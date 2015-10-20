@@ -10,4 +10,4 @@ The layout algorithms are plain Java
 and can thus also be used outside of Eclipse.
 
 If you want to know more,
-let us refer you [to the ELK homepage.](http://www.eclipse.org/elk).
+let us refer you [to the ELK homepage](http://www.eclipse.org/elk).
