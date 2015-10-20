@@ -1,0 +1,8 @@
+.DS_Store
+*.class
+bin/
+.checkstyle
+.svn/
+xtend-gen/
+target/
+*.pdf

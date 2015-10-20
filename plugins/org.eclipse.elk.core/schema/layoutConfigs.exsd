@@ -1,0 +1,283 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.elk.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.elk.core" id="layoutConfigs" name="Layout Configurations"/>
+      </appInfo>
+      <documentation>
+         The layout configurations extension point allows to specify the properties of a specific diagram editor with regard to automatic layout. Layout options can be configured for specific model elements or edit parts.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="diagramType"/>
+            <element ref="staticConfig"/>
+            <element ref="semanticConfig"/>
+            <element ref="customConfig"/>
+            <element ref="globalStaticConfig"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  org.eclipse.elk.core.layoutInfo
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  An optional identifier of the extension instance.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  An optional name of the extension instance.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="diagramType">
+      <annotation>
+         <documentation>
+            A diagram type, used to classify diagrams with respect to layout. Specific edit parts of a graphical editor can be mapped to diagram types using the &lt;code&gt;staticConfig&lt;/code&gt; element. Each layout algorithm may specify which diagram types it supports. The &lt;code&gt;org.eclipse.elk.diagram.general&lt;/code&gt; diagram type, predefined by ELK, applies to &lt;i&gt;all&lt;/i&gt; diagrams.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this diagram type. It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A user friendly name of this diagram type, to be displayed in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="staticConfig">
+      <annotation>
+         <documentation>
+            A layout option configuration for a specific model element or edit part. This can be used to statically specify default layout option values.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Either a domain model class, a diagram part class, or a diagram type. The option is assigned to all instances of the given class or type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="option" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element of the &lt;code&gt;layoutProviders&lt;/code&gt; extension point.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/layoutOption/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Value of the layout option.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="semanticConfig">
+      <annotation>
+         <documentation>
+            A layout option configuration for semantic model elements, which can determine specific layout option values dynamically depending on a given model element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A domain model class for which to assign the layout configuration. This includes all subclasses of the given class.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="config" type="string" use="required">
+            <annotation>
+               <documentation>
+                  An implementation of a semantic layout configuration, which can decide for each model element individually what layout option values are assigned.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.elk.core.config.SemanticLayoutConfig:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="customConfig">
+      <annotation>
+         <documentation>
+            A custom layout option configurator, which can calculate its values in arbitrary manner. This is recommended to be used only by experts.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The implementation of the layout configurator.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.elk.core.config.ILayoutConfig"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="activation" type="string">
+            <annotation>
+               <documentation>
+                  A property identifier used for activation of the layout configurator. If this property is omitted, the configurator is always active.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="boolean">
+            <annotation>
+               <documentation>
+                  The default activation value (&lt;pre&gt;true&lt;/pre&gt; or &lt;pre&gt;false&lt;/pre&gt;).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="activationText" type="string">
+            <annotation>
+               <documentation>
+                  Optional text to display in the user interface for manual activation of the layout configurator.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="activationAction" type="string">
+            <annotation>
+               <documentation>
+                  Optional action that is executed after the configurator has been enabled or disabled in the user interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":java.lang.Runnable"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="globalStaticConfig">
+      <annotation>
+         <documentation>
+            A global layout option configuration. This can be used to statically specify default layout option values to be used throughout the tool.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="option" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element of the &lt;code&gt;layoutProviders&lt;/code&gt; extension point.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/layoutOption/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Value of the layout option.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         0.3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example for a diagram type and an option extension, which together assign the diagram type &quot;State Machine&quot; to a specific domain model element:
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.elk.core.layoutInfo&quot;&gt;
+      &lt;diagramType
+            id=&quot;org.eclipse.elk.type.stateMachine&quot;
+            name=&quot;State Machine&quot;&gt;
+      &lt;/diagramType&gt;
+      &lt;option
+            class=&quot;org.example.synccharts.Region&quot;
+            option=&quot;org.eclipse.elk.diagramType&quot;
+            value=&quot;org.eclipse.elk.type.stateMachine&quot;&gt;
+      &lt;/option&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;org.eclipse.elk.core.LayoutDataService&lt;/code&gt;. This is the point where registered data can be read at runtime.
+&lt;p&gt;
+&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;org.eclipse.elk.core.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;org.eclipse.elk.core&lt;/code&gt;.
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright 2008 by&lt;br&gt;
+&amp;nbsp;+ Kiel University&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Department of Computer Science&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Real-Time and Embedded Systems Group&lt;br&gt;
+This program and the accompanying materials are made available under the terms of the Eclipse Public License (EPL) which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+</schema>

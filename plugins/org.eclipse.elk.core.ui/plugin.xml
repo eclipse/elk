@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.5"?>
+<plugin>
+ <extension
+       point="org.eclipse.core.expressions.propertyTesters">
+    <propertyTester
+          class="org.eclipse.elk.core.ui.ActiveEditorSupportedTester"
+          id="org.eclipse.elk.core.ui.activeEditorSupportedTester"
+          namespace="org.eclipse.elk.core.ui"
+          properties="activeEditorIsSupported"
+          type="org.eclipse.ui.IWorkbenchPart">
+    </propertyTester>
+ </extension>
+
+ <extension
+       point="org.eclipse.core.runtime.preferences">
+    <initializer
+          class="org.eclipse.elk.core.ui.preferences.PreferenceInitializer">
+    </initializer>
+ </extension>
+   
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.elk.core.ui.preferences.LayoutPreferencePage"
+            id="org.eclipse.elk.core.ui.preferences.layout"
+            name="%page.name.0">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="%command.description.0"
+            id="org.eclipse.elk.core.layout"
+            name="%category.name.0">
+      </category>
+      <command
+            categoryId="org.eclipse.elk.core.layout"
+            defaultHandler="org.eclipse.elk.core.ui.LayoutHandler"
+            id="org.eclipse.elk.core.ui.command.layout"
+            name="%command.name.0">
+         <commandParameter
+               id="org.eclipse.elk.core.ui.layoutScope"
+               name="Scope"
+               optional="true">
+         </commandParameter>
+      </command>
+      <command
+            categoryId="org.eclipse.elk.core.layout"
+            defaultHandler="org.eclipse.elk.core.ui.views.ShowLayoutViewHandler"
+            id="org.eclipse.elk.core.ui.command.showLayoutView"
+            name="%command.name.1">
+      </command>
+   </extension>
+   
+   <extension
+point="org.eclipse.ui.menus">
+<menuContribution
+      locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+   <toolbar
+         id="org.eclipse.elk.core.layout.toolbar"
+         label="Eclipse Diagram Layout">
+      <command
+            commandId="org.eclipse.elk.core.ui.command.layout"
+            icon="icons/menu16/arrange.gif"
+            label="%command.label.0"
+            style="push"
+            tooltip="%command.tooltip.0">
+         <visibleWhen
+               checkEnabled="false">
+            <with
+                  variable="activeEditor">
+               <test
+                     forcePluginActivation="true"
+                     property="org.eclipse.elk.core.ui.activeEditorIsSupported">
+               </test>
+            </with>
+         </visibleWhen>
+      </command>
+   </toolbar>
+</menuContribution>
+<menuContribution
+      locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+   <command
+         commandId="org.eclipse.elk.core.ui.command.layout"
+         icon="icons/menu16/arrange.gif"
+         id="org.eclipse.elk.core.ui.command.layout.selection"
+         label="%command.label.2"
+         mnemonic="%command.mnemonic.0"
+         style="push"
+         tooltip="%command.tooltip.0">
+      <parameter
+            name="org.eclipse.elk.core.ui.layoutScope"
+            value="selection">
+      </parameter>
+      <visibleWhen
+            checkEnabled="false">
+         <with
+               variable="activePart">
+            <test
+                  forcePluginActivation="true"
+                  property="org.eclipse.elk.core.ui.activeEditorIsSupported">
+            </test>
+         </with>
+      </visibleWhen>
+   </command>
+   <command
+         commandId="org.eclipse.elk.core.ui.command.showLayoutView"
+         icon="icons/view16/layout.gif"
+         label="%command.label.3"
+         mnemonic="%command.mnemonic.1"
+         style="push">
+      <visibleWhen
+            checkEnabled="false">
+         <with
+               variable="activePart">
+            <test
+                  forcePluginActivation="true"
+                  property="org.eclipse.elk.core.ui.activeEditorIsSupported">
+            </test>
+         </with>
+      </visibleWhen>
+   </command>
+</menuContribution>
+</extension>
+
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.elk.core.ui.command.layout"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+R L">
+      </key>
+   </extension>
+   
+ <extension
+       point="org.eclipse.ui.views">
+    <category
+          id="org.eclipse.elk.core.layout"
+          name="%category.name.0">
+    </category>
+    <view
+          allowMultiple="false"
+          category="org.eclipse.elk.core.layout"
+          class="org.eclipse.elk.core.ui.views.LayoutViewPart"
+          icon="icons/view16/layout.gif"
+          id="org.eclipse.elk.core.views.layout"
+          name="%view.name.0"
+          restorable="true">
+    </view>
+ </extension>
+ <extension
+       point="org.eclipse.emf.ecore.extension_parser">
+    <parser
+          class="org.eclipse.elk.core.ui.util.KGraphResourceFactory"
+          type="kgx">
+    </parser>
+    <parser
+          class="org.eclipse.elk.core.ui.util.KGraphResourceFactory"
+          type="kgraph">
+    </parser>
+ </extension>
+   
+</plugin>

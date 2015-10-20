@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+  <extension-point id="layoutManagers" name="Layout Managers" schema="schema/layoutManagers.exsd"/>
+ 
+ <extension
+       point="org.eclipse.elk.core.layoutConfigs">
+    <customConfig
+          activation="org.eclipse.elk.eclipse"
+          class="org.eclipse.elk.core.service.EclipseLayoutConfig"
+          default="true">
+    </customConfig>
+ </extension>
+
+</plugin>

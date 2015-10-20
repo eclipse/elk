@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.elk.core.service.layoutManagers">
+      <manager
+            class="org.eclipse.elk.core.graphiti.GraphitiDiagramLayoutManager">
+      </manager>
+   </extension>
+
+</plugin>

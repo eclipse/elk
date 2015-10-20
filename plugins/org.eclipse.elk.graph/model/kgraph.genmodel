@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="KIELER - Kiel Integrated Environment for Layout Eclipse RichClient&#xA;&#xA;http://www.informatik.uni-kiel.de/rtsys/kieler/&#xA;&#xA;Copyright 2009 by&#xA;+ Kiel University&#xA;  + Department of Computer Science&#xA;    + Real-Time and Embedded Systems Group&#xA;&#xA;This code is provided under the terms of the Eclipse Public License (EPL).&#xA;See the file epl-v10.html for the license text."
+    modelDirectory="/de.cau.cs.kieler.core.kgraph/src" editDirectory="/de.cau.cs.kieler.core.kgraph.edit/src"
+    editorDirectory="/de.cau.cs.kieler.core.kgraph.editor/src" modelPluginID="de.cau.cs.kieler.core.kgraph"
+    modelName="KGraph" editPluginClass="de.cau.cs.kieler.core.kgraph.provider.KGraphEditPlugin"
+    editorPluginClass="de.cau.cs.kieler.core.kgraph.presentation.KGraphEditorPlugin"
+    testSuiteClass="de.cau.cs.kieler.core.kgraph.tests.KGraphAllTests" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.core.kgraph.edit"
+    language="">
+  <foreignModel>kgraph.ecore</foreignModel>
+  <genPackages prefix="KGraph" basePackage="de.cau.cs.kieler.core" disposableProviderFactory="true"
+      fileExtensions="kgraph,kgx" ecorePackage="kgraph.ecore#/">
+    <genDataTypes ecoreDataType="kgraph.ecore#//IProperty">
+      <genTypeParameters ecoreTypeParameter="kgraph.ecore#//IProperty/T"/>
+    </genDataTypes>
+    <genClasses image="false" ecoreClass="kgraph.ecore#//KGraphElement">
+      <genFeatures property="None" children="true" createChild="true" propertyCategory=""
+          propertyDescription="Graph data for this graph element, e.g. layout data"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KGraphElement/data"/>
+      <genOperations ecoreOperation="kgraph.ecore#//KGraphElement/getData">
+        <genParameters ecoreParameter="kgraph.ecore#//KGraphElement/getData/type"/>
+      </genOperations>
+      <genOperations ecoreOperation="kgraph.ecore#//KGraphElement/getData.1">
+        <genParameters ecoreParameter="kgraph.ecore#//KGraphElement/getData.1/type"/>
+        <genTypeParameters ecoreTypeParameter="kgraph.ecore#//KGraphElement/getData.1/T"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="kgraph.ecore#//KLabeledGraphElement">
+      <genFeatures property="None" children="true" createChild="true" propertyDescription="The labels associated with this graph element"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KLabeledGraphElement/labels"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="kgraph.ecore#//KGraphData"/>
+    <genClasses ecoreClass="kgraph.ecore#//KNode">
+      <genFeatures property="None" children="true" createChild="true" propertyDescription="The child nodes form a nested graph, making the owner a compound node"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KNode/children"/>
+      <genFeatures property="None" notify="false" createChild="false" propertyDescription="The parent node in the compound graph structure"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KNode/parent"/>
+      <genFeatures property="None" children="true" createChild="true" propertyDescription="The ports, which may be empty for regular graphs"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KNode/ports"/>
+      <genFeatures property="None" children="true" createChild="true" propertyDescription="The outoing edges of this node"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KNode/outgoingEdges"/>
+      <genFeatures property="None" notify="false" createChild="false" propertyDescription="The incoming edges of this node"
+          propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KNode/incomingEdges"/>
+    </genClasses>
+    <genClasses ecoreClass="kgraph.ecore#//KEdge">
+      <genFeatures property="None" notify="false" createChild="false" propertyDescription="The source node of this edge"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/source"/>
+      <genFeatures notify="false" createChild="false" propertyDescription="The target node of this edge"
+          propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/target"/>
+      <genFeatures notify="false" createChild="false" propertyDescription="The source port, which may be null for graphs without ports"
+          propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/sourcePort"/>
+      <genFeatures notify="false" createChild="false" propertyDescription="The target port, which may be null for graphs without ports"
+          propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/targetPort"/>
+      <genOperations ecoreOperation="kgraph.ecore#//KEdge/connectSourcePort">
+        <genParameters ecoreParameter="kgraph.ecore#//KEdge/connectSourcePort/port"/>
+      </genOperations>
+      <genOperations ecoreOperation="kgraph.ecore#//KEdge/connectTargetPort">
+        <genParameters ecoreParameter="kgraph.ecore#//KEdge/connectTargetPort/port"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="kgraph.ecore#//KPort">
+      <genFeatures property="None" notify="false" createChild="false" propertyDescription="The node that contains this port"
+          ecoreFeature="ecore:EReference kgraph.ecore#//KPort/node"/>
+      <genFeatures property="None" notify="false" createChild="false" propertyDescription="The edges that are incident to this port"
+          propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KPort/edges"/>
+    </genClasses>
+    <genClasses ecoreClass="kgraph.ecore#//KLabel">
+      <genFeatures createChild="false" propertyDescription="The visible text of this label"
+          ecoreFeature="ecore:EAttribute kgraph.ecore#//KLabel/text"/>
+      <genFeatures notify="false" createChild="false" propertyDescription="The graph element that contains this label"
+          propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KLabel/parent"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="kgraph.ecore#//EMapPropertyHolder">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kgraph.ecore#//EMapPropertyHolder/properties"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference kgraph.ecore#//EMapPropertyHolder/persistentEntries"/>
+      <genOperations ecoreOperation="kgraph.ecore#//EMapPropertyHolder/makePersistent"/>
+    </genClasses>
+    <genClasses ecoreClass="kgraph.ecore#//IPropertyToObjectMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kgraph.ecore#//IPropertyToObjectMap/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kgraph.ecore#//IPropertyToObjectMap/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="kgraph.ecore#//IPropertyHolder">
+      <genOperations ecoreOperation="kgraph.ecore#//IPropertyHolder/setProperty">
+        <genParameters ecoreParameter="kgraph.ecore#//IPropertyHolder/setProperty/property"/>
+        <genParameters ecoreParameter="kgraph.ecore#//IPropertyHolder/setProperty/value"/>
+      </genOperations>
+      <genOperations ecoreOperation="kgraph.ecore#//IPropertyHolder/getProperty">
+        <genParameters ecoreParameter="kgraph.ecore#//IPropertyHolder/getProperty/property"/>
+        <genTypeParameters ecoreTypeParameter="kgraph.ecore#//IPropertyHolder/getProperty/T"/>
+      </genOperations>
+      <genOperations ecoreOperation="kgraph.ecore#//IPropertyHolder/copyProperties">
+        <genParameters ecoreParameter="kgraph.ecore#//IPropertyHolder/copyProperties/holder"/>
+      </genOperations>
+      <genOperations ecoreOperation="kgraph.ecore#//IPropertyHolder/getAllProperties"/>
+    </genClasses>
+    <genClasses ecoreClass="kgraph.ecore#//PersistentEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kgraph.ecore#//PersistentEntry/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute kgraph.ecore#//PersistentEntry/value"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

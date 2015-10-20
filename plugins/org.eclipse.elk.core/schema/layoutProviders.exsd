@@ -1,0 +1,532 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.elk.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.elk.core" id="layoutProviders" name="Layout Providers"/>
+      </appInfo>
+      <documentation>
+         The Layout Providers extension point allows plug-ins to add new layout providers to be used with the Eclipse Layout Kernel. Layout providers are algorithms that automatically compute layout information for an instance of the &lt;code&gt;KGraph&lt;/code&gt; data structure.
+&lt;p&gt;
+Layout providers can be grouped using categories, and they can be given a type to describe the basic approach of the implemented algorithm. Furthermore, a layout provider can declare which diagrams it supports and which layout options it understands. All this data is gathered to decide at runtime which layout provider should be used to layout a specific diagram, and which options to set for that provider.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="layoutAlgorithm"/>
+            <element ref="layoutType"/>
+            <element ref="category"/>
+            <element ref="layoutOption"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  org.eclipse.elk.core.layoutProviders
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  An optional identifier of the extension instance.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  An optional name of the extension instance.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="layoutAlgorithm">
+      <annotation>
+         <documentation>
+            A layout algorithm implementation that is able to process the &lt;code&gt;KGraph&lt;/code&gt; data structure. A library that provides multiple different layout algorithms should have one &lt;code&gt;layoutAlgorithm&lt;/code&gt; element for each algorithm and one &lt;code&gt;AbstractLayoutProvider&lt;/code&gt; implementation that accepts different parameters for initialization.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="knownOption"/>
+            <element ref="supportedDiagram"/>
+            <element ref="supportedFeature"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this layout provider. It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A user friendly name of this layout provider, to be displayed in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Implementing class of the layout provider, must extend &lt;code&gt;org.eclipse.elk.core.AbstractLayoutProvider&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.elk.core.AbstractLayoutProvider:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="parameter" type="string">
+            <annotation>
+               <documentation>
+                  An optional string parameter which is passed to the layout provider instance for initialization.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  Identifier of a category, which can be defined using the &lt;code&gt;category&lt;/code&gt; element. Categories are used to group layout providers.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/category/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="type" type="string">
+            <annotation>
+               <documentation>
+                  Identifier of a layout type, which can be defined using the &lt;code&gt;layoutType&lt;/code&gt; element. Layout types describe the general kind of layout algorithm that is implemented by that provider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/layoutType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  An optional description that will appear on selection dialogs for layout algorithms.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="preview" type="string">
+            <annotation>
+               <documentation>
+                  An optional preview image that will appear on selection dialogs for layout algorithms. The recommended image size is 300x200 pixels.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="layoutType">
+      <annotation>
+         <documentation>
+            A layout type, that is a general kind of layout algorithm. Layout types are used to give the user an idea of the expected results of a layout algorithm. For example, an algorithm that follows the &lt;i&gt;layered&lt;/i&gt; approach is expected to produce layouts in which most edges are oriented in a common direction.
+&lt;p&gt;
+Apart from a set of default layout types offered by KIML, new layout providers are free to define their own layout types.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this layout type. It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A user friendly name of the layout type, to be displayed in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  An optional description that will appear on selection dialogs for layout algorithms.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="category">
+      <annotation>
+         <documentation>
+            A layout provider category, used to group layout providers. For example, all layout algorithms of a specific library could be grouped with a common category.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this category. It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A user friendly name of this category, to be displayed in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="layoutOption">
+      <annotation>
+         <documentation>
+            An option that can be passed to a layout provider. Layout options can be used to modify the behavior of layout algorithms. Apart from a set of default layout options offered by KIML, layout providers are free to define their own layout options.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="dependency"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this layout option. It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  Defines the data type of this option; must be either &lt;code&gt;boolean&lt;/code&gt;, &lt;code&gt;string&lt;/code&gt;, &lt;code&gt;int&lt;/code&gt;, &lt;code&gt;float&lt;/code&gt;, &lt;code&gt;enum&lt;/code&gt;, &lt;code&gt;enumset&lt;/code&gt;, or &lt;code&gt;object&lt;/code&gt;. The types &lt;code&gt;enum&lt;/code&gt;, &lt;code&gt;enumset&lt;/code&gt;, and &lt;code&gt;object&lt;/code&gt; require the &lt;code&gt;class&lt;/code&gt; attribute to be set.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="boolean">
+                  </enumeration>
+                  <enumeration value="string">
+                  </enumeration>
+                  <enumeration value="int">
+                  </enumeration>
+                  <enumeration value="float">
+                  </enumeration>
+                  <enumeration value="enum">
+                  </enumeration>
+                  <enumeration value="enumset">
+                  </enumeration>
+                  <enumeration value="object">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A user friendly name of this layout option, to be displayed in the UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A user friendly description of this layout option, to be displayed in the UI. The description should contain all information needed to understand what this option does.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="appliesTo" type="string">
+            <annotation>
+               <documentation>
+                  A comma separated list of targets on which the layout option can be applied; a target can be either &lt;code&gt;parents&lt;/code&gt;, &lt;code&gt;nodes&lt;/code&gt;, &lt;code&gt;edges&lt;/code&gt;, &lt;code&gt;ports&lt;/code&gt;, or &lt;code&gt;labels&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="string">
+            <annotation>
+               <documentation>
+                  The default value to use when no other value can be determined for this option.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  An optional Java class giving more detail on the data type. For &lt;code&gt;enum&lt;/code&gt; and &lt;code&gt;enumset&lt;/code&gt; options this attribute must hold the Enum class of the option. For &lt;code&gt;object&lt;/code&gt; options it must hold the class name of an IDataObject implementation.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="advanced" type="boolean">
+            <annotation>
+               <documentation>
+                  Whether the option should only be shown in advanced mode; default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="lowerBound" type="string">
+            <annotation>
+               <documentation>
+                  An optional lower bound on the values of this layout option. This is used when a layout configuration is determined automatically.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="upperBound" type="string">
+            <annotation>
+               <documentation>
+                  An optional upper bound on the values of this layout option. This is used when a layout configuration is determined automatically.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="variance" type="string">
+            <annotation>
+               <documentation>
+                  An optional variance for values of this layout option. This is used when a layout configuration is determined automatically. The variance is taken as multiplier for Gaussian distributions when new values are determined. Options with uniform distibution, such as Boolean or enumeration types, do not need a variance value, since all values have equal probability. A variance of 0 implies that the option shall not be used in automatic configuration, regardless of its type.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="dependency">
+      <annotation>
+         <documentation>
+            A layout option that depends on another one is only visible when the specified condition is met. This is useful when an option makes only sense if another option has been set to a specific value. If multiple dependencies are present, visibility is active when at least one of the dependencies is met.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="option" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/layoutOption/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  The expected value of the referenced option. The containing option will only be visible if the referenced option is set to this value. If the expected value is left empty, the option is visible if any value is present.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="knownOption">
+      <annotation>
+         <documentation>
+            Declares that the layout algorithm knows the option referenced by an identifier. Only the known options of a layout provider can be modified by the user. Not all options that are processed by the algorithm need to be listed here; only those options that shall be accessible by the user should be listed.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="option" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/layoutOption/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="default" type="string">
+            <annotation>
+               <documentation>
+                  Optional default value to override the option&apos;s own default value.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="supportedDiagram">
+      <annotation>
+         <documentation>
+            Declares that the layout algorithm supports the diagram referenced by an identifier. If a layout provider supports a specific diagram type and it has the highest priority for that type, it is chosen as the default layout provider for diagrams of that type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier of a diagram type, which can be defined using the &lt;code&gt;diagramType&lt;/code&gt; element of the &lt;code&gt;layoutConfigs&lt;/code&gt; extension point. Diagram types are used to classify diagrams with respect to their layout.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutConfigs/diagramType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  An integer value that defines the relative priority of the layout algorithm for this diagram type. The layout algorithm with highest priority is chosen as the default provider for that type. The default value is 0.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="supportedFeature">
+      <annotation>
+         <documentation>
+            Declares that the layout algorithm supports the graph feature referenced by this element.  Graph feature support is used to automatically determine the most suitable layout algorithm for a graph.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="feature" use="required">
+            <annotation>
+               <documentation>
+                  The supported feature: SELF_LOOPS, INSIDE_SELF_LOOPS, MULTI_EDGES, EDGE_LABELS, PORTS, COMPOUND, CLUSTERS, or DISCONNECTED
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="SELF_LOOPS">
+                  </enumeration>
+                  <enumeration value="INSIDE_SELF_LOOPS">
+                  </enumeration>
+                  <enumeration value="MULTI_EDGES">
+                  </enumeration>
+                  <enumeration value="EDGE_LABELS">
+                  </enumeration>
+                  <enumeration value="PORTS">
+                  </enumeration>
+                  <enumeration value="COMPOUND">
+                  </enumeration>
+                  <enumeration value="CLUSTERS">
+                  </enumeration>
+                  <enumeration value="DISCONNECTED">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  An integer value that defines the relative priority of the layout algorithm for this graph feature. Positive values indicate good support for the feature, negative values indicate rather bad support. The default value is 0.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A description of how well the feature is supported or which restrictions may apply to its usage.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         0.1.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example for a layout provider extension:
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.elk.core.layoutProviders&quot;&gt;
+      &lt;layoutProvider
+            class=&quot;org.eclipse.elk.klodd.hierarchical.HierarchicalDataflowLayoutProvider&quot;
+            category=&quot;org.eclipse.elk&quot;
+            id=&quot;org.eclipse.elk.klodd.hierarchical&quot;
+            name=&quot;KLoDD Hierarchical&quot;
+            type=&quot;org.eclipse.elk.type.layered&quot;&gt;
+         &lt;supportedDiagram
+               priority=&quot;10&quot;
+               type=&quot;org.eclipse.elk.type.dataFlow&quot;&gt;
+         &lt;/supportedDiagram&gt;
+         &lt;knownOption
+               option=&quot;org.eclipse.elk.sizeConstraint&quot;&gt;
+         &lt;/knownOption&gt;
+         &lt;knownOption
+               option=&quot;org.eclipse.elk.direction&quot;&gt;
+         &lt;/knownOption&gt;
+         &lt;knownOption
+               option=&quot;org.eclipse.elk.spacing&quot;&gt;
+         &lt;/knownOption&gt;
+         &lt;knownOption
+               option=&quot;org.eclipse.elk.portConstraints&quot;&gt;
+         &lt;/knownOption&gt;
+      &lt;/layoutProvider&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;org.eclipse.elk.core.LayoutDataService&lt;/code&gt;. This is the point where registered data can be read at runtime.
+&lt;p&gt;
+&lt;b&gt;NOTE:&lt;/b&gt; The extension point is read out by the &lt;code&gt;org.eclipse.elk.core.ui&lt;/code&gt; plug-in, &lt;em&gt;not&lt;/em&gt; by &lt;code&gt;org.eclipse.elk.core&lt;/code&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Registered layout providers are made available through the Eclipse Layout Kernel. The layout kernel organizes appropriate selection of layout providers for layout of a graphical diagram, and provides means to manually select layout providers for each part of the diagram.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright 2008 by&lt;br&gt;
+&amp;nbsp;+ Kiel University&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Department of Computer Science&lt;br&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;+ Real-Time and Embedded Systems Group&lt;br&gt;
+This program and the accompanying materials are made available under the terms of the Eclipse Public License (EPL) which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+</schema>

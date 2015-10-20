@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK - Graph Model
+Bundle-SymbolicName: org.eclipse.elk.graph;singleton:=true
+Bundle-Version: 0.7.2.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: Eclipse Modeling Project
+Export-Package: org.eclipse.elk.graph,
+ org.eclipse.elk.graph.impl,
+ org.eclipse.elk.graph.properties,
+ org.eclipse.elk.graph.util
+Require-Bundle: org.eclipse.emf.ecore;bundle-version="2.5.0";visibility:=reexport
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

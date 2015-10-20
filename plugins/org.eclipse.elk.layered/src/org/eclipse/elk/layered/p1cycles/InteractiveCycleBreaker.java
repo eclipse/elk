@@ -1,0 +1,130 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.layered.p1cycles;
+
+import java.util.List;
+
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.layered.ILayoutPhase;
+import org.eclipse.elk.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.layered.graph.LEdge;
+import org.eclipse.elk.layered.graph.LGraph;
+import org.eclipse.elk.layered.graph.LNode;
+import org.eclipse.elk.layered.graph.LPort;
+import org.eclipse.elk.layered.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.layered.properties.PortType;
+
+import com.google.common.collect.Lists;
+
+/**
+ * A cycle breaker that responds to user interaction by respecting the direction of
+ * edges as given in the original drawing.
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt><dd>none</dd>
+ *   <dt>Postcondition:</dt><dd>the graph has no cycles</dd>
+ * </dl>
+ * 
+ * @author msp
+ * @kieler.design 2012-08-10 chsch grh
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
+ */
+public final class InteractiveCycleBreaker implements ILayoutPhase {
+
+    /** intermediate processing configuration. */
+    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
+        IntermediateProcessingConfiguration.createEmpty()
+            .addBeforePhase1(IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
+            .addAfterPhase5(IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
+
+    /**
+     * {@inheritDoc}
+     */
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
+            final LGraph graph) {
+        
+        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
+        monitor.begin("Interactive cycle breaking", 1);
+        
+        // gather edges that point to the wrong direction
+        List<LEdge> revEdges = Lists.newArrayList();
+        for (LNode source : layeredGraph.getLayerlessNodes()) {
+            source.id = 1;
+            double sourcex = source.getInteractiveReferencePoint().x;
+            for (LPort port : source.getPorts(PortType.OUTPUT)) {
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    LNode target = edge.getTarget().getNode();
+                    if (target != source) {
+                        double targetx = target.getInteractiveReferencePoint().x;
+                        if (targetx < sourcex) {
+                            revEdges.add(edge);
+                        }
+                    }
+                }
+            }
+        }
+        // reverse the gathered edges
+        for (LEdge edge : revEdges) {
+            edge.reverse(layeredGraph, true);
+        }
+        
+        // perform an additional check for cycles - maybe we missed something
+        // (could happen if some nodes have the same horizontal position)
+        revEdges.clear();
+        for (LNode node : layeredGraph.getLayerlessNodes()) {
+            // unvisited nodes have id = 1
+            if (node.id > 0) {
+                findCycles(node, revEdges);
+            }
+        }
+        // again, reverse the edges that were marked
+        for (LEdge edge : revEdges) {
+            edge.reverse(layeredGraph, true);
+        }
+        
+        revEdges.clear();
+        monitor.done();
+    }
+    
+    /**
+     * Perform a DFS starting on the given node and mark back edges in order to break cycles.
+     * 
+     * @param node1 a node
+     * @param revEdges list of edges that will be reversed
+     */
+    private void findCycles(final LNode node1, final List<LEdge> revEdges) {
+        // nodes with negative id are part of the currently inspected path
+        node1.id = -1;
+        for (LPort port : node1.getPorts(PortType.OUTPUT)) {
+            for (LEdge edge : port.getOutgoingEdges()) {
+                LNode node2 = edge.getTarget().getNode();
+                if (node1 != node2) {
+                    if (node2.id < 0) {
+                        // a node of the current path is found --> cycle
+                        revEdges.add(edge);
+                    } else if (node2.id > 0) {
+                        // the node has not been visited yet --> expand the current path
+                        findCycles(node2, revEdges);
+                    }
+                }
+            }
+        }
+        // nodes with id = 0 have been already visited and are ignored if encountered again
+        node1.id = 0;
+    }
+
+}
