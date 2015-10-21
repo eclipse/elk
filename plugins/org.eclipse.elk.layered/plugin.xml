@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.elk.core.layoutProviders">
       <layoutAlgorithm
-            category="org.eclipse.elk"
+            category="org.eclipse.elk.category.elk"
             class="org.eclipse.elk.layered.LayeredLayoutProvider"
             description="Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as possible into one direction by placing nodes into subsequent layers. This implementation supports different routing styles (straight, orthogonal, splines); if orthogonal routing is selected, arbitrary port constraints are respected, thus enabling the layout of block diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of compound graphs with cross-hierarchy edges is supported when the respective option is activated on the top level."
             id="org.eclipse.elk.algorithm.layered"

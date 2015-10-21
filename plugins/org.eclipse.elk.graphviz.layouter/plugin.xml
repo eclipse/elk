@@ -482,7 +482,7 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            class="org.eclipse.elk.kiml.graphviz.dot.transform.NeatoModel"
+            class="org.eclipse.elk.graphviz.dot.transform.NeatoModel"
             default="SHORTPATH"
             description="Specifies how the distance matrix is computed for the input graph."
             id="org.eclipse.elk.graphviz.neatoModel"
@@ -491,7 +491,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="org.eclipse.elk.kiml.graphviz.dot.transform.OverlapMode"
+            class="org.eclipse.elk.graphviz.dot.transform.OverlapMode"
             default="PRISM"
             description="Determines if and how node overlaps should be removed."
             id="org.eclipse.elk.graphviz.overlapMode"
