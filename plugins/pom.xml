@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.eclipse.elk</groupId>
+  <artifactId>plugins</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>org.eclipse.elk</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../build/pom.xml</relativePath>
+  </parent>
+
+  <!-- all plugins need to be listed as module -->
+  <modules>
+    <!-- Re-enable tests at some point. -->
+    <!--<module>../test</module>-->
+    <module>org.eclipse.elk.core</module>
+    <module>org.eclipse.elk.core.gmf</module>
+    <module>org.eclipse.elk.core.graphiti</module>
+    <module>org.eclipse.elk.core.service</module>
+    <module>org.eclipse.elk.core.ui</module>
+    <module>org.eclipse.elk.force</module>
+    <module>org.eclipse.elk.graph</module>
+    <module>org.eclipse.elk.graphviz.dot</module>
+    <module>org.eclipse.elk.graphviz.layouter</module>
+    <module>org.eclipse.elk.layered</module>
+    <module>org.eclipse.elk.mrtree</module>
+  </modules>
+
+</project>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.eclipse.elk</groupId>
+  <artifactId>parent</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+
+  <!-- Define a few properties used throughout all build profiles. -->
+  <properties>
+    <tycho-version>0.21.0</tycho-version>
+    <targetJdk>1.8</targetJdk>
+
+    <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
+    <!-- Non-breakable space, as normal spaces are trimmed. -->
+    <sourceFeatureLabelSuffix>&#xA0;(Sources)</sourceFeatureLabelSuffix>
+
+    <!-- guarantee that we use utf8 for compilation, this is especially required
+         due to xtend's template symbols («) when running maven on windows. -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
+    <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+
+    <!-- Our target platform. -->
+    <elk.targetplatform>
+      http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/
+    </elk.targetplatform>
+  </properties>
+
+  <!-- Define one profile for each output target we have.
+       Granted, for the moment this is just one. But that may change, and when it
+       does, the one who wants to add new profiles will be thankful that we
+       already thought of him from the beginning. Mark my words! -->
+  <profiles>
+
+    <!-- The ELK Update Site. -->
+    <profile>
+      <id>elk-update-site</id>
+
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>p2.targetPlatform</id>
+          <layout>p2</layout>
+          <url>${elk.targetplatform}</url>
+        </repository>
+      </repositories>
+
+      <modules>
+        <module>../plugins</module>
+        <module>../features</module>
+        <module>org.eclipse.elk.repository</module>
+      </modules>
+    </profile>
+
+  </profiles>
+
+
+  <!-- Maven plugin repositories -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>xtend</id>
+      <layout>default</layout>
+      <url>http://build.eclipse.org/common/xtend/maven</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>jboss-releases</id>
+      <name>JBoss Releases Maven Repository</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+<!--
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+-->
+    </pluginRepository>
+  </pluginRepositories>
+
+
+  <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
+  <build>
+    <plugins>
+      <!-- we need tycho plugin to build eclipse plugins -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <extensions>true</extensions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-source-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <executions>
+          <execution>
+            <id>plugin-source</id>
+            <goals>
+              <goal>plugin-source</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Enable java assertions during junit test runs. -->
+      <!-- The "enableAssertions" property is only available in the maven-surefire plugin. -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-surefire-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <argLine>-ea</argLine>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+
+        <!-- maven xtend plugin to tell maven how to compile xtend code -->
+        <plugin>
+          <groupId>org.eclipse.xtend</groupId>
+          <artifactId>xtend-maven-plugin</artifactId>
+          <version>2.7.2</version>
+          <configuration>
+            <outputDirectory>${basedir}/xtend-gen</outputDirectory>
+          </configuration>
+        </plugin>
+
+        <!-- add src-gen and xtend-gen to source-directories -->
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.3</version>
+          <executions>
+            <execution>
+              <id>add-source</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>add-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>src-gen</source>
+                </sources>
+                <sources>
+                  <source>${project.build.directory}/xtend-gen</source>
+                </sources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- generated code needs cleanup too -->
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>2.4.1</version>
+          <configuration>
+            <filesets>
+              <fileset>
+                <directory>xtend-gen</directory>
+                <includes>
+                  <include>**</include>
+                </includes>
+              </fileset>
+            </filesets>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

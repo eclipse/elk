@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site associateSitesURL="associateSites.xml">
+
+   <description name="Eclipse Layout Kernel (Nightly Builds)" url="TODO Add proper URL here">
+      Nightly build update site for the Eclipse Layout Kernel.
+   </description>
+
+   <!-- CATEGORY DEFINITIONS -->
+   <category-def name="elk" label="Eclipse Layout Kernel">
+      <description>
+         Eclipse Layout Kernel components for the automatic layout of diagrams.
+      </description>
+   </category-def>
+
+
+   <feature url="features/org.eclipse.elk_0.1.0.qualifier.jar" id="org.eclipse.elk.feature" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+   <feature url="features/org.eclipse.elk.source_0.1.0.qualifier.jar" id="org.eclipse.elk.feature.source" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+
+</site>
