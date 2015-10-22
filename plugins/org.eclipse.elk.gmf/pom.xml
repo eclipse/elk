@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>org.eclipse.elk</groupId>
-  <artifactId>org.eclipse.elk.core.gmf</artifactId>
+  <artifactId>org.eclipse.elk.gmf</artifactId>
   <version>0.9.1-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

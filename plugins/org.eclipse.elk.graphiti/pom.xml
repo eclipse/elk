@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>org.eclipse.elk</groupId>
-  <artifactId>org.eclipse.elk.core.graphiti</artifactId>
+  <artifactId>org.eclipse.elk.graphiti</artifactId>
   <version>0.6.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

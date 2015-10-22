@@ -19,12 +19,12 @@
     <!-- Re-enable tests at some point. -->
     <!--<module>../test</module>-->
     <module>org.eclipse.elk.core</module>
-    <module>org.eclipse.elk.core.gmf</module>
-    <module>org.eclipse.elk.core.graphiti</module>
     <module>org.eclipse.elk.core.service</module>
     <module>org.eclipse.elk.core.ui</module>
     <module>org.eclipse.elk.force</module>
+    <module>org.eclipse.elk.gmf</module>
     <module>org.eclipse.elk.graph</module>
+    <module>org.eclipse.elk.graphiti</module>
     <module>org.eclipse.elk.graphviz.dot</module>
     <module>org.eclipse.elk.graphviz.layouter</module>
     <module>org.eclipse.elk.layered</module>
