@@ -27,4 +27,11 @@
       <category name="elk"/>
    </feature>
 
+   <feature url="features/org.eclipse.elk.graphiti_0.1.0.qualifier.jar" id="org.eclipse.elk.graphiti.feature" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+   <feature url="features/org.eclipse.elk.graphiti.source_0.1.0.qualifier.jar" id="org.eclipse.elk.graphiti.feature.source" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+
 </site>
