@@ -12,11 +12,18 @@
       </description>
    </category-def>
 
-
+   <!-- FEATURES -->
    <feature url="features/org.eclipse.elk_0.1.0.qualifier.jar" id="org.eclipse.elk.feature" version="0.1.0.qualifier">
       <category name="elk"/>
    </feature>
    <feature url="features/org.eclipse.elk.source_0.1.0.qualifier.jar" id="org.eclipse.elk.feature.source" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+
+   <feature url="features/org.eclipse.elk.gmf_0.1.0.qualifier.jar" id="org.eclipse.elk.gmf.feature" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+   <feature url="features/org.eclipse.elk.gmf.source_0.1.0.qualifier.jar" id="org.eclipse.elk.gmf.feature.source" version="0.1.0.qualifier">
       <category name="elk"/>
    </feature>
 
