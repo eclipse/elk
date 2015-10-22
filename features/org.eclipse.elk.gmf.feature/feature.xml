@@ -8,10 +8,8 @@
 
    <description url="http://www.eclipse.org/elk">
       The Eclipse Layout Kernel provides automatic layout to diagram
-editors and viewers. It provides a layout graph format and an
-infrastructure that editors / viewers on one side and layout
-algorithms on the other side can connect to. The Eclipse Layout
-Kernel also provides layout algorithms.
+editors and viewers. This feature adds basic support for using
+automatic layout in GMF-based editors.
    </description>
 
    <copyright>

@@ -34,4 +34,11 @@
       <category name="elk"/>
    </feature>
 
+   <feature url="features/org.eclipse.elk.graphviz_0.1.0.qualifier.jar" id="org.eclipse.elk.graphviz.feature" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+   <feature url="features/org.eclipse.elk.graphviz.source_0.1.0.qualifier.jar" id="org.eclipse.elk.graphviz.feature.source" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+
 </site>
