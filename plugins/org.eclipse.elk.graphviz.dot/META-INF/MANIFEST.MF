@@ -7,7 +7,6 @@ Bundle-SymbolicName: org.eclipse.elk.graphviz.dot;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0",
  org.eclipse.xtext.generator;resolution:=optional,
- org.apache.commons.logging;resolution:=optional,
  org.eclipse.emf.codegen.ecore;resolution:=optional,
  org.eclipse.emf.mwe.utils;resolution:=optional,
  org.eclipse.emf.mwe2.launch;resolution:=optional,
@@ -18,7 +17,6 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0",
  org.eclipse.core.runtime;bundle-version="3.6.0",
  org.eclipse.elk.graph,
  org.eclipse.elk.core
-Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.elk.graphviz.dot,
  org.eclipse.elk.graphviz.dot.formatting,
