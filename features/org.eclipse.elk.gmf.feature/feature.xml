@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.elk.gmf.feature"
-      label="Eclipse Layout Kernel - GMF Support"
+      label="Eclipse Layout Kernel (Incubation) - GMF Support"
       version="0.1.0.qualifier"
       provider-name="Eclipse Modeling Project"
       plugin="org.eclipse.elk.core">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.elk.graphviz.feature"
-      label="Eclipse Layout Kernel - Graphviz Library Support"
+      label="Eclipse Layout Kernel (Incubation) - Graphviz Library Support"
       version="0.1.0.qualifier"
       provider-name="Eclipse Modeling Project"
       plugin="org.eclipse.elk.core">
