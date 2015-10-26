@@ -223,7 +223,6 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="com.google.guava" version="10.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.emf.edit" version="2.5.0" match="greaterOrEqual"/>
@@ -234,6 +233,7 @@ litigation.
       <import plugin="org.eclipse.emf.ecore.xmi" version="2.9.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.transaction" version="1.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
+      <import plugin="com.google.guava" version="15.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
