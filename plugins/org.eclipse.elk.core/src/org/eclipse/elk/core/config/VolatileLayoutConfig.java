@@ -227,7 +227,8 @@ public class VolatileLayoutConfig extends AbstractMutableLayoutConfig {
                 globalOptionMap.put(optionData, value);
             } else {
                 throw new IllegalArgumentException(
-                        "The given property is not registered as a layout option");
+                        "The given property '" + option.getId()
+                        + "' is not registered as a layout option");
             }
         }
         return this;

@@ -52,7 +52,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 public class ExtensionLayoutConfigService extends LayoutConfigService {
 
     /** preference identifier for the list of registered diagram elements. */
-    public static final String PREF_REG_ELEMENTS = "kiml.reg.elements";
+    public static final String PREF_REG_ELEMENTS = "elk.reg.elements";
 
     /** identifier of the extension point for layout configuration. */
     protected static final String EXTP_ID_LAYOUT_CONFIGS = "org.eclipse.elk.core.layoutConfigs";
@@ -126,7 +126,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
                             + ": An error occured while loading extensions.";
         }
         IStatus status =
-                new Status(IStatus.WARNING, KimlServicePlugin.PLUGIN_ID, 0, message, exception);
+                new Status(IStatus.WARNING, ElkServicePlugin.PLUGIN_ID, 0, message, exception);
         StatusManager.getManager().handle(status);
     }
 
@@ -138,7 +138,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
      *            a core exception holding a status with further information
      */
     protected void reportError(final CoreException exception) {
-        StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
+        StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
     }
 
     /**
@@ -285,7 +285,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
         Object value = optionData.parseValue(valueString);
         if (value != null) {
             addOptionValue(diagramType, optionData.getId(), value);
-            IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
+            IPreferenceStore preferenceStore = ElkServicePlugin.getDefault().getPreferenceStore();
             preferenceStore.setValue(getPreferenceName(diagramType, optionData.getId()),
                     valueString);
         }
@@ -329,7 +329,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
                 addOptionValue(clazzName, optionData.getId(), value);
                 registeredElements.add(clazzName);
                 IPreferenceStore preferenceStore =
-                        KimlServicePlugin.getDefault().getPreferenceStore();
+                        ElkServicePlugin.getDefault().getPreferenceStore();
                 preferenceStore.setValue(getPreferenceName(clazzName, optionData.getId()),
                         valueString);
             }
@@ -340,7 +340,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
      * Loads preferences for KIML.
      */
     private void loadPreferences() {
-        IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = ElkServicePlugin.getDefault().getPreferenceStore();
         LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
 
         // load default options for diagram types
@@ -381,7 +381,7 @@ public class ExtensionLayoutConfigService extends LayoutConfigService {
      * Stores preferences for KIML.
      */
     protected void storePreferences() {
-        IPreferenceStore preferenceStore = KimlServicePlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = ElkServicePlugin.getDefault().getPreferenceStore();
 
         // store set of registered diagram elements
         StringBuilder elementsString = new StringBuilder();

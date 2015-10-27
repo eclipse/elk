@@ -11,7 +11,7 @@
 package org.eclipse.elk.core.ui.preferences;
 
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.KimlServicePlugin;
+import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.elk.core.ui.KimlUiPlugin;
 import org.eclipse.elk.core.ui.LayoutHandler;
 import org.eclipse.elk.core.ui.Messages;
@@ -129,7 +129,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @return a group with developer options
      */
     private Group createDeveloperOptionsGroup(final Composite parent) {
-        IPreferenceStore servicePrefStore = KimlServicePlugin.getDefault().getPreferenceStore();
+        IPreferenceStore servicePrefStore = ElkServicePlugin.getDefault().getPreferenceStore();
         Group developerGroup = new Group(parent, SWT.NONE);
         developerGroup.setText(Messages.getString("kiml.ui.81")); //$NON-NLS-1$
         
@@ -169,7 +169,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     protected void performDefaults() {
         super.performDefaults();
         IPreferenceStore mainPrefStore = getPreferenceStore();
-        IPreferenceStore servicePrefStore = KimlServicePlugin.getDefault().getPreferenceStore();
+        IPreferenceStore servicePrefStore = ElkServicePlugin.getDefault().getPreferenceStore();
         
         // set default values for the general options
         animationCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_ANIMATION));
@@ -187,7 +187,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     public boolean performOk() {
         IPreferenceStore mainPrefStore = getPreferenceStore();
-        IPreferenceStore servicePrefStore = KimlServicePlugin.getDefault().getPreferenceStore();
+        IPreferenceStore servicePrefStore = ElkServicePlugin.getDefault().getPreferenceStore();
         
         // set new values for the general options
         mainPrefStore.setValue(LayoutHandler.PREF_ANIMATION, animationCheckBox.getSelection());

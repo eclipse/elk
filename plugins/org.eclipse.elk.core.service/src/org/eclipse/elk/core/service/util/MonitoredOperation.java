@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.KimlServicePlugin;
+import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
@@ -171,7 +171,7 @@ public abstract class MonitoredOperation {
             // execute the preparation prior to the actual operation 
             preUIexec();
         } catch (Throwable throwable) {
-            status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+            status.set(new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                     "Error in monitored operation running offscreen during prepration", throwable));
         }
 
@@ -185,7 +185,7 @@ public abstract class MonitoredOperation {
             try {
                 postUIexec();
             } catch (Throwable throwable) {
-                status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+                status.set(new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                         "Error in monitored operation running offscreen during post processing",
                         throwable));
             }
@@ -234,7 +234,7 @@ public abstract class MonitoredOperation {
                     postUIexec();
                 }
             } catch (Throwable throwable) {
-                status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+                status.set(new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                         "Error in monitored operation", throwable));
             }
         } else {
@@ -244,7 +244,7 @@ public abstract class MonitoredOperation {
                     try {
                         preUIexec();
                     } catch (Throwable throwable) {
-                        status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+                        status.set(new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                                 "Error in monitored operation", throwable));
                     }
                 }
@@ -262,7 +262,7 @@ public abstract class MonitoredOperation {
                                 postUIexec();
                             } catch (Throwable throwable) {
                                 status.set(new Status(IStatus.ERROR,
-                                        KimlServicePlugin.PLUGIN_ID,
+                                        ElkServicePlugin.PLUGIN_ID,
                                         "Error in monitored operation", throwable));
                             }
                         }
@@ -348,7 +348,7 @@ public abstract class MonitoredOperation {
                 }
             }
             if (status.get() == null && !isCanceled) {
-                boolean measureExecTime = KimlServicePlugin.getDefault().getPreferenceStore()
+                boolean measureExecTime = ElkServicePlugin.getDefault().getPreferenceStore()
                         .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT);
                 status.set(execute(new ProgressMonitorAdapter(monitor.get(), MAX_PROGRESS_LEVELS,
                         measureExecTime)));
@@ -449,7 +449,7 @@ public abstract class MonitoredOperation {
             }
             synchronized (status) {
                 if (status.get() == null || status.get().getSeverity() == IStatus.OK) {
-                    status.set(new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+                    status.set(new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                             "Error in monitored operation", throwable));
                     handleStatus(status);
                 }
@@ -598,7 +598,7 @@ public abstract class MonitoredOperation {
          * Create a cancelable progress monitor.
          */
         public CancelableProgressMonitor() {
-            super(0, KimlServicePlugin.getDefault().getPreferenceStore()
+            super(0, ElkServicePlugin.getDefault().getPreferenceStore()
                     .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
         }
         

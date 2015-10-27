@@ -42,7 +42,7 @@ public class ExtensionLayoutMetaDataService extends AbstractExtensionLayoutMetaD
             message = "Extension point " + extensionPoint
                     + ": An error occured while loading extensions.";
         }
-        IStatus status = new Status(IStatus.WARNING, KimlServicePlugin.PLUGIN_ID,
+        IStatus status = new Status(IStatus.WARNING, ElkServicePlugin.PLUGIN_ID,
                 0, message, exception);
         StatusManager.getManager().handle(status);
     }
@@ -52,7 +52,7 @@ public class ExtensionLayoutMetaDataService extends AbstractExtensionLayoutMetaD
      */
     @Override
     protected void reportError(final CoreException exception) {
-        StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
+        StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
     }
 
     /**

@@ -56,7 +56,7 @@ import com.google.common.base.Strings;
 abstract class AbstractExtensionLayoutMetaDataService extends LayoutMetaDataService {
     
     /** identifier of the extension point for layout providers. */
-    protected static final String EXTP_ID_LAYOUT_PROVIDERS = "IElkProgressMonitor.layoutProviders";
+    protected static final String EXTP_ID_LAYOUT_PROVIDERS = "org.eclipse.elk.core.layoutProviders";
     /** name of the 'layout algorithm' element in the 'layout providers' extension point. */
     protected static final String ELEMENT_LAYOUT_ALGORITHM = "layoutAlgorithm";
     /** name of the 'layout type' element in the 'layout providers' extension point. */

@@ -114,7 +114,7 @@ public class LayoutManagersService {
             message = "Extension point " + extensionPoint
                     + ": An error occured while loading extensions.";
         }
-        IStatus status = new Status(IStatus.WARNING, KimlServicePlugin.PLUGIN_ID,
+        IStatus status = new Status(IStatus.WARNING, ElkServicePlugin.PLUGIN_ID,
                 0, message, exception);
         StatusManager.getManager().handle(status);
     }
@@ -126,7 +126,7 @@ public class LayoutManagersService {
      * @param exception a core exception holding a status with further information
      */
     protected void reportError(final CoreException exception) {
-        StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
+        StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
     }
     
     /**
@@ -205,7 +205,7 @@ public class LayoutManagersService {
                     
                 }
             } catch (CoreException exception) {
-                StatusManager.getManager().handle(exception, KimlServicePlugin.PLUGIN_ID);
+                StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
             }
         }
     }

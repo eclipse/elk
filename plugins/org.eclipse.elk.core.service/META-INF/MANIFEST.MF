@@ -15,4 +15,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.elk.core.service,
  org.eclipse.elk.core.service.util
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.eclipse.elk.core.service.KimlServicePlugin
+Bundle-Activator: org.eclipse.elk.core.service.ElkServicePlugin

@@ -24,13 +24,13 @@ import org.osgi.framework.BundleContext;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class KimlServicePlugin extends AbstractUIPlugin {
+public class ElkServicePlugin extends AbstractUIPlugin {
 
     /** The plug-in ID. */
     public static final String PLUGIN_ID = "org.eclipse.elk.core.service";
 
     /** The shared instance. */
-    private static KimlServicePlugin plugin;
+    private static ElkServicePlugin plugin;
     
     /**
      * {@inheritDoc}
@@ -72,7 +72,7 @@ public class KimlServicePlugin extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static KimlServicePlugin getDefault() {
+    public static ElkServicePlugin getDefault() {
         return plugin;
     }
     

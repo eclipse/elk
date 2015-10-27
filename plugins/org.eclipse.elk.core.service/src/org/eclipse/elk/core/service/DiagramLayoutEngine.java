@@ -261,7 +261,7 @@ public class DiagramLayoutEngine {
             }
             return mapping;
         } else {
-            final IStatus status = new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+            final IStatus status = new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                     workbenchPart == null
                     ? "No layout manager is available for the selected part."
                     : "No layout manager is available for " + workbenchPart.getTitle() + ".");
@@ -386,7 +386,7 @@ public class DiagramLayoutEngine {
                         stopEarlierOperations(target, getTimestamp());
                     }
                 } else {
-                    status = new Status(Status.WARNING, KimlServicePlugin.PLUGIN_ID,
+                    status = new Status(Status.WARNING, ElkServicePlugin.PLUGIN_ID,
                             "Unable to build the layout graph from the given workbench part.");
                 }
                 
@@ -526,7 +526,7 @@ public class DiagramLayoutEngine {
         if (layoutManager != null) {
             return layout(layoutManager, workbenchPart, diagramPart, progressMonitor);
         } else {
-            return new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+            return new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                     "No layout manager is available for the selected part.");
         }
     }
@@ -553,7 +553,7 @@ public class DiagramLayoutEngine {
             final IElkProgressMonitor progressMonitor) {
         IElkProgressMonitor monitor;
         if (progressMonitor == null) {
-            monitor = new BasicProgressMonitor(0, KimlServicePlugin.getDefault().getPreferenceStore()
+            monitor = new BasicProgressMonitor(0, ElkServicePlugin.getDefault().getPreferenceStore()
                     .getBoolean(PREF_EXEC_TIME_MEASUREMENT));
         } else {
             monitor = progressMonitor;
@@ -596,7 +596,7 @@ public class DiagramLayoutEngine {
             layoutManager.applyLayout(mapping, false, 0);
             submon3.done();
         } else {
-            status = new Status(Status.WARNING, KimlServicePlugin.PLUGIN_ID,
+            status = new Status(Status.WARNING, ElkServicePlugin.PLUGIN_ID,
                     "Unable to build the layout graph from the given workbench part.");
         }
         
@@ -752,7 +752,7 @@ public class DiagramLayoutEngine {
             }
             
             // export the layout graph for debugging
-            if (KimlServicePlugin.getDefault().getPreferenceStore().getBoolean(PREF_DEBUG_OUTPUT)) {
+            if (ElkServicePlugin.getDefault().getPreferenceStore().getBoolean(PREF_DEBUG_OUTPUT)) {
                 exportLayoutGraph(mapping.getLayoutGraph());
             }
 
@@ -777,7 +777,7 @@ public class DiagramLayoutEngine {
             return Status.OK_STATUS;
             
         } catch (Throwable exception) {
-            return new Status(IStatus.ERROR, KimlServicePlugin.PLUGIN_ID,
+            return new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                     "Failed to perform diagram layout.", exception);
         }
     }
