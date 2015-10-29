@@ -15,7 +15,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.elk.core.ui.KimlUiPlugin;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -39,7 +39,7 @@ public class ShowLayoutViewHandler extends AbstractHandler {
             try {
                 workbenchWindow.getActivePage().showView(LayoutViewPart.VIEW_ID);
             } catch (PartInitException exception) {
-                IStatus status = new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+                IStatus status = new Status(IStatus.ERROR, ElkUiPlugin.PLUGIN_ID,
                         "Could not open Layout View.", exception);
                 StatusManager.getManager().handle(status, StatusManager.SHOW);
             }

@@ -47,7 +47,7 @@ public class LayoutOptionLabelProvider extends LabelProvider {
      */
     @Override
     public Image getImage(final Object element) {
-        KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
+        ElkUiPlugin.Images images = ElkUiPlugin.getDefault().getImages();
         switch (optionData.getType()) {
         case OBJECT:
         case STRING:

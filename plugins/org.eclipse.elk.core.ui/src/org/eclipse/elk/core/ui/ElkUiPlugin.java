@@ -23,13 +23,13 @@ import org.osgi.framework.BundleContext;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class KimlUiPlugin extends AbstractUIPlugin {
+public class ElkUiPlugin extends AbstractUIPlugin {
 
     /** the plug-in ID. */
     public static final String PLUGIN_ID = "org.eclipse.elk.core.ui";
 
     /** the shared instance. */
-    private static KimlUiPlugin plugin;
+    private static ElkUiPlugin plugin;
 
     /** nested class used to store images that are loaded at runtime. */
     public static class Images {
@@ -169,7 +169,7 @@ public class KimlUiPlugin extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static KimlUiPlugin getDefault() {
+    public static ElkUiPlugin getDefault() {
         return plugin;
     }
 

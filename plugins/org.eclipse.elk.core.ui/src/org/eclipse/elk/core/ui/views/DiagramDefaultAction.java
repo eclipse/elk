@@ -18,7 +18,7 @@ import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.EclipseLayoutConfig;
 import org.eclipse.elk.core.service.IDiagramLayoutManager;
 import org.eclipse.elk.core.service.LayoutManagersService;
-import org.eclipse.elk.core.ui.KimlUiPlugin;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.util.KimlUiUtil;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -40,7 +40,7 @@ public class DiagramDefaultAction extends Action {
     public static final String ACTION_ID = "elk.diagram.default";
     
     /** the icon used for this action. */
-    private static ImageDescriptor icon = KimlUiPlugin.getImageDescriptor(
+    private static ImageDescriptor icon = ElkUiPlugin.getImageDescriptor(
             "icons/menu16/apply2diagram.gif");
 
     /** the layout view that created this action. */

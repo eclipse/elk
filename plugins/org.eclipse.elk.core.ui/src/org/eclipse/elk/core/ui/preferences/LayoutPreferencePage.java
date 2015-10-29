@@ -12,7 +12,7 @@ package org.eclipse.elk.core.ui.preferences;
 
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.ElkServicePlugin;
-import org.eclipse.elk.core.ui.KimlUiPlugin;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.LayoutHandler;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.views.LayoutViewPart;
@@ -159,7 +159,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * {@inheritDoc}
      */
     public void init(final IWorkbench workbench) {
-        setPreferenceStore(KimlUiPlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(ElkUiPlugin.getDefault().getPreferenceStore());
     }
 
     /**

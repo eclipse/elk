@@ -14,7 +14,7 @@ import org.eclipse.elk.core.LayoutConfigService;
 import org.eclipse.elk.core.LayoutOptionData;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.service.ExtensionLayoutConfigService;
-import org.eclipse.elk.core.ui.KimlUiPlugin;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.util.KimlUiUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -37,7 +37,7 @@ public class DiagramPartDefaultAction extends Action {
     public static final String MODEL_ACTION_ID = "elk.model.default";
 
     /** the icon used for this action. */
-    private static ImageDescriptor icon = KimlUiPlugin.getImageDescriptor(
+    private static ImageDescriptor icon = ElkUiPlugin.getImageDescriptor(
             "icons/menu16/apply2editPart.gif");
 
     /** the layout view that created this action. */

@@ -13,7 +13,7 @@ package org.eclipse.elk.core.ui.preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.ElkServicePlugin;
-import org.eclipse.elk.core.ui.KimlUiPlugin;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.LayoutHandler;
 import org.eclipse.elk.core.ui.views.LayoutViewPart;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -33,7 +33,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     @Override
     public void initializeDefaultPreferences() {
         IPreferenceStore servicePrefStore = ElkServicePlugin.getDefault().getPreferenceStore();
-        IPreferenceStore uiPrefStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore uiPrefStore = ElkUiPlugin.getDefault().getPreferenceStore();
         
         uiPrefStore.setDefault(LayoutHandler.PREF_ANIMATION, true);
         uiPrefStore.setDefault(LayoutHandler.PREF_ZOOM, false);

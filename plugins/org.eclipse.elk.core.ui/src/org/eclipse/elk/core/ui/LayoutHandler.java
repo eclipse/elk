@@ -55,7 +55,7 @@ public class LayoutHandler extends AbstractHandler {
         }
         
         // fetch general settings from preferences
-        IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = ElkUiPlugin.getDefault().getPreferenceStore();
         boolean animation = preferenceStore.getBoolean(PREF_ANIMATION);
         boolean zoomToFit = preferenceStore.getBoolean(PREF_ZOOM);
         boolean progressDialog = preferenceStore.getBoolean(PREF_PROGRESS);

@@ -26,7 +26,7 @@ import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.ExtensionLayoutConfigService;
 import org.eclipse.elk.core.service.IDiagramLayoutManager;
 import org.eclipse.elk.core.service.LayoutManagersService;
-import org.eclipse.elk.core.ui.KimlUiPlugin;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.emf.ecore.EObject;
@@ -196,7 +196,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         formData.bottom = new FormAttachment(FORM_BOTTOM, 0);
         page.getControl().setLayoutData(formData);
         page.setPropertySourceProvider(propSourceProvider);
-        IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = ElkUiPlugin.getDefault().getPreferenceStore();
         
         // add actions to the toolbar, view menu, and context menu
         IActionBars actionBars = getViewSite().getActionBars();
@@ -269,14 +269,14 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         ActionContributionItem categoriesItem = (ActionContributionItem) getViewSite()
                 .getActionBars().getToolBarManager().find("categories");
         if (categoriesItem != null) {
-            KimlUiPlugin.getDefault().getPreferenceStore().setValue(PREF_CATEGORIES,
+            ElkUiPlugin.getDefault().getPreferenceStore().setValue(PREF_CATEGORIES,
                     categoriesItem.getAction().isChecked());
         }
         // store the current status of the advanced button
         ActionContributionItem advancedItem = (ActionContributionItem) getViewSite()
                 .getActionBars().getToolBarManager().find("filter");
         if (advancedItem != null) {
-            KimlUiPlugin.getDefault().getPreferenceStore().setValue(PREF_ADVANCED,
+            ElkUiPlugin.getDefault().getPreferenceStore().setValue(PREF_ADVANCED,
                     advancedItem.getAction().isChecked());
         }
         // dispose the view part

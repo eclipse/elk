@@ -19,7 +19,7 @@ import org.eclipse.elk.core.LayoutMetaDataService;
 import org.eclipse.elk.core.LayoutOptionData;
 import org.eclipse.elk.core.config.LayoutContext;
 import org.eclipse.elk.core.service.LayoutManagersService;
-import org.eclipse.elk.core.ui.KimlUiPlugin;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.util.KimlUiUtil;
 import org.eclipse.emf.ecore.EObject;
@@ -51,7 +51,7 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 public class SelectionInfoAction extends Action {
 
     /** the icon used for this action. */
-    private static ImageDescriptor icon = KimlUiPlugin.getImageDescriptor("icons/menu16/info.gif");
+    private static ImageDescriptor icon = ElkUiPlugin.getImageDescriptor("icons/menu16/info.gif");
     /** the dialog's default width. */
     private static final int DEFAULT_WIDTH = 580;
     /** the dialog's default height. */
@@ -114,7 +114,7 @@ public class SelectionInfoAction extends Action {
                 browser.setLayoutData(gridData);
                 browser.setText(htmlText);
             } catch (SWTError exception) {
-                IStatus status = new Status(IStatus.ERROR, KimlUiPlugin.PLUGIN_ID,
+                IStatus status = new Status(IStatus.ERROR, ElkUiPlugin.PLUGIN_ID,
                         "Could not instantiate Browser.", exception);
                 StatusManager.getManager().handle(status);
             }
