@@ -26,7 +26,7 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 import org.eclipse.elk.graph.KEdge;
@@ -57,13 +57,15 @@ import org.eclipse.graphiti.services.Graphiti;
 public class GraphitiLayoutCommand extends RecordingCommand {
     
     /** list of graph elements and pictogram elements to layout. */
-    private List<Pair<KGraphElement, PictogramElement>> elements =
+    private final List<Pair<KGraphElement, PictogramElement>> elements =
             new LinkedList<Pair<KGraphElement, PictogramElement>>();
     /** the feature provider for layout support. */
-    private IFeatureProvider featureProvider;
+    private final IFeatureProvider featureProvider;
     /** map of edge layouts to corresponding vector chains. */
-    private Map<KEdgeLayout, KVectorChain> bendpointsMap =
+    private final Map<KEdgeLayout, KVectorChain> bendpointsMap =
             new HashMap<KEdgeLayout, KVectorChain>();
+    /** the layout manager for which this command was created. */
+    private final GraphitiDiagramLayoutManager layoutManager;
 
     /**
      * Creates a Graphiti layout command.
@@ -71,11 +73,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param domain the transactional editing domain
      * @param thefeatureProvider the feature provider
      */
-    public GraphitiLayoutCommand(
-            final TransactionalEditingDomain domain,
-            final IFeatureProvider thefeatureProvider) {
+    public GraphitiLayoutCommand(final TransactionalEditingDomain domain,
+            final IFeatureProvider thefeatureProvider, final GraphitiDiagramLayoutManager manager) {
         super(domain, "Automatic Layout");
         this.featureProvider = thefeatureProvider;
+        this.layoutManager = manager;
     }
     
     /**
@@ -257,7 +259,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                 KNode source = kedge.getSource();
                 KPoint sourcePoint = kedge.getData(KEdgeLayout.class).getSourcePoint();
                 float xpos = sourcePoint.getX(), ypos = sourcePoint.getY();
-                if (KimlUtil.isDescendant(kedge.getTarget(), source)) {
+                if (ElkUtil.isDescendant(kedge.getTarget(), source)) {
                     KInsets insets = source.getData(KShapeLayout.class).getInsets();
                     xpos += insets.getLeft();
                     ypos += insets.getTop();
@@ -274,11 +276,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                 KNode target = kedge.getTarget();
                 KVector targetPoint = kedge.getData(KEdgeLayout.class).getTargetPoint().createVector();
                 KNode referenceNode = kedge.getSource();
-                if (!KimlUtil.isDescendant(target, referenceNode)) {
+                if (!ElkUtil.isDescendant(target, referenceNode)) {
                     referenceNode = referenceNode.getParent();
                 }
-                KimlUtil.toAbsolute(targetPoint, referenceNode);
-                KimlUtil.toRelative(targetPoint, target);
+                ElkUtil.toAbsolute(targetPoint, referenceNode);
+                ElkUtil.toRelative(targetPoint, target);
                 applyPortLayout(targetPoint.x, targetPoint.y, connection.getEnd(), target);
             }
         }
@@ -296,11 +298,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         if (bendPoints == null) {
             // determine the offset for all bend points
             KNode parent = edge.getSource();
-            if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
+            if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
                 parent = parent.getParent();
             }
             KVector offset = new KVector();
-            KimlUtil.toAbsolute(offset, parent);
+            ElkUtil.toAbsolute(offset, parent);
 
             // gather the bend points of the edge
             bendPoints = new KVectorChain();
@@ -340,10 +342,10 @@ public class GraphitiLayoutCommand extends RecordingCommand {
 
         // get vector chain for the bend points of the edge
         KVectorChain bendPoints = new KVectorChain(getBendPoints(kedge));
-        KVector sourcePoint = KimlGraphitiUtil.calculateAnchorEnds(kedge.getSource(),
+        KVector sourcePoint = layoutManager.calculateAnchorEnds(kedge.getSource(),
                 kedge.getSourcePort(), null);
         bendPoints.addFirst(sourcePoint);
-        KVector targetPoint = KimlGraphitiUtil.calculateAnchorEnds(kedge.getTarget(),
+        KVector targetPoint = layoutManager.calculateAnchorEnds(kedge.getTarget(),
                 kedge.getTargetPort(), null);
         bendPoints.addLast(targetPoint);
 
@@ -359,10 +361,10 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);
         KVector position = shapeLayout.createVector();
         KNode parent = kedge.getSource();
-        if (!KimlUtil.isDescendant(kedge.getTarget(), parent)) {
+        if (!ElkUtil.isDescendant(kedge.getTarget(), parent)) {
             parent = parent.getParent();
         }
-        KimlUtil.toAbsolute(position, parent);
+        ElkUtil.toAbsolute(position, parent);
         ga.setX((int) Math.round(position.x - referencePoint.x));
         ga.setY((int) Math.round(position.y - referencePoint.y));
     }

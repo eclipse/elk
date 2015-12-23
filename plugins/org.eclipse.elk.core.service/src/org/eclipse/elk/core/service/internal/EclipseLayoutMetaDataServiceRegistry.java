@@ -8,13 +8,15 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.service;
+package org.eclipse.elk.core.service.internal;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.elk.core.LayoutAlgorithmData;
+import org.eclipse.elk.core.service.ElkServicePlugin;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 /**
@@ -25,7 +27,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-10-10 review KI-25 by chsch, bdu
  */
-public class ExtensionLayoutMetaDataService extends AbstractExtensionLayoutMetaDataService {
+public class EclipseLayoutMetaDataServiceRegistry extends LayoutMetaDataService.Registry {
 
     /**
      * {@inheritDoc}

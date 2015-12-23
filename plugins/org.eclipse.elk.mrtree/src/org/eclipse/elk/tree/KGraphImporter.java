@@ -19,7 +19,7 @@ import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.elk.tree.graph.TEdge;
@@ -222,7 +222,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 + insets.getRight();
         float height = (float) (maxYPos - minYPos) + 2 * borderSpacing + insets.getTop()
                 + insets.getBottom();
-        KimlUtil.resizeNode(kgraph, width, height, false, false);
+        ElkUtil.resizeNode(kgraph, width, height, false, false);
     }
     
     

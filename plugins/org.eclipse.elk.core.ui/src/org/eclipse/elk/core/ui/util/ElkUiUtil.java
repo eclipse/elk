@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.util;
 
-import org.eclipse.elk.core.LayoutAlgorithmData;
-import org.eclipse.elk.core.LayoutMetaDataService;
-import org.eclipse.elk.core.LayoutOptionData;
 import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.RecordingCommand;
@@ -26,12 +26,12 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public final class KimlUiUtil {
+public final class ElkUiUtil {
     
     /**
      * Hidden constructor.
      */
-    private KimlUiUtil() {
+    private ElkUiUtil() {
     }
     
     /**

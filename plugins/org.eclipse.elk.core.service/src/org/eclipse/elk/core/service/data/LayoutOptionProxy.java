@@ -8,10 +8,9 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util;
+package org.eclipse.elk.core.service.data;
 
-import org.eclipse.elk.core.LayoutMetaDataService;
-import org.eclipse.elk.core.LayoutOptionData;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.IPropertyValueProxy;

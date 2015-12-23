@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.graphviz.layouter.preferences;
 
-import org.eclipse.elk.core.LayoutAlgorithmData;
-import org.eclipse.elk.core.LayoutMetaDataService;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
 import org.eclipse.elk.graphviz.layouter.GraphvizLayoutProvider;
 import org.eclipse.elk.graphviz.layouter.GraphvizTool;
 import org.eclipse.jface.preference.BooleanFieldEditor;

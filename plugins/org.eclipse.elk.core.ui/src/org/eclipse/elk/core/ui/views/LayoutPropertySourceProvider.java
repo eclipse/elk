@@ -10,16 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.views;
 
-import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.elk.core.config.IMutableLayoutConfig;
-import org.eclipse.elk.core.config.LayoutContext;
-import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.EclipseLayoutConfig;
 import org.eclipse.elk.core.service.IDiagramLayoutManager;
+import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.LayoutManagersService;
-import org.eclipse.elk.core.service.LayoutOptionManager;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
@@ -40,23 +35,47 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
     private final Map<Object, LayoutPropertySource> propertySources = Maps.newHashMap();
     /** the workbench part containing the current selection. */
     private IWorkbenchPart workbenchPart;
+    /** the last selected object. */
+    private Object lastSelection;
     
     /**
-     * Reset the cached content of this property source provider, so new
-     * property sources will be created on request.
+     * Clear the internal cache of property sources.
      */
-    public void resetContext() {
+    public void clearCache() {
+        lastSelection = null;
         propertySources.clear();
     }
     
     /**
-     * Reset the cached content and set up for a new workbench part.
+     * Return the currently tracked workbench part.
+     * 
+     * @return the current workbench part
+     */
+    public IWorkbenchPart getWorkbenchPart() {
+        return workbenchPart;
+    }
+    
+    /**
+     * Set the currently tracked workbench part.
      * 
      * @param theworkbenchPart a workbench part, or {@code null}
      */
-    public void resetContext(final IWorkbenchPart theworkbenchPart) {
-        this.workbenchPart = theworkbenchPart;
-        resetContext();
+    public void setWorkbenchPart(final IWorkbenchPart theworkbenchPart) {
+        if (this.workbenchPart != theworkbenchPart) {
+            propertySources.clear();
+            this.workbenchPart = theworkbenchPart;
+        }
+    }
+    
+    /**
+     * Return the currently active configuration store, or {@code null} if none is active.
+     */
+    public ILayoutConfigurationStore getConfigurationStore() {
+        LayoutPropertySource source = propertySources.get(lastSelection);
+        if (source != null) {
+            return source.getConfigurationStore();
+        }
+        return null;
     }
     
     /**
@@ -71,61 +90,15 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
         IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
                 workbenchPart, object);
         if (manager != null) {
-            IMutableLayoutConfig diagramConfig = manager.getDiagramConfig();
+            ILayoutConfigurationStore diagramConfig = manager.getConfigurationStore(workbenchPart, object);
             if (diagramConfig != null) {
-                // create a layout context and enrich it with basic information
-                LayoutContext context = new LayoutContext();
-                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
-                context.setProperty(LayoutContext.DIAGRAM_PART, object);
-                
-                // create a compound layout configurator using the layout option manager
-                LayoutOptionManager optionManager = DiagramLayoutEngine.INSTANCE.getOptionManager();
-                Object domainElement = diagramConfig.getContextValue(LayoutContext.DOMAIN_MODEL,
-                        context);
-                IMutableLayoutConfig compoundConfig = optionManager.createConfig(domainElement,
-                        diagramConfig);
-                
-                LayoutPropertySource propSource = new LayoutPropertySource(compoundConfig, context);
-                
+                LayoutPropertySource propSource = new LayoutPropertySource(diagramConfig);
                 propertySources.put(object, propSource);
+                lastSelection = object;
                 return propSource;
             }
         }
         return null;
-    }
-    
-    /**
-     * Return the currently tracked workbench part.
-     * 
-     * @return the current workbench part
-     */
-    public IWorkbenchPart getWorkbenchPart() {
-        return workbenchPart;
-    }
-    
-    /**
-     * Return a layout context for the current selection. This context will merge
-     * information of all objects in the selection, but most values will be overridden
-     * by the last element of the selection.
-     * 
-     * @return a layout context for the selection
-     */
-    public LayoutContext getContext() {
-        Collection<LayoutPropertySource> sources = propertySources.values();
-        LayoutContext context = new LayoutContext();
-        for (LayoutPropertySource s : sources) {
-            context.copyProperties(s.getContext());
-        }
-        return context;
-    }
-    
-    /**
-     * Determine whether the property source provider has any cached content.
-     * 
-     * @return true if there is cached content
-     */
-    public boolean hasContent() {
-        return !propertySources.isEmpty();
     }
 
 }

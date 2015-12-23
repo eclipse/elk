@@ -30,7 +30,7 @@ import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphData;
@@ -212,7 +212,7 @@ public class DotExporter {
             } else {
                 nodeID = getNodeID(childNode, NodeType.NODE, transData);
                 // set width and height
-                KimlUtil.resizeNode(childNode);
+                ElkUtil.resizeNode(childNode);
                 if (nodeLayout.getWidth() > 0) {
                     attributes.add(createAttribute(Attributes.WIDTH, nodeLayout.getWidth() / DPI));
                 }
@@ -311,14 +311,14 @@ public class DotExporter {
                             || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
                             || targetPoint.getX() != 0 || targetPoint.getY() != 0)) {
                         KNode referenceNode = source;
-                        if (!KimlUtil.isDescendant(target, source)) {
+                        if (!ElkUtil.isDescendant(target, source)) {
                             referenceNode = source.getParent();
                         }
                         StringBuilder pos = new StringBuilder();
                         Iterator<KVector> pointIter = edgeLayout.createVectorChain().iterator();
                         while (pointIter.hasNext()) {
                             KVector point = pointIter.next();
-                            KimlUtil.toAbsolute(point, referenceNode);
+                            ElkUtil.toAbsolute(point, referenceNode);
                             pos.append(point.x);
                             pos.append(",");
                             pos.append(point.y);
@@ -813,7 +813,7 @@ public class DotExporter {
                                     nodeOffset.x = -(baseOffset.x + leftx);
                                     nodeOffset.y = -(baseOffset.y + topy);
                                 }
-                                KimlUtil.resizeNode(parentNode, width, height, false, true);
+                                ElkUtil.resizeNode(parentNode, width, height, false, true);
                                 parentLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT,
                                         SizeConstraint.fixed());
                                 break attr_loop;
@@ -913,7 +913,7 @@ public class DotExporter {
         }
         
         KNode referenceNode = kedge.getSource();
-        if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
+        if (!ElkUtil.isDescendant(kedge.getTarget(), referenceNode)) {
             referenceNode = referenceNode.getParent();
         }
         KVector reference = new KVector();
@@ -976,12 +976,12 @@ public class DotExporter {
                     .getProperty(Attributes.ADAPT_PORT_POSITIONS);
             if (adaptPortPositions && (kedge.getSourcePort() != null || kedge.getTargetPort() != null)) {
                 referenceNode = kedge.getSource();
-                if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
+                if (!ElkUtil.isDescendant(kedge.getTarget(), referenceNode)) {
                     referenceNode = referenceNode.getParent();
                 }
                 if (kedge.getSourcePort() != null) {
-                    KimlUtil.toAbsolute(sourcePoint, referenceNode);
-                    KimlUtil.toRelative(sourcePoint, kedge.getSource().getParent());
+                    ElkUtil.toAbsolute(sourcePoint, referenceNode);
+                    ElkUtil.toRelative(sourcePoint, kedge.getSource().getParent());
                     KShapeLayout portLayout = kedge.getSourcePort().getData(KShapeLayout.class);
                     KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
                     portLayout.setXpos((float) sourcePoint.x - sourceLayout.getXpos()
@@ -990,8 +990,8 @@ public class DotExporter {
                             - portLayout.getHeight() / 2);
                 }
                 if (kedge.getTargetPort() != null) {
-                    KimlUtil.toAbsolute(targetPoint, referenceNode);
-                    KimlUtil.toRelative(targetPoint, kedge.getTarget().getParent());
+                    ElkUtil.toAbsolute(targetPoint, referenceNode);
+                    ElkUtil.toRelative(targetPoint, kedge.getTarget().getParent());
                     KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
                     KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
                     portLayout.setXpos((float) targetPoint.x - targetLayout.getXpos()

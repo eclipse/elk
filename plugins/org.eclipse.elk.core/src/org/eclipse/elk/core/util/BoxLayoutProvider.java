@@ -46,7 +46,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // set option for minimal spacing
@@ -153,7 +153,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         // adjust parent size
         float width = insets.getLeft() + (float) parentSize.x + insets.getRight();
         float height = insets.getTop() + (float) parentSize.y + insets.getBottom();
-        KimlUtil.resizeNode(parentNode, width, height, false, true);
+        ElkUtil.resizeNode(parentNode, width, height, false, true);
     }
 
     /**
@@ -176,7 +176,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         float totalArea = 0.0f;
         for (KNode box : sortedBoxes) {
             KShapeLayout boxLayout = box.getData(KShapeLayout.class);
-            KimlUtil.resizeNode(box);
+            ElkUtil.resizeNode(box);
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());
             totalArea += boxLayout.getWidth() * boxLayout.getHeight();
         }
@@ -243,7 +243,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                     float newWidth = broadestRow - xpos - borderSpacing;
                     float oldWidth = boxLayout.getWidth();
                     boxLayout.setWidth(newWidth);
-                    KimlUtil.translate(box, (newWidth - oldWidth) / 2, 0.0f);
+                    ElkUtil.translate(box, (newWidth - oldWidth) / 2, 0.0f);
                 }
                 xpos += boxLayout.getWidth() + minSpacing;
             }

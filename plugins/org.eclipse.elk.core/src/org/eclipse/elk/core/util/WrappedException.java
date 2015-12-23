@@ -36,10 +36,10 @@ public class WrappedException extends RuntimeException {
     /**
      * Create a wrapped exception with additional message.
      * 
-     * @param cause the error that caused this exception
      * @param message an additional message for information
+     * @param cause the error that caused this exception
      */
-    public WrappedException(final Throwable cause, final String message) {
+    public WrappedException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

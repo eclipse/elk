@@ -16,8 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.core.config.IMutableLayoutConfig;
-import org.eclipse.elk.core.config.VolatileLayoutConfig;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
@@ -27,8 +26,10 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.service.IDiagramLayoutManager;
+import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.LayoutMapping;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphElement;
@@ -37,10 +38,14 @@ import org.eclipse.elk.graph.KLabeledGraphElement;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.elk.graph.KPort;
 import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.mm.algorithms.AbstractText;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -60,6 +65,7 @@ import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
+import org.eclipse.graphiti.ui.internal.util.gef.ScalableRootEditPartAnimated;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.swt.SWTException;
 import org.eclipse.ui.IWorkbenchPart;
@@ -76,11 +82,7 @@ import com.google.common.collect.BiMap;
  * @kieler.rating proposed yellow by msp
  */
 @SuppressWarnings("restriction")
-public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<PictogramElement> {
-
-    /** property for the diagram editor of the currently layouted diagram. */
-    public static final IProperty<DiagramEditor> DIAGRAM_EDITOR = new Property<DiagramEditor>(
-            "graphiti.diagramEditor");
+public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<PictogramElement> {
 
     /** property for the the command that is executed for applying automatic layout. */
     public static final IProperty<Command> LAYOUT_COMMAND = new Property<Command>(
@@ -110,15 +112,20 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart
                 || object instanceof PictogramElement;
     }
-    
-    /** the cached layout configurator for Graphiti. */
-    private final GraphitiLayoutConfig layoutConfig = new GraphitiLayoutConfig(this);
 
-    /**
-     * {@inheritDoc}
-     */
-    public IMutableLayoutConfig getDiagramConfig() {
-        return layoutConfig;
+    @Override
+    public ILayoutConfigurationStore getConfigurationStore(IWorkbenchPart workbenchPart, Object context) {
+        EditingDomain editingDomain = null;
+        if (workbenchPart instanceof DiagramEditor) {
+            editingDomain = ((DiagramEditor) workbenchPart).getEditingDomain();
+        }
+        if (context instanceof PictogramElement) {
+            return new GraphitiLayoutConfigurationStore((PictogramElement) context, editingDomain, this);
+        } else if (context instanceof IPictogramElementEditPart) {
+            IPictogramElementEditPart editPart = (IPictogramElementEditPart) context;
+            return new GraphitiLayoutConfigurationStore(editPart.getPictogramElement(), editingDomain, this);
+        }
+        return null;
     }
 
     /**
@@ -126,12 +133,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     public LayoutMapping<PictogramElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
-        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>();
+        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>(workbenchPart);
         mapping.setProperty(CONNECTIONS, new LinkedList<Connection>());
-
-        if (workbenchPart instanceof DiagramEditor) {
-            mapping.setProperty(DIAGRAM_EDITOR, (DiagramEditor) workbenchPart);
-        }
 
         Shape rootElement = null;
         List<Shape> selectedElements = null;
@@ -181,9 +184,8 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
                 }
             }
         }
-        if (rootElement == null && mapping.getProperty(DIAGRAM_EDITOR) != null) {
-            EditPart editorContent = mapping.getProperty(DIAGRAM_EDITOR)
-                    .getGraphicalViewer().getContents();
+        if (rootElement == null && workbenchPart instanceof DiagramEditor) {
+            EditPart editorContent = ((DiagramEditor) workbenchPart).getGraphicalViewer().getContents();
             PictogramElement pe = ((IPictogramElementEditPart) editorContent).getPictogramElement();
             if (pe instanceof Shape) {
                 rootElement = (Shape) pe;
@@ -198,7 +200,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
 
         KNode topNode;
         if (rootElement instanceof Diagram) {
-            topNode = KimlUtil.createInitializedNode();
+            topNode = ElkUtil.createInitializedNode();
             KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
             GraphicsAlgorithm ga = rootElement.getGraphicsAlgorithm();
             shapeLayout.setPos(ga.getX(), ga.getY());
@@ -233,10 +235,6 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             createEdge(mapping, entry);
         }
         
-        // create a layout configurator from the properties that were set while building
-        mapping.getLayoutConfigs().add(VolatileLayoutConfig.fromProperties(mapping.getLayoutGraph(),
-                GraphitiLayoutConfig.PRIORITY - 1));
-
         return mapping;
     }
     
@@ -280,15 +278,58 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         } while (shape != null);
         return false;
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    @Override
+    public void applyLayout(LayoutMapping<PictogramElement> mapping, IPropertyHolder settings) {
+        boolean zoomToFit = settings.getProperty(LayoutOptions.ZOOM_TO_FIT);
+        Object layoutGraphObj = mapping.getParentElement();
+        if (zoomToFit && layoutGraphObj instanceof EditPart) {
+            // determine pre- or post-layout zoom
+            GraphicalViewer viewer = ((IPictogramElementEditPart) layoutGraphObj)
+                    .getConfigurationProvider().getDiagramContainer().getGraphicalViewer();
+            ZoomManager zoomManager = ((ScalableRootEditPartAnimated) viewer.getRootEditPart())
+                    .getZoomManager();
+            KNode parentNode = mapping.getLayoutGraph();
+            KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+            Dimension available = zoomManager.getViewport().getClientArea().getSize();
+            float desiredWidth = parentLayout.getWidth();
+            double scaleX = Math.min(available.width / desiredWidth, zoomManager.getMaxZoom());
+            float desiredHeight = parentLayout.getHeight();
+            double scaleY = Math.min(available.height / desiredHeight, zoomManager.getMaxZoom());
+            final double scale = Math.min(scaleX, scaleY);
+            final double oldScale = zoomManager.getZoom();
+
+            if (scale < oldScale) {
+                zoomManager.setViewLocation(new org.eclipse.draw2d.geometry.Point(0, 0));
+                zoomManager.setZoom(scale);
+                zoomManager.setViewLocation(new org.eclipse.draw2d.geometry.Point(0, 0));
+            }
+            transferLayout(mapping);
+            applyLayout(mapping);
+            if (scale > oldScale) {
+                zoomManager.setViewLocation(new org.eclipse.draw2d.geometry.Point(0, 0));
+                zoomManager.setZoom(scale);
+                zoomManager.setViewLocation(new org.eclipse.draw2d.geometry.Point(0, 0));
+            }
+        } else {
+            transferLayout(mapping);
+            applyLayout(mapping);
+        }
+    }
+    
+    /**
+     * Transfer all layout data from the last created KGraph instance to the
+     * original diagram. The diagram is not modified yet, but all required
+     * preparations are performed.
+     * 
+     * @param mapping a layout mapping that was created by this layout manager
+     */
     protected void transferLayout(final LayoutMapping<PictogramElement> mapping) {
-        DiagramEditor diagramEditor = mapping.getProperty(DIAGRAM_EDITOR);
+        DiagramEditor diagramEditor = (DiagramEditor) mapping.getWorkbenchPart();
         GraphitiLayoutCommand command = new GraphitiLayoutCommand(diagramEditor.getEditingDomain(),
-                diagramEditor.getDiagramTypeProvider().getFeatureProvider());
+                diagramEditor.getDiagramTypeProvider().getFeatureProvider(), this);
         for (Entry<KGraphElement, PictogramElement> entry : mapping.getGraphMap().entrySet()) {
             command.add(entry.getKey(), entry.getValue());
         }
@@ -319,15 +360,17 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         
         // add the corrected offset
         offset.add(-minx, -miny);
-        KimlUtil.translate(parentNode, (float) offset.x, (float) offset.y);
+        ElkUtil.translate(parentNode, (float) offset.x, (float) offset.y);
     }
 
     /**
-     * {@inheritDoc}
+     * Apply the transferred layout to the original diagram. This final step
+     * is where the actual change to the diagram is done.
+     * 
+     * @param mapping a layout mapping that was created by this layout manager
      */
-    @Override
     protected void applyLayout(final LayoutMapping<PictogramElement> mapping) {
-        TransactionalEditingDomain editingDomain = mapping.getProperty(DIAGRAM_EDITOR)
+        TransactionalEditingDomain editingDomain = ((DiagramEditor) mapping.getWorkbenchPart())
                 .getEditingDomain();
         editingDomain.getCommandStack().execute(mapping.getProperty(LAYOUT_COMMAND));
     }
@@ -395,7 +438,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     protected KNode createNode(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final Shape shape) {
-        KNode childNode = KimlUtil.createInitializedNode();
+        KNode childNode = ElkUtil.createInitializedNode();
         childNode.setParent(parentNode);
 
         // set the node's layout, considering margins and insets
@@ -463,7 +506,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     protected Margins computeMargins(final PictogramElement pictogramElement) {
         GraphicsAlgorithm graphicsAlgorithm = pictogramElement.getGraphicsAlgorithm();
-        GraphicsAlgorithm visibleGa = KimlGraphitiUtil.findVisibleGa(graphicsAlgorithm);
+        GraphicsAlgorithm visibleGa = findVisibleGa(graphicsAlgorithm);
         Margins margins = new Margins();
         while (visibleGa != null && visibleGa != graphicsAlgorithm) {
             margins.left += visibleGa.getX();
@@ -497,7 +540,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final BoxRelativeAnchor bra) {
-        KPort port = KimlUtil.createInitializedPort();
+        KPort port = ElkUtil.createInitializedPort();
         port.setNode(parentNode);
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
 
@@ -538,7 +581,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
             final KNode parentNode, final FixPointAnchor fpa) {
-        KPort port = KimlUtil.createInitializedPort();
+        KPort port = ElkUtil.createInitializedPort();
         port.setNode(parentNode);
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
         mapping.getGraphMap().put(port, fpa);
@@ -583,7 +626,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     protected KLabel createLabel(final KLabeledGraphElement element, final Shape shape,
             final float offsetx, final float offsety) {
-        KLabel label = KimlUtil.createInitializedLabel(element);
+        KLabel label = ElkUtil.createInitializedLabel(element);
         KShapeLayout labelLayout = label.getData(KShapeLayout.class);
         
         GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
@@ -688,7 +731,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
             return null;
         }
         
-        KEdge edge = KimlUtil.createInitializedEdge();
+        KEdge edge = ElkUtil.createInitializedEdge();
         edge.setTarget(targetNode);
         edge.setTargetPort(targetPort);
         edge.setSource(sourceNode);
@@ -696,18 +739,18 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
 
         // calculate offset for bend points and labels
         KNode referenceNode = sourceNode;
-        if (!KimlUtil.isDescendant(targetNode, sourceNode)) {
+        if (!ElkUtil.isDescendant(targetNode, sourceNode)) {
             referenceNode = sourceNode.getParent();
         }
         KVector offset = new KVector();
-        KimlUtil.toAbsolute(offset, referenceNode);
+        ElkUtil.toAbsolute(offset, referenceNode);
 
         // set source and target point
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        KVector sourcePoint = KimlGraphitiUtil.calculateAnchorEnds(sourceNode, sourcePort,
+        KVector sourcePoint = calculateAnchorEnds(sourceNode, sourcePort,
                 referenceNode);
         edgeLayout.getSourcePoint().applyVector(sourcePoint);
-        KVector targetPoint = KimlGraphitiUtil.calculateAnchorEnds(targetNode, targetPort,
+        KVector targetPoint = calculateAnchorEnds(targetNode, targetPort,
                 referenceNode);
         edgeLayout.getTargetPoint().applyVector(targetPoint);
         // set bend points for the new edge
@@ -763,7 +806,7 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
      */
     protected KLabel createEdgeLabel(final LayoutMapping<PictogramElement> mapping,
             final KEdge parentEdge, final ConnectionDecorator decorator, final KVectorChain allPoints) {
-        KLabel label = KimlUtil.createInitializedLabel(parentEdge);
+        KLabel label = ElkUtil.createInitializedLabel(parentEdge);
         mapping.getGraphMap().put(label, decorator);
 
         // set label placement
@@ -816,5 +859,63 @@ public class GraphitiDiagramLayoutManager extends GefDiagramLayoutManager<Pictog
         labelLayout.resetModificationFlag();
         return label;
     }
-    
+
+    /**
+     * Returns an end point for an anchor.
+     * 
+     * @param node
+     *            the node that owns the anchor
+     * @param port
+     *            the port that represents the anchor, or {@code null}
+     * @param referenceNode
+     *            the parent node to which edge points are relative, or {@code null}
+     * @return the position of the anchor, relative to the reference node
+     */
+    public KVector calculateAnchorEnds(final KNode node, final KPort port,
+            final KNode referenceNode) {
+        KVector pos = new KVector();
+        if (port != null) {
+            // the anchor end is represented by a port (box-relative anchor or fix-point anchor)
+            KShapeLayout portLayout = port.getData(KShapeLayout.class);
+            pos.x = portLayout.getXpos() + portLayout.getWidth() / 2;
+            pos.y = portLayout.getYpos() + portLayout.getHeight() / 2;
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            pos.x += nodeLayout.getXpos();
+            pos.y += nodeLayout.getYpos();
+        } else {
+            // the anchor end is determined by a chopbox anchor
+            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            pos.x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
+            pos.y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
+        }
+        ElkUtil.toAbsolute(pos, node.getParent());
+        if (referenceNode != null) {
+            ElkUtil.toRelative(pos, referenceNode);
+        }
+        return pos;
+    }
+
+    /**
+     * Given a graphics algorithm, find the first child that is not invisible. If the GA itself is
+     * visible, it is returned.
+     * 
+     * @param graphicsAlgorithm
+     *            the parent graphics algorithm
+     * @return a visible graphics algorithm
+     */
+    public GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
+        if (graphicsAlgorithm != null) {
+            if (graphicsAlgorithm.getLineVisible() || graphicsAlgorithm.getFilled()) {
+                return graphicsAlgorithm;
+            }
+            for (GraphicsAlgorithm ga : graphicsAlgorithm.getGraphicsAlgorithmChildren()) {
+                GraphicsAlgorithm result = findVisibleGa(ga);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
 }

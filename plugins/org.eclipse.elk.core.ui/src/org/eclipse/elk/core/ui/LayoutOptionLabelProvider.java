@@ -12,11 +12,11 @@ package org.eclipse.elk.core.ui;
 
 import java.util.EnumSet;
 
-import org.eclipse.elk.core.LayoutAlgorithmData;
-import org.eclipse.elk.core.LayoutMetaDataService;
-import org.eclipse.elk.core.LayoutOptionData;
-import org.eclipse.elk.core.LayoutTypeData;
 import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.service.data.LayoutOptionData;
+import org.eclipse.elk.core.service.data.LayoutTypeData;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -84,16 +84,16 @@ public class LayoutOptionLabelProvider extends LabelProvider {
     public String getText(final Object element) {
         switch (optionData.getType()) {
         case STRING:
-            LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
             if (LayoutOptions.ALGORITHM.equals(optionData)) {
-                String layoutHint = (String) element;
-                LayoutTypeData layoutType = layoutServices.getTypeData(layoutHint);
-                if (layoutType != null) {
-                    return layoutType.toString();
-                }
-                LayoutAlgorithmData layouterData = layoutServices.getAlgorithmData(layoutHint);
-                if (layouterData != null) {
-                    return layouterData.toString();
+                LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
+                LayoutAlgorithmData algorithmData = layoutDataService.getAlgorithmData((String) element);
+                if (algorithmData != null) {
+                    String categoryName = layoutDataService.getCategoryName(algorithmData.getCategory());
+                    if (categoryName == null) {
+                        return algorithmData.getName();
+                    } else {
+                        return algorithmData.getName() + " (" + categoryName + ")";
+                    }
                 }
                 return Messages.getString("kiml.ui.8");
             }
@@ -136,10 +136,7 @@ public class LayoutOptionLabelProvider extends LabelProvider {
                 }
                 return builder.substring(2);
             }
-        default:
-            return element.toString();
         }
-        
         return element.toString();
     }
     

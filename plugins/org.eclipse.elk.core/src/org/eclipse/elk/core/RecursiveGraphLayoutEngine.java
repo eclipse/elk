@@ -13,17 +13,17 @@ package org.eclipse.elk.core;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.elk.core.config.DefaultLayoutConfig;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
@@ -37,6 +37,18 @@ import com.google.common.collect.Lists;
  * @author msp
  */
 public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
+    
+    /** The default layout algorithm to apply if nothing else is specified. */
+    public static final String DEFAULT_LAYOUT_ALGORITHM = "org.eclipse.elk.layered";
+    
+    private final Function<String, ILayoutAlgorithmData> algorithmResolver;
+    
+    /**
+     * @param algorithmResolver a function that retrieves the layout algorithm metadata for a given identifier
+     */
+    public RecursiveGraphLayoutEngine(final Function<String, ILayoutAlgorithmData> algorithmResolver) {
+        this.algorithmResolver = algorithmResolver;
+    }
 
     /**
      * Performs recursive layout on the given layout graph.
@@ -91,9 +103,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         if (hasChildren || hasInsideSelfLoops) {
             // this node has children and is thus a compound node;
             // fetch the layout algorithm that should be used to compute a layout for its content
-            final LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
-            final boolean supportsHierarchy = algorithmData.supportsFeature(GraphFeature.COMPOUND);
-            final boolean supportsClusters = algorithmData.supportsFeature(GraphFeature.CLUSTERS);
+            final ILayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
             final boolean supportsInsideSelfLoops = algorithmData.supportsFeature(
                     GraphFeature.INSIDE_SELF_LOOPS);
             
@@ -110,7 +120,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // node children as well
             int nodeCount;
             if (layoutNodeShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                    && (supportsHierarchy || supportsClusters)) {
+                    && (algorithmData.supportsFeature(GraphFeature.COMPOUND)
+                    || algorithmData.supportsFeature(GraphFeature.CLUSTERS))) {
                 
                 // the layout algorithm will compute a layout for all levels of hierarchy under the
                 // current one
@@ -122,7 +133,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     childrenInsideSelfLoops.addAll(layoutRecursively(child, progressMonitor));
                     
                     // apply the LayoutOptions.SCALE_FACTOR if present
-                    KimlUtil.applyConfiguredNodeScaling(child);
+                    ElkUtil.applyConfiguredNodeScaling(child);
                 }
             }
 
@@ -141,7 +152,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
             try {
                 // perform layout on the current hierarchy level
-                layoutProvider.doLayout(layoutNode, progressMonitor.subTask(nodeCount));
+                layoutProvider.layout(layoutNode, progressMonitor.subTask(nodeCount));
                 algorithmData.getInstancePool().release(layoutProvider);
             } catch (RuntimeException exception) {
                 // the layout provider has failed - destroy it slowly and painfully
@@ -169,16 +180,18 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param layoutNode node for which a layout provider is requested
      * @return a layout provider instance that fits the layout hints for the given node
      */
-    private LayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
+    private ILayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String layoutHint = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
-        String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
-        LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
-                layoutHint, diagramType);
-        if (algorithmData == null) {
-            throw new IllegalStateException("No registered layout algorithm is available.");
+        ILayoutAlgorithmData result = algorithmResolver.apply(layoutHint);
+        if (result == null) {
+            if (layoutHint == null || layoutHint.isEmpty()) {
+                throw new UnsupportedConfigurationException("The layout algorithm registry is empty.");
+            } else {
+                throw new UnsupportedConfigurationException("Layout algorithm not found: " + layoutHint);
+            }
         }
-        return algorithmData;
+        return result;
     }
 
     /**

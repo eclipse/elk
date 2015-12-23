@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui;
 
-import org.eclipse.elk.core.LayoutOptionData;
+import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.jface.dialogs.IInputValidator;
 
 /**

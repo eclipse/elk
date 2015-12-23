@@ -111,7 +111,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
         if (command == Command.INVALID) {
             throw new IllegalStateException("The Graphviz layout provider is not initialized.");
         }
@@ -214,7 +214,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             outputStream.flush();
         } catch (IOException exception) {
             graphvizTool.cleanup(Cleanup.ERROR);
-            throw new WrappedException(exception, "Failed to send the graph to Graphviz.");
+            throw new WrappedException("Failed to send the graph to Graphviz.", exception);
         } finally {
             if (debugStream != null) {
                 try {
@@ -269,7 +269,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             resource.load(inputStream, null);
         } catch (IOException exception) {
             graphvizTool.cleanup(Cleanup.ERROR);
-            throw new WrappedException(exception, "Failed to read Graphviz output.");
+            throw new WrappedException("Failed to read Graphviz output.", exception);
         } finally {
             if (debugStream != null) {
                 try {

@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core;
+package org.eclipse.elk.core.service.data;
 
 /**
  * Interface for data holder classes that describe the layout infrastructure.

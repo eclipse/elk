@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.IElkCancelIndicator;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -53,6 +54,8 @@ public abstract class MonitoredOperation {
     private long timestamp;
     /** Whether the operation has been canceled. */
     private boolean isCanceled;
+    /** Additional cancel indicator to query. */
+    private final IElkCancelIndicator cancelIndicator;
     
     /**
      * Create a monitored operation with the given executor service.
@@ -60,10 +63,28 @@ public abstract class MonitoredOperation {
      * @param service an executor service for performing operations
      */
     public MonitoredOperation(final ExecutorService service) {
+        this(service, null);
+    }
+    
+    /**
+     * Create a monitored operation with the given executor service and cancel indicator.
+     * 
+     * @param service an executor service for performing operations
+     * @param cancelIndicator an indicator queried regularly for cancelation
+     */
+    public MonitoredOperation(final ExecutorService service, final IElkCancelIndicator cancelIndicator) {
         if (service == null) {
             throw new NullPointerException();
         }
         this.executorService = service;
+        this.cancelIndicator = cancelIndicator;
+    }
+    
+    /**
+     * Determine whether the operation has been canceled.
+     */
+    protected boolean isCanceled() {
+        return isCanceled || (cancelIndicator != null && cancelIndicator.isCanceled());
     }
     
     /**
@@ -175,12 +196,12 @@ public abstract class MonitoredOperation {
                     "Error in monitored operation running offscreen during prepration", throwable));
         }
 
-        if (status.get() == null && !isCanceled) {
+        if (status.get() == null && !isCanceled()) {
             // execute the actual operation without progress monitor
             status.set(execute(createMonitor()));
         }
 
-        if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled) {
+        if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled()) {
             // execute the post processing code after the actual operation
             try {
                 postUIexec();
@@ -219,17 +240,17 @@ public abstract class MonitoredOperation {
                     });
                 }
                 
-                while (status.get() == null && !isCanceled) {
+                while (status.get() == null && !isCanceled()) {
                     boolean hasMoreToDispatch;
                     do {
                         hasMoreToDispatch = display.readAndDispatch();
-                    } while (hasMoreToDispatch && status.get() == null && !isCanceled);
-                    if (status.get() == null && !isCanceled) {
+                    } while (hasMoreToDispatch && status.get() == null && !isCanceled());
+                    if (status.get() == null && !isCanceled()) {
                         display.sleep();
                     }
                 }
                 
-                if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled) {
+                if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled()) {
                     // execute UI code after the actual operation
                     postUIexec();
                 }
@@ -250,11 +271,11 @@ public abstract class MonitoredOperation {
                 }
             });
             
-            if (status.get() == null && !isCanceled) {
+            if (status.get() == null && !isCanceled()) {
                 // execute the actual operation without progress monitor
                 status.set(execute(createMonitor()));
                 
-                if (status.get().getSeverity() == IStatus.OK && !isCanceled) {
+                if (status.get().getSeverity() == IStatus.OK && !isCanceled()) {
                     // execute UI code after the actual operation
                     display.syncExec(new Runnable() {
                         public void run() {
@@ -339,7 +360,7 @@ public abstract class MonitoredOperation {
             final Maybe<IStatus> status) {
         try {
             synchronized (monitor) {
-                while (monitor.get() == null && !isCanceled) {
+                while (monitor.get() == null && !isCanceled()) {
                     try {
                         monitor.wait();
                     } catch (InterruptedException exception) {
@@ -347,7 +368,7 @@ public abstract class MonitoredOperation {
                     }
                 }
             }
-            if (status.get() == null && !isCanceled) {
+            if (status.get() == null && !isCanceled()) {
                 boolean measureExecTime = ElkServicePlugin.getDefault().getPreferenceStore()
                         .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT);
                 status.set(execute(new ProgressMonitorAdapter(monitor.get(), MAX_PROGRESS_LEVELS,
@@ -387,17 +408,17 @@ public abstract class MonitoredOperation {
                         monitor.set(monitorWrapper);
                         monitor.notify();
                     }
-                    while (status.get() == null && !isCanceled) {
+                    while (status.get() == null && !isCanceled()) {
                         boolean hasMoreToDispatch = false;
                         do {
                             hasMoreToDispatch = display.readAndDispatch();
                             isCanceled = uiMonitor.isCanceled();
-                        } while (hasMoreToDispatch && status.get() == null && !isCanceled);
-                        if (status.get() == null && monitorWrapper.commands.isEmpty() && !isCanceled) {
+                        } while (hasMoreToDispatch && status.get() == null && !isCanceled());
+                        if (status.get() == null && monitorWrapper.commands.isEmpty() && !isCanceled()) {
                             display.sleep();
                         }
                         while (!monitorWrapper.commands.isEmpty() && status.get() == null
-                                && !isCanceled) {
+                                && !isCanceled()) {
                             WrapperCommand command;
                             synchronized (monitorWrapper.commands) {
                                 command = monitorWrapper.commands.removeFirst();
@@ -425,18 +446,18 @@ public abstract class MonitoredOperation {
                     }
                 }
             });
-            while (status.get() == null && !isCanceled) {
+            while (status.get() == null && !isCanceled()) {
                 boolean hasMoreToDispatch;
                 do {
                     hasMoreToDispatch = display.readAndDispatch();
-                } while (hasMoreToDispatch && status.get() == null && !isCanceled);
-                if (status.get() == null && !isCanceled) {
+                } while (hasMoreToDispatch && status.get() == null && !isCanceled());
+                if (status.get() == null && !isCanceled()) {
                     display.sleep();
                 }
             }
             
             // execute UI code after the actual operation
-            if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled) {
+            if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled()) {
                 postUIexec();
             }
             
@@ -609,7 +630,7 @@ public abstract class MonitoredOperation {
          */
         @Override
         public boolean isCanceled() {
-            return isCanceled;
+            return MonitoredOperation.this.isCanceled();
         }
         
     }

@@ -10,21 +10,19 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.views;
 
-import org.eclipse.elk.core.LayoutOptionData;
-import org.eclipse.elk.core.config.IMutableLayoutConfig;
-import org.eclipse.elk.core.config.LayoutContext;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.EclipseLayoutConfig;
-import org.eclipse.elk.core.service.IDiagramLayoutManager;
-import org.eclipse.elk.core.service.LayoutManagersService;
+import org.eclipse.elk.core.service.ILayoutConfigurationStore;
+import org.eclipse.elk.core.service.LayoutConfigurationManager;
+import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.Messages;
-import org.eclipse.elk.core.ui.util.KimlUiUtil;
-import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.elk.core.ui.util.ElkUiUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 /**
@@ -45,6 +43,8 @@ public class DiagramDefaultAction extends Action {
 
     /** the layout view that created this action. */
     private LayoutViewPart layoutView;
+    
+    private final LayoutConfigurationManager configManager = new LayoutConfigurationManager();
 
     /**
      * Creates an apply option action.
@@ -62,68 +62,65 @@ public class DiagramDefaultAction extends Action {
      */
     @Override
     public void run() {
-        IWorkbenchPart workbenchPart = layoutView.getCurrentWorkbenchPart();
-        IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance()
-                .getManager(workbenchPart, null);
-        if (manager != null) {
-            IMutableLayoutConfig layoutConfig = manager.getDiagramConfig();
-            if (layoutConfig != null) {
-                // build a layout context for setting the option
-                LayoutContext context = new LayoutContext();
-                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
-                
-                Object diagramPart = layoutConfig.getContextValue(LayoutContext.DIAGRAM_PART, context);
-                if (diagramPart == null) {
-                    diagramPart = layoutView.getCurrentDiagramPart();
-                }
-                if (diagramPart != null) {
-                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                    context.setProperty(LayoutContext.GLOBAL, true);
-                    DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(context, layoutConfig,
-                            false);
-
-                    EditingDomain editingDomain = (EditingDomain) layoutConfig.getContextValue(
-                            EclipseLayoutConfig.EDITING_DOMAIN, context);
-                    for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                        applyOption(editingDomain, layoutConfig, context, entry);
-                    }
-                }
+        ILayoutConfigurationStore config = layoutView.getCurrentConfigurationStore();
+        if (config != null) {
+            for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                applyOption(config, entry);
             }
         }
     }
     
     /**
-     * Sets the layout option of the given property sheet entry as default for the whole
-     * diagram.
+     * Sets the layout option of the given property sheet entry as default for the whole diagram.
      * 
-     * @param editingDomain the editing domain, or {@code null}
      * @param config a layout configuration
-     * @param context a layout context
      * @param entry a property sheet entry
      */
-    private void applyOption(final EditingDomain editingDomain,
-            final IMutableLayoutConfig config, final LayoutContext context,
-            final IPropertySheetEntry entry) {
-        final LayoutOptionData optionData = KimlUiUtil.getOptionData(
-                layoutView.getCurrentLayouterData(), entry.getDisplayName());
+    private void applyOption(final ILayoutConfigurationStore config, final IPropertySheetEntry entry) {
+        final LayoutOptionData optionData = ElkUiUtil.getOptionData(
+                getCurrentLayouterData(config), entry.getDisplayName());
         if (optionData == null) {
             return;
         }
 
-        final Object value;
+        final String value;
         if (optionData.equals(LayoutOptions.ALGORITHM)) {
             value = LayoutPropertySource.getLayoutHint((String) entry.getValueAsString());
         } else {
-            value = optionData.parseValue(entry.getValueAsString());
+            value = entry.getValueAsString();
         }
         if (value != null) {
+            final ILayoutConfigurationStore parentConfig = configManager.getRoot(config);
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    config.setOptionValue(optionData, context, value);
+                    parentConfig.setOptionValue(optionData.getId() + LayoutConfigurationManager.RECURSIVE_SUFFIX, value);
                 }
             };
-            KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.13"));
+            ElkUiUtil.runModelChange(modelChange, config.getEditingDomain(), Messages.getString("kiml.ui.13"));
         }
+    }
+
+    /**
+     * Returns the current layout algorithm data.
+     */
+    private LayoutAlgorithmData[] getCurrentLayouterData(ILayoutConfigurationStore config) {
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        HashSet<LayoutAlgorithmData> data = new HashSet<LayoutAlgorithmData>(4);
+        Set<LayoutOptionData.Target> optionTargets = config.getOptionTargets();
+        if (optionTargets.contains(LayoutOptionData.Target.PARENTS)) {
+            LayoutAlgorithmData algoData = configManager.getAlgorithm(config);
+            if (algoData != null) {
+                data.add(algoData);
+            }
+        }
+        ILayoutConfigurationStore parentConfig = config.getParent();
+        if (parentConfig != null) {
+            LayoutAlgorithmData algoData = configManager.getAlgorithm(parentConfig);
+            if (algoData != null) {
+                data.add(algoData);
+            }
+        }
+        return data.toArray(new LayoutAlgorithmData[data.size()]);
     }
 
 }

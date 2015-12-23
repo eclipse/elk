@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core;
+package org.eclipse.elk.core.service.data;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -53,7 +53,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     public static final String DEFAULT_OPTION_NAME = "<Unnamed Option>";
 
     /** data type enumeration. */
-    public static enum Type {
+    public enum Type {
         /** undefined type. */
         UNDEFINED,
         /** boolean type. */
@@ -99,7 +99,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     }
 
     /** option target enumeration. */
-    public static enum Target {
+    public enum Target {
         /** parents target (hierarchical nodes). */
         PARENTS,
         /** nodes target. */
@@ -119,7 +119,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     /** type of the layout option. */
     private Type type = Type.UNDEFINED;
     /** user friendly name of the layout option. */
-    private String name = "";
+    private String name = DEFAULT_OPTION_NAME;
     /** a description to be displayed in the UI. */
     private String description = "";
     /** configured targets. */
@@ -132,12 +132,6 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     private String[] choices;
     /** whether the option should be shown in advanced mode only. */
     private boolean advanced;
-    /** the lower bound for option values. */
-    private Object lowerBound;
-    /** the upper bound for option values. */
-    private Object upperBound;
-    /** the variance for option values. */
-    private float variance = 1.0f;
     
     /**
      * Checks whether the enumeration class is set correctly. This method must
@@ -202,11 +196,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
       */
      @Override
     public String toString() {
-        if (name != null && name.length() > 0) {
-            return name;
-        } else {
-            return id;
-        }
+        return "Layout Option: " + id;
     }
 
     /**
@@ -626,46 +616,6 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public Comparable<? super Object> getLowerBound() {
-        if (lowerBound instanceof Comparable<?>) {
-            return (Comparable<Object>) lowerBound;
-        }
-        return (Comparable<Object>) Property.NEGATIVE_INFINITY;
-    }
-
-    /**
-     * Sets the lower bound for layout option values.
-     * 
-     * @param lowerBound the lowerBound to set
-     */
-    public void setLowerBound(final Object lowerBound) {
-        this.lowerBound = lowerBound;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public Comparable<? super Object> getUpperBound() {
-        if (upperBound instanceof Comparable<?>) {
-            return (Comparable<Object>) upperBound;
-        }
-        return (Comparable<Object>) Property.POSITIVE_INFINITY;
-    }
-
-    /**
-     * Sets the upper bound for layout option values.
-     * 
-     * @param upperBound the upperBound to set
-     */
-    public void setUpperBound(final Object upperBound) {
-        this.upperBound = upperBound;
-    }
-    
-    /**
      * Sets the default value.
      * 
      * @param thedefaultValue the default value
@@ -710,23 +660,14 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         this.advanced = theadvanced;
     }
 
-    /**
-     * Returns the variance for layout option values. If not given explicitly, the default
-     * value is 1.
-     * 
-     * @return the variance
-     */
-    public float getVariance() {
-        return variance;
+    @Override
+    public Comparable<? super Object> getLowerBound() {
+        return Property.NEGATIVE_INFINITY;
     }
 
-    /**
-     * Sets the variance for layout option values.
-     * 
-     * @param variance the variance to set
-     */
-    public void setVariance(final float variance) {
-        this.variance = variance;
+    @Override
+    public Comparable<? super Object> getUpperBound() {
+        return Property.POSITIVE_INFINITY;
     }
 
 }

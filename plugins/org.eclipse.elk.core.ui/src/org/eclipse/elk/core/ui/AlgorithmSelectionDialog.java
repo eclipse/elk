@@ -15,10 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.core.ILayoutMetaData;
-import org.eclipse.elk.core.LayoutAlgorithmData;
-import org.eclipse.elk.core.LayoutMetaDataService;
-import org.eclipse.elk.core.LayoutTypeData;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.service.data.ILayoutMetaData;
+import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.service.data.LayoutTypeData;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.FontDescriptor;
@@ -214,7 +214,28 @@ public class AlgorithmSelectionDialog extends Dialog {
         final TreeViewer treeViewer = new TreeViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
         final AlgorithmContentProvider contentProvider = new AlgorithmContentProvider();
         treeViewer.setContentProvider(contentProvider);
-        treeViewer.setLabelProvider(new LabelProvider());
+        treeViewer.setLabelProvider(new LabelProvider() {
+            @Override
+            public String getText(Object element) {
+                if (element instanceof LayoutAlgorithmData) {
+                    LayoutAlgorithmData algoData = (LayoutAlgorithmData) element;
+                    String categoryName = LayoutMetaDataService.getInstance().getCategoryName(algoData.getCategory());
+                    if (categoryName == null) {
+                        return algoData.getName();
+                    } else {
+                        return algoData.getName() + " (" + categoryName + ")";
+                    }
+                } else if (element instanceof LayoutTypeData) {
+                    LayoutTypeData typeData = (LayoutTypeData) element;
+                    if (LayoutTypeData.DEFAULT_TYPE_NAME.equals(typeData.getName())) {
+                        return "Other";
+                    } else {
+                        return typeData.getName() + " Type";
+                    }
+                }
+                return super.getText(element);
+            }
+        });
         treeViewer.setSorter(new ViewerSorter() {
             public int category(final Object element) {
                 if (element instanceof LayoutTypeData) {

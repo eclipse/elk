@@ -7,24 +7,6 @@
           class="org.eclipse.elk.gmf.GmfDiagramLayoutManager">
     </manager>
  </extension>
- <extension
-       point="org.eclipse.elk.core.layoutConfigs">
-      <staticConfig
-            class="org.eclipse.emf.ecoretools.diagram.edit.parts.EClassESuperTypesEditPart"
-            option="org.eclipse.elk.edgeType"
-            value="GENERALIZATION">
-      </staticConfig>
-      <staticConfig
-            class="org.eclipse.gmf.ecore.edit.parts.EClassESuperTypesEditPart"
-            option="org.eclipse.elk.edgeType"
-            value="GENERALIZATION">
-      </staticConfig>
-      <staticConfig
-            class="org.eclipse.gmf.runtime.diagram.ui.editparts.NoteEditPart"
-            option="org.eclipse.elk.commentBox"
-            value="true">
-      </staticConfig>
- </extension>
   <extension
        point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
     <editpolicyProvider
@@ -44,7 +26,7 @@
      </command>
   </extension>
  <extension
-       point="org.eclipse.elk.core.layoutProviders">
+       point="org.eclipse.elk.core.service.layoutProviders">
     <layoutAlgorithm
           class="org.eclipse.elk.gmf.layouter.Draw2DLayoutProvider"
           description="&quot;Directed Graph Layout&quot; provided by the Draw2D framework. This is the same algorithm that is used by the standard layout button of GMF diagrams."
@@ -52,10 +34,6 @@
           name="Draw2D Layout"
           preview="images/draw2d.png"
           type="org.eclipse.elk.type.layered">
-       <supportedDiagram
-             priority="1"
-             type="org.eclipse.elk.diagram.general">
-       </supportedDiagram>
        <supportedFeature
              feature="MULTI_EDGES">
        </supportedFeature>

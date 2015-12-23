@@ -13,12 +13,12 @@ package org.eclipse.elk.core.ui.util;
 import java.io.IOException;
 import java.util.Map;
 
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.service.util.ElkServiceUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.Resource.Factory;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 /**
@@ -26,12 +26,12 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
  * .kgt or .kgraph files. The dedicated resource takes care of loading and storing
  * custom layout properties within the model itself.
  * 
- * @see KimlUtil#loadDataElements(KNode)
- * @see KimlUtil#persistDataElements(KNode)
+ * @see ElkUtil#loadDataElements(KNode)
+ * @see ElkUtil#persistDataElements(KNode)
  * 
  * @author uru
  */
-public class KGraphResourceFactory implements Factory {
+public class KGraphResourceFactory implements Resource.Factory {
 
     /**
      * {@inheritDoc}
@@ -63,9 +63,9 @@ public class KGraphResourceFactory implements Factory {
                 EObject o = this.getContents().get(0);
                 if (o instanceof KNode) {
                     // parse persisted key-value pairs using KIML's layout data service
-                    KimlUtil.loadDataElements((KNode) o);
+                    ElkServiceUtil.loadDataElements((KNode) o);
                     // validate layout data and references and fill in missing data
-                    KimlUtil.validate((KNode) o);
+                    ElkUtil.validate((KNode) o);
                 }
             }
         }
@@ -78,7 +78,7 @@ public class KGraphResourceFactory implements Factory {
             if (!this.getContents().isEmpty()) {
                 EObject o = this.getContents().get(0);
                 if (o instanceof KNode) {
-                    KimlUtil.persistDataElements((KNode) o);
+                    ElkUtil.persistDataElements((KNode) o);
                 }
             }
 

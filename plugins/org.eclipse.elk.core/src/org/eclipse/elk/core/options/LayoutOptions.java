@@ -35,7 +35,7 @@ public final class LayoutOptions {
 
     /**
      * Whether the shift from the old layout to the new computed layout shall be animated.
-     * [programmatically set]
+     * [programmatically set in the global settings]
      */
     public static final IProperty<Boolean> ANIMATE = new Property<Boolean>(
             "org.eclipse.elk.animate", true);
@@ -75,14 +75,6 @@ public final class LayoutOptions {
      */
     public static final IProperty<Boolean> COMMENT_BOX = new Property<Boolean>(
             "org.eclipse.elk.commentBox", false);
-
-    /**
-     * The diagram type of a parent node. Diagram types are defined via extension point and are
-     * given an identifier and a name. The value of this option must be one of the pre-defined
-     * diagram types. [programmatically set]
-     */
-    public static final IProperty<String> DIAGRAM_TYPE = new Property<String>(
-            "org.eclipse.elk.diagramType");
 
     /**
      * Where to place an edge label: at the head, center, or tail. [programmatically set]
@@ -129,7 +121,7 @@ public final class LayoutOptions {
 
     /**
      * Whether the hierarchy levels on the path from the selected element to the root of the diagram
-     * shall be included in the layout process. [programmatically set]
+     * shall be included in the layout process. [programmatically set in the global settings]
      */
     public static final IProperty<Boolean> LAYOUT_ANCESTORS = new Property<Boolean>(
             "org.eclipse.elk.layoutAncestors", false);
@@ -207,7 +199,8 @@ public final class LayoutOptions {
             "org.eclipse.elk.portSide", PortSide.UNDEFINED);
 
     /**
-     * Whether a progress bar shall be displayed during layout computations. [programmatically set]
+     * Whether a progress bar shall be displayed during layout computations.
+     * [programmatically set in the global settings]
      */
     public static final IProperty<Boolean> PROGRESS_BAR = new Property<Boolean>(
             "org.eclipse.elk.progressBar", false);
@@ -241,8 +234,8 @@ public final class LayoutOptions {
             "org.eclipse.elk.thickness", 1f);
 
     /**
-     * Whether the zoom level shall be set to view the whole diagram after layout. [programmatically
-     * set]
+     * Whether the zoom level shall be set to view the whole diagram after layout.
+     * [programmatically set in the global settings]
      */
     public static final IProperty<Boolean> ZOOM_TO_FIT = new Property<Boolean>(
             "org.eclipse.elk.zoomToFit", false);
@@ -250,9 +243,7 @@ public final class LayoutOptions {
     // ///// USER INTERFACE LAYOUT OPTIONS ///////
 
     /**
-     * Which layout algorithm to use for the content of a parent node. This can be either a layout
-     * algorithm identifier or a layout type identifier. In the latter case ELK tries to find the
-     * most suitable layout algorithm that matches the given layout type.
+     * Which layout algorithm to use for the content of a parent node.
      */
     public static final IProperty<String> ALGORITHM = new Property<String>(
             "org.eclipse.elk.algorithm");

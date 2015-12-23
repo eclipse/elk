@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core;
+package org.eclipse.elk.core.service.data;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,7 +44,7 @@ public final class LayoutTypeData implements ILayoutMetaData {
     /** identifier of the layout type. */
     private String id = "";
     /** user friendly name of the layout type. */
-    private String name = "";
+    private String name = DEFAULT_TYPE_NAME;
     /** detail description. */
     private String description = "";
     /** the list of layout algorithms that are registered for this type. */
@@ -72,15 +72,7 @@ public final class LayoutTypeData implements ILayoutMetaData {
      */
     @Override
     public String toString() {
-        if (name != null && name.length() > 0) {
-            if (name.endsWith(">")) {
-                return name;
-            } else {
-                return name + " Type";
-            }
-        } else {
-            return "Other";
-        }
+        return "Layout Type: " + id;
     }
     
     /**

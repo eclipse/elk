@@ -29,6 +29,7 @@ public interface IGraphLayoutEngine {
      * 
      * @param layoutGraph the top-level node of the graph to be laid out
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
+     * @throws UnsupportedGraphException if the given graph is not supported by this algorithm
      */
     void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor);
 

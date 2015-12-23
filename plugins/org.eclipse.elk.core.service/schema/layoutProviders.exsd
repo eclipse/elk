@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.elk.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.elk.core.service" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
-         <meta.schema plugin="org.eclipse.elk.core" id="layoutProviders" name="Layout Providers"/>
-      </appInfo>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.elk.core.service" id="layoutProviders" name="Layout Providers"/>
+      </appinfo>
       <documentation>
          The Layout Providers extension point allows plug-ins to add new layout providers to be used with the Eclipse Layout Kernel. Layout providers are algorithms that automatically compute layout information for an instance of the &lt;code&gt;KGraph&lt;/code&gt; data structure.
 &lt;p&gt;
@@ -14,9 +14,9 @@ Layout providers can be grouped using categories, and they can be given a type t
 
    <element name="extension">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element />
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
@@ -44,9 +44,9 @@ Layout providers can be grouped using categories, and they can be given a type t
                <documentation>
                   An optional name of the extension instance.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -61,7 +61,6 @@ Layout providers can be grouped using categories, and they can be given a type t
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="knownOption"/>
-            <element ref="supportedDiagram"/>
             <element ref="supportedFeature"/>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -76,9 +75,9 @@ Layout providers can be grouped using categories, and they can be given a type t
                <documentation>
                   A user friendly name of this layout provider, to be displayed in the UI.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -86,9 +85,9 @@ Layout providers can be grouped using categories, and they can be given a type t
                <documentation>
                   Implementing class of the layout provider, must extend &lt;code&gt;org.eclipse.elk.core.AbstractLayoutProvider&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.elk.core.AbstractLayoutProvider:"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="parameter" type="string">
@@ -103,9 +102,9 @@ Layout providers can be grouped using categories, and they can be given a type t
                <documentation>
                   Identifier of a category, which can be defined using the &lt;code&gt;category&lt;/code&gt; element. Categories are used to group layout providers.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/category/@id"/>
-               </appInfo>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.service.layoutProviders/category/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="type" type="string">
@@ -113,9 +112,9 @@ Layout providers can be grouped using categories, and they can be given a type t
                <documentation>
                   Identifier of a layout type, which can be defined using the &lt;code&gt;layoutType&lt;/code&gt; element. Layout types describe the general kind of layout algorithm that is implemented by that provider.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/layoutType/@id"/>
-               </appInfo>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.service.layoutProviders/layoutType/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -130,9 +129,9 @@ Layout providers can be grouped using categories, and they can be given a type t
                <documentation>
                   An optional preview image that will appear on selection dialogs for layout algorithms. The recommended image size is 300x200 pixels.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -159,9 +158,9 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                <documentation>
                   A user friendly name of the layout type, to be displayed in the UI.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -193,9 +192,9 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                <documentation>
                   A user friendly name of this category, to be displayed in the UI.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -248,9 +247,9 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                <documentation>
                   A user friendly name of this layout option, to be displayed in the UI.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -258,9 +257,9 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                <documentation>
                   A user friendly description of this layout option, to be displayed in the UI. The description should contain all information needed to understand what this option does.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="appliesTo" type="string">
@@ -282,36 +281,15 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                <documentation>
                   An optional Java class giving more detail on the data type. For &lt;code&gt;enum&lt;/code&gt; and &lt;code&gt;enumset&lt;/code&gt; options this attribute must hold the Enum class of the option. For &lt;code&gt;object&lt;/code&gt; options it must hold the class name of an IDataObject implementation.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="advanced" type="boolean">
             <annotation>
                <documentation>
                   Whether the option should only be shown in advanced mode; default is false.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="lowerBound" type="string">
-            <annotation>
-               <documentation>
-                  An optional lower bound on the values of this layout option. This is used when a layout configuration is determined automatically.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="upperBound" type="string">
-            <annotation>
-               <documentation>
-                  An optional upper bound on the values of this layout option. This is used when a layout configuration is determined automatically.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="variance" type="string">
-            <annotation>
-               <documentation>
-                  An optional variance for values of this layout option. This is used when a layout configuration is determined automatically. The variance is taken as multiplier for Gaussian distributions when new values are determined. Options with uniform distibution, such as Boolean or enumeration types, do not need a variance value, since all values have equal probability. A variance of 0 implies that the option shall not be used in automatic configuration, regardless of its type.
                </documentation>
             </annotation>
          </attribute>
@@ -330,9 +308,9 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                <documentation>
                   Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/layoutOption/@id"/>
-               </appInfo>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.service.layoutProviders/layoutOption/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="value" type="string">
@@ -357,42 +335,15 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                <documentation>
                   Identifier of a layout option, which can be defined using the &lt;code&gt;layoutOption&lt;/code&gt; element.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutProviders/layoutOption/@id"/>
-               </appInfo>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.service.layoutProviders/layoutOption/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="default" type="string">
             <annotation>
                <documentation>
                   Optional default value to override the option&apos;s own default value.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="supportedDiagram">
-      <annotation>
-         <documentation>
-            Declares that the layout algorithm supports the diagram referenced by an identifier. If a layout provider supports a specific diagram type and it has the highest priority for that type, it is chosen as the default layout provider for diagrams of that type.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="type" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Identifier of a diagram type, which can be defined using the &lt;code&gt;diagramType&lt;/code&gt; element of the &lt;code&gt;layoutConfigs&lt;/code&gt; extension point. Diagram types are used to classify diagrams with respect to their layout.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.elk.core.layoutConfigs/diagramType/@id"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="priority" type="string">
-            <annotation>
-               <documentation>
-                  An integer value that defines the relative priority of the layout algorithm for this diagram type. The layout algorithm with highest priority is chosen as the default provider for that type. The default value is 0.
                </documentation>
             </annotation>
          </attribute>
@@ -433,13 +384,6 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="priority" type="string">
-            <annotation>
-               <documentation>
-                  An integer value that defines the relative priority of the layout algorithm for this graph feature. Positive values indicate good support for the feature, negative values indicate rather bad support. The default value is 0.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
@@ -451,18 +395,18 @@ Apart from a set of default layout types offered by KIML, new layout providers a
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          0.1.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example for a layout provider extension:
 &lt;pre&gt;
@@ -497,9 +441,9 @@ Apart from a set of default layout types offered by KIML, new layout providers a
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiinfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;org.eclipse.elk.core.LayoutDataService&lt;/code&gt;. This is the point where registered data can be read at runtime.
 &lt;p&gt;
@@ -508,18 +452,18 @@ Apart from a set of default layout types offered by KIML, new layout providers a
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Registered layout providers are made available through the Eclipse Layout Kernel. The layout kernel organizes appropriate selection of layout providers for layout of a graphical diagram, and provides means to manually select layout providers for each part of the diagram.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright 2008 by&lt;br&gt;
 &amp;nbsp;+ Kiel University&lt;br&gt;

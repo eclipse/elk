@@ -19,7 +19,7 @@ import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphElementAdapter;
@@ -464,12 +464,12 @@ public final class KGraphAdapters {
             for (KEdge edge : element.getEdges()) {
                 if (edge.getSource() == node) {
                     // check if the edge's target is a descendant of its source node
-                    if (KimlUtil.isDescendant(edge.getTarget(), node)) {
+                    if (ElkUtil.isDescendant(edge.getTarget(), node)) {
                         return true;
                     }
                 } else {
                     // check if the edge's source is a descendant of its source node
-                    if (KimlUtil.isDescendant(edge.getSource(), node)) {
+                    if (ElkUtil.isDescendant(edge.getSource(), node)) {
                         return true;
                     }
                 }

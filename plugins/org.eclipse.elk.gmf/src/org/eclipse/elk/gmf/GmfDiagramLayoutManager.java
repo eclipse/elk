@@ -18,10 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.draw2d.Animation;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionLocator;
 import org.eclipse.draw2d.IFigure;
@@ -31,8 +28,6 @@ import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.elk.core.config.IMutableLayoutConfig;
-import org.eclipse.elk.core.config.VolatileLayoutConfig;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
@@ -43,10 +38,11 @@ import org.eclipse.elk.core.klayoutdata.impl.KShapeLayoutImpl;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.service.IDiagramLayoutManager;
+import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.LayoutMapping;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Maybe;
-import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.KGraphFactory;
@@ -54,6 +50,7 @@ import org.eclipse.elk.graph.KLabel;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.elk.graph.KPort;
 import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -62,6 +59,7 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
+import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.AbstractBorderItemEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.CompartmentEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ConnectionEditPart;
@@ -72,8 +70,8 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ResizableCompartmentEditPart
 import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.diagram.ui.figures.BorderedNodeFigure;
 import org.eclipse.gmf.runtime.diagram.ui.figures.ResizableCompartmentFigure;
-import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramCommandStack;
 import org.eclipse.gmf.runtime.diagram.ui.parts.DiagramEditor;
+import org.eclipse.gmf.runtime.diagram.ui.render.editparts.RenderedDiagramRootEditPart;
 import org.eclipse.gmf.runtime.draw2d.ui.figures.WrappingLabel;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Font;
@@ -93,15 +91,11 @@ import com.google.common.collect.BiMap;
  * @author ars
  * @author msp
  */
-public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalEditPart> {
+public class GmfDiagramLayoutManager implements IDiagramLayoutManager<IGraphicalEditPart> {
 
     /** list of connection edit parts that were found in the diagram. */
     public static final IProperty<List<ConnectionEditPart>> CONNECTIONS = 
             new Property<List<ConnectionEditPart>>("gmf.connections");
-
-    /** editor part of the currently layouted diagram. */
-    public static final IProperty<DiagramEditor> DIAGRAM_EDITOR = new Property<DiagramEditor>(
-            "gmf.diagramEditor");
 
     /** diagram edit part of the currently layouted diagram. */
     public static final IProperty<DiagramEditPart> DIAGRAM_EDIT_PART = new Property<DiagramEditPart>(
@@ -118,6 +112,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     /** the offset to add for all coordinates. */
     public static final IProperty<KVector> COORDINATE_OFFSET = new Property<KVector>(
             "gmf.coordinateOffset");
+
+    /** the animation time that has been used for layout. */
+    public static final IProperty<Integer> ANIMATION_TIME = new Property<Integer>(
+            "gmf.animationTime", 0);
     
     /**
      * Calculates the absolute bounds of the given figure.
@@ -178,14 +176,23 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         return object instanceof DiagramEditor || object instanceof IGraphicalEditPart;
     }
 
-    /** the cached layout configurator for GMF. */
-    private final GmfLayoutConfig layoutConfig = new GmfLayoutConfig();
-
     /**
      * {@inheritDoc}
      */
-    public IMutableLayoutConfig getDiagramConfig() {
-        return layoutConfig;
+    @Override
+    public ILayoutConfigurationStore getConfigurationStore(IWorkbenchPart workbenchPart, final Object context) {
+        if (context instanceof EditPart) {
+            return new GmfLayoutConfigurationStore((EditPart) context, this);
+        }
+        return null;
+    }
+    
+    /**
+     * Whether to accept the given edit part and include it in the layout graph. This implementation
+     * returns always true. Override this to exclude some parts from automatic layout.
+     */
+    protected boolean acceptPart(EditPart editPart) {
+        return true;
     }
 
     /**
@@ -230,13 +237,12 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 selectedParts = new ArrayList<ShapeNodeEditPart>(selection.size());
                 for (Object object : selection) {
                     if (object instanceof IGraphicalEditPart) {
-                        EditPart editPart = (IGraphicalEditPart) object;
+                        EditPart editPart = (EditPart) object;
                         while (editPart != null && editPart.getParent() != layoutRootPart) {
                             editPart = editPart.getParent();
                         }
                         if (editPart instanceof ShapeNodeEditPart
-                                && !GmfLayoutConfig.isNoLayout(editPart)
-                                && !selectedParts.contains(editPart)) {
+                                && acceptPart(editPart) && !selectedParts.contains(editPart)) {
                             selectedParts.add((ShapeNodeEditPart) editPart);
                         }
                     }
@@ -253,16 +259,8 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         }
 
         // create the mapping
-        LayoutMapping<IGraphicalEditPart> mapping = buildLayoutGraph(layoutRootPart, selectedParts);
-
-        // set optional diagram editor
-        if (diagramEditor != null) {
-            mapping.setProperty(DIAGRAM_EDITOR, diagramEditor);
-        }
-        
-        // create a layout configurator from the properties that were set while building
-        mapping.getLayoutConfigs().add(VolatileLayoutConfig.fromProperties(mapping.getLayoutGraph(),
-                GmfLayoutConfig.PRIORITY - 1));
+        LayoutMapping<IGraphicalEditPart> mapping = buildLayoutGraph(layoutRootPart, selectedParts,
+                workbenchPart);
 
         return mapping;
     }
@@ -314,11 +312,13 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
      * @param layoutRootPart the layout root edit part
      * @param selection a selection of contained edit parts to process, or {@code null} if the whole
      *          content shall be processed
+     * @param workbenchPart the workbench part, or {@code null}
      * @return a layout graph mapping
      */
     protected LayoutMapping<IGraphicalEditPart> buildLayoutGraph(
-            final IGraphicalEditPart layoutRootPart, final List<ShapeNodeEditPart> selection) {
-        LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>();
+            final IGraphicalEditPart layoutRootPart, final List<ShapeNodeEditPart> selection,
+            final IWorkbenchPart workbenchPart) {
+        LayoutMapping<IGraphicalEditPart> mapping = new LayoutMapping<IGraphicalEditPart>(workbenchPart);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
         mapping.setParentElement(layoutRootPart);
 
@@ -331,13 +331,13 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             topNode = createNode(mapping, (ShapeNodeEditPart) layoutRootPart, null, null, null);
         } else {
             // start with the whole diagram as root for layout
-            topNode = KimlUtil.createInitializedNode();
+            topNode = ElkUtil.createInitializedNode();
             KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
             Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
             if (layoutRootPart instanceof DiagramEditPart) {
                 String labelText = ((DiagramEditPart) layoutRootPart).getDiagramView().getName();
                 if (labelText.length() > 0) {
-                    KLabel label = KimlUtil.createInitializedLabel(topNode);
+                    KLabel label = ElkUtil.createInitializedLabel(topNode);
                     label.setText(labelText);
                 }
             } else {
@@ -372,11 +372,134 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
 
         return mapping;
     }
-
+    
     /**
      * {@inheritDoc}
      */
-    @Override
+    public void applyLayout(final LayoutMapping<IGraphicalEditPart> mapping,
+            final IPropertyHolder settings) {
+        boolean zoomToFit = settings.getProperty(LayoutOptions.ZOOM_TO_FIT);
+        IWorkbenchPart workbenchPart = mapping.getWorkbenchPart();
+        int animationTime = calcAnimationTime(mapping, settings,
+                workbenchPart != null && !workbenchPart.getSite().getPage().isPartVisible(workbenchPart));
+        mapping.setProperty(ANIMATION_TIME, animationTime);
+        Object layoutGraphObj = mapping.getParentElement();
+        if (zoomToFit && layoutGraphObj instanceof EditPart) {
+            // determine pre- or post-layout zoom
+            DiagramEditPart diagramEditPart = GmfDiagramLayoutManager.getDiagramEditPart(
+                    (EditPart) layoutGraphObj);
+            if (diagramEditPart == null) {
+                applyLayout(mapping, animationTime);
+                return;
+            }
+            ZoomManager zoomManager = ((RenderedDiagramRootEditPart) diagramEditPart.getRoot())
+                    .getZoomManager();
+            KNode parentNode = mapping.getLayoutGraph();
+            KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+            Dimension available = zoomManager.getViewport().getClientArea().getSize();
+            float desiredWidth = parentLayout.getWidth();
+            double scaleX = Math.min(available.width / desiredWidth, zoomManager.getMaxZoom());
+            float desiredHeight = parentLayout.getHeight();
+            double scaleY = Math.min(available.height / desiredHeight, zoomManager.getMaxZoom());
+            final double scale = Math.min(scaleX, scaleY);
+            final double oldScale = zoomManager.getZoom();
+
+            if (scale < oldScale) {
+                // we're zooming out, so do it before layout is applied
+                zoomManager.setViewLocation(new Point(0, 0));
+                zoomManager.setZoom(scale);
+                zoomManager.setViewLocation(new Point(0, 0));
+            }
+            
+            applyLayout(mapping, animationTime);
+            
+            if (scale > oldScale) {
+                // we're zooming in, so do it after layout is applied
+                zoomManager.setViewLocation(new Point(0, 0));
+                zoomManager.setZoom(scale);
+                zoomManager.setViewLocation(new Point(0, 0));
+            }
+        } else {
+            applyLayout(mapping, animationTime);
+        }
+    }
+
+    /**
+     * Calculates animation time for the given graph size. If the viewer is not visible,
+     * the animation time is 0.
+     * 
+     * @param mapping a mapping of the layout graph
+     * @param globalConfig the layout configurator used to determine the global options
+     * @param viewerNotVisible whether the diagram viewer is currently not visible
+     * @return number of milliseconds to animate, or 0 if no animation is desired
+     */
+    private int calcAnimationTime(final LayoutMapping<?> mapping, final IPropertyHolder settings,
+            final boolean viewerNotVisible) {
+        
+        boolean animate = settings.getProperty(LayoutOptions.ANIMATE);
+        if (animate) {
+            int minTime = settings.getProperty(LayoutOptions.MIN_ANIMATION_TIME);
+            if (minTime < 0) {
+                minTime = 0;
+            }
+            int maxTime = settings.getProperty(LayoutOptions.MAX_ANIMATION_TIME);
+            if (maxTime < minTime) {
+                maxTime = minTime;
+            }
+            int factor = settings.getProperty(LayoutOptions.ANIMATION_TIME_FACTOR);
+            if (factor > 0) {
+                int graphSize = countNodes(mapping.getLayoutGraph());
+                int time = minTime + (int) (factor * Math.sqrt(graphSize));
+                return time <= maxTime ? time : maxTime;
+            } else {
+                return minTime;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Counts the total number of children in the given node, including deep hierarchies.
+     * 
+     * @param node
+     *            parent node
+     * @return number of children and grandchildren in the given parent
+     */
+    private static int countNodes(final KNode node) {
+        int count = 0;
+        for (KNode child : node.getChildren()) {
+            count += countNodes(child) + 1;
+        }
+        return count;
+    }
+    
+    /**
+     * Apply the computed layout to the original diagram.
+     * 
+     * @param mapping a layout mapping that was created by this layout manager
+     * @param animationTime the animation time in milliseconds, or 0 for no animation
+     */
+    private void applyLayout(final LayoutMapping<IGraphicalEditPart> mapping, final int animationTime) {
+        // transfer layout to the diagram
+        transferLayout(mapping);
+        if (animationTime > 0) {
+            // apply the layout with animation
+            Animation.markBegin();
+            applyLayout(mapping);
+            Animation.run(animationTime);
+        } else {
+            // apply the layout without animation
+            applyLayout(mapping);
+        }
+    }
+
+    /**
+     * Transfer all layout data from the last created KGraph instance to the original diagram.
+     * The diagram is not modified yet, but all required preparations are performed. This is
+     * separated from {@link #applyLayout(LayoutMapping)} to allow better code modularization.
+     * 
+     * @param mapping a layout mapping that was created by this layout manager
+     */
     protected void transferLayout(final LayoutMapping<IGraphicalEditPart> mapping) {
         // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
@@ -422,20 +545,23 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
         
         // add the corrected offset
         offset.add(-minx, -miny);
-        KimlUtil.translate(parentNode, (float) offset.x, (float) offset.y);
+        ElkUtil.translate(parentNode, (float) offset.x, (float) offset.y);
     }
 
     /**
-     * {@inheritDoc}
+     * Apply the transferred layout to the original diagram. This final step is where the actual
+     * change to the diagram is done. This method is always called after
+     * {@link #transferLayout(LayoutMapping)} has been done.
+     * 
+     * @param mapping a layout mapping that was created by this layout manager
      */
-    @Override
     protected void applyLayout(final LayoutMapping<IGraphicalEditPart> mapping) {
         Command applyLayoutCommand = mapping.getProperty(LAYOUT_COMMAND);
         
         if (applyLayoutCommand != null) {
-            // get a command stack to execute the command
+            // Get a command stack to execute the command
             CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
-            DiagramEditor diagramEditor = mapping.getProperty(DIAGRAM_EDITOR);
+            IWorkbenchPart diagramEditor = mapping.getWorkbenchPart();
             if (commandStack == null) {
                 if (diagramEditor != null) {
                     Object adapter = diagramEditor.getAdapter(CommandStack.class);
@@ -449,32 +575,16 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 }
             }
     
-            // execute the command
+            // Execute the command
             commandStack.execute(applyLayoutCommand);
             
-            // refresh the border items in the diagram
-            if (diagramEditor != null || mapping.getParentElement() != null) {
-                refreshDiagram(diagramEditor, mapping.getParentElement());
+            // Refresh the border items in the diagram
+            if (diagramEditor instanceof DiagramEditor) {
+                refreshDiagram((DiagramEditor) diagramEditor, mapping.getParentElement());
             }
         }
     }
     
-    /**
-     * Perform undo in the original diagram.
-     *
-     * @param mapping a layout mapping that was created by this layout manager
-     */
-    @Override
-    protected void performUndo(final LayoutMapping<IGraphicalEditPart> mapping) {
-        try {
-            IOperationHistory history = OperationHistoryFactory.getOperationHistory();
-            history.undoOperation(DiagramCommandStack.getICommand(mapping.getProperty(LAYOUT_COMMAND)),
-                    new NullProgressMonitor(), null);
-        } catch (ExecutionException e) {
-            throw new WrappedException(e);
-        }
-    }
-
     /**
      * Recursively builds a layout graph by analyzing the children of the given edit part.
      * 
@@ -512,7 +622,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             } else if (obj instanceof ResizableCompartmentEditPart
                     && ((CompartmentEditPart) obj).getChildren().size() > 0) {
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
-                if (!GmfLayoutConfig.isNoLayout(compartment)) {
+                if (acceptPart(compartment)) {
                     boolean compExp = true;
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
@@ -531,7 +641,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             // process a node, which may be a parent of ports, compartments, or other nodes
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
-                if (!GmfLayoutConfig.isNoLayout(childNodeEditPart)) {
+                if (acceptPart(childNodeEditPart)) {
                     KNode node = createNode(mapping, childNodeEditPart, parentEditPart,
                             parentLayoutNode, kinsets);
                     // process the child as new current edit part
@@ -565,7 +675,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             final ShapeNodeEditPart nodeEditPart, final IGraphicalEditPart parentEditPart,
             final KNode parentKNode, final Maybe<KInsets> kinsets) {
         IFigure nodeFigure = nodeEditPart.getFigure();
-        KNode childLayoutNode = KimlUtil.createInitializedNode();
+        KNode childLayoutNode = ElkUtil.createInitializedNode();
 
         // set location and size
         Rectangle childBounds = getAbsoluteBounds(nodeFigure);
@@ -676,7 +786,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
     protected KPort createPort(final LayoutMapping<IGraphicalEditPart> mapping,
             final AbstractBorderItemEditPart portEditPart, final IGraphicalEditPart nodeEditPart,
             final KNode knode) {
-        KPort port = KimlUtil.createInitializedPort();
+        KPort port = ElkUtil.createInitializedPort();
         port.setNode(knode);
 
         // set the port's layout, relative to the node position
@@ -706,7 +816,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     text = ((Label) labelFigure).getText();
                 }
                 if (text != null) {
-                    KLabel portLabel = KimlUtil.createInitializedLabel(port);
+                    KLabel portLabel = ElkUtil.createInitializedLabel(port);
                     portLabel.setText(text);
                     mapping.getGraphMap().put(portLabel, (IGraphicalEditPart) portChildObj);
                     // set the port label's layout
@@ -758,7 +868,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
             font = label.getFont();
         }
         if (text != null) {
-            KLabel label = KimlUtil.createInitializedLabel(knode);
+            KLabel label = ElkUtil.createInitializedLabel(knode);
             label.setText(text);
             mapping.getGraphMap().put(label, labelEditPart);
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
@@ -828,11 +938,11 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                     edgeLabelPlacement = EdgeLabelPlacement.TAIL;
                     isOppositeEdge = true;
                 } else {
-                    edge = KimlUtil.createInitializedEdge();
+                    edge = ElkUtil.createInitializedEdge();
                     reference2EdgeMap.put(reference, edge);
                 }
             } else {
-                edge = KimlUtil.createInitializedEdge();
+                edge = ElkUtil.createInitializedEdge();
             }
 
             BiMap<KGraphElement, IGraphicalEditPart> graphMap = mapping.getGraphMap();
@@ -885,10 +995,10 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
 
             // calculate offset for edge and label coordinates
             KVector offset = new KVector();
-            if (KimlUtil.isDescendant(targetNode, sourceNode)) {
-                KimlUtil.toAbsolute(offset, sourceNode);
+            if (ElkUtil.isDescendant(targetNode, sourceNode)) {
+                ElkUtil.toAbsolute(offset, sourceNode);
             } else {
-                KimlUtil.toAbsolute(offset, sourceNode.getParent());
+                ElkUtil.toAbsolute(offset, sourceNode.getParent());
             }
 
             if (!isOppositeEdge) {
@@ -1012,7 +1122,7 @@ public class GmfDiagramLayoutManager extends GefDiagramLayoutManager<IGraphicalE
                 }
                 
                 if (labelText != null && labelText.length() > 0) {
-                    KLabel label = KimlUtil.createInitializedLabel(edge);
+                    KLabel label = ElkUtil.createInitializedLabel(edge);
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {

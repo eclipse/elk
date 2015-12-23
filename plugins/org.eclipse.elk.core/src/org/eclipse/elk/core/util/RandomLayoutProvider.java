@@ -44,7 +44,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Random Layout", 1);
         if (parentNode.getChildren().isEmpty()) {
             progressMonitor.done();
@@ -137,7 +137,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         KInsets insets = parentLayout.getInsets();
         totalWidth += insets.getLeft() + insets.getRight();
         totalHeight += insets.getTop() + insets.getBottom();
-        KimlUtil.resizeNode(parent, totalWidth, totalHeight, false, true);
+        ElkUtil.resizeNode(parent, totalWidth, totalHeight, false, true);
     }
     
     /** the maximal number of generated bend points for each edge. */

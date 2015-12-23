@@ -32,7 +32,7 @@ import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.elk.graph.KEdge;
@@ -232,11 +232,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             String serializedJP = null;
             if (junctionPoints != null) {
                 KNode referenceNode = kedge.getSource();
-                if (!KimlUtil.isDescendant(kedge.getTarget(), referenceNode)) {
+                if (!ElkUtil.isDescendant(kedge.getTarget(), referenceNode)) {
                     referenceNode = referenceNode.getParent();
                 }
                 for (KVector point : junctionPoints) {
-                    KimlUtil.toAbsolute(point, referenceNode);
+                    ElkUtil.toAbsolute(point, referenceNode);
                 }
                 serializedJP = junctionPoints.toString();
             }
@@ -262,7 +262,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KVector sourceRel = sourcePoint.createVector();
         KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
 
-        if (KimlUtil.isDescendant(targetNode, sourceNode)) {
+        if (ElkUtil.isDescendant(targetNode, sourceNode)) {
             // the target node is contained in the source node
             translateDescendantPoint(sourceRel, sourceLayout);
         } else {
@@ -315,17 +315,17 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         KVector targetRel = targetPoint.createVector();
         KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
 
-        if (KimlUtil.isDescendant(targetNode, sourceNode)) {
+        if (ElkUtil.isDescendant(targetNode, sourceNode)) {
             // the target node is contained in the source node
             if (sourceNode != targetNode.getParent()) {
-                KimlUtil.toAbsolute(targetRel, sourceNode);
-                KimlUtil.toRelative(targetRel, targetNode.getParent());
+                ElkUtil.toAbsolute(targetRel, sourceNode);
+                ElkUtil.toRelative(targetRel, targetNode.getParent());
             }
             targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
         } else if (sourceNode.getParent() != targetNode.getParent()) {
             // the reference point of the target is different from the source
-            KimlUtil.toAbsolute(targetRel, sourceNode.getParent());
-            KimlUtil.toRelative(targetRel, targetNode.getParent());
+            ElkUtil.toAbsolute(targetRel, sourceNode.getParent());
+            ElkUtil.toRelative(targetRel, targetNode.getParent());
             targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
         } else {
             // source and target have the same reference point

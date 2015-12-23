@@ -8,11 +8,14 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core;
+package org.eclipse.elk.core.service.data;
 
 import java.util.Map;
 
+import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.ILayoutAlgorithmData;
 import org.eclipse.elk.core.options.GraphFeature;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.elk.core.util.IFactory;
 import org.eclipse.elk.core.util.InstancePool;
 
@@ -27,7 +30,7 @@ import com.google.common.collect.Maps;
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public final class LayoutAlgorithmData implements ILayoutMetaData {
+public final class LayoutAlgorithmData implements ILayoutAlgorithmData, ILayoutMetaData {
 
     /**
      * The minimal allowed priority value. Priorities less or equal to this value are treated
@@ -86,16 +89,7 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
      */
     @Override
     public String toString() {
-        if (name != null && name.length() > 0) {
-            String categoryName = LayoutMetaDataService.getInstance().getCategoryName(category);
-            if (categoryName == null) {
-                return name;
-            } else {
-                return name + " (" + categoryName + ")";
-            }
-        } else {
-            return DEFAULT_LAYOUTER_NAME;
-        }
+        return "Layout Algorithm: " + id;
     }
     
     /**

@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.views;
 
-import org.eclipse.elk.core.LayoutAlgorithmData;
-import org.eclipse.elk.core.LayoutMetaDataService;
-import org.eclipse.elk.core.LayoutTypeData;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
-import org.eclipse.elk.core.ui.Messages;
+import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.jface.viewers.DialogCellEditor;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +32,8 @@ import org.eclipse.swt.widgets.Control;
  */
 public class AlgorithmCellEditor extends DialogCellEditor {
     
+    private final ILabelProvider labelProvider;
+    
     /**
      * Creates a layout algorithm cell editor.
      * 
@@ -37,6 +41,9 @@ public class AlgorithmCellEditor extends DialogCellEditor {
      */
     public AlgorithmCellEditor(final Composite parent) {
         super(parent);
+        LayoutOptionData algorithmOption = LayoutMetaDataService.getInstance().getOptionData(
+                LayoutOptions.ALGORITHM.getId());
+        labelProvider = new LayoutOptionLabelProvider(algorithmOption);
     }
     
     /**
@@ -80,21 +87,8 @@ public class AlgorithmCellEditor extends DialogCellEditor {
      */
     @Override
     protected void updateContents(final Object value) {
-        if (value instanceof String) {
-            String newText;
-            LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
-            LayoutTypeData layoutType = layoutServices.getTypeData((String) value);
-            if (layoutType != null) {
-                newText = layoutType.toString();
-            } else {
-                LayoutAlgorithmData layouterData = layoutServices.getAlgorithmData((String) value);
-                if (layouterData != null) {
-                    newText = layouterData.toString();
-                } else {
-                    newText = Messages.getString("kiml.ui.8");
-                }
-            }
-            super.updateContents(newText);
+        if (value != null) {
+            super.updateContents(labelProvider.getText(value));
         }
     }
 
@@ -105,7 +99,7 @@ public class AlgorithmCellEditor extends DialogCellEditor {
     protected Object openDialogBox(final Control cellEditorWindow) {
         AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(cellEditorWindow.getShell(),
                 (String) getValue());
-        if (dialog.open() == AlgorithmSelectionDialog.OK) {
+        if (dialog.open() == Window.OK) {
             return dialog.getSelectedHint();
         }
         return null;

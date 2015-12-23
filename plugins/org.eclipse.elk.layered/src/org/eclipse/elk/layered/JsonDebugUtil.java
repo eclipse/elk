@@ -19,16 +19,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.core.LayoutMetaDataService;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.layered.graph.LEdge;
 import org.eclipse.elk.layered.graph.LGraph;
 import org.eclipse.elk.layered.graph.LNode;
+import org.eclipse.elk.layered.graph.LNode.NodeType;
 import org.eclipse.elk.layered.graph.LPort;
 import org.eclipse.elk.layered.graph.Layer;
-import org.eclipse.elk.layered.graph.LNode.NodeType;
 import org.eclipse.elk.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
 import org.eclipse.elk.layered.p5edges.OrthogonalRoutingGenerator.Dependency;
 import org.eclipse.elk.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
@@ -47,11 +46,7 @@ import com.google.common.collect.Lists;
 public final class JsonDebugUtil {
     
     private static final String INDENT = "  ";
-    private static final String DEBUG_ID_PREFIX = "debug.";
 
-    private static final LayoutMetaDataService LAYOUT_DATA_SERVICE = LayoutMetaDataService.getInstance();
-
-    
     /**
      * Hidden constructor to avoid instantiation.
      */
@@ -631,11 +626,6 @@ public final class JsonDebugUtil {
         while (propertiesIterator.hasNext()) {
             Entry<IProperty<?>, Object> property = propertiesIterator.next();
             String id = property.getKey().getId();
-            // Test whether the given id is a registered layout option. If not, prefix the id with
-            // DEBUG_ID_PREFIX
-            if (LAYOUT_DATA_SERVICE.getOptionData(id) == null) {
-                id = DEBUG_ID_PREFIX + id;
-            }
             final String val = getValueRepresentation(property.getKey(), property.getValue());
             writer.write("\n" + indent1 + "\"" + id + "\": \"" + val.replace("\"", "\\\"") + "\"");
             if (propertiesIterator.hasNext()) {

@@ -45,7 +45,7 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("KLay Force", 1);
         
         // transform the input graph

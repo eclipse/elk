@@ -103,6 +103,7 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
      * 
      * @param newProperties the properties that shall be checked
      */
+    @Deprecated
     public void checkProperties(final IProperty<?> ... newProperties) {
         if (propertyMap == null) {
             return;
