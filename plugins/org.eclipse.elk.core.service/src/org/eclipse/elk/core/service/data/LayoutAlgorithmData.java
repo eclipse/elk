@@ -202,11 +202,7 @@ public final class LayoutAlgorithmData implements ILayoutAlgorithmData, ILayoutM
     }
     
     /**
-     * Checks if the given graph feature is supported at all. This is equivalent to checking whether
-     * {@link #getFeatureSupport(GraphFeature)} returns something greater than {@link #MIN_PRIORITY}.
-     * 
-     * @param graphFeature the graph feature to check.
-     * @return {@code true} if the algorithm supports the given feature.
+     * {@inheritDoc}
      */
     public boolean supportsFeature(final GraphFeature graphFeature) {
         return getFeatureSupport(graphFeature) > MIN_PRIORITY;
@@ -308,10 +304,7 @@ public final class LayoutAlgorithmData implements ILayoutAlgorithmData, ILayoutM
     }
 
     /**
-     * Returns an instance pool for layout providers. If multiple threads execute the layout
-     * algorithm in parallel, each thread should use its own instance of the algorithm.
-     *
-     * @return a layout provider instance pool
+     * {@inheritDoc}}
      */
     public InstancePool<AbstractLayoutProvider> getInstancePool() {
         return providerPool;

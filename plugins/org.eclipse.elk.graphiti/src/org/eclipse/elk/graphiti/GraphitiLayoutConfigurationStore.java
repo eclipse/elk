@@ -62,13 +62,6 @@ public class GraphitiLayoutConfigurationStore implements ILayoutConfigurationSto
     /**
      * {@inheritDoc}
      */
-    public Object getContext() {
-        return pictogramElement;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public EditingDomain getEditingDomain() {
         return editingDomain;
     }

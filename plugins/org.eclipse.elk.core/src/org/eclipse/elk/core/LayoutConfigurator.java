@@ -30,7 +30,9 @@ import com.google.common.collect.Maps;
 /**
  * A layout configurator is a graph element visitor that applies layout option values. It can be
  * used to modify the layout configuration of a graph after it has been created, e.g. in order to
- * apply multiple layouts with different configurations.
+ * apply multiple layouts with different configurations. Create an instance and then use one of the
+ * {@code configure(..)} methods to obtain a property holder that can be filled with values for
+ * layout options.
  */
 public class LayoutConfigurator implements IGraphElementVisitor {
     
@@ -83,7 +85,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * Add and return a property holder for the given element. If such a property holder is
      * already present, the previous instance is returned.
      */
-    public IPropertyHolder add(KGraphElement element) {
+    public IPropertyHolder configure(KGraphElement element) {
         MapPropertyHolder result = elementOptionMap.get(element);
         if (result == null) {
             result = new MapPropertyHolder();
@@ -103,7 +105,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * Add and return a property holder for the given element class. If such a property holder is
      * already present, the previous instance is returned.
      */
-    public IPropertyHolder add(Class<? extends KGraphElement> elementClass) {
+    public IPropertyHolder configure(Class<? extends KGraphElement> elementClass) {
         MapPropertyHolder result = classOptionMap.get(elementClass);
         if (result == null) {
             result = new MapPropertyHolder();

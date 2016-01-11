@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+/**
+ * Interface for indicators of task cancelation. Possibly long-running tasks such as layout algorithms
+ * should query the indicator from time to time in order to allow users to abort the process.
+ */
 public interface IElkCancelIndicator {
 
     /**

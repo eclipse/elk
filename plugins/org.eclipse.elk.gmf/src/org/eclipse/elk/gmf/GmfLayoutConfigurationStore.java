@@ -72,13 +72,6 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
     /**
      * {@inheritDoc}
      */
-    public Object getContext() {
-        return editPart;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
     public Object getOptionValue(String optionId) {
         View view = editPart.getNotationView();
         if (view != null) {

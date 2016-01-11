@@ -18,7 +18,10 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 
 /**
  * Persistence layer for layout configuration. Implementations are used by the Layout view to modify
- * values of layout options for selected diagram elements.
+ * values of layout options for selected diagram elements. An instance of such an implementation should
+ * always be linked to a specific context, e.g. a selected node of a diagram. The {@link #getParent()}
+ * method allows to navigate to the parent context, so it should return a new instance (or {@code null}
+ * if this is already the top-level context).
  *
  * @author msp
  */

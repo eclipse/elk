@@ -12,6 +12,7 @@ package org.eclipse.elk.core;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KPoint;
@@ -23,7 +24,6 @@ import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
@@ -37,9 +37,6 @@ import com.google.common.collect.Lists;
  * @author msp
  */
 public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
-    
-    /** The default layout algorithm to apply if nothing else is specified. */
-    public static final String DEFAULT_LAYOUT_ALGORITHM = "org.eclipse.elk.layered";
     
     private final Function<String, ILayoutAlgorithmData> algorithmResolver;
     
@@ -182,13 +179,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     private ILayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
-        String layoutHint = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
-        ILayoutAlgorithmData result = algorithmResolver.apply(layoutHint);
+        String algorithmId = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
+        ILayoutAlgorithmData result = algorithmResolver.apply(algorithmId);
         if (result == null) {
-            if (layoutHint == null || layoutHint.isEmpty()) {
-                throw new UnsupportedConfigurationException("The layout algorithm registry is empty.");
+            if (algorithmId == null || algorithmId.isEmpty()) {
+                throw new UnsupportedConfigurationException("No layout algorithm has been specified (" + layoutNode + ").");
             } else {
-                throw new UnsupportedConfigurationException("Layout algorithm not found: " + layoutHint);
+                throw new UnsupportedConfigurationException("Layout algorithm not found: " + algorithmId);
             }
         }
         return result;

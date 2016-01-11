@@ -38,18 +38,18 @@ public class LayoutConfigurationManager {
     public static final String RECURSIVE_SUFFIX = "#recursive";
     
     /**
-     * Return a layout algorithm data instance for the given layout hint. The hint can be attached
-     * to some graph element in order to select an algorithm. If no hint is given, a default
+     * Return a layout algorithm data instance for the given layout algorithm identifier. The id can be
+     * attached to some graph element in order to select an algorithm. If no id is given, a default
      * algorithm is selected.
      * 
      * @return a layout algorithm, or {@code null} if none was found for the given hint
      */
-    public LayoutAlgorithmData getAlgorithm(String layoutHint) {
-        if (layoutHint == null || layoutHint.isEmpty()) {
-            layoutHint = "org.eclipse.elk.layered";
+    public LayoutAlgorithmData getAlgorithm(String algorithmId) {
+        if (algorithmId == null || algorithmId.isEmpty()) {
+            algorithmId = "org.eclipse.elk.layered";
         }
         LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
-        LayoutAlgorithmData result = layoutDataService.getAlgorithmData(layoutHint);
+        LayoutAlgorithmData result = layoutDataService.getAlgorithmData(algorithmId);
         if (result != null) {
             return result;
         }
@@ -265,7 +265,7 @@ public class LayoutConfigurationManager {
                     if (value instanceof String) {
                         value = optionData.parseValue((String) value);
                     }
-                    configurator.add(element).setProperty(optionData, value);
+                    configurator.configure(element).setProperty(optionData, value);
                 }
             }
         }

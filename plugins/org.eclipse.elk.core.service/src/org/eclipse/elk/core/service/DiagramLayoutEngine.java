@@ -96,14 +96,11 @@ public class DiagramLayoutEngine {
                         return targets.contains(LayoutOptionData.Target.NODES)
                                 || targets.contains(LayoutOptionData.Target.PARENTS);
                     }
-                }
-                if (e instanceof KEdge) {
+                } else if (e instanceof KEdge) {
                     return targets.contains(LayoutOptionData.Target.EDGES);
-                }
-                if (e instanceof KPort) {
+                } else if (e instanceof KPort) {
                     return targets.contains(LayoutOptionData.Target.PORTS);
-                }
-                if (e instanceof KLabel) {
+                } else if (e instanceof KLabel) {
                     return targets.contains(LayoutOptionData.Target.LABELS);
                 }
             }
@@ -128,7 +125,7 @@ public class DiagramLayoutEngine {
      * Use a {@link LayoutConfigurator} to configure layout options:
      * <pre>
      * DiagramLayoutEngine.Setup setup = new DiagramLayoutEngine.Setup();
-     * setup.addLayout().add(KNode.class)
+     * setup.addLayoutRun().configure(KNode.class)
      *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.layered")
      *         .setProperty(LayoutOptions.SPACING, 30.0f)
      *         .setProperty(LayoutOptions.ANIMATE, true);
@@ -140,9 +137,9 @@ public class DiagramLayoutEngine {
      * Example:
      * <pre>
      * DiagramLayoutEngine.Setup setup = new DiagramLayoutEngine.Setup();
-     * setup.addLayout().add(KNode.class)
+     * setup.addLayoutRun().configure(KNode.class)
      *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.force");
-     * setup.addLayout().setClearLayout(true).add(KNode.class)
+     * setup.addLayoutRun().setClearLayout(true).configure(KNode.class)
      *         .setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.kiml.libavoid");
      * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart, setup);
      * </pre>
@@ -175,14 +172,14 @@ public class DiagramLayoutEngine {
         }
         
         /**
-         * Add a layout phase with the given configurator. Each invocation of this method corresponds
+         * Add a layout run with the given configurator. Each invocation of this method corresponds
          * to a separate layout execution on the whole input graph. This can be used to apply
          * multiple layout algorithms one after another, where each algorithm execution can reuse
          * results from previous executions.
          * 
          * @return the given configurator
          */
-        public LayoutConfigurator addLayout(LayoutConfigurator configurator) {
+        public LayoutConfigurator addLayoutRun(LayoutConfigurator configurator) {
             configurators.add(configurator);
             configurator.setFilter(OPTION_TARGET_FILTER);
             return configurator;
@@ -191,20 +188,17 @@ public class DiagramLayoutEngine {
         /**
          * Convenience method for {@code addLayout(new LayoutConfigurator())}.
          */
-        public LayoutConfigurator addLayout() {
-            return addLayout(new LayoutConfigurator());
+        public LayoutConfigurator addLayoutRun() {
+            return addLayoutRun(new LayoutConfigurator());
         }
     }
     
     private final LayoutConfigurationManager configManager = new LayoutConfigurationManager();
     
     /** the graph layout engine for executing layout algorithms on the hierarchy levels of a graph. */
-    private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine(
-        new Function<String, ILayoutAlgorithmData>() {
-            public ILayoutAlgorithmData apply(final String input) {
-                return configManager.getAlgorithm(input);
-            }
-        });
+    private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine((String input) -> {
+        return configManager.getAlgorithm(input);
+    });
     
     /** the executor service used to perform layout operations. */
     private final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -537,7 +531,7 @@ public class DiagramLayoutEngine {
             final LayoutMapping<T> layoutMapping) {
         LayoutConfigurator diagramConfig = configManager.createConfigurator(layoutManager, layoutMapping);
         if (setup.configurators.isEmpty()) {
-            setup.addLayout(diagramConfig);
+            setup.addLayoutRun(diagramConfig);
         } else {
             ListIterator<LayoutConfigurator> configIter = setup.configurators.listIterator();
             while (configIter.hasNext()) {
@@ -592,7 +586,7 @@ public class DiagramLayoutEngine {
                     for (KNode child : parent.getChildren()) {
                         if (child != node) {
                             for (LayoutConfigurator c : setup.configurators) {
-                                IPropertyHolder childConfig = c.add(child);
+                                IPropertyHolder childConfig = c.configure(child);
                                 // Do not layout the content of the child node
                                 childConfig.setProperty(LayoutOptions.NO_LAYOUT, true);
                                 // Do not change the size of the child node
