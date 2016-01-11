@@ -19,7 +19,7 @@ import java.util.List;
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
-public interface IElkProgressMonitor {
+public interface IElkProgressMonitor extends IElkCancelIndicator {
 
     /** constant indicating an unknown amount of work. */
     float UNKNOWN_WORK = -1;
@@ -54,13 +54,6 @@ public interface IElkProgressMonitor {
      * @param work number of work units
      */
     void worked(float work);
-
-    /**
-     * Returns whether cancellation of the task has been requested.
-     * 
-     * @return true if cancellation has been requested
-     */
-    boolean isCanceled();
 
     /**
      * Creates a new sub-task that will complete the given amount of work units

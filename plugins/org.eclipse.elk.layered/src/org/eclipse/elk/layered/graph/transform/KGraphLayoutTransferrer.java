@@ -25,7 +25,7 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KLabel;
 import org.eclipse.elk.graph.KNode;
@@ -290,7 +290,7 @@ class KGraphLayoutTransferrer {
             if (graphProps.contains(GraphProperties.EXTERNAL_PORTS)) {
                 // Ports have positions assigned, the graph's size is final
                 knodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-                KimlUtil.resizeNode(
+                ElkUtil.resizeNode(
                         knode,
                         (float) actualGraphSize.x,
                         (float) actualGraphSize.y,
@@ -298,7 +298,7 @@ class KGraphLayoutTransferrer {
                         true);
             } else {
                 // Ports have not been positioned yet - leave this for next layouter
-                KimlUtil.resizeNode(
+                ElkUtil.resizeNode(
                         knode,
                         (float) actualGraphSize.x,
                         (float) actualGraphSize.y,

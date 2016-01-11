@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.views;
 
-import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DialogCellEditor;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -104,7 +104,7 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
                 null);
         dialog.setInitialSelections((String[]) getValue());
         
-        if (dialog.open() == AlgorithmSelectionDialog.OK) {
+        if (dialog.open() == Window.OK) {
             Object[] result = dialog.getResult();
             String[] stringResult = new String[result.length];
             

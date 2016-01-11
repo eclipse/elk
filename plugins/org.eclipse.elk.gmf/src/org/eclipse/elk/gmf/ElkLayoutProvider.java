@@ -34,8 +34,7 @@ import com.google.common.collect.Iterables;
 
 /**
  * GMF layout provider that executes ELK layout. This enables the execution of ELK layout
- * using the default "Arrange All" button. However, layout of selection is not possible with
- * this provider.
+ * using the default "Arrange All" button.
  *
  * @author msp
  * @author chsch
@@ -75,8 +74,7 @@ public class ElkLayoutProvider extends AbstractProvider implements ILayoutNodePr
                 public boolean apply(final Object o) {
                     return o instanceof ShapeNodeEditPart
                             && !(o instanceof AbstractBorderItemEditPart)
-                            && !(o instanceof AbstractImageEditPart)
-                            && !GmfLayoutConfig.isNoLayout((ShapeNodeEditPart) o);
+                            && !(o instanceof AbstractImageEditPart);
                 }
             });
         } else {
@@ -86,8 +84,7 @@ public class ElkLayoutProvider extends AbstractProvider implements ILayoutNodePr
                     IGraphicalEditPart editPart = findEditPart(parent, layoutNode.getNode());
                     return editPart instanceof ShapeNodeEditPart
                             && !(editPart instanceof AbstractBorderItemEditPart)
-                            && !(editPart instanceof AbstractImageEditPart)
-                            && !GmfLayoutConfig.isNoLayout(editPart);
+                            && !(editPart instanceof AbstractImageEditPart);
                 }
             });
         }

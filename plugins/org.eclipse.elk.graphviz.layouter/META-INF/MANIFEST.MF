@@ -10,6 +10,7 @@ Require-Bundle: org.eclipse.ui;resolution:=optional,
  org.eclipse.xtext;bundle-version="2.0.0",
  org.eclipse.elk.graph,
  org.eclipse.elk.core,
+ org.eclipse.elk.core.service;resolution:=optional,
  org.eclipse.elk.graphviz.dot
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse Modeling Project

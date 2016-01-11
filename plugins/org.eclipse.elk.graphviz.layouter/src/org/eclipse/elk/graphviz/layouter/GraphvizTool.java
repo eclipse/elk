@@ -202,8 +202,8 @@ public class GraphvizTool {
             try {
                 process = Runtime.getRuntime().exec(args.toArray(new String[args.size()]));
             } catch (IOException exception) {
-                throw new WrappedException(exception, "Failed to start Graphviz process."
-                        + " Please check your Graphviz installation.");
+                throw new WrappedException("Failed to start Graphviz process."
+                        + " Please check your Graphviz installation.", exception);
             }
         }
     }

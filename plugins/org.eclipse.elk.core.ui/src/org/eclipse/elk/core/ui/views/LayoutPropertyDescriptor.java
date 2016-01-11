@@ -14,8 +14,8 @@ package org.eclipse.elk.core.ui.views;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.eclipse.elk.core.LayoutOptionData;
 import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.jface.viewers.CellEditor;

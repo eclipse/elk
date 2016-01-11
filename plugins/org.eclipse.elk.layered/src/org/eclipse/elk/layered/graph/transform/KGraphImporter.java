@@ -27,7 +27,7 @@ import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.KGraphAdapters;
 import org.eclipse.elk.core.util.labelspacing.LabelSpaceCalculation;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Insets;
@@ -226,7 +226,7 @@ class KGraphImporter {
                         // the graph that represents the node's insides. Otherwise, it will be placed in
                         // the graph that represents the node's parent.
                         KNode parentKGraph = knode;
-                        if (!KimlUtil.isDescendant(kedge.getTarget(), knode) && !isInsideSelfLoop) {
+                        if (!ElkUtil.isDescendant(kedge.getTarget(), knode) && !isInsideSelfLoop) {
                             parentKGraph = knode.getParent();
                         }
                         
@@ -415,7 +415,7 @@ class KGraphImporter {
         // If we don't have a proper port side, calculate one
         Direction layoutDirection = lgraph.getProperty(LayoutOptions.DIRECTION);
         if (portSide == PortSide.UNDEFINED) {
-            portSide = KimlUtil.calcPortSide(kport, layoutDirection);
+            portSide = ElkUtil.calcPortSide(kport, layoutDirection);
             kportLayout.setProperty(LayoutOptions.PORT_SIDE, portSide);
         }
         
@@ -427,7 +427,7 @@ class KGraphImporter {
             if (kportLayout.getXpos() == 0.0f && kportLayout.getYpos() == 0.0f) {
                 portOffset = 0.0f;
             } else {
-                portOffset = KimlUtil.calcPortOffset(kport, portSide);
+                portOffset = ElkUtil.calcPortOffset(kport, portSide);
             }
             kportLayout.setProperty(LayoutOptions.OFFSET, portOffset);
         }
@@ -620,13 +620,13 @@ class KGraphImporter {
         for (KEdge edge : kport.getEdges()) {
             if (edge.getSource() == kport.getNode()) {
                 // check if the edge's target is a descendant of its source node
-                if (KimlUtil.isDescendant(edge.getTarget(), kport.getNode())) {
+                if (ElkUtil.isDescendant(edge.getTarget(), kport.getNode())) {
                     lport.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
                     break;
                 }
             } else {
                 // check if the edge's source is a descendant of its source node
-                if (KimlUtil.isDescendant(edge.getSource(), kport.getNode())) {
+                if (ElkUtil.isDescendant(edge.getSource(), kport.getNode())) {
                     lport.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
                     break;
                 }
@@ -745,7 +745,7 @@ class KGraphImporter {
             KVector sourcePoint = null;
             if (sourceLNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
                 sourcePoint = kedgeLayout.getSourcePoint().createVector();
-                if (KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+                if (ElkUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
                     // External source port: put it on the west side
                     portType = PortType.INPUT;
                     sourcePoint.add(sourceLNode.getPosition());
@@ -762,14 +762,14 @@ class KGraphImporter {
                 if (kedge.getSource().getParent() != kedge.getTarget().getParent()) {
                     // Cross-hierarchy edge: correct the target position
                     KNode referenceNode = kedge.getSource();
-                    if (!KimlUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
+                    if (!ElkUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
                         referenceNode = referenceNode.getParent();
-                        if (KimlUtil.isDescendant(kedge.getSource(), kedge.getTarget())) {
+                        if (ElkUtil.isDescendant(kedge.getSource(), kedge.getTarget())) {
                             portType = PortType.OUTPUT;
                         }
                     }
-                    KimlUtil.toAbsolute(targetPoint, referenceNode);
-                    KimlUtil.toRelative(targetPoint, kedge.getTarget().getParent());
+                    ElkUtil.toAbsolute(targetPoint, referenceNode);
+                    ElkUtil.toRelative(targetPoint, kedge.getTarget().getParent());
                 }
             }
             targetLPort = LGraphUtil.createPort(

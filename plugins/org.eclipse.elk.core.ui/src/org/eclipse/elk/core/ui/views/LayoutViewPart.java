@@ -10,37 +10,24 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.views;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.LayoutAlgorithmData;
-import org.eclipse.elk.core.LayoutConfigService;
-import org.eclipse.elk.core.LayoutMetaDataService;
-import org.eclipse.elk.core.LayoutOptionData;
-import org.eclipse.elk.core.config.DefaultLayoutConfig;
-import org.eclipse.elk.core.config.ILayoutConfig;
-import org.eclipse.elk.core.config.LayoutContext;
-import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.ExtensionLayoutConfigService;
 import org.eclipse.elk.core.service.IDiagramLayoutManager;
+import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.LayoutManagersService;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.util.Maybe;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -52,6 +39,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -72,7 +60,7 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
-public class LayoutViewPart extends ViewPart implements ISelectionListener {
+public class LayoutViewPart extends ViewPart {
 
     /** the view identifier. */
     public static final String VIEW_ID = "org.eclipse.elk.core.views.layout";
@@ -80,25 +68,36 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     public static final String PREF_CATEGORIES = "view.categories";
     /** preference identifier for enabling advanced options. */
     public static final String PREF_ADVANCED = "view.advanced";
-    /** preference identifier for the title font. */
-    private static final String TITLE_FONT = "org.eclipse.elk.core.ui.views.LayoutViewPart.TITLE_FONT";
     
     /** the form toolkit used to create forms. */
     private FormToolkit toolkit;
-    /** the form container for the property sheet page. */
-    private Form form;
     /** the page that is displayed in this view part. */
     private PropertySheetPage page;
     /** the property source provider that keeps track of created property sources. */
     private final LayoutPropertySourceProvider propSourceProvider = new LayoutPropertySourceProvider();
+    
+    /** the selection listener. */
+    private final ISelectionListener selectionListener = new ISelectionListener() {
+        public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
+            if (part instanceof IEditorPart && propSourceProvider.getWorkbenchPart() instanceof IEditorPart
+                    && part != propSourceProvider.getWorkbenchPart()) {
+                // If the editor is switched, clear the view content even if the new editor is not supported
+                propSourceProvider.setWorkbenchPart(null);
+            }
+            IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(part, null);
+            if (manager != null) {
+                propSourceProvider.setWorkbenchPart(part);
+                page.selectionChanged(part, selection);
+            }
+        }
+    };
+    
     /** the part listener for reacting to closed workbench parts. */
     private final IPartListener partListener = new IPartListener() {
-
         public void partClosed(final IWorkbenchPart part) {
             if (propSourceProvider.getWorkbenchPart() == part) {
-                // reset esp. the workbenchPart field in order to ensure proper
-                //  garbage collection of that workbench part instance
-                propSourceProvider.resetContext(null);
+                // Reset the workbench part in order to ensure proper garbage collection
+                propSourceProvider.setWorkbenchPart(null);
             }
         }
         public void partOpened(final IWorkbenchPart part) { }
@@ -163,21 +162,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         // CHECKSTYLEOFF MagicNumber
         
         toolkit = new FormToolkit(parent.getDisplay());
-        form = toolkit.createForm(parent);
-        
-        // Set the form's heading
-        // (see org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle)
-        toolkit.decorateFormHeading(form);
-        form.setText("");
-
-        if (!JFaceResources.getFontRegistry().hasValueFor(TITLE_FONT)) {
-            FontData[] fontData = JFaceResources.getFontRegistry().getBold(
-                    JFaceResources.DEFAULT_FONT).getFontData();
-            /* title font is 2pt larger than that used in the tabs. */  
-            fontData[0].setHeight(fontData[0].getHeight() + 2);
-            JFaceResources.getFontRegistry().put(TITLE_FONT, fontData);
-        }
-        form.setFont(JFaceResources.getFont(TITLE_FONT));
+        Form form = toolkit.createForm(parent);
         
         // Content
         Composite content = form.getBody();
@@ -204,9 +189,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
         addPopupActions(page.getControl().getMenu());
         IMenuManager menuManager = actionBars.getMenuManager();
         menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
-        ExtensionLayoutConfigService.fillConfigMenu(menuManager);
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
-        toolBarManager.add(new SelectionInfoAction(this, Messages.getString("kiml.ui.37")));
         
         // CHECKSTYLEON MagicNumber
         // set the stored value of the categories button
@@ -234,12 +217,12 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
             if (activePart != null && selection != null) {
                 workbenchWindow.getWorkbench().getDisplay().asyncExec(new Runnable() {
                     public void run() {
-                        selectionChanged(activePart, selection);
+                        selectionListener.selectionChanged(activePart, selection);
                     }
                 });
             }
         }
-        workbenchWindow.getSelectionService().addSelectionListener(this);
+        workbenchWindow.getSelectionService().addSelectionListener(selectionListener);
         workbenchWindow.getPartService().addPartListener(partListener);
     }
 
@@ -280,9 +263,9 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                     advancedItem.getAction().isChecked());
         }
         // dispose the view part
-        getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+        getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(selectionListener);
         getSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
-        propSourceProvider.resetContext(null);
+        propSourceProvider.setWorkbenchPart(null);
         toolkit.dispose();
         super.dispose();
     }
@@ -293,22 +276,10 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     public void refresh() {
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
-                propSourceProvider.resetContext();
+                propSourceProvider.clearCache();
                 page.refresh();
             }
         });
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-        IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(part, null);
-        if (manager != null) {
-            propSourceProvider.resetContext(part);
-            page.selectionChanged(part, selection);
-            setPartText();
-        }
     }
     
     /**
@@ -324,7 +295,7 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
             if (data instanceof IPropertySheetEntry) {
                 entries.add((IPropertySheetEntry) data);
             } else {
-                // a category was selected, apply options for all children
+                // A category was selected, apply options for all children
                 for (TreeItem childItem : item.getItems()) {
                     data = childItem.getData();
                     if (data instanceof IPropertySheetEntry) {
@@ -344,35 +315,22 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
     private void addPopupActions(final Menu menu) {
         final DiagramDefaultAction applyOptionAction
                 = new DiagramDefaultAction(this, Messages.getString("kiml.ui.10"));
-        final DiagramPartDefaultAction diagramPartDefaultAction
-                = new DiagramPartDefaultAction(this, "", false);
-        final DiagramPartDefaultAction modelDefaultAction
-                = new DiagramPartDefaultAction(this, "", true);
-        final DiagramTypeDefaultAction diagramTypeDefaultAction
-                = new DiagramTypeDefaultAction(this, "");
         
         // dirty hack to add actions to an existing menu without having the menu manager
         menu.addMenuListener(new MenuAdapter() {
             public void menuShown(final MenuEvent event) {
-                MenuItem diagramDefaultItem = null, diagramTypeDefaultItem = null,
-                        diagramPartDefaultItem = null, modelDefaultItem = null;
+                MenuItem diagramDefaultItem = null;
                 for (MenuItem item : menu.getItems()) {
                     if (item.getData() instanceof IContributionItem) {
                         String itemId = ((IContributionItem) item.getData()).getId();
                         if (DiagramDefaultAction.ACTION_ID.equals(itemId)) {
                             diagramDefaultItem = item;
-                        } else if (DiagramPartDefaultAction.EDIT_PART_ACTION_ID.equals(itemId)) {
-                            diagramPartDefaultItem = item;
-                        } else if (DiagramPartDefaultAction.MODEL_ACTION_ID.equals(itemId)) {
-                            modelDefaultItem = item;
-                        } else if (DiagramTypeDefaultAction.ACTION_ID.equals(itemId)) {
-                            diagramTypeDefaultItem = item;
                         }
                     }
                 }
                 
-                // add the "set as default for this diagram" action
-                if (propSourceProvider.hasContent()) {
+                // Add the "set as default for this diagram" action
+                if (propSourceProvider.getConfigurationStore() != null) {
                     if (diagramDefaultItem == null) {
                         ContributionItem contributionItem = new ActionContributionItem(
                                 applyOptionAction);
@@ -384,224 +342,22 @@ public class LayoutViewPart extends ViewPart implements ISelectionListener {
                 } else if (diagramDefaultItem != null) {
                     diagramDefaultItem.setEnabled(false);
                 }
-                
-                // add the "set as default for ... in this context" action
-                String diagramPartName = getReadableName(false, true);
-                if (diagramPartName != null && propSourceProvider.hasContent()) {
-                    if (diagramPartDefaultItem == null) {
-                        diagramPartDefaultAction.setText(Messages.getString("kiml.ui.16")
-                                + " " + diagramPartName);
-                        ContributionItem contributionItem = new ActionContributionItem(
-                                diagramPartDefaultAction);
-                        contributionItem.setId(DiagramPartDefaultAction.EDIT_PART_ACTION_ID);
-                        contributionItem.fill(menu, -1);
-                    } else {
-                        diagramPartDefaultItem.setEnabled(true);
-                        diagramPartDefaultItem.setText(Messages.getString("kiml.ui.16")
-                                + " " + diagramPartName);
-                    }
-                } else if (diagramPartDefaultItem != null) {
-                    diagramPartDefaultItem.setEnabled(false);
-                }
-                    
-                // add the "set as default for all ..." action
-                String modelName = getReadableName(true, true);
-                if (modelName != null && propSourceProvider.hasContent()) {
-                    if (modelDefaultItem == null) {
-                        modelDefaultAction.setText(Messages.getString("kiml.ui.34")
-                                + " " + modelName);
-                        ContributionItem contributionItem = new ActionContributionItem(
-                                modelDefaultAction);
-                        contributionItem.setId(DiagramPartDefaultAction.MODEL_ACTION_ID);
-                        contributionItem.fill(menu, -1);
-                    } else {
-                        modelDefaultItem.setEnabled(true);
-                        modelDefaultItem.setText(Messages.getString("kiml.ui.34")
-                                + " " + modelName);
-                    }
-                } else if (modelDefaultItem != null) {
-                    modelDefaultItem.setEnabled(false);
-                }
-                
-                // add the "set as default for diagram type" action
-                LayoutOptionData diagramTypeOption = LayoutMetaDataService.getInstance().getOptionData(
-                        LayoutOptions.DIAGRAM_TYPE.getId());
-                LayoutContext context = propSourceProvider.getContext();
-                ILayoutConfig config = DiagramLayoutEngine.INSTANCE.getOptionManager().createConfig(
-                        context.getProperty(LayoutContext.DOMAIN_MODEL));
-                String diagramType = (String) config.getOptionValue(diagramTypeOption, context);
-                String diagramTypeName = LayoutConfigService.getInstance()
-                        .getDiagramTypeName(diagramType);
-                if (diagramTypeName != null) {
-                    // make the diagram type name plural, if it does not already end with "s"
-                    String dtdText;
-                    if (diagramTypeName.endsWith("s")) {
-                        dtdText = Messages.getString("kiml.ui.34") + " " + diagramTypeName;
-                    } else {
-                        dtdText = Messages.getString("kiml.ui.34") + " " + diagramTypeName + "s";
-                    }
-                    if (diagramTypeDefaultItem == null) {
-                        diagramTypeDefaultAction.setText(dtdText);
-                        ContributionItem contributionItem = new ActionContributionItem(
-                                diagramTypeDefaultAction);
-                        contributionItem.setId(DiagramTypeDefaultAction.ACTION_ID);
-                        contributionItem.fill(menu, -1);
-                    } else {
-                        diagramTypeDefaultItem.setEnabled(true);
-                        diagramTypeDefaultItem.setText(dtdText);
-                    }
-                    diagramTypeDefaultAction.setDiagramType(diagramType);
-                } else if (diagramTypeDefaultItem != null) {
-                    diagramTypeDefaultItem.setEnabled(false);
-                }
             }
         });
     }
     
     /**
-     * Builds a readable name for the current focus object.
-     * 
-     * @param plural if true, the plural form is created
-     * @return a readable name for the edit part, or {@code null} if the focus object
-     *     cannot be handled in this context
-     */
-    private String getReadableName(final boolean forDomainModel, final boolean plural) {
-        if (!propSourceProvider.hasContent()) {
-            // the property source provider has no cached content, so we cannot get any context info
-            return "";
-        }
-        
-        LayoutContext context = propSourceProvider.getContext();
-        Object model = context.getProperty(LayoutContext.DOMAIN_MODEL);
-        Object diagramPart = context.getProperty(LayoutContext.DIAGRAM_PART);
-        String clazzName = null;
-        if (model instanceof EObject) {
-            clazzName = ((EObject) model).eClass().getInstanceTypeName();
-        } else if (model != null) {
-            clazzName = model.getClass().getName();
-        }
-        
-        if (clazzName == null) {
-            if (plural || diagramPart == null) {
-                return null;
-            }
-            clazzName = diagramPart.getClass().getName();
-            // omit the suffix "EditPart" if found
-            if (clazzName.endsWith("EditPart")) {
-                clazzName = clazzName.substring(0, clazzName.length() - "EditPart".length());
-            }
-        }
-        int lastDotIndex = clazzName.lastIndexOf('.');
-        if (lastDotIndex >= 0) {
-            clazzName = clazzName.substring(lastDotIndex + 1);
-        }
-        StringBuilder stringBuilder = new StringBuilder();
-        int length = clazzName.length();
-        if (clazzName.endsWith("Impl")) {
-            length -= "Impl".length();
-        }
-        for (int i = 0; i < length; i++) {
-            char c = clazzName.charAt(i);
-            if (i > 0 && Character.isUpperCase(c)
-                    && !Character.isUpperCase(clazzName.charAt(i - 1))) {
-                stringBuilder.append(' ');
-            }
-            if (!Character.isDigit(c)) {
-                stringBuilder.append(c);
-            }
-        }
-        if (plural && !clazzName.endsWith("s")) {
-            stringBuilder.append('s');
-        }
-        if (!forDomainModel) {
-            stringBuilder.append(" " + Messages.getString("kiml.ui.33"));
-        }
-        return stringBuilder.toString();
-    }
-
-    /**
-     * Returns the first diagram part in the current selection for which options are shown.
-     * 
-     * @return the selected diagram part, or {@code null} if there is none
-     */
-    public Object getCurrentDiagramPart() {
-        if (propSourceProvider.hasContent()) {
-            return propSourceProvider.getContext().getProperty(LayoutContext.DIAGRAM_PART);
-        }
-        return null;
-    }
-
-    /**
-     * Returns the currently active workbench part that is tracked by the layout view.
-     * 
-     * @return the current workbench part, or {@code null} if there is none
+     * Return the currently tracked workbench part, or {@code null} if none is active.
      */
     public IWorkbenchPart getCurrentWorkbenchPart() {
         return propSourceProvider.getWorkbenchPart();
     }
-
-    /**
-     * Returns the current layout algorithm data.
-     * 
-     * @return the current layout algorithm data
-     */
-    public LayoutAlgorithmData[] getCurrentLayouterData() {
-        // SUPPRESS CHECKSTYLE NEXT MagicNumber
-        HashSet<LayoutAlgorithmData> data = new HashSet<LayoutAlgorithmData>(4);
-        LayoutContext context = propSourceProvider.getContext();
-        LayoutAlgorithmData lad = context.getProperty(DefaultLayoutConfig.CONTENT_ALGO);
-        if (lad != null) {
-            data.add(lad);
-        }
-        lad = context.getProperty(DefaultLayoutConfig.CONTAINER_ALGO);
-        if (lad != null) {
-            data.add(lad);
-        }
-        return data.toArray(new LayoutAlgorithmData[data.size()]);
-    }
-
-    /**
-     * Sets a text line for the view part.
-     */
-    private void setPartText() {
-        if (propSourceProvider.hasContent()) {
-            StringBuilder textBuffer = new StringBuilder();
-            String name = getReadableName(true, false);
-            if (name != null) {
-                textBuffer.append(name);
-            }
-            Object model = propSourceProvider.getContext().getProperty(LayoutContext.DOMAIN_MODEL);
-            if (model != null) {
-                String modelName = getProperty(model, "Name");
-                if (modelName == null) {
-                    modelName = getProperty(model, "Label");
-                }
-                if (modelName == null) {
-                    modelName = getProperty(model, "Id");
-                }
-                if (modelName != null) {
-                    textBuffer.append(" '" + modelName + "'");
-                }
-            }
-            form.setText(textBuffer.toString());
-        } else {
-            form.setText("");
-        }
-    }
     
     /**
-     * Gets a property of the given object by invoking its getter method.
-     * 
-     * @param object the object from which the property shall be fetched
-     * @param property the name of a property, starting with a capital
-     * @return the named property, or {@code null} if there is no such property
+     * Return the currently active configuration store, or {@code null} if none is active.
      */
-    private static String getProperty(final Object object, final String property) {
-        try {
-            return (String) object.getClass().getMethod("get" + property).invoke(object);
-        } catch (Exception exception) {
-            return null;
-        }
+    public ILayoutConfigurationStore getCurrentConfigurationStore() {
+        return propSourceProvider.getConfigurationStore();
     }
 
 }

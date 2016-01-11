@@ -2,26 +2,20 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.elk.core.layoutProviders">
+         point="org.eclipse.elk.core.service.layoutProviders">
       <layoutAlgorithm
             category="org.eclipse.elk.category.elk"
             class="org.eclipse.elk.force.ForceLayoutProvider"
             description="Force-based algorithm provided by the Eclipse Layout Kernel. Implements methods that follow physical analogies by simulating forces that move the nodes into a balanced distribution. Currently the original Eades model and the Fruchterman - Reingold model are supported."
-            id="org.eclipse.elk.algorithm.force"
+            id="org.eclipse.elk.force"
             name="ELK Force"
             preview="images/force.png"
             type="org.eclipse.elk.type.force">
-         <supportedDiagram
-               priority="8"
-               type="org.eclipse.elk.diagram.general">
-         </supportedDiagram>
          <supportedFeature
-               feature="MULTI_EDGES"
-               priority="-2">
+               feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS"
-               priority="-4">
+               feature="EDGE_LABELS">
          </supportedFeature>
          <knownOption
                default="1"
@@ -76,22 +70,16 @@
             default="100"
             description="The number of iterations on the force model."
             id="org.eclipse.elk.force.iterations"
-            lowerBound="1"
             name="Iterations"
-            type="int"
-            upperBound="10000"
-            variance="100.0">
+            type="int">
       </layoutOption>
       <layoutOption
             appliesTo="edges"
             default="0"
             description="Determines how many bend points are added to the edge; such bend points are regarded as repelling particles in the force model"
             id="org.eclipse.elk.force.repulsivePower"
-            lowerBound="0"
             name="Repulsive Power"
-            type="int"
-            upperBound="100"
-            variance="2.0">
+            type="int">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -99,11 +87,8 @@
             default="0.001"
             description="The temperature is used as a scaling factor for particle displacements."
             id="org.eclipse.elk.force.temperature"
-            lowerBound="0.00001"
             name="FR Temperature"
-            type="float"
-            upperBound="100.0"
-            variance="0.1">
+            type="float">
          <dependency
                option="org.eclipse.elk.force.model"
                value="FRUCHTERMAN_REINGOLD">
@@ -115,11 +100,8 @@
             default="5.0"
             description="Factor for repulsive forces in Eades' model."
             id="org.eclipse.elk.force.repulsion"
-            lowerBound="0.01"
             name="Eades Repulsion"
-            type="float"
-            upperBound="100.0"
-            variance="2.0">
+            type="float">
          <dependency
                option="org.eclipse.elk.force.model"
                value="EADES">

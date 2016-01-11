@@ -32,7 +32,7 @@ import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
 
@@ -68,7 +68,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Draw2D Directed Graph layout", 1);
         
         DirectedGraph graph = buildDraw2dGraph(layoutNode);
@@ -118,7 +118,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         for (KNode knode : layoutNode.getChildren()) {
             Node draw2dNode = new Node(knode);
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            KimlUtil.resizeNode(knode);
+            ElkUtil.resizeNode(knode);
             draw2dNode.width = (int) nodeLayout.getWidth();
             draw2dNode.height = (int) nodeLayout.getHeight();
             nodeMap.put(knode, draw2dNode);
@@ -187,7 +187,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         Dimension layoutSize = graph.getLayoutSize();
         float width = insets.getLeft() + layoutSize.width + insets.getRight();
         float height = insets.getTop() + layoutSize.height + insets.getBottom();
-        KimlUtil.resizeNode(parentNode, width, height, false, true);
+        ElkUtil.resizeNode(parentNode, width, height, false, true);
     }
 
 }

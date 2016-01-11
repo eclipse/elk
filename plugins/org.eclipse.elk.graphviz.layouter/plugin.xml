@@ -18,7 +18,7 @@
       </initializer>
    </extension>
    <extension
-         point="org.eclipse.elk.core.layoutProviders">
+         point="org.eclipse.elk.core.service.layoutProviders">
       <category
             id="org.eclipse.elk.category.graphviz"
             name="Graphviz">
@@ -32,28 +32,17 @@
             parameter="DOT"
             preview="images/dot.png"
             type="org.eclipse.elk.type.layered">
-         <supportedDiagram
-               priority="10"
-               type="org.eclipse.elk.diagram.general">
-         </supportedDiagram>
-         <supportedDiagram
-               priority="10"
-               type="org.eclipse.elk.diagram.stateMachine">
-         </supportedDiagram>
          <supportedFeature
-               feature="SELF_LOOPS"
-               priority="1">
+               feature="SELF_LOOPS">
          </supportedFeature>
          <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS"
-               priority="1">
+               feature="EDGE_LABELS">
          </supportedFeature>
          <supportedFeature
-               feature="COMPOUND"
-               priority="-3">
+               feature="COMPOUND">
          </supportedFeature>
          <supportedFeature
                feature="CLUSTERS">
@@ -119,25 +108,14 @@
             parameter="NEATO"
             preview="images/neato.png"
             type="org.eclipse.elk.type.force">
-         <supportedDiagram
-               priority="7"
-               type="org.eclipse.elk.diagram.general">
-         </supportedDiagram>
-         <supportedDiagram
-               priority="10"
-               type="org.eclipse.elk.diagram.usecaseDiagram">
-         </supportedDiagram>
          <supportedFeature
-               feature="SELF_LOOPS"
-               priority="1">
+               feature="SELF_LOOPS">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES"
-               priority="-2">
+               feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS"
-               priority="1">
+               feature="EDGE_LABELS">
          </supportedFeature>
          <knownOption
                default="40"
@@ -211,21 +189,14 @@
             parameter="FDP"
             preview="images/fdp.png"
             type="org.eclipse.elk.type.force">
-         <supportedDiagram
-               priority="4"
-               type="org.eclipse.elk.diagram.general">
-         </supportedDiagram>
          <supportedFeature
-               feature="SELF_LOOPS"
-               priority="1">
+               feature="SELF_LOOPS">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES"
-               priority="-2">
+               feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS"
-               priority="1">
+               feature="EDGE_LABELS">
          </supportedFeature>
          <supportedFeature
                feature="CLUSTERS">
@@ -295,15 +266,13 @@
             preview="images/twopi.png"
             type="org.eclipse.elk.type.tree">
          <supportedFeature
-               feature="SELF_LOOPS"
-               priority="1">
+               feature="SELF_LOOPS">
          </supportedFeature>
          <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS"
-               priority="1">
+               feature="EDGE_LABELS">
          </supportedFeature>
          <knownOption
                default="60"
@@ -356,16 +325,13 @@
             preview="images/circo.png"
             type="org.eclipse.elk.type.circle">
          <supportedFeature
-               feature="SELF_LOOPS"
-               priority="1">
+               feature="SELF_LOOPS">
          </supportedFeature>
          <supportedFeature
-               feature="MULTI_EDGES"
-               priority="-2">
+               feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS"
-               priority="1">
+               feature="EDGE_LABELS">
          </supportedFeature>
          <knownOption
                default="40"
@@ -417,11 +383,8 @@
             default="1.0"
             description="Distance of head / tail positioned edge labels to the source or target node."
             id="org.eclipse.elk.graphviz.labelDistance"
-            lowerBound="0"
             name="Label Distance"
-            type="float"
-            upperBound="100"
-            variance="1.0">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -429,11 +392,8 @@
             default="-25.0"
             description="Angle between head / tail positioned edge labels and the corresponding edge."
             id="org.eclipse.elk.graphviz.labelAngle"
-            lowerBound="-90"
             name="Label Angle"
-            type="float"
-            upperBound="90"
-            variance="5.0">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -449,11 +409,8 @@
             default="-1"
             description="Terminating condition. If the length squared of all energy gradients are &lt; epsilon, the algorithm stops."
             id="org.eclipse.elk.graphviz.epsilon"
-            lowerBound="0.00001"
             name="Epsilon"
-            type="float"
-            upperBound="10.0"
-            variance="0.0001">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -461,11 +418,8 @@
             default="-1"
             description="The maximum number of iterations."
             id="org.eclipse.elk.graphviz.maxiter"
-            lowerBound="1"
             name="Max. Iterations"
-            type="int"
-            upperBound="10000"
-            variance="100">
+            type="int">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -473,11 +427,8 @@
             default="-1.0"
             description="Multiplicative scale factor for the maximal number of iterations used during crossing minimization, node ranking, and node positioning."
             id="org.eclipse.elk.graphviz.iterationsLimit"
-            lowerBound="0.01"
             name="Iterations Factor"
-            type="float"
-            upperBound="100.0"
-            variance="0.3">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -504,11 +455,8 @@
             default="1.0"
             description="Factor for the spacing of different layers (ranks)."
             id="org.eclipse.elk.graphviz.layerSpacingFactor"
-            lowerBound="0.01"
             name="Layer Spacing Factor"
-            type="float"
-            upperBound="100.0"
-            variance="0.5">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"

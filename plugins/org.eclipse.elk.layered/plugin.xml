@@ -2,26 +2,17 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.elk.core.layoutProviders">
+         point="org.eclipse.elk.core.service.layoutProviders">
       <layoutAlgorithm
             category="org.eclipse.elk.category.elk"
             class="org.eclipse.elk.layered.LayeredLayoutProvider"
             description="Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as possible into one direction by placing nodes into subsequent layers. This implementation supports different routing styles (straight, orthogonal, splines); if orthogonal routing is selected, arbitrary port constraints are respected, thus enabling the layout of block diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of compound graphs with cross-hierarchy edges is supported when the respective option is activated on the top level."
-            id="org.eclipse.elk.algorithm.layered"
+            id="org.eclipse.elk.layered"
             name="ELK Layered"
             preview="images/layered.png"
             type="org.eclipse.elk.type.layered">
-         <supportedDiagram
-               priority="15"
-               type="org.eclipse.elk.diagram.general">
-         </supportedDiagram>
-         <supportedDiagram
-               priority="15"
-               type="org.eclipse.elk.diagram.dataFlow">
-         </supportedDiagram>
          <supportedFeature
-               feature="SELF_LOOPS"
-               priority="-2">
+               feature="SELF_LOOPS">
          </supportedFeature>
          <supportedFeature
                feature="INSIDE_SELF_LOOPS">
@@ -30,12 +21,10 @@
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
-               feature="EDGE_LABELS"
-               priority="-5">
+               feature="EDGE_LABELS">
          </supportedFeature>
          <supportedFeature
-               feature="PORTS"
-               priority="8">
+               feature="PORTS">
          </supportedFeature>
          <supportedFeature
                feature="COMPOUND">
@@ -223,8 +212,7 @@
             description="Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right)."
             id="org.eclipse.elk.layered.cycleBreaking"
             name="Cycle Breaking"
-            type="enum"
-            variance="0">
+            type="enum">
       </layoutOption>
       <layoutOption
             appliesTo="parents"
@@ -233,8 +221,7 @@
             description="Strategy for node layering."
             id="org.eclipse.elk.layered.nodeLayering"
             name="Node Layering"
-            type="enum"
-            variance="0">
+            type="enum">
       </layoutOption>
       <layoutOption
       		appliesTo="parents"
@@ -243,8 +230,7 @@
             description="Strategy for crossing minimization."
             id="org.eclipse.elk.layered.crossMin"
             name="Crossing Minimization"
-            type="enum"
-            variance="0">
+            type="enum">
       </layoutOption>
       <layoutOption
       		appliesTo="parents"
@@ -253,8 +239,7 @@
             description="Greedy Switch strategy for crossing minimization."
             id="org.eclipse.elk.layered.greedySwitch"
             name="Greedy Switch Crossing Minimization"
-            type="enum"
-            variance="0">
+            type="enum">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -262,11 +247,8 @@
             default="7"
             description="How much effort should be spent to produce a nice layout."
             id="org.eclipse.elk.layered.thoroughness"
-            lowerBound="1"
             name="Thoroughness"
-            type="int"
-            upperBound="1000"
-            variance="4.0">
+            type="int">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -284,11 +266,8 @@
             default="0.5"
             description="Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges."
             id="org.eclipse.elk.layered.edgeSpacingFactor"
-            lowerBound="0.01"
             name="Edge Spacing Factor"
-            type="float"
-            upperBound="100"
-            variance="0.2">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -296,11 +275,8 @@
             default="0.5"
             description="Factor by which the object spacing is multiplied to arrive at the minimal spacing between an edge and a node."
             id="org.eclipse.elk.layered.edgeNodeSpacingFactor"
-            lowerBound="0.01"
             name="Edge Node Spacing Factor"
-            type="float"
-            upperBound="100"
-            variance="0.2">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -382,8 +358,6 @@
             name="Linear Segments Deflection Dampening"
             description="Dampens the movement of nodes to keep the diagram from getting too large."
             default="0.3"
-            lowerBound="0.0"
-            upperBound="1.0"
             type="float">
          <dependency
                option="org.eclipse.elk.layered.nodePlace"
@@ -418,11 +392,8 @@
             default="1"
             description="Factor by which the usual spacing is multiplied to determine the in-layer spacing between objects."
             id="org.eclipse.elk.layered.inLayerSpacingFactor"
-            lowerBound="0.01"
             name="In-layer Spacing Factor"
-            type="float"
-            upperBound="100"
-            variance="0.2">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"

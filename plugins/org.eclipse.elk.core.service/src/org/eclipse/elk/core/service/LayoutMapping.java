@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.elk.core.service;
 
-import java.util.List;
-
-import org.eclipse.elk.core.config.ILayoutConfig;
 import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
+import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
 
 /**
  * A layout mapping describes the relation between a graphical diagram and the layout graph
@@ -32,17 +29,25 @@ import com.google.common.collect.Lists;
  */
 public class LayoutMapping<T> extends MapPropertyHolder {
     
-    /** the serial version UID. */
-    private static final long serialVersionUID = 4066018168889912586L;
+    private static final long serialVersionUID = 2237409212851510612L;
     
     /** the bidirectional mapping of layout graph elements to diagram parts. */
     private final BiMap<KGraphElement, T> graphElemMap = HashBiMap.create();
-    /** additional layout configurations for specification of layout options. */
-    private final List<ILayoutConfig> layoutConfigs = Lists.newLinkedList();
     /** the top-level parent node of the layout graph. */
     private KNode layoutGraph;
     /** the top-level diagram part. */
     private T parentElement;
+    /** the workbench part for wich the mapping was created, if any. */
+    private final IWorkbenchPart workbenchPart;
+    
+    /**
+     * Create a layout mapping.
+     * 
+     * @param theWorkbenchPart the workbench part for which the mapping is created, which may be {@code null}
+     */
+    public LayoutMapping(final IWorkbenchPart theWorkbenchPart) {
+        this.workbenchPart = theWorkbenchPart;
+    }
     
     /**
      * Returns the bidirectional mapping of layout graph elements to diagram parts.
@@ -72,16 +77,6 @@ public class LayoutMapping<T> extends MapPropertyHolder {
     }
     
     /**
-     * Returns the additional layout configurations for specification of layout options. The
-     * returned list is initially empty.
-     * 
-     * @return the layout configurations
-     */
-    public List<ILayoutConfig> getLayoutConfigs() {
-        return layoutConfigs;
-    }
-    
-    /**
      * Set the top-level diagram part.
      * 
      * @param parentElem the parent diagram part
@@ -97,6 +92,13 @@ public class LayoutMapping<T> extends MapPropertyHolder {
      */
     public T getParentElement() {
         return parentElement;
+    }
+    
+    /**
+     * Returns the workbench part, or {@code null}.
+     */
+    public IWorkbenchPart getWorkbenchPart() {
+        return workbenchPart;
     }
 
 }

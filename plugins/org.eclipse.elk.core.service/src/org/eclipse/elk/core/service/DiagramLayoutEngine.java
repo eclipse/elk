@@ -15,33 +15,38 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.IGraphLayoutEngine;
-import org.eclipse.elk.core.LayoutConfigService;
+import org.eclipse.elk.core.ILayoutAlgorithmData;
+import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
-import org.eclipse.elk.core.config.CompoundLayoutConfig;
-import org.eclipse.elk.core.config.ILayoutConfig;
-import org.eclipse.elk.core.config.IMutableLayoutConfig;
-import org.eclipse.elk.core.config.LayoutContext;
-import org.eclipse.elk.core.config.VolatileLayoutConfig;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.SizeConstraint;
+import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.core.service.util.MonitoredOperation;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkCancelIndicator;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KLabel;
 import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -50,6 +55,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -72,22 +79,126 @@ public class DiagramLayoutEngine {
     public static final DiagramLayoutEngine INSTANCE = new DiagramLayoutEngine();
     
     /**
+     * Filter for {@link LayoutConfigurator} that checks for each option whether its configured targets
+     * match the input element.
+     */
+    public static final Predicate<Pair<KGraphElement, IProperty<?>>> OPTION_TARGET_FILTER =
+            new Predicate<Pair<KGraphElement, IProperty<?>>>() {
+        public boolean apply(Pair<KGraphElement, IProperty<?>> input) {
+            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(input.getSecond().getId());
+            if (optionData != null) {
+                KGraphElement e = input.getFirst();
+                Set<LayoutOptionData.Target> targets = optionData.getTargets();
+                if (e instanceof KNode) {
+                    if (((KNode) e).getChildren().isEmpty()) {
+                        return targets.contains(LayoutOptionData.Target.NODES);
+                    } else {
+                        return targets.contains(LayoutOptionData.Target.NODES)
+                                || targets.contains(LayoutOptionData.Target.PARENTS);
+                    }
+                } else if (e instanceof KEdge) {
+                    return targets.contains(LayoutOptionData.Target.EDGES);
+                } else if (e instanceof KPort) {
+                    return targets.contains(LayoutOptionData.Target.PORTS);
+                } else if (e instanceof KLabel) {
+                    return targets.contains(LayoutOptionData.Target.LABELS);
+                }
+            }
+            return true;
+        }
+    };
+    
+    /**
      * Property for the diagram layout manager used for automatic layout. This property is
      * attached to layout mappings created by the {@code layout} methods.
      */
     public static final IProperty<IDiagramLayoutManager<?>> DIAGRAM_LM
             = new Property<IDiagramLayoutManager<?>>("layoutEngine.diagramLayoutManager");
+    
     /** preference identifier for debug graph output. */
     public static final String PREF_DEBUG_OUTPUT = "kiml.debug.graph";
     /** preference identifier for execution time measurement. */
     public static final String PREF_EXEC_TIME_MEASUREMENT = "kiml.exectime.measure";
     
+    /**
+     * Configuration class for invoking the {@link DiagramLayoutEngine}.
+     * Use a {@link LayoutConfigurator} to configure layout options:
+     * <pre>
+     * DiagramLayoutEngine.Setup setup = new DiagramLayoutEngine.Setup();
+     * setup.addLayoutRun().configure(KNode.class)
+     *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.layered")
+     *         .setProperty(LayoutOptions.SPACING, 30.0f)
+     *         .setProperty(LayoutOptions.ANIMATE, true);
+     * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart, setup);
+     * </pre>
+     * If multiple configurators are given, the layout is computed multiple times:
+     * once for each configurator. This behavior can be used to apply different layout algorithms
+     * one after another, e.g. first a node placer algorithm and then an edge router algorithm.
+     * Example:
+     * <pre>
+     * DiagramLayoutEngine.Setup setup = new DiagramLayoutEngine.Setup();
+     * setup.addLayoutRun().configure(KNode.class)
+     *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.force");
+     * setup.addLayoutRun().setClearLayout(true).configure(KNode.class)
+     *         .setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.kiml.libavoid");
+     * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart, setup);
+     * </pre>
+     * <b>Note:</b> By using the {@link LayoutConfigurator} approach as shown above, the Layout
+     * view does not have any access to the configured values and hence will not work correctly.
+     * In order to support the Layout view, use the {@link ILayoutConfigurationStore} interface instead.
+     */
+    public static class Setup {
+        
+        private List<LayoutConfigurator> configurators = new LinkedList<LayoutConfigurator>();
+        private MapPropertyHolder globalSettings = new MapPropertyHolder();
+        private boolean overrideDiagramConfig = true;
+        
+        /**
+         * Set whether to override the configuration from the {@link ILayoutConfigurationStore}
+         * provided by the diagram layout manager with the configuration provided by this setup.
+         * The default is {@code true}.
+         */
+        public Setup setOverrideDiagramConfig(boolean override) {
+            this.overrideDiagramConfig = override;
+            return this;
+        }
+        
+        /**
+         * Returns the global settings, i.e. options that are not processed by layout algorithms,
+         * but by layout managers or the layout engine itself.
+         */
+        public IPropertyHolder getGlobalSettings() {
+            return globalSettings;
+        }
+        
+        /**
+         * Add a layout run with the given configurator. Each invocation of this method corresponds
+         * to a separate layout execution on the whole input graph. This can be used to apply
+         * multiple layout algorithms one after another, where each algorithm execution can reuse
+         * results from previous executions.
+         * 
+         * @return the given configurator
+         */
+        public LayoutConfigurator addLayoutRun(LayoutConfigurator configurator) {
+            configurators.add(configurator);
+            configurator.setFilter(OPTION_TARGET_FILTER);
+            return configurator;
+        }
+        
+        /**
+         * Convenience method for {@code addLayout(new LayoutConfigurator())}.
+         */
+        public LayoutConfigurator addLayoutRun() {
+            return addLayoutRun(new LayoutConfigurator());
+        }
+    }
+    
+    private final LayoutConfigurationManager configManager = new LayoutConfigurationManager();
     
     /** the graph layout engine for executing layout algorithms on the hierarchy levels of a graph. */
-    private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine();
-    
-    /** the layout options manager for configuration of layout graphs. */
-    private final LayoutOptionManager layoutOptionManager = new LayoutOptionManager();
+    private final IGraphLayoutEngine graphLayoutEngine = new RecursiveGraphLayoutEngine((String input) -> {
+        return configManager.getAlgorithm(input);
+    });
     
     /** the executor service used to perform layout operations. */
     private final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -96,44 +207,6 @@ public class DiagramLayoutEngine {
     private final Multimap<Pair<IWorkbenchPart, Object>, MonitoredOperation> runningOperations
             = HashMultimap.create();
 
-
-    /**
-     * Interface definition of handles allowing to let the {@link DiagramLayoutEngine} know if a
-     * layout run should be canceled because of, e.g., the disposition of elements to be arranged.<br>
-     * <br>
-     * Such a {@link ILayoutCancelationIndicator} can be employed when invoking automatic layout via
-     * {@link DiagramLayoutEngine#layout(IWorkbenchPart, Object, ILayoutCancelationIndicator,
-     * ILayoutConfig...)}.
-     *
-     * @author chsch
-     */
-    public interface ILayoutCancelationIndicator {
-
-        /**
-         * To be implemented by callers of the {@link DiagramLayoutEngine}, is called by the
-         * {@link DiagramLayoutEngine} to check whether this layout performance must be stopped,
-         * e.g. because of the disposal of required data.
-         *
-         * @return <code>true</code> if the corresponding layout performance must be stopped,
-         *         <code>false</code> otherwise
-         */
-        boolean isCanceled();
-    }
-
-    /**
-     * Helper method combining a <code>null</code> check and execution of
-     * {@link ILayoutCancelationIndicator#isCanceled() handle.isCanceled()}.
-     *
-     * @param cancelIndicator
-     *            the {@link ILayoutCancelationIndicator} to check, may be <code>null</code>
-     * @return <code>false</code> if <code>cancelIndicator</code> is <code>null</code>,
-     *         <code>cancelIndicator.isCanceled()</code> otherwise
-     */
-    private static boolean isCanceled(final ILayoutCancelationIndicator cancelIndicator) {
-        return cancelIndicator != null && cancelIndicator.isCanceled();
-    }
-
-
     /**
      * Perform layout on the given workbench part with the given global options.
      * 
@@ -141,7 +214,7 @@ public class DiagramLayoutEngine {
      *            the workbench part for which layout is performed
      * @param diagramPart
      *            the parent diagram part for which layout is performed, or {@code null} if the whole
-     *            diagram shall be layouted
+     *            diagram shall be arranged
      * @param animate
      *            if true, animation is activated
      * @param progressBar
@@ -156,112 +229,64 @@ public class DiagramLayoutEngine {
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final boolean animate, final boolean progressBar, final boolean layoutAncestors,
             final boolean zoomToFit) {
-        return layout(workbenchPart, diagramPart,
-                new VolatileLayoutConfig()
-                    .setValue(LayoutOptions.ANIMATE, animate)
-                    .setValue(LayoutOptions.PROGRESS_BAR, progressBar)
-                    .setValue(LayoutOptions.LAYOUT_ANCESTORS, layoutAncestors)
-                    .setValue(LayoutOptions.ZOOM_TO_FIT, zoomToFit));
+        Setup setup = new Setup();
+        setup.getGlobalSettings()
+            .setProperty(LayoutOptions.ANIMATE, animate)
+            .setProperty(LayoutOptions.PROGRESS_BAR, progressBar)
+            .setProperty(LayoutOptions.LAYOUT_ANCESTORS, layoutAncestors)
+            .setProperty(LayoutOptions.ZOOM_TO_FIT, zoomToFit);
+        return layout(workbenchPart, diagramPart, setup);
     }
     
     /**
-     * Perform layout on the given workbench part.
-     * Use a {@link VolatileLayoutConfig} to configure layout options:
-     * <pre>
-     * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart,
-     *          new VolatileLayoutConfig()
-     *              .setValue(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.layered")
-     *              .setValue(LayoutOptions.SPACING, 30.0f)
-     *              .setValue(LayoutOptions.ANIMATE, true));
-     * </pre>
-     * If multiple configurators are given, the layout is computed multiple times:
-     * once for each configurator. This behavior can be used to apply different layout algorithms
-     * one after another, e.g. first a node placer algorithm and then an edge router algorithm.
-     * Example:
-     * <pre>
-     * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart,
-     *          new VolatileLayoutConfig()
-     *              .setValue(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.force"),
-     *          new VolatileLayoutConfig()
-     *              .setValue(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.kiml.libavoid"));
-     * </pre>
-     * If you want to use multiple configurators in the same layout computation,
-     * use a {@link CompoundLayoutConfig}:
-     * <pre>
-     * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart,
-     *          CompoundLayoutConfig.of(config1, config2, ...));
-     * </pre> 
+     * Perform layout on the given workbench part with the given setup.
      * 
      * @param workbenchPart
      *            the workbench part for which layout is performed
      * @param diagramPart
      *            the parent diagram part for which layout is performed, or {@code null} if the whole
      *            diagram shall be layouted
-     * @param configurators
-     *            the configurators to use for the layout
+     * @param setup
+     *            a layout setup, or {@code null} to use default values
      * @return the layout mapping used in this session
      */
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
-            final ILayoutConfig... configurators) {
-        return layout(workbenchPart, diagramPart, null, configurators);
+            final Setup setup) {
+        return layout(workbenchPart, diagramPart, (IElkCancelIndicator) null, setup);
     }
 
     /**
      * Perform layout on the given workbench part.
-     * Use a {@link VolatileLayoutConfig} to configure layout options:
-     * <pre>
-     * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart, cancelationIndicator,
-     *          new VolatileLayoutConfig()
-     *              .setValue(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.layered")
-     *              .setValue(LayoutOptions.SPACING, 30.0f)
-     *              .setValue(LayoutOptions.ANIMATE, true));
-     * </pre>
-     * If multiple configurators are given, the layout is computed multiple times:
-     * once for each configurator. This behavior can be used to apply different layout algorithms
-     * one after another, e.g. first a node placer algorithm and then an edge router algorithm.
-     * Example:
-     * <pre>
-     * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart, cancelationIndicator,
-     *          new VolatileLayoutConfig()
-     *              .setValue(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.force"),
-     *          new VolatileLayoutConfig()
-     *              .setValue(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.kiml.libavoid"));
-     * </pre>
-     * If you want to use multiple configurators in the same layout computation,
-     * use a {@link CompoundLayoutConfig}:
-     * <pre>
-     * DiagramLayoutEngine.INSTANCE.layout(workbenchPart, diagramPart, cancelationIndicator,
-     *          CompoundLayoutConfig.of(config1, config2, ...));
-     * </pre> 
      * 
      * @param workbenchPart
      *            the workbench part for which layout is performed
      * @param diagramPart
      *            the parent diagram part for which layout is performed, or {@code null} if the whole
      *            diagram shall be layouted
-     * @param cancelationIndicator
-     *            an {@link ILayoutCancelationIndicator} evaluated repeatedly during the layout
-     *            performance, or <code>null</code>
-     * @param configurators
-     *            the configurators to use for the layout
+     * @param cancelIndicator
+     *            an {@link IElkCancelIndicator} evaluated repeatedly during the layout
+     *            performance, or {@code null}
+     * @param setup
+     *            a layout setup, or {@code null} to use default values
      * @return the layout mapping used in this session
      */
     public LayoutMapping<?> layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
-            final ILayoutCancelationIndicator cancelationIndicator,
-            final ILayoutConfig... configurators) {
-
-        final IDiagramLayoutManager<?> layoutManager = 
+            final IElkCancelIndicator cancelIndicator, Setup setup) {
+        IDiagramLayoutManager<?> layoutManager = 
                 LayoutManagersService.getInstance().getManager(workbenchPart, diagramPart);
 
         if (layoutManager != null) {
-            final LayoutMapping<?> mapping = layout(
-                    layoutManager, workbenchPart, diagramPart, cancelationIndicator, configurators);
+            if (setup == null) {
+                setup = new Setup();
+            }
+            LayoutMapping<?> mapping = layout(
+                    layoutManager, workbenchPart, diagramPart, cancelIndicator, setup);
             if (mapping != null) {
                 mapping.setProperty(DIAGRAM_LM, layoutManager);
             }
             return mapping;
         } else {
-            final IStatus status = new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
+            IStatus status = new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                     workbenchPart == null
                     ? "No layout manager is available for the selected part."
                     : "No layout manager is available for " + workbenchPart.getTitle() + ".");
@@ -285,71 +310,37 @@ public class DiagramLayoutEngine {
      * @param diagramPart
      *            the parent diagram part for which layout is performed, or {@code null} if the whole
      *            diagram shall be layouted
-     * @param cancelationIndicator
-     *            an {@link ILayoutCancelationIndicator} evaluated repeatedly during the layout
+     * @param cancelIndicator
+     *            an {@link IElkCancelIndicator} evaluated repeatedly during the layout
      *            performance, or <code>null</code>
-     * @param configurators
-     *            the configurators to use for the layout
+     * @param setup
+     *            the layout setup
      * @return the layout mapping used in this session
      */
     protected <T> LayoutMapping<T> layout(final IDiagramLayoutManager<T> layoutManager,
             final IWorkbenchPart workbenchPart, final Object diagramPart,
-            final ILayoutCancelationIndicator cancelationIndicator,
-            final ILayoutConfig... configurators) {
+            final IElkCancelIndicator cancelIndicator, final Setup setup) {
         final Maybe<LayoutMapping<T>> layoutMapping = Maybe.create();
         final Pair<IWorkbenchPart, Object> target = Pair.of(workbenchPart, diagramPart);
-        final ILayoutConfig globalConfig = configurators.length == 0 ? null : configurators[0];
         
-        final MonitoredOperation monitoredOperation = new MonitoredOperation(executorService) {
+        final MonitoredOperation monitoredOperation = new MonitoredOperation(executorService, cancelIndicator) {
             
-            private final MonitoredOperation thisOperation = this;
-            
-            /**
-             * Specialized {@link MonitoredOperation.CancelableProgressMonitor} evaluating 
-             * <code>cancelationIndicator</code> in addition to the original behavior.
-             *
-             * @author chsch
-             */
-            class CancelableProgressMonitorEx extends MonitoredOperation.CancelableProgressMonitor {
-
-                @Override
-                public boolean isCanceled() {
-                    if (super.isCanceled()) {
-                        return true;
-                        
-                    } else if (DiagramLayoutEngine.isCanceled(cancelationIndicator)) {
-                        thisOperation.cancel();
-                        return true;
-                        
-                    } else {
-                        return false;
-                    }
-                }
-            }
-            
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            protected IElkProgressMonitor createMonitor() {
-                return new CancelableProgressMonitorEx();
-            }
-            
-            // first phase: build the layout graph
+            // First phase: build the layout graph
+            @SuppressWarnings("unchecked")
             @Override
             protected void preUIexec() {
-                if (isCanceled(cancelationIndicator)) {
-                    this.cancel();
-                    return;
+                boolean layoutAncestors = setup.getGlobalSettings().getProperty(LayoutOptions.LAYOUT_ANCESTORS);
+                LayoutMapping<T> mapping;
+                if (layoutAncestors) {
+                    mapping = layoutManager.buildLayoutGraph(workbenchPart, null);
+                    mapping.setParentElement((T) diagramPart);
+                } else {
+                    mapping = layoutManager.buildLayoutGraph(workbenchPart, diagramPart);
                 }
-
-                boolean layoutAncestors = layoutOptionManager.getGlobalValue(
-                        LayoutOptions.LAYOUT_ANCESTORS, globalConfig);
-                layoutMapping.set(layoutManager.buildLayoutGraph(workbenchPart,
-                        layoutAncestors ? null : diagramPart));
+                layoutMapping.set(mapping);
             }
 
-            // second phase: execute layout algorithms
+            // Second phase: execute layout algorithms
             @Override
             protected IStatus execute(final IElkProgressMonitor monitor) {
                 if (monitor.isCanceled()) {
@@ -359,29 +350,13 @@ public class DiagramLayoutEngine {
                 LayoutMapping<T> mapping = layoutMapping.get();
                 IStatus status;
                 if (mapping != null && mapping.getLayoutGraph() != null) {
-                    Object transDiagPart = diagramPart;
-                    IMutableLayoutConfig diagramConfig = layoutManager.getDiagramConfig();
-                    if (diagramConfig != null) {
-                        if (!mapping.getLayoutConfigs().contains(diagramConfig)) {
-                            mapping.getLayoutConfigs().add(diagramConfig);
-                        }
-                        
-                        // translate the diagram part into one that is understood by the layout manager
-                        if (diagramPart != null) {
-                            LayoutContext context = new LayoutContext();
-                            context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                            Object object = diagramConfig.getContextValue(LayoutContext.DIAGRAM_PART,
-                                    context);
-                            if (object != null) {
-                                transDiagPart = object;
-                            }
-                        }
-                    }
+                    // Extract the diagram configuration
+                    addDiagramConfig(setup, layoutManager, mapping);
                     
-                    // perform the actual layout
-                    status = layout(mapping, transDiagPart, monitor, configurators);
+                    // Perform the actual layout
+                    status = layout(mapping, monitor, setup);
                     
-                    // stop earlier layout operations that are still running
+                    // Stop earlier layout operations that are still running
                     if (!monitor.isCanceled()) {
                         stopEarlierOperations(target, getTimestamp());
                     }
@@ -394,22 +369,11 @@ public class DiagramLayoutEngine {
                 return status;
             }
 
-            // third phase: apply layout with animation
+            // Third phase: apply layout with animation
             @Override
             protected void postUIexec() {
-                if (isCanceled(cancelationIndicator)) {
-                    this.cancel();
-                    return;
-                }
-
                 if (layoutMapping.get() != null) {
-                    boolean zoomToFit = layoutOptionManager.getGlobalValue(
-                            LayoutOptions.ZOOM_TO_FIT, globalConfig);
-                    int animationTime = calcAnimationTime(layoutMapping.get(),
-                            configurators.length == 0 ? null : configurators[0],
-                            workbenchPart != null && !workbenchPart.getSite().getPage()
-                                .isPartVisible(workbenchPart));
-                    layoutManager.applyLayout(layoutMapping.get(), zoomToFit, animationTime);
+                    layoutManager.applyLayout(layoutMapping.get(), setup.getGlobalSettings());
                 }
             }
         };
@@ -419,13 +383,12 @@ public class DiagramLayoutEngine {
         }
 
         try {
-            boolean progressBar = layoutOptionManager.getGlobalValue(
-                    LayoutOptions.PROGRESS_BAR, globalConfig);
+            boolean progressBar = setup.getGlobalSettings().getProperty(LayoutOptions.PROGRESS_BAR);
             if (progressBar) {
-                // perform layout with a progress bar
+                // Perform layout with a progress bar
                 monitoredOperation.runMonitored();
             } else {
-                // perform layout without a progress bar
+                // Perform layout without a progress bar
                 monitoredOperation.runUnmonitored();
             }
         } finally {
@@ -435,59 +398,6 @@ public class DiagramLayoutEngine {
         }
         
         return layoutMapping.get();
-    }
-
-    /**
-     * Calculates animation time for the given graph size. If the viewer is not visible,
-     * the animation time is 0.
-     * 
-     * @param mapping a mapping of the layout graph
-     * @param config the layout configurator from which to read animation settings, or {@code null}
-     * @param viewerNotVisible whether the diagram viewer is currently not visible
-     * @return number of milliseconds to animate, or 0 if no animation is desired
-     */
-    private int calcAnimationTime(final LayoutMapping<?> mapping, final ILayoutConfig config,
-            final boolean viewerNotVisible) {
-        
-        final CompoundLayoutConfig clc = CompoundLayoutConfig.of(config);
-        clc.addAll(LayoutConfigService.getInstance().getActiveConfigs());
-        
-        boolean animate = layoutOptionManager.getGlobalValue(LayoutOptions.ANIMATE, clc);
-        if (animate) {
-            int minTime = layoutOptionManager.getGlobalValue(LayoutOptions.MIN_ANIMATION_TIME, clc);
-            if (minTime < 0) {
-                minTime = 0;
-            }
-            int maxTime = layoutOptionManager.getGlobalValue(LayoutOptions.MAX_ANIMATION_TIME, clc);
-            if (maxTime < minTime) {
-                maxTime = minTime;
-            }
-            int factor = layoutOptionManager.getGlobalValue(
-                    LayoutOptions.ANIMATION_TIME_FACTOR, clc);
-            if (factor > 0) {
-                int graphSize = countNodes(mapping.getLayoutGraph());
-                int time = minTime + (int) (factor * Math.sqrt(graphSize));
-                return time <= maxTime ? time : maxTime;
-            } else {
-                return minTime;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Counts the total number of children in the given node, including deep hierarchies.
-     * 
-     * @param node
-     *            parent node
-     * @return number of children and grandchildren in the given parent
-     */
-    private static int countNodes(final KNode node) {
-        int count = 0;
-        for (KNode child : node.getChildren()) {
-            count += countNodes(child) + 1;
-        }
-        return count;
     }
     
     /**
@@ -521,10 +431,33 @@ public class DiagramLayoutEngine {
      */
     public IStatus layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
             final IElkProgressMonitor progressMonitor) {
+        return layout(workbenchPart, diagramPart, progressMonitor, null);
+    }
+    
+    /**
+     * Perform layout with a given progress monitor, possibly without a workbench part.
+     * 
+     * @param workbenchPart
+     *            the workbench part for which layout is performed
+     * @param diagramPart
+     *            the parent diagram part for which layout is performed, or {@code null} if the whole
+     *            diagram shall be layouted
+     * @param progressMonitor
+     *            a progress monitor to which progress of the layout algorithm is reported,
+     *            or {@code null} if no progress reporting is required
+     * @param setup
+     *            a layout setup, or {@code null} to use the default values
+     * @return a status indicating success or failure
+     */
+    public IStatus layout(final IWorkbenchPart workbenchPart, final Object diagramPart,
+            final IElkProgressMonitor progressMonitor, Setup setup) {
         IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance().getManager(
                 workbenchPart, diagramPart);
         if (layoutManager != null) {
-            return layout(layoutManager, workbenchPart, diagramPart, progressMonitor);
+            if (setup == null) {
+                setup = new Setup();
+            }
+            return layout(layoutManager, workbenchPart, diagramPart, progressMonitor, setup);
         } else {
             return new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                     "No layout manager is available for the selected part.");
@@ -546,11 +479,13 @@ public class DiagramLayoutEngine {
      * @param progressMonitor
      *            a progress monitor to which progress of the layout algorithm is reported,
      *            or {@code null} if no progress reporting is required
+     * @param setup
+     *            the layout setup
      * @return a status indicating success or failure
      */
     protected <T> IStatus layout(final IDiagramLayoutManager<T> layoutManager,
             final IWorkbenchPart workbenchPart, final Object diagramPart,
-            final IElkProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor, Setup setup) {
         IElkProgressMonitor monitor;
         if (progressMonitor == null) {
             monitor = new BasicProgressMonitor(0, ElkServicePlugin.getDefault().getPreferenceStore()
@@ -561,39 +496,24 @@ public class DiagramLayoutEngine {
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
         monitor.begin("Layout Diagram", 3);
         
-        // build the layout graph
+        // Build the layout graph
         IElkProgressMonitor submon1 = monitor.subTask(1);
         submon1.begin("Build layout graph", 1);
         LayoutMapping<T> mapping = layoutManager.buildLayoutGraph(workbenchPart, diagramPart);
         
         IStatus status;
         if (mapping != null && mapping.getLayoutGraph() != null) {
-            Object transDiagPart = diagramPart;
-            IMutableLayoutConfig diagramConfig = layoutManager.getDiagramConfig();
-            if (diagramConfig != null) {
-                if (!mapping.getLayoutConfigs().contains(diagramConfig)) {
-                    mapping.getLayoutConfigs().add(diagramConfig);
-                }
-                
-                // translate the diagram part into one that is understood by the layout manager
-                if (diagramPart != null) {
-                    LayoutContext context = new LayoutContext();
-                    context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                    Object object = diagramConfig.getContextValue(LayoutContext.DIAGRAM_PART, context);
-                    if (object != null) {
-                        transDiagPart = object;
-                    }
-                }
-            }
+            // Extract the diagram configuration
+            addDiagramConfig(setup, layoutManager, mapping);
             submon1.done();
             
-            // perform the actual layout
-            status = layout(mapping, transDiagPart, monitor.subTask(1));
+            // Perform the actual layout
+            status = layout(mapping, monitor.subTask(1), setup);
             
-            // apply the layout to the diagram
+            // Apply the layout to the diagram
             IElkProgressMonitor submon3 = monitor.subTask(1);
             submon3.begin("Apply layout to the diagram", 1);
-            layoutManager.applyLayout(mapping, false, 0);
+            layoutManager.applyLayout(mapping, setup.getGlobalSettings());
             submon3.done();
         } else {
             status = new Status(Status.WARNING, ElkServicePlugin.PLUGIN_ID,
@@ -605,17 +525,34 @@ public class DiagramLayoutEngine {
     }
     
     /**
-     * Returns the currently used layout option manager.
-     * 
-     * @return the layout option manager
+     * Create a diagram layout configuration and add it to the setup.
      */
-    public LayoutOptionManager getOptionManager() {
-        return layoutOptionManager;
+    protected <T> void addDiagramConfig(final Setup setup, final IDiagramLayoutManager<T> layoutManager,
+            final LayoutMapping<T> layoutMapping) {
+        LayoutConfigurator diagramConfig = configManager.createConfigurator(layoutManager, layoutMapping);
+        if (setup.configurators.isEmpty()) {
+            setup.addLayoutRun(diagramConfig);
+        } else {
+            ListIterator<LayoutConfigurator> configIter = setup.configurators.listIterator();
+            while (configIter.hasNext()) {
+                boolean isFirstConfig = !configIter.hasPrevious();
+                LayoutConfigurator setupConfig = configIter.next();
+                if (setup.overrideDiagramConfig) {
+                    if (isFirstConfig || setupConfig.isClearLayout()) {
+                        LayoutConfigurator newConfig;
+                        if (configIter.hasNext()) {
+                            newConfig = new LayoutConfigurator().overrideWith(diagramConfig);
+                        } else {
+                            newConfig = diagramConfig;
+                        }
+                        configIter.set(newConfig.overrideWith(setupConfig));
+                    }
+                } else {
+                    setupConfig.overrideWith(diagramConfig);
+                }
+            }
+        }
     }
-    
-    /** property for layout context: the progress monitor that was used for layout. */
-    public static final IProperty<IElkProgressMonitor> PROGRESS_MONITOR
-            = new Property<IElkProgressMonitor>("layout.progressMonitor");
     
     /**
      * Perform layout on the given layout graph mapping. If zero or one layout configurator is
@@ -626,75 +563,77 @@ public class DiagramLayoutEngine {
      * 
      * @param mapping
      *            a mapping for the layout graph
-     * @param diagramPart
-     *            the parent diagram part for which layout is performed, or {@code null} if the whole
-     *            diagram shall be layouted
      * @param progressMonitor
      *            a progress monitor to which progress of the layout algorithm is reported
-     * @param configurators
-     *            the configurators to use for the layout
+     * @param setup
+     *            a layout setup, or {@code null} to use default values
      * @return a status indicating success or failure
      */
-    protected IStatus layout(final LayoutMapping<?> mapping, final Object diagramPart,
-            final IElkProgressMonitor progressMonitor, final ILayoutConfig... configurators) {
-
-        ILayoutConfig globalConfig = configurators.length == 0 ? null : configurators[0];
-        boolean layoutAncestors =
-                layoutOptionManager.getGlobalValue(LayoutOptions.LAYOUT_ANCESTORS, globalConfig);
-
+    public IStatus layout(final LayoutMapping<?> mapping, final IElkProgressMonitor progressMonitor,
+            final Setup setup) {
+        
+        boolean layoutAncestors = setup.getGlobalSettings().getProperty(LayoutOptions.LAYOUT_ANCESTORS);
         if (layoutAncestors) {
-            // mark all parallel areas for exclusion from layout
-            KGraphElement graphElem = mapping.getGraphMap().inverse().get(diagramPart);
+            // Mark all parallel areas for exclusion from layout
+            KGraphElement graphElem = mapping.getGraphMap().inverse().get(mapping.getParentElement());
             if (graphElem instanceof KNode && ((KNode) graphElem).getParent() != null) {
+                if (setup.configurators.isEmpty()) {
+                    setup.configurators.add(new LayoutConfigurator());
+                }
                 KNode node = (KNode) graphElem;
-                VolatileLayoutConfig vlc = new VolatileLayoutConfig();
                 do {
                     KNode parent = node.getParent();
                     for (KNode child : parent.getChildren()) {
                         if (child != node) {
-                            // do not layout the content of the child node
-                            vlc.setValue(LayoutOptions.NO_LAYOUT, child,
-                                    LayoutContext.GRAPH_ELEM, true);
-                            // do not change the size of the child node
-                            vlc.setValue(LayoutOptions.SIZE_CONSTRAINT, child,
-                                    LayoutContext.GRAPH_ELEM, SizeConstraint.fixed());
-                            // do not move the ports of the child node
-                            vlc.setValue(LayoutOptions.PORT_CONSTRAINTS, child,
-                                    LayoutContext.GRAPH_ELEM, PortConstraints.FIXED_POS);
+                            for (LayoutConfigurator c : setup.configurators) {
+                                IPropertyHolder childConfig = c.configure(child);
+                                // Do not layout the content of the child node
+                                childConfig.setProperty(LayoutOptions.NO_LAYOUT, true);
+                                // Do not change the size of the child node
+                                childConfig.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+                                // Do not move the ports of the child node
+                                childConfig.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+                            }
                         }
                     }
                     node = parent;
                 } while (node.getParent() != null);
-                mapping.getLayoutConfigs().add(vlc);
             }
         }
         
-        mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
         IStatus status = null;
-        if (configurators.length == 0) {
-            // perform layout without any extra configuration
+        if (setup.configurators.isEmpty()) {
+            // Perform layout without any extra configuration
             status = layout(mapping, progressMonitor);
-        } else if (configurators.length == 1) {
-            // perform layout once with an extra configuration
-            mapping.getLayoutConfigs().add(configurators[0]);
-            status = layout(mapping, progressMonitor);
+        } else if (setup.configurators.size() == 1) {
+            // Perform layout once with an extra configuration
+            status = layout(mapping, progressMonitor, setup.configurators.get(0));
         } else {
-            // perform layout multiple times with different configurations
-            progressMonitor.begin("Diagram layout engine", TOTAL_WORK * configurators.length);
-            for (ILayoutConfig config : configurators) {
-                mapping.getLayoutConfigs().add(config);
-                status = layout(mapping, progressMonitor);
+            // Perform layout multiple times with different configurations
+            progressMonitor.begin("Diagram layout engine", TOTAL_WORK * setup.configurators.size());
+            ListIterator<LayoutConfigurator> configIter = setup.configurators.listIterator();
+            while (configIter.hasNext()) {
+                status = layout(mapping, progressMonitor, configIter.next());
                 if (!status.isOK()) {
                     break;
                 }
-                mapping.getLayoutConfigs().remove(config);
+                
+                // If an additional layout configurator is attached to the graph, consider it in the future
+                LayoutConfigurator addConfig = mapping.getLayoutGraph().getData(KShapeLayout.class).getProperty(
+                        LayoutConfigurator.ADD_LAYOUT_CONFIG);
+                if (addConfig != null) {
+                    ListIterator<LayoutConfigurator> configIter2 = setup.configurators.listIterator(configIter.nextIndex());
+                    while (configIter2.hasNext()) {
+                        configIter2.next().overrideWith(addConfig);
+                    }
+                }
             }
             progressMonitor.done();
         }
 
-        // notify listeners of the executed layout
+        // Notify listeners of the executed layout
         if (layoutListeners != null) {
-            for (final ILayoutTerminatedListener listener : layoutListeners) {
+            for (final ILayoutDoneListener listener : layoutListeners) {
                 listener.layoutDone(mapping.getLayoutGraph(), progressMonitor);
             }
         }
@@ -714,57 +653,31 @@ public class DiagramLayoutEngine {
      * @param progressMonitor
      *            a progress monitor to which progress of the layout algorithm is reported; if the
      *            given monitor is not yet started, it is started in this method
+     * @param visitors
+     *            an optional array of graph element visitors to apply
      * @return a status indicating success or failure
      */
     public IStatus layout(final LayoutMapping<?> mapping,
-            final IElkProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor, final IGraphElementVisitor... visitors) {
 
         if (progressMonitor.isCanceled()) {
             return Status.CANCEL_STATUS;
         }
-
         boolean newTask = progressMonitor.begin("Diagram layout engine", TOTAL_WORK);
-        if (mapping.getProperty(PROGRESS_MONITOR) == null) {
-            mapping.setProperty(PROGRESS_MONITOR, progressMonitor);
-        }
         
         try {
-            // configure the layout graph using a layout option manager
-            try {
-                // chsch: wrapped the configuration of the layout graph by the addition try catch
-                //  block as layout configs contributed via IDiagramLayoutManager.getDiagramConfig()
-                //  are likely rely on the corresponding diagram viewer that may be closed
-                //  while executing the method call below (in a non-UI thread)
-                // hence, if a Throwable 't' occurs during the subsequent method call and the
-                //  cancelation check returns 'true',
-                //  don't consider the occurrence of 't' a failure and just stop the layout run
-
-                layoutOptionManager.configure(mapping, progressMonitor.subTask(CONFIGURE_WORK));
-
-            } catch (Throwable t) {
-
-                if (progressMonitor.isCanceled()) {
-                    return Status.CANCEL_STATUS;
-
-                } else {
-                    throw t;
-                }
+            // Configure the layout graph by applying the given visitors
+            if (visitors.length > 0) {
+                ElkUtil.applyVisitors(mapping.getLayoutGraph(), visitors);
             }
             
-            // export the layout graph for debugging
+            // Export the layout graph for debugging
             if (ElkServicePlugin.getDefault().getPreferenceStore().getBoolean(PREF_DEBUG_OUTPUT)) {
                 exportLayoutGraph(mapping.getLayoutGraph());
             }
 
-            // perform layout on the layout graph
+            // Perform layout on the layout graph
             graphLayoutEngine.layout(mapping.getLayoutGraph(), progressMonitor.subTask(LAYOUT_WORK));
-            
-            // if an additional layout configurator is attached to the graph, consider it in the future
-            ILayoutConfig addConfig = mapping.getLayoutGraph().getData(KShapeLayout.class).getProperty(
-                    AbstractLayoutProvider.ADD_LAYOUT_CONFIG);
-            if (addConfig != null) {
-                mapping.getLayoutConfigs().add(addConfig);
-            }
             
             if (newTask) {
                 progressMonitor.done();
@@ -786,7 +699,7 @@ public class DiagramLayoutEngine {
      * Listener interface for graph layout. Implementations must not modify the graph in any way
      * and should execute as quickly as possible.
      */
-    public interface ILayoutTerminatedListener {
+    public interface ILayoutDoneListener {
         /**
          * Called when layout has been done on a graph.
          * 
@@ -797,27 +710,16 @@ public class DiagramLayoutEngine {
     }
     
     /** list of registered layout listeners. */
-    private List<ILayoutTerminatedListener> layoutListeners = null;
+    private List<ILayoutDoneListener> layoutListeners = null;
     
-    /**
-     * Add the given object to the list of layout listeners.
-     * 
-     * @deprecated use {@link #addLayoutTerminatedListener(ILayoutTerminatedListener)}
-     * @param listener
-     *            a listener
-     */
-    public void addListener(final ILayoutTerminatedListener listener) {
-        addLayoutTerminatedListener(listener);
-    }
-
     /**
      * Add the given object to the list of layout listeners.
      *
      * @param listener a listener
      */
-    public void addLayoutTerminatedListener(final ILayoutTerminatedListener listener) {
+    public void addLayoutDoneListener(final ILayoutDoneListener listener) {
         if (layoutListeners == null) {
-            layoutListeners = new LinkedList<ILayoutTerminatedListener>();
+            layoutListeners = new LinkedList<ILayoutDoneListener>();
         }
         layoutListeners.add(listener);
     }
@@ -827,7 +729,7 @@ public class DiagramLayoutEngine {
      *
      * @param listener a listener
      */
-    public void removeLayoutTerminatedListener(final ILayoutTerminatedListener listener) {
+    public void removeLayoutDoneListener(final ILayoutDoneListener listener) {
         if (layoutListeners == null) {
             return;
         }
@@ -851,7 +753,7 @@ public class DiagramLayoutEngine {
             }
             
             // serialize all properties of the graph
-            KimlUtil.persistDataElements(graph);
+            ElkUtil.persistDataElements(graph);
             
             // save the KGraph to a file
             ResourceSet resourceSet = new ResourceSetImpl();

@@ -47,7 +47,7 @@ public enum GraphFeature {
     /**
      * Create a new graph feature with no description.
      */
-    private GraphFeature() {
+    GraphFeature() {
         description = "";
     }
     
@@ -57,7 +57,7 @@ public enum GraphFeature {
      * @param description
      *            the description of the graph feature.
      */
-    private GraphFeature(final String description) {
+    GraphFeature(final String description) {
         this.description = description;
     }
 

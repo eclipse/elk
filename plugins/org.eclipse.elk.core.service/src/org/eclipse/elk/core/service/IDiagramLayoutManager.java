@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.service;
 
-import org.eclipse.elk.core.config.IMutableLayoutConfig;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -41,15 +41,6 @@ public interface IDiagramLayoutManager<T> {
      * {@link org.eclipse.elk.core.klayoutdata.KEdgeLayout KEdgeLayouts} attached,
      * and their modification flags must be set to {@code false}.
      * 
-     * <p>Layout options that are directly set on graph elements are cleared later by the
-     * {@link org.eclipse.elk.core.service.LayoutOptionManager LayoutOptionManager}.
-     * Therefore those options must be pulled into a volatile configuration and
-     * added to the {@link LayoutMapping#getLayoutConfigs()} list:
-     * <pre>
-     * mapping.getLayoutConfigs().add(VolatileLayoutConfig.fromProperties(
-     *         mapping.getLayoutGraph(), PRIORITY));
-     * </pre></p> 
-     * 
      * <p>At least one of the two parameters must be non-null.</p>
      * 
      * <p>This method is usually called from the UI thread.</p>
@@ -60,10 +51,10 @@ public interface IDiagramLayoutManager<T> {
      * @param diagramPart
      *            the parent object for which layout is performed, or {@code null} if the
      *            whole diagram shall be layouted
-     * @return a layout graph mapping
+     * @return a layout graph mapping, or {@code null} if the given workbench part or diagram part
+     *            is not supported
      */
-    LayoutMapping<T> buildLayoutGraph(IWorkbenchPart workbenchPart,
-            Object diagramPart);
+    LayoutMapping<T> buildLayoutGraph(IWorkbenchPart workbenchPart, Object diagramPart);
 
     /**
      * Apply the computed layout back to the diagram. Graph elements whose modification flag
@@ -72,29 +63,20 @@ public interface IDiagramLayoutManager<T> {
      * <p>This method is usually called from the UI thread.</p>
      * 
      * @param mapping a layout mapping that was created by this layout manager
-     * @param zoomToFit whether the diagram should zoom to fit
-     * @param animationTime the animation time in milliseconds, or 0 for no animation
-     * @see org.eclipse.elk.core.klayoutdata.impl.KShapeLayoutImpl#isModified()
-     * @see org.eclipse.elk.core.klayoutdata.impl.KEdgeLayoutImpl#isModified()
+     * @param settings general settings for applying layout, e.g. whether to use animation
      */
-    void applyLayout(LayoutMapping<T> mapping, boolean zoomToFit,
-            int animationTime);
+    void applyLayout(LayoutMapping<T> mapping, IPropertyHolder settings);
     
     /**
-     * Undo the layout in the original diagram (optional operation).
-     * 
-     * @param mapping a layout mapping that was created by this layout manager
-     */
-    void undoLayout(LayoutMapping<T> mapping);
-    
-    /**
-     * Return a mutable layout configurator that is able to read and write layout options
+     * Return a layout configuration store that is able to read and write layout options
      * through annotations of the diagram. This configurator is necessary for the Layout View.
      * If this method returns {@code null}, the Layout View will not be active for the diagrams
      * handled by this manager.
      * 
-     * @return a mutable layout configurator for direct access, or {@code null}
+     * @param workbenchPart a workbench part, or {@code null}
+     * @param context a context for layout configuration, usually a selected diagram element
+     * @return a layout configuration store, or {@code null}
      */
-    IMutableLayoutConfig getDiagramConfig();
+    ILayoutConfigurationStore getConfigurationStore(IWorkbenchPart workbenchPart, Object context);
 
 }

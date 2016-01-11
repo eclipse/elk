@@ -25,7 +25,7 @@ import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KLabel;
@@ -90,7 +90,7 @@ public class DotImporter {
      */
     public void transform(final IDotTransformationData<GraphvizModel, KNode> transData) {
         for (Graph graph : transData.getSourceGraph().getGraphs()) {
-            KNode parent = KimlUtil.createInitializedNode();
+            KNode parent = ElkUtil.createInitializedNode();
             Map<String, KNode> nodeIdMap = Maps.newHashMap();
             transData.setProperty(NODE_ID_MAP, nodeIdMap);
             Map<Pair<KNode, String>, KPort> portIdMap = Maps.newHashMap();
@@ -377,7 +377,7 @@ public class DotImporter {
                 String value = trimValue(attr);
                 try {
                     if (Attributes.LABEL.equals(attr.getName())) {
-                        KLabel label = KimlUtil.createInitializedLabel(knode);
+                        KLabel label = ElkUtil.createInitializedLabel(knode);
                         label.setText(value);
                     } else if (Attributes.POS.equals(attr.getName())) {
                         KVector pos = new KVector();
@@ -422,7 +422,7 @@ public class DotImporter {
         Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
-            knode = KimlUtil.createInitializedNode();
+            knode = ElkUtil.createInitializedNode();
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             nodeLayout.setWidth(DEF_WIDTH);
             nodeLayout.setHeight(DEF_WIDTH);
@@ -449,7 +449,7 @@ public class DotImporter {
         Pair<KNode, String> key = new Pair<KNode, String>(node, portId);
         KPort kport = portIdMap.get(key);
         if (kport == null) {
-            kport = KimlUtil.createInitializedPort();
+            kport = ElkUtil.createInitializedPort();
             kport.setNode(node);
             if (portId != null) {
                 portIdMap.put(key, kport);
@@ -482,7 +482,7 @@ public class DotImporter {
         ListIterator<EdgeTarget> targetIter = statement.getEdgeTargets().listIterator();
         while (targetIter.hasNext()) {
             EdgeTarget edgeTarget = targetIter.next();
-            KEdge kedge = KimlUtil.createInitializedEdge();
+            KEdge kedge = ElkUtil.createInitializedEdge();
             kedge.setSource(source);
             if (sourcePort != null) {
                 kedge.setSourcePort(sourcePort);
@@ -533,17 +533,17 @@ public class DotImporter {
             for (Attribute attr : statement.getAttributes()) {
                 String value = trimValue(attr);
                 if (Attributes.LABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel(kedge);
+                    KLabel label = ElkUtil.createInitializedLabel(kedge);
                     label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.CENTER);
                 } else if (Attributes.HEADLABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel(kedge);
+                    KLabel label = ElkUtil.createInitializedLabel(kedge);
                     label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.HEAD);
                 } else if (Attributes.TAILLABEL.equals(attr.getName())) {
-                    KLabel label = KimlUtil.createInitializedLabel(kedge);
+                    KLabel label = ElkUtil.createInitializedLabel(kedge);
                     label.setText(value);
                     label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
                             EdgeLabelPlacement.TAIL);

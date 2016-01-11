@@ -48,7 +48,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
         // LGraph instance, even though the IGraphImporter interface would allow null as a return
         // value)

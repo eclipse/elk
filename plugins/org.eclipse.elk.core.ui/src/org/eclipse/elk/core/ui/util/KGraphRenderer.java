@@ -25,7 +25,7 @@ import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.EdgeType;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KLabel;
 import org.eclipse.elk.graph.KNode;
@@ -405,15 +405,15 @@ public class KGraphRenderer {
      */
     private void renderEdge(final KNode graph, final KEdge edge, final GC graphics,
             final Rectangle area, final int labelAlpha) {
-        if (!KimlUtil.isDescendant(edge.getSource(), graph)
-                || !KimlUtil.isDescendant(edge.getTarget(), graph)) {
+        if (!ElkUtil.isDescendant(edge.getSource(), graph)
+                || !ElkUtil.isDescendant(edge.getTarget(), graph)) {
             // the edge points to some node outside of the rendered subgraph
             return;
         }
         
         // calculate an offset for edge coordinates
         KNode parent = edge.getSource();
-        if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
+        if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
             parent = parent.getParent();
         }
         KNode node = parent;

@@ -13,10 +13,10 @@ package org.eclipse.elk.core.ui;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.elk.core.ILayoutMetaData;
-import org.eclipse.elk.core.LayoutAlgorithmData;
-import org.eclipse.elk.core.LayoutMetaDataService;
-import org.eclipse.elk.core.LayoutTypeData;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.service.data.ILayoutMetaData;
+import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.service.data.LayoutTypeData;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 

@@ -19,12 +19,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.elk.core.config.IMutableLayoutConfig;
-import org.eclipse.elk.core.config.LayoutContext;
 import org.eclipse.elk.core.util.DefaultFactory;
 import org.eclipse.elk.core.util.IFactory;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -149,30 +146,6 @@ public class LayoutManagersService {
             } else if (manager.supports(workbenchPart)
                     && (diagramPart == null || manager.supports(diagramPart))) {
                 return manager;
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * Determines a context value by querying the diagram layout configurator of the most
-     * suitable layout manager for the given workbench and diagram part.
-     * 
-     * @param contextProperty a layout context property
-     * @param workbenchPart the workbench part of the context, or {@code null}
-     * @param diagramPart the diagram part of the context, or {@code null}
-     * @return a layout context value, or {@code null}
-     */
-    public final Object getContextValue(final IProperty<?> contextProperty,
-            final IWorkbenchPart workbenchPart, final Object diagramPart) {
-        IDiagramLayoutManager<?> manager = getManager(workbenchPart, diagramPart);
-        if (manager != null) {
-            IMutableLayoutConfig config = manager.getDiagramConfig();
-            if (config != null) {
-                LayoutContext context = new LayoutContext();
-                context.setProperty(EclipseLayoutConfig.WORKBENCH_PART, workbenchPart);
-                context.setProperty(LayoutContext.DIAGRAM_PART, diagramPart);
-                return config.getContextValue(contextProperty, context);
             }
         }
         return null;

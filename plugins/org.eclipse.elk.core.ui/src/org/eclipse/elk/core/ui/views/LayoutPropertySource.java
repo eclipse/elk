@@ -16,20 +16,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.eclipse.elk.core.LayoutAlgorithmData;
-import org.eclipse.elk.core.LayoutMetaDataService;
-import org.eclipse.elk.core.LayoutOptionData;
-import org.eclipse.elk.core.LayoutTypeData;
-import org.eclipse.elk.core.config.DefaultLayoutConfig;
-import org.eclipse.elk.core.config.IMutableLayoutConfig;
-import org.eclipse.elk.core.config.LayoutContext;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.EclipseLayoutConfig;
+import org.eclipse.elk.core.service.ILayoutConfigurationStore;
+import org.eclipse.elk.core.service.LayoutConfigurationManager;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.core.ui.Messages;
-import org.eclipse.elk.core.ui.util.KimlUiUtil;
+import org.eclipse.elk.core.ui.util.ElkUiUtil;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -43,15 +38,13 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public class LayoutPropertySource implements IPropertySource {
     
     /** the layout configuration for this property source. */
-    private IMutableLayoutConfig layoutConfig;
-    /** the layout context describing which element has been selected. */
-    private LayoutContext layoutContext;
-    /** the editing domain that is used for model changes. */
-    private EditingDomain editingDomain;
+    private ILayoutConfigurationStore layoutConfig;
     /** array of property descriptors for the option data. */
     private IPropertyDescriptor[] propertyDescriptors;
     /** set of layout option identifiers that can affect the visibility of other options. */
     private final Set<String> dependencyOptions = new HashSet<String>();
+
+    private final LayoutConfigurationManager configManager = new LayoutConfigurationManager();
 
     /**
      * Creates a layout property source for the given layout configuration.
@@ -59,35 +52,25 @@ public class LayoutPropertySource implements IPropertySource {
      * @param config a mutable layout configuration
      * @param context a layout context describing which element has been selected
      */
-    public LayoutPropertySource(final IMutableLayoutConfig config,
-            final LayoutContext context) {
+    public LayoutPropertySource(final ILayoutConfigurationStore config) {
         this.layoutConfig = config;
-        this.layoutContext = context;
     }
     
     /**
-     * Return the layout context used for this property source.
-     * 
-     * @return the layout context
+     * Returns the configuration store for this property source.
      */
-    public LayoutContext getContext() {
-        return layoutContext;
+    public ILayoutConfigurationStore getConfigurationStore() {
+        return layoutConfig;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (propertyDescriptors == null) {
-            // enrich the layout context
-            DiagramLayoutEngine.INSTANCE.getOptionManager().enrich(layoutContext, layoutConfig, true);
-            List<LayoutOptionData> optionData = layoutContext.getProperty(
-                    DefaultLayoutConfig.OPTIONS);
-            Set<LayoutOptionData.Target> elementTargets = layoutContext.getProperty(
-                    LayoutContext.OPT_TARGETS);
-            editingDomain = layoutContext.getProperty(EclipseLayoutConfig.EDITING_DOMAIN);
+            List<LayoutOptionData> optionData = configManager.getSupportedOptions(layoutConfig);
             
-            // filter the options hidden by option dependencies
+            // Filter the options hidden by option dependencies
             filterDependencies(optionData);
             
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
@@ -95,7 +78,7 @@ public class LayoutPropertySource implements IPropertySource {
             while (optionIter.hasNext()) {
                 LayoutOptionData data = optionIter.next();
                 propertyDescriptors[optionIter.previousIndex()] = new LayoutPropertyDescriptor(data,
-                        elementTargets);
+                        layoutConfig.getOptionTargets());
             }
         }
         return propertyDescriptors;
@@ -122,7 +105,7 @@ public class LayoutPropertySource implements IPropertySource {
                 LayoutOptionData targetOption = dependency.getFirst();
                 dependencyOptions.add(targetOption.getId());
                 Object expectedValue = dependency.getSecond();
-                Object value = layoutConfig.getOptionValue(targetOption, layoutContext);
+                Object value = configManager.getOptionValue(targetOption, layoutConfig);
                 if (expectedValue == null && value != null
                         || expectedValue != null && expectedValue.equals(value)) {
                     visible = true;
@@ -143,13 +126,8 @@ public class LayoutPropertySource implements IPropertySource {
         LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
         LayoutOptionData optionData = layoutServices.getOptionData((String) id);
         if (optionData != null) {
-            Object value;
-            if (LayoutOptions.ALGORITHM.getId().equals(id)) {
-                value = layoutContext.getProperty(DefaultLayoutConfig.CONTENT_ALGO).getId();
-            } else {
-                value = layoutConfig.getOptionValue(optionData, layoutContext);
-            }
-            return translateValue(value, optionData);
+            Object value = configManager.getOptionValue(optionData, layoutConfig);
+            return translateToUI(value, optionData);
         }
         return null;
     }
@@ -163,7 +141,7 @@ public class LayoutPropertySource implements IPropertySource {
      * @return a cell editor value
      */
     @SuppressWarnings("rawtypes")
-    private static Object translateValue(final Object value, final LayoutOptionData optionData) {
+    private Object translateToUI(final Object value, final LayoutOptionData optionData) {
         if (value == null) {
             return "";
         }
@@ -224,41 +202,48 @@ public class LayoutPropertySource implements IPropertySource {
         if (optionData != null) {
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    Object value = thevalue;
-                    switch (optionData.getType()) {
-                    case STRING:
-                        break;
-                    case BOOLEAN:
-                        value = Boolean.valueOf((Integer) value == 1);
-                        break;
-                    case ENUM:
-                        value = optionData.getEnumValue((Integer) value);
-                        break;
-                    case ENUMSET:
-                        // The returned value is a string array that we will turn into a string
-                        // of elements separated by whitespace. We can then use LayoutOptionData
-                        // to obtain a proper set
-                        StringBuilder elementString = new StringBuilder();
-                        for (String s : (String[]) value) {
-                            elementString.append(" ").append(s);
-                        }
-                        value = optionData.parseValue(elementString.toString());
-                        break;
-                    default:
-                        value = optionData.parseValue((String) value);
-                    }
-                    layoutConfig.setOptionValue(optionData, layoutContext, value);
+                    Object value = translateFromUI(thevalue, optionData);
+                    layoutConfig.setOptionValue(optionData.getId(), value.toString());
                 }
             };
-            KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.11"));
+            ElkUiUtil.runModelChange(modelChange, layoutConfig.getEditingDomain(), Messages.getString("kiml.ui.11"));
     
-            // if the selected option can affect other options, refresh the whole layout view
+            // If the selected option can affect other options, refresh the whole layout view
             if (dependencyOptions.contains(id)) {
                 LayoutViewPart layoutView = LayoutViewPart.findView();
                 if (layoutView != null) {
                     layoutView.refresh();
                 }
             }
+        }
+    }
+    
+    /**
+     * Translate a layout option value from an object returned by a cell editor.
+     * 
+     * @param value a cell editor value
+     * @param optionData the corresponding layout option data
+     * @return a layout option value
+     */
+    private Object translateFromUI(final Object value, final LayoutOptionData optionData) {
+        switch (optionData.getType()) {
+        case STRING:
+            return (String) value;
+        case BOOLEAN:
+            return Boolean.valueOf((Integer) value == 1);
+        case ENUM:
+            return optionData.getEnumValue((Integer) value);
+        case ENUMSET:
+            // The returned value is a string array that we will turn into a string
+            // of elements separated by whitespace. We can then use LayoutOptionData
+            // to obtain a proper set
+            StringBuilder elementString = new StringBuilder();
+            for (String s : (String[]) value) {
+                elementString.append(" ").append(s);
+            }
+            return optionData.parseValue(elementString.toString());
+        default:
+            return optionData.parseValue((String) value);
         }
     }
     
@@ -274,46 +259,38 @@ public class LayoutPropertySource implements IPropertySource {
      * {@inheritDoc}
      */
     public boolean isPropertySet(final Object id) {
-        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData((String) id);
-        return layoutConfig.isSet(optionData, layoutContext);
+        return layoutConfig.getOptionValue((String) id) != null;
     }
 
     /**
      * {@inheritDoc}
      */
     public void resetPropertyValue(final Object id) {
-        final LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(
-                (String) id);
-        if (optionData != null) {
-            Runnable modelChange = new Runnable() {
-                public void run() {
-                    layoutConfig.setOptionValue(optionData, layoutContext, null);
-                }
-            };
-            KimlUiUtil.runModelChange(modelChange, editingDomain, Messages.getString("kiml.ui.12"));
-            
-            // if the selected option can affect other options, refresh the whole layout view
-            if (dependencyOptions.contains(id)) {
-                LayoutViewPart layoutView = LayoutViewPart.findView();
-                if (layoutView != null) {
-                    layoutView.refresh();
-                }
+        Runnable modelChange = new Runnable() {
+            public void run() {
+                layoutConfig.setOptionValue((String) id, null);
+            }
+        };
+        ElkUiUtil.runModelChange(modelChange, layoutConfig.getEditingDomain(), Messages.getString("kiml.ui.12"));
+        
+        // if the selected option can affect other options, refresh the whole layout view
+        if (dependencyOptions.contains(id)) {
+            LayoutViewPart layoutView = LayoutViewPart.findView();
+            if (layoutView != null) {
+                layoutView.refresh();
             }
         }
     }
     
     /**
-     * Returns an identifier for a displayed layout hint name. The result is the identifier of
+     * Returns an identifier for a displayed layout algorithm name. The result is the identifier of
      * an algorithm whose name is a prefix of the displayed name. If there are multiple such
-     * algorithms, the one with the longest prefix is taken. If there is no such algorithm,
-     * the result is the identifier of a layout type whose name is a prefix of the displayed
-     * name. If there are multiple such types, the one with the longest prefix is taken.
+     * algorithms, the one with the longest prefix is taken.
      * 
-     * @param displayedName a displayed name of a layout provider or a layout type
+     * @param displayedName a displayed name of a layout algorithm
      * @return the corresponding identifier, or {@code null} if no match is found
      */
     public static String getLayoutHint(final String displayedName) {
-        // look for a matching layout provider
         String bestHint = null;
         int bestLength = 0;
         for (LayoutAlgorithmData layouterData : LayoutMetaDataService.getInstance().getAlgorithmData()) {
@@ -321,17 +298,6 @@ public class LayoutPropertySource implements IPropertySource {
             if (displayedName.startsWith(name) && name.length() > bestLength) {
                 bestHint = layouterData.getId();
                 bestLength = name.length();
-            }
-        }
-        if (bestHint == null) {
-            // look for a matching layout type
-            for (LayoutTypeData layoutType : LayoutMetaDataService.getInstance().getTypeData()) {
-                String typeId = layoutType.getId();
-                String typeName = layoutType.getName();
-                if (displayedName.startsWith(typeName) && typeName.length() > bestLength) {
-                    bestHint = typeId;
-                    bestLength = typeName.length();
-                }
             }
         }
         return bestHint;

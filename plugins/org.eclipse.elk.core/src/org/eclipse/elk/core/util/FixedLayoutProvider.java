@@ -52,7 +52,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Fixed Layout", 1);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
@@ -72,7 +72,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                     float width = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
                     float height = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
                     if (width > 0 && height > 0) {
-                        KimlUtil.resizeNode(node, width, height, true, true);
+                        ElkUtil.resizeNode(node, width, height, true, true);
                     }
                 }
             }
@@ -148,7 +148,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         KInsets insets = parentLayout.getInsets();
         float newWidth = maxx + borderSpacing + insets.getLeft() + insets.getRight();
         float newHeight = maxy + borderSpacing + insets.getTop() + insets.getBottom();
-        KimlUtil.resizeNode(layoutNode, newWidth, newHeight, true, true);
+        ElkUtil.resizeNode(layoutNode, newWidth, newHeight, true, true);
         progressMonitor.done();
     }
     
@@ -199,7 +199,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
     private void generateJunctionPoints(final KEdge edge) {
      // Note: if the edge coordinates are not modified, the junction points are also ignored
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        KVectorChain junctionPoints = KimlUtil.determineJunctionPoints(edge);
+        KVectorChain junctionPoints = ElkUtil.determineJunctionPoints(edge);
         if (junctionPoints.isEmpty()) {
             edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
         } else {

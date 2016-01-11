@@ -20,16 +20,17 @@ import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
 /**
- * A useful pair implementation.<p>
+ * A useful pair implementation.
  * 
- * <b>CARE:</b> Take care when using the pair in conjunction with xtend's "+=" operator. The +=
+ * <p><b>CARE:</b> Take care when using the pair in conjunction with xtend's "+=" operator. The +=
  * operator allows to have iterables on both sides, hence a pair where no generics are specified
  * would be treated as an iterable and both elements are added to the left side iterable despite the
- * pair itself. Example: <p>
+ * pair itself. Example:
  * <code>
  *      // heuristicAttachments += new Pair(commentNode, heuristicAttachment) WRONG !!
  *      heuristicAttachments.add(new Pair(commentNode, heuristicAttachment)) // correct
  * </code>
+ * </p>
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating proposed yellow 2012-07-10 msp

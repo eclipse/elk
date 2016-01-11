@@ -22,7 +22,7 @@ import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.layered.components.ComponentsProcessor;
 import org.eclipse.elk.layered.compound.CompoundGraphPostprocessor;
 import org.eclipse.elk.layered.compound.CompoundGraphPreprocessor;
@@ -476,7 +476,7 @@ public final class KlayLayered {
      * Afterwards, the border spacing property is reset to 0.
      * 
      * <p>Major parts of this method are adapted from
-     * {@link KimlUtil#resizeNode(org.eclipse.elk.graph.KNode, float, float, boolean)}.</p>
+     * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.KNode, float, float, boolean)}.</p>
      * 
      * <p>Note: This method doesn't care about labels of compound nodes since those labels are not
      * attached to the graph.</p>
@@ -509,11 +509,11 @@ public final class KlayLayered {
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minWidth <= 0) {
-                    minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
+                    minWidth = ElkUtil.DEFAULT_MIN_WIDTH;
                 }
                 
                 if (minHeight <= 0) {
-                    minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
+                    minHeight = ElkUtil.DEFAULT_MIN_HEIGHT;
                 }
             }
             

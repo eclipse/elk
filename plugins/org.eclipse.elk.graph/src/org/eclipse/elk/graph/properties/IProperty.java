@@ -36,6 +36,7 @@ public interface IProperty<T> {
      * 
      * @return the lower bound
      */
+    @Deprecated
     Comparable<? super T> getLowerBound();
     
     /**
@@ -44,6 +45,7 @@ public interface IProperty<T> {
      * 
      * @return the upper bound
      */
+    @Deprecated
     Comparable<? super T> getUpperBound();
     
     /**

@@ -24,7 +24,7 @@ import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.KimlUtil;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
@@ -604,11 +604,11 @@ public class LabelAndNodeSizeProcessor {
             // If we are to use default minima, check if the values are properly set
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minWidth <= 0) {
-                    minWidth = KimlUtil.DEFAULT_MIN_WIDTH;
+                    minWidth = ElkUtil.DEFAULT_MIN_WIDTH;
                 }
 
                 if (minHeight <= 0) {
-                    minHeight = KimlUtil.DEFAULT_MIN_HEIGHT;
+                    minHeight = ElkUtil.DEFAULT_MIN_HEIGHT;
                 }
             }
 
