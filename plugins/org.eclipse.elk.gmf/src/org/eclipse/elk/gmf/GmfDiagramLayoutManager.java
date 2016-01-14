@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+ * Copyright (c) 2009, 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Kiel University - initial API and implementation
+ *     Camille Letavernier (CEA LIST) - Bug 485905
  *******************************************************************************/
 package org.eclipse.elk.gmf;
 
@@ -194,18 +195,26 @@ public class GmfDiagramLayoutManager implements IDiagramLayoutManager<IGraphical
     protected boolean acceptPart(EditPart editPart) {
         return true;
     }
+    
+    /**
+     * Returns the DiagramEditor represented by (or wrapped in) the given IWorkbenchPart
+     *
+     * May be null
+     */
+    protected DiagramEditor getDiagramEditor(IWorkbenchPart workbenchPart) {
+        if (workbenchPart instanceof DiagramEditor) {
+            return (DiagramEditor) workbenchPart;
+        }
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      */
     public LayoutMapping<IGraphicalEditPart> buildLayoutGraph(final IWorkbenchPart workbenchPart,
             final Object diagramPart) {
-        DiagramEditor diagramEditor = null;
-
         // get the diagram editor part
-        if (workbenchPart instanceof DiagramEditor) {
-            diagramEditor = (DiagramEditor) workbenchPart;
-        }
+        DiagramEditor diagramEditor = getDiagramEditor(workbenchPart);
 
         // choose the layout root edit part
         IGraphicalEditPart layoutRootPart = null;
@@ -561,10 +570,10 @@ public class GmfDiagramLayoutManager implements IDiagramLayoutManager<IGraphical
         if (applyLayoutCommand != null) {
             // Get a command stack to execute the command
             CommandStack commandStack = mapping.getProperty(COMMAND_STACK);
-            IWorkbenchPart diagramEditor = mapping.getWorkbenchPart();
+            IWorkbenchPart workbenchPart = mapping.getWorkbenchPart();
             if (commandStack == null) {
-                if (diagramEditor != null) {
-                    Object adapter = diagramEditor.getAdapter(CommandStack.class);
+                if (workbenchPart != null) {
+                    Object adapter = workbenchPart.getAdapter(CommandStack.class);
                     if (adapter instanceof CommandStack) {
                         commandStack = (CommandStack) adapter;
                     }
@@ -579,8 +588,9 @@ public class GmfDiagramLayoutManager implements IDiagramLayoutManager<IGraphical
             commandStack.execute(applyLayoutCommand);
             
             // Refresh the border items in the diagram
-            if (diagramEditor instanceof DiagramEditor) {
-                refreshDiagram((DiagramEditor) diagramEditor, mapping.getParentElement());
+            DiagramEditor diagramEditor = getDiagramEditor(workbenchPart);
+            if (diagramEditor != null) {
+                refreshDiagram(diagramEditor, mapping.getParentElement());
             }
         }
     }
