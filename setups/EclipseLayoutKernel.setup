@@ -172,6 +172,8 @@
         <requirement
             name="org.eclipse.gmf.feature.group"/>
         <requirement
+            name="org.eclipse.gmf.tooling.runtime.feature.group"/>
+        <requirement
             name="org.eclipse.graphiti.sdk.feature.feature.group"/>
         <sourceLocator
             rootFolder="${git.clone.location}"
