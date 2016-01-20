@@ -13,9 +13,9 @@ package org.eclipse.elk.core.ui.views;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.service.IDiagramLayoutManager;
-import org.eclipse.elk.core.service.ILayoutConfigurationStore;
-import org.eclipse.elk.core.service.LayoutManagersService;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.util.Maybe;
@@ -49,9 +49,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
+
+import com.google.inject.ConfigurationException;
+import com.google.inject.Injector;
 
 /**
  * A view that displays layout options for selected objects.
@@ -61,50 +65,6 @@ import org.eclipse.ui.views.properties.PropertySheetPage;
  * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutViewPart extends ViewPart {
-
-    /** the view identifier. */
-    public static final String VIEW_ID = "org.eclipse.elk.core.views.layout";
-    /** preference identifier for enabling categories. */
-    public static final String PREF_CATEGORIES = "view.categories";
-    /** preference identifier for enabling advanced options. */
-    public static final String PREF_ADVANCED = "view.advanced";
-    
-    /** the form toolkit used to create forms. */
-    private FormToolkit toolkit;
-    /** the page that is displayed in this view part. */
-    private PropertySheetPage page;
-    /** the property source provider that keeps track of created property sources. */
-    private final LayoutPropertySourceProvider propSourceProvider = new LayoutPropertySourceProvider();
-    
-    /** the selection listener. */
-    private final ISelectionListener selectionListener = new ISelectionListener() {
-        public void selectionChanged(final IWorkbenchPart part, final ISelection selection) {
-            if (part instanceof IEditorPart && propSourceProvider.getWorkbenchPart() instanceof IEditorPart
-                    && part != propSourceProvider.getWorkbenchPart()) {
-                // If the editor is switched, clear the view content even if the new editor is not supported
-                propSourceProvider.setWorkbenchPart(null);
-            }
-            IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(part, null);
-            if (manager != null) {
-                propSourceProvider.setWorkbenchPart(part);
-                page.selectionChanged(part, selection);
-            }
-        }
-    };
-    
-    /** the part listener for reacting to closed workbench parts. */
-    private final IPartListener partListener = new IPartListener() {
-        public void partClosed(final IWorkbenchPart part) {
-            if (propSourceProvider.getWorkbenchPart() == part) {
-                // Reset the workbench part in order to ensure proper garbage collection
-                propSourceProvider.setWorkbenchPart(null);
-            }
-        }
-        public void partOpened(final IWorkbenchPart part) { }
-        public void partDeactivated(final IWorkbenchPart part) { }
-        public void partBroughtToTop(final IWorkbenchPart part) { }
-        public void partActivated(final IWorkbenchPart part) { }
-    };
     
     /**
      * Finds the active layout view, if it exists.
@@ -140,6 +100,63 @@ public class LayoutViewPart extends ViewPart {
             }
         }
         return null;
+    }
+
+    /** The view identifier. */
+    public static final String VIEW_ID = "org.eclipse.elk.core.views.layout";
+    /** Preference identifier for enabling categories. */
+    public static final String PREF_CATEGORIES = "view.categories";
+    /** Preference identifier for enabling advanced options. */
+    public static final String PREF_ADVANCED = "view.advanced";
+    
+    /** The form toolkit used to create forms. */
+    private FormToolkit toolkit;
+    /** The page that is displayed in this view part. */
+    private PropertySheetPage page;
+    /** The last created property source provider. */
+    private LayoutPropertySourceProvider currentPropSourceProvider;
+    
+    /** The selection listener. */
+    private final ISelectionListener selectionListener = (final IWorkbenchPart part, final ISelection selection) -> {
+        Injector injector = LayoutConnectorsService.getInstance().getInjector(part, null);
+        if (injector != null) {
+            try {
+                currentPropSourceProvider = injector.getInstance(LayoutPropertySourceProvider.class);
+                currentPropSourceProvider.setWorkbenchPart(part);
+                page.setPropertySourceProvider(currentPropSourceProvider);
+                page.selectionChanged(part, selection);
+            } catch (ConfigurationException exception) {
+                IStatus status = new Status(IStatus.ERROR, ElkUiPlugin.PLUGIN_ID,
+                        "The Guice configuration for " + part.getTitle() + " is inconsistent.",
+                        exception);
+                StatusManager.getManager().handle(status, StatusManager.LOG);
+            }
+        } else if (part instanceof IEditorPart) {
+            currentPropSourceProvider = null;
+            page.setPropertySourceProvider(null);
+        }
+    };
+    
+    /** The part listener for reacting to closed workbench parts. */
+    private final IPartListener partListener = new IPartListener() {
+        public void partClosed(final IWorkbenchPart part) {
+            if (currentPropSourceProvider != null && part == currentPropSourceProvider.getWorkbenchPart()) {
+                // Reset the property source provider in order to ensure proper garbage collection
+                currentPropSourceProvider = null;
+                page.setPropertySourceProvider(null);
+            }
+        }
+        public void partOpened(final IWorkbenchPart part) { }
+        public void partDeactivated(final IWorkbenchPart part) { }
+        public void partBroughtToTop(final IWorkbenchPart part) { }
+        public void partActivated(final IWorkbenchPart part) { }
+    };
+    
+    /**
+     * Return the currently active property source provider, or {@code null} if none is active.
+     */
+    public LayoutPropertySourceProvider getPropertySourceProvider() {
+        return currentPropSourceProvider;
     }
     
     /** margin width for the form layout. */
@@ -180,15 +197,15 @@ public class LayoutViewPart extends ViewPart {
         formData.top = new FormAttachment(FORM_TOP, 5);
         formData.bottom = new FormAttachment(FORM_BOTTOM, 0);
         page.getControl().setLayoutData(formData);
-        page.setPropertySourceProvider(propSourceProvider);
-        IPreferenceStore preferenceStore = ElkUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = ElkUiPlugin.getInstance().getPreferenceStore();
         
         // add actions to the toolbar, view menu, and context menu
         IActionBars actionBars = getViewSite().getActionBars();
         page.setActionBars(actionBars);
         addPopupActions(page.getControl().getMenu());
         IMenuManager menuManager = actionBars.getMenuManager();
-        menuManager.add(new RemoveOptionsAction(this, Messages.getString("kiml.ui.30")));
+        menuManager.add(new RestoreDefaultsAction(this, Messages.getString("kiml.ui.30"), false));
+        menuManager.add(new RestoreDefaultsAction(this, Messages.getString("kiml.ui.82"), true));
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         
         // CHECKSTYLEON MagicNumber
@@ -248,24 +265,24 @@ public class LayoutViewPart extends ViewPart {
      */
     @Override
     public void dispose() {
-        // store the current status of the categories button
+        // Store the current status of the categories button
         ActionContributionItem categoriesItem = (ActionContributionItem) getViewSite()
                 .getActionBars().getToolBarManager().find("categories");
         if (categoriesItem != null) {
-            ElkUiPlugin.getDefault().getPreferenceStore().setValue(PREF_CATEGORIES,
+            ElkUiPlugin.getInstance().getPreferenceStore().setValue(PREF_CATEGORIES,
                     categoriesItem.getAction().isChecked());
         }
-        // store the current status of the advanced button
+        // Store the current status of the advanced button
         ActionContributionItem advancedItem = (ActionContributionItem) getViewSite()
                 .getActionBars().getToolBarManager().find("filter");
         if (advancedItem != null) {
-            ElkUiPlugin.getDefault().getPreferenceStore().setValue(PREF_ADVANCED,
+            ElkUiPlugin.getInstance().getPreferenceStore().setValue(PREF_ADVANCED,
                     advancedItem.getAction().isChecked());
         }
-        // dispose the view part
+        // Dispose the view part
         getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(selectionListener);
         getSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
-        propSourceProvider.setWorkbenchPart(null);
+        currentPropSourceProvider = null;
         toolkit.dispose();
         super.dispose();
     }
@@ -276,7 +293,6 @@ public class LayoutViewPart extends ViewPart {
     public void refresh() {
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
-                propSourceProvider.clearCache();
                 page.refresh();
             }
         });
@@ -330,7 +346,8 @@ public class LayoutViewPart extends ViewPart {
                 }
                 
                 // Add the "set as default for this diagram" action
-                if (propSourceProvider.getConfigurationStore() != null) {
+                if (currentPropSourceProvider != null
+                        && !currentPropSourceProvider.getConfigurationStores().isEmpty()) {
                     if (diagramDefaultItem == null) {
                         ContributionItem contributionItem = new ActionContributionItem(
                                 applyOptionAction);
@@ -344,20 +361,6 @@ public class LayoutViewPart extends ViewPart {
                 }
             }
         });
-    }
-    
-    /**
-     * Return the currently tracked workbench part, or {@code null} if none is active.
-     */
-    public IWorkbenchPart getCurrentWorkbenchPart() {
-        return propSourceProvider.getWorkbenchPart();
-    }
-    
-    /**
-     * Return the currently active configuration store, or {@code null} if none is active.
-     */
-    public ILayoutConfigurationStore getCurrentConfigurationStore() {
-        return propSourceProvider.getConfigurationStore();
     }
 
 }

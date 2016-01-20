@@ -11,11 +11,11 @@
 package org.eclipse.elk.core.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.elk.core.service.LayoutManagersService;
+import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Tester class for checking whether the active editor is supported by KIML.
+ * Tester class for checking whether the active editor is supported by ELK.
  * 
  * @author jjc
  * @kieler.design proposed by msp
@@ -30,7 +30,7 @@ public class ActiveEditorSupportedTester extends PropertyTester {
             final Object[] args, final Object expectedValue) {
         if (receiver instanceof IWorkbenchPart) {
             IWorkbenchPart workbenchPart = (IWorkbenchPart) receiver;
-            return LayoutManagersService.getInstance().getManager(workbenchPart, null) != null;
+            return LayoutConnectorsService.getInstance().getConnector(workbenchPart, null) != null;
         }
         return false;
     }

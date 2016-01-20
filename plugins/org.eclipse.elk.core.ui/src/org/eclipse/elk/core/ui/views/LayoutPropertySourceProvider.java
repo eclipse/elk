@@ -10,41 +10,50 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.views;
 
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.eclipse.elk.core.service.IDiagramLayoutManager;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
-import org.eclipse.elk.core.service.LayoutManagersService;
+import org.eclipse.elk.core.service.ILayoutSetup;
+import org.eclipse.elk.core.service.LayoutConfigurationManager;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
 
-import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 /**
- * A property source provider used by the layout view. This provider queries the
- * {@link LayoutOptionManager} in order to obtain the valid options for the current selection.
+ * A property source provider used by the layout view.
+ * 
+ * <p>Subclasses of this class can be bound in an {@link ILayoutSetup} injector for customization.</p>
  *
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutPropertySourceProvider implements IPropertySourceProvider {
-
-    /** property sources that have been created for the current selection. */
-    private final Map<Object, LayoutPropertySource> propertySources = Maps.newHashMap();
-    /** the workbench part containing the current selection. */
-    private IWorkbenchPart workbenchPart;
-    /** the last selected object. */
-    private Object lastSelection;
     
     /**
-     * Clear the internal cache of property sources.
+     * The layout configuration store provider interacting with the created property sources.
      */
-    public void clearCache() {
-        lastSelection = null;
-        propertySources.clear();
-    }
+    @Inject(optional = true)
+    private ILayoutConfigurationStore.Provider configurationStoreProvider;
+    
+    /**
+     * The layout configuration manager used to handle configuration stores.
+     */
+    @Inject
+    private LayoutConfigurationManager configManager;
+
+    /**
+     * The workbench part containing the current selection.
+     */
+    private IWorkbenchPart workbenchPart;
+    
+    /**
+     * The requested configuration stores.
+     */
+    private final List<ILayoutConfigurationStore> configStores = new LinkedList<ILayoutConfigurationStore>();
     
     /**
      * Return the currently tracked workbench part.
@@ -61,44 +70,42 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
      * @param theworkbenchPart a workbench part, or {@code null}
      */
     public void setWorkbenchPart(final IWorkbenchPart theworkbenchPart) {
-        if (this.workbenchPart != theworkbenchPart) {
-            propertySources.clear();
-            this.workbenchPart = theworkbenchPart;
-        }
+        this.workbenchPart = theworkbenchPart;
     }
     
     /**
-     * Return the currently active configuration store, or {@code null} if none is active.
+     * Return the list of requested layout configuration stores.
      */
-    public ILayoutConfigurationStore getConfigurationStore() {
-        LayoutPropertySource source = propertySources.get(lastSelection);
-        if (source != null) {
-            return source.getConfigurationStore();
-        }
-        return null;
+    public List<ILayoutConfigurationStore> getConfigurationStores() {
+        return configStores;
+    }
+    
+    /**
+     * Return the active layout configuration manager.
+     */
+    public LayoutConfigurationManager getConfigurationManager() {
+        return configManager;
     }
     
     /**
      * {@inheritDoc}
-     * A property source is only created if a valid diagram layout manager is found for the given
-     * object in the {@link LayoutManagersService}.
      */
     public IPropertySource getPropertySource(final Object object) {
-        if (propertySources.containsKey(object)) {
-            return propertySources.get(object);
-        }
-        IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
-                workbenchPart, object);
-        if (manager != null) {
-            ILayoutConfigurationStore diagramConfig = manager.getConfigurationStore(workbenchPart, object);
-            if (diagramConfig != null) {
-                LayoutPropertySource propSource = new LayoutPropertySource(diagramConfig);
-                propertySources.put(object, propSource);
-                lastSelection = object;
-                return propSource;
+        if (configurationStoreProvider != null) {
+            ILayoutConfigurationStore config = configurationStoreProvider.get(workbenchPart, object);
+            if (config != null) {
+                configStores.add(config);
+                return createPropertySource(config);
             }
         }
         return null;
     }
-
+    
+    /**
+     * Create a property source for the given configuration store.
+     */
+    protected IPropertySource createPropertySource(final ILayoutConfigurationStore config) {
+        return new LayoutPropertySource(config, getConfigurationManager());
+    }
+    
 }

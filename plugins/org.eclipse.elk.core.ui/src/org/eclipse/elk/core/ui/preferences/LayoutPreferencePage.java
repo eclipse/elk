@@ -129,7 +129,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * @return a group with developer options
      */
     private Group createDeveloperOptionsGroup(final Composite parent) {
-        IPreferenceStore servicePrefStore = ElkServicePlugin.getDefault().getPreferenceStore();
+        IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
         Group developerGroup = new Group(parent, SWT.NONE);
         developerGroup.setText(Messages.getString("kiml.ui.81")); //$NON-NLS-1$
         
@@ -159,7 +159,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
      * {@inheritDoc}
      */
     public void init(final IWorkbench workbench) {
-        setPreferenceStore(ElkUiPlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(ElkUiPlugin.getInstance().getPreferenceStore());
     }
 
     /**
@@ -169,7 +169,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     protected void performDefaults() {
         super.performDefaults();
         IPreferenceStore mainPrefStore = getPreferenceStore();
-        IPreferenceStore servicePrefStore = ElkServicePlugin.getDefault().getPreferenceStore();
+        IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
         
         // set default values for the general options
         animationCheckBox.setSelection(mainPrefStore.getDefaultBoolean(LayoutHandler.PREF_ANIMATION));
@@ -187,7 +187,7 @@ public class LayoutPreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
     public boolean performOk() {
         IPreferenceStore mainPrefStore = getPreferenceStore();
-        IPreferenceStore servicePrefStore = ElkServicePlugin.getDefault().getPreferenceStore();
+        IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
         
         // set new values for the general options
         mainPrefStore.setValue(LayoutHandler.PREF_ANIMATION, animationCheckBox.getSelection());

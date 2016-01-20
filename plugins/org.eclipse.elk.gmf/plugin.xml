@@ -2,10 +2,10 @@
 <?eclipse version="3.4"?>
 <plugin>
  <extension
-       point="org.eclipse.elk.core.service.layoutManagers">
-    <manager
-          class="org.eclipse.elk.gmf.GmfDiagramLayoutManager">
-    </manager>
+       point="org.eclipse.elk.core.service.layoutConnectors">
+    <setup
+          class="org.eclipse.elk.gmf.GmfLayoutSetup">
+    </setup>
  </extension>
   <extension
        point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">

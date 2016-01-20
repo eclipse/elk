@@ -70,7 +70,7 @@ public class LayoutDiagramFileHandler extends AbstractHandler {
                         }
                     } catch (Exception exception) {
                         return new Status(IStatus.ERROR, "org.eclipse.elk.core.gmf",
-                                "Failed to layout the selected diagram file." , exception);
+                                "Failed to layout the selected diagram file.", exception);
                     }
                     monitorAdapter.done();
                     return Status.OK_STATUS;
@@ -122,7 +122,7 @@ public class LayoutDiagramFileHandler extends AbstractHandler {
         monitor.worked(1);
         
         // perform layout on the diagram
-        DiagramLayoutEngine.INSTANCE.layout(null, editPart.get(), monitor.subTask(1));
+        DiagramLayoutEngine.invokeLayout(null, editPart.get(), monitor.subTask(1), null);
         
         // save the modified diagram
         resource.save(Collections.emptyMap());

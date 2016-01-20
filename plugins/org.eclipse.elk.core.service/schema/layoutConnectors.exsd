@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.elk.core.service" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.elk.core.service" id="layoutManagers" name="Layout Managers"/>
+         <meta.schema plugin="org.eclipse.elk.core.service" id="layoutConnectors" name="Layout Connectors"/>
       </appinfo>
       <documentation>
-         This extension point can be used to connect graphical diagram editors to the KIML functionality. A diagram layout manager has responsibility to translate the graph structure of a specific diagram editor into the internally used KGraph structure, which is used to execute algorithms for automatic layout.
+         This extension point can be used to connect graphical diagram viewers and editors to the ELK functionality. A diagram layout connector has responsibility to translate the graph structure of a specific diagram editor into the internally used graph structure, which is used to execute algorithms for automatic layout.
       </documentation>
    </annotation>
 
@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="manager"/>
+            <element ref="setup"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,27 +47,27 @@
       </complexType>
    </element>
 
-   <element name="manager">
+   <element name="setup">
       <annotation>
          <documentation>
-            Use this element to register a diagram layout manager class for use in KIML. A layout manager must recognize the graph structure of a specific type of diagram editors and must translate it into a KGraph instance, which is the internally used graph structure for automatic layout.
+            Use this element to register a layout setup class for use in ELK. A layout setup must be able to create a Guice injector for providing an implementation of a diagram layout connector, and possibly other custom functionality. A layout connector must recognize the graph structure of a specific type of diagram viewers or editors and must translate it into an ELK graph instance, which is the internally used graph structure for automatic layout.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Qualified name of a diagram layout manager class.
+                  Qualified name of a layout setup class.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.elk.core.service.IDiagramLayoutManager"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.elk.core.service.ILayoutSetup"/>
                </appinfo>
             </annotation>
          </attribute>
          <attribute name="priority" type="string">
             <annotation>
                <documentation>
-                  An optional priority (default is 0); layout managers with higher priority are checked first when a suitable manager class is searched.
+                  An optional priority (default is 0); layout setups with higher priority are checked first when a suitable setup class is searched.
                </documentation>
             </annotation>
          </attribute>

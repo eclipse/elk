@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
+import org.eclipse.elk.core.service.ILayoutSetup;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
@@ -29,7 +30,8 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 /**
- * A property source for layout options for GMF diagrams.
+ * A property source for layout options. This class can be specialized by binding a subclass of
+ * {@link LayoutPropertySourceProvider} in an {@link ILayoutSetup} injector.
  *
  * @author msp
  * @kieler.design proposed by msp
@@ -37,30 +39,30 @@ import org.eclipse.ui.views.properties.IPropertySource;
  */
 public class LayoutPropertySource implements IPropertySource {
     
-    /** the layout configuration for this property source. */
+    /**
+     * The layout configuration for this property source.
+     */
     private ILayoutConfigurationStore layoutConfig;
-    /** array of property descriptors for the option data. */
+    /**
+     * Array of property descriptors for the option data.
+     */
     private IPropertyDescriptor[] propertyDescriptors;
-    /** set of layout option identifiers that can affect the visibility of other options. */
+    /**
+     * Set of layout option identifiers that can affect the visibility of other options.
+     */
     private final Set<String> dependencyOptions = new HashSet<String>();
-
-    private final LayoutConfigurationManager configManager = new LayoutConfigurationManager();
+    /**
+     * The layout configuration manager used to handle configuration stores.
+     */
+    private final LayoutConfigurationManager configManager;
 
     /**
      * Creates a layout property source for the given layout configuration.
-     * 
-     * @param config a mutable layout configuration
-     * @param context a layout context describing which element has been selected
      */
-    public LayoutPropertySource(final ILayoutConfigurationStore config) {
+    protected LayoutPropertySource(final ILayoutConfigurationStore config,
+            final LayoutConfigurationManager manager) {
         this.layoutConfig = config;
-    }
-    
-    /**
-     * Returns the configuration store for this property source.
-     */
-    public ILayoutConfigurationStore getConfigurationStore() {
-        return layoutConfig;
+        this.configManager = manager;
     }
     
     /**
@@ -71,7 +73,7 @@ public class LayoutPropertySource implements IPropertySource {
             List<LayoutOptionData> optionData = configManager.getSupportedOptions(layoutConfig);
             
             // Filter the options hidden by option dependencies
-            filterDependencies(optionData);
+            filterOptions(optionData);
             
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
             ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
@@ -90,9 +92,11 @@ public class LayoutPropertySource implements IPropertySource {
      * that equals the actual value, or if it has no target value and the actual value is anything
      * but {@code null}.
      * 
+     * <p>Override this method in a subclass in order to further restrict the visible options.</p>
+     * 
      * @param optionData a list of option meta data
      */
-    private void filterDependencies(final List<LayoutOptionData> optionData) {
+    protected void filterOptions(final List<LayoutOptionData> optionData) {
         // the layout algorithm option always affects other options
         dependencyOptions.add(LayoutOptions.ALGORITHM.getId());
         
@@ -141,7 +145,7 @@ public class LayoutPropertySource implements IPropertySource {
      * @return a cell editor value
      */
     @SuppressWarnings("rawtypes")
-    private Object translateToUI(final Object value, final LayoutOptionData optionData) {
+    protected Object translateToUI(final Object value, final LayoutOptionData optionData) {
         if (value == null) {
             return "";
         }
@@ -225,7 +229,7 @@ public class LayoutPropertySource implements IPropertySource {
      * @param optionData the corresponding layout option data
      * @return a layout option value
      */
-    private Object translateFromUI(final Object value, final LayoutOptionData optionData) {
+    protected Object translateFromUI(final Object value, final LayoutOptionData optionData) {
         switch (optionData.getType()) {
         case STRING:
             return (String) value;

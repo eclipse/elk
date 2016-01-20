@@ -32,8 +32,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
      */
     @Override
     public void initializeDefaultPreferences() {
-        IPreferenceStore servicePrefStore = ElkServicePlugin.getDefault().getPreferenceStore();
-        IPreferenceStore uiPrefStore = ElkUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore servicePrefStore = ElkServicePlugin.getInstance().getPreferenceStore();
+        IPreferenceStore uiPrefStore = ElkUiPlugin.getInstance().getPreferenceStore();
         
         uiPrefStore.setDefault(LayoutHandler.PREF_ANIMATION, true);
         uiPrefStore.setDefault(LayoutHandler.PREF_ZOOM, false);

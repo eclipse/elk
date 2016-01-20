@@ -26,8 +26,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.service.IDiagramLayoutManager;
-import org.eclipse.elk.core.service.ILayoutConfigurationStore;
+import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
@@ -41,7 +40,6 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
@@ -71,9 +69,11 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.BiMap;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
- * Generic layout manager implementation for Graphiti diagrams.
+ * Generic layout connector implementation for Graphiti diagrams.
  * 
  * @author atr
  * @author soh
@@ -82,7 +82,8 @@ import com.google.common.collect.BiMap;
  * @kieler.rating proposed yellow by msp
  */
 @SuppressWarnings("restriction")
-public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<PictogramElement> {
+@Singleton
+public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
 
     /** property for the the command that is executed for applying automatic layout. */
     public static final IProperty<Command> LAYOUT_COMMAND = new Property<Command>(
@@ -95,45 +96,15 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
     /** property for the the offset to add for all coordinates. */
     public static final IProperty<KVector> COORDINATE_OFFSET = new Property<KVector>(
             "graphiti.coordinateOffset");
+    
+    @Inject
+    private GraphElementIndicator graphElemIndicator;
 
     /**
      * {@inheritDoc}
      */
-    public boolean supports(final Object object) {
-        if (object instanceof Collection) {
-            Collection<?> collection = (Collection<?>) object;
-            for (Object o : collection) {
-                if (o instanceof IPictogramElementEditPart || o instanceof PictogramElement) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return object instanceof DiagramEditor || object instanceof IPictogramElementEditPart
-                || object instanceof PictogramElement;
-    }
-
-    @Override
-    public ILayoutConfigurationStore getConfigurationStore(IWorkbenchPart workbenchPart, Object context) {
-        EditingDomain editingDomain = null;
-        if (workbenchPart instanceof DiagramEditor) {
-            editingDomain = ((DiagramEditor) workbenchPart).getEditingDomain();
-        }
-        if (context instanceof PictogramElement) {
-            return new GraphitiLayoutConfigurationStore((PictogramElement) context, editingDomain, this);
-        } else if (context instanceof IPictogramElementEditPart) {
-            IPictogramElementEditPart editPart = (IPictogramElementEditPart) context;
-            return new GraphitiLayoutConfigurationStore(editPart.getPictogramElement(), editingDomain, this);
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public LayoutMapping<PictogramElement> buildLayoutGraph(final IWorkbenchPart workbenchPart,
-            final Object diagramPart) {
-        LayoutMapping<PictogramElement> mapping = new LayoutMapping<PictogramElement>(workbenchPart);
+    public LayoutMapping buildLayoutGraph(final IWorkbenchPart workbenchPart, final Object diagramPart) {
+        LayoutMapping mapping = new LayoutMapping(workbenchPart);
         mapping.setProperty(CONNECTIONS, new LinkedList<Connection>());
 
         Shape rootElement = null;
@@ -193,7 +164,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
         }
         if (rootElement == null) {
             throw new UnsupportedOperationException(
-                    "Not supported by this layout manager: Workbench part "
+                    "Not supported by this layout connector: Workbench part "
                     + workbenchPart + ", Element " + diagramPart);
         }
         mapping.setParentElement(rootElement);
@@ -245,7 +216,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * @param shape2 the second shape
      * @return the common parent, or {@code null} if there is none
      */
-    private static Shape commonParent(final Shape shape1, final Shape shape2) {
+    protected static Shape commonParent(final Shape shape1, final Shape shape2) {
         Shape s1 = shape1;
         Shape s2 = shape2;
         do {
@@ -268,7 +239,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * @param child the tentative child
      * @return true if the parent is actually a parent of the child
      */
-    private static boolean isParent(final Shape parent, final Shape child) {
+    protected static boolean isParent(final Shape parent, final Shape child) {
         Shape shape = child;
         do {
             if (shape == parent) {
@@ -282,7 +253,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
     /**
      * {@inheritDoc}
      */
-    public void applyLayout(LayoutMapping<PictogramElement> mapping, IPropertyHolder settings) {
+    public void applyLayout(final LayoutMapping mapping, final IPropertyHolder settings) {
         boolean zoomToFit = settings.getProperty(LayoutOptions.ZOOM_TO_FIT);
         Object layoutGraphObj = mapping.getParentElement();
         if (zoomToFit && layoutGraphObj instanceof EditPart) {
@@ -324,14 +295,14 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * original diagram. The diagram is not modified yet, but all required
      * preparations are performed.
      * 
-     * @param mapping a layout mapping that was created by this layout manager
+     * @param mapping a layout mapping that was created by this layout connector
      */
-    protected void transferLayout(final LayoutMapping<PictogramElement> mapping) {
+    protected void transferLayout(final LayoutMapping mapping) {
         DiagramEditor diagramEditor = (DiagramEditor) mapping.getWorkbenchPart();
         GraphitiLayoutCommand command = new GraphitiLayoutCommand(diagramEditor.getEditingDomain(),
                 diagramEditor.getDiagramTypeProvider().getFeatureProvider(), this);
-        for (Entry<KGraphElement, PictogramElement> entry : mapping.getGraphMap().entrySet()) {
-            command.add(entry.getKey(), entry.getValue());
+        for (Entry<KGraphElement, Object> entry : mapping.getGraphMap().entrySet()) {
+            command.add(entry.getKey(), (PictogramElement) entry.getValue());
         }
         mapping.setProperty(LAYOUT_COMMAND, command);
         
@@ -348,7 +319,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * @param parentNode the parent node
      * @param offset the offset to add
      */
-    private static void addOffset(final KNode parentNode, final KVector offset) {
+    protected static void addOffset(final KNode parentNode, final KVector offset) {
         // correct the offset with the minimal computed coordinates
         double minx = Integer.MAX_VALUE;
         double miny = Integer.MAX_VALUE;
@@ -367,9 +338,9 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * Apply the transferred layout to the original diagram. This final step
      * is where the actual change to the diagram is done.
      * 
-     * @param mapping a layout mapping that was created by this layout manager
+     * @param mapping a layout mapping that was created by this layout connector
      */
-    protected void applyLayout(final LayoutMapping<PictogramElement> mapping) {
+    protected void applyLayout(final LayoutMapping mapping) {
         TransactionalEditingDomain editingDomain = ((DiagramEditor) mapping.getWorkbenchPart())
                 .getEditingDomain();
         editingDomain.getCommandStack().execute(mapping.getProperty(LAYOUT_COMMAND));
@@ -386,10 +357,10 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * @param parentElement the currently analyzed element
      * @param parentNode the corresponding KNode
      */
-    protected void buildLayoutGraphRecursively(final LayoutMapping<PictogramElement> mapping,
+    protected void buildLayoutGraphRecursively(final LayoutMapping mapping,
             final ContainerShape parentElement, final KNode parentNode) {
         for (Shape shape : parentElement.getChildren()) {
-            if (isNodeShape(shape)) {
+            if (graphElemIndicator.isNodeShape(shape)) {
                 KNode node = createNode(mapping, parentNode, shape);
                 if (shape instanceof ContainerShape) {
                     // process the children of the container shape
@@ -400,35 +371,6 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
     }
     
     /**
-     * Determine whether the given shape shall be treated as a node in the layout graph.
-     * 
-     * <p>This implementation checks whether the shape has any anchors. Subclasses may override
-     * this in order to implement other checks for excluding shapes that are not to be included
-     * in the layout graph.</p>
-     * 
-     * @param shape a shape
-     * @return whether the shape shall be treated a a node
-     */
-    protected boolean isNodeShape(final Shape shape) {
-        return !shape.getAnchors().isEmpty();
-    }
-    
-    /**
-     * Determine whether the given anchor shall be treated as a port in the layout graph.
-     * 
-     * <p>This implementation returns true if the anchor has a graphics algorithm and it is
-     * either a {@link BoxRelativeAnchor} or a {@link FixPointAnchor}. Subclasses may override
-     * this.</p>
-     * 
-     * @param anchor an anchor
-     * @return whether the anchor shall be treated a a port
-     */
-    protected boolean isPortAnchor(final Anchor anchor) {
-        return anchor.getGraphicsAlgorithm() != null
-                && (anchor instanceof BoxRelativeAnchor || anchor instanceof FixPointAnchor);
-    }
-    
-    /**
      * Create a node for the layout graph.
      * 
      * @param mapping the mapping of pictogram elements to graph elements
@@ -436,8 +378,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * @param shape the shape for a new node
      * @return the new layout node
      */
-    protected KNode createNode(final LayoutMapping<PictogramElement> mapping,
-            final KNode parentNode, final Shape shape) {
+    protected KNode createNode(final LayoutMapping mapping, final KNode parentNode, final Shape shape) {
         KNode childNode = ElkUtil.createInitializedNode();
         childNode.setParent(parentNode);
 
@@ -473,7 +414,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
         if (shape instanceof ContainerShape) {
             // find a label for the container shape
             for (Shape child : ((ContainerShape) shape).getChildren()) {
-                if (isNodeLabel(child)) {
+                if (graphElemIndicator.isNodeLabel(child)) {
                     createLabel(childNode, child, (float) -nodeMargins.left, (float) -nodeMargins.top);
                 }
             }
@@ -481,7 +422,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
 
         for (Anchor anchor : shape.getAnchors()) {
             // box-relative anchors and fixed-position anchors are interpreted as ports
-            if (isPortAnchor(anchor)) {
+            if (graphElemIndicator.isPortAnchor(anchor)) {
                 if (anchor instanceof BoxRelativeAnchor) {
                     createPort(mapping, childNode, (BoxRelativeAnchor) anchor);
                 } else if (anchor instanceof FixPointAnchor) {
@@ -538,7 +479,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * @param bra the anchor
      * @return the new layout port
      */
-    protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
+    protected KPort createPort(final LayoutMapping mapping,
             final KNode parentNode, final BoxRelativeAnchor bra) {
         KPort port = ElkUtil.createInitializedPort();
         port.setNode(parentNode);
@@ -579,8 +520,8 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * @param fpa the anchor
      * @return the new layout port
      */
-    protected KPort createPort(final LayoutMapping<PictogramElement> mapping,
-            final KNode parentNode, final FixPointAnchor fpa) {
+    protected KPort createPort(final LayoutMapping mapping, final KNode parentNode,
+            final FixPointAnchor fpa) {
         KPort port = ElkUtil.createInitializedPort();
         port.setNode(parentNode);
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
@@ -600,19 +541,6 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
         portLayout.resetModificationFlag();
         
         return port;
-    }
-
-    /**
-     * Determine whether the given shape shall be treated as a node label in the layout graph.
-     * This implementation checks whether the shape has a text as graphics algorithm.
-     * Subclasses may override this in order to implement specialized checks.
-     * 
-     * @param shape a shape
-     * @return whether the shape shall be treated as a node label
-     */
-    protected boolean isNodeLabel(final Shape shape) {
-        return shape.getGraphicsAlgorithm() instanceof AbstractText
-                && ((AbstractText) shape.getGraphicsAlgorithm()).getValue() != null;
     }
 
     /**
@@ -701,18 +629,17 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      *            a pictogram connection
      * @return the new layout edge
      */
-    protected KEdge createEdge(final LayoutMapping<PictogramElement> mapping,
-            final Connection connection) {
-        BiMap<KGraphElement, PictogramElement> graphMap = mapping.getGraphMap();
+    protected KEdge createEdge(final LayoutMapping mapping, final Connection connection) {
+        BiMap<Object, KGraphElement> inverseGraphMap = mapping.getGraphMap().inverse();
 
         // set target node and port
         KNode targetNode;
         Anchor targetAnchor = connection.getEnd();
-        KPort targetPort = (KPort) graphMap.inverse().get(targetAnchor);
+        KPort targetPort = (KPort) inverseGraphMap.get(targetAnchor);
         if (targetPort != null) {
             targetNode = targetPort.getNode();
         } else {
-            targetNode = (KNode) graphMap.inverse().get(targetAnchor.getParent());
+            targetNode = (KNode) inverseGraphMap.get(targetAnchor.getParent());
         }
         if (targetNode == null) {
             return null;
@@ -721,11 +648,11 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
         // set source node and port
         KNode sourceNode;
         Anchor sourceAnchor = connection.getStart();
-        KPort sourcePort = (KPort) graphMap.inverse().get(sourceAnchor);
+        KPort sourcePort = (KPort) inverseGraphMap.get(sourceAnchor);
         if (sourcePort != null) {
             sourceNode = sourcePort.getNode();
         } else {
-            sourceNode = (KNode) graphMap.inverse().get(sourceAnchor.getParent());
+            sourceNode = (KNode) inverseGraphMap.get(sourceAnchor.getParent());
         }
         if (sourceNode == null) {
             return null;
@@ -770,29 +697,16 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
         // the modification flag must initially be false
         edgeLayout.resetModificationFlag();
 
-        graphMap.put(edge, connection);
+        mapping.getGraphMap().put(edge, connection);
 
         // find labels for the connection
         for (ConnectionDecorator decorator : connection.getConnectionDecorators()) {
-            if (isEdgeLabel(decorator)) {
+            if (graphElemIndicator.isEdgeLabel(decorator)) {
                 createEdgeLabel(mapping, edge, decorator, allPoints);
             }
         }
         
         return edge;
-    }
-
-    /**
-     * Determine whether the given decorator shall be treated as an edge label in the layout graph.
-     * This implementation checks whether the decorator has a text as graphics algorithm.
-     * Subclasses may override this in order to implement specialized checks.
-     * 
-     * @param decorator a decorator
-     * @return whether the decorator shall be treated as an edge label
-     */
-    protected boolean isEdgeLabel(final ConnectionDecorator decorator) {
-        return decorator.getGraphicsAlgorithm() instanceof AbstractText
-                && ((AbstractText) decorator.getGraphicsAlgorithm()).getValue() != null;
     }
     
     /**
@@ -804,8 +718,8 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      * @param allPoints the connection points, including end points and bend points
      * @return the new label
      */
-    protected KLabel createEdgeLabel(final LayoutMapping<PictogramElement> mapping,
-            final KEdge parentEdge, final ConnectionDecorator decorator, final KVectorChain allPoints) {
+    protected KLabel createEdgeLabel(final LayoutMapping mapping, final KEdge parentEdge,
+            final ConnectionDecorator decorator, final KVectorChain allPoints) {
         KLabel label = ElkUtil.createInitializedLabel(parentEdge);
         mapping.getGraphMap().put(label, decorator);
 
@@ -903,7 +817,7 @@ public class GraphitiDiagramLayoutManager implements IDiagramLayoutManager<Picto
      *            the parent graphics algorithm
      * @return a visible graphics algorithm
      */
-    public GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
+    protected GraphicsAlgorithm findVisibleGa(final GraphicsAlgorithm graphicsAlgorithm) {
         if (graphicsAlgorithm != null) {
             if (graphicsAlgorithm.getLineVisible() || graphicsAlgorithm.getFilled()) {
                 return graphicsAlgorithm;

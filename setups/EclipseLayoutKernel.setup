@@ -166,6 +166,8 @@
             name="com.google.guava"
             versionRange="15.0.0"/>
         <requirement
+            name="com.google.inject"/>
+        <requirement
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"/>

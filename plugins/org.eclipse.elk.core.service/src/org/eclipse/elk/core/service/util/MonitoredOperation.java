@@ -369,7 +369,7 @@ public abstract class MonitoredOperation {
                 }
             }
             if (status.get() == null && !isCanceled()) {
-                boolean measureExecTime = ElkServicePlugin.getDefault().getPreferenceStore()
+                boolean measureExecTime = ElkServicePlugin.getInstance().getPreferenceStore()
                         .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT);
                 status.set(execute(new ProgressMonitorAdapter(monitor.get(), MAX_PROGRESS_LEVELS,
                         measureExecTime)));
@@ -487,7 +487,7 @@ public abstract class MonitoredOperation {
         /**
          * Enumeration of progress monitor wrapper command types.
          */
-        static enum Type {
+        enum Type {
             BEGIN_TASK, SET_TASK_NAME, SUB_TASK, WORKED, INTERNAL_WORKED, DONE
         }
         
@@ -528,7 +528,7 @@ public abstract class MonitoredOperation {
          * 
          * @param thedisplay the display that is woken after each incoming monitor command
          */
-        public ProgressMonitorWrapper(final Display thedisplay) {
+        ProgressMonitorWrapper(final Display thedisplay) {
             this.display = thedisplay;
         }
         
@@ -619,7 +619,7 @@ public abstract class MonitoredOperation {
          * Create a cancelable progress monitor.
          */
         public CancelableProgressMonitor() {
-            super(0, ElkServicePlugin.getDefault().getPreferenceStore()
+            super(0, ElkServicePlugin.getInstance().getPreferenceStore()
                     .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
         }
         

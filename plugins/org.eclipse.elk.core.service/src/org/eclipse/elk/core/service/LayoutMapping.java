@@ -22,21 +22,20 @@ import com.google.common.collect.HashBiMap;
  * A layout mapping describes the relation between a graphical diagram and the layout graph
  * that is created by diagram layout managers.
  *
- * @param <T> the type of diagram parts to store in the mapping
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-07-19 review KI-20 by cds, jjc
  */
-public class LayoutMapping<T> extends MapPropertyHolder {
+public class LayoutMapping extends MapPropertyHolder {
     
     private static final long serialVersionUID = 2237409212851510612L;
     
     /** the bidirectional mapping of layout graph elements to diagram parts. */
-    private final BiMap<KGraphElement, T> graphElemMap = HashBiMap.create();
+    private final BiMap<KGraphElement, Object> graphElemMap = HashBiMap.create();
     /** the top-level parent node of the layout graph. */
     private KNode layoutGraph;
     /** the top-level diagram part. */
-    private T parentElement;
+    private Object parentElement;
     /** the workbench part for wich the mapping was created, if any. */
     private final IWorkbenchPart workbenchPart;
     
@@ -54,7 +53,7 @@ public class LayoutMapping<T> extends MapPropertyHolder {
      * 
      * @return the graph element map
      */
-    public BiMap<KGraphElement, T> getGraphMap() {
+    public BiMap<KGraphElement, Object> getGraphMap() {
         return graphElemMap;
     }
     
@@ -81,7 +80,7 @@ public class LayoutMapping<T> extends MapPropertyHolder {
      * 
      * @param parentElem the parent diagram part
      */
-    public void setParentElement(final T parentElem) {
+    public void setParentElement(final Object parentElem) {
         this.parentElement = parentElem;
     }
     
@@ -90,7 +89,7 @@ public class LayoutMapping<T> extends MapPropertyHolder {
      * 
      * @return the parent diagram part
      */
-    public T getParentElement() {
+    public Object getParentElement() {
         return parentElement;
     }
     

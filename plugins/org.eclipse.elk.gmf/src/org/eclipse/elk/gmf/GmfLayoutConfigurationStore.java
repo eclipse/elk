@@ -35,8 +35,10 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.ShapeNodeEditPart;
 import org.eclipse.gmf.runtime.notation.NotationFactory;
 import org.eclipse.gmf.runtime.notation.StringValueStyle;
 import org.eclipse.gmf.runtime.notation.View;
+import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 /**
  * A layout configuration that stores layout options in the notation model of GMF diagrams.
@@ -47,15 +49,40 @@ import com.google.common.collect.Maps;
  */
 public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
     
+    /**
+     * Provider for GMF layout configuration stores.
+     */
+    public static final class Provider implements ILayoutConfigurationStore.Provider {
+        
+        @Inject
+        private IEditPartFilter editPartFilter;
+
+        @Override
+        public ILayoutConfigurationStore get(final IWorkbenchPart workbenchPart, final Object context) {
+            if (context instanceof EditPart) {
+                try {
+                    return new GmfLayoutConfigurationStore((EditPart) context, editPartFilter);
+                } catch (IllegalArgumentException e) {
+                    // Fall back to null
+                }
+            }
+            return null;
+        }
+        
+    }
+    
     /** Prefix for all layout options. */
     public static final String PREFIX = "layout:";
     
     /** The graphical edit part used as context for this configuration store. */
     private final IGraphicalEditPart editPart;
-    /** The layout manager for which this configurator was created. */
-    private final GmfDiagramLayoutManager layoutManager;
+    /** The edit part filter for excluding specific diagram parts. */
+    private final IEditPartFilter editPartFilter;
     
-    public GmfLayoutConfigurationStore(EditPart theeditPart, GmfDiagramLayoutManager manager) {
+    /**
+     * Create a GMF layout configuration store.
+     */
+    public GmfLayoutConfigurationStore(final EditPart theeditPart, final IEditPartFilter filter) {
         if (theeditPart instanceof CompartmentEditPart) {
             // If the selected object is a compartment, replace it by its parent element
             this.editPart = (IGraphicalEditPart) ((CompartmentEditPart) theeditPart).getParent();
@@ -66,13 +93,13 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
         } else {
             throw new IllegalArgumentException("Not supported: " + theeditPart.toString());
         }
-        this.layoutManager = manager;
+        this.editPartFilter = filter;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object getOptionValue(String optionId) {
+    public Object getOptionValue(final String optionId) {
         View view = editPart.getNotationView();
         if (view != null) {
             String key = PREFIX + optionId;
@@ -215,18 +242,18 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
      * Finds the edit part that contains layoutable children, if there are any. The returned
      * edit part is either the parent edit part itself or one of its compartments.
      * 
-     * @param editPart a node edit part
+     * @param nodeEditPart a node edit part
      * @return the edit part that contains other node edit parts, or {@code null} if there is none
      */
-    protected IGraphicalEditPart findContainingEditPart(final IGraphicalEditPart editPart) {
-        for (Object child : editPart.getChildren()) {
-            if (layoutManager.acceptPart((EditPart) child)) {
+    protected IGraphicalEditPart findContainingEditPart(final IGraphicalEditPart nodeEditPart) {
+        for (Object child : nodeEditPart.getChildren()) {
+            if (editPartFilter.filter((EditPart) child)) {
                 if (child instanceof ShapeNodeEditPart) {
-                    return editPart;
+                    return nodeEditPart;
                 } else if (child instanceof CompartmentEditPart) {
                     for (Object grandChild : ((CompartmentEditPart) child).getChildren()) {
                         if (grandChild instanceof ShapeNodeEditPart
-                                && layoutManager.acceptPart((EditPart) grandChild)) {
+                                && editPartFilter.filter((EditPart) grandChild)) {
                             return (IGraphicalEditPart) child;
                         }
                     }
@@ -242,7 +269,7 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
     public ILayoutConfigurationStore getParent() {
         EditPart container = getContainer();
         if (container != null) {
-            return new GmfLayoutConfigurationStore(container, layoutManager);
+            return new GmfLayoutConfigurationStore(container, editPartFilter);
         }
         return null;
     }

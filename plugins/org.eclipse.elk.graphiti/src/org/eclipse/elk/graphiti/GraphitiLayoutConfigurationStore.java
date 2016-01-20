@@ -31,6 +31,11 @@ import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.ui.editor.DiagramEditor;
+import org.eclipse.graphiti.ui.internal.parts.IPictogramElementEditPart;
+import org.eclipse.ui.IWorkbenchPart;
+
+import com.google.inject.Inject;
 
 /**
  * Layout option configuration for Graphiti.
@@ -42,21 +47,51 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
  */
 public class GraphitiLayoutConfigurationStore implements ILayoutConfigurationStore {
     
+    /**
+     * Provider for Graphiti layout configuration stores.
+     */
+    public static final class Provider implements ILayoutConfigurationStore.Provider {
+        
+        @Inject
+        private GraphElementIndicator graphElemIndicator;
+
+        @Override
+        public ILayoutConfigurationStore get(final IWorkbenchPart workbenchPart, final Object context) {
+            EditingDomain editingDomain = null;
+            if (workbenchPart instanceof DiagramEditor) {
+                editingDomain = ((DiagramEditor) workbenchPart).getEditingDomain();
+            }
+            if (context instanceof PictogramElement) {
+                return new GraphitiLayoutConfigurationStore((PictogramElement) context, editingDomain,
+                        graphElemIndicator);
+            } else if (context instanceof IPictogramElementEditPart) {
+                IPictogramElementEditPart editPart = (IPictogramElementEditPart) context;
+                return new GraphitiLayoutConfigurationStore(editPart.getPictogramElement(), editingDomain,
+                        graphElemIndicator);
+            }
+            return null;
+        }
+        
+    }
+    
     /** Prefix for all layout options. */
     public static final String PREFIX = "layout:";
     
     /** The pictogram element used as context for this configuration store. */
     private final PictogramElement pictogramElement;
-    /** */
+    /** The editing domain for performing changes. */
     private final EditingDomain editingDomain;
-    /** the layout manager for which this configurator was created. */
-    private final GraphitiDiagramLayoutManager layoutManager;
+    /** The graph element indicator for recognizing the graph structure. */
+    private GraphElementIndicator graphElemIndicator;
 
+    /**
+     * Create a Graphiti layout configuration store.
+     */
     public GraphitiLayoutConfigurationStore(final PictogramElement thePictogramElement,
-            final EditingDomain theEditingDomain, final GraphitiDiagramLayoutManager theLayoutManager) {
+            final EditingDomain theEditingDomain, final GraphElementIndicator indicator) {
         this.pictogramElement = thePictogramElement;
         this.editingDomain = theEditingDomain;
-        this.layoutManager = theLayoutManager;
+        this.graphElemIndicator = indicator;
     }
 
     /**
@@ -69,7 +104,7 @@ public class GraphitiLayoutConfigurationStore implements ILayoutConfigurationSto
     /**
      * {@inheritDoc}
      */
-    public Object getOptionValue(String optionId) {
+    public Object getOptionValue(final String optionId) {
         String optionKey = PREFIX + optionId;
         for (Property p : pictogramElement.getProperties()) {
             if (optionKey.equals(p.getKey())) {
@@ -85,7 +120,7 @@ public class GraphitiLayoutConfigurationStore implements ILayoutConfigurationSto
     /**
      * {@inheritDoc}
      */
-    public void setOptionValue(String optionId, String value) {
+    public void setOptionValue(final String optionId, final String value) {
         if (value == null) {
             removeValue(optionId);
         } else {
@@ -107,7 +142,7 @@ public class GraphitiLayoutConfigurationStore implements ILayoutConfigurationSto
     /**
      * Remove the option with the given id.
      */
-    private void removeValue(String optionId) {
+    private void removeValue(final String optionId) {
         Iterator<Property> iter = pictogramElement.getProperties().iterator();
         String optionKey = PREFIX + optionId;
         while (iter.hasNext()) {
@@ -141,11 +176,11 @@ public class GraphitiLayoutConfigurationStore implements ILayoutConfigurationSto
         } else if (pictogramElement instanceof Shape) {
             Shape shape = (Shape) pictogramElement;
             Set<LayoutOptionData.Target> targets = EnumSet.noneOf(LayoutOptionData.Target.class);
-            if (layoutManager.isNodeShape(shape)) {
+            if (graphElemIndicator.isNodeShape(shape)) {
                 targets.add(LayoutOptionData.Target.NODES);
                 if (shape instanceof ContainerShape) {
                     for (Shape child : ((ContainerShape) shape).getChildren()) {
-                        if (layoutManager.isNodeShape(child)) {
+                        if (graphElemIndicator.isNodeShape(child)) {
                             targets.add(LayoutOptionData.Target.PARENTS);
                             break;
                         }
@@ -162,12 +197,12 @@ public class GraphitiLayoutConfigurationStore implements ILayoutConfigurationSto
         } else if (pictogramElement instanceof Anchor) {
             Anchor anchor = (Anchor) pictogramElement;
             AnchorContainer ac = anchor.getParent();
-            if (ac instanceof Shape && layoutManager.isPortAnchor(anchor)) {
+            if (ac instanceof Shape && graphElemIndicator.isPortAnchor(anchor)) {
                 return EnumSet.of(LayoutOptionData.Target.PORTS);
             }
         } else if (pictogramElement instanceof ConnectionDecorator) {
             ConnectionDecorator decorator = (ConnectionDecorator) pictogramElement;
-            if (layoutManager.isEdgeLabel(decorator)) {
+            if (graphElemIndicator.isEdgeLabel(decorator)) {
                 return EnumSet.of(LayoutOptionData.Target.LABELS);
             }
         }
@@ -178,7 +213,7 @@ public class GraphitiLayoutConfigurationStore implements ILayoutConfigurationSto
     public ILayoutConfigurationStore getParent() {
         PictogramElement container = getContainer();
         if (container != null) {
-            return new GraphitiLayoutConfigurationStore(container, editingDomain, layoutManager);
+            return new GraphitiLayoutConfigurationStore(container, editingDomain, graphElemIndicator);
         }
         return null;
     }

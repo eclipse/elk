@@ -55,29 +55,25 @@ public class LayoutHandler extends AbstractHandler {
         }
         
         // fetch general settings from preferences
-        IPreferenceStore preferenceStore = ElkUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = ElkUiPlugin.getInstance().getPreferenceStore();
         boolean animation = preferenceStore.getBoolean(PREF_ANIMATION);
         boolean zoomToFit = preferenceStore.getBoolean(PREF_ZOOM);
         boolean progressDialog = preferenceStore.getBoolean(PREF_PROGRESS);
 
         // get the active editor, which is expected to contain the diagram for applying layout
         IEditorPart editorPart = HandlerUtil.getActiveEditor(event);
+        Object diagramPart = null;
         if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
             // perform layout with the given selection (only the first element is considered)
             IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-            Object diagramPart;
             if (structuredSelection.size() == 1) {
                 diagramPart = structuredSelection.getFirstElement();
             } else {
                 diagramPart = structuredSelection.toList();
             }
-            DiagramLayoutEngine.INSTANCE.layout(editorPart, diagramPart, animation, progressDialog,
-                    false, zoomToFit);
-        } else {
-            // perform layout on the whole diagram
-            DiagramLayoutEngine.INSTANCE.layout(editorPart, null, animation, progressDialog,
-                    false, zoomToFit);
         }
+        DiagramLayoutEngine.invokeLayout(editorPart, diagramPart, animation, progressDialog,
+                false, zoomToFit);
         return null;
     }
 

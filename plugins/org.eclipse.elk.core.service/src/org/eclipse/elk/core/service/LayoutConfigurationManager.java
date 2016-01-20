@@ -16,7 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.ILayoutAlgorithmData;
 import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
@@ -25,17 +27,49 @@ import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Iterators;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * Manages layout configurations derived from implementations of {@link ILayoutConfigurationStore}.
+ * 
+ * <p>Subclasses of this class can be bound in an {@link ILayoutSetup} injector for customization.
+ * Note that this class is marked as {@link Singleton}, which means that exactly one instance is
+ * created for each injector, i.e. for each registered {@link ILayoutSetup}.</p>
  */
+@Singleton
 public class LayoutConfigurationManager {
+    
+    /**
+     * A specialized version of the recursive graph layout engine that uses a layout configuration
+     * manager to obtain layout algorithm meta data for a given algorithm identifier.
+     */
+    public static class GraphLayoutEngine extends RecursiveGraphLayoutEngine {
+        
+        @Inject
+        private LayoutConfigurationManager configManager;
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected ILayoutAlgorithmData getAlgorithm(final String algorithmId) {
+            return configManager.getAlgorithm(algorithmId);
+        }
+        
+    }
     
     /**
      * Suffix appended to layout option identifiers to mark them as applied recursively to all
      * contained elements.
      */
-    public static final String RECURSIVE_SUFFIX = "#recursive";
+    private static final String RECURSIVE_SUFFIX = "#recursive";
+    
+    /**
+     * Optional provider for layout configuration stores.
+     */
+    @Inject(optional = true)
+    private ILayoutConfigurationStore.Provider configProvider;
     
     /**
      * Return a layout algorithm data instance for the given layout algorithm identifier. The id can be
@@ -44,12 +78,11 @@ public class LayoutConfigurationManager {
      * 
      * @return a layout algorithm, or {@code null} if none was found for the given hint
      */
-    public LayoutAlgorithmData getAlgorithm(String algorithmId) {
-        if (algorithmId == null || algorithmId.isEmpty()) {
-            algorithmId = "org.eclipse.elk.layered";
-        }
+    public LayoutAlgorithmData getAlgorithm(final String algorithmId) {
+        final String finalAlgorithmId = algorithmId == null || algorithmId.isEmpty()
+                ? "org.eclipse.elk.layered" : algorithmId;
         LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
-        LayoutAlgorithmData result = layoutDataService.getAlgorithmData(algorithmId);
+        LayoutAlgorithmData result = layoutDataService.getAlgorithmData(finalAlgorithmId);
         if (result != null) {
             return result;
         }
@@ -161,21 +194,20 @@ public class LayoutConfigurationManager {
     protected Object getRawOptionValue(final IProperty<?> option, final ILayoutConfigurationStore config) {
         Object result = config.getOptionValue(option.getId());
         if (result == null) {
-            String parentOptionId = option.getId() + RECURSIVE_SUFFIX;
+            String recursiveOptionId = option.getId() + RECURSIVE_SUFFIX;
             ILayoutConfigurationStore current = config;
-            ILayoutConfigurationStore parent;
             do {
-                parent = current.getParent();
-                if (parent != null) {
-                    result = parent.getOptionValue(parentOptionId);
+                result = current.getOptionValue(recursiveOptionId);
+                if (result == null) {
+                    current = current.getParent();
                 }
-                current = parent;
             } while (current != null && result == null);
         }
-        if (result instanceof String && option instanceof LayoutOptionData)
+        if (result instanceof String && option instanceof LayoutOptionData) {
             return ((LayoutOptionData) option).parseValue((String) result);
-        else
+        } else {
             return result;
+        }
     }
     
     /**
@@ -215,9 +247,20 @@ public class LayoutConfigurationManager {
     }
     
     /**
+     * Set a default value for the given layout option. The value will be considered for all elements of
+     * the containing diagram.
+     */
+    public void setDefaultValue(final LayoutOptionData optionData, final String value,
+            final ILayoutConfigurationStore config) {
+        config.setOptionValue(optionData.getId(), null);
+        ILayoutConfigurationStore rootConfig = getRoot(config);
+        rootConfig.setOptionValue(optionData.getId() + RECURSIVE_SUFFIX, value);
+    }
+    
+    /**
      * Return the root configuration store for the given one by going up the parent hierarchy.
      */
-    public ILayoutConfigurationStore getRoot(final ILayoutConfigurationStore config) {
+    protected ILayoutConfigurationStore getRoot(final ILayoutConfigurationStore config) {
         ILayoutConfigurationStore current = config;
         ILayoutConfigurationStore parent;
         do {
@@ -231,18 +274,42 @@ public class LayoutConfigurationManager {
     }
     
     /**
-     * Create a layout configurator and initialize it with the option values from the layout
-     * configuration store provided by the given diagram layout manager.
+     * Clear all non-recursive layout option values for the given configuration store.
      */
-    public <T> LayoutConfigurator createConfigurator(final IDiagramLayoutManager<T> layoutManager,
-            final LayoutMapping<T> layoutMapping) {
+    public void clearOptionValues(final ILayoutConfigurationStore config) {
+        for (String optionId : config.getAffectedOptions()) {
+            if (!optionId.endsWith(RECURSIVE_SUFFIX)) {
+                config.setOptionValue(optionId, null);
+            }
+        }
+    }
+    
+    /**
+     * Clear all default layout option values for the given configuration store.
+     */
+    public void clearDefaultOptionValues(final ILayoutConfigurationStore config) {
+        ILayoutConfigurationStore rootConfig = getRoot(config);
+        for (String optionId : rootConfig.getAffectedOptions()) {
+            if (optionId.endsWith(RECURSIVE_SUFFIX)) {
+                config.setOptionValue(optionId, null);
+            }
+        }
+    }
+    
+    /**
+     * Create a layout configurator and initialize it with the option values from the given layout
+     * configuration store provider.
+     */
+    public <T> LayoutConfigurator createConfigurator(final LayoutMapping layoutMapping) {
         LayoutConfigurator result = new LayoutConfigurator();
-        configureElement(layoutMapping.getLayoutGraph(), layoutManager, layoutMapping, result);
-        Iterator<KGraphElement> allElements = Iterators.filter(layoutMapping.getLayoutGraph().eAllContents(),
-                KGraphElement.class);
-        while (allElements.hasNext()) {
-            KGraphElement element = allElements.next();
-            configureElement(element, layoutManager, layoutMapping, result);
+        if (configProvider != null) {
+            configureElement(layoutMapping.getLayoutGraph(), layoutMapping, result);
+            Iterator<KGraphElement> allElements = Iterators.filter(layoutMapping.getLayoutGraph().eAllContents(),
+                    KGraphElement.class);
+            while (allElements.hasNext()) {
+                KGraphElement element = allElements.next();
+                configureElement(element, layoutMapping, result);
+            }
         }
         return result;
     }
@@ -250,17 +317,36 @@ public class LayoutConfigurationManager {
     /**
      * Transfer option values from a configuration store of a graph element to a configurator.
      */
-    protected <T> void configureElement(final KGraphElement element,
-            final IDiagramLayoutManager<T> layoutManager, final LayoutMapping<T> layoutMapping,
+    protected void configureElement(final KGraphElement element, final LayoutMapping layoutMapping,
             final LayoutConfigurator configurator) {
-        T diagramPart = layoutMapping.getGraphMap().get(element);
-        ILayoutConfigurationStore configurationStore = layoutManager.getConfigurationStore(
-                layoutMapping.getWorkbenchPart(), diagramPart);
+        Object diagramPart = layoutMapping.getGraphMap().get(element);
+        ILayoutConfigurationStore configurationStore = configProvider.get(layoutMapping.getWorkbenchPart(),
+                diagramPart);
         if (configurationStore != null) {
-            LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
-            for (String optionId : configurationStore.getAffectedOptions()) {
-                LayoutOptionData optionData = layoutDataService.getOptionData(optionId);
-                Object value = configurationStore.getOptionValue(optionId);
+            configureElement(element, configurationStore, configurator, false);
+        }
+    }
+    
+    /**
+     * Transfer option values from the given configuration store to a configurator using the given graph
+     * element as key.
+     */
+    protected void configureElement(final KGraphElement element,
+            final ILayoutConfigurationStore configStore, final LayoutConfigurator configurator,
+            final boolean recursiveOnly) {
+        ILayoutConfigurationStore parentStore = configStore.getParent();
+        if (parentStore != null) {
+            configureElement(element, parentStore, configurator, true);
+        }
+        
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
+        for (String optionId : configStore.getAffectedOptions()) {
+            boolean isRecursive = optionId.endsWith(RECURSIVE_SUFFIX);
+            if (isRecursive || !recursiveOnly) {
+                Object value = configStore.getOptionValue(optionId);
+                String rawId = isRecursive ? optionId.substring(0, optionId.length() - RECURSIVE_SUFFIX.length())
+                        : optionId;
+                LayoutOptionData optionData = layoutDataService.getOptionData(rawId);
                 if (optionData != null && value != null) {
                     if (value instanceof String) {
                         value = optionData.parseValue((String) value);
