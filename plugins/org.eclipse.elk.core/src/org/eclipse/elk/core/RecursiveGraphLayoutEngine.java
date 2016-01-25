@@ -12,15 +12,14 @@ package org.eclipse.elk.core;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
 
@@ -36,17 +35,8 @@ import com.google.common.collect.Lists;
  * @author ars
  * @author msp
  */
-public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
+public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     
-    private final Function<String, ILayoutAlgorithmData> algorithmResolver;
-    
-    /**
-     * @param algorithmResolver a function that retrieves the layout algorithm metadata for a given identifier
-     */
-    public RecursiveGraphLayoutEngine(final Function<String, ILayoutAlgorithmData> algorithmResolver) {
-        this.algorithmResolver = algorithmResolver;
-    }
-
     /**
      * Performs recursive layout on the given layout graph.
      * 
@@ -76,7 +66,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param progressMonitor monitor used to keep track of progress
      * @return list of self loops routed inside the node.
      */
-    private List<KEdge> layoutRecursively(final KNode layoutNode,
+    protected List<KEdge> layoutRecursively(final KNode layoutNode,
             final IElkProgressMonitor progressMonitor) {
         
         if (progressMonitor.isCanceled()) {
@@ -172,24 +162,33 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     }
 
     /**
-     * Returns the most appropriate layout provider for the given node.
+     * Returns the most appropriate layout algorithm for the given node.
      * 
      * @param layoutNode node for which a layout provider is requested
-     * @return a layout provider instance that fits the layout hints for the given node
+     * @return a layout algorithm that fits the layout hints for the given node
      */
-    private ILayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
+    protected ILayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String algorithmId = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
-        ILayoutAlgorithmData result = algorithmResolver.apply(algorithmId);
+        ILayoutAlgorithmData result = getAlgorithm(algorithmId);
         if (result == null) {
             if (algorithmId == null || algorithmId.isEmpty()) {
-                throw new UnsupportedConfigurationException("No layout algorithm has been specified (" + layoutNode + ").");
+                throw new UnsupportedConfigurationException("No layout algorithm has been specified ("
+                        + layoutNode + ").");
             } else {
                 throw new UnsupportedConfigurationException("Layout algorithm not found: " + algorithmId);
             }
         }
         return result;
     }
+    
+    /**
+     * Returns a layout algorithm descriptor for the given identifier.
+     * 
+     * @param algorithmId an algorithm identifier, or {@code null} to get a default algorithm
+     * @return a matching algorithm or default algorithm
+     */
+    protected abstract ILayoutAlgorithmData getAlgorithm(final String algorithmId);
 
     /**
      * Determines the total number of layout nodes in the given layout graph.
@@ -198,7 +197,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param countAncestors if true, the nodes on the ancestors path are also counted
      * @return total number of child layout nodes
      */
-    private int countNodesRecursively(final KNode layoutNode, final boolean countAncestors) {
+    protected int countNodesRecursively(final KNode layoutNode, final boolean countAncestors) {
         // count the content of the given node
         int count = layoutNode.getChildren().size();
         for (KNode childNode : layoutNode.getChildren()) {
@@ -232,7 +231,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      *            the node whose inside self loops to return.
      * @return possibly empty list of inside self loops.
      */
-    private List<KEdge> gatherInsideSelfLoops(final KNode node) {
+    protected List<KEdge> gatherInsideSelfLoops(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         
         if (nodeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
@@ -262,7 +261,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param insideSelfLoops
      *            list of inside self loops to post-process.
      */
-    private void postProcessInsideSelfLoops(final List<KEdge> insideSelfLoops) {
+    protected void postProcessInsideSelfLoops(final List<KEdge> insideSelfLoops) {
         for (final KEdge selfLoop : insideSelfLoops) {
             final KNode node = selfLoop.getSource();
             final KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
@@ -291,7 +290,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param yOffset
      *            vertical offset.
      */
-    private void applyOffset(final KPoint point, final float xOffset, final float yOffset) {
+    protected void applyOffset(final KPoint point, final float xOffset, final float yOffset) {
         point.setX(point.getX() + xOffset);
         point.setY(point.getY() + yOffset);
     }

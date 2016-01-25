@@ -2,10 +2,10 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.elk.core.service.layoutManagers">
-      <manager
-            class="org.eclipse.elk.graphiti.GraphitiDiagramLayoutManager">
-      </manager>
+         point="org.eclipse.elk.core.service.layoutConnectors">
+      <setup
+            class="org.eclipse.elk.graphiti.GraphitiLayoutSetup">
+      </setup>
    </extension>
 
 </plugin>

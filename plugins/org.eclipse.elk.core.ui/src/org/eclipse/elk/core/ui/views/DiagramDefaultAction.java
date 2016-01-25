@@ -11,6 +11,7 @@
 package org.eclipse.elk.core.ui.views;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.elk.core.options.LayoutOptions;
@@ -22,7 +23,6 @@ import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.util.ElkUiUtil;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
 
 /**
@@ -37,15 +37,9 @@ public class DiagramDefaultAction extends Action {
     /** identifier of the diagram default action. */
     public static final String ACTION_ID = "elk.diagram.default";
     
-    /** the icon used for this action. */
-    private static ImageDescriptor icon = ElkUiPlugin.getImageDescriptor(
-            "icons/menu16/apply2diagram.gif");
-
     /** the layout view that created this action. */
-    private LayoutViewPart layoutView;
+    private final LayoutViewPart layoutView;
     
-    private final LayoutConfigurationManager configManager = new LayoutConfigurationManager();
-
     /**
      * Creates an apply option action.
      * 
@@ -53,7 +47,7 @@ public class DiagramDefaultAction extends Action {
      * @param text user friendly text
      */
     public DiagramDefaultAction(final LayoutViewPart thelayoutView, final String text) {
-        super(text, icon);
+        super(text, ElkUiPlugin.getImageDescriptor("icons/menu16/apply2diagram.gif"));
         this.layoutView = thelayoutView;
     }
     
@@ -62,10 +56,13 @@ public class DiagramDefaultAction extends Action {
      */
     @Override
     public void run() {
-        ILayoutConfigurationStore config = layoutView.getCurrentConfigurationStore();
-        if (config != null) {
-            for (IPropertySheetEntry entry : layoutView.getSelection()) {
-                applyOption(config, entry);
+        LayoutPropertySourceProvider propSourceProvider = layoutView.getPropertySourceProvider();
+        if (propSourceProvider != null) {
+            List<ILayoutConfigurationStore> configs = propSourceProvider.getConfigurationStores();
+            if (!configs.isEmpty()) {
+                for (IPropertySheetEntry entry : layoutView.getSelection()) {
+                    applyOption(configs.get(0), entry, propSourceProvider.getConfigurationManager());
+                }
             }
         }
     }
@@ -76,9 +73,10 @@ public class DiagramDefaultAction extends Action {
      * @param config a layout configuration
      * @param entry a property sheet entry
      */
-    private void applyOption(final ILayoutConfigurationStore config, final IPropertySheetEntry entry) {
+    private void applyOption(final ILayoutConfigurationStore config, final IPropertySheetEntry entry,
+            final LayoutConfigurationManager configManager) {
         final LayoutOptionData optionData = ElkUiUtil.getOptionData(
-                getCurrentLayouterData(config), entry.getDisplayName());
+                getCurrentLayouterData(config, configManager), entry.getDisplayName());
         if (optionData == null) {
             return;
         }
@@ -90,10 +88,9 @@ public class DiagramDefaultAction extends Action {
             value = entry.getValueAsString();
         }
         if (value != null) {
-            final ILayoutConfigurationStore parentConfig = configManager.getRoot(config);
             Runnable modelChange = new Runnable() {
                 public void run() {
-                    parentConfig.setOptionValue(optionData.getId() + LayoutConfigurationManager.RECURSIVE_SUFFIX, value);
+                    configManager.setDefaultValue(optionData, value, config);
                 }
             };
             ElkUiUtil.runModelChange(modelChange, config.getEditingDomain(), Messages.getString("kiml.ui.13"));
@@ -103,7 +100,8 @@ public class DiagramDefaultAction extends Action {
     /**
      * Returns the current layout algorithm data.
      */
-    private LayoutAlgorithmData[] getCurrentLayouterData(ILayoutConfigurationStore config) {
+    private LayoutAlgorithmData[] getCurrentLayouterData(final ILayoutConfigurationStore config,
+            final LayoutConfigurationManager configManager) {
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
         HashSet<LayoutAlgorithmData> data = new HashSet<LayoutAlgorithmData>(4);
         Set<LayoutOptionData.Target> optionTargets = config.getOptionTargets();

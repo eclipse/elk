@@ -65,7 +65,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     private final Map<KEdgeLayout, KVectorChain> bendpointsMap =
             new HashMap<KEdgeLayout, KVectorChain>();
     /** the layout manager for which this command was created. */
-    private final GraphitiDiagramLayoutManager layoutManager;
+    private final GraphitiDiagramLayoutConnector layoutManager;
 
     /**
      * Creates a Graphiti layout command.
@@ -74,7 +74,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param thefeatureProvider the feature provider
      */
     public GraphitiLayoutCommand(final TransactionalEditingDomain domain,
-            final IFeatureProvider thefeatureProvider, final GraphitiDiagramLayoutManager manager) {
+            final IFeatureProvider thefeatureProvider, final GraphitiDiagramLayoutConnector manager) {
         super(domain, "Automatic Layout");
         this.featureProvider = thefeatureProvider;
         this.layoutManager = manager;

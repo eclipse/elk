@@ -16,7 +16,7 @@ import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.service.data.LayoutOptionData;
-import org.eclipse.elk.core.service.data.LayoutTypeData;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -47,11 +47,11 @@ public class LayoutOptionLabelProvider extends LabelProvider {
      */
     @Override
     public Image getImage(final Object element) {
-        ElkUiPlugin.Images images = ElkUiPlugin.getDefault().getImages();
+        ImageRegistry registry = ElkUiPlugin.getInstance().getImageRegistry();
         switch (optionData.getType()) {
         case OBJECT:
         case STRING:
-            return images.getPropText();
+            return registry.get(ElkUiPlugin.IMG_TEXT);
         case BOOLEAN:
             boolean istrue = true;
             if (element instanceof Boolean) {
@@ -60,17 +60,17 @@ public class LayoutOptionLabelProvider extends LabelProvider {
                 istrue = (Integer) element == 1;
             }
             if (istrue) {
-                return images.getPropTrue();
+                return registry.get(ElkUiPlugin.IMG_TRUE);
             } else {
-                return images.getPropFalse();
+                return registry.get(ElkUiPlugin.IMG_FALSE);
             }
         case ENUM:
         case ENUMSET:
-            return images.getPropChoice();
+            return registry.get(ElkUiPlugin.IMG_CHOICE);
         case INT:
-            return images.getPropInt();
+            return registry.get(ElkUiPlugin.IMG_INT);
         case FLOAT:
-            return images.getPropFloat();
+            return registry.get(ElkUiPlugin.IMG_FLOAT);
         default:
             return null;
         }

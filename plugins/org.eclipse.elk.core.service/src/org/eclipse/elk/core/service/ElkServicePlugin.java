@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.elk.core.service;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.service.internal.EclipseLayoutMetaDataServiceRegistry;
+import org.eclipse.elk.core.service.util.MonitoredOperation;
 import org.eclipse.elk.core.util.DefaultFactory;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -23,13 +32,29 @@ import org.osgi.framework.BundleContext;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class ElkServicePlugin extends AbstractUIPlugin {
+public final class ElkServicePlugin extends AbstractUIPlugin {
 
     /** The plug-in ID. */
     public static final String PLUGIN_ID = "org.eclipse.elk.core.service";
 
     /** The shared instance. */
     private static ElkServicePlugin plugin;
+
+    /**
+     * Returns the shared instance.
+     * 
+     * @return the shared instance
+     */
+    public static ElkServicePlugin getInstance() {
+        return plugin;
+    }
+    
+    /** The executor service used to perform layout operations. */
+    private ExecutorService executorService;
+    
+    /** map of currently running layout operations. */
+    private final Multimap<Pair<IWorkbenchPart, Object>, MonitoredOperation> runningOperations
+            = HashMultimap.create();
     
     /**
      * {@inheritDoc}
@@ -53,18 +78,30 @@ public class ElkServicePlugin extends AbstractUIPlugin {
         for (LayoutAlgorithmData algoData : layoutDataService.getAlgorithmData()) {
             algoData.getInstancePool().clear();
         }
+        if (executorService != null) {
+            executorService.shutdown();
+            executorService = null;
+        }
         
         plugin = null;
         super.stop(context);
     }
-
+    
     /**
-     * Returns the shared instance.
-     * 
-     * @return the shared instance
+     * Return the executor service to use for automatic layout operations.
      */
-    public static ElkServicePlugin getDefault() {
-        return plugin;
+    public synchronized ExecutorService getExecutorService() {
+        if (executorService == null && plugin != null) {
+            executorService = Executors.newCachedThreadPool();
+        }
+        return executorService;
+    }
+    
+    /**
+     * Return the map of currently running layout operations.
+     */
+    public Multimap<Pair<IWorkbenchPart, Object>, MonitoredOperation> getRunningOperations() {
+        return runningOperations;
     }
     
 }
