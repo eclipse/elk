@@ -11,6 +11,9 @@
 package org.eclipse.elk.alg.graphviz.dot;
 
 
+import org.eclipse.elk.alg.graphviz.dot.serializer.GraphvizDotSerializer;
+import org.eclipse.xtext.serializer.ISerializer;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  * 
@@ -19,5 +22,10 @@ package org.eclipse.elk.alg.graphviz.dot;
  * @kieler.rating proposed yellow by msp
  */
 public class GraphvizDotRuntimeModule extends AbstractGraphvizDotRuntimeModule {
+    
+    @Override
+    public Class<? extends ISerializer> bindISerializer() {
+        return GraphvizDotSerializer.class;
+    }
     
 }

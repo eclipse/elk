@@ -10,54 +10,57 @@
  *******************************************************************************/
 module org.eclipse.elk.alg.graphviz.dot.GraphvizDot
 
-import org.eclipse.emf.mwe.utils.*
-import org.eclipse.xtext.generator.*
-import org.eclipse.xtext.ui.generator.*
+import org.eclipse.xtext.xtext.generator.*
+import org.eclipse.xtext.xtext.generator.model.project.*
 
-var grammarURI = "classpath:/org/eclipse/elk/graphviz/dot/GraphvizDot.xtext"
-var file.extensions = "graphviz_dot"
-var projectName = "org.eclipse.elk.alg.graphviz.dot"
-var runtimeProject = "../${projectName}"
+var rootPath = ".."
+var fileHeader = "/*******************************************************************************
+ * Copyright (c) 2016 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/"
 
 Workflow {
-    bean = StandaloneSetup {
-		platformUri = "${runtimeProject}/.."
-		// chsch: the following registration doesn't make sense to me, as the file isn't available
-		//  after the execution of the DirectoryCleaner
-        // registerGeneratedEPackage = "org.eclipse.elk.alg.graphviz.dot.dot.DotPackage"
-	}
-	
-	component = DirectoryCleaner {
-		directory = "${runtimeProject}/src-gen"
-	}
-	
-	component = Generator {
-		pathRtProject = runtimeProject
-		projectNameRt = projectName
-		
-		language = {
-			uri = grammarURI
-			fileExtensions = file.extensions
-			
-			// Java API to access grammar elements (required by several other fragments)
-			fragment = grammarAccess.GrammarAccessFragment {}
-			
-			// generates Java API for the generated EPackages
-			fragment = ecore.EcoreGeneratorFragment {}
-			
-			// a custom ResourceFactory for use with EMF
-			fragment = resourceFactory.ResourceFactoryFragment {
-				fileExtensions = file.extensions
-			}
-				
-			// the following fragment tries to use the Antlr Generator fragment
-			fragment = parser.antlr.XtextAntlrGeneratorFragment {}
-			
-			// formatter API
-			fragment = ecore2xtext.FormatterFragment {}
+    
+    component = XtextGenerator {
+        configuration = {
+            project = StandardProjectConfig {
+                baseName = "org.eclipse.elk.alg.graphviz.dot"
+                rootPath = rootPath
+                createEclipseMetaData = true
+            }
+            code = {
+                encoding = "UTF-8"
+                fileHeader = fileHeader
+                preferXtendStubs = false
+            }
+        }
+        language = XtextGeneratorLanguage {
+            name = "org.eclipse.elk.alg.graphviz.dot.GraphvizDot"
+            fileExtensions = "graphviz_dot"
+            
+            // Java API to access grammar elements (required by several other fragments)
+            fragment = grammarAccess.GrammarAccessFragment2 {}
+            
+            // Java API for the generated EPackages
+            fragment = ecore.EMFGeneratorFragment2 {}
+            
+            // A custom ResourceFactory for use with EMF
+            fragment = resourceFactory.ResourceFactoryFragment2 {}
+                
+            // The parser
+            fragment = parser.antlr.XtextAntlrGeneratorFragment2 {}
+            
+            // The formatter
+            fragment = formatting.Formatter2Fragment2 {}
 
-            // Serializer 2.0
-            fragment = serializer.SerializerFragment {}
-		}
-	}
+            // The serializer
+            fragment = serializer.SerializerFragment2 {}
+        }
+    }
 }

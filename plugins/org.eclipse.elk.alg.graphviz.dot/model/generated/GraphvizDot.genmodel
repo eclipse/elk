@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.elk.alg.graphviz.dot/src-gen" editDirectory="/org.eclipse.elk.alg.graphviz.dot.edit/src"
-    editorDirectory="/org.eclipse.elk.alg.graphviz.dot.editor/src" modelPluginID="org.eclipse.elk.alg.graphviz.dot"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="******************************************************************************&#xA;Copyright (c) 2016 Kiel University and others.&#xA;All rights reserved. This program and the accompanying materials&#xA;are made available under the terms of the Eclipse Public License v1.0&#xA;which accompanies this distribution, and is available at&#xA;http://www.eclipse.org/legal/epl-v10.html&#xA; *&#xA;Contributors:&#xA;    Kiel University - initial API and implementation&#xA; ******************************************************************************"
+    modelDirectory="/org.eclipse.elk.alg.graphviz.dot/src-gen" modelPluginID="org.eclipse.elk.alg.graphviz.dot"
     forceOverwrite="true" modelName="GraphvizDot" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    complianceLevel="6.0" copyrightFields="false" editPluginID="org.eclipse.elk.alg.graphviz.dot.edit"
-    editorPluginID="org.eclipse.elk.alg.graphviz.dot.editor" runtimeVersion="2.11">
+    complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.11">
   <genPackages prefix="Dot" basePackage="org.eclipse.elk.alg.graphviz.dot" disposableProviderFactory="true"
-      ecorePackage="GraphvizDot.ecore#/">
+      fileExtensions="graphviz_dot" ecorePackage="GraphvizDot.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphvizDot.ecore#//EdgeOperator">
       <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//EdgeOperator/directed"/>
       <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//EdgeOperator/undirected"/>

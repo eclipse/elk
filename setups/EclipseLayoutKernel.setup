@@ -38,7 +38,7 @@
         name="org.eclipse.jdt.feature.group"/>
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"
-        versionRange="[2.8.0,2.9.0)"/>
+        versionRange="[2.9.0,2.10.0)"/>
     <requirement
         name="org.eclipse.mylyn.ide_feature.feature.group"/>
     <requirement
@@ -67,6 +67,8 @@
         name="net.sf.eclipsecs.feature.group"/>
     <repository
         url="http://eclipse-cs.sf.net/update"/>
+    <repository
+        url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -170,7 +172,8 @@
         <requirement
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
-            name="org.eclipse.xtext.sdk.feature.group"/>
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.9.0,2.10.0)"/>
         <requirement
             name="org.eclipse.gmf.feature.group"/>
         <requirement
@@ -186,6 +189,8 @@
               url="http://download.eclipse.org/releases/mars"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
         </repositoryList>
         <repositoryList
             name="Luna">
@@ -193,6 +198,8 @@
               url="http://download.eclipse.org/releases/luna"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
         </repositoryList>
       </targlet>
     </setupTask>

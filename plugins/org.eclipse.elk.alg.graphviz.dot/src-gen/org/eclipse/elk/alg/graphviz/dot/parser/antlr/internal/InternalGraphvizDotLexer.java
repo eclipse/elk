@@ -50,15 +50,15 @@ public class InternalGraphvizDotLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g"; }
+    public String getGrammarFileName() { return "InternalGraphvizDot.g"; }
 
     // $ANTLR start "T__13"
     public final void mT__13() throws RecognitionException {
         try {
             int _type = T__13;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:11:7: ( 'strict' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:11:9: 'strict'
+            // InternalGraphvizDot.g:11:7: ( 'strict' )
+            // InternalGraphvizDot.g:11:9: 'strict'
             {
             match("strict"); 
 
@@ -78,8 +78,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__14;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:12:7: ( '{' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:12:9: '{'
+            // InternalGraphvizDot.g:12:7: ( '{' )
+            // InternalGraphvizDot.g:12:9: '{'
             {
             match('{'); 
 
@@ -98,8 +98,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__15;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:13:7: ( '}' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:13:9: '}'
+            // InternalGraphvizDot.g:13:7: ( '}' )
+            // InternalGraphvizDot.g:13:9: '}'
             {
             match('}'); 
 
@@ -118,8 +118,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__16;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:14:7: ( ';' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:14:9: ';'
+            // InternalGraphvizDot.g:14:7: ( ';' )
+            // InternalGraphvizDot.g:14:9: ';'
             {
             match(';'); 
 
@@ -138,8 +138,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__17;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:15:7: ( '=' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:15:9: '='
+            // InternalGraphvizDot.g:15:7: ( '=' )
+            // InternalGraphvizDot.g:15:9: '='
             {
             match('='); 
 
@@ -158,8 +158,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__18;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:16:7: ( '[' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:16:9: '['
+            // InternalGraphvizDot.g:16:7: ( '[' )
+            // InternalGraphvizDot.g:16:9: '['
             {
             match('['); 
 
@@ -178,8 +178,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__19;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:17:7: ( ',' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:17:9: ','
+            // InternalGraphvizDot.g:17:7: ( ',' )
+            // InternalGraphvizDot.g:17:9: ','
             {
             match(','); 
 
@@ -198,8 +198,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__20;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:18:7: ( ']' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:18:9: ']'
+            // InternalGraphvizDot.g:18:7: ( ']' )
+            // InternalGraphvizDot.g:18:9: ']'
             {
             match(']'); 
 
@@ -218,8 +218,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__21;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:19:7: ( ':' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:19:9: ':'
+            // InternalGraphvizDot.g:19:7: ( ':' )
+            // InternalGraphvizDot.g:19:9: ':'
             {
             match(':'); 
 
@@ -238,8 +238,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__22;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:20:7: ( 'subgraph' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:20:9: 'subgraph'
+            // InternalGraphvizDot.g:20:7: ( 'subgraph' )
+            // InternalGraphvizDot.g:20:9: 'subgraph'
             {
             match("subgraph"); 
 
@@ -259,8 +259,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__23;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:21:7: ( '->' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:21:9: '->'
+            // InternalGraphvizDot.g:21:7: ( '->' )
+            // InternalGraphvizDot.g:21:9: '->'
             {
             match("->"); 
 
@@ -280,8 +280,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__24;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:22:7: ( '--' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:22:9: '--'
+            // InternalGraphvizDot.g:22:7: ( '--' )
+            // InternalGraphvizDot.g:22:9: '--'
             {
             match("--"); 
 
@@ -301,8 +301,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__25;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:23:7: ( 'graph' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:23:9: 'graph'
+            // InternalGraphvizDot.g:23:7: ( 'graph' )
+            // InternalGraphvizDot.g:23:9: 'graph'
             {
             match("graph"); 
 
@@ -322,8 +322,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__26;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:24:7: ( 'digraph' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:24:9: 'digraph'
+            // InternalGraphvizDot.g:24:7: ( 'digraph' )
+            // InternalGraphvizDot.g:24:9: 'digraph'
             {
             match("digraph"); 
 
@@ -343,8 +343,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__27;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:25:7: ( 'node' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:25:9: 'node'
+            // InternalGraphvizDot.g:25:7: ( 'node' )
+            // InternalGraphvizDot.g:25:9: 'node'
             {
             match("node"); 
 
@@ -364,8 +364,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = T__28;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:26:7: ( 'edge' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:26:9: 'edge'
+            // InternalGraphvizDot.g:26:7: ( 'edge' )
+            // InternalGraphvizDot.g:26:9: 'edge'
             {
             match("edge"); 
 
@@ -385,10 +385,10 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1067:10: ( ( '-' )? ( '0' .. '9' )+ )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1067:12: ( '-' )? ( '0' .. '9' )+
+            // InternalGraphvizDot.g:1125:10: ( ( '-' )? ( '0' .. '9' )+ )
+            // InternalGraphvizDot.g:1125:12: ( '-' )? ( '0' .. '9' )+
             {
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1067:12: ( '-' )?
+            // InternalGraphvizDot.g:1125:12: ( '-' )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -397,7 +397,7 @@ public class InternalGraphvizDotLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1067:12: '-'
+                    // InternalGraphvizDot.g:1125:12: '-'
                     {
                     match('-'); 
 
@@ -406,7 +406,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
             }
 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1067:17: ( '0' .. '9' )+
+            // InternalGraphvizDot.g:1125:17: ( '0' .. '9' )+
             int cnt2=0;
             loop2:
             do {
@@ -420,7 +420,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1067:18: '0' .. '9'
+            	    // InternalGraphvizDot.g:1125:18: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -452,8 +452,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1069:9: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1069:11: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalGraphvizDot.g:1127:9: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalGraphvizDot.g:1127:11: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -464,7 +464,7 @@ public class InternalGraphvizDotLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1069:35: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalGraphvizDot.g:1127:35: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop3:
             do {
                 int alt3=2;
@@ -477,7 +477,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:
+            	    // InternalGraphvizDot.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -513,10 +513,10 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_FLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:12: ( ( '-' )? ( '0' .. '9' )* '.' ( '0' .. '9' )+ )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:14: ( '-' )? ( '0' .. '9' )* '.' ( '0' .. '9' )+
+            // InternalGraphvizDot.g:1129:12: ( ( '-' )? ( '0' .. '9' )* '.' ( '0' .. '9' )+ )
+            // InternalGraphvizDot.g:1129:14: ( '-' )? ( '0' .. '9' )* '.' ( '0' .. '9' )+
             {
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:14: ( '-' )?
+            // InternalGraphvizDot.g:1129:14: ( '-' )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -525,7 +525,7 @@ public class InternalGraphvizDotLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:14: '-'
+                    // InternalGraphvizDot.g:1129:14: '-'
                     {
                     match('-'); 
 
@@ -534,7 +534,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
             }
 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:19: ( '0' .. '9' )*
+            // InternalGraphvizDot.g:1129:19: ( '0' .. '9' )*
             loop5:
             do {
                 int alt5=2;
@@ -547,7 +547,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:20: '0' .. '9'
+            	    // InternalGraphvizDot.g:1129:20: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -560,7 +560,7 @@ public class InternalGraphvizDotLexer extends Lexer {
             } while (true);
 
             match('.'); 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:35: ( '0' .. '9' )+
+            // InternalGraphvizDot.g:1129:35: ( '0' .. '9' )+
             int cnt6=0;
             loop6:
             do {
@@ -574,7 +574,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1071:36: '0' .. '9'
+            	    // InternalGraphvizDot.g:1129:36: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -606,11 +606,11 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1073:13: ( '\"' ( '\\\\' '\"' | ~ ( '\"' ) )* '\"' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1073:15: '\"' ( '\\\\' '\"' | ~ ( '\"' ) )* '\"'
+            // InternalGraphvizDot.g:1131:13: ( '\"' ( '\\\\' '\"' | ~ ( '\"' ) )* '\"' )
+            // InternalGraphvizDot.g:1131:15: '\"' ( '\\\\' '\"' | ~ ( '\"' ) )* '\"'
             {
             match('\"'); 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1073:19: ( '\\\\' '\"' | ~ ( '\"' ) )*
+            // InternalGraphvizDot.g:1131:19: ( '\\\\' '\"' | ~ ( '\"' ) )*
             loop7:
             do {
                 int alt7=3;
@@ -644,7 +644,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1073:20: '\\\\' '\"'
+            	    // InternalGraphvizDot.g:1131:20: '\\\\' '\"'
             	    {
             	    match('\\'); 
             	    match('\"'); 
@@ -652,7 +652,7 @@ public class InternalGraphvizDotLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1073:29: ~ ( '\"' )
+            	    // InternalGraphvizDot.g:1131:29: ~ ( '\"' )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -689,11 +689,11 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_PREC_LINE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1075:16: ( '#' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1075:18: '#' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalGraphvizDot.g:1133:16: ( '#' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalGraphvizDot.g:1133:18: '#' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match('#'); 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1075:22: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalGraphvizDot.g:1133:22: (~ ( ( '\\n' | '\\r' ) ) )*
             loop8:
             do {
                 int alt8=2;
@@ -706,7 +706,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1075:22: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalGraphvizDot.g:1133:22: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -726,7 +726,7 @@ public class InternalGraphvizDotLexer extends Lexer {
                 }
             } while (true);
 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1075:38: ( ( '\\r' )? '\\n' )?
+            // InternalGraphvizDot.g:1133:38: ( ( '\\r' )? '\\n' )?
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -735,9 +735,9 @@ public class InternalGraphvizDotLexer extends Lexer {
             }
             switch (alt10) {
                 case 1 :
-                    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1075:39: ( '\\r' )? '\\n'
+                    // InternalGraphvizDot.g:1133:39: ( '\\r' )? '\\n'
                     {
-                    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1075:39: ( '\\r' )?
+                    // InternalGraphvizDot.g:1133:39: ( '\\r' )?
                     int alt9=2;
                     int LA9_0 = input.LA(1);
 
@@ -746,7 +746,7 @@ public class InternalGraphvizDotLexer extends Lexer {
                     }
                     switch (alt9) {
                         case 1 :
-                            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1075:39: '\\r'
+                            // InternalGraphvizDot.g:1133:39: '\\r'
                             {
                             match('\r'); 
 
@@ -778,12 +778,12 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1077:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1077:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalGraphvizDot.g:1135:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalGraphvizDot.g:1135:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1077:24: ( options {greedy=false; } : . )*
+            // InternalGraphvizDot.g:1135:24: ( options {greedy=false; } : . )*
             loop11:
             do {
                 int alt11=2;
@@ -808,7 +808,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1077:52: .
+            	    // InternalGraphvizDot.g:1135:52: .
             	    {
             	    matchAny(); 
 
@@ -838,12 +838,12 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1079:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1079:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalGraphvizDot.g:1137:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalGraphvizDot.g:1137:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1079:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalGraphvizDot.g:1137:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop12:
             do {
                 int alt12=2;
@@ -856,7 +856,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1079:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalGraphvizDot.g:1137:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -876,7 +876,7 @@ public class InternalGraphvizDotLexer extends Lexer {
                 }
             } while (true);
 
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1079:40: ( ( '\\r' )? '\\n' )?
+            // InternalGraphvizDot.g:1137:40: ( ( '\\r' )? '\\n' )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -885,9 +885,9 @@ public class InternalGraphvizDotLexer extends Lexer {
             }
             switch (alt14) {
                 case 1 :
-                    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1079:41: ( '\\r' )? '\\n'
+                    // InternalGraphvizDot.g:1137:41: ( '\\r' )? '\\n'
                     {
-                    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1079:41: ( '\\r' )?
+                    // InternalGraphvizDot.g:1137:41: ( '\\r' )?
                     int alt13=2;
                     int LA13_0 = input.LA(1);
 
@@ -896,7 +896,7 @@ public class InternalGraphvizDotLexer extends Lexer {
                     }
                     switch (alt13) {
                         case 1 :
-                            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1079:41: '\\r'
+                            // InternalGraphvizDot.g:1137:41: '\\r'
                             {
                             match('\r'); 
 
@@ -928,10 +928,10 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1081:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1081:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalGraphvizDot.g:1139:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalGraphvizDot.g:1139:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1081:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalGraphvizDot.g:1139:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt15=0;
             loop15:
             do {
@@ -945,7 +945,7 @@ public class InternalGraphvizDotLexer extends Lexer {
 
                 switch (alt15) {
             	case 1 :
-            	    // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:
+            	    // InternalGraphvizDot.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
             	        input.consume();
@@ -985,8 +985,8 @@ public class InternalGraphvizDotLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1083:16: ( . )
-            // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1083:18: .
+            // InternalGraphvizDot.g:1141:16: ( . )
+            // InternalGraphvizDot.g:1141:18: .
             {
             matchAny(); 
 
@@ -1001,180 +1001,180 @@ public class InternalGraphvizDotLexer extends Lexer {
     // $ANTLR end "RULE_ANY_OTHER"
 
     public void mTokens() throws RecognitionException {
-        // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:8: ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | RULE_INT | RULE_ID | RULE_FLOAT | RULE_STRING | RULE_PREC_LINE | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        // InternalGraphvizDot.g:1:8: ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | RULE_INT | RULE_ID | RULE_FLOAT | RULE_STRING | RULE_PREC_LINE | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
         int alt16=25;
         alt16 = dfa16.predict(input);
         switch (alt16) {
             case 1 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:10: T__13
+                // InternalGraphvizDot.g:1:10: T__13
                 {
                 mT__13(); 
 
                 }
                 break;
             case 2 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:16: T__14
+                // InternalGraphvizDot.g:1:16: T__14
                 {
                 mT__14(); 
 
                 }
                 break;
             case 3 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:22: T__15
+                // InternalGraphvizDot.g:1:22: T__15
                 {
                 mT__15(); 
 
                 }
                 break;
             case 4 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:28: T__16
+                // InternalGraphvizDot.g:1:28: T__16
                 {
                 mT__16(); 
 
                 }
                 break;
             case 5 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:34: T__17
+                // InternalGraphvizDot.g:1:34: T__17
                 {
                 mT__17(); 
 
                 }
                 break;
             case 6 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:40: T__18
+                // InternalGraphvizDot.g:1:40: T__18
                 {
                 mT__18(); 
 
                 }
                 break;
             case 7 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:46: T__19
+                // InternalGraphvizDot.g:1:46: T__19
                 {
                 mT__19(); 
 
                 }
                 break;
             case 8 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:52: T__20
+                // InternalGraphvizDot.g:1:52: T__20
                 {
                 mT__20(); 
 
                 }
                 break;
             case 9 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:58: T__21
+                // InternalGraphvizDot.g:1:58: T__21
                 {
                 mT__21(); 
 
                 }
                 break;
             case 10 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:64: T__22
+                // InternalGraphvizDot.g:1:64: T__22
                 {
                 mT__22(); 
 
                 }
                 break;
             case 11 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:70: T__23
+                // InternalGraphvizDot.g:1:70: T__23
                 {
                 mT__23(); 
 
                 }
                 break;
             case 12 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:76: T__24
+                // InternalGraphvizDot.g:1:76: T__24
                 {
                 mT__24(); 
 
                 }
                 break;
             case 13 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:82: T__25
+                // InternalGraphvizDot.g:1:82: T__25
                 {
                 mT__25(); 
 
                 }
                 break;
             case 14 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:88: T__26
+                // InternalGraphvizDot.g:1:88: T__26
                 {
                 mT__26(); 
 
                 }
                 break;
             case 15 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:94: T__27
+                // InternalGraphvizDot.g:1:94: T__27
                 {
                 mT__27(); 
 
                 }
                 break;
             case 16 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:100: T__28
+                // InternalGraphvizDot.g:1:100: T__28
                 {
                 mT__28(); 
 
                 }
                 break;
             case 17 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:106: RULE_INT
+                // InternalGraphvizDot.g:1:106: RULE_INT
                 {
                 mRULE_INT(); 
 
                 }
                 break;
             case 18 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:115: RULE_ID
+                // InternalGraphvizDot.g:1:115: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
             case 19 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:123: RULE_FLOAT
+                // InternalGraphvizDot.g:1:123: RULE_FLOAT
                 {
                 mRULE_FLOAT(); 
 
                 }
                 break;
             case 20 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:134: RULE_STRING
+                // InternalGraphvizDot.g:1:134: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
             case 21 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:146: RULE_PREC_LINE
+                // InternalGraphvizDot.g:1:146: RULE_PREC_LINE
                 {
                 mRULE_PREC_LINE(); 
 
                 }
                 break;
             case 22 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:161: RULE_ML_COMMENT
+                // InternalGraphvizDot.g:1:161: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
             case 23 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:177: RULE_SL_COMMENT
+                // InternalGraphvizDot.g:1:177: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
             case 24 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:193: RULE_WS
+                // InternalGraphvizDot.g:1:193: RULE_WS
                 {
                 mRULE_WS(); 
 
                 }
                 break;
             case 25 :
-                // ../org.eclipse.elk.alg.graphviz.dot/src-gen/org/eclipse/elk/alg/graphviz/dot/parser/antlr/internal/InternalGraphvizDot.g:1:201: RULE_ANY_OTHER
+                // InternalGraphvizDot.g:1:201: RULE_ANY_OTHER
                 {
                 mRULE_ANY_OTHER(); 
 
