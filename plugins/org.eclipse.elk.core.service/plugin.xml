@@ -14,7 +14,7 @@
             category="org.eclipse.elk.category.elk"
             class="org.eclipse.elk.core.util.FixedLayoutProvider"
             description="Keeps the current layout as it is, without any automatic modification. Optional coordinates can be given for nodes and edge bend points."
-            id="org.eclipse.elk.algorithm.fixed"
+            id="org.eclipse.elk.alg.fixed"
             name="Fixed Layout">
          <knownOption
                option="org.eclipse.elk.position">
@@ -31,7 +31,7 @@
             category="org.eclipse.elk.category.elk"
             class="org.eclipse.elk.core.util.BoxLayoutProvider"
             description="Algorithm for packing of unconnected boxes, i.e. graphs without edges."
-            id="org.eclipse.elk.algorithm.box"
+            id="org.eclipse.elk.alg.box"
             name="Box Layout"
             preview="images/box_layout.png">
          <knownOption
@@ -67,7 +67,7 @@
             category="org.eclipse.elk.category.elk"
             class="org.eclipse.elk.core.util.RandomLayoutProvider"
             description="Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be useful to demonstrate the power of &quot;real&quot; layout algorithms."
-            id="org.eclipse.elk.algorithm.random"
+            id="org.eclipse.elk.alg.random"
             name="Randomizer"
             preview="images/random.png">
          <knownOption

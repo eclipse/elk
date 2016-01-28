@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK - Mr. Tree Layout Algorithm
+Bundle-SymbolicName: org.eclipse.elk.alg.mrtree;singleton:=true
+Bundle-Version: 0.3.0.qualifier
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.elk.graph,
+ org.eclipse.elk.core
+Export-Package: org.eclipse.elk.alg.tree
+Import-Package: com.google.common.collect

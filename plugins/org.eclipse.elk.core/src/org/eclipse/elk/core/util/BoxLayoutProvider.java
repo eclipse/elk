@@ -35,7 +35,7 @@ import org.eclipse.elk.graph.KNode;
 public class BoxLayoutProvider extends AbstractLayoutProvider {
     
     /** the layout provider id. */
-    public static final String ID = "org.eclipse.elk.algorithm.box";
+    public static final String ID = "org.eclipse.elk.alg.box";
 
     /** default value for spacing between boxes. */
     private static final float DEF_SPACING = 15.0f;

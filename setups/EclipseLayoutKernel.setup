@@ -234,15 +234,8 @@
       <workingSet
           name="ELK Algorithms">
         <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:NamePredicate"
-              pattern="org\.eclipse\.elk\..*"/>
-          <operand
-              xsi:type="predicates:FilePredicate"
-              filePattern="build.properties"
-              contentPattern="org\.eclipse\.elk\.algorithm = true"/>
-        </predicate>
+            xsi:type="predicates:NamePredicate"
+            pattern="org\.eclipse\.elk\.alg\..*"/>
       </workingSet>
       <workingSet
           name="ELK Editor Support">

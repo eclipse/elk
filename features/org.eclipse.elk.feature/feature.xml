@@ -237,6 +237,27 @@ litigation.
    </requires>
 
    <plugin
+         id="org.eclipse.elk.alg.layered"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.elk.alg.mrtree"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.elk.alg.force"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.elk.core"
          download-size="0"
          install-size="0"
@@ -258,28 +279,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.elk.force"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.elk.graph"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.elk.layered"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.elk.mrtree"
          download-size="0"
          install-size="0"
          version="0.0.0"

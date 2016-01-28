@@ -234,14 +234,14 @@ litigation.
    </requires>
 
    <plugin
-         id="org.eclipse.elk.graphviz.dot"
+         id="org.eclipse.elk.alg.graphviz.dot"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.elk.graphviz.layouter"
+         id="org.eclipse.elk.alg.graphviz.layouter"
          download-size="0"
          install-size="0"
          version="0.0.0"
