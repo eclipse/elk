@@ -234,7 +234,7 @@ litigation.
    </requires>
 
    <plugin
-         id="org.eclipse.elk.graphiti"
+         id="org.eclipse.elk.conn.graphiti"
          download-size="0"
          install-size="0"
          version="0.0.0"

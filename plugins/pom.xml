@@ -23,12 +23,12 @@
     <module>org.eclipse.elk.alg.graphviz.layouter</module>
     <module>org.eclipse.elk.alg.layered</module>
     <module>org.eclipse.elk.alg.mrtree</module>
+    <module>org.eclipse.elk.conn.gmf</module>
+    <module>org.eclipse.elk.conn.graphiti</module>
     <module>org.eclipse.elk.core</module>
     <module>org.eclipse.elk.core.service</module>
     <module>org.eclipse.elk.core.ui</module>
-    <module>org.eclipse.elk.gmf</module>
     <module>org.eclipse.elk.graph</module>
-    <module>org.eclipse.elk.graphiti</module>
   </modules>
 
 </project>
