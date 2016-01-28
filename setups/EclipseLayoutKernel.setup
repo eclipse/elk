@@ -238,17 +238,10 @@
             pattern="org\.eclipse\.elk\.alg\..*"/>
       </workingSet>
       <workingSet
-          name="ELK Editor Support">
+          name="ELK Connectors">
         <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:NamePredicate"
-              pattern="org\.eclipse\.elk\..*"/>
-          <operand
-              xsi:type="predicates:FilePredicate"
-              filePattern="build.properties"
-              contentPattern="org\.eclipse\.elk\.editorsupport = true"/>
-        </predicate>
+            xsi:type="predicates:NamePredicate"
+            pattern="org\.eclipse\.elk\.conn\..*"/>
       </workingSet>
       <workingSet
           name="ELK Stuff">

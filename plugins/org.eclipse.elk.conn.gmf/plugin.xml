@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+ <extension
+       point="org.eclipse.elk.core.service.layoutConnectors">
+    <setup
+          class="org.eclipse.elk.conn.gmf.GmfLayoutSetup">
+    </setup>
+ </extension>
+  <extension
+       point="org.eclipse.gmf.runtime.diagram.ui.editpolicyProviders">
+    <editpolicyProvider
+          class="org.eclipse.elk.conn.gmf.LayoutEditPolicyProvider">
+       <Priority
+             name="Lowest">
+       </Priority>
+    </editpolicyProvider>
+ </extension>
+  <extension
+        point="org.eclipse.ui.commands">
+     <command
+           categoryId="org.eclipse.elk.core.layout"
+           defaultHandler="org.eclipse.elk.conn.gmf.LayoutDiagramFileHandler"
+           id="org.eclipse.elk.conn.gmf.layoutDiagramFile"
+           name="Layout Diagram File">
+     </command>
+  </extension>
+ <extension
+       point="org.eclipse.elk.core.service.layoutProviders">
+    <layoutAlgorithm
+          class="org.eclipse.elk.conn.gmf.layouter.Draw2DLayoutProvider"
+          description="&quot;Directed Graph Layout&quot; provided by the Draw2D framework. This is the same algorithm that is used by the standard layout button of GMF diagrams."
+          id="org.eclipse.elk.alg.draw2d"
+          name="Draw2D Layout"
+          preview="images/draw2d.png"
+          type="org.eclipse.elk.type.layered">
+       <supportedFeature
+             feature="MULTI_EDGES">
+       </supportedFeature>
+       <knownOption
+             default="16"
+             option="org.eclipse.elk.spacing">
+       </knownOption>
+       <knownOption
+             default="16"
+             option="org.eclipse.elk.borderSpacing">
+       </knownOption>
+       <knownOption
+             default="RIGHT"
+             option="org.eclipse.elk.direction">
+       </knownOption>
+       <knownOption
+             option="org.eclipse.elk.sizeConstraint">
+       </knownOption>
+    </layoutAlgorithm>
+ </extension>
+ <extension
+       point="org.eclipse.gmf.runtime.diagram.ui.layoutProviders">
+    <layoutProvider
+          class="org.eclipse.elk.conn.gmf.ElkLayoutProvider">
+       <Priority
+             name="Highest">
+       </Priority>
+    </layoutProvider>
+ </extension>
+
+</plugin>
