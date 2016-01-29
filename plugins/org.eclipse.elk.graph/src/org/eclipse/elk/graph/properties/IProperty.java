@@ -31,24 +31,6 @@ public interface IProperty<T> {
     T getDefault();
     
     /**
-     * Returns the lower bound of this property. If there is no lower bound, a
-     * comparable is returned that is smaller than everything else.
-     * 
-     * @return the lower bound
-     */
-    @Deprecated
-    Comparable<? super T> getLowerBound();
-    
-    /**
-     * Returns the upper bound of this property. If there is no upper bound, a
-     * comparable is returned that is greater than everything else.
-     * 
-     * @return the upper bound
-     */
-    @Deprecated
-    Comparable<? super T> getUpperBound();
-    
-    /**
      * Returns an identifier string for this property.
      * 
      * @return an identifier

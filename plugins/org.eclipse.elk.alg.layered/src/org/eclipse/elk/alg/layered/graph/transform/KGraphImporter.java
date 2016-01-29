@@ -298,7 +298,7 @@ class KGraphImporter {
                 EnumSet.noneOf(GraphProperties.class));
         
         // Adjust the insets to respect inside labels.
-        double labelSpacing = lgraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
+        float labelSpacing = lgraph.getProperty(Properties.LABEL_SPACING);
         Insets insets = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
                 KGraphAdapters.adaptSingleNode(kgraph), labelSpacing);
         
@@ -420,7 +420,7 @@ class KGraphImporter {
         }
         
         // If we don't have a port offset, infer one
-        Float portOffset = kportLayout.getProperty(LayoutOptions.OFFSET);
+        Float portOffset = kportLayout.getProperty(LayoutOptions.PORT_OFFSET);
         if (portOffset == null) {
             // if port coordinates are (0,0), we default to port offset 0 to make the common case
             // frustration-free
@@ -429,7 +429,7 @@ class KGraphImporter {
             } else {
                 portOffset = ElkUtil.calcPortOffset(kport, portSide);
             }
-            kportLayout.setProperty(LayoutOptions.OFFSET, portOffset);
+            kportLayout.setProperty(LayoutOptions.PORT_OFFSET, portOffset);
         }
         
         // Create the external port dummy node
@@ -807,7 +807,7 @@ class KGraphImporter {
         // Copy the original bend points of the edge in case they are required
         boolean bendPointsRequired =
                 lgraph.getProperty(Properties.CROSS_MIN) == CrossingMinimizationStrategy.INTERACTIVE
-                || lgraph.getProperty(Properties.NODE_PLACER) == NodePlacementStrategy.INTERACTIVE;
+                || lgraph.getProperty(Properties.NODE_PLACEMENT) == NodePlacementStrategy.INTERACTIVE;
         
         if (!kedgeLayout.getBendPoints().isEmpty() && bendPointsRequired) {
             KVectorChain bendpoints = new KVectorChain();

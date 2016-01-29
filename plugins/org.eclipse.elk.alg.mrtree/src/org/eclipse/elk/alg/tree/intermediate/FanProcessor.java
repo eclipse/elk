@@ -20,7 +20,7 @@ import java.util.Map.Entry;
 import org.eclipse.elk.alg.tree.ILayoutProcessor;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -53,7 +53,7 @@ public class FanProcessor implements ILayoutProcessor {
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
-            if (tNode.getProperty(Properties.ROOT)) {
+            if (tNode.getProperty(InternalProperties.ROOT)) {
                 root = tNode;
             }
         }
@@ -65,11 +65,11 @@ public class FanProcessor implements ILayoutProcessor {
 
         /** set the fan and descendants for all nodes */
         for (TNode tNode : tGraph.getNodes()) {
-            String key = tNode.getProperty(Properties.ID);
+            String key = tNode.getProperty(InternalProperties.ID);
             int fan = gloFanMap.get(key) != null ? gloFanMap.get(key) : 0;
-            tNode.setProperty(Properties.FAN, fan);
+            tNode.setProperty(InternalProperties.FAN, fan);
             int desc = 1 + (gloDescMap.get(key) != null ? gloDescMap.get(key) : 0);
-            tNode.setProperty(Properties.DESCENDANTS, desc);
+            tNode.setProperty(InternalProperties.DESCENDANTS, desc);
         }
 
         progressMonitor.done();
@@ -101,8 +101,8 @@ public class FanProcessor implements ILayoutProcessor {
             int index = 0;
             for (TNode tNode : currentLevel) {
                 /** the final stringId is the stringId of the parent and the extension */
-                if (pId != tNode.getProperty(Properties.ID)) {
-                    pId = tNode.getProperty(Properties.ID);
+                if (pId != tNode.getProperty(InternalProperties.ID)) {
+                    pId = tNode.getProperty(InternalProperties.ID);
                     index = 0;
                 }
                 if (pId != null) {
@@ -110,11 +110,11 @@ public class FanProcessor implements ILayoutProcessor {
                 } else {
                     id = formatRight(index++, digits);
                 }
-                tNode.setProperty(Properties.ID, id);
+                tNode.setProperty(InternalProperties.ID, id);
                 for (TNode tChild : tNode.getChildren()) {
                     nextLevel.add(tChild);
                     /** the provisional stringId is the Id of the parent */
-                    tChild.setProperty(Properties.ID, id);
+                    tChild.setProperty(InternalProperties.ID, id);
                 }
             }
 
@@ -124,7 +124,7 @@ public class FanProcessor implements ILayoutProcessor {
             /** calculated occurences of descendants in this level */
             for (int i = 0; i < id.length() - digits; i++) {
                 for (TNode tNode : currentLevel) {
-                    String key = tNode.getProperty(Properties.ID).substring(0, i + 1);
+                    String key = tNode.getProperty(InternalProperties.ID).substring(0, i + 1);
                     int blockSize = locFanMap.get(key) != null ? locFanMap.get(key) + 1 : 1;
                     locFanMap.put(key, blockSize);
                 }

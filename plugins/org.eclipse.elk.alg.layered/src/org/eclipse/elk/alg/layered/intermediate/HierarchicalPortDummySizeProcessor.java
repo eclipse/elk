@@ -15,9 +15,9 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.options.Alignment;
@@ -65,7 +65,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
         List<LNode> southernDummies = Lists.newArrayList();
         
         // Calculate the width difference (this assumes CENTER node alignment)
-        double normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
+        double normalSpacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
         double smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         double delta = smallSpacing * 2;
         

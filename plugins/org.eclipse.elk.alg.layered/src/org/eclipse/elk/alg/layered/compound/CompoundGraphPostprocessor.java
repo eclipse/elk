@@ -77,7 +77,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
         monitor.begin("Compound graph postprocessor", 1);
         
         // whether bend points should be added whenever crossing a hierarchy boundary
-        boolean addUnnecessaryBendpoints = graph.getProperty(Properties.ADD_UNNECESSARY_BENDPOINTS);
+        boolean addUnnecessaryBendpoints = graph.getProperty(Properties.UNNECESSARY_BENDPOINTS);
         
         // restore the cross-hierarchy map that was built by the preprocessor
         Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap = graph.getProperty(

@@ -175,6 +175,8 @@
             name="org.eclipse.xtext.sdk.feature.group"
             versionRange="[2.9.0,2.10.0)"/>
         <requirement
+            name="de.itemis.xtext.antlr.sdk.feature.group"/>
+        <requirement
             name="org.eclipse.gmf.feature.group"/>
         <requirement
             name="org.eclipse.gmf.tooling.runtime.feature.group"/>
@@ -191,6 +193,8 @@
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/"/>
         </repositoryList>
         <repositoryList
             name="Luna">

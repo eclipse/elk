@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.math.KVector;
 
 /**
@@ -67,7 +67,7 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         for (LGraph graph : components) {
             int priority = 0;
             for (LNode node : graph.getLayerlessNodes()) {
-                priority += node.getProperty(InternalProperties.PRIORITY);
+                priority += node.getProperty(Properties.PRIORITY);
             }
             graph.id = priority;
         }
@@ -98,8 +98,8 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             totalArea += size.x * size.y;
         }
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
-                * target.getProperty(InternalProperties.ASPECT_RATIO));
-        double spacing = SPACING_FACTOR * target.getProperty(InternalProperties.SPACING);
+                * target.getProperty(Properties.ASPECT_RATIO));
+        double spacing = SPACING_FACTOR * target.getProperty(Properties.SPACING);
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;

@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LInsets;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.KimlNodeDimensionCalculation;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
@@ -59,7 +60,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
         KimlNodeDimensionCalculation.calculateNodeMargins(LGraphAdapters.adapt(layeredGraph));
         
         // Iterate through the layers to additionally handle comments
-        double spacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
+        double spacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
         for (Layer layer : layeredGraph) {
             // Iterate through the layer's nodes
             for (LNode node : layer) {

@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.elk.alg.tree.ILayoutProcessor;
 import org.eclipse.elk.alg.tree.graph.TEdge;
 import org.eclipse.elk.alg.tree.graph.TGraph;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -32,7 +32,7 @@ public class Untreeifyer implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final TGraph tGraph, final IElkProgressMonitor progressMonitor) {
-        List<TEdge>  edges = tGraph.getProperty(Properties.REMOVABLE_EDGES);
+        List<TEdge>  edges = tGraph.getProperty(InternalProperties.REMOVABLE_EDGES);
 
         for (TEdge tEdge : edges) {
             tEdge.getSource().getOutgoingEdges().add(tEdge);

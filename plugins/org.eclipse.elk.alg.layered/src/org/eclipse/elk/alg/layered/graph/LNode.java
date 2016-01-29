@@ -13,7 +13,6 @@ package org.eclipse.elk.alg.layered.graph;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.math.KVector;
@@ -450,7 +449,7 @@ public final class LNode extends LShape {
         LGraph thegraph = getGraph();
         
         LInsets graphInsets = thegraph.getInsets();
-        float borderSpacing = thegraph.getProperty(InternalProperties.BORDER_SPACING);
+        float borderSpacing = thegraph.getProperty(Properties.BORDER_SPACING);
         KVector offset = thegraph.getOffset();
         KVector pos = getPosition();
         

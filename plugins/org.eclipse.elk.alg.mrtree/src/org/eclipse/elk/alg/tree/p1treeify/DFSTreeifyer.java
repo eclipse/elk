@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.tree.graph.TEdge;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
 import org.eclipse.elk.alg.tree.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.alg.tree.properties.Properties;
 import org.eclipse.elk.alg.tree.properties.TreeifyingOrder;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -96,7 +97,7 @@ public class DFSTreeifyer implements ILayoutPhase {
      *            where to collect the edges
      */
     private void collectEdges(final TGraph tGraph) {
-        TreeifyingOrder treeifyingOrder = tGraph.getProperty(Properties.TREEIFY_ORDER);
+        TreeifyingOrder treeifyingOrder = tGraph.getProperty(Properties.SEARCH_ORDER);
 
         // start DFS on every node in graph
         for (TNode tNode : tGraph.getNodes()) {
@@ -121,7 +122,7 @@ public class DFSTreeifyer implements ILayoutPhase {
             tEdge.getTarget().getIncomingEdges().remove(tEdge);
         }
         // set the list of collected edges as a graph property
-        tGraph.setProperty(Properties.REMOVABLE_EDGES, eliminated);
+        tGraph.setProperty(InternalProperties.REMOVABLE_EDGES, eliminated);
     }
 
     /**

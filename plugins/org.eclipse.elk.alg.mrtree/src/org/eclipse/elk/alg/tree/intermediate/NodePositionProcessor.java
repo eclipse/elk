@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import org.eclipse.elk.alg.tree.ILayoutProcessor;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -46,10 +46,10 @@ public class NodePositionProcessor implements ILayoutProcessor {
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
-            if (tNode.getProperty(Properties.ROOT)) {
+            if (tNode.getProperty(InternalProperties.ROOT)) {
                 root = tNode;
                 KVector pos = tNode.getPosition();
-                pos.x = tNode.getProperty(Properties.XCOOR).doubleValue();
+                pos.x = tNode.getProperty(InternalProperties.XCOOR).doubleValue();
                 pos.y = 0;
             }
         }
@@ -85,8 +85,8 @@ public class NodePositionProcessor implements ILayoutProcessor {
             for (TNode tNode : currentLevel) {
                 nextLevel.addAll(tNode.getChildrenCopy());
                 KVector pos = tNode.getPosition();
-                pos.x = tNode.getProperty(Properties.XCOOR).doubleValue();
-                pos.y = tNode.getProperty(Properties.YCOOR).doubleValue();
+                pos.x = tNode.getProperty(InternalProperties.XCOOR).doubleValue();
+                pos.y = tNode.getProperty(InternalProperties.YCOOR).doubleValue();
             }
 
             /** go to the next level */

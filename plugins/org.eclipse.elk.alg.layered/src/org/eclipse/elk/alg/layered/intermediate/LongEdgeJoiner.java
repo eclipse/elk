@@ -67,7 +67,7 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
         monitor.begin("Edge joining", 1);
         
         final boolean addUnnecessaryBendpoints =
-                layeredGraph.getProperty(Properties.ADD_UNNECESSARY_BENDPOINTS);
+                layeredGraph.getProperty(Properties.UNNECESSARY_BENDPOINTS);
         
         // Iterate through the layers
         for (Layer layer : layeredGraph) {

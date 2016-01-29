@@ -15,10 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.data.ILayoutMetaData;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutCategoryData;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
-import org.eclipse.elk.core.service.data.ILayoutMetaData;
-import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.service.data.LayoutTypeData;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.FontDescriptor;
@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A dialog to browse and select layout algorithms or layout types.
@@ -156,11 +157,16 @@ public class AlgorithmSelectionDialog extends Dialog {
         descriptionLabel.setText(description);
         Image image = imageCache.get(layoutData);
         if (image == null && layoutData instanceof LayoutAlgorithmData) {
-            Object descriptor = ((LayoutAlgorithmData) layoutData).getPreviewImage();       
-            if (descriptor instanceof ImageDescriptor) {
-                image = ((ImageDescriptor) descriptor).createImage(false);
-                if (image != null) {
-                    imageCache.put(layoutData, image);
+            String path = ((LayoutAlgorithmData) layoutData).getPreviewImagePath();
+            int lastDotIndex = layoutData.getId().lastIndexOf('.');
+            if (path != null && lastDotIndex > 0) {
+                String bundleId = layoutData.getId().substring(0, lastDotIndex);
+                ImageDescriptor imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(bundleId, path);
+                if (imageDescriptor != null) {
+                    image = imageDescriptor.createImage(false);
+                    if (image != null) {
+                        imageCache.put(layoutData, image);
+                    }
                 }
             }
         }
@@ -183,7 +189,7 @@ public class AlgorithmSelectionDialog extends Dialog {
             LayoutMetaDataService layoutServices = LayoutMetaDataService.getInstance();
             ILayoutMetaData layoutData = layoutServices.getAlgorithmData(layouterHint);
             if (layoutData == null) {
-                layoutData = layoutServices.getTypeData(layouterHint);
+                layoutData = layoutServices.getCategoryData(layouterHint);
             }
             if (layoutData != null) {
                 selectionProvider.setSelection(new StructuredSelection(layoutData));
@@ -216,21 +222,21 @@ public class AlgorithmSelectionDialog extends Dialog {
         treeViewer.setContentProvider(contentProvider);
         treeViewer.setLabelProvider(new LabelProvider() {
             @Override
-            public String getText(Object element) {
+            public String getText(final Object element) {
                 if (element instanceof LayoutAlgorithmData) {
                     LayoutAlgorithmData algoData = (LayoutAlgorithmData) element;
-                    String categoryName = LayoutMetaDataService.getInstance().getCategoryName(algoData.getCategory());
-                    if (categoryName == null) {
+                    String bundleName = algoData.getBundleName();
+                    if (bundleName == null) {
                         return algoData.getName();
                     } else {
-                        return algoData.getName() + " (" + categoryName + ")";
+                        return algoData.getName() + " (" + bundleName + ")";
                     }
-                } else if (element instanceof LayoutTypeData) {
-                    LayoutTypeData typeData = (LayoutTypeData) element;
-                    if (LayoutTypeData.DEFAULT_TYPE_NAME.equals(typeData.getName())) {
+                } else if (element instanceof LayoutCategoryData) {
+                    LayoutCategoryData typeData = (LayoutCategoryData) element;
+                    if (typeData.getName() == null) {
                         return "Other";
                     } else {
-                        return typeData.getName() + " Type";
+                        return typeData.getName();
                     }
                 }
                 return super.getText(element);
@@ -238,8 +244,8 @@ public class AlgorithmSelectionDialog extends Dialog {
         });
         treeViewer.setSorter(new ViewerSorter() {
             public int category(final Object element) {
-                if (element instanceof LayoutTypeData) {
-                    LayoutTypeData typeData = (LayoutTypeData) element;
+                if (element instanceof LayoutCategoryData) {
+                    LayoutCategoryData typeData = (LayoutCategoryData) element;
                     // the "Other" layout type has empty identifier and is put to the bottom
                     return typeData.getId().length() == 0 ? 1 : 0;
                 }

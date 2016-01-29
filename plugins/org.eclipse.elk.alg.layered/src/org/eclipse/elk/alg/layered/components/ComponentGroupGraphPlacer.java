@@ -29,10 +29,10 @@ import static org.eclipse.elk.core.options.PortSide.SIDES_WEST;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.Lists;
 
@@ -92,7 +92,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         
         // Place components in each group
         KVector offset = new KVector();
-        float spacing = 2 * firstComponent.getProperty(InternalProperties.SPACING);
+        float spacing = 2 * firstComponent.getProperty(Properties.SPACING);
         
         for (ComponentGroup group : componentGroups) {
             // Place the components
@@ -341,7 +341,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         }
         
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
-                * components.iterator().next().getProperty(InternalProperties.ASPECT_RATIO));
+                * components.iterator().next().getProperty(Properties.ASPECT_RATIO));
         
         // Place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;

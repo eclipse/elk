@@ -13,7 +13,7 @@ package org.eclipse.elk.core.service;
 import java.util.Collection;
 import java.util.Set;
 
-import org.eclipse.elk.core.service.data.LayoutOptionData;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.ui.IWorkbenchPart;
 

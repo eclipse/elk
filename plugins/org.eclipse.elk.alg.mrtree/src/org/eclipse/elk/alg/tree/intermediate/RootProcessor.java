@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.elk.alg.tree.ILayoutProcessor;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -40,7 +40,7 @@ public class RootProcessor implements ILayoutProcessor {
         /** find all roots in the graph */
         for (TNode node : tGraph.getNodes()) {
             if (node.getIncomingEdges().isEmpty()) {
-                node.setProperty(Properties.ROOT, true);
+                node.setProperty(InternalProperties.ROOT, true);
                 roots.add(node);
             }
         }
@@ -52,8 +52,8 @@ public class RootProcessor implements ILayoutProcessor {
         case 0:
             assert tGraph.getNodes().isEmpty();
             TNode root = new TNode(0, tGraph, "DUMMY_ROOT");
-            root.setProperty(Properties.ROOT, true);
-            root.setProperty(Properties.DUMMY, true);
+            root.setProperty(InternalProperties.ROOT, true);
+            root.setProperty(InternalProperties.DUMMY, true);
             tGraph.getNodes().add(root);
             break;
             
@@ -66,10 +66,10 @@ public class RootProcessor implements ILayoutProcessor {
 
             for (TNode tRoot : roots) {
                 superRoot.addChild(tRoot);
-                tRoot.setProperty(Properties.ROOT, false);
+                tRoot.setProperty(InternalProperties.ROOT, false);
             }
-            superRoot.setProperty(Properties.ROOT, true);
-            superRoot.setProperty(Properties.DUMMY, true);
+            superRoot.setProperty(InternalProperties.ROOT, true);
+            superRoot.setProperty(InternalProperties.DUMMY, true);
             tGraph.getNodes().add(superRoot);
             break;
         }

@@ -97,39 +97,4 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
         }
     }
     
-    /**
-     * Check for upper and lower bounds. If a property value does not fit into the bounds,
-     * it is reset to the respective bound or to the default value.
-     * 
-     * @param newProperties the properties that shall be checked
-     */
-    @Deprecated
-    public void checkProperties(final IProperty<?> ... newProperties) {
-        if (propertyMap == null) {
-            return;
-        }
-        for (IProperty<?> property : newProperties) {
-            Object value = propertyMap.get(property);
-            if (value != null) {
-                @SuppressWarnings("unchecked")
-                Comparable<Object> lowbo = (Comparable<Object>) property.getLowerBound();
-                @SuppressWarnings("unchecked")
-                Comparable<Object> uppbo = (Comparable<Object>) property.getUpperBound();
-                if (lowbo.compareTo(value) > 0) {
-                    if (value.getClass().isAssignableFrom(lowbo.getClass())) {
-                        propertyMap.put(property, lowbo);
-                    } else {
-                        propertyMap.remove(property);
-                    }
-                } else if (uppbo.compareTo(value) < 0) {
-                    if (value.getClass().isAssignableFrom(uppbo.getClass())) {
-                        propertyMap.put(property, uppbo);
-                    } else {
-                        propertyMap.remove(property);
-                    }
-                }
-            }
-        }
-    }
-    
 }

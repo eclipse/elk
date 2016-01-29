@@ -15,7 +15,7 @@ import java.util.Iterator;
 import org.eclipse.elk.alg.tree.ILayoutProcessor;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -48,7 +48,7 @@ public class NeighborsProcessor implements ILayoutProcessor {
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
-            if (tNode.getProperty(Properties.ROOT)) {
+            if (tNode.getProperty(InternalProperties.ROOT)) {
                 root = tNode;
             }
         }
@@ -101,11 +101,11 @@ public class NeighborsProcessor implements ILayoutProcessor {
                 /** append the children of the current node to the next level */
                 nextLevel = Iterables.concat(nextLevel, cN.getChildren());
                 if (lN != null) {
-                    lN.setProperty(Properties.RIGHTNEIGHBOR, cN);
-                    cN.setProperty(Properties.LEFTNEIGHBOR, lN);
+                    lN.setProperty(InternalProperties.RIGHTNEIGHBOR, cN);
+                    cN.setProperty(InternalProperties.LEFTNEIGHBOR, lN);
                     if (cN.getParent() == lN.getParent()) {
-                        lN.setProperty(Properties.RIGHTSIBLING, cN);
-                        cN.setProperty(Properties.LEFTSIBLING, lN);
+                        lN.setProperty(InternalProperties.RIGHTSIBLING, cN);
+                        cN.setProperty(InternalProperties.LEFTSIBLING, lN);
                     }
                 }
 

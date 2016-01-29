@@ -27,32 +27,10 @@
   </extension>
  <extension
        point="org.eclipse.elk.core.service.layoutProviders">
-    <layoutAlgorithm
-          class="org.eclipse.elk.conn.gmf.layouter.Draw2DLayoutProvider"
-          description="&quot;Directed Graph Layout&quot; provided by the Draw2D framework. This is the same algorithm that is used by the standard layout button of GMF diagrams."
-          id="org.eclipse.elk.alg.draw2d"
-          name="Draw2D Layout"
-          preview="images/draw2d.png"
-          type="org.eclipse.elk.type.layered">
-       <supportedFeature
-             feature="MULTI_EDGES">
-       </supportedFeature>
-       <knownOption
-             default="16"
-             option="org.eclipse.elk.spacing">
-       </knownOption>
-       <knownOption
-             default="16"
-             option="org.eclipse.elk.borderSpacing">
-       </knownOption>
-       <knownOption
-             default="RIGHT"
-             option="org.eclipse.elk.direction">
-       </knownOption>
-       <knownOption
-             option="org.eclipse.elk.sizeConstraint">
-       </knownOption>
-    </layoutAlgorithm>
+    <provider
+          class="org.eclipse.elk.conn.gmf.layouter.Metadata">
+    </provider>
+    
  </extension>
  <extension
        point="org.eclipse.gmf.runtime.diagram.ui.layoutProviders">

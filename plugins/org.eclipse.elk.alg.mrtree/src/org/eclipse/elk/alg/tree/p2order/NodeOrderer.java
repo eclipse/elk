@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.tree.graph.TEdge;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
 import org.eclipse.elk.alg.tree.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.PropertyHolderComparator;
 
@@ -66,7 +66,7 @@ public class NodeOrderer implements ILayoutPhase {
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
-            if (tNode.getProperty(Properties.ROOT)) {
+            if (tNode.getProperty(InternalProperties.ROOT)) {
                 root = tNode;
             }
         }
@@ -94,7 +94,7 @@ public class NodeOrderer implements ILayoutPhase {
 
         // sort all nodes in this level by their fan out
         // so the leaves are at the end of the list
-        Collections.sort(currentLevel, PropertyHolderComparator.with(Properties.FAN));
+        Collections.sort(currentLevel, PropertyHolderComparator.with(InternalProperties.FAN));
 
         // find the first occurence of a leave in the list
         int firstOcc = currentLevel.size();
@@ -102,7 +102,7 @@ public class NodeOrderer implements ILayoutPhase {
         boolean notNull = true;
         while (notNull && it.hasPrevious()) {
             TNode tNode = (TNode) it.previous();
-            if ((tNode.getProperty(Properties.FAN) == 0)) {
+            if ((tNode.getProperty(InternalProperties.FAN) == 0)) {
                 firstOcc--;
             } else {
                 notNull = false;
@@ -119,14 +119,14 @@ public class NodeOrderer implements ILayoutPhase {
         if (inners.isEmpty()) {
             // leave the leaves in their order
             for (TNode tENode : leaves) {
-                tENode.setProperty(Properties.POSITION, pos++);
+                tENode.setProperty(InternalProperties.POSITION, pos++);
             }
         } else {
 
             // order each level of descendants of the inner nodes
             int size = inners.size();
             for (TNode tPNode : inners) {
-                tPNode.setProperty(Properties.POSITION, pos++);
+                tPNode.setProperty(InternalProperties.POSITION, pos++);
 
                 // set the position of the children and set them in order
                 LinkedList<TNode> children = tPNode.getChildrenCopy();
@@ -134,7 +134,7 @@ public class NodeOrderer implements ILayoutPhase {
 
                 // order the children by their reverse position
                 Collections.sort(children,
-                        Collections.reverseOrder(PropertyHolderComparator.with(Properties.POSITION)));
+                        Collections.reverseOrder(PropertyHolderComparator.with(InternalProperties.POSITION)));
 
                 // reset the list of children with the new order
                 List<TEdge> sortedOutEdges = new LinkedList<TEdge>();
@@ -155,8 +155,8 @@ public class NodeOrderer implements ILayoutPhase {
                 notNull = true;
                 while ((0 < fillGap) && notNull && it.hasPrevious()) {
                     TNode tNode = (TNode) it.previous();
-                    if ((tNode.getProperty(Properties.FAN) == 0)) {
-                        tNode.setProperty(Properties.POSITION, pos++);
+                    if ((tNode.getProperty(InternalProperties.FAN) == 0)) {
+                        tNode.setProperty(InternalProperties.POSITION, pos++);
                         fillGap--;
                         it.remove();
                     } else {

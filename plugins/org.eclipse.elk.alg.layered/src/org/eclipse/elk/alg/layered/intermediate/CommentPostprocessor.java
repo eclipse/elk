@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -51,7 +52,7 @@ public final class CommentPostprocessor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Comment post-processing", 1);
-        double spacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
+        double spacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
         
         for (Layer layer : layeredGraph) {
             List<LNode> boxes = Lists.newArrayList();

@@ -14,8 +14,8 @@ package org.eclipse.elk.core.ui.views;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.jface.viewers.CellEditor;
@@ -178,7 +178,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
      * {@inheritDoc}
      */
     public String[] getFilterFlags() {
-        if (optionData.isAdvanced()) {
+        if (optionData.getVisibility() == LayoutOptionData.Visibility.ADVANCED) {
             return new String[] { IPropertySheetEntry.FILTER_ID_EXPERT };
         }
         return null;

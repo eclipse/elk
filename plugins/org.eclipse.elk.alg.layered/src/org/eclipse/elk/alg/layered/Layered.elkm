@@ -1,0 +1,293 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    spoenemann - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.alg.layered
+
+import java.util.EnumSet
+import org.eclipse.elk.alg.layered.LayeredLayoutProvider
+import org.eclipse.elk.alg.layered.p1cycles.CycleBreakingStrategy
+import org.eclipse.elk.alg.layered.p2layers.LayeringStrategy
+import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy
+import org.eclipse.elk.alg.layered.p4nodes.NodePlacementStrategy
+import org.eclipse.elk.alg.layered.p4nodes.bk.CompactionStrategy
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.EdgeRouting
+import org.eclipse.elk.core.options.PortAlignment
+
+/**
+ * Declarations for the ELK Layered layout algorithm.
+ */
+bundle {
+    class = properties.Properties
+}
+
+algorithm Layered(LayeredLayoutProvider) {
+	label = "ELK Layered"
+	description =
+		"Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
+		possible into one direction by placing nodes into subsequent layers. This implementation
+		supports different routing styles (straight, orthogonal, splines); if orthogonal routing is
+		selected, arbitrary port constraints are respected, thus enabling the layout of block
+		diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
+		compound graphs with cross-hierarchy edges is supported when the respective option is
+		activated on the top level."
+	category = org.eclipse.elk.Layered
+	features = self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
+	preview = images/layered.png
+	supports org.eclipse.elk.spacing = 20 duplicated
+	supports org.eclipse.elk.borderSpacing = 12 duplicated
+	supports org.eclipse.elk.portSpacing = 10 duplicated
+	supports org.eclipse.elk.priority = 0 duplicated
+	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL duplicated
+	supports org.eclipse.elk.portOffset = 0 duplicated
+	supports org.eclipse.elk.randomSeed = 1 duplicated
+	supports org.eclipse.elk.aspectRatio = 1.6f duplicated
+	supports org.eclipse.elk.labelSpacing = 0 duplicated
+	supports org.eclipse.elk.noLayout
+	supports org.eclipse.elk.portConstraints
+	supports org.eclipse.elk.portSide
+	supports org.eclipse.elk.debugMode
+	supports org.eclipse.elk.alignment
+	supports org.eclipse.elk.layoutHierarchy
+	supports org.eclipse.elk.separateConnComp = true
+	supports org.eclipse.elk.selfLoopInside
+	supports org.eclipse.elk.sizeConstraint
+	supports org.eclipse.elk.sizeOptions
+	supports org.eclipse.elk.direction = Direction.RIGHT
+	supports org.eclipse.elk.nodeLabelPlacement
+	supports org.eclipse.elk.portLabelPlacement
+	supports org.eclipse.elk.portAlignment = PortAlignment.JUSTIFIED
+	supports org.eclipse.elk.portAlignmentNorth
+	supports org.eclipse.elk.portAlignmentSouth
+	supports org.eclipse.elk.portAlignmentWest
+	supports org.eclipse.elk.portAlignmentEast
+	supports edgeSpacingFactor
+	supports edgeNodeSpacingFactor
+	supports unnecessaryBendpoints
+	supports nodeLayering
+	supports thoroughness
+	supports layerConstraint
+	supports cycleBreaking
+	supports crossMin
+	supports greedySwitch
+	supports mergeEdges
+	supports mergeHierarchyEdges
+	supports interactiveReferencePoint
+	supports nodePlacement
+	supports fixedAlignment
+	supports edgeLabelSideSelection
+	supports feedbackEdges
+	supports inLayerSpacingFactor
+	supports wideNodesOnMultipleLayers
+	supports linearSegmentsDeflectionDampening
+	supports selfLoopPlacement
+	supports contentAlignment
+	supports compaction
+}
+
+advanced property compaction: CompactionStrategy {
+	label = "Compaction Strategy"
+	description = "Specifies the compaction strategy when using the Brandes and Koepf node placer."
+	default = CompactionStrategy.IMPROVE_STRAIGHTNESS
+	targets = parents
+	requires nodePlacement == NodePlacementStrategy.BRANDES_KOEPF
+}
+
+property contentAlignment: EnumSet<ContentAlignment> {
+	label = "Content Alignment"
+	description = "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+	default = EnumSet.noneOf(ContentAlignment)
+	targets = parents
+}
+
+property crossMin: CrossingMinimizationStrategy {
+	label = "Crossing Minimization"
+	description = "Strategy for crossing minimization."
+	default = CrossingMinimizationStrategy.LAYER_SWEEP
+	targets = parents
+}
+
+property cycleBreaking: CycleBreakingStrategy {
+	label = "Cycle Breaking"
+	description =
+		"Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines
+		which edges to reverse to break the cycles. Reversed edges will end up pointing to the
+		opposite direction of regular edges (that is, reversed edges will point left if edges
+		usually point right)."
+	default = CycleBreakingStrategy.GREEDY
+	targets = parents
+}
+
+deprecated advanced property distributeNodes: boolean {
+	label = "Distribute Nodes (Deprecated)"
+	description = "Whether wide nodes should be distributed to several layers."
+	default = false
+	targets = parents
+}
+
+property edgeLabelSideSelection: EdgeLabelSideSelection {
+	label = "Edge Label Side Selection"
+	description = "Method to decide on edge label sides."
+	default = EdgeLabelSideSelection.ALWAYS_DOWN
+	targets = parents
+	requires org.eclipse.elk.edgeRouting == EdgeRouting.ORTHOGONAL
+}
+
+advanced property edgeNodeSpacingFactor: float {
+	label = "Edge Node Spacing Factor"
+	description =
+		"Factor by which the object spacing is multiplied to arrive at the minimal spacing between
+		an edge and a node."
+	default = 0.5f
+	targets = parents
+}
+
+advanced property edgeSpacingFactor: float {
+	label = "Edge Spacing Factor"
+	description =
+		"Factor by which the object spacing is multiplied to arrive at the minimal spacing between
+		edges."
+	default = 0.5f
+	targets = parents
+}
+
+advanced property feedbackEdges: boolean {
+	label = "Feedback Edges"
+	description = "Whether feedback edges should be highlighted by routing around the nodes."
+	default = false
+	targets = parents
+}
+
+advanced property fixedAlignment: FixedAlignment {
+	label = "Fixed Alignment"
+	description =
+		"Tells the BK node placer to use a certain alignment instead of taking the optimal result."
+	default = FixedAlignment.NONE
+	targets = parents
+	requires nodePlacement == NodePlacementStrategy.BRANDES_KOEPF
+}
+
+property greedySwitch: GreedySwitchType {
+	label = "Greedy Switch Crossing Minimization"
+	description = "Greedy Switch strategy for crossing minimization."
+	default = GreedySwitchType.TWO_SIDED
+	targets = parents
+}
+
+advanced property inLayerSpacingFactor: float {
+	label = "In-layer Spacing Factor"
+	description =
+		"Factor by which the usual spacing is multiplied to determine the in-layer spacing between
+		objects."
+	default = 1
+	targets = parents
+}
+
+advanced property interactiveReferencePoint: InteractiveReferencePoint {
+	label = "Interactive Reference Point"
+	description = "Determines which point of a node is considered by interactive layout phases."
+	default = InteractiveReferencePoint.CENTER
+	targets = parents
+	requires cycleBreaking == CycleBreakingStrategy.INTERACTIVE
+	requires crossMin == CrossingMinimizationStrategy.INTERACTIVE
+}
+
+advanced property layerConstraint: LayerConstraint {
+	label = "Layer Constraint"
+	description = "Determines a constraint on the placement of the node regarding the layering."
+	default = LayerConstraint.NONE
+	targets = parents
+}
+
+advanced property linearSegmentsDeflectionDampening: float {
+	label = "Linear Segments Deflection Dampening"
+	description = "Dampens the movement of nodes to keep the diagram from getting too large."
+	default = 0.3f
+	targets = parents
+	requires nodePlacement == NodePlacementStrategy.LINEAR_SEGMENTS
+}
+
+property nodeLayering: LayeringStrategy {
+	label = "Node Layering"
+	description = "Strategy for node layering."
+	default = LayeringStrategy.NETWORK_SIMPLEX
+	targets = parents
+}
+
+advanced property mergeEdges: boolean {
+	label = "Merge Edges"
+	description =
+		"Edges that have no ports are merged so they touch the connected nodes at the same points.
+		When this option is disabled, one port is created for each edge directly connected to a
+		node. When it is enabled, all such incoming edges share an input port, and all outgoing
+		edges share an output port."
+	default = false
+	targets = parents
+}
+
+advanced property mergeHierarchyEdges: boolean {
+	label = "Merge Hierarchy-Crossing Edges"
+	description =
+		"If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports
+		as possible. They are broken by the algorithm, with hierarchical ports inserted as
+		required. Usually, one such port is created for each edge at each hierarchy crossing point.
+		With this option set to true, we try to create as few hierarchical ports as possible in
+		the process. In particular, all edges that form a hyperedge can share a port."
+	default = true
+	targets = parents
+	requires org.eclipse.elk.layoutHierarchy == true
+}
+
+property nodePlacement: NodePlacementStrategy {
+	label = "Node Placement"
+	description = "Strategy for node placement."
+	default = NodePlacementStrategy.BRANDES_KOEPF
+	targets = parents
+}
+
+advanced property sausageFolding: boolean {
+	label = "Sausage Folding"
+	description = "Whether long sausages should be folded up nice and tight."
+	default = false
+	targets = parents
+	requires nodeLayering == LayeringStrategy.LONGEST_PATH
+}
+
+property selfLoopPlacement: SelfLoopPlacement {
+	label = "Spline Self-Loop Placement"
+	default = SelfLoopPlacement.NORTH_STACKED
+	targets = parents
+	requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+}
+
+advanced property thoroughness: int {
+	label = "Thoroughness"
+	description = "How much effort should be spent to produce a nice layout."
+	default = 7
+	targets = parents
+}
+
+advanced property unnecessaryBendpoints: boolean {
+	label = "Add Unnecessary Bendpoints"
+	description =
+		"Adds bend points even if an edge does not change direction. If true, each long edge dummy
+		will contribute a bend point to its edges and hierarchy-crossing edges will always get a
+		bend point where they cross hierarchy boundaries. By default, bend points are only added
+		where an edge changes direction."
+	default = false
+	targets = parents
+}
+
+advanced property wideNodesOnMultipleLayers: WideNodesStrategy {
+	label = "Wide Nodes on Multiple Layers"
+	description = "Strategy to distribute wide nodes over multiple layers."
+	default = WideNodesStrategy.OFF
+	targets = parents
+}

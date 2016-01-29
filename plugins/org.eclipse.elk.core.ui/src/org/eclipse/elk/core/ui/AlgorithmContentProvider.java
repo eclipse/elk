@@ -13,10 +13,10 @@ package org.eclipse.elk.core.ui;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.elk.core.data.ILayoutMetaData;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutCategoryData;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
-import org.eclipse.elk.core.service.data.ILayoutMetaData;
-import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.service.data.LayoutTypeData;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -51,15 +51,15 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
         if (inputElement instanceof LayoutMetaDataService) {
             layoutDataService = (LayoutMetaDataService) inputElement;
         }
-        return layoutDataService.getTypeData().toArray();
+        return layoutDataService.getCategoryData().toArray();
     }
 
     /**
      * {@inheritDoc}
      */
     public Object[] getChildren(final Object parentElement) {
-        if (parentElement instanceof LayoutTypeData) {
-            LayoutTypeData typeData = (LayoutTypeData) parentElement;
+        if (parentElement instanceof LayoutCategoryData) {
+            LayoutCategoryData typeData = (LayoutCategoryData) parentElement;
             return typeData.getLayouters().toArray();
         }
         return null;
@@ -71,7 +71,7 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
     public Object getParent(final Object element) {
         if (element instanceof LayoutAlgorithmData) {
             LayoutAlgorithmData layouterData = (LayoutAlgorithmData) element;
-            return layoutDataService.getTypeData(layouterData.getType());
+            return layoutDataService.getCategoryData(layouterData.getCategoryId());
         }
         return null;
     }
@@ -80,8 +80,8 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
      * {@inheritDoc}
      */
     public boolean hasChildren(final Object element) {
-        if (element instanceof LayoutTypeData) {
-            return ((LayoutTypeData) element).getLayouters().size() > 0;
+        if (element instanceof LayoutCategoryData) {
+            return ((LayoutCategoryData) element).getLayouters().size() > 0;
         }
         return false;
     }
@@ -116,8 +116,8 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
         Boolean result = filterMap.get(element);
         if (result == null) {
             if (filterValue != null && filterValue.length() > 0) {
-                if (element instanceof LayoutTypeData) {
-                    LayoutTypeData typeData = (LayoutTypeData) element;
+                if (element instanceof LayoutCategoryData) {
+                    LayoutCategoryData typeData = (LayoutCategoryData) element;
                     result = !typeData.getLayouters().isEmpty();
                     if (result) {
                         String typeName = typeData.getName().toLowerCase();
@@ -152,13 +152,12 @@ public class AlgorithmContentProvider implements ITreeContentProvider {
                             bestFilterMatch = layouterData;                            
                         }
                     } else {
-                        String category = LayoutMetaDataService.getInstance().getCategoryName(
-                                layouterData.getCategory());
-                        result = category != null && category.toLowerCase().contains(filterValue);
+                        String bundle = layouterData.getBundleName();
+                        result = bundle != null && bundle.toLowerCase().contains(filterValue);
                     }
                 }
-            } else if (element instanceof LayoutTypeData) {
-                result = !((LayoutTypeData) element).getLayouters().isEmpty();
+            } else if (element instanceof LayoutCategoryData) {
+                result = !((LayoutCategoryData) element).getLayouters().isEmpty();
             } else {
                 result = Boolean.TRUE;
             }

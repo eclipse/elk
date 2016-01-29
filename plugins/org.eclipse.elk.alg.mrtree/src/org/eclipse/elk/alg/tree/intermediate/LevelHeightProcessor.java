@@ -15,7 +15,7 @@ import java.util.Iterator;
 import org.eclipse.elk.alg.tree.ILayoutProcessor;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -48,7 +48,7 @@ public class LevelHeightProcessor implements ILayoutProcessor {
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
-            if (tNode.getProperty(Properties.ROOT)) {
+            if (tNode.getProperty(InternalProperties.ROOT)) {
                 root = tNode;
             }
         }
@@ -102,7 +102,7 @@ public class LevelHeightProcessor implements ILayoutProcessor {
             }
             for (TNode cN : currentLevel) {
                 /** set the level height for the node */
-                cN.setProperty(Properties.LEVELHEIGHT, height);
+                cN.setProperty(InternalProperties.LEVELHEIGHT, height);
             }
 
             /** add amount of work units to the whole task */

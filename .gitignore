@@ -3,6 +3,6 @@
 bin/
 .checkstyle
 .svn/
-xtend-gen/
 target/
 *.pdf
+*_trace

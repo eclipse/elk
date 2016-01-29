@@ -639,7 +639,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             final ExternalPort defaultExternalPort) {
         
         // check if external ports are to be merged
-        boolean mergeExternalPorts = graph.getProperty(Properties.MERGE_HIERARCHICAL_EDGES);
+        boolean mergeExternalPorts = graph.getProperty(Properties.MERGE_HIERARCHY_EDGES);
         
         // check if the edge connects to the parent node instead of to the outside world; if so, the
         // parentEndPort will be non-null
@@ -798,9 +798,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      */
     private static IPropertyHolder createExternalPortProperties(final LGraph graph) {
         IPropertyHolder propertyHolder = new MapPropertyHolder();
-        float offset = graph.getProperty(InternalProperties.SPACING)
+        float offset = graph.getProperty(Properties.SPACING)
                 * graph.getProperty(Properties.EDGE_SPACING_FACTOR) / 2;
-        propertyHolder.setProperty(InternalProperties.OFFSET, offset);
+        propertyHolder.setProperty(Properties.PORT_OFFSET, offset);
         return propertyHolder;
     }
     
@@ -830,7 +830,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             port.setSide(PortSide.fromDirection(layoutDirection));
             break;
         }
-        port.setProperty(InternalProperties.OFFSET, dummyNode.getProperty(InternalProperties.OFFSET));
+        port.setProperty(Properties.PORT_OFFSET, dummyNode.getProperty(Properties.PORT_OFFSET));
         dummyNode.setProperty(InternalProperties.ORIGIN, port);
         dummyNodeMap.put(port, dummyNode);
         return port;

@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.elk.core.meta.ui
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: org.eclipse.elk.core.meta.ui; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.elk.core.meta,
+ org.eclipse.xtext.ui,
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtext.common.types.ui,
+ org.eclipse.xtend.lib;resolution:=optional,
+ org.eclipse.ui,
+ org.eclipse.xtext.xbase.ui,
+ org.eclipse.compare,
+ org.eclipse.xtext.builder,
+ org.eclipse.jdt.debug.ui
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.elk.core.meta.ui.internal,
+ org.eclipse.elk.core.meta.ui.quickfix,
+ org.eclipse.elk.core.meta.ui.contentassist,
+ org.eclipse.elk.core.meta.ide.contentassist.antlr.internal,
+ org.eclipse.elk.core.meta.ide.contentassist.antlr
+Bundle-Activator: org.eclipse.elk.core.meta.ui.internal.MetaActivator

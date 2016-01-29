@@ -25,9 +25,9 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.p5edges.PolylineEdgeRouter;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
@@ -135,7 +135,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Spline edge routing", 1);
         // Retrieve some generic values
-        final float nodeSpacing = layeredGraph.getProperty(InternalProperties.SPACING);
+        final float nodeSpacing = layeredGraph.getProperty(Properties.SPACING);
         edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         double xpos = 0.0;
 

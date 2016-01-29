@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 
 /**
  * A node in the T graph. Some properties are maybe null.
@@ -219,7 +219,7 @@ public class TNode extends TShape {
      */
     public void addChild(final TNode child) {
         TEdge newEdge = new TEdge(this, child);
-        newEdge.setProperty(Properties.DUMMY, true);
+        newEdge.setProperty(InternalProperties.DUMMY, true);
         graph.getEdges().add(newEdge);
         getOutgoingEdges().add(newEdge);
         child.getIncomingEdges().add(newEdge);

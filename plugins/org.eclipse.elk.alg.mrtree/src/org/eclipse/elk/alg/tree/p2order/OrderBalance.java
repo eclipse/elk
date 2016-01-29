@@ -24,6 +24,7 @@ import org.eclipse.elk.alg.tree.graph.TEdge;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
 import org.eclipse.elk.alg.tree.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.alg.tree.properties.OrderWeighting;
 import org.eclipse.elk.alg.tree.properties.Properties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -72,9 +73,9 @@ public class OrderBalance implements ILayoutPhase {
 
         /** get the weighting from the userinterface */
         if (tGraph.getProperty(Properties.WEIGHTING).equals(OrderWeighting.DESCENDANTS)) {
-            weighting = Properties.DESCENDANTS;
+            weighting = InternalProperties.DESCENDANTS;
         } else {
-            weighting = Properties.FAN;
+            weighting = InternalProperties.FAN;
         }
 
         /** find the root of the component expected only one root exists */
@@ -82,7 +83,7 @@ public class OrderBalance implements ILayoutPhase {
         Iterator<TNode> it = tGraph.getNodes().iterator();
         while (root == null && it.hasNext()) {
             TNode tNode = it.next();
-            if (tNode.getProperty(Properties.ROOT)) {
+            if (tNode.getProperty(InternalProperties.ROOT)) {
                 root = tNode;
             }
         }
@@ -98,8 +99,8 @@ public class OrderBalance implements ILayoutPhase {
                 TNode parent = lM.getParent().getParent();
                 TNode leftMost = parent;
                 /** go to the leftmost node in this level */
-                while (leftMost.getProperty(Properties.LEFTNEIGHBOR) != null) {
-                    leftMost = leftMost.getProperty(Properties.LEFTNEIGHBOR);
+                while (leftMost.getProperty(InternalProperties.LEFTNEIGHBOR) != null) {
+                    leftMost = leftMost.getProperty(InternalProperties.LEFTNEIGHBOR);
                 }
                 /** start the order at the leftmost node */
                 orderLevel(leftMost, false);
@@ -109,10 +110,10 @@ public class OrderBalance implements ILayoutPhase {
                  * graph has changed
                  */
                 for (TNode tNode : tGraph.getNodes()) {
-                    tNode.setProperty(Properties.RIGHTNEIGHBOR, null);
-                    tNode.setProperty(Properties.LEFTNEIGHBOR, null);
-                    tNode.setProperty(Properties.RIGHTSIBLING, null);
-                    tNode.setProperty(Properties.LEFTSIBLING, null);
+                    tNode.setProperty(InternalProperties.RIGHTNEIGHBOR, null);
+                    tNode.setProperty(InternalProperties.LEFTNEIGHBOR, null);
+                    tNode.setProperty(InternalProperties.RIGHTSIBLING, null);
+                    tNode.setProperty(InternalProperties.LEFTSIBLING, null);
                 }
             }
         }
@@ -155,7 +156,7 @@ public class OrderBalance implements ILayoutPhase {
 
                 boolean innerOdd = odd;
                 while (!outgoing.isEmpty()) {
-                    int gaps = outgoing.get(0).getTarget().getProperty(Properties.FAN);
+                    int gaps = outgoing.get(0).getTarget().getProperty(InternalProperties.FAN);
                     int index;
 
                     if (innerOdd) {
@@ -191,7 +192,7 @@ public class OrderBalance implements ILayoutPhase {
                 currentNode.getOutgoingEdges().addAll(balanced);
 
                 /** go on with the next node to the right */
-                currentNode = currentNode.getProperty(Properties.RIGHTNEIGHBOR);
+                currentNode = currentNode.getProperty(InternalProperties.RIGHTNEIGHBOR);
             }
             /** this level has been ordered, go on with the next level above */
             orderLevel(leftMost.getParent(), !odd);
@@ -204,7 +205,7 @@ public class OrderBalance implements ILayoutPhase {
     private static class SortTEdgeTargetProperty implements Comparator<TEdge> {
         private IProperty<Integer> property;
 
-        public SortTEdgeTargetProperty(final IProperty<Integer> property) {
+        SortTEdgeTargetProperty(final IProperty<Integer> property) {
             this.property = property;
         }
 
