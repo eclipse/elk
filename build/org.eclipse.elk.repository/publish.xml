@@ -1,0 +1,34 @@
+<project name="Eclipse Layout Kernel" default="publish" basedir=".">
+
+    <!----------------------------------------------------------------------->
+    <!-- P R O P E R T I E S                                               -->
+    <!----------------------------------------------------------------------->
+    <property name="dir.source" value="target/repository/" />
+    <!-- The dir.target property must be set externally. -->
+
+
+    <!----------------------------------------------------------------------->
+    <!-- P U B L I S H                                                     -->
+    <!----------------------------------------------------------------------->
+    <target name="publish"
+            description="Publishes a built update site to its download location.">
+
+        <!-- Produce a zip archive of the update site -->
+        <zip zipfile="${dir.source}/elk-nightly.zip"
+             update="false">
+
+            <zipfileset dir="${dir.source}" />
+        </zip>
+
+        <!-- Empty the target directory -->
+        <delete dir="${dir.target}" />
+        <mkdir dir="${dir.target}" />
+
+        <!-- Copy to target directory -->
+        <copy todir="${dir.target}">
+            <fileset dir="${dir.source}" />
+        </copy>
+
+    </target>
+
+</project>
