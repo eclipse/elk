@@ -82,9 +82,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             
             // 1. Public constants for all declared properties
             for (property : bundle.members.filter(MdProperty)) {
+                val constant = property.toPropertyConstant
                 if (property.defaultValue !== null)
                     members += property.toPropertyDefault
-                members += property.toPropertyConstant
+                members += constant
             }
             // 2. Private constants for required values of option dependencies
             for (property : bundle.members.filter(MdProperty)) {

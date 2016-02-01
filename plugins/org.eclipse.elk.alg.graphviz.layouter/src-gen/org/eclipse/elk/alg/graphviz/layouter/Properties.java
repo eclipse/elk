@@ -147,14 +147,14 @@ public class Properties implements ILayoutMetaDataProvider {
   private final static float DOT_SUP_BORDER_SPACING = 10;
   
   /**
-   * Default value for {@link #LABEL_SPACING} with algorithm "Dot".
-   */
-  private final static float DOT_SUP_LABEL_SPACING = 0;
-  
-  /**
    * Default value for {@link #EDGE_ROUTING} with algorithm "Dot".
    */
   private final static EdgeRouting DOT_SUP_EDGE_ROUTING = EdgeRouting.SPLINES;
+  
+  /**
+   * Default value for {@link #ITERATIONS_FACTOR} with algorithm "Dot".
+   */
+  private final static float DOT_SUP_ITERATIONS_FACTOR = 1;
   
   /**
    * Default value for {@link #SPACING} with algorithm "Neato".
@@ -165,11 +165,6 @@ public class Properties implements ILayoutMetaDataProvider {
    * Default value for {@link #BORDER_SPACING} with algorithm "Neato".
    */
   private final static float NEATO_SUP_BORDER_SPACING = 10;
-  
-  /**
-   * Default value for {@link #LABEL_SPACING} with algorithm "Neato".
-   */
-  private final static float NEATO_SUP_LABEL_SPACING = 0;
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "Neato".
@@ -207,11 +202,6 @@ public class Properties implements ILayoutMetaDataProvider {
   private final static float FDP_SUP_BORDER_SPACING = 10;
   
   /**
-   * Default value for {@link #LABEL_SPACING} with algorithm "FDP".
-   */
-  private final static float FDP_SUP_LABEL_SPACING = 0;
-  
-  /**
    * Default value for {@link #EDGE_ROUTING} with algorithm "FDP".
    */
   private final static EdgeRouting FDP_SUP_EDGE_ROUTING = EdgeRouting.SPLINES;
@@ -237,11 +227,6 @@ public class Properties implements ILayoutMetaDataProvider {
   private final static float TWOPI_SUP_BORDER_SPACING = 10;
   
   /**
-   * Default value for {@link #LABEL_SPACING} with algorithm "Twopi".
-   */
-  private final static float TWOPI_SUP_LABEL_SPACING = 0;
-  
-  /**
    * Default value for {@link #EDGE_ROUTING} with algorithm "Twopi".
    */
   private final static EdgeRouting TWOPI_SUP_EDGE_ROUTING = EdgeRouting.SPLINES;
@@ -255,11 +240,6 @@ public class Properties implements ILayoutMetaDataProvider {
    * Default value for {@link #BORDER_SPACING} with algorithm "Circo".
    */
   private final static float CIRCO_SUP_BORDER_SPACING = 10;
-  
-  /**
-   * Default value for {@link #LABEL_SPACING} with algorithm "Circo".
-   */
-  private final static float CIRCO_SUP_LABEL_SPACING = 0;
   
   /**
    * Default value for {@link #EDGE_ROUTING} with algorithm "Circo".
@@ -390,7 +370,7 @@ public class Properties implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Dot",
         "org.eclipse.elk.labelSpacing",
-        DOT_SUP_LABEL_SPACING
+        null
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Dot",
@@ -419,6 +399,11 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Dot",
+        "org.eclipse.elk.alg.graphviz.iterationsFactor",
+        DOT_SUP_ITERATIONS_FACTOR
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.graphviz.Dot",
         "org.eclipse.elk.alg.graphviz.concentrate",
         null
     );
@@ -430,11 +415,6 @@ public class Properties implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Dot",
         "org.eclipse.elk.alg.graphviz.labelAngle",
-        null
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.Dot",
-        "org.eclipse.elk.alg.graphviz.iterationsFactor",
         null
     );
     registry.addOptionSupport(
@@ -470,7 +450,7 @@ public class Properties implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Neato",
         "org.eclipse.elk.labelSpacing",
-        NEATO_SUP_LABEL_SPACING
+        null
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Neato",
@@ -570,7 +550,7 @@ public class Properties implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Fdp",
         "org.eclipse.elk.labelSpacing",
-        FDP_SUP_LABEL_SPACING
+        null
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Fdp",
@@ -660,7 +640,7 @@ public class Properties implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Twopi",
         "org.eclipse.elk.labelSpacing",
-        TWOPI_SUP_LABEL_SPACING
+        null
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Twopi",
@@ -730,7 +710,7 @@ public class Properties implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Circo",
         "org.eclipse.elk.labelSpacing",
-        CIRCO_SUP_LABEL_SPACING
+        null
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Circo",

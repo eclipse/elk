@@ -298,7 +298,7 @@ class KGraphImporter {
                 EnumSet.noneOf(GraphProperties.class));
         
         // Adjust the insets to respect inside labels.
-        float labelSpacing = lgraph.getProperty(Properties.LABEL_SPACING);
+        float labelSpacing = lgraph.getProperty(LayoutOptions.LABEL_SPACING);
         Insets insets = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
                 KGraphAdapters.adaptSingleNode(kgraph), labelSpacing);
         

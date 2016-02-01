@@ -81,8 +81,8 @@ public final class Spacings {
         inLayerSpacingFactor = graph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);
         edgeEdgeSpacing = nodeSpacing * graph.getProperty(Properties.EDGE_SPACING_FACTOR);
         edgeNodeSpacing = nodeSpacing * graph.getProperty(Properties.EDGE_NODE_SPACING_FACTOR);
-        portSpacing = graph.getProperty(Properties.PORT_SPACING);
-        externalPortSpacing = graph.getProperty(Properties.PORT_SPACING);
+        portSpacing = graph.getProperty(LayoutOptions.PORT_SPACING);
+        externalPortSpacing = graph.getProperty(LayoutOptions.PORT_SPACING);
         labelSpacing = graph.getProperty(LayoutOptions.LABEL_SPACING);
 
         // pre calculate the spacings between pairs of node types

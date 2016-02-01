@@ -413,18 +413,6 @@ public class Properties implements ILayoutMetaDataProvider {
             LAYERED_SUP_BORDER_SPACING);
   
   /**
-   * Default value for {@link #PORT_SPACING} with algorithm "ELK Layered".
-   */
-  private final static float LAYERED_SUP_PORT_SPACING = 10;
-  
-  /**
-   * Overridden value for Port Spacing.
-   */
-  public final static IProperty<Float> PORT_SPACING = new Property<Float>(
-            LayoutOptions.PORT_SPACING,
-            LAYERED_SUP_PORT_SPACING);
-  
-  /**
    * Default value for {@link #PRIORITY} with algorithm "ELK Layered".
    */
   private final static int LAYERED_SUP_PRIORITY = 0;
@@ -483,18 +471,6 @@ public class Properties implements ILayoutMetaDataProvider {
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO,
             LAYERED_SUP_ASPECT_RATIO);
-  
-  /**
-   * Default value for {@link #LABEL_SPACING} with algorithm "ELK Layered".
-   */
-  private final static float LAYERED_SUP_LABEL_SPACING = 0;
-  
-  /**
-   * Overridden value for Label Spacing.
-   */
-  public final static IProperty<Float> LABEL_SPACING = new Property<Float>(
-            LayoutOptions.LABEL_SPACING,
-            LAYERED_SUP_LABEL_SPACING);
   
   /**
    * Default value for {@link #SEPARATE_CONN_COMP} with algorithm "ELK Layered".
@@ -795,11 +771,6 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portSpacing",
-        LAYERED_SUP_PORT_SPACING
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
         "org.eclipse.elk.priority",
         LAYERED_SUP_PRIORITY
     );
@@ -825,8 +796,13 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.portSpacing",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.Layered",
         "org.eclipse.elk.labelSpacing",
-        LAYERED_SUP_LABEL_SPACING
+        null
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.layered.Layered",

@@ -30,9 +30,9 @@ algorithm MrTree(TreeLayoutProvider) {
 	features = disconnected
 	preview = images/tree.png
 	supports org.eclipse.elk.spacing = 20 duplicated
+	supports org.eclipse.elk.borderSpacing = 20 duplicated
 	supports org.eclipse.elk.aspectRatio = 1.6f duplicated
 	supports org.eclipse.elk.priority = 1 duplicated
-	supports org.eclipse.elk.borderSpacing = 20
 	supports org.eclipse.elk.separateConnComp = true
 	supports org.eclipse.elk.direction = Direction.DOWN
 	supports org.eclipse.elk.debugMode

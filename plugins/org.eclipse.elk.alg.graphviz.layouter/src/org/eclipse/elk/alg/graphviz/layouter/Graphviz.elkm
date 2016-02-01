@@ -34,16 +34,16 @@ algorithm Dot(GraphvizLayoutProvider#DOT) {
 	supports org.eclipse.elk.direction = Direction.DOWN
 	supports org.eclipse.elk.spacing = 20
 	supports org.eclipse.elk.borderSpacing = 10
-	supports org.eclipse.elk.labelSpacing = 0
+	supports org.eclipse.elk.labelSpacing
 	supports org.eclipse.elk.sizeConstraint
 	supports org.eclipse.elk.sizeOptions
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.SPLINES
 	supports org.eclipse.elk.debugMode
 	supports org.eclipse.elk.layoutHierarchy
+	supports iterationsFactor = 1
 	supports concentrate
 	supports labelDistance
 	supports labelAngle
-	supports iterationsFactor
 	supports layerSpacingFactor
 	supports adaptPortPositions
 }
@@ -60,7 +60,7 @@ algorithm Neato(GraphvizLayoutProvider#NEATO) {
 	preview = images/neato.png
 	supports org.eclipse.elk.spacing = 40
 	supports org.eclipse.elk.borderSpacing = 10
-	supports org.eclipse.elk.labelSpacing = 0
+	supports org.eclipse.elk.labelSpacing
 	supports org.eclipse.elk.sizeConstraint
 	supports org.eclipse.elk.sizeOptions
 	supports org.eclipse.elk.randomSeed = 1
@@ -89,7 +89,7 @@ algorithm Fdp(GraphvizLayoutProvider#FDP) {
 	preview = images/fdp.png
 	supports org.eclipse.elk.spacing = 40
 	supports org.eclipse.elk.borderSpacing = 10
-	supports org.eclipse.elk.labelSpacing = 0
+	supports org.eclipse.elk.labelSpacing
 	supports org.eclipse.elk.sizeConstraint
 	supports org.eclipse.elk.sizeOptions
 	supports org.eclipse.elk.interactive
@@ -116,7 +116,7 @@ algorithm Twopi(GraphvizLayoutProvider#TWOPI) {
 	preview = images/twopi.png
 	supports org.eclipse.elk.spacing = 60
 	supports org.eclipse.elk.borderSpacing = 10
-	supports org.eclipse.elk.labelSpacing = 0
+	supports org.eclipse.elk.labelSpacing
 	supports org.eclipse.elk.sizeConstraint
 	supports org.eclipse.elk.sizeOptions
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.SPLINES
@@ -140,7 +140,7 @@ algorithm Circo(GraphvizLayoutProvider#CIRCO) {
 	preview = images/circo.png
 	supports org.eclipse.elk.spacing = 40
 	supports org.eclipse.elk.borderSpacing = 10
-	supports org.eclipse.elk.labelSpacing = 0
+	supports org.eclipse.elk.labelSpacing
 	supports org.eclipse.elk.sizeConstraint
 	supports org.eclipse.elk.sizeOptions
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.SPLINES

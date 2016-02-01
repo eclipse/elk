@@ -123,6 +123,18 @@ public class Properties implements ILayoutMetaDataProvider {
             FORCE_SUP_SPACING);
   
   /**
+   * Default value for {@link #BORDER_SPACING} with algorithm "ELK Force".
+   */
+  private final static float FORCE_SUP_BORDER_SPACING = 50;
+  
+  /**
+   * Overridden value for Border Spacing.
+   */
+  public final static IProperty<Float> BORDER_SPACING = new Property<Float>(
+            LayoutOptions.BORDER_SPACING,
+            FORCE_SUP_BORDER_SPACING);
+  
+  /**
    * Default value for {@link #LABEL_SPACING} with algorithm "ELK Force".
    */
   private final static float FORCE_SUP_LABEL_SPACING = 5;
@@ -231,6 +243,11 @@ public class Properties implements ILayoutMetaDataProvider {
         "org.eclipse.elk.alg.force.Force",
         "org.eclipse.elk.spacing",
         FORCE_SUP_SPACING
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.borderSpacing",
+        FORCE_SUP_BORDER_SPACING
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.force.Force",

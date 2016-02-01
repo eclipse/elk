@@ -141,8 +141,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         }
         
         // set size of the parent node
-        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-        if (borderSpacing < 0) {
+        Float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing == null || borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
         KInsets insets = parentLayout.getInsets();

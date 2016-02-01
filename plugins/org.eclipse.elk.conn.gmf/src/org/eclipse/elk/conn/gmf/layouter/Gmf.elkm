@@ -28,8 +28,8 @@ algorithm Draw2D(Draw2DLayoutProvider) {
 	category = org.eclipse.elk.Layered
 	features = multi_edges
 	preview = images/draw2d.png
-	supports org.eclipse.elk.spacing = 16
-	supports org.eclipse.elk.borderSpacing = 16
+	supports org.eclipse.elk.spacing = 16 duplicated
+	supports org.eclipse.elk.borderSpacing = 16 duplicated
 	supports org.eclipse.elk.direction = Direction.RIGHT
 	supports org.eclipse.elk.sizeConstraint
 }

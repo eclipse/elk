@@ -512,11 +512,11 @@ public class DotExporter {
         // set mid label: if empty, it is filled with a dummy string to avoid
         // edge overlapping
         if (midLabel.length() > 0) {
-            Float labelSpacing = edgeLayout.getProperty(LayoutOptions.LABEL_SPACING);
-            if (labelSpacing == null || labelSpacing < 1) {
+            float labelSpacing = edgeLayout.getProperty(LayoutOptions.LABEL_SPACING);
+            if (labelSpacing < 1) {
                 labelSpacing = 0f;
             }
-            int charsToAdd = labelSpacing.intValue() - 1;
+            int charsToAdd = (int) labelSpacing - 1;
             for (int i = 0; i < charsToAdd; i++) {
                 midLabel.append(isVertical ? "O" : "\nO");
             }

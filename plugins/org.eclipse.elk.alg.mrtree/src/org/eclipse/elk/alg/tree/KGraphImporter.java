@@ -161,10 +161,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KShapeLayout graphLayout = kgraph.getData(KShapeLayout.class);
 
         // check border spacing and update if necessary
-        float borderSpacing = tGraph.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = tGraph.getProperty(Properties.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = Properties.SPACING.getDefault();
-            tGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
+            tGraph.setProperty(Properties.BORDER_SPACING, borderSpacing);
         }
 
         // calculate the offset from border spacing and node distribution

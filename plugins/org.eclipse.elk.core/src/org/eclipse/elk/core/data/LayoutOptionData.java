@@ -116,10 +116,10 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
             this.type = Type.BOOLEAN;
         } else if (atype == Integer.class || atype == int.class) {
             this.type = Type.INT;
+        } else if (Number.class.isAssignableFrom(atype) || atype == float.class) {
+            this.type = Type.FLOAT;
         } else if (atype == String.class) {
             this.type = Type.STRING;
-        } else if (Number.class.isAssignableFrom(atype)) {
-            this.type = Type.FLOAT;
         } else if (Enum.class.isAssignableFrom(atype)) {
             this.type = Type.ENUM;
         } else if (EnumSet.class.isAssignableFrom(atype)) {

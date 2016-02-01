@@ -259,12 +259,6 @@ public class DotImporter {
             } else if (Attributes.HEIGHT.equals(name)) {
                 target.setProperty(PROP_DEF_HEIGHT, Float.valueOf(value)
                         * DotExporter.DPI);
-            } else if (Attributes.ASPECT.equals(name)) {
-                int commaIndex = value.indexOf(',');
-                if (commaIndex >= 0) {
-                    value = value.substring(0, commaIndex);
-                }
-                target.setProperty(LayoutOptions.ASPECT_RATIO, Float.valueOf(value));
             } else if (Attributes.FIXEDSIZE.equals(name)) {
                 Boolean fixedSize = Boolean.valueOf(value);
                 target.setProperty(LayoutOptions.SIZE_CONSTRAINT,
@@ -290,10 +284,6 @@ public class DotImporter {
                     target.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
                 } else if (value.equals("RL")) {
                     target.setProperty(LayoutOptions.DIRECTION, Direction.LEFT);
-                }
-            } else if (Attributes.RANKSEP.equals(name)) {
-                if (target.getProperty(LayoutOptions.SPACING) <= 0) {
-                    target.setProperty(LayoutOptions.SPACING, Float.valueOf(value));
                 }
             } else if (Attributes.SPLINES.equals(name)) {
                 if (value.equals("spline") || value.equals("true")) {

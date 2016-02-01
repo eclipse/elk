@@ -18,8 +18,8 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
@@ -70,7 +70,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
         
         List<LNode> newDummyNodes = Lists.newArrayList();
         
-        double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
+        float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
 
         for (LNode node : layeredGraph.getLayerlessNodes()) {

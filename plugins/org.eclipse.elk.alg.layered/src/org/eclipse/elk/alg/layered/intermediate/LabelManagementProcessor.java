@@ -15,8 +15,8 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
@@ -57,7 +57,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         // set on the graph, but let's be sure anyway
         ILabelManager labelManager = layeredGraph.getProperty(LabelManagementOptions.LABEL_MANAGER);
         if (labelManager != null) {
-            double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
+            float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
             
             // Iterate over all layers and call our nifty code
             for (Layer layer : layeredGraph) {

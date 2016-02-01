@@ -16,7 +16,10 @@ import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.GraphFeature;
+import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.AlgorithmFactory;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 
 /**
  * Layout algorithms contributed by GMF / GEF.
@@ -29,9 +32,23 @@ public class Metadata implements ILayoutMetaDataProvider {
   private final static float DRAW2_D_SUP_SPACING = 16;
   
   /**
+   * Overridden value for Spacing.
+   */
+  public final static IProperty<Float> SPACING = new Property<Float>(
+            LayoutOptions.SPACING,
+            DRAW2_D_SUP_SPACING);
+  
+  /**
    * Default value for {@link #BORDER_SPACING} with algorithm "Draw2D Layout".
    */
   private final static float DRAW2_D_SUP_BORDER_SPACING = 16;
+  
+  /**
+   * Overridden value for Border Spacing.
+   */
+  public final static IProperty<Float> BORDER_SPACING = new Property<Float>(
+            LayoutOptions.BORDER_SPACING,
+            DRAW2_D_SUP_BORDER_SPACING);
   
   /**
    * Default value for {@link #DIRECTION} with algorithm "Draw2D Layout".

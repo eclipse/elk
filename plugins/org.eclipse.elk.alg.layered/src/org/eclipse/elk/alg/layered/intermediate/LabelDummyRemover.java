@@ -18,8 +18,8 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
@@ -59,7 +59,7 @@ public final class LabelDummyRemover implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy removal", 1);
         
-        double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
+        float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         
         for (Layer layer : layeredGraph.getLayers()) {

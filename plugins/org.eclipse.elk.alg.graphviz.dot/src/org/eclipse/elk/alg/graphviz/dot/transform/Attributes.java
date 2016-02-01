@@ -25,9 +25,6 @@ public final class Attributes {
     private Attributes() {
     }
     
-    /** Target aspect ratio (width of the layout divided by the height) of the graph drawing. */
-    public static final String ASPECT = "aspect";
-    
     /** Bounding box. */
     public static final String BOUNDINGBOX = "bb";
     
@@ -140,6 +137,9 @@ public final class Attributes {
     /** In dot, this gives the desired rank separation, in inches. In twopi,
      *  specifies radial separation of concentric circles. (twopi, dot only) */
     public static final String RANKSEP = "ranksep";
+    
+    /** Sets the aspect ratio (drawing height/drawing width) for the drawing. */
+    public static final String RATIO = "ratio";
     
     /** Specifies margin to leave around nodes when removing node overlap. */
     public static final String SEP = "sep";

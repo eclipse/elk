@@ -50,13 +50,13 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // set option for minimal spacing
-        float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
-        if (objSpacing < 0) {
+        Float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
+        if (objSpacing == null || objSpacing < 0) {
             objSpacing = DEF_SPACING;
         }
         // set option for border spacing
-        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-        if (borderSpacing < 0) {
+        Float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        if (borderSpacing == null || borderSpacing < 0) {
             borderSpacing = DEF_SPACING;
         }
         // set expand nodes option
@@ -141,8 +141,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                 - insets.getLeft() - insets.getRight(), 0);
         float minHeight = Math.max(parentLayout.getProperty(LayoutOptions.MIN_HEIGHT)
                 - insets.getTop() - insets.getBottom(), 0);
-        float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
-        if (aspectRatio <= 0) {
+        Float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
+        if (aspectRatio == null || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }
 

@@ -66,6 +66,18 @@ public class Properties implements ILayoutMetaDataProvider {
             MR_TREE_SUP_SPACING);
   
   /**
+   * Default value for {@link #BORDER_SPACING} with algorithm "ELK Mr. Tree".
+   */
+  private final static float MR_TREE_SUP_BORDER_SPACING = 20;
+  
+  /**
+   * Overridden value for Border Spacing.
+   */
+  public final static IProperty<Float> BORDER_SPACING = new Property<Float>(
+            LayoutOptions.BORDER_SPACING,
+            MR_TREE_SUP_BORDER_SPACING);
+  
+  /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "ELK Mr. Tree".
    */
   private final static float MR_TREE_SUP_ASPECT_RATIO = 1.6f;
@@ -88,11 +100,6 @@ public class Properties implements ILayoutMetaDataProvider {
   public final static IProperty<Integer> PRIORITY = new Property<Integer>(
             LayoutOptions.PRIORITY,
             MR_TREE_SUP_PRIORITY);
-  
-  /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "ELK Mr. Tree".
-   */
-  private final static float MR_TREE_SUP_BORDER_SPACING = 20;
   
   /**
    * Default value for {@link #SEPARATE_CONN_COMP} with algorithm "ELK Mr. Tree".
@@ -140,6 +147,11 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.borderSpacing",
+        MR_TREE_SUP_BORDER_SPACING
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.tree.MrTree",
         "org.eclipse.elk.aspectRatio",
         MR_TREE_SUP_ASPECT_RATIO
     );
@@ -147,11 +159,6 @@ public class Properties implements ILayoutMetaDataProvider {
         "org.eclipse.elk.alg.tree.MrTree",
         "org.eclipse.elk.priority",
         MR_TREE_SUP_PRIORITY
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
-        "org.eclipse.elk.borderSpacing",
-        MR_TREE_SUP_BORDER_SPACING
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.tree.MrTree",

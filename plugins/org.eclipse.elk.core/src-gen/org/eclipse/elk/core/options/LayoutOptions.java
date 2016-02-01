@@ -62,16 +62,10 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             ALIGNMENT_DEFAULT);
   
   /**
-   * Default value for {@link #ASPECT_RATIO}.
-   */
-  private final static float ASPECT_RATIO_DEFAULT = 0;
-  
-  /**
    * The desired aspect ratio of the drawing, that is the quotient of width by height.
    */
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            "org.eclipse.elk.aspectRatio",
-            ASPECT_RATIO_DEFAULT);
+            "org.eclipse.elk.aspectRatio");
   
   /**
    * A fixed list of bend points for the edge. This is used by the 'Fixed Layout' algorithm to
@@ -156,10 +150,16 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             INTERACTIVE_DEFAULT);
   
   /**
+   * Default value for {@link #LABEL_SPACING}.
+   */
+  private final static float LABEL_SPACING_DEFAULT = 0;
+  
+  /**
    * Determines the amount of space to be left around labels.
    */
   public final static IProperty<Float> LABEL_SPACING = new Property<Float>(
-            "org.eclipse.elk.labelSpacing");
+            "org.eclipse.elk.labelSpacing",
+            LABEL_SPACING_DEFAULT);
   
   /**
    * Default value for {@link #LAYOUT_HIERARCHY}.
@@ -262,10 +262,16 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             PORT_CONSTRAINTS_DEFAULT);
   
   /**
+   * Default value for {@link #PORT_SPACING}.
+   */
+  private final static float PORT_SPACING_DEFAULT = 10;
+  
+  /**
    * Spacing between ports of a given node.
    */
   public final static IProperty<Float> PORT_SPACING = new Property<Float>(
-            "org.eclipse.elk.portSpacing");
+            "org.eclipse.elk.portSpacing",
+            PORT_SPACING_DEFAULT);
   
   /**
    * The position of a node, port, or label. This is used by the 'Fixed Layout' algorithm to
@@ -730,7 +736,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.aspectRatio",
         "Aspect Ratio",
         "The desired aspect ratio of the drawing, that is the quotient of width by height.",
-        ASPECT_RATIO_DEFAULT,
+        null,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -802,7 +808,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.labelSpacing",
         "Label Spacing",
         "Determines the amount of space to be left around labels.",
-        null,
+        LABEL_SPACING_DEFAULT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES, LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
@@ -883,7 +889,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.portSpacing",
         "Port Spacing",
         "Spacing between ports of a given node.",
-        null,
+        PORT_SPACING_DEFAULT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE

@@ -43,13 +43,13 @@ algorithm Layered(LayeredLayoutProvider) {
 	preview = images/layered.png
 	supports org.eclipse.elk.spacing = 20 duplicated
 	supports org.eclipse.elk.borderSpacing = 12 duplicated
-	supports org.eclipse.elk.portSpacing = 10 duplicated
 	supports org.eclipse.elk.priority = 0 duplicated
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL duplicated
 	supports org.eclipse.elk.portOffset = 0 duplicated
 	supports org.eclipse.elk.randomSeed = 1 duplicated
 	supports org.eclipse.elk.aspectRatio = 1.6f duplicated
-	supports org.eclipse.elk.labelSpacing = 0 duplicated
+	supports org.eclipse.elk.portSpacing
+	supports org.eclipse.elk.labelSpacing
 	supports org.eclipse.elk.noLayout
 	supports org.eclipse.elk.portConstraints
 	supports org.eclipse.elk.portSide

@@ -167,10 +167,7 @@ public class ComponentsProcessor {
             double minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE;
             double maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
             for (TNode node : graph.getNodes()) {
-                Integer p = node.getProperty(LayoutOptions.PRIORITY);
-                if (p != null) {
-                    priority += p;
-                }
+                priority += node.getProperty(Properties.PRIORITY);
                 minx = Math.min(minx, node.getPosition().x);
                 miny = Math.min(miny, node.getPosition().y);
                 maxx = Math.max(maxx, node.getPosition().x + node.getSize().x);

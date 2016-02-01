@@ -124,7 +124,6 @@ property alignment: Alignment {
 property aspectRatio: float {
 	label = "Aspect Ratio"
 	description = "The desired aspect ratio of the drawing, that is the quotient of width by height."
-	default = 0
 	targets = parents
 }
 
@@ -192,6 +191,7 @@ property interactive: boolean {
 property labelSpacing: float {
 	label = "Label Spacing"
 	description = "Determines the amount of space to be left around labels."
+	default = 0
 	targets = edges, nodes
 }
 
@@ -264,6 +264,7 @@ property portConstraints: PortConstraints {
 property portSpacing: float {
 	label = "Port Spacing"
 	description = "Spacing between ports of a given node."
+	default = 10
 	targets = nodes
 }
 

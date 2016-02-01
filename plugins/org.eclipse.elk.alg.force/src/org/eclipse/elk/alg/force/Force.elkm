@@ -32,6 +32,7 @@ algorithm Force(ForceLayoutProvider) {
     preview = images/force.png
     supports org.eclipse.elk.priority = 1 duplicated
     supports org.eclipse.elk.spacing = 80 duplicated
+    supports org.eclipse.elk.borderSpacing = 50 duplicated
     supports org.eclipse.elk.labelSpacing = 5 duplicated
     supports org.eclipse.elk.aspectRatio = 1.6f duplicated
     supports org.eclipse.elk.randomSeed = 1

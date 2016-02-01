@@ -92,12 +92,12 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         
         // set layout options for the graph
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
+        float minSpacing = parentLayout.getProperty(Metadata.SPACING);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
         graph.setDefaultPadding(new Insets((int) minSpacing));
-        float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = parentLayout.getProperty(Metadata.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = DEF_MIN_SPACING;
         }

@@ -81,27 +81,27 @@ public class LayoutDotExporter extends DotExporter {
         List<Attribute> edgeAttrs = setGeneralEdgeAttributes(statements);
 
         // set minimal spacing
-        float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
-        if (minSpacing < 0) {
+        Float spacing = parentLayout.getProperty(LayoutOptions.SPACING);
+        if (spacing == null || spacing < 0) {
             switch (command) {
             case CIRCO:
             case FDP:
             case NEATO:
-                minSpacing = DEF_SPACING_LARGE;
+                spacing = DEF_SPACING_LARGE;
                 break;
             case TWOPI:
-                minSpacing = DEF_SPACING_XLARGE;
+                spacing = DEF_SPACING_XLARGE;
                 break;
             default:
-                minSpacing = DEF_SPACING_SMALL;
+                spacing = DEF_SPACING_SMALL;
             }
         }
 
         switch (command) {
         case DOT:
-            graphAttrs.add(createAttribute(Attributes.NODESEP, minSpacing / DPI));
+            graphAttrs.add(createAttribute(Attributes.NODESEP, spacing / DPI));
             float rankSepFactor = parentLayout.getProperty(Properties.LAYER_SPACING_FACTOR);
-            graphAttrs.add(createAttribute(Attributes.RANKSEP, rankSepFactor * minSpacing / DPI));
+            graphAttrs.add(createAttribute(Attributes.RANKSEP, rankSepFactor * spacing / DPI));
             // set layout direction
             switch (parentLayout.getProperty(LayoutOptions.DIRECTION)) {
             case UP:
@@ -116,14 +116,9 @@ public class LayoutDotExporter extends DotExporter {
             default: // DOWN
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "TB"));
             }
-            // set aspect ratio (formerly crashed dot, but doesn't seem to anymore; see KIELER-1799)
-            float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
-            if (aspectRatio > 0) {
-                graphAttrs.add(createAttribute(Attributes.ASPECT, "\"" + aspectRatio + ",1\""));
-            }
             // set iterations limit
-            float iterationsFactor = parentLayout.getProperty(Properties.ITERATIONS_FACTOR);
-            if (iterationsFactor > 0) {
+            Float iterationsFactor = parentLayout.getProperty(Properties.ITERATIONS_FACTOR);
+            if (iterationsFactor != null && iterationsFactor > 0) {
                 graphAttrs.add(createAttribute(Attributes.CROSSMIN_LIMIT, iterationsFactor));
                 if (iterationsFactor < 1) {
                     float simplexLimit = iterationsFactor * NSLIMIT_BASE;
@@ -137,15 +132,15 @@ public class LayoutDotExporter extends DotExporter {
             break;
 
         case TWOPI:
-            graphAttrs.add(createAttribute(Attributes.RANKSEP, minSpacing / DPI));
+            graphAttrs.add(createAttribute(Attributes.RANKSEP, spacing / DPI));
             break;
 
         case CIRCO:
-            graphAttrs.add(createAttribute(Attributes.MINDIST, minSpacing / DPI));
+            graphAttrs.add(createAttribute(Attributes.MINDIST, spacing / DPI));
             break;
 
         case NEATO:
-            edgeAttrs.add(createAttribute(Attributes.EDGELEN, minSpacing / DPI));
+            edgeAttrs.add(createAttribute(Attributes.EDGELEN, spacing / DPI));
             // configure initial placement of nodes
             Integer seed = parentLayout.getProperty(LayoutOptions.RANDOM_SEED);
             if (seed == null) {
@@ -157,8 +152,8 @@ public class LayoutDotExporter extends DotExporter {
             }
             graphAttrs.add(createAttribute(Attributes.START, "random" + seed));
             // set epsilon value
-            float epsilon = parentLayout.getProperty(Properties.EPSILON);
-            if (epsilon > 0) {
+            Float epsilon = parentLayout.getProperty(Properties.EPSILON);
+            if (epsilon != null && epsilon > 0) {
                 graphAttrs.add(createAttribute(Attributes.EPSILON, epsilon));
             }
             // set distance model
@@ -169,14 +164,14 @@ public class LayoutDotExporter extends DotExporter {
             break;
 
         case FDP:
-            graphAttrs.add(createAttribute(Attributes.SPRING_CONSTANT, minSpacing / DPI));
+            graphAttrs.add(createAttribute(Attributes.SPRING_CONSTANT, spacing / DPI));
             break;
         }
 
         if (command == Command.NEATO || command == Command.FDP) {
             // set maximum number of iterations
-            int maxiter = parentLayout.getProperty(Properties.MAXITER);
-            if (maxiter > 0) {
+            Integer maxiter = parentLayout.getProperty(Properties.MAXITER);
+            if (maxiter != null && maxiter > 0) {
                 graphAttrs.add(createAttribute(Attributes.MAXITER, maxiter));
             }
         }
@@ -186,13 +181,13 @@ public class LayoutDotExporter extends DotExporter {
             OverlapMode mode = parentLayout.getProperty(Properties.OVERLAP_MODE);
             if (mode != OverlapMode.NONE) {
                 graphAttrs.add(createAttribute(Attributes.OVERLAP, mode.literal()));
-                graphAttrs.add(createAttribute(Attributes.SEP, "\"+" + Math.round(minSpacing / 2)
+                graphAttrs.add(createAttribute(Attributes.SEP, "\"+" + Math.round(spacing / 2)
                         + "\""));
             }
             // enable or disable connected component packing
             Boolean pack = parentLayout.getProperty(LayoutOptions.SEPARATE_CONN_COMP);
             if (command == Command.TWOPI || pack != null && pack.booleanValue()) {
-                graphAttrs.add(createAttribute(Attributes.PACK, (int) minSpacing));
+                graphAttrs.add(createAttribute(Attributes.PACK, spacing.intValue()));
             }
         }
 
