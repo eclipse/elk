@@ -1,0 +1,577 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    spoenemann - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk
+
+import org.eclipse.elk.core.util.FixedLayoutProvider
+import org.eclipse.elk.core.math.KVectorChain
+import org.eclipse.elk.core.math.KVector
+import java.util.EnumSet
+import org.eclipse.elk.core.^labels.ILabelManager
+import org.eclipse.elk.core.util.nodespacing.Spacing
+import org.eclipse.elk.core.util.BoxLayoutProvider
+import org.eclipse.elk.core.util.RandomLayoutProvider
+
+/**
+ * Core definitions of the Eclipse Layout Kernel.
+ */
+bundle {
+	label = "ELK"
+	class = core.options.LayoutOptions
+}
+
+category Layered {
+	description =
+		"The layer-based method was introduced by Sugiyama, Tagawa and Toda in 1981. It emphasizes
+		the direction of edges by pointing as many edges as possible into the same direction.
+		The nodes are arranged in layers, which are sometimes called \"hierarchies\", and then
+		reordered such that the number of edge crossings is minimized. Afterwards, concrete
+		coordinates are computed for the nodes and edge bend points."
+}
+
+category Orthogonal {
+	description =
+		"Orthogonal methods that follow the \"topology-shape-metrics\" approach by Batini,
+		Nardelli and Tamassia '86. The first phase determines the topology of the drawing by
+		applying a planarization technique, which results in a planar representation of the graph.
+		The orthogonal shape is computed in the second phase, which aims at minimizing the number
+		of edge bends, and is called orthogonalization. The third phase leads to concrete
+		coordinates for nodes and edge bend points by applying a compaction method, thus defining
+		the metrics."
+}
+
+category Force {
+	description =
+		"Layout algorithms that follow physical analogies by simulating a system of attractive and
+		repulsive forces. The first successful method of this kind was proposed by Eades in 1984."
+}
+
+category Circle {
+	description =
+		"Circular layout algorithms emphasize cycles or biconnected components of a graph by
+		arranging them in circles. This is useful if a drawing is desired where such components
+		are clearly grouped, or where cycles are shown as prominent properties of the graph."
+}
+
+category Tree {
+	description =
+		"Specialized layout methods for trees, i.e. acyclic graphs. The regular structure of graphs
+		that have no undirected cycles can be emphasized using an algorithm of this type."
+}
+
+
+//------- UTILITY ALGORITHMS
+
+algorithm Fixed(FixedLayoutProvider) {
+	label = "Fixed Layout"
+	description =
+		"Keeps the current layout as it is, without any automatic modification. Optional coordinates
+		can be given for nodes and edge bend points."
+	supports position
+	supports bendPoints
+	supports borderSpacing = 15
+}
+
+algorithm Box(BoxLayoutProvider) {
+	label = "Box Layout"
+	description = "Algorithm for packing of unconnected boxes, i.e. graphs without edges."
+	preview = images/box_layout.png
+	supports spacing = 15
+	supports borderSpacing = 15
+	supports priority = 0
+	supports expandNodes
+	supports sizeConstraint
+	supports sizeOptions
+	supports aspectRatio = 1.3f
+	supports interactive
+}
+
+algorithm Random(RandomLayoutProvider) {
+	label = "Randomizer"
+	description =
+		"Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be
+		useful to demonstrate the power of \"real\" layout algorithms."
+	preview = images/random.png
+	supports randomSeed = 0
+	supports spacing = 15
+	supports borderSpacing = 15
+	supports aspectRatio = 1.6f
+}
+
+
+//------- UI PROPERTIES
+
+property ^algorithm: String {
+	label = "Layout Algorithm"
+	description = "Select a specific layout algorithm."
+	targets = parents
+}
+
+property alignment: Alignment {
+	label = "Alignment"
+	description = "Alignment of the selected node relative to other nodes in the same row or column."
+	default = Alignment.AUTOMATIC
+	targets = nodes
+}
+
+property aspectRatio: float {
+	label = "Aspect Ratio"
+	description = "The desired aspect ratio of the drawing, that is the quotient of width by height."
+	targets = parents
+}
+
+property bendPoints: KVectorChain {
+	label = "Bend Points"
+	description =
+		"A fixed list of bend points for the edge. This is used by the 'Fixed Layout' algorithm to
+		specify a pre-defined routing for an edge. The vector chain must include the source point,
+		any bend points, and the target point, so it must have at least two points."
+	targets = edges
+}
+
+property borderSpacing: float {
+	label = "Border Spacing"
+	description =
+		"Spacing of the content of a parent node to its inner border. The inner border is the node
+		border, which is given by width and height, with subtracted insets."
+	targets = parents
+}
+
+advanced property debugMode: boolean {
+	label = "Debug Mode"
+	description = "Whether additional debug information shall be generated."
+	default = false
+	targets = parents
+}
+
+property direction: Direction {
+	label = "Direction"
+	description = "Overall direction of edges: horizontal (right / left) or
+		vertical (down / up)."
+	default = Direction.UNDEFINED
+	targets = parents
+}
+
+property edgeRouting: EdgeRouting {
+	label = "Edge Routing"
+	description =
+		"What kind of edge routing style should be applied for the content of a parent node.
+		Algorithms may also set this option to single edges in order to mark them as splines.
+		The bend point list of edges with this option set to SPLINES must be interpreted as control
+		points for a piecewise cubic spline."
+	default = EdgeRouting.UNDEFINED
+	targets = parents
+}
+
+property expandNodes: boolean {
+	label = "Expand Nodes"
+	description = "If active, nodes are expanded to fill the area of their parent."
+	default = false
+	targets = parents
+}
+
+property interactive: boolean {
+	label = "Interactive"
+	description =
+		"Whether the algorithm should be run in interactive mode for the content of a parent node.
+		What this means exactly depends on how the specific algorithm interprets this option.
+		Usually in the interactive mode algorithms try to modify the current layout as little as
+		possible."
+	default = false
+	targets = parents
+}
+
+property labelSpacing: float {
+	label = "Label Spacing"
+	description = "Determines the amount of space to be left around labels."
+	default = 0
+	targets = edges, nodes
+}
+
+property layoutHierarchy: boolean {
+	label = "Layout Hierarchy"
+	description =
+		"Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy
+		level of the graph is processed independently, possibly by different layout algorithms,
+		beginning with the lowest level. If it is set, the algorithm is responsible to process
+		all hierarchy levels that are contained in the associated parent node."
+	default = false
+	targets = parents
+}
+
+property nodeLabelPlacement: EnumSet<NodeLabelPlacement> {
+	label = "Node Label Placement"
+	description =
+		"Hints for where node labels are to be placed; if empty, the node label's position is not
+		modified."
+	default = NodeLabelPlacement.fixed
+	targets = nodes, labels
+}
+
+property portAlignment: PortAlignment {
+	label = "Port Alignment"
+	description = "Defines the default port distribution for a node."
+	default = PortAlignment.JUSTIFIED
+	targets = nodes
+}
+
+advanced property portAlignmentNorth: PortAlignment {
+	label = "Port Alignment (North)"
+	description =
+		"Defines how ports on the northern side are placed, overriding the node's general port alignment."
+	default = PortAlignment.UNDEFINED
+	targets = nodes
+}
+
+advanced property portAlignmentSouth: PortAlignment {
+	label = "Port Alignment (South)"
+	description =
+		"Defines how ports on the southern side are placed, overriding the node's general port alignment."
+	default = PortAlignment.UNDEFINED
+	targets = nodes
+}
+
+advanced property portAlignmentWest: PortAlignment {
+	label = "Port Alignment (West)"
+	description =
+		"Defines how ports on the western side are placed, overriding the node's general port alignment."
+	default = PortAlignment.UNDEFINED
+	targets = nodes
+}
+
+advanced property portAlignmentEast: PortAlignment {
+	label = "Port Alignment (East)"
+	description =
+		"Defines how ports on the eastern side are placed, overriding the node's general port alignment."
+	default = PortAlignment.UNDEFINED
+	targets = nodes
+}
+
+property portConstraints: PortConstraints {
+	label = "Port Constraints"
+	description = "Defines constraints of the position of the ports of a node."
+	default = PortConstraints.UNDEFINED
+	targets = nodes
+}
+
+property portSpacing: float {
+	label = "Port Spacing"
+	description = "Spacing between ports of a given node."
+	default = 10
+	targets = nodes
+}
+
+property position: KVector {
+	label = "Position"
+	description =
+		"The position of a node, port, or label. This is used by the 'Fixed Layout' algorithm to
+		specify a pre-defined position."
+	targets = nodes, ports, labels
+}
+
+property priority: int {
+	label = "Priority"
+	description =
+		"Defines the priority of an object; its meaning depends on the specific layout algorithm
+		and the context where it is used."
+	targets = nodes, edges
+}
+
+property randomSeed: int {
+	label = "Randomization Seed"
+	description =
+		"Seed used for pseudo-random number generators to control the layout algorithm. If the
+		value is 0, the seed shall be determined pseudo-randomly (e.g. from the system time)."
+	targets = parents
+}
+
+property separateConnComp: boolean {
+	label = "Separate Connected Components"
+	description = "Whether each connected component should be processed separately."
+	targets = parents
+}
+
+property sizeConstraint: EnumSet<SizeConstraint> {
+	label = "Size Constraint"
+	description =
+		"Constraints for determining node sizes. Each member of the set specifies something that
+		should be taken into account when calculating node sizes. The empty set corresponds to
+		node sizes being fixed."
+	default = EnumSet.noneOf(SizeConstraint)
+	targets = nodes
+}
+
+property sizeOptions: EnumSet<SizeOptions> {
+	label = "Size Options"
+	description =
+		"Options modifying the behavior of the size constraints set on a node. Each member of the
+		set specifies something that should be taken into account when calculating node sizes.
+		The empty set corresponds to no further modifications."
+	default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE,
+		SizeOptions.APPLY_ADDITIONAL_INSETS)
+	targets = nodes
+}
+
+property spacing: float {
+	label = "Spacing"
+	description =
+		"Overall spacing between elements. This is mostly interpreted as the minimal distance
+		between each two nodes and should also influence the spacing between edges."
+	targets = parents
+}
+
+
+//------- PROGRAMMATIC PROPERTIES
+
+output property junctionPoints: KVectorChain {
+	label = "Junction Points"
+	description =
+		"This property is not used as option, but as output of the layout algorithms. It is
+		attached to edges and determines the points where junction symbols should be drawn in
+		order to represent hyperedges with orthogonal routing. Whether such points are computed
+		depends on the chosen layout algorithm and edge routing style. The points are put into
+		the vector chain with no specific order."
+	targets = edges
+}
+
+programmatic property additionalPortSpace: Spacing.Margins {
+	label = "Additional Port Space"
+	description =
+		"Additional space around the sets of ports on each node side. For each side of a node,
+		this property can reserve additional space before and after the ports on each side. For
+		example, a top spacing of 20 makes sure that the first port on the western and eastern
+		side is 20 units away from the northern border."
+	targets = nodes
+}
+
+programmatic property commentBox: boolean {
+	label = "Comment Box"
+	description =
+		"Whether the node should be regarded as a comment box instead of a regular node. In that
+		case its placement should be similar to how labels are handled. Any edges incident to a
+		comment box specify to which graph elements the comment is related."
+	default = false
+	targets = nodes
+}
+
+programmatic property edgeLabelPlacement: EdgeLabelPlacement {
+	label = "Edge Label Placement"
+	description = "Gives a hint on where to put edge labels."
+	default = EdgeLabelPlacement.UNDEFINED
+	targets = labels
+}
+
+programmatic property edgeType: EdgeType {
+	label = "Edge Type"
+	description =
+		"The type of an edge. This is usually used for UML class diagrams, where associations must
+		be handled differently from generalizations."
+	default = EdgeType.NONE
+	targets = edges
+}
+
+programmatic property fontName: String {
+	label = "Font Name"
+	description = "Font name used for a label."
+	targets = labels
+}
+
+programmatic property fontSize: int {
+	label = "Font Size"
+	description = "Font size used for a label."
+	targets = labels
+}
+
+programmatic property hypernode: boolean {
+	label = "Hypernode"
+	description = "Whether the node should be handled as a hypernode."
+	default = false
+	targets = nodes
+}
+
+programmatic property labelManager: ILabelManager {
+	label = "Label Manager"
+	description = "Label managers can shorten labels upon a layout algorithm's request."
+	targets = parents, labels
+}
+
+programmatic property margins: Spacing.Margins {
+	label = "Margins"
+	description =
+		"Margins define additional space around the actual bounds of a graph element. For instance,
+		ports or labels being placed on the outside of a node's border might introduce such a
+		margin. The margin is used to guarantee non-overlap of other graph elements with those
+		ports or labels."
+	default = new Spacing.Margins
+	targets = nodes
+}
+
+programmatic property minHeight: float {
+	label = "Minimal Height"
+	description = "The minimal height to which a node can be reduced."
+	default = 0
+	targets = nodes
+}
+
+programmatic property minWidth: float {
+	label = "Minimal Width"
+	description = "The minimal width to which a node can be reduced."
+	default = 0
+	targets = nodes
+}
+
+programmatic property noLayout: boolean {
+	label = "No Layout"
+	description =
+		"No layout is done for the associated element. This is used to mark parts of a diagram to
+		avoid their inclusion in the layout graph, or to mark parts of the layout graph to
+		prevent layout engines from processing them. If you wish to exclude the contents of a
+		compound node from automatic layout, while the node itself is still considered on its own
+		layer, use the 'Fixed Layout' algorithm for that node."
+	default = false
+	targets = nodes, edges, ports, labels
+}
+
+programmatic property portAnchor: KVector {
+	label = "Port Anchor Offset"
+	description = "The offset to the port position where connections shall be attached."
+	targets = ports
+}
+
+programmatic property portIndex: int {
+	label = "Port Index"
+	description =
+		"The index of a port in the fixed order around a node. The order is assumed as clockwise,
+		starting with the leftmost port on the top side. This option must be set if 'Port
+		Constraints' is set to FIXED_ORDER and no specific positions are given for the ports.
+		Additionally, the option 'Port Side' must be defined in this case."
+	targets = ports
+}
+
+programmatic property portLabelPlacement: PortLabelPlacement {
+	label = "Port Label Placement"
+	description = "Decides on a placement method for port labels."
+	default = PortLabelPlacement.OUTSIDE
+	targets = nodes
+}
+
+programmatic property portSide: PortSide {
+	label = "Port Side"
+	description =
+		"The side of a node on which a port is situated. This option must be set if 'Port
+		Constraints' is set to FIXED_SIDE or FIXED_ORDER and no specific positions are given
+		for the ports."
+	default = PortSide.UNDEFINED
+	targets = ports
+}
+
+programmatic property portOffset: float {
+	label = "Port Offset"
+	description =
+		"The offset of ports on the node border. With a positive offset the port is moved outside
+		of the node, while with a negative offset the port is moved towards the inside. An offset
+		of 0 means that the port is placed directly on the node border, i.e.
+     	if the port side is north, the port's south border touches the nodes's north border;
+     	if the port side is east, the port's west border touches the nodes's east border;
+     	if the port side is south, the port's north border touches the node's south border;
+     	if the port side is west, the port's east border touches the node's west border."
+	targets = ports
+}
+
+programmatic property scaleFactor: float {
+	label = "Scale Factor"
+	description =
+		"The scaling factor to be applied to the corresponding node in recursive layout. It causes
+		the corresponding node's size to be adjusted, and its ports and labels to be sized and
+		placed accordingly after the layout of that node has been determined (and before the node
+		itself and its siblings are arranged). The scaling is not reverted afterwards, so the
+		resulting layout graph contains the adjusted size and position data. This option is
+		currently not supported if 'Layout Hierarchy' is set."
+	default = 1
+	targets = nodes
+	requires layoutHierarchy == false
+}
+
+programmatic property selfLoopInside: boolean {
+	label = "Route Self Loop Inside"
+	description =
+		"Whether a self loop should be routed around a node or inside that node. The latter will
+		make the node a compound node if it isn't already, and will require the layout algorithm
+		to support compound nodes with hierarchical ports."
+	default = false
+	targets = nodes, edges
+}
+
+programmatic property thickness: float {
+	label = "Thickness"
+	description =
+		"The thickness of an edge. This is a hint on the line width used to draw an edge, possibly
+		requiring more space to be reserved for it."
+	default = 1
+	targets = edges
+}
+
+
+//------- GLOBAL PROPERTIES
+
+global property animate: boolean {
+	label = "Animate"
+	description =
+		"Whether the shift from the old layout to the new computed layout shall be animated."
+	default = true
+	targets = parents
+}
+
+global property animTimeFactor: int {
+	label = "Animation Time Factor"
+	description =
+		"Factor for computation of animation time. The higher the value, the longer the animation
+		time. If the value is 0, the resulting time is always equal to the minimum defined by
+		'Minimal Animation Time'."
+	default = 100
+	targets = parents
+}
+
+global property layoutAncestors: boolean {
+	label = "Layout Ancestors"
+	description =
+		"Whether the hierarchy levels on the path from the selected element to the root of the
+		diagram shall be included in the layout process."
+	default = false
+	targets = parents
+}
+
+global property maxAnimTime: int {
+	label = "Maximal Animation Time"
+	description = "The maximal time for animations, in milliseconds."
+	default = 4000
+	targets = parents
+}
+
+global property minAnimTime: int {
+	label = "Minimal Animation Time"
+	description = "The minimal time for animations, in milliseconds."
+	default = 400
+	targets = parents
+}
+
+global property progressBar: boolean {
+	label = "Progress Bar"
+	description = "Whether a progress bar shall be displayed during layout computations."
+	default = false
+	targets = parents
+}
+
+global property zoomToFit: boolean {
+	label = "Zoom to Fit"
+	description = "Whether the zoom level shall be set to view the whole diagram after layout."
+	default = false
+	targets = parents
+}

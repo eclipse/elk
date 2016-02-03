@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.tree.TreeUtil;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
 import org.eclipse.elk.alg.tree.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.alg.tree.properties.Properties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -93,7 +94,7 @@ public class NodePlacer implements ILayoutPhase {
         /** find the root node of this component */
         LinkedList<TNode> roots = new LinkedList<TNode>();
         for (TNode tNode : tGraph.getNodes()) {
-            if (tNode.getProperty(Properties.ROOT)) {
+            if (tNode.getProperty(InternalProperties.ROOT)) {
                 roots.add(tNode);
             }
         }
@@ -104,7 +105,7 @@ public class NodePlacer implements ILayoutPhase {
         progressMonitor.worked(1);
 
         /** Do the final positioning with a preorder walk. */
-        secondWalk(root, root.getProperty(Properties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment);
+        secondWalk(root, root.getProperty(InternalProperties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment);
         progressMonitor.worked(1);
 
         progressMonitor.done();
@@ -121,8 +122,8 @@ public class NodePlacer implements ILayoutPhase {
      *            the index of the passed level
      */
     private void firstWalk(final TNode cN, final int level) {
-        cN.setProperty(Properties.MODIFIER, 0d);
-        TNode lS = cN.getProperty(Properties.LEFTSIBLING);
+        cN.setProperty(InternalProperties.MODIFIER, 0d);
+        TNode lS = cN.getProperty(InternalProperties.LEFTSIBLING);
 
         if (cN.isLeaf()) {
             if (lS != null) {
@@ -131,11 +132,11 @@ public class NodePlacer implements ILayoutPhase {
                  * the left sibling, the separation between sibling nodes, and tHe mean size of left
                  * sibling and current node.
                  */
-                double p = lS.getProperty(Properties.PRELIM) + spacing + meanNodeWidth(lS, cN);
-                cN.setProperty(Properties.PRELIM, p);
+                double p = lS.getProperty(InternalProperties.PRELIM) + spacing + meanNodeWidth(lS, cN);
+                cN.setProperty(InternalProperties.PRELIM, p);
             } else {
                 /** No sibling on the left to worry about. */
-                cN.setProperty(Properties.PRELIM, 0d);
+                cN.setProperty(InternalProperties.PRELIM, 0d);
             }
         } else {
             /**
@@ -152,19 +153,19 @@ public class NodePlacer implements ILayoutPhase {
              */
             TNode lM = Iterables.getFirst(cN.getChildren(), null);
             TNode rM = Iterables.getLast(cN.getChildren(), null);
-            double midPoint = (rM.getProperty(Properties.PRELIM) + lM
-                    .getProperty(Properties.PRELIM)) / 2f;
+            double midPoint = (rM.getProperty(InternalProperties.PRELIM) + lM
+                    .getProperty(InternalProperties.PRELIM)) / 2f;
 
             if (lS != null) {
                 /** This Node has a left sibling so its offsprings must be shifted to the right */
-                double p = lS.getProperty(Properties.PRELIM) + spacing + meanNodeWidth(lS, cN);
-                cN.setProperty(Properties.PRELIM, p);
-                cN.setProperty(Properties.MODIFIER, cN.getProperty(Properties.PRELIM) - midPoint);
+                double p = lS.getProperty(InternalProperties.PRELIM) + spacing + meanNodeWidth(lS, cN);
+                cN.setProperty(InternalProperties.PRELIM, p);
+                cN.setProperty(InternalProperties.MODIFIER, cN.getProperty(InternalProperties.PRELIM) - midPoint);
                 /** shift the offsprings of this node to the right */
                 apportion(cN, level);
             } else {
                 /** No sibling on the left to worry about. */
-                cN.setProperty(Properties.PRELIM, midPoint);
+                cN.setProperty(InternalProperties.PRELIM, midPoint);
             }
         }
     }
@@ -185,7 +186,7 @@ public class NodePlacer implements ILayoutPhase {
     private void apportion(final TNode cN, final int level) {
         /** Initialize the leftmost and neighbor corresponding to the root of the subtree */
         TNode leftmost = Iterables.getFirst(cN.getChildren(), null);
-        TNode neighbor = leftmost != null ? leftmost.getProperty(Properties.LEFTNEIGHBOR) : null;
+        TNode neighbor = leftmost != null ? leftmost.getProperty(InternalProperties.LEFTNEIGHBOR) : null;
         int compareDepth = 1;
         /**
          * until this node and the neighbor to the left have nodes in the current level we have to
@@ -201,15 +202,15 @@ public class NodePlacer implements ILayoutPhase {
             for (int i = 0; i < compareDepth; i++) {
                 ancestorLeftmost = ancestorLeftmost.getParent();
                 ancestorNeighbor = ancestorNeighbor.getParent();
-                rightModSum += ancestorLeftmost.getProperty(Properties.MODIFIER);
-                leftModSum += ancestorNeighbor.getProperty(Properties.MODIFIER);
+                rightModSum += ancestorLeftmost.getProperty(InternalProperties.MODIFIER);
+                leftModSum += ancestorNeighbor.getProperty(InternalProperties.MODIFIER);
             }
             /**
              * Find the MoveDistance, and apply it to Node's subtree. Add appropriate portions to
              * smaller interior subtrees.
              */
-            double prN = neighbor.getProperty(Properties.PRELIM);
-            double prL = leftmost.getProperty(Properties.PRELIM);
+            double prN = neighbor.getProperty(InternalProperties.PRELIM);
+            double prL = leftmost.getProperty(InternalProperties.PRELIM);
             double mean = meanNodeWidth(leftmost, neighbor);
             double moveDistance = prN + leftModSum + spacing + mean - prL - rightModSum;
 
@@ -219,19 +220,19 @@ public class NodePlacer implements ILayoutPhase {
                 int leftSiblings = 0;
                 while (leftSibling != null && leftSibling != ancestorNeighbor) {
                     leftSiblings++;
-                    leftSibling = leftSibling.getProperty(Properties.LEFTSIBLING);
+                    leftSibling = leftSibling.getProperty(InternalProperties.LEFTSIBLING);
                 }
                 /** Apply portions to appropriate left sibling subtrees. */
                 if (leftSibling != null) {
                     double portion = moveDistance / (double) leftSiblings;
                     leftSibling = cN;
                     while (leftSibling != ancestorNeighbor) {
-                        double newPr = leftSibling.getProperty(Properties.PRELIM) + moveDistance;
-                        leftSibling.setProperty(Properties.PRELIM, newPr);
-                        double newMod = leftSibling.getProperty(Properties.MODIFIER) + moveDistance;
-                        leftSibling.setProperty(Properties.MODIFIER, newMod);
+                        double newPr = leftSibling.getProperty(InternalProperties.PRELIM) + moveDistance;
+                        leftSibling.setProperty(InternalProperties.PRELIM, newPr);
+                        double newMod = leftSibling.getProperty(InternalProperties.MODIFIER) + moveDistance;
+                        leftSibling.setProperty(InternalProperties.MODIFIER, newMod);
                         moveDistance -= portion;
-                        leftSibling = leftSibling.getProperty(Properties.LEFTSIBLING);
+                        leftSibling = leftSibling.getProperty(InternalProperties.LEFTSIBLING);
                     }
                 } else {
                     /**
@@ -251,7 +252,7 @@ public class NodePlacer implements ILayoutPhase {
             } else {
                 leftmost = Iterables.getFirst(leftmost.getChildren(), null);
             }
-            neighbor = leftmost != null ? leftmost.getProperty(Properties.LEFTNEIGHBOR) : null;
+            neighbor = leftmost != null ? leftmost.getProperty(InternalProperties.LEFTNEIGHBOR) : null;
         }
     }
 
@@ -298,24 +299,24 @@ public class NodePlacer implements ILayoutPhase {
         if (tNode != null) {
             // The x-position of the node is the sum of its prev x-coordinate and the modifiers of
             // all the node's ancestors and the adjust of the root location.
-            double xTemp = tNode.getProperty(Properties.PRELIM) + modsum;
+            double xTemp = tNode.getProperty(InternalProperties.PRELIM) + modsum;
             // The y-position of the node is the height of the node's ancestors levels and the
             // height nodes's level and the adjust of the root location.
-            double yTemp = yCoor + spacing + tNode.getProperty(Properties.LEVELHEIGHT);
+            double yTemp = yCoor + spacing + tNode.getProperty(InternalProperties.LEVELHEIGHT);
             // We do not check to see that xTemp and yTemp are of the proper size, because the
             // framework will take care of this.
-            tNode.setProperty(Properties.XCOOR, (int) Math.round(xTemp));
-            tNode.setProperty(Properties.YCOOR, (int) Math.round(yTemp));
+            tNode.setProperty(InternalProperties.XCOOR, (int) Math.round(xTemp));
+            tNode.setProperty(InternalProperties.YCOOR, (int) Math.round(yTemp));
             // Apply the modifier value for this node to all its offspring.
             if (!tNode.isLeaf()) {
                 // This node got offsprings so we will step a level down and take care of them.
                 secondWalk(Iterables.getFirst(tNode.getChildren(), null), yTemp,
-                        modsum + tNode.getProperty(Properties.MODIFIER));
+                        modsum + tNode.getProperty(InternalProperties.MODIFIER));
             }
             // Go ahead with the sibling to the right. This is a dfs so we just layout the current
             // subtree.
-            if (tNode.getProperty(Properties.RIGHTSIBLING) != null) {
-                secondWalk(tNode.getProperty(Properties.RIGHTSIBLING), yCoor, modsum);
+            if (tNode.getProperty(InternalProperties.RIGHTSIBLING) != null) {
+                secondWalk(tNode.getProperty(InternalProperties.RIGHTSIBLING), yCoor, modsum);
             }
         }
     }

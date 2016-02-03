@@ -10,5 +10,11 @@
             uri="http://elk.eclipse.org/KLayoutData">
       </package>
    </extension>
+   <extension
+         point="org.eclipse.elk.core.service.layoutProviders">
+      <provider
+            class="org.eclipse.elk.core.options.LayoutOptions">
+      </provider>
+   </extension>
 
 </plugin>

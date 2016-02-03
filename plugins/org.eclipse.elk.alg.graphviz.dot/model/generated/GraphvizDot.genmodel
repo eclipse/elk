@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="******************************************************************************&#xA;Copyright (c) 2016 Kiel University and others.&#xA;All rights reserved. This program and the accompanying materials&#xA;are made available under the terms of the Eclipse Public License v1.0&#xA;which accompanies this distribution, and is available at&#xA;http://www.eclipse.org/legal/epl-v10.html&#xA; *&#xA;Contributors:&#xA;    Kiel University - initial API and implementation&#xA; ******************************************************************************"
+    modelDirectory="/org.eclipse.elk.alg.graphviz.dot/src-gen" modelPluginID="org.eclipse.elk.alg.graphviz.dot"
+    forceOverwrite="true" modelName="GraphvizDot" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.11">
+  <genPackages prefix="Dot" basePackage="org.eclipse.elk.alg.graphviz.dot" disposableProviderFactory="true"
+      fileExtensions="graphviz_dot" ecorePackage="GraphvizDot.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphvizDot.ecore#//EdgeOperator">
+      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//EdgeOperator/directed"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//EdgeOperator/undirected"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphvizDot.ecore#//GraphType">
+      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//GraphType/graph"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//GraphType/digraph"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="GraphvizDot.ecore#//AttributeType">
+      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//AttributeType/graph"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//AttributeType/node"/>
+      <genEnumLiterals ecoreEnumLiteral="GraphvizDot.ecore#//AttributeType/edge"/>
+    </genEnums>
+    <genClasses ecoreClass="GraphvizDot.ecore#//GraphvizModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//GraphvizModel/graphs"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//Graph">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Graph/strict"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Graph/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Graph/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//Graph/statements"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//Statement"/>
+    <genClasses ecoreClass="GraphvizDot.ecore#//Attribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Attribute/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Attribute/value"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//NodeStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//NodeStatement/node"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//NodeStatement/attributes"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//Node">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Node/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//Node/port"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//EdgeStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeStatement/sourceNode"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeStatement/edgeTargets"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeStatement/attributes"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//EdgeTarget">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//EdgeTarget/operator"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeTarget/targetSubgraph"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//EdgeTarget/targetnode"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//AttributeStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//AttributeStatement/type"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//AttributeStatement/attributes"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//Subgraph">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Subgraph/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference GraphvizDot.ecore#//Subgraph/statements"/>
+    </genClasses>
+    <genClasses ecoreClass="GraphvizDot.ecore#//Port">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Port/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute GraphvizDot.ecore#//Port/compass_pt"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.ILayoutSetup;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
-import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.util.ElkUiUtil;
 import org.eclipse.elk.core.util.Pair;
@@ -72,7 +72,7 @@ public class LayoutPropertySource implements IPropertySource {
         if (propertyDescriptors == null) {
             List<LayoutOptionData> optionData = configManager.getSupportedOptions(layoutConfig);
             
-            // Filter the options hidden by option dependencies
+            // Filter the options hidden by visibility settings and option dependencies
             filterOptions(optionData);
             
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
@@ -103,17 +103,20 @@ public class LayoutPropertySource implements IPropertySource {
         ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
         while (optionIter.hasNext()) {
             LayoutOptionData option = optionIter.next();
-            boolean visible = option.getDependencies().isEmpty();
-            for (Pair<LayoutOptionData, Object> dependency : option.getDependencies()) {
-                // if at least one dependency is met, the option is made visible
-                LayoutOptionData targetOption = dependency.getFirst();
-                dependencyOptions.add(targetOption.getId());
-                Object expectedValue = dependency.getSecond();
-                Object value = configManager.getOptionValue(targetOption, layoutConfig);
-                if (expectedValue == null && value != null
-                        || expectedValue != null && expectedValue.equals(value)) {
-                    visible = true;
-                    break;
+            boolean visible = option.getVisibility() != LayoutOptionData.Visibility.HIDDEN;
+            if (visible) {
+                visible = option.getDependencies().isEmpty();
+                for (Pair<LayoutOptionData, Object> dependency : option.getDependencies()) {
+                    // if at least one dependency is met, the option is made visible
+                    LayoutOptionData targetOption = dependency.getFirst();
+                    dependencyOptions.add(targetOption.getId());
+                    Object expectedValue = dependency.getSecond();
+                    Object value = configManager.getOptionValue(targetOption, layoutConfig);
+                    if (expectedValue == null && value != null
+                            || expectedValue != null && expectedValue.equals(value)) {
+                        visible = true;
+                        break;
+                    }
                 }
             }
             

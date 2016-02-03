@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.force.model.AbstractForceModel;
 import org.eclipse.elk.alg.force.model.EadesModel;
 import org.eclipse.elk.alg.force.model.ForceModelStrategy;
 import org.eclipse.elk.alg.force.model.FruchtermanReingoldModel;
+import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.alg.force.properties.Properties;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.options.LayoutOptions;
@@ -56,7 +57,7 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
         setOptions(fgraph, kgraph);
 
         // update the force model depending on user selection
-        updateModel(fgraph.getProperty(Properties.FORCE_MODEL));
+        updateModel(fgraph.getProperty(Properties.MODEL));
         
         // split the input graph into components
         List<FGraph> components = componentsProcessor.split(fgraph);
@@ -87,12 +88,12 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
         if (randomSeed != null) {
             int val = randomSeed;
             if (val == 0) {
-                fgraph.setProperty(Properties.RANDOM, new Random());
+                fgraph.setProperty(InternalProperties.RANDOM, new Random());
             } else {
-                fgraph.setProperty(Properties.RANDOM, new Random(val));
+                fgraph.setProperty(InternalProperties.RANDOM, new Random(val));
             }
         } else {
-            fgraph.setProperty(Properties.RANDOM, new Random(1));
+            fgraph.setProperty(InternalProperties.RANDOM, new Random(1));
         }
     }
     

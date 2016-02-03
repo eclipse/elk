@@ -537,9 +537,9 @@ public final class LGraphUtil {
             
             // if port coordinates are (0,0), we default to port offset 0 to make the common case
             // frustration-free
-            if (port.getProperty(LayoutOptions.OFFSET) == null && portSide != PortSide.UNDEFINED
+            if (port.getProperty(LayoutOptions.PORT_OFFSET) == null && portSide != PortSide.UNDEFINED
                     && (port.getPosition().x != 0 || port.getPosition().y != 0)) {
-                port.setProperty(LayoutOptions.OFFSET, calcPortOffset(port, portSide));
+                port.setProperty(LayoutOptions.PORT_OFFSET, calcPortOffset(port, portSide));
             }
         }
         
@@ -672,7 +672,7 @@ public final class LGraphUtil {
         dummy.setType(NodeType.EXTERNAL_PORT);
         dummy.setProperty(InternalProperties.EXT_PORT_SIZE, portSize);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        dummy.setProperty(InternalProperties.OFFSET, propertyHolder.getProperty(LayoutOptions.OFFSET));
+        dummy.setProperty(Properties.PORT_OFFSET, propertyHolder.getProperty(LayoutOptions.PORT_OFFSET));
         
         // set the anchor point
         KVector anchor = propertyHolder.getProperty(LayoutOptions.PORT_ANCHOR);
@@ -785,7 +785,7 @@ public final class LGraphUtil {
         KVector portPosition = new KVector(portDummy.getPosition());
         portPosition.x += portDummy.getSize().x / 2.0;
         portPosition.y += portDummy.getSize().y / 2.0;
-        float portOffset = portDummy.getProperty(InternalProperties.OFFSET);
+        float portOffset = portDummy.getProperty(Properties.PORT_OFFSET);
         
         // Get some properties of the graph
         KVector graphSize = graph.getSize();
@@ -907,7 +907,7 @@ public final class LGraphUtil {
     public static Direction getDirection(final LGraph graph) {
         Direction direction = graph.getProperty(LayoutOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
-            float aspectRatio = graph.getProperty(InternalProperties.ASPECT_RATIO);
+            float aspectRatio = graph.getProperty(Properties.ASPECT_RATIO);
             if (aspectRatio >= 1) {
                 return Direction.RIGHT;
             } else {

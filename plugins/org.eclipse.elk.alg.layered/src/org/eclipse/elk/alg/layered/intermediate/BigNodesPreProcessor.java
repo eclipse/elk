@@ -17,9 +17,10 @@ import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.PortConstraints;
@@ -94,7 +95,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        spacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
+        spacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
         direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();

@@ -62,18 +62,18 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         }
         
         // get aspect ratio
-        float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
-        if (aspectRatio <= 0) {
+        Float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
+        if (aspectRatio == null || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }
         
         // get spacing values
-        float spacing = parentLayout.getProperty(LayoutOptions.SPACING);
-        if (spacing <= 0) {
+        Float spacing = parentLayout.getProperty(LayoutOptions.SPACING);
+        if (spacing == null || spacing < 0) {
             spacing = DEF_SPACING;
         }
-        float offset = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
-        if (offset <= 0) {
+        Float offset = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        if (offset == null || offset < 0) {
             offset = DEF_SPACING;
         }
         

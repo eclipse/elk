@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
@@ -110,7 +111,7 @@ class KGraphLayoutTransferrer {
             }
         }
 
-        EdgeRouting routing = parentLayout.getProperty(InternalProperties.EDGE_ROUTING);
+        EdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
         
         // Iterate through all edges
         for (LEdge ledge : edgeList) {
@@ -264,10 +265,10 @@ class KGraphLayoutTransferrer {
         // Mark the edge with information about its routing
         if (routing == EdgeRouting.SPLINES) {
             // SPLINES means that bend points shall be interpreted as control points for splines
-            edgeLayout.setProperty(InternalProperties.EDGE_ROUTING, EdgeRouting.SPLINES);
+            edgeLayout.setProperty(Properties.EDGE_ROUTING, EdgeRouting.SPLINES);
         } else {
             // null means that bend points shall be interpreted as bend points
-            edgeLayout.setProperty(InternalProperties.EDGE_ROUTING, null);
+            edgeLayout.setProperty(Properties.EDGE_ROUTING, null);
         }
     }
 

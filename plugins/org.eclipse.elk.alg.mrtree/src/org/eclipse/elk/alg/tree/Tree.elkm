@@ -1,0 +1,55 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    spoenemann - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.alg.tree
+
+import org.eclipse.elk.alg.tree.TreeLayoutProvider
+import org.eclipse.elk.core.options.Direction
+
+/**
+ * Declarations for the ELK Tree layout algorithm.
+ */
+bundle {
+    class = properties.Properties
+}
+
+algorithm MrTree(TreeLayoutProvider) {
+	label = "ELK Mr. Tree"
+	description =
+		"Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
+		the input graph and arranges all nodes according to the resulting parent-children
+		hierarchy. I pity the fool who doesn't use Mr. Tree Layout."
+	category = org.eclipse.elk.Tree
+	features = disconnected
+	preview = images/tree.png
+	supports org.eclipse.elk.spacing = 20 duplicated
+	supports org.eclipse.elk.borderSpacing = 20 duplicated
+	supports org.eclipse.elk.aspectRatio = 1.6f duplicated
+	supports org.eclipse.elk.priority = 1 duplicated
+	supports org.eclipse.elk.separateConnComp = true
+	supports org.eclipse.elk.direction = Direction.DOWN
+	supports org.eclipse.elk.debugMode
+	supports weighting
+	supports searchOrder
+}
+
+property weighting: OrderWeighting {
+    label = "Weighting of Nodes"
+    description = "Which weighting to use when computing a node order."
+    default = OrderWeighting.DESCENDANTS
+    targets = parents
+}
+
+property searchOrder: TreeifyingOrder {
+    label = "Search Order"
+    description = "Which search order to use when computing a spanning tree."
+    default = TreeifyingOrder.DFS
+    targets = parents
+}

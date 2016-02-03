@@ -3,63 +3,10 @@
 <plugin>
    <extension
          point="org.eclipse.elk.core.service.layoutProviders">
-      <layoutAlgorithm
-            category="org.eclipse.elk.category.elk"
-            class="org.eclipse.elk.alg.tree.TreeLayoutProvider"
-            description="Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of the input graph and arranges all nodes according to the resulting parent-children hierarchy. I pity the fool who doesn't use Mr. Tree Layout."
-            id="org.eclipse.elk.alg.mrtree"
-            name="ELK Mr. Tree"
-            preview="images/tree.png"
-            type="org.eclipse.elk.type.tree">
-         <knownOption
-               default="20"
-               option="org.eclipse.elk.spacing">
-         </knownOption>
-         <knownOption
-               default="20"
-               option="org.eclipse.elk.borderSpacing">
-         </knownOption>
-         <knownOption
-               default="true"
-               option="org.eclipse.elk.separateConnComp">
-         </knownOption>
-         <knownOption
-               default="1.6"
-               option="org.eclipse.elk.aspectRatio">
-         </knownOption>
-         <knownOption
-               default="DOWN"
-               option="org.eclipse.elk.direction">
-         </knownOption>
-         <knownOption
-               option="org.eclipse.elk.debugMode">
-         </knownOption>
-         <knownOption
-               option="org.eclipse.elk.tree.weighting">
-         </knownOption>
-         <knownOption
-               option="org.eclipse.elk.tree.treeifyOrder">
-         </knownOption>
-      </layoutAlgorithm>
-        <layoutOption
-              advanced="true"
-              appliesTo="parents"
-              class="org.eclipse.elk.alg.tree.properties.OrderWeighting"
-              default="DESCENDANTS"
-              description="Which weighting to use when computing a node order."
-              id="org.eclipse.elk.tree.weighting"
-              name="Weighting of Nodes"
-              type="enum">
-        </layoutOption>
-        <layoutOption
-              appliesTo="parents"
-              class="org.eclipse.elk.alg.tree.properties.TreeifyingOrder"
-              default="DFS"
-              description="Which search order to use when computing a spanning tree."
-              id="org.eclipse.elk.tree.treeifyOrder"
-              name="Search Order"
-              type="enum">
-        </layoutOption>
+      <provider
+            class="org.eclipse.elk.alg.tree.properties.Properties">
+      </provider>
+      
    </extension>
 
 </plugin>

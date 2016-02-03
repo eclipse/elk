@@ -14,10 +14,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
-import org.eclipse.elk.core.service.data.LayoutOptionData;
-import org.eclipse.elk.core.service.data.LayoutOptionProxy;
+import org.eclipse.elk.core.service.internal.LayoutOptionProxy;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.EMapPropertyHolder;
 import org.eclipse.elk.graph.KGraphData;

@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.graph.FParticle;
+import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.alg.force.properties.Properties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.LayoutOptions;
@@ -51,7 +52,7 @@ public abstract class AbstractForceModel {
      */
     protected void initialize(final FGraph fgraph) {
         this.graph = fgraph;
-        this.random = fgraph.getProperty(Properties.RANDOM);
+        this.random = fgraph.getProperty(InternalProperties.RANDOM);
         
         // calculate the adjacency matrix for the graph
         fgraph.calcAdjacency();
@@ -73,7 +74,7 @@ public abstract class AbstractForceModel {
         // create bend points for node repulsion
         List<FBendpoint> bends = fgraph.getBendpoints();
         for (FEdge edge : fgraph.getEdges()) {
-            int count = edge.getProperty(Properties.EDGE_REP);
+            int count = edge.getProperty(Properties.REPULSIVE_POWER);
             if (count > 0) {
                 for (int i = 0; i < count; i++) {
                     bends.add(new FBendpoint(edge));

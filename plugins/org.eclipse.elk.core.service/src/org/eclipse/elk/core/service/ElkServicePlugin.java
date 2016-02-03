@@ -13,10 +13,7 @@ package org.eclipse.elk.core.service;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.service.internal.EclipseLayoutMetaDataServiceRegistry;
 import org.eclipse.elk.core.service.util.MonitoredOperation;
-import org.eclipse.elk.core.util.DefaultFactory;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -63,10 +60,6 @@ public final class ElkServicePlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        
-        // Initialize the layout meta data service (see LayoutDataService.getInstance())
-        LayoutMetaDataService.setRegistryFactory(new DefaultFactory<LayoutMetaDataService.Registry>(
-                EclipseLayoutMetaDataServiceRegistry.class));
     }
 
     /**
@@ -74,10 +67,8 @@ public final class ElkServicePlugin extends AbstractUIPlugin {
      */
     @Override
     public void stop(final BundleContext context) throws Exception {
-        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
-        for (LayoutAlgorithmData algoData : layoutDataService.getAlgorithmData()) {
-            algoData.getInstancePool().clear();
-        }
+        LayoutMetaDataService.unload();
+        LayoutConnectorsService.unload();
         if (executorService != null) {
             executorService.shutdown();
             executorService = null;

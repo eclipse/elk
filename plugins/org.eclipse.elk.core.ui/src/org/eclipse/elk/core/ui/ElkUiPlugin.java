@@ -60,10 +60,15 @@ public class ElkUiPlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        
-        ImageRegistry imageRegistry = getImageRegistry();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void initializeImageRegistry(final ImageRegistry reg) {
         for (String img : new String[] {IMG_CHOICE, IMG_FLOAT, IMG_INT, IMG_TEXT, IMG_TRUE, IMG_FALSE}) {
-            imageRegistry.put(img, getImageDescriptor("icons/" + img));
+            reg.put(img, getImageDescriptor("icons/" + img));
         }
     }
 

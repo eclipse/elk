@@ -17,6 +17,7 @@ import java.util.ListIterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.service.internal.DefaultModule;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -59,6 +60,15 @@ public class LayoutConnectorsService {
     }
     
     /**
+     * Unload any created instance in order to feed the garbage collector.
+     */
+    protected static synchronized void unload() {
+        if (instance != null) {
+            instance = null;
+        }
+    }
+    
+    /**
      * An entry read from the extension point.
      */
     private static class SetupEntry {
@@ -69,6 +79,7 @@ public class LayoutConnectorsService {
         /** The cached injector instance obtained from the setup. */
         private Injector injector;
     }
+    
     
     /** List of registered layout setups. */
     private final List<SetupEntry> entries = new LinkedList<SetupEntry>();

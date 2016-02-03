@@ -76,7 +76,7 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor {
         
         /** Stores which loop placement strategy to choose. */
         final SelfLoopPlacement loopPlacement = 
-                layeredGraph.getProperty(Properties.SPLINE_SELF_LOOP_PLACEMENT);
+                layeredGraph.getProperty(Properties.SELF_LOOP_PLACEMENT);
         
         ////////////////////////////////////////////////////////
         // There are two main jobs to be done:

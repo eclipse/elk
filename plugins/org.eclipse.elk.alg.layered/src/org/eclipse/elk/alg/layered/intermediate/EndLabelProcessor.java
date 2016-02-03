@@ -76,7 +76,7 @@ public final class EndLabelProcessor implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("End label placement", 1);
         
-        double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
+        float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
         
         // Initialize the offset maps
         northOffset = Maps.newHashMap();

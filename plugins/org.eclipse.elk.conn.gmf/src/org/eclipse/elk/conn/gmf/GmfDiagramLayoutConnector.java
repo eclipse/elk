@@ -413,15 +413,15 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         
         boolean animate = settings.getProperty(LayoutOptions.ANIMATE);
         if (animate) {
-            int minTime = settings.getProperty(LayoutOptions.MIN_ANIMATION_TIME);
+            int minTime = settings.getProperty(LayoutOptions.MIN_ANIM_TIME);
             if (minTime < 0) {
                 minTime = 0;
             }
-            int maxTime = settings.getProperty(LayoutOptions.MAX_ANIMATION_TIME);
+            int maxTime = settings.getProperty(LayoutOptions.MAX_ANIM_TIME);
             if (maxTime < minTime) {
                 maxTime = minTime;
             }
-            int factor = settings.getProperty(LayoutOptions.ANIMATION_TIME_FACTOR);
+            int factor = settings.getProperty(LayoutOptions.ANIM_TIME_FACTOR);
             if (factor > 0) {
                 int graphSize = countNodes(mapping.getLayoutGraph());
                 int time = minTime + (int) (factor * Math.sqrt(graphSize));

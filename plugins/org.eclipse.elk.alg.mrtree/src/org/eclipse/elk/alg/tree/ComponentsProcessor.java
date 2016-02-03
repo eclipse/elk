@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import org.eclipse.elk.alg.tree.graph.TEdge;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.alg.tree.properties.Properties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.LayoutOptions;
@@ -76,7 +77,7 @@ public class ComponentsProcessor {
      * @return a list of components that can be processed one by one
      */
     public List<TGraph> split(final TGraph graph) {
-        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CC);
+        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CONN_COMP);
         if (separate == null || separate.booleanValue()) {
             initialize(graph);
 
@@ -166,18 +167,15 @@ public class ComponentsProcessor {
             double minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE;
             double maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
             for (TNode node : graph.getNodes()) {
-                Integer p = node.getProperty(LayoutOptions.PRIORITY);
-                if (p != null) {
-                    priority += p;
-                }
+                priority += node.getProperty(Properties.PRIORITY);
                 minx = Math.min(minx, node.getPosition().x);
                 miny = Math.min(miny, node.getPosition().y);
                 maxx = Math.max(maxx, node.getPosition().x + node.getSize().x);
                 maxy = Math.max(maxy, node.getPosition().y + node.getSize().y);
             }
             graph.setProperty(Properties.PRIORITY, priority);
-            graph.setProperty(Properties.BB_UPLEFT, new KVector(minx, miny));
-            graph.setProperty(Properties.BB_LOWRIGHT, new KVector(maxx, maxy));
+            graph.setProperty(InternalProperties.BB_UPLEFT, new KVector(minx, miny));
+            graph.setProperty(InternalProperties.BB_LOWRIGHT, new KVector(maxx, maxy));
         }
 
         // sort the components by their priority and size
@@ -186,10 +184,10 @@ public class ComponentsProcessor {
                 int prio = graph2.getProperty(Properties.PRIORITY)
                         - graph1.getProperty(Properties.PRIORITY);
                 if (prio == 0) {
-                    KVector size1 = graph1.getProperty(Properties.BB_LOWRIGHT).clone().sub(
-                            graph1.getProperty(Properties.BB_UPLEFT));
-                    KVector size2 = graph2.getProperty(Properties.BB_LOWRIGHT).clone().sub(
-                            graph2.getProperty(Properties.BB_UPLEFT));
+                    KVector size1 = graph1.getProperty(InternalProperties.BB_LOWRIGHT).clone().sub(
+                            graph1.getProperty(InternalProperties.BB_UPLEFT));
+                    KVector size2 = graph2.getProperty(InternalProperties.BB_LOWRIGHT).clone().sub(
+                            graph2.getProperty(InternalProperties.BB_UPLEFT));
                     return Double.compare(size1.x * size1.y, size2.x * size2.y);
                 }
                 return prio;
@@ -203,8 +201,8 @@ public class ComponentsProcessor {
         double maxRowWidth = 0.0f;
         double totalArea = 0.0f;
         for (TGraph graph : components) {
-            KVector size = graph.getProperty(Properties.BB_LOWRIGHT).clone().sub(
-                    graph.getProperty(Properties.BB_UPLEFT));
+            KVector size = graph.getProperty(InternalProperties.BB_LOWRIGHT).clone().sub(
+                    graph.getProperty(InternalProperties.BB_UPLEFT));
             maxRowWidth = Math.max(maxRowWidth, size.x);
             totalArea += size.x * size.y;
         }
@@ -215,8 +213,8 @@ public class ComponentsProcessor {
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
         for (TGraph graph : components) {
-            KVector size = graph.getProperty(Properties.BB_LOWRIGHT).clone().sub(
-                    graph.getProperty(Properties.BB_UPLEFT));
+            KVector size = graph.getProperty(InternalProperties.BB_LOWRIGHT).clone().sub(
+                    graph.getProperty(InternalProperties.BB_UPLEFT));
             if (xpos + size.x > maxRowWidth) {
                 // place the graph into the next row
                 xpos = 0;
@@ -275,7 +273,7 @@ public class ComponentsProcessor {
     private void moveGraph(final TGraph destGraph, final TGraph sourceGraph, final double offsetx,
             final double offsety) {
         KVector graphOffset = new KVector(offsetx, offsety);
-        graphOffset.sub(sourceGraph.getProperty(Properties.BB_UPLEFT));
+        graphOffset.sub(sourceGraph.getProperty(InternalProperties.BB_UPLEFT));
 
         for (TNode node : sourceGraph.getNodes()) {
             node.getPosition().add(graphOffset);

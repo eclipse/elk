@@ -17,9 +17,9 @@ import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.options.Direction;
@@ -74,8 +74,8 @@ public class SausageFolding implements ILayoutProcessor {
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Sausage Folding", 1);
         
-        spacing = graph.getProperty(InternalProperties.SPACING).doubleValue();
-        inLayerSpacing = spacing * graph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
+        spacing = graph.getProperty(Properties.SPACING).doubleValue();
+        inLayerSpacing = spacing * graph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);
 
         // determine the maximal dimensions of layers
         double maxHeight = determineMaximalHeight(graph); // sum of heights of nodes in the layer
@@ -91,9 +91,9 @@ public class SausageFolding implements ILayoutProcessor {
         double desiredAR;
         final Direction dir = graph.getProperty(LayoutOptions.DIRECTION);
         if (dir == Direction.LEFT || dir == Direction.RIGHT || dir == Direction.UNDEFINED) {
-            desiredAR = graph.getProperty(InternalProperties.ASPECT_RATIO).doubleValue();
+            desiredAR = graph.getProperty(Properties.ASPECT_RATIO).doubleValue();
         } else {
-            desiredAR = 1 / graph.getProperty(InternalProperties.ASPECT_RATIO);
+            desiredAR = 1 / graph.getProperty(Properties.ASPECT_RATIO);
         }
         
         double currentAR = sumWidth / maxHeight;

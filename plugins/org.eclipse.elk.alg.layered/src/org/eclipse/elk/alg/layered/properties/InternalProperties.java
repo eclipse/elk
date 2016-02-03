@@ -29,7 +29,6 @@ import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
@@ -373,53 +372,6 @@ public final class InternalProperties {
     public static final IProperty<Spacings> SPACINGS =
             new Property<Spacings>("spacings");
 
-    // /////////////////////////////////////////////////////////////////////////////
-    // OVERWRITTEN PROPERTIES
-
-    /**
-     * Offset of port position to the node border. An offset of 0 means that the port touches its
-     * parent node on the outside, positive offsets move the port away from the node, and negative
-     * offset move the port towards the inside.
-     */
-    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
-
-    /**
-     * Minimal spacing between objects.
-     */
-    public static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
-            20.0f, 1.0f);
-
-    /**
-     * Minimal spacing between ports.
-     */
-    public static final IProperty<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
-            10.0f, 1.0f);
-
-    /**
-     * Spacing to the border of the drawing.
-     */
-    public static final IProperty<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
-
-    /**
-     * Priority of elements. controls how much single edges are emphasized.
-     */
-    public static final IProperty<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
-
-    /**
-     * The aspect ratio for packing connected components.
-     */
-    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
-
-    /**
-     * How to route edges.
-     */
-    public static final IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
-            LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
-
-    // /////////////////////////////////////////////////////////////////////////////
-    // CONSTRUCTOR
 
     /**
      * Hidden default constructor.

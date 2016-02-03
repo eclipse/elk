@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -119,9 +120,9 @@ public final class LGraphAdapters {
             // handle some special cases
             if (prop.equals(LayoutOptions.SPACING)) {
                 // cast is ok, as both properties are Floats
-                return (P) element.getProperty(InternalProperties.SPACING);
-            } else if (prop.equals(LayoutOptions.OFFSET)) {
-                return (P) element.getProperty(InternalProperties.OFFSET);
+                return (P) element.getProperty(Properties.SPACING);
+            } else if (prop.equals(LayoutOptions.PORT_OFFSET)) {
+                return (P) element.getProperty(Properties.PORT_OFFSET);
             }
 
             return element.getProperty(prop);

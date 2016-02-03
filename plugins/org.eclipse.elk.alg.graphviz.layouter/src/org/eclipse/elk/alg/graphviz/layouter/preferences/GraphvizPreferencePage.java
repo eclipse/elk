@@ -12,8 +12,8 @@ package org.eclipse.elk.alg.graphviz.layouter.preferences;
 
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizLayoutProvider;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizTool;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
-import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;
@@ -86,7 +86,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
     public boolean performOk() {
         // dispose all cached Graphviz instances to ensure creation of new processes
         for (LayoutAlgorithmData data : LayoutMetaDataService.getInstance().getAlgorithmData()) {
-            if ("org.eclipse.elk.category.graphviz".equals(data.getCategory())) {
+            if ("Graphviz".equals(data.getBundleName())) {
                 data.getInstancePool().clear();
             }
         }

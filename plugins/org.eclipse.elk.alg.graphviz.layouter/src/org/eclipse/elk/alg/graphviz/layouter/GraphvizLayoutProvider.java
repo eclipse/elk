@@ -124,8 +124,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             progressMonitor.done();
             return;
         }
-        boolean debugMode = parentNode.getData(KShapeLayout.class)
-                .getProperty(LayoutOptions.DEBUG_MODE);
+        boolean debugMode = parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.DEBUG_MODE);
         myCallNo = ++serialCallNo;
 
         // start the graphviz process, or retrieve the previously used process
@@ -135,15 +134,14 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         XtextResourceSet resourceSet = (XtextResourceSet) dotResourceSetProvider.createResourceSet();
         
         // create the dot exporter we'll be using
-        DotExporter dotExporter = new DotExporter();
+        DotExporter dotExporter = new LayoutDotExporter();
 
         // translate the KGraph to Graphviz and write to the process
         IDotTransformationData<KNode, GraphvizModel> transData
                 = new DotTransformationData<KNode, GraphvizModel>();
         transData.setSourceGraph(parentNode);
-        transData.setProperty(DotExporter.USE_EDGE_IDS, true);
-        transData.setProperty(DotExporter.FULL_EXPORT, false);
         transData.setProperty(DotExporter.COMMAND, command);
+        
         dotExporter.transform(transData);
         GraphvizModel graphvizInput = transData.getTargetGraphs().get(0);
         writeDotGraph(graphvizInput, progressMonitor.subTask(1), debugMode, resourceSet);

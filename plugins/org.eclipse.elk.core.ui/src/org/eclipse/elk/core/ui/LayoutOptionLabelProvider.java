@@ -12,10 +12,10 @@ package org.eclipse.elk.core.ui;
 
 import java.util.EnumSet;
 
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
-import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -88,11 +88,11 @@ public class LayoutOptionLabelProvider extends LabelProvider {
                 LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
                 LayoutAlgorithmData algorithmData = layoutDataService.getAlgorithmData((String) element);
                 if (algorithmData != null) {
-                    String categoryName = layoutDataService.getCategoryName(algorithmData.getCategory());
-                    if (categoryName == null) {
+                    String bundleName = algorithmData.getBundleName();
+                    if (bundleName == null) {
                         return algorithmData.getName();
                     } else {
-                        return algorithmData.getName() + " (" + categoryName + ")";
+                        return algorithmData.getName() + " (" + bundleName + ")";
                     }
                 }
                 return Messages.getString("kiml.ui.8");

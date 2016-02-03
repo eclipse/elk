@@ -68,7 +68,7 @@ public class LabelAndNodeSizeProcessor {
      * {@inheritDoc}
      */
     public void process(final GraphAdapter<?> layeredGraph) {
-        final double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
+        final float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
 
         // Iterate over all the graph's nodes
         for (final NodeAdapter<?> node : layeredGraph.getNodes()) {
@@ -906,7 +906,7 @@ public class LabelAndNodeSizeProcessor {
         final KVector nodeSize = node.getSize();
 
         for (final PortAdapter<?> port : node.getPorts()) {
-            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            Float portOffset = port.getProperty(LayoutOptions.PORT_OFFSET);
             if (portOffset == null) {
                 portOffset = 0f;
             }
@@ -944,7 +944,7 @@ public class LabelAndNodeSizeProcessor {
         // coordinate set to the node's current width; the same goes for the y coordinate of
         // southern ports
         for (final PortAdapter<?> port : node.getPorts()) {
-            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            Float portOffset = port.getProperty(LayoutOptions.PORT_OFFSET);
             if (portOffset == null) {
                 portOffset = 0f;
             }
@@ -1005,7 +1005,7 @@ public class LabelAndNodeSizeProcessor {
 
         // Arrange the ports
         for (final PortAdapter<?> port : data.node.getPorts()) {
-            Float portOffset = port.getProperty(LayoutOptions.OFFSET);
+            Float portOffset = port.getProperty(LayoutOptions.PORT_OFFSET);
             if (portOffset == null) {
                 portOffset = 0f;
             }

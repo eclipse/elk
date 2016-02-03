@@ -1,0 +1,56 @@
+module org.eclipse.elk.core.meta.GenerateMetaData
+
+import org.eclipse.xtext.xtext.generator.*
+import org.eclipse.xtext.xtext.generator.model.project.*
+
+var rootPath = ".."
+var fileHeader = "/*******************************************************************************
+ * Copyright (c) 2016 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/"
+
+Workflow {
+	
+	component = XtextGenerator {
+		configuration = {
+			project = StandardProjectConfig {
+				baseName = "org.eclipse.elk.core.meta"
+				rootPath = rootPath
+				genericIde = {
+				    root = "${rootPath}/org.eclipse.elk.core.meta.ui"
+				}
+				eclipsePlugin = {
+					enabled = true
+				}
+				createEclipseMetaData = true
+			}
+			code = {
+				encoding = "UTF-8"
+				fileHeader = fileHeader
+			}
+		}
+		language = StandardLanguage {
+			name = "org.eclipse.elk.core.meta.MetaData"
+			fileExtensions = "elkm"
+            
+            scopeProvider = {
+                generateStub = false
+            }
+			serializer = {
+				generateStub = false
+			}
+			contentAssist = {
+			    generateStub = false
+			}
+			quickFixProvider = {
+			    generateStub = false
+			}
+		}
+	}
+}

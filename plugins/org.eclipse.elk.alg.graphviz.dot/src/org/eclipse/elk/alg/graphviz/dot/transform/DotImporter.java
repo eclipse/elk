@@ -15,6 +15,19 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.elk.alg.graphviz.dot.dot.Attribute;
+import org.eclipse.elk.alg.graphviz.dot.dot.AttributeStatement;
+import org.eclipse.elk.alg.graphviz.dot.dot.AttributeType;
+import org.eclipse.elk.alg.graphviz.dot.dot.DotFactory;
+import org.eclipse.elk.alg.graphviz.dot.dot.EdgeStatement;
+import org.eclipse.elk.alg.graphviz.dot.dot.EdgeTarget;
+import org.eclipse.elk.alg.graphviz.dot.dot.Graph;
+import org.eclipse.elk.alg.graphviz.dot.dot.GraphvizModel;
+import org.eclipse.elk.alg.graphviz.dot.dot.Node;
+import org.eclipse.elk.alg.graphviz.dot.dot.NodeStatement;
+import org.eclipse.elk.alg.graphviz.dot.dot.Statement;
+import org.eclipse.elk.alg.graphviz.dot.dot.Subgraph;
+import org.eclipse.elk.alg.graphviz.dot.dot.util.DotSwitch;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
@@ -35,19 +48,6 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
-import org.eclipse.elk.alg.graphviz.dot.dot.Attribute;
-import org.eclipse.elk.alg.graphviz.dot.dot.AttributeStatement;
-import org.eclipse.elk.alg.graphviz.dot.dot.AttributeType;
-import org.eclipse.elk.alg.graphviz.dot.dot.DotFactory;
-import org.eclipse.elk.alg.graphviz.dot.dot.EdgeStatement;
-import org.eclipse.elk.alg.graphviz.dot.dot.EdgeTarget;
-import org.eclipse.elk.alg.graphviz.dot.dot.Graph;
-import org.eclipse.elk.alg.graphviz.dot.dot.GraphvizModel;
-import org.eclipse.elk.alg.graphviz.dot.dot.Node;
-import org.eclipse.elk.alg.graphviz.dot.dot.NodeStatement;
-import org.eclipse.elk.alg.graphviz.dot.dot.Statement;
-import org.eclipse.elk.alg.graphviz.dot.dot.Subgraph;
-import org.eclipse.elk.alg.graphviz.dot.dot.util.DotSwitch;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.Maps;
@@ -259,38 +259,14 @@ public class DotImporter {
             } else if (Attributes.HEIGHT.equals(name)) {
                 target.setProperty(PROP_DEF_HEIGHT, Float.valueOf(value)
                         * DotExporter.DPI);
-            } else if (Attributes.ASPECT.equals(name)) {
-                int commaIndex = value.indexOf(',');
-                if (commaIndex >= 0) {
-                    value = value.substring(0, commaIndex);
-                }
-                target.setProperty(LayoutOptions.ASPECT_RATIO, Float.valueOf(value));
             } else if (Attributes.FIXEDSIZE.equals(name)) {
                 Boolean fixedSize = Boolean.valueOf(value);
                 target.setProperty(LayoutOptions.SIZE_CONSTRAINT,
                         fixedSize ? SizeConstraint.fixed() : EnumSet.of(SizeConstraint.MINIMUM_SIZE));
-            } else if (Attributes.CONCENTRATE.equals(name)) {
-                target.setProperty(Attributes.CONCENTRATE_PROP, Boolean.valueOf(value));
-            } else if (Attributes.DAMPING.equals(name)) {
-                target.setProperty(Attributes.DAMPING_PROP, Float.valueOf(value));
-            } else if (Attributes.EPSILON.equals(name)) {
-                target.setProperty(Attributes.EPSILON_PROP, Float.valueOf(value));
-            } else if (Attributes.LABELDISTANCE.equals(name)) {
-                target.setProperty(Attributes.LABEL_DISTANCE_PROP, Float.valueOf(value));
-            } else if (Attributes.LABELANGLE.equals(name)) {
-                target.setProperty(Attributes.LABEL_ANGLE_PROP, Float.valueOf(value));
-            } else if (Attributes.MAXITER.equals(name)) {
-                target.setProperty(Attributes.MAXITER_PROP, Integer.valueOf(value));
-            } else if (Attributes.CROSSMIN_LIMIT.equals(name)) {
-                target.setProperty(Attributes.ITER_LIMIT_PROP, Float.valueOf(value));
-            } else if (Attributes.NEATO_MODEL.equals(name)) {
-                target.setProperty(Attributes.NEATO_MODEL_PROP, NeatoModel.parse(value));
             } else if (Attributes.NODESEP.equals(name)) {
                 target.setProperty(LayoutOptions.SPACING, Float.valueOf(value));
-            } else if (Attributes.OVERLAP.equals(name)) {
-                target.setProperty(Attributes.OVERLAP_PROP, OverlapMode.parse(value));
             } else if (Attributes.PACK.equals(name)) {
-                target.setProperty(LayoutOptions.SEPARATE_CC, Boolean.valueOf(value));
+                target.setProperty(LayoutOptions.SEPARATE_CONN_COMP, Boolean.valueOf(value));
             } else if (Attributes.PAD.equals(name)) {
                 if (value.indexOf(',') >= 0) {
                     KVector pad = new KVector();
@@ -308,10 +284,6 @@ public class DotImporter {
                     target.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
                 } else if (value.equals("RL")) {
                     target.setProperty(LayoutOptions.DIRECTION, Direction.LEFT);
-                }
-            } else if (Attributes.RANKSEP.equals(name)) {
-                if (target.getProperty(LayoutOptions.SPACING) <= 0) {
-                    target.setProperty(LayoutOptions.SPACING, Float.valueOf(value));
                 }
             } else if (Attributes.SPLINES.equals(name)) {
                 if (value.equals("spline") || value.equals("true")) {

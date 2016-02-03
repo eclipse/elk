@@ -1,0 +1,85 @@
+/*******************************************************************************
+ * Copyright (c) 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    spoenemann - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.alg.force
+
+import org.eclipse.elk.alg.force.ForceLayoutProvider
+import org.eclipse.elk.alg.force.model.ForceModelStrategy
+
+/**
+ * Declarations for the ELK Force layout algorithm.
+ */
+bundle {
+    class = properties.Properties
+}
+
+algorithm Force(ForceLayoutProvider) {
+    label = "ELK Force"
+    description =
+        "Force-based algorithm provided by the Eclipse Layout Kernel. Implements methods that
+        follow physical analogies by simulating forces that move the nodes into a balanced
+        distribution. Currently the original Eades model and the Fruchterman - Reingold model are
+        supported."
+    category = org.eclipse.elk.Force
+    features = multi_edges, edge_labels
+    preview = images/force.png
+    supports org.eclipse.elk.priority = 1 duplicated
+    supports org.eclipse.elk.spacing = 80 duplicated
+    supports org.eclipse.elk.borderSpacing = 50 duplicated
+    supports org.eclipse.elk.labelSpacing = 5 duplicated
+    supports org.eclipse.elk.aspectRatio = 1.6f duplicated
+    supports org.eclipse.elk.randomSeed = 1
+    supports org.eclipse.elk.separateConnComp = true
+    supports org.eclipse.elk.interactive
+    supports model
+    supports temperature
+    supports iterations
+    supports repulsion
+    supports repulsivePower
+}
+
+property model: ForceModelStrategy {
+    label = "Force Model"
+    description = "Determines the model for force calculation."
+    default = ForceModelStrategy.FRUCHTERMAN_REINGOLD
+    targets = parents
+}
+
+property iterations: int {
+    label = "Iterations"
+    description = "The number of iterations on the force model."
+    default = 300
+    targets = parents
+}
+
+property repulsivePower: int {
+    label = "Repulsive Power"
+    description =
+        "Determines how many bend points are added to the edge; such bend points are regarded as
+        repelling particles in the force model"
+    default = 0
+    targets = edges
+}
+
+property temperature: float {
+    label = "FR Temperature"
+    description = "The temperature is used as a scaling factor for particle displacements."
+    default = 0.001f
+    targets = parents
+    requires model == ForceModelStrategy.FRUCHTERMAN_REINGOLD
+}
+
+property repulsion: float {
+    label = "Eades Repulsion"
+    description = "Factor for repulsive forces in Eades' model."
+    default = 5.0f
+    targets = parents
+    requires model == ForceModelStrategy.EADES
+}

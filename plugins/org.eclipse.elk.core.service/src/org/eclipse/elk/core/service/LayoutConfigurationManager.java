@@ -16,13 +16,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.core.ILayoutAlgorithmData;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
 
@@ -53,7 +52,7 @@ public class LayoutConfigurationManager {
          * {@inheritDoc}
          */
         @Override
-        protected ILayoutAlgorithmData getAlgorithm(final String algorithmId) {
+        protected LayoutAlgorithmData getAlgorithm(final String algorithmId) {
             return configManager.getAlgorithm(algorithmId);
         }
         

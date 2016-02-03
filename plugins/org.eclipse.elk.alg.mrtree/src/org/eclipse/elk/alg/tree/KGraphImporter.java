@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.elk.alg.tree.graph.TEdge;
 import org.eclipse.elk.alg.tree.graph.TGraph;
 import org.eclipse.elk.alg.tree.graph.TNode;
+import org.eclipse.elk.alg.tree.properties.InternalProperties;
 import org.eclipse.elk.alg.tree.properties.Properties;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
@@ -47,8 +48,9 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // copy the properties of the KGraph to the t-graph
         KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
         tGraph.copyProperties(sourceShapeLayout);
-        tGraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO);
-        tGraph.setProperty(Properties.ORIGIN, kgraph);
+        // TODO Find a new concept for checking validity of bounds
+//        tGraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO);
+        tGraph.setProperty(InternalProperties.ORIGIN, kgraph);
 
         // keep a list of created nodes in the t-graph
         Map<KNode, TNode> elemMap = new HashMap<KNode, TNode>();
@@ -87,7 +89,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             // create new tNode
             TNode newNode = new TNode(index++, tGraph, label);
             newNode.copyProperties(nodeLayout);
-            newNode.setProperty(Properties.ORIGIN, knode);
+            newNode.setProperty(InternalProperties.ORIGIN, knode);
             
             newNode.getPosition().y = nodeLayout.getYpos() + nodeLayout.getHeight() / 2;
             newNode.getSize().x = Math.max(nodeLayout.getWidth(), 1);
@@ -127,7 +129,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                     if (source != null && target != null) {
                         // create a edge and add edge to tGraph
                         TEdge newEdge = new TEdge(source, target);
-                        newEdge.setProperty(Properties.ORIGIN, kedge);
+                        newEdge.setProperty(InternalProperties.ORIGIN, kedge);
 
                         // TODO transform the edge's labels
 
@@ -153,16 +155,16 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      */
     public void applyLayout(final TGraph tGraph) {
         // get the corresponding kGraph
-        KNode kgraph = (KNode) tGraph.getProperty(Properties.ORIGIN);
+        KNode kgraph = (KNode) tGraph.getProperty(InternalProperties.ORIGIN);
 
         // determine the border spacing, which influences the offset
         KShapeLayout graphLayout = kgraph.getData(KShapeLayout.class);
 
         // check border spacing and update if necessary
-        float borderSpacing = tGraph.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = tGraph.getProperty(Properties.BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = Properties.SPACING.getDefault();
-            tGraph.setProperty(LayoutOptions.BORDER_SPACING, borderSpacing);
+            tGraph.setProperty(Properties.BORDER_SPACING, borderSpacing);
         }
 
         // calculate the offset from border spacing and node distribution
@@ -180,7 +182,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         // process the nodes
         for (TNode tNode : tGraph.getNodes()) {
-            Object object = tNode.getProperty(Properties.ORIGIN);
+            Object object = tNode.getProperty(InternalProperties.ORIGIN);
             if (object instanceof KNode) {
                 // set the node position
                 KNode knode = (KNode) object;
@@ -193,7 +195,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
 
         // process the edges
         for (TEdge tEdge : tGraph.getEdges()) {
-            KEdge kedge = (KEdge) tEdge.getProperty(Properties.ORIGIN);
+            KEdge kedge = (KEdge) tEdge.getProperty(InternalProperties.ORIGIN);
             if (kedge != null) {
 
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);

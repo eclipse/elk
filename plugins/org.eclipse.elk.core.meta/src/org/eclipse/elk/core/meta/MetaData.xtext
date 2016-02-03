@@ -1,0 +1,86 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
+grammar org.eclipse.elk.core.meta.MetaData with org.eclipse.xtext.xbase.Xbase
+
+generate metaData "http://www.eclipse.org/elk/core/meta/MetaData"
+
+MdModel:
+    (
+        'package' name=QualifiedName
+        importSection=XImportSection?
+    	bundle=MdBundle
+    )?;
+
+MdBundle:
+    {MdBundle}
+    (
+        'bundle' '{'
+            (
+                ('label' '=' label=STRING)?
+                & ('class' '=' targetClass=QualifiedName)?
+            )
+        '}'
+    )?
+    members+=MdBundleMember*;
+
+MdBundleMember:
+    MdProperty | MdAlgorithm | MdCategory;
+
+MdProperty:
+    deprecated?='deprecated'?
+    (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
+    'property' name=ID (':' type=JvmTypeReference)? '{'
+        (
+            ('label' '=' label=STRING)?
+            & ('description' '=' description=STRING)?
+            & ('default' '=' defaultValue=XExpression)?
+            & ('targets' '=' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
+        )
+        (dependencies+=MdPropertyDependency)*
+    '}';
+
+MdPropertyDependency:
+    'requires' target=[MdProperty|QualifiedName] ('==' value=XExpression)?;
+
+MdAlgorithm:
+    deprecated?='deprecated'?
+    'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{'
+        (
+            ('label' '=' label=STRING)?
+            & ('description' '=' description=STRING)?
+            & ('category' '=' category=[MdCategory|QualifiedName])?
+            & ('preview' '=' previewImage=Path)?
+            & ('features' '=' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
+        )
+        (supportedOptions+=MdPropertySupport)*
+    '}';
+
+MdCategory:
+    deprecated?='deprecated'?
+    'category' name=ID '{'
+        (
+            ('label' '=' label=STRING)?
+            & ('description' '=' description=STRING)?
+        )
+    '}';
+
+MdPropertySupport:
+    'supports' property=[MdProperty|QualifiedName] ('=' value=XExpression duplicated?='duplicated'?)?;
+
+Path:
+    QualifiedName ('/' QualifiedName)*;
+
+enum MdPropertyTargetType:
+    parents | nodes | edges | ports | labels;
+
+enum MdGraphFeature:
+    self_loops | inside_self_loops | multi_edges | edge_labels | ports | compound
+    | clusters | disconnected;

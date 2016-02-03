@@ -14,11 +14,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
-import org.eclipse.elk.core.service.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.service.data.LayoutOptionData;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.util.ElkUiUtil;

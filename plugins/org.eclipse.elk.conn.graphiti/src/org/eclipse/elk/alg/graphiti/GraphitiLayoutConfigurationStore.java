@@ -17,9 +17,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.data.LayoutOptionData.Target;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
-import org.eclipse.elk.core.service.data.LayoutOptionData;
-import org.eclipse.elk.core.service.data.LayoutOptionData.Target;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.graphiti.mm.MmFactory;
 import org.eclipse.graphiti.mm.Property;

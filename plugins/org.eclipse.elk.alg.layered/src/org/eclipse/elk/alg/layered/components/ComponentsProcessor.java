@@ -85,7 +85,7 @@ public final class ComponentsProcessor {
         graphPlacer = simpleRowGraphPlacer;
         
         // Whether separate components processing is requested
-        Boolean separateProperty = graph.getProperty(LayoutOptions.SEPARATE_CC);
+        Boolean separateProperty = graph.getProperty(LayoutOptions.SEPARATE_CONN_COMP);
         boolean separate = separateProperty == null || separateProperty.booleanValue();
         
         // Whether the graph contains external ports

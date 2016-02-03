@@ -13,6 +13,7 @@ package org.eclipse.elk.core;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
@@ -90,7 +91,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         if (hasChildren || hasInsideSelfLoops) {
             // this node has children and is thus a compound node;
             // fetch the layout algorithm that should be used to compute a layout for its content
-            final ILayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
+            final LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
             final boolean supportsInsideSelfLoops = algorithmData.supportsFeature(
                     GraphFeature.INSIDE_SELF_LOOPS);
             
@@ -167,10 +168,10 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param layoutNode node for which a layout provider is requested
      * @return a layout algorithm that fits the layout hints for the given node
      */
-    protected ILayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
+    protected LayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String algorithmId = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
-        ILayoutAlgorithmData result = getAlgorithm(algorithmId);
+        LayoutAlgorithmData result = getAlgorithm(algorithmId);
         if (result == null) {
             if (algorithmId == null || algorithmId.isEmpty()) {
                 throw new UnsupportedConfigurationException("No layout algorithm has been specified ("
@@ -188,7 +189,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param algorithmId an algorithm identifier, or {@code null} to get a default algorithm
      * @return a matching algorithm or default algorithm
      */
-    protected abstract ILayoutAlgorithmData getAlgorithm(final String algorithmId);
+    protected abstract LayoutAlgorithmData getAlgorithm(final String algorithmId);
 
     /**
      * Determines the total number of layout nodes in the given layout graph.
