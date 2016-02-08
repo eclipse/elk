@@ -117,9 +117,7 @@
     <module name="JavadocStyle">
       <property name="checkHtml" value="false" />
     </module>
-    <module name="JavadocType">
-      <property name="authorFormat" value="\S*" />
-    </module>
+    <module name="JavadocType" />
 
 
     <!-- Checks for Naming Conventions. -->
