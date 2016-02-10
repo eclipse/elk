@@ -4,5 +4,6 @@ bin/
 .checkstyle
 .svn/
 target/
+xtend-gen/
 *.pdf
 *_trace
