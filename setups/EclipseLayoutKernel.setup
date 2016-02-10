@@ -162,6 +162,25 @@
       <targlet
           name="${scope.project.label}"
           activeRepositoryList="${eclipse.target.platform}">
+        <annotation
+            source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator_DISABLED">
+          <detail
+              key="location">
+            <value>${git.clone.location}/build/org.eclipse.elk.targetplatform/org.eclipse.elk.targetplatform.target</value>
+          </detail>
+          <detail
+              key="preferredRepositories">
+            <value>http://download.eclipse.org/eclipse/updates/</value>
+          </detail>
+          <detail
+              key="includeAllPlatforms">
+            <value>false</value>
+          </detail>
+          <detail
+              key="includeSource">
+            <value>false</value>
+          </detail>
+        </annotation>
         <requirement
             name="org.eclipse.sdk.feature.group"/>
         <requirement
