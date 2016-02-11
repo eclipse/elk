@@ -26,6 +26,8 @@
     <module>org.eclipse.elk.conn.gmf</module>
     <module>org.eclipse.elk.conn.graphiti</module>
     <module>org.eclipse.elk.core</module>
+    <module>org.eclipse.elk.core.meta</module>
+    <module>org.eclipse.elk.core.meta.ui</module>
     <module>org.eclipse.elk.core.service</module>
     <module>org.eclipse.elk.core.ui</module>
     <module>org.eclipse.elk.graph</module>
