@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.elk.core.service.layoutProviders">
       <provider
-            class="org.eclipse.elk.alg.tree.properties.Properties">
+            class="org.eclipse.elk.alg.mrtree.properties.Properties">
       </provider>
       
    </extension>

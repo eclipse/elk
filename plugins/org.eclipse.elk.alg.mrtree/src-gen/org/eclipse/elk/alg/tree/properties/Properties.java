@@ -11,9 +11,10 @@
 package org.eclipse.elk.alg.tree.properties;
 
 import java.util.EnumSet;
-import org.eclipse.elk.alg.tree.TreeLayoutProvider;
-import org.eclipse.elk.alg.tree.properties.OrderWeighting;
-import org.eclipse.elk.alg.tree.properties.TreeifyingOrder;
+
+import org.eclipse.elk.alg.mrtree.TreeLayoutProvider;
+import org.eclipse.elk.alg.mrtree.properties.OrderWeighting;
+import org.eclipse.elk.alg.mrtree.properties.TreeifyingOrder;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
@@ -38,7 +39,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Which weighting to use when computing a node order.
    */
   public final static IProperty<OrderWeighting> WEIGHTING = new Property<OrderWeighting>(
-            "org.eclipse.elk.alg.tree.weighting",
+            "org.eclipse.elk.alg.mrtree.weighting",
             WEIGHTING_DEFAULT);
   
   /**
@@ -50,7 +51,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Which search order to use when computing a spanning tree.
    */
   public final static IProperty<TreeifyingOrder> SEARCH_ORDER = new Property<TreeifyingOrder>(
-            "org.eclipse.elk.alg.tree.searchOrder",
+            "org.eclipse.elk.alg.mrtree.searchOrder",
             SEARCH_ORDER_DEFAULT);
   
   /**
@@ -113,7 +114,7 @@ public class Properties implements ILayoutMetaDataProvider {
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.tree.weighting",
+        "org.eclipse.elk.alg.mrtree.weighting",
         "Weighting of Nodes",
         "Which weighting to use when computing a node order.",
         WEIGHTING_DEFAULT,
@@ -122,7 +123,7 @@ public class Properties implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.tree.searchOrder",
+        "org.eclipse.elk.alg.mrtree.searchOrder",
         "Search Order",
         "Which search order to use when computing a spanning tree.",
         SEARCH_ORDER_DEFAULT,
@@ -131,7 +132,7 @@ public class Properties implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.alg.mrtree.MrTree",
         "ELK Mr. Tree",
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of the input graph and arranges all nodes according to the resulting parent-children hierarchy. I pity the fool who doesn\'t use Mr. Tree Layout.",
         new AlgorithmFactory(TreeLayoutProvider.class, ""),
@@ -141,48 +142,48 @@ public class Properties implements ILayoutMetaDataProvider {
         EnumSet.of(GraphFeature.DISCONNECTED)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.alg.mrtree.MrTree",
         "org.eclipse.elk.spacing",
         MR_TREE_SUP_SPACING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.alg.mrtree.MrTree",
         "org.eclipse.elk.borderSpacing",
         MR_TREE_SUP_BORDER_SPACING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.alg.mrtree.MrTree",
         "org.eclipse.elk.aspectRatio",
         MR_TREE_SUP_ASPECT_RATIO
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.alg.mrtree.MrTree",
         "org.eclipse.elk.priority",
         MR_TREE_SUP_PRIORITY
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.alg.mrtree.MrTree",
         "org.eclipse.elk.separateConnComp",
         MR_TREE_SUP_SEPARATE_CONN_COMP
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.alg.mrtree.MrTree",
         "org.eclipse.elk.direction",
         MR_TREE_SUP_DIRECTION
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
+        "org.eclipse.elk.alg.mrtree.MrTree",
         "org.eclipse.elk.debugMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
-        "org.eclipse.elk.alg.tree.weighting",
+        "org.eclipse.elk.alg.mrtree.MrTree",
+        "org.eclipse.elk.alg.mrtree.weighting",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.tree.MrTree",
-        "org.eclipse.elk.alg.tree.searchOrder",
+        "org.eclipse.elk.alg.mrtree.MrTree",
+        "org.eclipse.elk.alg.mrtree.searchOrder",
         null
     );
   }
