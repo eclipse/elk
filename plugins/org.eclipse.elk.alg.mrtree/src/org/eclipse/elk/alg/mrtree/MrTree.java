@@ -48,7 +48,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @author sor
  * @author sgu
  */
-public final class KlayTree {
+public final class MrTree {
 
     // /////////////////////////////////////////////////////////////////////////////
     // Variables

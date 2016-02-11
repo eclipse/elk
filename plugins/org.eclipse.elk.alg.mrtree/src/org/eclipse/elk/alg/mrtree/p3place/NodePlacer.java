@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.mrtree.properties.Properties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;

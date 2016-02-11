@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.properties;
 
-import org.eclipse.elk.alg.tree.properties.Properties;
-
 /**
  * An enumeration of properties a graph may have. These can be used as part of an {@code EnumSet} to
  * base decisions on graph properties. For example, self-loop processing may be skipped if the graph

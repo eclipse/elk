@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
-import org.eclipse.elk.alg.tree.properties.Properties;
+import org.eclipse.elk.alg.mrtree.properties.Properties;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;

@@ -33,7 +33,7 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
     // Variables
 
     /** the layout algorithm used for this layout. */
-    private KlayTree klayTree = new KlayTree();
+    private MrTree klayTree = new MrTree();
     /** connected components processor. */
     private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
 
