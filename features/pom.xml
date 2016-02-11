@@ -17,6 +17,7 @@
   <!-- all features are listed as modules -->
   <modules>
     <module>org.eclipse.elk.feature</module>
+    <module>org.eclipse.elk.sdk.feature</module>
     <module>org.eclipse.elk.gmf.feature</module>
     <module>org.eclipse.elk.graphiti.feature</module>
     <module>org.eclipse.elk.graphviz.feature</module>

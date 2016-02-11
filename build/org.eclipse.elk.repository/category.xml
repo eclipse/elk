@@ -20,6 +20,13 @@
       <category name="elk"/>
    </feature>
 
+   <feature url="features/org.eclipse.elk.sdk_0.1.0.qualifier.jar" id="org.eclipse.elk.sdk.feature" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+   <feature url="features/org.eclipse.elk.sdk.source_0.1.0.qualifier.jar" id="org.eclipse.elk.sdk.feature.source" version="0.1.0.qualifier">
+      <category name="elk"/>
+   </feature>
+
    <feature url="features/org.eclipse.elk.gmf_0.1.0.qualifier.jar" id="org.eclipse.elk.gmf.feature" version="0.1.0.qualifier">
       <category name="elk"/>
    </feature>
