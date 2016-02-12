@@ -43,6 +43,7 @@ MdProperty:
             & ('description' '=' description=STRING)?
             & ('default' '=' defaultValue=XExpression)?
             & ('targets' '=' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
+            & ('legacyIds' '=' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
         )
         (dependencies+=MdPropertyDependency)*
     '}';

@@ -215,6 +215,9 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 «ELSE»
                     «LayoutOptionData».Visibility.VISIBLE
                 «ENDIF»
+                «IF !property.legacyIds.empty»
+                    «property.legacyIds.map[', "' + it + '"'].join»
+                «ENDIF»
             ));
             «FOR dependency : property.dependencies»
                 registry.addDependency(

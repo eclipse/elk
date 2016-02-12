@@ -77,6 +77,8 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
 
     /** identifier of the layout option. */
     private final String id;
+    /** legacy identifiers of this option. */
+    private final String[] legacyIds;
     /** the default value of this option. */
     private final Object defaultValue;
     /** the class that represents this option type. */
@@ -99,8 +101,12 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     /**
      * Create a layout option data entry.
      */
-    public LayoutOptionData(final String aid, final String aname, final String adescription, final Object adefaultValue,
-            final Class<?> atype, final Set<Target> atargets, final Visibility avisibility) {
+    // SUPPRESS CHECKSTYLE NEXT ParameterNumber
+    public LayoutOptionData(final String aid,
+            final String aname, final String adescription, final Object adefaultValue,
+            final Class<?> atype, final Set<Target> atargets, 
+            final Visibility avisibility, 
+            final String... alegacyIds) {
         this.id = aid;
         this.name = aname;
         this.description = adescription;
@@ -112,6 +118,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
             this.targets = atargets;
         }
         this.visibility = avisibility;
+        this.legacyIds = alegacyIds;
         if (atype == Boolean.class || atype == boolean.class) {
             this.type = Type.BOOLEAN;
         } else if (atype == Integer.class || atype == int.class) {
@@ -504,4 +511,11 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         return visibility;
     }
 
+    /**
+     * @return the legacyIds, may be {@code null}
+     */
+    public String[] getLegacyIds() {
+        return legacyIds;
+    }
+    
 }

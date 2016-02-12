@@ -286,6 +286,11 @@ public class LayoutMetaDataService {
         @Override
         public void register(final LayoutOptionData optionData) {
             layoutOptionMap.put(optionData.getId(), optionData);
+            if (optionData.getLegacyIds() != null) {
+                for (String legacyId : optionData.getLegacyIds()) {
+                    layoutOptionMap.put(legacyId, optionData);
+                }
+            }
         }
 
         @Override
