@@ -34,6 +34,7 @@ import org.eclipse.xtext.xbase.XExpression;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDefaultValue <em>Default Value</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getTargets <em>Targets</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLegacyIds <em>Legacy Ids</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDependencies <em>Dependencies</em>}</li>
  * </ul>
  *
@@ -216,6 +217,22 @@ public interface MdProperty extends MdBundleMember
    * @generated
    */
   EList<MdPropertyTargetType> getTargets();
+
+  /**
+   * Returns the value of the '<em><b>Legacy Ids</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Legacy Ids</em>' attribute list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Legacy Ids</em>' attribute list.
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_LegacyIds()
+   * @model unique="false"
+   * @generated
+   */
+  EList<String> getLegacyIds();
 
   /**
    * Returns the value of the '<em><b>Dependencies</b></em>' containment reference list.

@@ -52,6 +52,7 @@ import org.eclipse.xtext.xbase.XExpression;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDefaultValue <em>Default Value</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getTargets <em>Targets</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getLegacyIds <em>Legacy Ids</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDependencies <em>Dependencies</em>}</li>
  * </ul>
  *
@@ -168,6 +169,16 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
    * @ordered
    */
   protected EList<MdPropertyTargetType> targets;
+
+  /**
+   * The cached value of the '{@link #getLegacyIds() <em>Legacy Ids</em>}' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLegacyIds()
+   * @generated
+   * @ordered
+   */
+  protected EList<String> legacyIds;
 
   /**
    * The cached value of the '{@link #getDependencies() <em>Dependencies</em>}' containment reference list.
@@ -407,6 +418,20 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<String> getLegacyIds()
+  {
+    if (legacyIds == null)
+    {
+      legacyIds = new EDataTypeEList<String>(String.class, this, MetaDataPackage.MD_PROPERTY__LEGACY_IDS);
+    }
+    return legacyIds;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<MdPropertyDependency> getDependencies()
   {
     if (dependencies == null)
@@ -460,6 +485,8 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
         return getDefaultValue();
       case MetaDataPackage.MD_PROPERTY__TARGETS:
         return getTargets();
+      case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
+        return getLegacyIds();
       case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
         return getDependencies();
     }
@@ -498,6 +525,10 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
       case MetaDataPackage.MD_PROPERTY__TARGETS:
         getTargets().clear();
         getTargets().addAll((Collection<? extends MdPropertyTargetType>)newValue);
+        return;
+      case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
+        getLegacyIds().clear();
+        getLegacyIds().addAll((Collection<? extends String>)newValue);
         return;
       case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
         getDependencies().clear();
@@ -538,6 +569,9 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
       case MetaDataPackage.MD_PROPERTY__TARGETS:
         getTargets().clear();
         return;
+      case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
+        getLegacyIds().clear();
+        return;
       case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
         getDependencies().clear();
         return;
@@ -569,6 +603,8 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
         return defaultValue != null;
       case MetaDataPackage.MD_PROPERTY__TARGETS:
         return targets != null && !targets.isEmpty();
+      case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
+        return legacyIds != null && !legacyIds.isEmpty();
       case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
         return dependencies != null && !dependencies.isEmpty();
     }
@@ -596,6 +632,8 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
     result.append(global);
     result.append(", targets: ");
     result.append(targets);
+    result.append(", legacyIds: ");
+    result.append(legacyIds);
     result.append(')');
     return result.toString();
   }

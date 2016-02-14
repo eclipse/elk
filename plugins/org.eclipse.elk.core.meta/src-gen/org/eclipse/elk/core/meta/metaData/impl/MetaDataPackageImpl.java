@@ -399,9 +399,19 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getMdProperty_LegacyIds()
+  {
+    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getMdProperty_Dependencies()
   {
-    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(7);
+    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -628,6 +638,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     createEReference(mdPropertyEClass, MD_PROPERTY__TYPE);
     createEReference(mdPropertyEClass, MD_PROPERTY__DEFAULT_VALUE);
     createEAttribute(mdPropertyEClass, MD_PROPERTY__TARGETS);
+    createEAttribute(mdPropertyEClass, MD_PROPERTY__LEGACY_IDS);
     createEReference(mdPropertyEClass, MD_PROPERTY__DEPENDENCIES);
 
     mdPropertyDependencyEClass = createEClass(MD_PROPERTY_DEPENDENCY);
@@ -717,6 +728,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     initEReference(getMdProperty_Type(), theTypesPackage.getJvmTypeReference(), null, "type", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMdProperty_DefaultValue(), theXbasePackage.getXExpression(), null, "defaultValue", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdProperty_Targets(), this.getMdPropertyTargetType(), "targets", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdProperty_LegacyIds(), ecorePackage.getEString(), "legacyIds", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMdProperty_Dependencies(), this.getMdPropertyDependency(), null, "dependencies", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(mdPropertyDependencyEClass, MdPropertyDependency.class, "MdPropertyDependency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

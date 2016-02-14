@@ -448,7 +448,11 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *         (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')? 
 	 *         name=ID 
 	 *         type=JvmTypeReference? 
-	 *         ((label=STRING | description=STRING | defaultValue=XExpression)? (targets+=MdPropertyTargetType targets+=MdPropertyTargetType*)?)+ 
+	 *         (
+	 *             (label=STRING | description=STRING | defaultValue=XExpression)? 
+	 *             (targets+=MdPropertyTargetType targets+=MdPropertyTargetType*)? 
+	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)?
+	 *         )+ 
 	 *         dependencies+=MdPropertyDependency*
 	 *     )
 	 */

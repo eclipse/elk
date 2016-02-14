@@ -324,13 +324,22 @@ public interface MetaDataPackage extends EPackage
   int MD_PROPERTY__TARGETS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 6;
 
   /**
+   * The feature id for the '<em><b>Legacy Ids</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_PROPERTY__LEGACY_IDS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 7;
+
+  /**
    * The feature id for the '<em><b>Dependencies</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__DEPENDENCIES = MD_BUNDLE_MEMBER_FEATURE_COUNT + 7;
+  int MD_PROPERTY__DEPENDENCIES = MD_BUNDLE_MEMBER_FEATURE_COUNT + 8;
 
   /**
    * The number of structural features of the '<em>Md Property</em>' class.
@@ -339,7 +348,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 8;
+  int MD_PROPERTY_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 9;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyDependencyImpl <em>Md Property Dependency</em>}' class.
@@ -837,6 +846,17 @@ public interface MetaDataPackage extends EPackage
   EAttribute getMdProperty_Targets();
 
   /**
+   * Returns the meta object for the attribute list '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLegacyIds <em>Legacy Ids</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Legacy Ids</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdProperty#getLegacyIds()
+   * @see #getMdProperty()
+   * @generated
+   */
+  EAttribute getMdProperty_LegacyIds();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDependencies <em>Dependencies</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1226,6 +1246,14 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EAttribute MD_PROPERTY__TARGETS = eINSTANCE.getMdProperty_Targets();
+
+    /**
+     * The meta object literal for the '<em><b>Legacy Ids</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_PROPERTY__LEGACY_IDS = eINSTANCE.getMdProperty_LegacyIds();
 
     /**
      * The meta object literal for the '<em><b>Dependencies</b></em>' containment reference list feature.
