@@ -26,6 +26,7 @@ import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.alg.layered.properties.Spacings;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LayoutOptions;
 
 import com.google.common.collect.Lists;
@@ -282,6 +283,28 @@ final class GraphConfigurator {
             configuration
                 .addBeforePhase1(IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
                 .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
+        }
+        
+        // Node-Promotion application for reduction of dummy nodes after layering
+        if (lgraph.getProperty(Properties.NODE_PROMOTION) != NodePromotionStrategy.NONE) {
+            configuration.addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
+        }
+
+        // Preserve certain partitions during layering
+        if (graphProperties.contains(GraphProperties.PARTITIONS)) {
+            configuration.addBeforePhase1(IntermediateProcessorStrategy.PARTITION_PREPROCESSOR);
+            configuration.addBeforePhase3(IntermediateProcessorStrategy.PARTITION_POSTPROCESSOR);
+        }
+        
+        // Additional horizontal compaction depends on orthogonal edge routing
+        if (lgraph.getProperty(Properties.POST_COMPACTION) != GraphCompactionStrategy.NONE
+              && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+            configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
+        }
+        
+        // Move trees of high degree nodes to separate layers
+        if (lgraph.getProperty(Properties.HIGH_DEGREE_NODE_TREATMENT)) {
+            configuration.addBeforePhase3(IntermediateProcessorStrategy.HIGH_DEGREE_NODE_LAYER_PROCESSOR);
         }
 
         return configuration;

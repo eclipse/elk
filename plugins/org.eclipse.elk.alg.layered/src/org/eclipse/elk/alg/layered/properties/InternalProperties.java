@@ -191,6 +191,7 @@ public final class InternalProperties {
     public static final IProperty<LNode> PORT_DUMMY = new Property<LNode>("portDummy");
 
     /**
+     * TODO remove
      * The node group of an LNode as used in the crossing minimization phase.
      */
     public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
@@ -372,6 +373,13 @@ public final class InternalProperties {
     public static final IProperty<Spacings> SPACINGS =
             new Property<Spacings>("spacings");
 
+    /**
+     * Specifies if the corresponding LGraph element was added by the
+     * {@link de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor
+     * PartitionPreprocessor}.
+     */
+    public static final IProperty<Boolean> PARTITION_DUMMY = new Property<Boolean>(
+            "partitionConstraint", false);
 
     /**
      * Hidden default constructor.
