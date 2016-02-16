@@ -21,8 +21,10 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
+import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.EdgeType;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortConstraints;
@@ -108,6 +110,18 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             DIRECTION_DEFAULT);
   
   /**
+   * Default value for {@link #EDGE_LABEL_PLACEMENT_STRATEGY}.
+   */
+  private final static EdgeLabelPlacementStrategy EDGE_LABEL_PLACEMENT_STRATEGY_DEFAULT = EdgeLabelPlacementStrategy.CENTER;
+  
+  /**
+   * Determines in which layer center labels of long edges should be placed.
+   */
+  public final static IProperty<EdgeLabelPlacementStrategy> EDGE_LABEL_PLACEMENT_STRATEGY = new Property<EdgeLabelPlacementStrategy>(
+            "org.eclipse.elk.edgeLabelPlacementStrategy",
+            EDGE_LABEL_PLACEMENT_STRATEGY_DEFAULT);
+  
+  /**
    * Default value for {@link #EDGE_ROUTING}.
    */
   private final static EdgeRouting EDGE_ROUTING_DEFAULT = EdgeRouting.UNDEFINED;
@@ -133,6 +147,20 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Boolean> EXPAND_NODES = new Property<Boolean>(
             "org.eclipse.elk.expandNodes",
             EXPAND_NODES_DEFAULT);
+  
+  /**
+   * Default value for {@link #HIERARCHY_HANDLING}.
+   */
+  private final static HierarchyHandling HIERARCHY_HANDLING_DEFAULT = HierarchyHandling.INHERIT;
+  
+  /**
+   * Determines whether the descendants should be layouted separately or together with their
+   * parents. If the root node is set to inherit (or not set at all), the property is assumed
+   * as SEPARATE_CHILDREN.
+   */
+  public final static IProperty<HierarchyHandling> HIERARCHY_HANDLING = new Property<HierarchyHandling>(
+            "org.eclipse.elk.hierarchyHandling",
+            HIERARCHY_HANDLING_DEFAULT);
   
   /**
    * Default value for {@link #INTERACTIVE}.
@@ -175,6 +203,37 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             "org.eclipse.elk.layoutHierarchy",
             LAYOUT_HIERARCHY_DEFAULT);
+  
+  /**
+   * Partition to which the node belongs to. If 'layoutPartitions' is true,
+   * all nodes are expected to have a partition.
+   */
+  public final static IProperty<Integer> LAYOUT_PARTITION = new Property<Integer>(
+            "org.eclipse.elk.layoutPartition");
+  
+  /**
+   * Default value for {@link #LAYOUT_PARTITIONS}.
+   */
+  private final static Boolean LAYOUT_PARTITIONS_DEFAULT = Boolean.valueOf(false);
+  
+  /**
+   * Whether to activate partitioned layout.
+   */
+  public final static IProperty<Boolean> LAYOUT_PARTITIONS = new Property<Boolean>(
+            "org.eclipse.elk.layoutPartitions",
+            LAYOUT_PARTITIONS_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODE_LABEL_INSETS}.
+   */
+  private final static Spacing.Insets NODE_LABEL_INSETS_DEFAULT = new Spacing.Insets(0, 0, 0, 0);
+  
+  /**
+   * Define insets for node labels that are placed inside of a node.
+   */
+  public final static IProperty<Spacing.Insets> NODE_LABEL_INSETS = new Property<Spacing.Insets>(
+            "org.eclipse.elk.nodeLabelInsets",
+            NODE_LABEL_INSETS_DEFAULT);
   
   /**
    * Default value for {@link #NODE_LABEL_PLACEMENT}.
@@ -778,6 +837,15 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
+        "org.eclipse.elk.edgeLabelPlacementStrategy",
+        "Edge Label Placement Strategy",
+        "Determines in which layer center labels of long edges should be placed.",
+        EDGE_LABEL_PLACEMENT_STRATEGY_DEFAULT,
+        EdgeLabelPlacementStrategy.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
         "org.eclipse.elk.edgeRouting",
         "Edge Routing",
         "What kind of edge routing style should be applied for the content of a parent node. Algorithms may also set this option to single edges in order to mark them as splines. The bend point list of edges with this option set to SPLINES must be interpreted as control points for a piecewise cubic spline.",
@@ -793,6 +861,15 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EXPAND_NODES_DEFAULT,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.hierarchyHandling",
+        "Hierarchy Handling",
+        "Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the property is assumed as SEPARATE_CHILDREN.",
+        HIERARCHY_HANDLING_DEFAULT,
+        HierarchyHandling.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
@@ -821,6 +898,33 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layoutPartition",
+        "Layout Partition",
+        "Partition to which the node belongs to. If \'layoutPartitions\' is true, all nodes are expected to have a partition.",
+        null,
+        Integer.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layoutPartitions",
+        "Layout Partitions",
+        "Whether to activate partitioned layout.",
+        LAYOUT_PARTITIONS_DEFAULT,
+        Boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.nodeLabelInsets",
+        "Node Label Insets",
+        "Define insets for node labels that are placed inside of a node.",
+        NODE_LABEL_INSETS_DEFAULT,
+        Spacing.Insets.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.nodeLabelPlacement",

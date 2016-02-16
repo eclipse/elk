@@ -159,6 +159,13 @@ property direction: Direction {
 	targets = parents
 }
 
+advanced property edgeLabelPlacementStrategy: EdgeLabelPlacementStrategy {
+	label = "Edge Label Placement Strategy"
+	description = "Determines in which layer center labels of long edges should be placed."
+	default = EdgeLabelPlacementStrategy.CENTER
+	targets = parents
+}
+
 property edgeRouting: EdgeRouting {
 	label = "Edge Routing"
 	description =
@@ -175,6 +182,16 @@ property expandNodes: boolean {
 	description = "If active, nodes are expanded to fill the area of their parent."
 	default = false
 	targets = parents
+}
+
+property hierarchyHandling: HierarchyHandling {
+	label = "Hierarchy Handling"
+	description = 
+		"Determines whether the descendants should be layouted separately or together with their 
+	    parents. If the root node is set to inherit (or not set at all), the property is assumed 
+	    as SEPARATE_CHILDREN."
+	default = HierarchyHandling.INHERIT
+	targets = parents, nodes
 }
 
 property interactive: boolean {
@@ -195,6 +212,7 @@ property labelSpacing: float {
 	targets = edges, nodes
 }
 
+// TODO remove this!
 property layoutHierarchy: boolean {
 	label = "Layout Hierarchy"
 	description =
@@ -204,6 +222,28 @@ property layoutHierarchy: boolean {
 		all hierarchy levels that are contained in the associated parent node."
 	default = false
 	targets = parents
+}
+
+advanced property layoutPartition: Integer {
+	label = "Layout Partition"
+	description = 
+		"Partition to which the node belongs to. If 'layoutPartitions' is true,
+		all nodes are expected to have a partition."
+	targets = parents, nodes
+}
+
+advanced property layoutPartitions: Boolean {
+	label = "Layout Partitions"
+	description = "Whether to activate partitioned layout."
+	default = false
+	targets = parents
+}
+
+advanced property nodeLabelInsets: Spacing.Insets {
+	label = "Node Label Insets"	
+	description = "Define insets for node labels that are placed inside of a node."
+	default = new org.eclipse.elk.core.util.nodespacing.Spacing.Insets(0, 0, 0, 0) 
+	targets = nodes
 }
 
 property nodeLabelPlacement: EnumSet<NodeLabelPlacement> {
