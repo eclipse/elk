@@ -36,9 +36,6 @@ import com.google.common.collect.Maps;
  * As opposed to the default {@link BKCompactor} this version
  * trades maximal compactness with straight edges. In other words,
  * where possible it favors additional straight edges over compactness. 
- * 
- * @author jjc
- * @author uru
  */
 public class BKCompactor implements ICompactor {
     
@@ -92,6 +89,8 @@ public class BKCompactor implements ICompactor {
                         ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             }
         }
+        // clear any previous sinks
+        sinkNodes.clear();
 
         // If the horizontal direction is LEFT, the layers are traversed from right to left, thus
         // a reverse iterator is needed (note that this does not change the original list of layers)
@@ -101,7 +100,7 @@ public class BKCompactor implements ICompactor {
         }
 
         // init threshold strategy
-        threshStrategy.init(bal);
+        threshStrategy.init(bal, ni);
         // mark all blocks as unplaced
         Arrays.fill(bal.y, null);
         
