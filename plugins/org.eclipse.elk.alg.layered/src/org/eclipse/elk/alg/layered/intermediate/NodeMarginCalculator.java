@@ -57,8 +57,12 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
         monitor.begin("Node margin calculation", 1);
         
         // calculate the margins using KIML's utility methods
-        KimlNodeDimensionCalculation.calculateNodeMargins(LGraphAdapters.adapt(layeredGraph));
-        
+        // Use transparentNorthSouthEdges. This ensures that end labels of edges connected to north/south
+        // ports are considered during margin calculation.
+        // Setting this to false would consider end labels in the margin calculation of the corresponding
+        // dummy node instead of the originally connected port.
+        KimlNodeDimensionCalculation.calculateNodeMargins(LGraphAdapters.adapt(layeredGraph, true));
+
         // Iterate through the layers to additionally handle comments
         double spacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
         for (Layer layer : layeredGraph) {

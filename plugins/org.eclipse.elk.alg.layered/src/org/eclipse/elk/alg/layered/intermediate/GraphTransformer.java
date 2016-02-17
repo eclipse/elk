@@ -19,9 +19,10 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.properties.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.layered.properties.InLayerConstraint;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayerConstraint;
@@ -89,6 +90,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             break;
         case TRANSPOSE:
             transpose(nodes);
+            transposeEdgeLabelPlacement(layeredGraph);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
             break;
@@ -96,6 +98,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             mirrorX(nodes, layeredGraph);
             mirrorY(nodes, layeredGraph);
             transpose(nodes);
+            transposeEdgeLabelPlacement(layeredGraph);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
             break;
@@ -621,6 +624,19 @@ public final class GraphTransformer implements ILayoutProcessor {
         default:
             return PortSide.UNDEFINED;    
         }
+    }
+    
+    /**
+     * Transpose the placement of edge labels in the graph.
+     *
+     * @param graph the complete graph
+     */
+    private void transposeEdgeLabelPlacement(final LGraph graph) {
+        EdgeLabelSideSelection oldSide = graph.getProperty(Properties.EDGE_LABEL_SIDE_SELECTION);
+        if (oldSide != null) {
+            graph.setProperty(Properties.EDGE_LABEL_SIDE_SELECTION, oldSide.transpose());
+        }
+
     }
 
     /**
