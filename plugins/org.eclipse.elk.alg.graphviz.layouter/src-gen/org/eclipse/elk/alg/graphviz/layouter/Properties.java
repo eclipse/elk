@@ -394,7 +394,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Dot",
-        "org.eclipse.elk.layoutHierarchy",
+        "org.eclipse.elk.hierarchyHandling",
         null
     );
     registry.addOptionSupport(
@@ -579,7 +579,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.graphviz.Fdp",
-        "org.eclipse.elk.layoutHierarchy",
+        "org.eclipse.elk.hierarchyHandling",
         null
     );
     registry.addOptionSupport(

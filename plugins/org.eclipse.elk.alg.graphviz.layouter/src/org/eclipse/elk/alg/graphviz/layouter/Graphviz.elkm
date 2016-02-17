@@ -39,7 +39,7 @@ algorithm Dot(GraphvizLayoutProvider#DOT) {
 	supports org.eclipse.elk.sizeOptions
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.SPLINES
 	supports org.eclipse.elk.debugMode
-	supports org.eclipse.elk.layoutHierarchy
+	supports org.eclipse.elk.hierarchyHandling
 	supports iterationsFactor = 1
 	supports concentrate
 	supports labelDistance
@@ -95,7 +95,7 @@ algorithm Fdp(GraphvizLayoutProvider#FDP) {
 	supports org.eclipse.elk.interactive
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.SPLINES
 	supports org.eclipse.elk.debugMode
-	supports org.eclipse.elk.layoutHierarchy
+	supports org.eclipse.elk.hierarchyHandling
 	supports org.eclipse.elk.separateConnComp = false
 	supports concentrate
 	supports labelDistance
