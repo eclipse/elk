@@ -19,6 +19,8 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.layered.intermediate.NodePromotionStrategy;
+import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
@@ -298,7 +300,7 @@ final class GraphConfigurator {
         
         // Additional horizontal compaction depends on orthogonal edge routing
         if (lgraph.getProperty(Properties.POST_COMPACTION) != GraphCompactionStrategy.NONE
-              && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+              && lgraph.getProperty(Properties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
             configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
         }
         

@@ -10,6 +10,21 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.compaction.components;
 
+import static org.eclipse.elk.core.options.PortSide.SIDES_EAST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_EAST_SOUTH;
+import static org.eclipse.elk.core.options.PortSide.SIDES_EAST_SOUTH_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_EAST_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_SOUTH_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_SOUTH;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_SOUTH_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_SOUTH;
+import static org.eclipse.elk.core.options.PortSide.SIDES_SOUTH_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_WEST;
+
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
