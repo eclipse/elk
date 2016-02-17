@@ -227,17 +227,19 @@ litigation.
       <import plugin="org.apache.log4j"/>
       <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.elk.feature" version="0.0.0.qualifier"/>
+      <import feature="org.eclipse.elk.feature.source" version="0.0.0.qualifier"/>
+      <import feature="org.eclipse.elk.sdk.feature.source" version="0.0.0.qualifier"/>
    </requires>
 
    <plugin
-         id="org.eclipse.elk.alg.graphviz.dot"
+         id="org.eclipse.elk.core.meta"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.elk.alg.graphviz.layouter"
+         id="org.eclipse.elk.core.meta.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
