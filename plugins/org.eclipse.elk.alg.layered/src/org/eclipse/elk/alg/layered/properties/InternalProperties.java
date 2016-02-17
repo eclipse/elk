@@ -24,7 +24,6 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.NodeGroup;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
 import org.eclipse.elk.core.math.KVector;
@@ -189,12 +188,6 @@ public final class InternalProperties {
      * all ports that have dummy nodes created for them.
      */
     public static final IProperty<LNode> PORT_DUMMY = new Property<LNode>("portDummy");
-
-    /**
-     * TODO remove
-     * The node group of an LNode as used in the crossing minimization phase.
-     */
-    public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
 
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies. This
