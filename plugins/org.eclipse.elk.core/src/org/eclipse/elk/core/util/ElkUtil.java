@@ -33,6 +33,8 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.selection.DefaultSelectionIterator;
+import org.eclipse.elk.core.util.selection.SelectionIterator;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphData;
 import org.eclipse.elk.graph.KGraphElement;
@@ -41,12 +43,10 @@ import org.eclipse.elk.graph.KLabel;
 import org.eclipse.elk.graph.KLabeledGraphElement;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.elk.graph.KPort;
-import org.eclipse.emf.common.util.AbstractTreeIterator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -819,7 +819,6 @@ public final class ElkUtil {
         return points;
     }
 
-
     /**
      * Determines the {@link KEdge KEdges} that are (transitively) connected to the given
      * {@code kedges} across hierarchy boundaries via common ports. See
@@ -830,6 +829,8 @@ public final class ElkUtil {
      *            an {@link Iterable} of {@link KEdge KEdges} that shall be checked
      * @return an {@link Iterator} visiting the given {@code kedges} and all (transitively)
      *         connected ones.
+     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     *             combination with {@link DefaultSelectionIterator}
      */
     public static Iterator<KEdge> getConnectedEdges(final Iterable<KEdge> kedges) {
         return Iterators.concat(
@@ -853,10 +854,39 @@ public final class ElkUtil {
      *            the {@link KEdge} check for connected edges
      * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
      *         almost) breadth first search fashion
+     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     *             combination with {@link DefaultSelectionIterator}
      */
     public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
         // Default behavior should be to not select the ports
-        return Iterators.filter(getConnectedEdges(kedge, false), KEdge.class);
+        return Iterators.filter(getConnectedElements(kedge, false), KEdge.class);
+    }
+    
+    /**
+     * Determines the {@link KGraphElement KGraphElements} that are (transitively) connected to
+     * {@code kedge} across hierarchy boundaries via common ports. Rational: Multiple {@link KEdge
+     * KEdges} that are pairwise connected by means of a {@link KPort} (target port of edge a ==
+     * source port of edge b or vice versa) may form one logical connection. This kind splitting
+     * might be already present in the view model, or is performed by the layout algorithm for
+     * decomposing a nested layout input graph into flat sub graphs.
+     * This version allows to also include ports in the selection.
+     *
+     * @param kedge
+     *            the {@link KEdge} check for connected elements
+     * @param addPorts
+     *            flag to determine, whether ports should be added to the selection or not
+     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
+     *         almost) breadth first search fashion
+     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     *             combination with {@link DefaultSelectionIterator}
+     */
+    public static Iterator<KGraphElement> getConnectedElements(final KEdge kedge,
+            final boolean addPorts) {
+
+        final SelectionIterator sourceSideIt = new DefaultSelectionIterator(kedge, addPorts, false);
+        final SelectionIterator targetSideIt = new DefaultSelectionIterator(kedge, addPorts, true);
+
+        return getConnectedElements(kedge, sourceSideIt, targetSideIt);
     }
     
     /**
@@ -868,120 +898,47 @@ public final class ElkUtil {
      * layout input graph into flat sub graphs.
      *
      * @param kedge
-     *            the {@link KEdge} check for connected edges
-     * @param addPorts
-     *            flag to determine, whether ports should be added to the selection or not
-     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
-     *         almost) breadth first search fashion
+     *            the {@link KEdge} check for connected elements
+     * @param sourceIterator
+     *            the {@link SelectionIterator} to be used for iterating towards the tail of the
+     *            selected edge
+     * @param targetIterator
+     *            the {@link SelectionIterator} to be used for iterating towards the head of the
+     *            selected edge
+     * @return an {@link Iterator} visiting the given {@code kedge} and all connected elements
+     *         determined by the {@link SelectionIterator SelectionIterators}
      */
-    public static Iterator<KGraphElement> getConnectedEdges(final KEdge kedge, final boolean addPorts) {
+    public static Iterator<KGraphElement> getConnectedElements(final KEdge kedge,
+            final SelectionIterator sourceIterator, final SelectionIterator targetIterator) {
+
         // get a singleton iterator offering 'kedge'
         final Iterator<KGraphElement> kedgeIt = Iterators.singletonIterator((KGraphElement) kedge);
+        // Keep a set of visited elements for the tree iterators
         final Set<KPort> visited = Sets.newHashSet();
 
-        // if 'kedge' has a source port,
-        //  create a bfs tree iterator visiting all source-sidewise connected edges
-        //  and ports if desired
-        final Iterator<KGraphElement> sourceSideIt =
-                kedge.getSourcePort() == null ? null : new AbstractTreeIterator<KGraphElement>(
-                        kedge, false) {
+        // Grab source iterator if edge has a source
+        final SelectionIterator sourceSideIt =
+                kedge.getSourcePort() == null ? null : sourceIterator;
+        if (sourceSideIt != null) {
+            // Configure the iterator
+            sourceSideIt.attachVisitedSet(visited);
+        }
 
-            private static final long serialVersionUID = 2096899476184317737L;
-
-            @Override
-            protected Iterator<? extends KGraphElement> getChildren(final Object object) {
-                if (object instanceof KEdge) {
-                    final KPort sourcePort = ((KEdge) object).getSourcePort();
-    
-                    if (sourcePort == null || visited.contains(sourcePort)) {
-                        // return an empty iterator if no source port is configured
-                        //  or if the source port has been visited already, in order
-                        //  to break infinite loops
-                        return Iterators.<KGraphElement>emptyIterator();
-                    }
-    
-                    visited.add(sourcePort);
-    
-                    // for each object (kedge) visited by this iterator check all the edges connected to
-                    //  'sourcePort' and visit those edges satisfying the criterion stated above
-                    // this criterion btw. prevents from visiting 'object' immediately again,
-                    //  as "sourcePort == input.getTargetPort()" implies "object != input"
-                    Iterator<KEdge> resultEdges =
-                            Iterators.filter(sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
-                        public boolean apply(final KEdge input) {
-                            return sourcePort == input.getTargetPort();
-                        }
-                    });
-                    
-                    // If the port should be added to the selection, add it to the result set
-                    if (addPorts) {
-                        Iterator<KGraphElement> sourcePortIterator =
-                                Iterators.singletonIterator((KGraphElement) sourcePort);
-                        return Iterators.concat(sourcePortIterator, resultEdges);
-                    } else {
-                        return resultEdges;
-                    }
-                } else {
-                    return Iterators.<KGraphElement>emptyIterator();
-                }
-            }
-        };
-
-        // if 'kedge' has a target port,
-        //  create a bfs tree iterator visiting all target-sidewise connected edges
-        //  and ports if desired
-        final Iterator<KGraphElement> targetSideIt =
-                kedge.getTargetPort() == null ? null : new AbstractTreeIterator<KGraphElement>(
-                        kedge, false) {
-
-            private static final long serialVersionUID = -4290192971641462249L;
-
-            @Override
-            protected Iterator<? extends KGraphElement> getChildren(final Object object) {
-                if (object instanceof KEdge) {
-                    final KPort targetPort = ((KEdge) object).getTargetPort();
-    
-                    if (targetPort == null || visited.contains(targetPort)) {
-                        // return an empty iterator if no target port is configured
-                        //  or if the target port has been visited already, in order
-                        //  to break infinite loops
-                        return Iterators.<KGraphElement>emptyIterator();
-                    }
-    
-                    visited.add(targetPort);
-    
-                    // for each object (kedge) visited by this iterator check all the edges connected to
-                    //  'targetPort' and visit those edges satisfying the criterion stated above
-                    // this criterion btw. prevents from visiting 'object' immediately again,
-                    //  as "targetPort == input.getSourcePort()" implies "object != input"
-                    Iterator<KEdge> resultEdges =
-                            Iterators.filter(targetPort.getEdges().iterator(), new Predicate<KEdge>() {
-    
-                        public boolean apply(final KEdge input) {
-                            return targetPort == input.getSourcePort();
-                        }
-                    });
-                                    
-                    // If the port should be added to the selection, add it to the result set
-                    if (addPorts) {
-                        Iterator<KGraphElement> sourcePortIterator =
-                                Iterators.singletonIterator((KGraphElement) targetPort);
-                        return Iterators.concat(sourcePortIterator, resultEdges);
-                    } else {
-                        return resultEdges;
-                    }
-                } else {
-                    return Iterators.<KGraphElement>emptyIterator();
-                }
-            }
-        };
+        // Grab target iterator if edge has a target
+        final SelectionIterator targetSideIt =
+                kedge.getTargetPort() == null ? null : targetIterator;
+        if (targetSideIt != null) {
+            // Configure the iterator
+            targetSideIt.attachVisitedSet(visited);
+        }
 
         // concatenate the source-sidewise and target-sidewise iterators if present ...
-        final Iterator<KGraphElement> connectedEdges = sourceSideIt == null ? targetSideIt
-                : targetSideIt == null ? sourceSideIt : Iterators.concat(sourceSideIt, targetSideIt);
+        final Iterator<KGraphElement> connectedEdges =
+                sourceSideIt == null ? targetSideIt : targetSideIt == null ? sourceSideIt
+                        : Iterators.concat(sourceSideIt, targetSideIt);
 
         // ... and attach them to the input 'kedge' offering iterator, or return just the
-        //  input 'kedge' iterator in case no ports are configured for 'kedge'
+        // input 'kedge' iterator in case no ports are configured for 'kedge'
         return connectedEdges == null ? kedgeIt : Iterators.concat(kedgeIt, connectedEdges);
     }
     

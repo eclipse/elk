@@ -12,12 +12,15 @@ package org.eclipse.elk.core;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.GraphFeature;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -92,8 +95,11 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // this node has children and is thus a compound node;
             // fetch the layout algorithm that should be used to compute a layout for its content
             final LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
-            final boolean supportsInsideSelfLoops = algorithmData.supportsFeature(
-                    GraphFeature.INSIDE_SELF_LOOPS);
+            final boolean supportsInsideSelfLoops = algorithmData.supportsFeature(GraphFeature.INSIDE_SELF_LOOPS);
+           
+            // Persist the Hierarchy Handling in the nodes by querying the parent node
+            evaluateHierarchyHandlingInheritance(layoutNode);
+           
             
             // If the node contains inside self loops, but no regular children and if the layout
             // algorithm doesn't actually support inside self loops, we cancel
@@ -107,18 +113,51 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // if the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
             int nodeCount;
-            if (layoutNodeShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                    && (algorithmData.supportsFeature(GraphFeature.COMPOUND)
+            if (layoutNodeShapeLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING)
+                        == HierarchyHandling.INCLUDE_CHILDREN && (algorithmData.supportsFeature(GraphFeature.COMPOUND)
                     || algorithmData.supportsFeature(GraphFeature.CLUSTERS))) {
                 
-                // the layout algorithm will compute a layout for all levels of hierarchy under the
-                // current one
-                nodeCount = countNodesRecursively(layoutNode, false);
+                // the layout algorithm will compute a layout for multiple levels of hierarchy under the current one
+                nodeCount = countNodesWithHierarchy(layoutNode);
+                
+                // Look for nodes that stop the hierarchy handling, evaluating the inheritance on the way
+                final Queue<KNode> kNodeQueue = Lists.newLinkedList();
+                kNodeQueue.addAll(layoutNode.getChildren());
+                
+                while (!kNodeQueue.isEmpty()) {
+                    KNode knode = kNodeQueue.poll();
+                    // Persist the Hierarchy Handling in every case. (Won't hurt with nodes that are
+                    // evaluated in the next recursion)
+                    evaluateHierarchyHandlingInheritance(knode);
+                    final KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
+                    final boolean stopHierarchy = knodeLayout.getProperty(
+                            LayoutOptions.HIERARCHY_HANDLING) == HierarchyHandling.SEPARATE_CHILDREN;
+
+                    if (stopHierarchy || !getAlgorithm(knode).equals(algorithmData)) {
+                        // Hierarchical layout is stopped by explicitly disabling or switching
+                        // algorithm. Separate recursive call is used for child nodes
+                        List<KEdge> childLayoutSelfLoops = layoutRecursively(knode, progressMonitor);
+                        childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
+                        // Explicitly disable hierarchical layout for the child node. Simplifies the
+                        // handling of switching algorithms in the layouter.
+                        knodeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING,
+                                HierarchyHandling.SEPARATE_CHILDREN);
+
+                        // apply the LayoutOptions.SCALE_FACTOR if present
+                        ElkUtil.applyConfiguredNodeScaling(knode);
+                    } else {
+                        // Child should be included in current layout, possibly adding its own
+                        // children
+                        kNodeQueue.addAll(knode.getChildren());
+                    }
+                }
+
             } else {
                 // layout each compound node contained in this node separately
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
-                    childrenInsideSelfLoops.addAll(layoutRecursively(child, progressMonitor));
+                    List<KEdge> childLayoutSelfLoops = layoutRecursively(child, progressMonitor); 
+                    childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                     
                     // apply the LayoutOptions.SCALE_FACTOR if present
                     ElkUtil.applyConfiguredNodeScaling(child);
@@ -212,6 +251,73 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             while (parent != null) {
                 count += parent.getChildren().size();
                 parent = parent.getParent();
+            }
+        }
+        return count;
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Hierarchy Handling
+    
+    /**
+     * Evaluates one level of inheritance for property {@link LayoutOptions#HIERARCHY_HANDLING}.
+     * Additionally provides legacy support for property {@link LayoutOptions#LAYOUT_HIERARCHY} and
+     * replaces it with the new property. If the root node is evaluated and it is set to inherit (or
+     * not set at all) the property is set to {@link HierarchyHandling#SEPARATE_CHILDREN}.
+     * 
+     * @param layoutNode
+     *            The current node which should be evaluated
+     */
+    private void evaluateHierarchyHandlingInheritance(final KNode layoutNode) {
+        KLayoutData layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
+        // Pre-process the hierarchy handling by replacing the deprecated LAYOUT_HIERARCHY
+        // property with the new hierarchy handling property
+        boolean hasLayoutHierarchy = layoutNodeShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        if (hasLayoutHierarchy) {
+            layoutNodeShapeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING,
+                    HierarchyHandling.INCLUDE_CHILDREN);
+        }
+        
+        // Pre-process the hierarchy handling to substitute inherited handling by the parent
+        // value. If the root node is set to inherit, it is set to separate the children.
+        if (layoutNodeShapeLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) == HierarchyHandling.INHERIT) {
+            if (layoutNode.getParent() == null) {
+                // Set root node to separate children handling
+                layoutNodeShapeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING,
+                        HierarchyHandling.SEPARATE_CHILDREN);
+            } else {
+                // Set hierarchy handling to the value of the parent. 
+                // It is safe to assume that the parent has been handled before and is not set to
+                // INHERIT anymore.
+                HierarchyHandling parentHandling = layoutNode.getParent().getData(KShapeLayout.class)
+                        .getProperty(LayoutOptions.HIERARCHY_HANDLING);
+                layoutNodeShapeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING, parentHandling);
+            }
+        }
+    }
+
+    /**
+     * Determines the number of layout nodes in the given layout graph across multiple levels of
+     * hierarchy. Counting is stopped at nodes which disable the hierarchical layout or are
+     * configured to use a different layout algorithm.
+     * 
+     * @param layoutNode
+     *            parent layout node to examine
+     * @return total number of child layout nodes
+     */
+    private int countNodesWithHierarchy(final KNode layoutNode) {
+        // count the content of the given node
+        int count = layoutNode.getChildren().size();
+        for (KNode childNode : layoutNode.getChildren()) {
+            if (childNode.getData(KShapeLayout.class).getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                    != HierarchyHandling.SEPARATE_CHILDREN
+                    && getAlgorithm(layoutNode).equals(getAlgorithm(childNode))) {
+                
+                // Only count nodes that don't abort the hierarchical layout
+                if (!childNode.getChildren().isEmpty()) {
+                    count += countNodesWithHierarchy(childNode);
+                }
             }
         }
         return count;
