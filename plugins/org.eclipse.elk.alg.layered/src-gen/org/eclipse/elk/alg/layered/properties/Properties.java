@@ -12,6 +12,9 @@ package org.eclipse.elk.alg.layered.properties;
 
 import java.util.EnumSet;
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
+import org.eclipse.elk.alg.layered.intermediate.NodePromotionStrategy;
+import org.eclipse.elk.alg.layered.intermediate.compaction.ConstraintCalculationStrategy;
+import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.p1cycles.CycleBreakingStrategy;
 import org.eclipse.elk.alg.layered.p2layers.LayeringStrategy;
 import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy;
@@ -344,6 +347,138 @@ public class Properties implements ILayoutMetaDataProvider {
             WIDE_NODES_ON_MULTIPLE_LAYERS_DEFAULT);
   
   /**
+   * Default value for {@link #NORTH_OR_SOUTH_PORT}.
+   */
+  private final static Boolean NORTH_OR_SOUTH_PORT_DEFAULT = Boolean.valueOf(false);
+  
+  /**
+   * Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)
+   */
+  public final static IProperty<Boolean> NORTH_OR_SOUTH_PORT = new Property<Boolean>(
+            "org.eclipse.elk.alg.layered.northOrSouthPort",
+            NORTH_OR_SOUTH_PORT_DEFAULT);
+  
+  /**
+   * Default value for {@link #HIGH_DEGREE_NODE_TREATMENT}.
+   */
+  private final static Boolean HIGH_DEGREE_NODE_TREATMENT_DEFAULT = Boolean.valueOf(false);
+  
+  /**
+   * Makes room around high degree nodes to place leafs and trees.
+   */
+  public final static IProperty<Boolean> HIGH_DEGREE_NODE_TREATMENT = new Property<Boolean>(
+            "org.eclipse.elk.alg.layered.highDegreeNode_treatment",
+            HIGH_DEGREE_NODE_TREATMENT_DEFAULT);
+  
+  /**
+   * Default value for {@link #HIGH_DEGREE_NODE_THRESHOLD}.
+   */
+  private final static Integer HIGH_DEGREE_NODE_THRESHOLD_DEFAULT = Integer.valueOf(16);
+  
+  /**
+   * Whether a node is considered to have a high degree.
+   */
+  public final static IProperty<Integer> HIGH_DEGREE_NODE_THRESHOLD = new Property<Integer>(
+            "org.eclipse.elk.alg.layered.highDegreeNode_threshold",
+            HIGH_DEGREE_NODE_THRESHOLD_DEFAULT);
+  
+  /**
+   * Default value for {@link #HIGH_DEGREE_NODE_TREE_HEIGHT}.
+   */
+  private final static Integer HIGH_DEGREE_NODE_TREE_HEIGHT_DEFAULT = Integer.valueOf(5);
+  
+  /**
+   * Maximum height of a subtree connected to a high degree node to be moved to separate layers.
+   */
+  public final static IProperty<Integer> HIGH_DEGREE_NODE_TREE_HEIGHT = new Property<Integer>(
+            "org.eclipse.elk.alg.layered.highDegreeNode_treeHeight",
+            HIGH_DEGREE_NODE_TREE_HEIGHT_DEFAULT);
+  
+  /**
+   * Default value for {@link #MIN_WIDTH_UPPER_BOUND_ON_WIDTH}.
+   */
+  private final static Integer MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT = Integer.valueOf(4);
+  
+  /**
+   * Defines a loose upper bound on the width of the MinWidth layerer.
+   */
+  public final static IProperty<Integer> MIN_WIDTH_UPPER_BOUND_ON_WIDTH = new Property<Integer>(
+            "org.eclipse.elk.alg.layered.minWidthUpperBoundOnWidth",
+            MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT);
+  
+  /**
+   * Default value for {@link #MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR}.
+   */
+  private final static Integer MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT = Integer.valueOf(2);
+  
+  /**
+   * Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.
+   */
+  public final static IProperty<Integer> MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR = new Property<Integer>(
+            "org.eclipse.elk.alg.layered.minWidthUpperLayerEstimationScalingFactor",
+            MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT);
+  
+  /**
+   * Default value for {@link #POST_COMPACTION}.
+   */
+  private final static GraphCompactionStrategy POST_COMPACTION_DEFAULT = GraphCompactionStrategy.NONE;
+  
+  /**
+   * Specifies whether and how post-process compaction is applied.
+   */
+  public final static IProperty<GraphCompactionStrategy> POST_COMPACTION = new Property<GraphCompactionStrategy>(
+            "org.eclipse.elk.alg.layered.postCompaction",
+            POST_COMPACTION_DEFAULT);
+  
+  /**
+   * Default value for {@link #POST_COMPACTION_CONSTRAINTS}.
+   */
+  private final static ConstraintCalculationStrategy POST_COMPACTION_CONSTRAINTS_DEFAULT = ConstraintCalculationStrategy.SCANLINE;
+  
+  /**
+   * Specifies whether and how post-process compaction is applied.
+   */
+  public final static IProperty<ConstraintCalculationStrategy> POST_COMPACTION_CONSTRAINTS = new Property<ConstraintCalculationStrategy>(
+            "org.eclipse.elk.alg.layered.postCompaction_constraints",
+            POST_COMPACTION_CONSTRAINTS_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODE_PROMOTION}.
+   */
+  private final static NodePromotionStrategy NODE_PROMOTION_DEFAULT = NodePromotionStrategy.NONE;
+  
+  /**
+   * Reduces number of dummy nodes after layering phase (if possible).
+   */
+  public final static IProperty<NodePromotionStrategy> NODE_PROMOTION = new Property<NodePromotionStrategy>(
+            "org.eclipse.elk.alg.layered.nodePromotion",
+            NODE_PROMOTION_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODE_PROMOTION_BOUNDARY}.
+   */
+  private final static Integer NODE_PROMOTION_BOUNDARY_DEFAULT = Integer.valueOf(0);
+  
+  /**
+   * Limits the number of iterations for node promotion.
+   */
+  public final static IProperty<Integer> NODE_PROMOTION_BOUNDARY = new Property<Integer>(
+            "org.eclipse.elk.alg.layered.nodePromotion_boundary",
+            NODE_PROMOTION_BOUNDARY_DEFAULT);
+  
+  /**
+   * Default value for {@link #COMPONENTS_COMPACT}.
+   */
+  private final static Boolean COMPONENTS_COMPACT_DEFAULT = Boolean.valueOf(false);
+  
+  /**
+   * Tries to further compact components (disconnected sub-graphs).
+   */
+  public final static IProperty<Boolean> COMPONENTS_COMPACT = new Property<Boolean>(
+            "org.eclipse.elk.alg.layered.components_compact",
+            COMPONENTS_COMPACT_DEFAULT);
+  
+  /**
    * Required value for dependency between {@link #COMPACTION} and {@link #NODE_PLACEMENT}.
    */
   private final static NodePlacementStrategy COMPACTION_DEP_NODE_PLACEMENT = NodePlacementStrategy.BRANDES_KOEPF;
@@ -387,6 +522,21 @@ public class Properties implements ILayoutMetaDataProvider {
    * Required value for dependency between {@link #SELF_LOOP_PLACEMENT} and {@link #EDGE_ROUTING}.
    */
   private final static EdgeRouting SELF_LOOP_PLACEMENT_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
+  
+  /**
+   * Required value for dependency between {@link #HIGH_DEGREE_NODE_THRESHOLD} and {@link #HIGH_DEGREE_NODE_TREATMENT}.
+   */
+  private final static Boolean HIGH_DEGREE_NODE_THRESHOLD_DEP_HIGH_DEGREE_NODE_TREATMENT = Boolean.valueOf(true);
+  
+  /**
+   * Required value for dependency between {@link #HIGH_DEGREE_NODE_TREE_HEIGHT} and {@link #HIGH_DEGREE_NODE_TREATMENT}.
+   */
+  private final static Boolean HIGH_DEGREE_NODE_TREE_HEIGHT_DEP_HIGH_DEGREE_NODE_TREATMENT = Boolean.valueOf(true);
+  
+  /**
+   * Required value for dependency between {@link #COMPONENTS_COMPACT} and {@link #SEPARATE_CONN_COMP}.
+   */
+  private final static boolean COMPONENTS_COMPACT_DEP_SEPARATE_CONN_COMP = true;
   
   /**
    * Default value for {@link #SPACING} with algorithm "ELK Layered".
@@ -749,6 +899,125 @@ public class Properties implements ILayoutMetaDataProvider {
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.northOrSouthPort",
+        "North or South Port",
+        "Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)",
+        NORTH_OR_SOUTH_PORT_DEFAULT,
+        Boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PORTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.highDegreeNode_treatment",
+        "High Degree Node Treatment",
+        "Makes room around high degree nodes to place leafs and trees.",
+        HIGH_DEGREE_NODE_TREATMENT_DEFAULT,
+        Boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.highDegreeNode_threshold",
+        "High Degree Node Threshold",
+        "Whether a node is considered to have a high degree.",
+        HIGH_DEGREE_NODE_THRESHOLD_DEFAULT,
+        Integer.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.alg.layered.highDegreeNode_threshold",
+        "org.eclipse.elk.alg.layered.highDegreeNode_treatment",
+        HIGH_DEGREE_NODE_THRESHOLD_DEP_HIGH_DEGREE_NODE_TREATMENT
+    );
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.highDegreeNode_treeHeight",
+        "High Degree Node Maximum Tree Height",
+        "Maximum height of a subtree connected to a high degree node to be moved to separate layers.",
+        HIGH_DEGREE_NODE_TREE_HEIGHT_DEFAULT,
+        Integer.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.alg.layered.highDegreeNode_treeHeight",
+        "org.eclipse.elk.alg.layered.highDegreeNode_treatment",
+        HIGH_DEGREE_NODE_TREE_HEIGHT_DEP_HIGH_DEGREE_NODE_TREATMENT
+    );
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.minWidthUpperBoundOnWidth",
+        "Upper Bound On Width [MinWidth Layerer]",
+        "Defines a loose upper bound on the width of the MinWidth layerer.",
+        MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT,
+        Integer.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.minWidthUpperLayerEstimationScalingFactor",
+        "Upper Layer Estimation Scaling Factor [MinWidth Layerer]",
+        "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.",
+        MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT,
+        Integer.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.postCompaction",
+        "Post Compaction",
+        "Specifies whether and how post-process compaction is applied.",
+        POST_COMPACTION_DEFAULT,
+        GraphCompactionStrategy.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.postCompaction_constraints",
+        "Post Compaction Constraint Calculation",
+        "Specifies whether and how post-process compaction is applied.",
+        POST_COMPACTION_CONSTRAINTS_DEFAULT,
+        ConstraintCalculationStrategy.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.nodePromotion",
+        "Node Promotion",
+        "Reduces number of dummy nodes after layering phase (if possible).",
+        NODE_PROMOTION_DEFAULT,
+        NodePromotionStrategy.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.nodePromotion_boundary",
+        "Node Promotion Boundary",
+        "Limits the number of iterations for node promotion.",
+        NODE_PROMOTION_BOUNDARY_DEFAULT,
+        Integer.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.alg.layered.nodePromotion_boundary",
+        "org.eclipse.elk.alg.layered.nodePromotion",
+        null
+    );
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.components_compact",
+        "Compact Components",
+        "Tries to further compact components (disconnected sub-graphs).",
+        COMPONENTS_COMPACT_DEFAULT,
+        Boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.alg.layered.components_compact",
+        "org.eclipse.elk.separateConnComp",
+        COMPONENTS_COMPACT_DEP_SEPARATE_CONN_COMP
+    );
     registry.register(new LayoutAlgorithmData(
         "org.eclipse.elk.alg.layered.Layered",
         "ELK Layered",
@@ -1002,6 +1271,36 @@ public class Properties implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.alg.layered.Layered",
         "org.eclipse.elk.alg.layered.compaction",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.postCompaction",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.postCompaction_constraints",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.components_compact",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.highDegreeNode_treatment",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.highDegreeNode_threshold",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.highDegreeNode_treeHeight",
         null
     );
   }

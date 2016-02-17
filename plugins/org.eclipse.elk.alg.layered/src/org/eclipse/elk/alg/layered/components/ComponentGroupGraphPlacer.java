@@ -19,6 +19,7 @@ import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_SOUTH;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_SOUTH_WEST;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_SOUTH;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_SOUTH_WEST;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_WEST;
@@ -33,6 +34,8 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.LayoutOptions;
 
 import com.google.common.collect.Lists;
 
@@ -97,7 +100,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         for (ComponentGroup group : componentGroups) {
             // Place the components
             KVector groupSize = placeComponents(group, spacing);
-            moveGraphs(target, group.getComponents(), offset.x, offset.y);
+            offsetGraphs(group.getComponents(), offset.x, offset.y);
             
             // Compute the new offset
             offset.x += groupSize.x;
@@ -108,6 +111,33 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         // on the right and bottom sides which we need to subtract at this point)
         target.getSize().x = offset.x - spacing;
         target.getSize().y = offset.y - spacing;
+        
+        // if compaction is desired, do so!cing;
+        if (firstComponent.getProperty(Properties.COMPONENTS_COMPACT)
+                // the compaction only supports orthogonally routed edges
+                && firstComponent.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+
+            // apply graph offsets (which we reset later on)
+            // since the compaction works in a common coordinate system
+            for (LGraph h : components) {
+                offsetGraph(h, h.getOffset().x, h.getOffset().y);
+            }
+
+            ComponentsCompactor compactor = new ComponentsCompactor();
+            compactor.compact(components, target.getSize(), spacing);
+
+            // the compaction algorithm places components absolutely,
+            // therefore we have to use the final drawing's offset
+            for (LGraph h : components) {
+                h.getOffset().reset().add(compactor.getOffset());
+            }
+
+        }
+
+        // finally move the components to the combined graph
+        for (ComponentGroup group : componentGroups) {
+            moveGraphs(target, group.getComponents(), 0, 0);
+        }
     }
     
     
@@ -188,16 +218,18 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
                 group.getComponents(SIDES_NORTH_SOUTH_WEST), spacing);
         KVector sizeENS = placeComponentsVertically(
                 group.getComponents(SIDES_NORTH_EAST_SOUTH), spacing);
+        KVector sizeNESW = placeComponentsHorizontally(
+                group.getComponents(SIDES_NORTH_EAST_SOUTH_WEST), spacing);
         
         // Find the maximum height of the three rows and the maximum width of the three columns the
         // component group is divided into (we're adding a fourth row for WE components and a fourth
         // column for NS components to make the placement easier later)
         double colLeftWidth = ElkMath.maxd(sizeNW.x, sizeW.x, sizeSW.x, sizeWNS.x);
-        double colMidWidth = ElkMath.maxd(sizeN.x, sizeC.x, sizeS.x);
+        double colMidWidth = ElkMath.maxd(sizeN.x, sizeC.x, sizeS.x, sizeNESW.x);
         double colNsWidth = sizeNS.x;
         double colRightWidth = ElkMath.maxd(sizeNE.x, sizeE.x, sizeSE.x, sizeENS.x);
         double rowTopHeight = ElkMath.maxd(sizeNW.y, sizeN.y, sizeNE.y, sizeNWE.y);
-        double rowMidHeight = ElkMath.maxd(sizeW.y, sizeC.y, sizeE.y);
+        double rowMidHeight = ElkMath.maxd(sizeW.y, sizeC.y, sizeE.y, sizeNESW.y);
         double rowWeHeight = sizeWE.y;
         double rowBottomHeight = ElkMath.maxd(sizeSW.y, sizeS.y, sizeSE.y, sizeSWE.y);
         
@@ -205,6 +237,9 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         // taking the size of other component placements into account (the NW, NWE, and WNS components
         // stay at coordinates (0,0) and thus don't need to be moved around)
         offsetGraphs(group.getComponents(SIDES_NONE),
+                colLeftWidth + colNsWidth,
+                rowTopHeight + rowWeHeight);
+        offsetGraphs(group.getComponents(SIDES_NORTH_EAST_SOUTH_WEST),
                 colLeftWidth + colNsWidth,
                 rowTopHeight + rowWeHeight);
         offsetGraphs(group.getComponents(SIDES_NORTH),

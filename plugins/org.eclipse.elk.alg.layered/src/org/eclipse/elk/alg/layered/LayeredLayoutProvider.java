@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.layered.graph.transform.IGraphTransformer;
 import org.eclipse.elk.alg.layered.graph.transform.KGraphTransformer;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KNode;
@@ -57,7 +58,8 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         // Check if hierarchy handling for a compound graph is requested
         KShapeLayout kgraphLayout = kgraph.getData(KShapeLayout.class);
-        if (kgraphLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+        if (kgraphLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                == HierarchyHandling.INCLUDE_CHILDREN) {
 
             // Layout for all hierarchy levels is requested
             klayLayered.doCompoundLayout(layeredGraph, progressMonitor);

@@ -28,6 +28,7 @@ import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphData;
@@ -50,7 +51,7 @@ public class LayoutDotExporter extends DotExporter {
         Command command = transData.getProperty(COMMAND);
         transData.setProperty(USE_EDGE_IDS, true);
         transData.setProperty(HIERARCHY,
-                parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                parentLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN
                 && (command == Command.DOT || command == Command.FDP));
         transData.setProperty(TRANSFORM_NODE_LAYOUT, parentLayout.getProperty(LayoutOptions.INTERACTIVE));
         transData.setProperty(TRANSFORM_EDGE_LAYOUT, false);
@@ -126,7 +127,7 @@ public class LayoutDotExporter extends DotExporter {
                 }
             }
             // enable compound mode
-            if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            if (parentLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN) {
                 graphAttrs.add(createAttribute(Attributes.COMPOUND, "true"));
             }
             break;

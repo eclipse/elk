@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.graph;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
@@ -21,6 +22,7 @@ import org.eclipse.elk.alg.layered.properties.LayerConstraint;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.alg.layered.properties.Properties;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.LayoutOptions;
@@ -124,9 +126,57 @@ public final class LGraphUtil {
         node.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
     }
     
+    ///////////////////////////////////////////////////////////////////////////////
+    // Graph Offsetting
+
+    /**
+     * Offsets the given graphs by a given offset without moving their nodes to another graph. The order
+     * of the graphs in the collection must not depend on their hash values. Otherwise, subsequent
+     * layout calls will most likely produce different results.
+     *
+     * @param graphs the graph to offset.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
+     */
+    public static void offsetGraphs(final Collection<LGraph> graphs, final double offsetx,
+            final double offsety) {
+
+        for (LGraph graph : graphs) {
+            offsetGraph(graph, offsetx, offsety);
+        }
+    }
+    
+    /**
+     * Offsets the given graph by a given offset without moving its nodes to another graph. This
+     * method can be called as many times as required on a given graph: it does not take the graph's
+     * offset into account.
+     *
+     * @param graph the graph to offset.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
+     */
+    public static void offsetGraph(final LGraph graph, final double offsetx, final double offsety) {
+        KVector graphOffset = new KVector(offsetx, offsety);
+
+        for (LNode node : graph.getLayerlessNodes()) {
+            node.getPosition().add(graphOffset);
+            for (LPort port : node.getPorts()) {
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    edge.getBendPoints().offset(graphOffset);
+                    KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                    if (junctionPoints != null) {
+                        junctionPoints.offset(graphOffset);
+                    }
+                    for (LLabel label : edge.getLabels()) {
+                        label.getPosition().add(graphOffset);
+                    }
+                }
+            }
+        }
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Node Placement
+    // Layer Things
     
     /**
      * Determines a horizontal placement for all nodes of a layer. The size of the layer is assumed
@@ -203,6 +253,50 @@ public final class LGraphUtil {
         }
     }
     
+    /**
+     * Finds the maximum width of non-dummy nodes in the given layer.
+     * <p>
+     * If the graph is laid out in a vertical direction, the maximum non-dummy node width doesn't
+     * mean anything since the labels are narrow, but very high. So in that case, {@code 0.0} is
+     * returned.
+     * </p>
+     * <p>
+     * When calling the function prior to node margin calculation, the node margins are
+     * unknown/invalid. One may set the {@code respectNodeMargins} flag accordingly.It would seem
+     * that the solution is to execute label management after node margin calculation. But there's a
+     * chicken-and-egg problem right there: if we execute node margin calculation first, it won't
+     * know about shortened edge end labels and port labels. If we execute label management first,
+     * it won't include node margins in the space usable for center edge labels. Damn!
+     * </p>
+     *
+     * @param layer
+     *            the layer to iterate over.
+     * @param respectNodeMargins
+     *            whether to include node margins in width calculation.
+     * @return the maximum width of non-dummy nodes. If there are none or the layout direction is
+     *         vertical, {@code 0.0} is returned.
+     */
+    public static double findMaxNonDummyNodeWidth(final Layer layer,
+            final boolean respectNodeMargins) {
+
+        if (layer.getGraph().getProperty(LayoutOptions.DIRECTION).isVertical()) {
+            return 0.0;
+        }
+
+        double maxWidth = 0.0;
+
+        for (LNode node : layer) {
+            if (node.getType() == NodeType.NORMAL) {
+                double width = node.getSize().x;
+                if (respectNodeMargins) {
+                    width += node.getMargin().left + node.getMargin().right;
+                }
+                maxWidth = Math.max(maxWidth, width);
+            }
+        }
+
+        return maxWidth;
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // Graph Properties

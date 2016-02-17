@@ -27,6 +27,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * The node's list of ports is sorted beginning at the leftmost northern port, going clockwise.
  * This order of ports may be used during crossing minimization for calculating port ranks.
  * 
+ * In case of {@link PortConstraints#FIXED_SIDE FIXED_SIDE} the ports are order by side
+ * according to the order north - east - south - west.
  * In case of {@link PortConstraints#FIXED_ORDER FIXED_ORDER} the side and
  * {@link LayoutOptions#PORT_INDEX PORT_INDEX} are used if specified. Otherwise the order is inferred
  * from specified port positions. For {@link PortConstraints#FIXED_POS FIXED_POS} solely the position of
@@ -57,19 +59,19 @@ public final class PortListSorter implements ILayoutProcessor {
          * {@inheritDoc}
          */
         public int compare(final LPort port1, final LPort port2) {
+            PortConstraints port1Constraint = 
+                    port1.getNode().getProperty(LayoutOptions.PORT_CONSTRAINTS);
             // Sort by side first (if the comparison ends here, the ports were on different sides;
             // otherwise, the ports must be on the same side)
             int ordinalDifference = port1.getSide().ordinal() - port2.getSide().ordinal();
-            if (ordinalDifference != 0) {
+            if (ordinalDifference != 0 || port1Constraint == PortConstraints.FIXED_SIDE) {
                 return ordinalDifference;
             }
 
             // If the ports are on the same side and the node has FIXED_ORDER port constraints (that is,
             // the coordinates of the ports don't necessarily make sense), we check if the port index
             // has been explicitly set
-            if (port1.getNode().getProperty(LayoutOptions.PORT_CONSTRAINTS)
-                    == PortConstraints.FIXED_ORDER) {
-
+            if (port1Constraint == PortConstraints.FIXED_ORDER) {
                 // In case of equal sides, sort by port index property
                 Integer index1 = port1.getProperty(LayoutOptions.PORT_INDEX);
                 Integer index2 = port2.getProperty(LayoutOptions.PORT_INDEX);
@@ -118,7 +120,7 @@ public final class PortListSorter implements ILayoutProcessor {
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     // We need to sort the port list accordingly
                     Collections.sort(node.getPorts(), portComparator);
                 }

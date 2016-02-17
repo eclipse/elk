@@ -19,10 +19,16 @@ import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic.BarycenterState;
+import org.eclipse.elk.alg.layered.p3order.constraints.ForsterConstraintResolver;
+import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractCrossingsCounter;
+import org.eclipse.elk.alg.layered.p3order.counting.BarthJuengerMutzelCrossingsCounter;
+import org.eclipse.elk.alg.layered.p3order.counting.HyperedgeCrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
@@ -97,15 +103,15 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
     /**
      * Complete node order of the best layer sweep.
      */
-    private NodeGroup[][] bestSweep;
+    private LNode[][] bestSweep;
     /**
      * Complete node order of the current layer sweep.
      */
-    private NodeGroup[][] curSweep;
+    private LNode[][] curSweep;
     /**
      * Complete node order of the previous layer sweep.
      */
-    private NodeGroup[][] prevSweep;
+    private LNode[][] prevSweep;
     /**
      * Crossings counter for normal edges.
      */
@@ -139,9 +145,9 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
         // Remember the best, current and previous sweep; they basically save the node oder
         // per layer for the different sweeps of the algorithm
-        bestSweep = new NodeGroup[layerCount][];
-        curSweep = new NodeGroup[layerCount][];
-        prevSweep = new NodeGroup[layerCount][];
+        bestSweep = new LNode[layerCount][];
+        curSweep = new LNode[layerCount][];
+        prevSweep = new LNode[layerCount][];
 
         int[] inLayerEdgeCount = new int[layerCount];
         boolean[] hasNorthSouthPorts = new boolean[layerCount];
@@ -163,9 +169,9 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             assert layerNodeCount > 0;
 
             // Initialize this layer's node arrays in the different sweeps
-            bestSweep[layerIndex] = new NodeGroup[layerNodeCount];
-            prevSweep[layerIndex] = new NodeGroup[layerNodeCount];
-            curSweep[layerIndex] = new NodeGroup[layerNodeCount];
+            bestSweep[layerIndex] = new LNode[layerNodeCount];
+            prevSweep[layerIndex] = new LNode[layerNodeCount];
+            curSweep[layerIndex] = new LNode[layerNodeCount];
             inLayerEdgeCount[layerIndex] = 0;
             hasNorthSouthPorts[layerIndex] = false;
 
@@ -173,11 +179,9 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             while (nodeIter.hasNext()) {
                 LNode node = nodeIter.next();
 
-                // Create node group and register layout unit
-                NodeGroup nodeGroup = new NodeGroup(node);
-                curSweep[layerIndex][nodeIter.previousIndex()] = nodeGroup;
+                // Register layout unit
+                curSweep[layerIndex][nodeIter.previousIndex()] = node;
                 node.id = nodeCount++;
-                node.setProperty(InternalProperties.NODE_GROUP, nodeGroup);
                 LNode layoutUnit = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
                 if (layoutUnit != null) {
                     layoutUnits.put(layoutUnit, node);
@@ -281,10 +285,27 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         // Determine the requested number of runs
         int runCount = layeredGraph.getProperty(Properties.THOROUGHNESS);
 
+        // Initialize barycenter states used by the barycenter heuristic and forster 
+        // assign ids to layers and nodes
+        BarycenterState[][] barycenterStates = new BarycenterState[layeredGraph.getLayers().size()][];
+        int i = 0;
+        for (Layer layer : layeredGraph.getLayers()) {
+            layer.id = i;
+            barycenterStates[i] = new BarycenterState[layer.getNodes().size()];
+            int j = 0;
+            for (LNode node : layer.getNodes()) {
+                node.id = j;
+                barycenterStates[i][j] = new BarycenterState(node);
+                j++;
+            }
+            i++;
+        }
+        
         // Initialize the compound graph layer crossing minimizer
-        IConstraintResolver constraintResolver = new ForsterConstraintResolver(layoutUnits);
-        ICrossingMinimizationHeuristic crossminHeuristic = new BarycenterHeuristic(constraintResolver,
-                random, portRanks);
+        IConstraintResolver constraintResolver =
+                new ForsterConstraintResolver(barycenterStates, layoutUnits);
+        ICrossingMinimizationHeuristic crossminHeuristic =
+                new BarycenterHeuristic(barycenterStates, constraintResolver, random, portRanks);
         
         // Create port distributors
         NodeRelativePortDistributor nodeRelativePortDistributor
@@ -298,7 +319,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             // Each run is randomly determined to be a forward or a backward run
             boolean forward = random.nextBoolean();
             int fixedLayerIndex = forward ? 0 : layerCount - 1;
-            NodeGroup[] fixedLayer = curSweep[fixedLayerIndex];
+            LNode[] fixedLayer = curSweep[fixedLayerIndex];
             
             // Randomly choose a port distribution method for this run
             portDistributor = random.nextBoolean()
@@ -326,7 +347,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 if (forward) {
                     // Perform a forward sweep
                     for (int layerIndex = 1; layerIndex < layerCount; layerIndex++) {
-                        NodeGroup[] freeLayer = curSweep[layerIndex];
+                        LNode[] freeLayer = curSweep[layerIndex];
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.OUTPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, true, !firstSweep, false);
@@ -350,7 +371,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 } else {
                     // Perform a backward sweep
                     for (int layerIndex = layerCount - 2; layerIndex >= 0; layerIndex--) {
-                        NodeGroup[] freeLayer = curSweep[layerIndex];
+                        LNode[] freeLayer = curSweep[layerIndex];
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.INPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, false, !firstSweep, false);
@@ -394,11 +415,11 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
-            NodeGroup[] nodes = bestSweep[layerIter.previousIndex()];
+            LNode[] nodes = bestSweep[layerIter.previousIndex()];
             ListIterator<LNode> nodeIter = layer.getNodes().listIterator();
             while (nodeIter.hasNext()) {
                 nodeIter.next();
-                nodeIter.set(nodes[nodeIter.previousIndex()].getNode());
+                nodeIter.set(nodes[nodeIter.previousIndex()]);
             }
         }
         
@@ -419,24 +440,19 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
      * @param preOrdered whether the nodes of the given layer are already ordered
      * @param randomize whether to randomize all node positions
      */
-    private void minimizeCrossings(final NodeGroup[] layer,
+    private void minimizeCrossings(final LNode[] layer,
             final ICrossingMinimizationHeuristic heuristic,
             final boolean forward, final boolean preOrdered, final boolean randomize) {
         
-        List<NodeGroup> nodeGroups = Lists.newArrayList();
-        for (NodeGroup ng : layer) {
-            nodeGroups.add(ng);
-        }
+        List<LNode> nodes = Lists.newArrayList(layer);
         
         // minimize crossings in the given layer
-        heuristic.minimizeCrossings(nodeGroups, preOrdered, randomize, forward);
+        heuristic.minimizeCrossings(nodes, preOrdered, randomize, forward);
         
         // apply the new ordering
         int index = 0;
-        for (NodeGroup nodeGroup : nodeGroups) {
-            for (LNode node : nodeGroup.getNodes()) {
-                layer[index++] = node.getProperty(InternalProperties.NODE_GROUP);
-            }
+        for (LNode nodeGroup : nodes) {
+                layer[index++] = nodeGroup;
         }
     }
     
@@ -452,7 +468,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
      * @param dest
      *            a node array to copy the graph into
      */
-    private static void copySweep(final NodeGroup[][] source, final NodeGroup[][] dest) {
+    private static void copySweep(final LNode[][] source, final LNode[][] dest) {
         for (int i = 0; i < dest.length; i++) {
             for (int j = 0; j < dest[i].length; j++) {
                 dest[i][j] = source[i][j];

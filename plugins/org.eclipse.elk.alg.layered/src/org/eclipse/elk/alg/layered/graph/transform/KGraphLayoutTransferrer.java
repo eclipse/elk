@@ -62,19 +62,29 @@ class KGraphLayoutTransferrer {
         if (!(graphOrigin instanceof KNode)) {
             return;
         }
-        KNode parentNode = (KNode) graphOrigin;
+        
+        // The KNode that represents this graph in the original KGraph
+        KNode parentKNode = (KNode) graphOrigin;
+        
+        // The LNode that represents this graph in the upper hierarchy level, if any
+        LNode parentLNode = (LNode) lgraph.getProperty(InternalProperties.PARENT_LNODE);
         
         // Get the offset to be added to all coordinates
         KVector offset = new KVector(lgraph.getOffset());
         
         // Adjust offset (and with it the positions), if requested
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        KShapeLayout parentLayout = parentKNode.getData(KShapeLayout.class);
         LInsets lInsets = lgraph.getInsets();
         KInsets kInsets = parentLayout.getInsets();
+        
+        // We may need to apply increased top/left insets
         final EnumSet<SizeOptions> sizeOptions = parentLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
+        KVector additionalInsets = new KVector();
         if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_INSETS)) {
-            offset.x += lInsets.left - kInsets.getLeft();
-            offset.y += lInsets.top - kInsets.getTop();
+            additionalInsets.x = lInsets.left - kInsets.getLeft();
+            additionalInsets.y = lInsets.top - kInsets.getTop();
+            offset.x += additionalInsets.x;
+            offset.y += additionalInsets.y;
         }
         
         // Set node insets, if requested
@@ -94,8 +104,7 @@ class KGraphLayoutTransferrer {
 
             if (origin instanceof KNode) {
                 applyNodeLayout(lnode, offset);
-            } else if (origin instanceof KPort
-                    && lgraph.getProperty(InternalProperties.PARENT_LNODE) == null) {
+            } else if (origin instanceof KPort && parentLNode == null) {
                 
                 // It's an external port. Set its position if it hasn't already been done before
                 KPort kport = (KPort) origin;
@@ -105,17 +114,29 @@ class KGraphLayoutTransferrer {
                 portLayout.applyVector(portPosition);
             }
 
-            // Collect edges
+            // Collect edges, except if they go into a nested subgraph (those edges need to be
+            // processed during one of the recursive calls so that any additional offsets are applied
+            // correctly)
             for (LPort port : lnode.getPorts()) {
-                edgeList.addAll(port.getOutgoingEdges());
+                port.getOutgoingEdges().stream()
+                    .filter(edge -> !LGraphUtil.isDescendant(edge.getTarget().getNode(), lnode))
+                    .forEach(edge -> edgeList.add(edge));
             }
         }
 
-        EdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
+        // Collect edges that go from the current graph's representing LNode down into its descendants
+        if (parentLNode != null) {
+            for (LPort port : parentLNode.getPorts()) {
+                port.getOutgoingEdges().stream()
+                        .filter(edge -> LGraphUtil.isDescendant(edge.getTarget().getNode(), parentLNode))
+                        .forEach(edge -> edgeList.add(edge));
+            }
+        }
         
         // Iterate through all edges
+        EdgeRouting routing = parentLayout.getProperty(Properties.EDGE_ROUTING);
         for (LEdge ledge : edgeList) {
-            applyEdgeLayout(ledge, routing, offset);
+            applyEdgeLayout(ledge, routing, offset, additionalInsets);
         }
 
         // Setup the parent node
@@ -184,6 +205,8 @@ class KGraphLayoutTransferrer {
                 for (LLabel label : lport.getLabels()) {
                     KLabel klabel = (KLabel) label.getProperty(InternalProperties.ORIGIN);
                     KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                    klabelLayout.setWidth((float) label.getSize().x);
+                    klabelLayout.setHeight((float) label.getSize().y);
                     klabelLayout.applyVector(label.getPosition());
                 }
             }
@@ -199,16 +222,21 @@ class KGraphLayoutTransferrer {
      *            the kind of routing applied to edges.
      * @param offset
      *            offset to add to coordinates.
+     * @param additionalInsets
+     *            the additional insets that may have to be taken into account for hierarchical that go
+     *            into the bowels of their source node. These are already included in the offset, but
+     *            are required separately.
      */
-    private void applyEdgeLayout(final LEdge ledge, final EdgeRouting routing, final KVector offset) {
+    private void applyEdgeLayout(final LEdge ledge, final EdgeRouting routing, final KVector offset,
+            final KVector additionalInsets) {
+
         KEdge kedge = (KEdge) ledge.getProperty(InternalProperties.ORIGIN);
         
         // Only the orthogonal edge routing algorithm supports self-loops. Thus, leave self-loops
         // untouched if another routing algorithm is selected.
-        if (kedge == null
-                || (ledge.isSelfLoop() 
-                        && routing != EdgeRouting.ORTHOGONAL 
-                        && routing != EdgeRouting.SPLINES)) {
+        if (kedge == null) {
+            return;
+        } else if (ledge.isSelfLoop() && routing != EdgeRouting.ORTHOGONAL && routing != EdgeRouting.SPLINES) {
             return;
         }
         
@@ -219,15 +247,24 @@ class KGraphLayoutTransferrer {
         // Adapt the offset value and add the source port position to the vector chain
         KVector sourcePoint;
         if (LGraphUtil.isDescendant(ledge.getTarget().getNode(), ledge.getSource().getNode())) {
+            // The external port's anchor position, relative to the node's top left corner
             LPort sourcePort = ledge.getSource();
             sourcePoint = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
+            
+            // The node's insets need to be subtracted since edges going into the node's bowels are
+            // relative to the top left corner + insets
+            // TODO This line assumes that for a compound node, the insets computed for its LGraph and
+            //      for its representing LNode are the same, which doesn't always seem to be the case
             LInsets sourceInsets = sourcePort.getNode().getInsets();
             sourcePoint.add(-sourceInsets.left, -sourceInsets.top);
-            LGraph nestedGraph = sourcePort.getNode().getProperty(InternalProperties.NESTED_LGRAPH);
-            if (nestedGraph != null) {
-                edgeOffset = nestedGraph.getOffset();
-            }
-            sourcePoint.sub(edgeOffset);
+            
+            // The source point will later have the passed offset added to it, which it doesn't actually
+            // need, so we subtract it now
+            sourcePoint.sub(offset);
+
+            // What it does need, however, is any additional insets that may be present, so we
+            // explicitly add them here
+            sourcePoint.add(additionalInsets);
         } else {
             sourcePoint = ledge.getSource().getAbsoluteAnchor();
         }

@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
+import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchProcessor;
 
 /**
@@ -42,11 +43,13 @@ public enum IntermediateProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Creates connected compontents for the SplineSelfLoopPre- and postprocessor. */
+    /** Creates connected components for the SplineSelfLoopPre- and postprocessor. */
     SPLINE_SELF_LOOP_PREPROCESSOR,
     /** If one of the phases is set to interactive mode, this processor positions external ports. */
     INTERACTIVE_EXTERNAL_PORT_POSITIONER,
-
+    /** Add constraint edges to respect partitioning of nodes. */
+    PARTITION_PREPROCESSOR,
+    
     // Before Phase 2
 
     /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
@@ -54,6 +57,14 @@ public enum IntermediateProcessorStrategy {
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
 
+    // Before Phase 3
+    
+    /** Moves trees of high degree nodes to separate layers. */
+    HIGH_DEGREE_NODE_LAYER_PROCESSOR,
+    /** Remove partition constraint edges. */
+    PARTITION_POSTPROCESSOR,
+    /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
+    NODE_PROMOTION,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
@@ -127,6 +138,9 @@ public enum IntermediateProcessorStrategy {
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
     LABEL_DUMMY_REMOVER,
+    /** Moves nodes and vertical edge segments in horizontal direction to close some gaps that are a
+      * result of the layering. */
+    HORIZONTAL_COMPACTOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Mirrors the graph to perform a right-to-left drawing. */
@@ -143,6 +157,7 @@ public enum IntermediateProcessorStrategy {
      * 
      * @return the layout processor.
      */
+    // SUPPRESS CHECKSTYLE NEXT MethodLength
     public ILayoutProcessor create() {
         switch (this) {
 
@@ -188,6 +203,12 @@ public enum IntermediateProcessorStrategy {
 
         case HIERARCHICAL_PORT_POSITION_PROCESSOR:
             return new HierarchicalPortPositionProcessor();
+
+        case HIGH_DEGREE_NODE_LAYER_PROCESSOR:
+            return new HighDegreeNodeLayeringProcessor();
+
+        case HORIZONTAL_COMPACTOR:
+            return new HorizontalGraphCompactor();
 
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
@@ -237,6 +258,9 @@ public enum IntermediateProcessorStrategy {
 
         case NODE_MARGIN_CALCULATOR:
             return new NodeMarginCalculator();
+            
+        case NODE_PROMOTION:
+            return new NodePromotion();
 
         case NORTH_SOUTH_PORT_POSTPROCESSOR:
             return new NorthSouthPortPostprocessor();
@@ -246,6 +270,12 @@ public enum IntermediateProcessorStrategy {
 
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();
+
+        case PARTITION_POSTPROCESSOR:
+            return new PartitionPostprocessor();
+
+        case PARTITION_PREPROCESSOR:
+            return new PartitionPreprocessor();
 
         case PORT_DISTRIBUTER:
             return new PortDistributionProcessor();

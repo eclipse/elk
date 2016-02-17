@@ -22,8 +22,6 @@ import org.eclipse.elk.core.math.KVector;
  * layout algorithm to work with. Of course, the changes to the label's text need to actually be
  * applied after automatic layout. How that works depends on the visualization framework used.
  * </p>
- * 
- * @author cds
  */
 public interface ILabelManager {
     
@@ -39,6 +37,6 @@ public interface ILabelManager {
      * @return the label's dimensions after shortening or {@code null} if the label has not been
      *         shortened.
      */
-    KVector resizeLabelToWidth(Object label, double targetWidth);
+    KVector manageLabelSize(Object label, double targetWidth);
     
 }

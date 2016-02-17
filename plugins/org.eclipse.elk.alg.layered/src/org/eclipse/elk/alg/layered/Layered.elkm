@@ -20,6 +20,9 @@ import org.eclipse.elk.alg.layered.p4nodes.bk.CompactionStrategy
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
+import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrategy
+import org.eclipse.elk.alg.layered.intermediate.compaction.ConstraintCalculationStrategy
+import org.eclipse.elk.alg.layered.intermediate.NodePromotionStrategy
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -68,6 +71,7 @@ algorithm Layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.portAlignmentSouth
 	supports org.eclipse.elk.portAlignmentWest
 	supports org.eclipse.elk.portAlignmentEast
+	// TODO hierarchy handling
 	supports edgeSpacingFactor
 	supports edgeNodeSpacingFactor
 	supports unnecessaryBendpoints
@@ -90,6 +94,12 @@ algorithm Layered(LayeredLayoutProvider) {
 	supports selfLoopPlacement
 	supports contentAlignment
 	supports compaction
+	supports postCompaction
+	supports postCompaction_constraints
+	supports components_compact
+	supports highDegreeNode_treatment
+	supports highDegreeNode_threshold
+	supports highDegreeNode_treeHeight
 }
 
 advanced property compaction: CompactionStrategy {
@@ -290,4 +300,91 @@ advanced property wideNodesOnMultipleLayers: WideNodesStrategy {
 	description = "Strategy to distribute wide nodes over multiple layers."
 	default = WideNodesStrategy.OFF
 	targets = parents
+}
+
+advanced property northOrSouthPort: Boolean {
+	label = "North or South Port"
+	description = "Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)"
+	default = false
+	targets = ports
+}
+
+/* ------------------------
+ *    high degree nodes
+ * ------------------------*/
+advanced property highDegreeNode_treatment: Boolean {
+	label = "High Degree Node Treatment"
+	description = "Makes room around high degree nodes to place leafs and trees."
+	default = false
+	targets = parents
+}
+
+advanced property highDegreeNode_threshold: Integer {
+	label = "High Degree Node Threshold"
+	description = "Whether a node is considered to have a high degree."
+	default = 16
+	targets = parents
+	requires highDegreeNode_treatment == true
+}
+
+advanced property highDegreeNode_treeHeight: Integer {
+	label = "High Degree Node Maximum Tree Height"
+	description = "Maximum height of a subtree connected to a high degree node to be moved to separate layers."
+	default = 5
+	targets = parents
+	requires highDegreeNode_treatment == true
+}
+
+advanced property minWidthUpperBoundOnWidth: Integer {
+	label = "Upper Bound On Width [MinWidth Layerer]"
+	description = "Defines a loose upper bound on the width of the MinWidth layerer."
+	default = 4
+	targets = parents
+//	requires nodeLayering == EXP_MIN_WIDTH
+}
+
+advanced property minWidthUpperLayerEstimationScalingFactor: Integer {
+	label = "Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
+	description = "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations."
+	default = 2
+	targets = parents
+//	requires nodeLayering == EXP_MIN_WIDTH
+}
+
+advanced property postCompaction: GraphCompactionStrategy {
+	label = "Post Compaction"
+	description = "Specifies whether and how post-process compaction is applied."
+	default = GraphCompactionStrategy.NONE
+	targets = parents
+
+}
+
+advanced property postCompaction_constraints: ConstraintCalculationStrategy {
+	label = "Post Compaction Constraint Calculation"
+	description = "Specifies whether and how post-process compaction is applied."
+	default = ConstraintCalculationStrategy.SCANLINE
+	targets = parents
+}
+
+advanced property nodePromotion: NodePromotionStrategy {
+	label = "Node Promotion"
+	description = "Reduces number of dummy nodes after layering phase (if possible)."
+	default = NodePromotionStrategy.NONE
+	targets = parents
+}
+
+advanced property nodePromotion_boundary: Integer {
+	label = "Node Promotion Boundary"
+	description = "Limits the number of iterations for node promotion."
+	default = 0
+	targets = parents
+	requires nodePromotion
+}
+
+advanced property components_compact: Boolean {
+	label = "Compact Components"
+	description = "Tries to further compact components (disconnected sub-graphs)."
+	default = false
+	targets = parents
+	requires org.eclipse.elk.separateConnComp == true
 }

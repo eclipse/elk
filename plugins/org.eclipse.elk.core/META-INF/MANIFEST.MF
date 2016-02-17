@@ -8,6 +8,7 @@ Require-Bundle: com.google.guava;bundle-version="15.0.0",
  org.eclipse.emf.ecore,
  org.eclipse.elk.graph
 Export-Package: org.eclipse.elk.core,
+ org.eclipse.elk.core.comments,
  org.eclipse.elk.core.data,
  org.eclipse.elk.core.klayoutdata,
  org.eclipse.elk.core.klayoutdata.impl,
@@ -18,7 +19,8 @@ Export-Package: org.eclipse.elk.core,
  org.eclipse.elk.core.util,
  org.eclipse.elk.core.util.adapters,
  org.eclipse.elk.core.util.labelspacing,
- org.eclipse.elk.core.util.nodespacing
+ org.eclipse.elk.core.util.nodespacing,
+ org.eclipse.elk.core.util.selection
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

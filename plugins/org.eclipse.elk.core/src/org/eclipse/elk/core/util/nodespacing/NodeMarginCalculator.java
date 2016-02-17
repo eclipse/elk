@@ -276,8 +276,13 @@ public final class NodeMarginCalculator  {
             final boolean incomingEdge, final NodeAdapter<?> node, final PortAdapter<?> port,
             final KVector portLabelSpace, final double labelSpacing) {
         
-        // The label box is set to the label's size; the position needs to be determined depending on
-        // further details.
+        labelBox.x = node.getPosition().x;
+        labelBox.y = node.getPosition().y;
+        if (port != null) {
+            labelBox.x += port.getPosition().x;
+            labelBox.y += port.getPosition().y;
+        }
+        
         labelBox.width = label.getSize().x;
         labelBox.height = label.getSize().y;
         
@@ -285,51 +290,41 @@ public final class NodeMarginCalculator  {
             // The edge is connected directly to the node
             if (incomingEdge) {
                 // Assume the edge enters the node at its western side
-                labelBox.x = 0.0 - labelSpacing - label.getSize().x;
-                labelBox.y = 0;
+                labelBox.x -= labelSpacing + label.getSize().x;
             } else {
                 // Assume the edge leaves the node at its eastern side
-                labelBox.x = node.getSize().x + labelSpacing;
-                labelBox.y = 0;
+                labelBox.x += node.getSize().x + labelSpacing;
             }
         } else {
             switch (port.getSide()) {
             case UNDEFINED:
             case EAST:
-                labelBox.x = port.getPosition().x
-                           + port.getSize().x
+                labelBox.x += port.getSize().x
                            + labelSpacing
                            + portLabelSpace.x
                            + labelSpacing;
-                labelBox.y = port.getPosition().y;
                 break;
                 
             case WEST:
-                labelBox.x = port.getPosition().x
-                           - labelSpacing
-                           - portLabelSpace.x
-                           - labelSpacing
-                           - label.getSize().x;
-                labelBox.y = port.getPosition().y;
+                labelBox.x -= labelSpacing
+                           + portLabelSpace.x
+                           + labelSpacing
+                           + label.getSize().x;
                 break;
                 
             case NORTH:
-                labelBox.x = port.getPosition().x
-                           + port.getSize().x
+                labelBox.x += port.getSize().x
                            + labelSpacing;
-                labelBox.y = port.getPosition().y
-                           - labelSpacing
-                           - portLabelSpace.y
-                           - labelSpacing
-                           - label.getSize().y;
+                labelBox.y -= labelSpacing
+                           + portLabelSpace.y
+                           + labelSpacing
+                           + label.getSize().y;
                 break;
                 
             case SOUTH:
-                labelBox.x = port.getPosition().x
-                           + port.getSize().x
+                labelBox.x += port.getSize().x
                            + labelSpacing;
-                labelBox.y = port.getPosition().y
-                           + port.getSize().y
+                labelBox.y += port.getSize().y
                            + labelSpacing
                            + portLabelSpace.y
                            + labelSpacing;

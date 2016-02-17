@@ -12,6 +12,9 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
+
 /**
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
  * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
@@ -40,7 +43,7 @@ public interface ICrossingMinimizationHeuristic {
      * @param forward
      *            whether the free layer is after the fixed layer.
      */
-    void minimizeCrossings(List<NodeGroup> layer, boolean preOrdered, boolean randomize,
+    void minimizeCrossings(List<LNode> layer, boolean preOrdered, boolean randomize,
             boolean forward);
 
 }

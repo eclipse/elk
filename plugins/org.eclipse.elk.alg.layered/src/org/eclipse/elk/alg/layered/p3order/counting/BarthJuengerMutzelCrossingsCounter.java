@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kiel University and others.
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p3order;
+package org.eclipse.elk.alg.layered.p3order.counting;
 
 import java.util.ListIterator;
 
@@ -67,13 +67,12 @@ public class BarthJuengerMutzelCrossingsCounter extends AbstractCrossingsCounter
      * @return the number of edge crossings
      */
     @Override
-    public int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer) {
+    public int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer) {
         // Assign index values to the ports of the right layer
         int targetCount = 0, edgeCount = 0;
-        Layer leftLayerRef = leftLayer[0].getNode().getLayer();
-        Layer rightLayerRef = rightLayer[0].getNode().getLayer();
-        for (NodeGroup nodeGroup : rightLayer) {
-            LNode node = nodeGroup.getNode();
+        Layer leftLayerRef = leftLayer[0].getLayer();
+        Layer rightLayerRef = rightLayer[0].getLayer();
+        for (LNode node : rightLayer) {
             assert node.getLayer() == rightLayerRef;
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Determine how many input ports there are on the north side
@@ -136,8 +135,7 @@ public class BarthJuengerMutzelCrossingsCounter extends AbstractCrossingsCounter
         // Determine the sequence of edge target positions sorted by source and target index
         int[] southSequence = new int[edgeCount];
         int i = 0;
-        for (NodeGroup nodeGroup : leftLayer) {
-            LNode node = nodeGroup.getNode();
+        for (LNode node : leftLayer) {
             assert node.getLayer() == leftLayerRef;
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Iterate output ports in their natural order, that is north - east - south - west

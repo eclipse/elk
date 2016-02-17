@@ -53,10 +53,10 @@ public class LabelAndNodeSizeProcessor {
 
     /**
      * Copy of the
-     * {@link org.eclipse.elk.layered.properties.InternalProperties#PORT_RATIO_OR_POSITION}
+     * {@link de.cau.cs.kieler.klay.layered.properties.InternalProperties#PORT_RATIO_OR_POSITION}
      * option. For further information see the documentation found there. We added this copy here to
      * allow a generic treatment of spacing calculations for graph elements. See the
-     * {@link org.eclipse.elk.core.util.nodespacing} package. [programmatically set]
+     * {@link de.cau.cs.kieler.kiml.util.nodespacing} package. [programmatically set]
      */
     public static final IProperty<Double> PORT_RATIO_OR_POSITION = new Property<Double>(
             "portRatioOrPosition", 0.0);
@@ -68,7 +68,7 @@ public class LabelAndNodeSizeProcessor {
      * {@inheritDoc}
      */
     public void process(final GraphAdapter<?> layeredGraph) {
-        final float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        final double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
 
         // Iterate over all the graph's nodes
         for (final NodeAdapter<?> node : layeredGraph.getNodes()) {
@@ -81,6 +81,7 @@ public class LabelAndNodeSizeProcessor {
             final NodeData data = new NodeData(node);
             data.labelSpacing = labelSpacing;
             data.portSpacing = node.getProperty(LayoutOptions.PORT_SPACING).doubleValue();
+            data.nodeLabelInsets = node.getProperty(LayoutOptions.NODE_LABEL_INSETS);
 
             /*
              * PHASE 1 (SAD DUCK):
@@ -733,10 +734,13 @@ public class LabelAndNodeSizeProcessor {
         sumWidthOutsideTop    -= labelSpacing;
         sumWidthOutsideBottom -= labelSpacing;
         
-        //add missing label spacing (only if not zero)
-        sumWidthInsideTop    += sumWidthInsideTop    != 0 ? labelSpacing : 0;
-        sumWidthInsideCenter += sumWidthInsideCenter != 0 ? labelSpacing : 0;
-        sumWidthInsideBottom += sumWidthInsideBottom != 0 ? labelSpacing : 0;
+        //add missing label spacing and label insets (only if not zero)
+        double additionalSpacing = labelSpacing 
+                + data.nodeLabelInsets.left + data.nodeLabelInsets.right;
+        sumWidthInsideTop    += sumWidthInsideTop    != 0 ? additionalSpacing : 0;
+        sumWidthInsideCenter += sumWidthInsideCenter != 0 ? additionalSpacing : 0;
+        sumWidthInsideBottom += sumWidthInsideBottom != 0 ? additionalSpacing : 0;
+        // label insets are not added here because they are already part of requiredNodeLabelSpace
         double minHeightInside =
                 data.requiredNodeLabelSpace.top
                 + maxHeightInsideCenter
@@ -1313,6 +1317,11 @@ public class LabelAndNodeSizeProcessor {
         // For each present location, calculate the position of the top left corner of the label group
         for (final Entry<LabelLocation, LabelGroup> entry : data.labelGroupsBoundingBoxes.entrySet()) {
             final Rectangle boundingBox = entry.getValue();
+            // Prepare available horizontal and vertical space for centering objects
+            double horizontalSpace =
+                    data.node.getSize().x - data.nodeLabelInsets.left - data.nodeLabelInsets.right;
+            double verticalSpace =
+                    data.node.getSize().y - data.nodeLabelInsets.top - data.nodeLabelInsets.bottom;
             switch (entry.getKey()) {
             case OUT_T_L:
                 boundingBox.x = 0;
@@ -1363,52 +1372,75 @@ public class LabelAndNodeSizeProcessor {
                 boundingBox.y = data.node.getSize().y - boundingBox.height;
                 break;
             case IN_T_L:
-                boundingBox.x = data.requiredPortLabelSpace.left + data.labelSpacing;
-                boundingBox.y = data.requiredPortLabelSpace.top + data.labelSpacing;
+                boundingBox.x =
+                        data.requiredPortLabelSpace.left + data.labelSpacing
+                                + data.nodeLabelInsets.left;
+                boundingBox.y =
+                        data.requiredPortLabelSpace.top + data.labelSpacing
+                                + data.nodeLabelInsets.top;
                 break;
             case IN_T_C:
-                boundingBox.x = (data.node.getSize().x - boundingBox.width) / 2.0;
-                boundingBox.y = data.requiredPortLabelSpace.top + data.labelSpacing;
+                boundingBox.x =
+                        ((horizontalSpace - boundingBox.width) / 2.0) + data.nodeLabelInsets.left;
+                boundingBox.y =
+                        data.requiredPortLabelSpace.top + data.labelSpacing
+                                + data.nodeLabelInsets.top;
                 break;
             case IN_T_R:
                 boundingBox.x =
                         data.node.getSize().x - data.requiredPortLabelSpace.right
-                                - boundingBox.width - data.labelSpacing;
-                boundingBox.y = data.requiredPortLabelSpace.top + data.labelSpacing;
+                                - boundingBox.width - data.labelSpacing
+                                - data.nodeLabelInsets.right;
+                boundingBox.y =
+                        data.requiredPortLabelSpace.top + data.labelSpacing
+                                + data.nodeLabelInsets.top;
                 break;
             case IN_C_L:
-                boundingBox.x = data.requiredPortLabelSpace.left + data.labelSpacing;
-                boundingBox.y = (data.node.getSize().y - boundingBox.height) / 2.0;
+                boundingBox.x =
+                        data.requiredPortLabelSpace.left + data.labelSpacing
+                                + data.nodeLabelInsets.left;
+                boundingBox.y =
+                        ((verticalSpace - boundingBox.height) / 2.0) + data.nodeLabelInsets.top;
                 break;
             case IN_C_C:
-                boundingBox.x = (data.node.getSize().x - boundingBox.width) / 2.0;
-                boundingBox.y = (data.node.getSize().y - boundingBox.height) / 2.0;
+                boundingBox.x =
+                        ((horizontalSpace - boundingBox.width) / 2.0) + data.nodeLabelInsets.left;
+                boundingBox.y =
+                        ((verticalSpace - boundingBox.height) / 2.0) + data.nodeLabelInsets.top;
                 break;
             case IN_C_R:
                 boundingBox.x =
                         data.node.getSize().x - data.requiredPortLabelSpace.right
-                                - boundingBox.width - data.labelSpacing;
-                boundingBox.y = (data.node.getSize().y - boundingBox.height) / 2.0;
+                                - boundingBox.width - data.labelSpacing - data.nodeLabelInsets.right;
+                boundingBox.y =
+                        ((verticalSpace - boundingBox.height) / 2.0) + data.nodeLabelInsets.top;
                 break;
             case IN_B_L:
-                boundingBox.x = data.requiredPortLabelSpace.left + data.labelSpacing;
+                boundingBox.x =
+                        data.requiredPortLabelSpace.left + data.labelSpacing
+                                + data.nodeLabelInsets.left;
                 boundingBox.y =
                         data.node.getSize().y - data.requiredPortLabelSpace.bottom
-                                - boundingBox.height - data.labelSpacing;
+                                - boundingBox.height - data.labelSpacing
+                                - data.nodeLabelInsets.bottom;
                 break;
             case IN_B_C:
-                boundingBox.x = (data.node.getSize().x - boundingBox.width) / 2.0;
+                boundingBox.x =
+                        ((horizontalSpace - boundingBox.width) / 2.0) + data.nodeLabelInsets.left;
                 boundingBox.y =
                         data.node.getSize().y - data.requiredPortLabelSpace.bottom
-                                - boundingBox.height - data.labelSpacing;
+                                - boundingBox.height - data.labelSpacing
+                                - data.nodeLabelInsets.bottom;
                 break;
             case IN_B_R:
                 boundingBox.x =
                         data.node.getSize().x - data.requiredPortLabelSpace.right
-                                - boundingBox.width - data.labelSpacing;
+                                - boundingBox.width - data.labelSpacing
+                                - data.nodeLabelInsets.right;
                 boundingBox.y =
                         data.node.getSize().y - data.requiredPortLabelSpace.bottom
-                                - boundingBox.height - data.labelSpacing;
+                                - boundingBox.height - data.labelSpacing
+                                - data.nodeLabelInsets.bottom;
                 break;
             }
         }
@@ -1469,6 +1501,11 @@ public class LabelAndNodeSizeProcessor {
          * Spacing around labels.
          */
         private double labelSpacing;
+
+        /**
+         * Insets for node labels placed inside the node.
+         */
+        private Insets nodeLabelInsets;
 
         /*
          * Spacing around ports.
@@ -1614,6 +1651,7 @@ public class LabelAndNodeSizeProcessor {
      */
     private void calculateRequiredNodeLabelSpace(final NodeData data) {
         LabelSpaceCalculation.calculateRequiredNodeLabelSpace(data.node, data.labelSpacing,
-                data.labelGroupsBoundingBoxes, data.requiredNodeLabelSpace);
+                data.nodeLabelInsets, data.labelGroupsBoundingBoxes, data.requiredNodeLabelSpace);
     }
+    
 }

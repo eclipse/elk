@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.p4nodes.bk;
 
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -22,20 +23,28 @@ import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.math.DoubleMath;
 
 /**
- * @author uru
+ * 
  */
 public abstract class ThresholdStrategy {
 
     // TODO make this an option?!
-    private static final double THRESHOLD = Double.MAX_VALUE; 
+    private static final double THRESHOLD = Double.MAX_VALUE;
     
-    // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
+    private static final double EPSILON = 0.0001d; 
+    
+    // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
     /**
      * The currently processed layout with its iteration directions.
      */
     protected BKAlignedLayout bal;
+    
+    /**
+     * The precalculated neighborhood information.
+     */
+    protected NeighborhoodInformation ni;
     
     /**
      * We keep track of which blocks have been completely finished.
@@ -45,18 +54,27 @@ public abstract class ThresholdStrategy {
     /**
      * A queue with blocks that are postponed during compaction.
      */
-    protected Queue<Pair<LNode, Boolean>> postProcessables = Lists.newLinkedList();
-
+    protected Queue<Postprocessable> postProcessablesQueue = Lists.newLinkedList();
+    
+    /** 
+     * A stack that is used to treat postponed nodes in reversed order.
+     */
+    protected Stack<Postprocessable> postProcessablesStack = new Stack<>();
+    
     /**
      * Resets the internal state.
      * 
      * @param theBal
      *            The currently processed layout with its iteration directions.
+     * @param theNi
+     *            The precalculated neighborhood information of the graph.
      */
-    public void init(final BKAlignedLayout theBal) {
+    public void init(final BKAlignedLayout theBal, final NeighborhoodInformation theNi) {
         this.bal = theBal;
+        this.ni = theNi;
         blockFinished.clear();
-        postProcessables.clear();
+        postProcessablesQueue.clear();
+        postProcessablesStack.clear();
     }
     
     /**
@@ -212,30 +230,40 @@ public abstract class ThresholdStrategy {
          *         the pair's first element is {@code null} and the second element indicates if
          *         there are possible candidate edges that might become valid at a later stage.
          */
-        private Pair<LEdge, Boolean> pickEdge(
-                final LNode currentNode, final boolean isRoot) {
+        private Postprocessable pickEdge(final Postprocessable pp) {
         
             Iterable<LEdge> edges;
-            if (isRoot) {
+            if (pp.isRoot) {
                 edges = bal.hdir == HDirection.RIGHT
-                            ? currentNode.getIncomingEdges() : currentNode.getOutgoingEdges();
+                            ? pp.free.getIncomingEdges() : pp.free.getOutgoingEdges();
             } else {
                 edges = bal.hdir == HDirection.LEFT 
-                            ? currentNode.getIncomingEdges() : currentNode.getOutgoingEdges();
+                            ? pp.free.getIncomingEdges() : pp.free.getOutgoingEdges();
             }
             
             boolean hasEdges = false;
             for (LEdge e : edges) {
+                
+                // ignore in-layer edges
+                if (ni.layerIndex[e.getSource().getNode().getLayer().id] 
+                        == ni.layerIndex[e.getTarget().getNode().getLayer().id]) {
+                    continue;
+                }
+                
                 hasEdges = true;
                 
                 // if the other node does not have a position yet, ignore this edge
-                if (blockFinished.contains(bal.root[getOther(e, currentNode).id])) {
-                    return Pair.of(e, true);
+                if (blockFinished.contains(bal.root[getOther(e, pp.free).id])) {
+                    pp.hasEdges = true;
+                    pp.edge = e;
+                    return pp;
                 }
             }
             
             // no edge picked
-            return Pair.of(null, hasEdges);
+            pp.hasEdges = hasEdges;
+            pp.edge = null;
+            return pp;
         }
         
     
@@ -248,17 +276,17 @@ public abstract class ThresholdStrategy {
             double invalid = bal.vdir == VDirection.UP 
                     ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
     
-            final Pair<LEdge, Boolean> pick = pickEdge(blockNode, isRoot);
+            final Postprocessable pick = pickEdge(new Postprocessable(blockNode, isRoot));
             
             // if edges exist but we couldn't find a good one
-            if (pick.getFirst() == null && pick.getSecond()) {
-                 postProcessables.add(Pair.of(blockNode, isRoot));
+            if (pick.edge == null && pick.hasEdges) {
+                 postProcessablesQueue.add(pick);
                  return invalid;
-            } else if (pick.getFirst() != null) {
+            } else if (pick.edge != null) {
     
                 double threshold;
-                LPort left = pick.getFirst().getSource();
-                LPort right = pick.getFirst().getTarget();
+                LPort left = pick.edge.getSource();
+                LPort right = pick.edge.getTarget();
     
                 if (isRoot) {
                     // We handle the root (first) node of a block here
@@ -299,42 +327,102 @@ public abstract class ThresholdStrategy {
          */
         @Override
         public void postProcess() {
-            while (!postProcessables.isEmpty()) {
+            
+            // try original iteration order
+            while (!postProcessablesQueue.isEmpty()) {
                 
                 // first is the node, second whether it is regarded as root
-                Pair<LNode, Boolean> pair = postProcessables.poll();
-                Pair<LEdge, Boolean> pick = pickEdge(pair.getFirst(), pair.getSecond());
-    
-                if (pick.getFirst() == null) {
+                Postprocessable pp = postProcessablesQueue.poll();
+                Postprocessable pick = pickEdge(pp);
+                
+                if (pick.edge == null) {
                     continue;
                 }
                 
-                LEdge edge =  pick.getFirst();
-                LPort left = edge.getSource();
-                LPort right = edge.getTarget();
-                LPort block = bal.hdir == HDirection.LEFT ? right : left;
-                LPort fix = bal.hdir == HDirection.LEFT ? left : right;
+                LEdge edge = pick.edge;
                 
-                // t has to be the root node of a different block
-                double delta = bal.calculateDelta(fix, block);
-    
-                if (delta > 0 && delta < THRESHOLD) {
-                    // target y larger than source y --> shift upwards?
-                    double availableSpace = bal.checkSpaceAbove(block.getNode(), delta);
-                    bal.shiftBlock(block.getNode(), -availableSpace);
-                    
-                } else if (delta < 0 && -delta < THRESHOLD) {
-                    
-                    // direction is up, we possibly shifted some blocks too far upward 
-                    // for an edge to be straight, so check if we can shift down again
-                    double availableSpace = bal.checkSpaceBelow(block.getNode(), -delta);
-                    bal.shiftBlock(block.getNode(), availableSpace);
+                // ignore in-layer edges
+                if (ni.layerIndex[edge.getSource().getNode().getLayer().id] 
+                        == ni.layerIndex[edge.getTarget().getNode().getLayer().id]) {
+                    continue;
+                }
+
+                // try to straighten the edge ...
+                boolean moved = process(pp);
+                // if it wasn't possible try again later in the opposite iteration direction
+                if (!moved) {
+                    postProcessablesStack.push(pp);
                 }
                 
             }
+
+            // reversed iteration order
+            while (!postProcessablesStack.isEmpty()) {
+                process(postProcessablesStack.pop());
+            }
+        }
+        
+        private boolean process(final Postprocessable pp) {
+            assert pp.edge != null;
+            
+            LEdge edge = pp.edge;
+            LPort fix;
+            if (edge.getSource().getNode() == pp.free) {
+                fix = edge.getTarget();
+            } else {
+                fix = edge.getSource();
+            }
+            LPort block; 
+            if (edge.getSource().getNode() == pp.free) {
+                block = edge.getSource();
+            } else {
+                block = edge.getTarget();
+            }
+
+            // t has to be the root node of a different block
+            double delta = bal.calculateDelta(fix, block);
+            
+            if (delta > 0 && delta < THRESHOLD) {
+                // target y larger than source y --> shift upwards?
+                double availableSpace = bal.checkSpaceAbove(block.getNode(), delta);
+                assert DoubleMath.fuzzyEquals(availableSpace, 0, EPSILON) || availableSpace >= 0;
+                bal.shiftBlock(block.getNode(), -availableSpace);
+                
+                return availableSpace > 0;
+            } else if (delta < 0 && -delta < THRESHOLD) {
+                
+                // direction is up, we possibly shifted some blocks too far upward 
+                // for an edge to be straight, so check if we can shift down again
+                double availableSpace = bal.checkSpaceBelow(block.getNode(), -delta);
+                assert DoubleMath.fuzzyEquals(availableSpace, 0, EPSILON) || availableSpace >= 0;
+                bal.shiftBlock(block.getNode(), availableSpace);
+                
+                return availableSpace > 0;
+            }
+            
+            return false;
         }
     }
     
+    /** 
+     * Represents a unit to be post-processed. 
+     */
+    private static class Postprocessable {
+        // SUPPRESS CHECKSTYLE NEXT 8 VisibilityModifier
+        /** the node whose block can potentially be moved. */
+        LNode free;
+        /** whether {@code free} is the root node of its block. */
+        boolean isRoot;
+        /** whether {@code free} has edges. */
+        boolean hasEdges;
+        /** the edge that was selected to be straightened. */
+        LEdge edge;
+        
+        public Postprocessable(final LNode free, final boolean isRoot) {
+            this.free = free;
+            this.isRoot = isRoot;
+        }
+    }
     
     /**
      * The following code does not work in its current form. It contains
@@ -489,7 +577,7 @@ public abstract class ThresholdStrategy {
 
             // if edges exist but we couldn't find a good one
             if (pick.getFirst() == null && pick.getSecond()) {
-                postProcessables.add(Pair.of(blockNode, isRoot));
+                postProcessablesQueue.add(new Postprocessable(blockNode, isRoot));
                 return invalid;
             } else if (pick.getFirst() != null) {
 
@@ -534,20 +622,20 @@ public abstract class ThresholdStrategy {
         @Override
         public void postProcess() {
 
-            while (!postProcessables.isEmpty()) {
-                Pair<LNode, Boolean> pair = postProcessables.poll();
+            while (!postProcessablesQueue.isEmpty()) {
+                Postprocessable pair = postProcessablesQueue.poll();
                 System.out.println("PostProcesS: " + pair);
 
                 // TODO !!! it is quite important to check both directions here!
                 // why ... elaborate
                 Pair<LEdge, Boolean> pick =
-                        pickEdge(bal, pair.getFirst(), pair.getSecond(),
-                                bal.y[pair.getFirst().id], true);
+                        pickEdge(bal, pair.free, pair.isRoot,
+                                bal.y[pair.free.id], true);
 
                 if (pick.getFirst() == null) {
                     pick =
-                            pickEdge(bal, pair.getFirst(), pair.getSecond(),
-                                    bal.y[pair.getFirst().id], false);
+                            pickEdge(bal, pair.free, pair.isRoot,
+                                    bal.y[pair.free.id], false);
                 }
 
                 if (!pick.getSecond()) {

@@ -24,7 +24,6 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.NodeGroup;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
 import org.eclipse.elk.core.math.KVector;
@@ -189,11 +188,6 @@ public final class InternalProperties {
      * all ports that have dummy nodes created for them.
      */
     public static final IProperty<LNode> PORT_DUMMY = new Property<LNode>("portDummy");
-
-    /**
-     * The node group of an LNode as used in the crossing minimization phase.
-     */
-    public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
 
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies. This
@@ -372,6 +366,13 @@ public final class InternalProperties {
     public static final IProperty<Spacings> SPACINGS =
             new Property<Spacings>("spacings");
 
+    /**
+     * Specifies if the corresponding LGraph element was added by the
+     * {@link de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor
+     * PartitionPreprocessor}.
+     */
+    public static final IProperty<Boolean> PARTITION_DUMMY = new Property<Boolean>(
+            "partitionConstraint", false);
 
     /**
      * Hidden default constructor.

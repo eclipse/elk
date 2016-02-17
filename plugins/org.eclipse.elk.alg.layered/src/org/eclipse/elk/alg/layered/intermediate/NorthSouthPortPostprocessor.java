@@ -16,12 +16,13 @@ import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -52,6 +53,10 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Odd port side processing", 1);
         
+        // Spline edge routing manages bend points in the edge router. Differentiate behaviour
+        // depending on edge router.
+        EdgeRouting routing = layeredGraph.getProperty(LayoutOptions.EDGE_ROUTING);
+
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
             // Iterate through the nodes (use an array to avoid concurrent modification exceptions)
@@ -62,7 +67,18 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
                     continue;
                 }
                 
-                if (node.getProperty(InternalProperties.ORIGIN) instanceof LEdge) {
+                if (routing == EdgeRouting.SPLINES) {
+                    // Iterate through ports
+                    for (LPort port : node.getPorts()) {
+                        if (!port.getIncomingEdges().isEmpty()) {
+                            processSplineInputPort(port);
+                        }
+                        if (!port.getOutgoingEdges().isEmpty()) {
+                            processSplineOutputPort(port);
+                        }
+                    }
+
+                } else if (node.getProperty(InternalProperties.ORIGIN) instanceof LEdge) {
                     // It's a self-loop
                     processSelfLoop(node);
                 } else {
@@ -213,4 +229,41 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
         bendPoint.x = originInputPort.getAbsoluteAnchor().x;
         selfLoop.getBendPoints().add(bendPoint);
     }
+    
+    /**
+     * Reroutes the edges connected to the given input port back to the port it was created for.
+     *
+     * @param inputPort
+     *            the input port whose edges to restore.
+     */
+    private void processSplineInputPort(final LPort inputPort) {
+        // Retrieve the port the dummy node was created from
+        LPort originPort = (LPort) inputPort.getProperty(InternalProperties.ORIGIN);
+
+        // Reroute the edges
+        LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(
+                new LEdge[inputPort.getIncomingEdges().size()]);
+        for (LEdge inEdge : edgeArray) {
+            inEdge.setTarget(originPort);
+        }
+    }
+
+    /**
+     * Reroutes the edges connected to the given output port back to the port it was created for.
+     *
+     * @param outputPort
+     *            the output port whose edges to restore.
+     */
+    private void processSplineOutputPort(final LPort outputPort) {
+        // Retrieve the port the dummy node was created from
+        LPort originPort = (LPort) outputPort.getProperty(InternalProperties.ORIGIN);
+
+        // Reroute the edges
+        LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(
+                new LEdge[outputPort.getOutgoingEdges().size()]);
+        for (LEdge outEdge : edgeArray) {
+            outEdge.setSource(originPort);
+        }
+    }
+
 }
