@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
+import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchProcessor;
 
 /**
