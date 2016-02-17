@@ -51,4 +51,23 @@ public enum Direction {
         return this == UP || this == DOWN;
     }
     
+    /**
+     * @return the opposite direction of {@code this}. For instance, if this is {@link #LEFT},
+     *         return {@link #RIGHT}.
+     */
+    public Direction opposite() {
+        switch (this) {
+        case LEFT:
+            return RIGHT;
+        case RIGHT:
+            return LEFT;
+        case UP:
+            return DOWN;
+        case DOWN:
+            return UP;
+        default:
+            return UNDEFINED;
+        }
+    }
+    
 }

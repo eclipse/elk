@@ -49,7 +49,7 @@ public interface IElkProgressMonitor extends IElkCancelIndicator {
 
     /**
      * Notifies that the given number of work units has been completed. This
-     * method will have no effect is the monitor is closed.
+     * method will have no effect if the monitor is closed.
      * 
      * @param work number of work units
      */

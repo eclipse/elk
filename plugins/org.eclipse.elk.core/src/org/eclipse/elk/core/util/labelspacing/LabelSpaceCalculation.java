@@ -48,8 +48,10 @@ public final class LabelSpaceCalculation {
     public static Insets calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
             final double labelSpacing) {
 
-        return calculateRequiredNodeLabelSpace(node, labelSpacing,
-                        new HashMap<LabelLocation, LabelGroup>(), new Insets(node.getInsets()));
+        Insets nodeLabelInsets = node.getProperty(LayoutOptions.NODE_LABEL_INSETS);
+
+        return calculateRequiredNodeLabelSpace(node, labelSpacing, nodeLabelInsets,
+                new HashMap<LabelLocation, LabelGroup>(), new Insets(node.getInsets()));
     }
 
     /**
@@ -64,6 +66,8 @@ public final class LabelSpaceCalculation {
      *            the node whose labels are to be placed.
      * @param labelSpacing
      *            the default label spacing.
+     * @param nodeLabelInsets
+     *            the additional insets for node labels on this node
      * @param labelGroupsBoundingBoxes
      *            map of locations to corresponding bounding boxes.
      * @param insets
@@ -71,8 +75,8 @@ public final class LabelSpaceCalculation {
      * @return the adjusted insets.
      */
     public static Insets calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
-            final double labelSpacing, final Map<LabelLocation, LabelGroup> labelGroupsBoundingBoxes,
-            final Insets insets) {
+            final double labelSpacing, final Insets nodeLabelInsets,
+            final Map<LabelLocation, LabelGroup> labelGroupsBoundingBoxes, final Insets insets) {
 
         // Check if there are any labels
         if (!node.getLabels().iterator().hasNext()) {
@@ -117,19 +121,19 @@ public final class LabelSpaceCalculation {
             case IN_T_R:
                 insets.top =
                         Math.max(insets.top, boundingBox.height
-                                + labelSpacing);
+                                + labelSpacing + nodeLabelInsets.top);
                 break;
             // Left label group
             case IN_C_L:
                 insets.left =
                         Math.max(insets.left, boundingBox.width
-                                + labelSpacing);
+                                + labelSpacing + nodeLabelInsets.left);
                 break;
             // Right label group
             case IN_C_R:
                 insets.right =
                         Math.max(insets.right, boundingBox.width
-                                + labelSpacing);
+                                + labelSpacing + nodeLabelInsets.right);
                 break;
             // Bottom 3 label groups
             case IN_B_L:
@@ -137,10 +141,20 @@ public final class LabelSpaceCalculation {
             case IN_B_R:
                 insets.bottom =
                         Math.max(insets.bottom, boundingBox.height
-                                + labelSpacing);
+                                + labelSpacing + nodeLabelInsets.bottom);
                 break;
+            default:
+                // In all other cases, no specific action is required
             }
         }
+
+        // Add node label insets that aren't set yet
+        // This happens if e.g. a top inset is set but no top label is present
+        insets.top    = Math.max(insets.top, nodeLabelInsets.top);
+        insets.left   = Math.max(insets.left, nodeLabelInsets.left);
+        insets.right  = Math.max(insets.right, nodeLabelInsets.right);
+        insets.bottom = Math.max(insets.bottom, nodeLabelInsets.bottom);
+
         return insets;
     }
 
