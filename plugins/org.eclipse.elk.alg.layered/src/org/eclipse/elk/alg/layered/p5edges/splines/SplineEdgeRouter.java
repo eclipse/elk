@@ -1048,26 +1048,40 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         final KVector center = new KVector(centerXPos, centerYPos);
         
         for (final LEdge edge : hyperEdge.edges) {
+            final KVector targetAnchor = edge.getTarget().getAbsoluteAnchor();
+            final KVector sourceAnchor = edge.getSource().getAbsoluteAnchor();
+            
             final KVector sourceVerticalCP = 
-                    new KVector(centerXPos, edge.getSource().getAbsoluteAnchor().y);
+                    new KVector(centerXPos, sourceAnchor.y);
             final KVector targetVerticalCP = 
-                    new KVector(centerXPos, edge.getTarget().getAbsoluteAnchor().y);
+                    new KVector(centerXPos, targetAnchor.y);
 
-            // Add a bend point for the horizontal inner-layer segment in the left layer
-            edge.getBendPoints().add(
-                    new KVector(startXPos - NODE_TO_VERTICAL_SEGMENT_GAP, edge.getSource()
-                            .getAbsoluteAnchor().y));
+            // Calculate bend points to draw inner layer segments straight
+            // to prevent intersections with big nodes
+            final KVector sourceStraightCP =
+                    new KVector(startXPos - NODE_TO_VERTICAL_SEGMENT_GAP, sourceAnchor.y);
+            final KVector targetStraightCP = new KVector(endXPos, targetAnchor.y);
+
+            // Modify straight CPs to handle inverted edges.
+            if (targetAnchor.x >= endXPos && sourceAnchor.x >= endXPos) {
+                // Inner layer connection on the right layer
+                sourceStraightCP.x = endXPos;
+            }
+            if (targetAnchor.x <= startXPos && sourceAnchor.x <= startXPos) {
+                // Inner layer connection on the right layer
+                targetStraightCP.x = startXPos - NODE_TO_VERTICAL_SEGMENT_GAP;
+            }
 
             // add the NubSpline control points to the edge, but in revered order!
             if (hyperEdge.edges.size() == 1) {
                 // Special handling of single edges. They don't need a center CP.
-                edge.getBendPoints().addAll(sourceVerticalCP, targetVerticalCP);
+                edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP, targetVerticalCP, 
+                        targetStraightCP);
             } else {
-                edge.getBendPoints().addAll(sourceVerticalCP, center, targetVerticalCP);
+                edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP, center, 
+                        targetVerticalCP, targetStraightCP);
             }
 
-            //Add a bend point for the horizontal inner-layer segment for the right layer
-            edge.getBendPoints().add(new KVector(endXPos, edge.getTarget().getAbsoluteAnchor().y));
         }
     }
 

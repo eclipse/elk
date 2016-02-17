@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.layered.p5edges;
 
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.stream.StreamSupport;
 
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
@@ -332,14 +331,14 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                     port.getOutgoingEdges().size() + port.getIncomingEdges().size() > 1;
             
             // Iterate over the edges and add bend (and possibly junction) points
-            StreamSupport.stream(port.getConnectedEdges().spliterator(), false)
-                // Only route an edge if it isn't (nearly) straight anyway
-                .filter(e -> {
-                    LPort otherPort = e.getSource() == port ? e.getTarget() : e.getSource();
-                    return Math.abs(otherPort.getAbsoluteAnchor().y - bendPoint.y) > MIN_VERT_DIFF;
-                })
-                // Insert bend point
-                .forEach(e -> addBendPoint(e, bendPoint, addJunctionPoint, port));
+            for (LEdge e : port.getConnectedEdges()) {
+                LPort otherPort = e.getSource() == port ? e.getTarget() : e.getSource();
+                if (Math.abs(otherPort.getAbsoluteAnchor().y - bendPoint.y) > MIN_VERT_DIFF) {
+                    // Insert bend point
+                    addBendPoint(e, bendPoint, addJunctionPoint, port);
+                }
+            }
+
         }
     }
 
