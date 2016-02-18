@@ -84,7 +84,10 @@ public class LayoutMetaDataService {
     
     /** additional map of layout algorithm suffixes to data instances. */
     private final Map<String, LayoutAlgorithmData> algorithmSuffixMap = Maps.newHashMap();
-    /** additional map of layout option suffixes to data instances. */
+    /**
+     * additional map of layout option suffixes to data instances. For layout options this include
+     * the layout option's group.
+     */
     private final Map<String, LayoutOptionData> optionSuffixMap = Maps.newHashMap();
     
     /**
@@ -162,7 +165,7 @@ public class LayoutMetaDataService {
     public final Collection<LayoutOptionData> getOptionData() {
         return Collections.unmodifiableCollection(layoutOptionMap.values());
     }
-    
+
     /**
      * Returns a layout option data that has the given suffix in its identifier.
      * 
@@ -172,20 +175,38 @@ public class LayoutMetaDataService {
      *          no option has that suffix
      */
     public final LayoutOptionData getOptionDataBySuffix(final String suffix) {
+        
+        if (suffix == null || suffix.trim().isEmpty()) {
+            return null;
+        }
+        
+        // try the full id
         LayoutOptionData data = layoutOptionMap.get(suffix);
+        
+        // nothing found? try suffix map
         if (data == null) {
-            data = optionSuffixMap.get(suffix);
-            if (data == null) {
-                for (LayoutOptionData d : layoutOptionMap.values()) {
-                    String id = d.getId();
-                    if (id.endsWith(suffix) && (suffix.length() == id.length()
-                            || id.charAt(id.length() - suffix.length() - 1) == '.')) {
-                        optionSuffixMap.put(suffix, d);
-                        return d;
-                    }
+            
+            // find the longest matching suffix
+            String[] split = suffix.split("\\.");
+            StringBuilder tmpSuffix = new StringBuilder();
+            LayoutOptionData needle = null;
+            
+            int i = split.length - 1;
+            do {
+                data = needle;
+                if (tmpSuffix.length() > 0) {
+                    tmpSuffix.insert(0, '.');
                 }
+                tmpSuffix.insert(0, split[i]);
+                needle = optionSuffixMap.get(tmpSuffix.toString());
+                i--;
+            } while (needle != null && i >= 0);
+            
+            if (needle != null) {
+                data = needle;
             }
         }
+        
         return data;
     }
 
@@ -285,7 +306,15 @@ public class LayoutMetaDataService {
 
         @Override
         public void register(final LayoutOptionData optionData) {
-            layoutOptionMap.put(optionData.getId(), optionData);
+
+            String id = optionData.getId(); 
+            layoutOptionMap.put(id, optionData);
+            
+            // register as suffix (which include groups)
+            String suffix = id.substring(id.lastIndexOf('.') + 1, id.length());
+            optionSuffixMap.put(optionData.getGroup() + '.' + suffix, optionData);
+            
+            // register legacy options
             if (optionData.getLegacyIds() != null) {
                 for (String legacyId : optionData.getLegacyIds()) {
                     layoutOptionMap.put(legacyId, optionData);

@@ -77,6 +77,8 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
 
     /** identifier of the layout option. */
     private final String id;
+    /** the group this layout option is associated with. Note that the group is included in the {@code id}. */
+    private final String group;
     /** legacy identifiers of this option. */
     private final String[] legacyIds;
     /** the default value of this option. */
@@ -102,12 +104,13 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
      * Create a layout option data entry.
      */
     // SUPPRESS CHECKSTYLE NEXT ParameterNumber
-    public LayoutOptionData(final String aid,
+    public LayoutOptionData(final String aid, final String agroup,
             final String aname, final String adescription, final Object adefaultValue,
             final Class<?> atype, final Set<Target> atargets, 
             final Visibility avisibility, 
             final String... alegacyIds) {
         this.id = aid;
+        this.group = agroup;
         this.name = aname;
         this.description = adescription;
         this.defaultValue = adefaultValue;
@@ -441,6 +444,13 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
      */
     public String getId() {
         return id;
+    }
+    
+    /**
+     * @return the group
+     */
+    public String getGroup() {
+        return group;
     }
 
     /**

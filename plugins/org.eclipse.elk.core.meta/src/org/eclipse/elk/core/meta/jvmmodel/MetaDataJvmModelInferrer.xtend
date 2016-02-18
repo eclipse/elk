@@ -205,6 +205,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         «FOR property : bundle.members.filter(MdProperty)»
             registry.register(new «LayoutOptionData»(
                 «property.qualifiedName.toCodeString»,
+                «property.groups.map[name].join('.').toCodeString»,
                 «(property.label ?: property.name).shrinkWhiteSpace.toCodeString»,
                 «property.description.shrinkWhiteSpace.toCodeString»,
                 «IF property.defaultValue === null»
