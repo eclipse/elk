@@ -20,13 +20,13 @@ bundle {
     class = properties.Properties
 }
 
-algorithm MrTree(TreeLayoutProvider) {
+algorithm mrTree(TreeLayoutProvider) {
     label = "ELK Mr. Tree"
     description =
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
         the input graph and arranges all nodes according to the resulting parent-children
         hierarchy. I pity the fool who doesn't use Mr. Tree Layout."
-    category = org.eclipse.elk.Tree
+    category = org.eclipse.elk.tree
     features = disconnected
     preview = images/tree.png
     supports org.eclipse.elk.spacing = 20 duplicated

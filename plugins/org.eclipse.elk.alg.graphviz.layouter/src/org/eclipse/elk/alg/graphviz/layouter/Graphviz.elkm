@@ -20,7 +20,7 @@ bundle {
 	class = layouter.Properties
 }
 
-algorithm Dot(GraphvizLayoutProvider#DOT) {
+algorithm dot(GraphvizLayoutProvider#DOT) {
 	label = "Dot"
 	description =
 		"Layered drawings of directed graphs. The algorithm aims edges in the same direction (top
@@ -28,7 +28,7 @@ algorithm Dot(GraphvizLayoutProvider#DOT) {
 		length. Edges are routed as spline curves and are thus drawn very smoothly. This algorithm
 		is very suitable for state machine and activity diagrams, where the direction of edges has
 		an important role."
-	category = org.eclipse.elk.Layered
+	category = org.eclipse.elk.layered
 	features = self_loops, multi_edges, edge_labels, compound, clusters
 	preview = images/dot.png
 	supports org.eclipse.elk.direction = Direction.DOWN
@@ -48,14 +48,14 @@ algorithm Dot(GraphvizLayoutProvider#DOT) {
 	supports adaptPortPositions
 }
 
-algorithm Neato(GraphvizLayoutProvider#NEATO) {
+algorithm neato(GraphvizLayoutProvider#NEATO) {
 	label = "Neato"
 	description =
 		"Spring model layouts. Neato attempts to minimize a global energy function, which is
 		equivalent to statistical multi-dimensional scaling. The solution is achieved using
 		stress majorization, though the older Kamada-Kawai algorithm, using steepest descent, is
 		also available."
-	category = org.eclipse.elk.Force
+	category = org.eclipse.elk.force
 	features = self_loops, multi_edges, edge_labels
 	preview = images/neato.png
 	supports org.eclipse.elk.spacing = 40
@@ -78,13 +78,13 @@ algorithm Neato(GraphvizLayoutProvider#NEATO) {
 	supports adaptPortPositions
 }
 
-algorithm Fdp(GraphvizLayoutProvider#FDP) {
+algorithm fdp(GraphvizLayoutProvider#FDP) {
 	label = "FDP"
 	description =
 		"Spring model layouts similar to those of Neato, but does this by reducing forces rather
 		than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a
 		multigrid solver that handles larger graphs and clustered undirected graphs."
-	category = org.eclipse.elk.Force
+	category = org.eclipse.elk.force
 	features = self_loops, multi_edges, edge_labels, clusters
 	preview = images/fdp.png
 	supports org.eclipse.elk.spacing = 40
@@ -105,13 +105,13 @@ algorithm Fdp(GraphvizLayoutProvider#FDP) {
 	supports adaptPortPositions
 }
 
-algorithm Twopi(GraphvizLayoutProvider#TWOPI) {
+algorithm twopi(GraphvizLayoutProvider#TWOPI) {
 	label = "Twopi"
 	description =
 		"Radial layouts, after Wills '97. The nodes are placed on concentric circles depending on
 		their distance from a given root node. The algorithm is designed to handle not only small
 		graphs, but also very large ones."
-	category = org.eclipse.elk.Tree
+	category = org.eclipse.elk.tree
 	features = self_loops, multi_edges, edge_labels
 	preview = images/twopi.png
 	supports org.eclipse.elk.spacing = 60
@@ -128,14 +128,14 @@ algorithm Twopi(GraphvizLayoutProvider#TWOPI) {
 	supports adaptPortPositions
 }
 
-algorithm Circo(GraphvizLayoutProvider#CIRCO) {
+algorithm circo(GraphvizLayoutProvider#CIRCO) {
 	label = "Circo"
 	description =
 		"Circular layout, after Six and Tollis '99, Kaufmann and Wiese '02. The algorithm finds
 		biconnected components and arranges each component in a circle, trying to minimize the
 		number of crossings inside the circle. This is suitable for certain diagrams of multiple
 		cyclic structures such as certain telecommunications networks."
-	category = org.eclipse.elk.Circle
+	category = org.eclipse.elk.circle
 	features = self_loops, multi_edges, edge_labels
 	preview = images/circo.png
 	supports org.eclipse.elk.spacing = 40

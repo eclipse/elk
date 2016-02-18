@@ -20,14 +20,14 @@ bundle {
     class = properties.Properties
 }
 
-algorithm Force(ForceLayoutProvider) {
+algorithm force(ForceLayoutProvider) {
     label = "ELK Force"
     description =
         "Force-based algorithm provided by the Eclipse Layout Kernel. Implements methods that
         follow physical analogies by simulating forces that move the nodes into a balanced
         distribution. Currently the original Eades model and the Fruchterman - Reingold model are
         supported."
-    category = org.eclipse.elk.Force
+    category = org.eclipse.elk.force
     features = multi_edges, edge_labels
     preview = images/force.png
     supports org.eclipse.elk.priority = 1 duplicated

@@ -31,7 +31,7 @@ bundle {
     class = properties.Properties
 }
 
-algorithm Layered(LayeredLayoutProvider) {
+algorithm layered(LayeredLayoutProvider) {
 	label = "ELK Layered"
 	description =
 		"Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
@@ -41,7 +41,7 @@ algorithm Layered(LayeredLayoutProvider) {
 		diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
 		compound graphs with cross-hierarchy edges is supported when the respective option is
 		activated on the top level."
-	category = org.eclipse.elk.Layered
+	category = org.eclipse.elk.layered
 	features = self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
 	preview = images/layered.png
 	supports org.eclipse.elk.spacing = 20 duplicated
