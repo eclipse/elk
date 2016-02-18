@@ -97,6 +97,8 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdPropertyAccess().getGroup_6_2(), "rule__MdProperty__Group_6_2__0");
 					put(grammarAccess.getMdPropertyAccess().getGroup_6_3(), "rule__MdProperty__Group_6_3__0");
 					put(grammarAccess.getMdPropertyAccess().getGroup_6_3_3(), "rule__MdProperty__Group_6_3_3__0");
+					put(grammarAccess.getMdPropertyAccess().getGroup_6_4(), "rule__MdProperty__Group_6_4__0");
+					put(grammarAccess.getMdPropertyAccess().getGroup_6_4_3(), "rule__MdProperty__Group_6_4_3__0");
 					put(grammarAccess.getMdPropertyDependencyAccess().getGroup(), "rule__MdPropertyDependency__Group__0");
 					put(grammarAccess.getMdPropertyDependencyAccess().getGroup_2(), "rule__MdPropertyDependency__Group_2__0");
 					put(grammarAccess.getMdAlgorithmAccess().getGroup(), "rule__MdAlgorithm__Group__0");
@@ -311,6 +313,8 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdPropertyAccess().getDefaultValueAssignment_6_2_2(), "rule__MdProperty__DefaultValueAssignment_6_2_2");
 					put(grammarAccess.getMdPropertyAccess().getTargetsAssignment_6_3_2(), "rule__MdProperty__TargetsAssignment_6_3_2");
 					put(grammarAccess.getMdPropertyAccess().getTargetsAssignment_6_3_3_1(), "rule__MdProperty__TargetsAssignment_6_3_3_1");
+					put(grammarAccess.getMdPropertyAccess().getLegacyIdsAssignment_6_4_2(), "rule__MdProperty__LegacyIdsAssignment_6_4_2");
+					put(grammarAccess.getMdPropertyAccess().getLegacyIdsAssignment_6_4_3_1(), "rule__MdProperty__LegacyIdsAssignment_6_4_3_1");
 					put(grammarAccess.getMdPropertyAccess().getDependenciesAssignment_7(), "rule__MdProperty__DependenciesAssignment_7");
 					put(grammarAccess.getMdPropertyDependencyAccess().getTargetAssignment_1(), "rule__MdPropertyDependency__TargetAssignment_1");
 					put(grammarAccess.getMdPropertyDependencyAccess().getValueAssignment_2_1(), "rule__MdPropertyDependency__ValueAssignment_2_1");
