@@ -112,6 +112,7 @@ property ^algorithm: String {
 	label = "Layout Algorithm"
 	description = "Select a specific layout algorithm."
 	targets = parents
+	legacyIds = de.cau.cs.kieler.^algorithm
 }
 
 property alignment: Alignment {
@@ -119,12 +120,14 @@ property alignment: Alignment {
 	description = "Alignment of the selected node relative to other nodes in the same row or column."
 	default = Alignment.AUTOMATIC
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.animate
 }
 
 property aspectRatio: float {
 	label = "Aspect Ratio"
 	description = "The desired aspect ratio of the drawing, that is the quotient of width by height."
 	targets = parents
+	legacyIds = de.cau.cs.kieler.aspectRatio
 }
 
 property bendPoints: KVectorChain {
@@ -134,6 +137,7 @@ property bendPoints: KVectorChain {
 		specify a pre-defined routing for an edge. The vector chain must include the source point,
 		any bend points, and the target point, so it must have at least two points."
 	targets = edges
+	legacyIds = de.cau.cs.kieler.bendPoints
 }
 
 property borderSpacing: float {
@@ -142,6 +146,7 @@ property borderSpacing: float {
 		"Spacing of the content of a parent node to its inner border. The inner border is the node
 		border, which is given by width and height, with subtracted insets."
 	targets = parents
+	legacyIds = de.cau.cs.kieler.borderSpacing
 }
 
 advanced property debugMode: boolean {
@@ -149,6 +154,7 @@ advanced property debugMode: boolean {
 	description = "Whether additional debug information shall be generated."
 	default = false
 	targets = parents
+	legacyIds = de.cau.cs.kieler.debugMode
 }
 
 property direction: Direction {
@@ -157,6 +163,7 @@ property direction: Direction {
 		vertical (down / up)."
 	default = Direction.UNDEFINED
 	targets = parents
+	legacyIds = de.cau.cs.kieler.direction
 }
 
 advanced property edgeLabelPlacementStrategy: EdgeLabelPlacementStrategy {
@@ -164,6 +171,7 @@ advanced property edgeLabelPlacementStrategy: EdgeLabelPlacementStrategy {
 	description = "Determines in which layer center labels of long edges should be placed."
 	default = EdgeLabelPlacementStrategy.CENTER
 	targets = parents
+	legacyIds = de.cau.cs.kieler.edgeLabelPlacementStrategy
 }
 
 property edgeRouting: EdgeRouting {
@@ -175,6 +183,7 @@ property edgeRouting: EdgeRouting {
 		points for a piecewise cubic spline."
 	default = EdgeRouting.UNDEFINED
 	targets = parents
+	legacyIds = de.cau.cs.kieler.edgeRouting
 }
 
 property expandNodes: boolean {
@@ -182,6 +191,7 @@ property expandNodes: boolean {
 	description = "If active, nodes are expanded to fill the area of their parent."
 	default = false
 	targets = parents
+	legacyIds = de.cau.cs.kieler.expandNodes
 }
 
 property hierarchyHandling: HierarchyHandling {
@@ -192,6 +202,7 @@ property hierarchyHandling: HierarchyHandling {
 	    as SEPARATE_CHILDREN."
 	default = HierarchyHandling.INHERIT
 	targets = parents, nodes
+	legacyIds = de.cau.cs.kieler.hierarchyHandling
 }
 
 property interactive: boolean {
@@ -203,6 +214,7 @@ property interactive: boolean {
 		possible."
 	default = false
 	targets = parents
+	legacyIds = de.cau.cs.kieler.interactive
 }
 
 property labelSpacing: float {
@@ -210,6 +222,7 @@ property labelSpacing: float {
 	description = "Determines the amount of space to be left around labels."
 	default = 0
 	targets = edges, nodes
+	legacyIds = de.cau.cs.kieler.labelSpacing
 }
 
 // TODO remove this!
@@ -222,6 +235,7 @@ property layoutHierarchy: boolean {
 		all hierarchy levels that are contained in the associated parent node."
 	default = false
 	targets = parents
+	legacyIds = de.cau.cs.kieler.layoutHierarchy
 }
 
 advanced property layoutPartition: Integer {
@@ -230,6 +244,7 @@ advanced property layoutPartition: Integer {
 		"Partition to which the node belongs to. If 'layoutPartitions' is true,
 		all nodes are expected to have a partition."
 	targets = parents, nodes
+	legacyIds = de.cau.cs.kieler.partition
 }
 
 advanced property layoutPartitions: Boolean {
@@ -237,6 +252,7 @@ advanced property layoutPartitions: Boolean {
 	description = "Whether to activate partitioned layout."
 	default = false
 	targets = parents
+	legacyIds = de.cau.cs.kieler.layoutPartitions
 }
 
 advanced property nodeLabelInsets: Spacing.Insets {
@@ -244,6 +260,7 @@ advanced property nodeLabelInsets: Spacing.Insets {
 	description = "Define insets for node labels that are placed inside of a node."
 	default = new org.eclipse.elk.core.util.nodespacing.Spacing.Insets(0, 0, 0, 0) 
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.nodeLabelInset
 }
 
 property nodeLabelPlacement: EnumSet<NodeLabelPlacement> {
@@ -253,6 +270,7 @@ property nodeLabelPlacement: EnumSet<NodeLabelPlacement> {
 		modified."
 	default = NodeLabelPlacement.fixed
 	targets = nodes, labels
+	legacyIds = de.cau.cs.kieler.nodeLabelPlacement
 }
 
 property portAlignment: PortAlignment {
@@ -260,6 +278,7 @@ property portAlignment: PortAlignment {
 	description = "Defines the default port distribution for a node."
 	default = PortAlignment.JUSTIFIED
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.portAlignment
 }
 
 advanced property portAlignmentNorth: PortAlignment {
@@ -268,6 +287,7 @@ advanced property portAlignmentNorth: PortAlignment {
 		"Defines how ports on the northern side are placed, overriding the node's general port alignment."
 	default = PortAlignment.UNDEFINED
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.portAlignment.north
 }
 
 advanced property portAlignmentSouth: PortAlignment {
@@ -276,6 +296,7 @@ advanced property portAlignmentSouth: PortAlignment {
 		"Defines how ports on the southern side are placed, overriding the node's general port alignment."
 	default = PortAlignment.UNDEFINED
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.portAlignment.south
 }
 
 advanced property portAlignmentWest: PortAlignment {
@@ -284,6 +305,7 @@ advanced property portAlignmentWest: PortAlignment {
 		"Defines how ports on the western side are placed, overriding the node's general port alignment."
 	default = PortAlignment.UNDEFINED
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.portAlignment.west
 }
 
 advanced property portAlignmentEast: PortAlignment {
@@ -292,6 +314,7 @@ advanced property portAlignmentEast: PortAlignment {
 		"Defines how ports on the eastern side are placed, overriding the node's general port alignment."
 	default = PortAlignment.UNDEFINED
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.portAlignment.east
 }
 
 property portConstraints: PortConstraints {
@@ -299,6 +322,7 @@ property portConstraints: PortConstraints {
 	description = "Defines constraints of the position of the ports of a node."
 	default = PortConstraints.UNDEFINED
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.portConstraints
 }
 
 property portSpacing: float {
@@ -306,6 +330,7 @@ property portSpacing: float {
 	description = "Spacing between ports of a given node."
 	default = 10
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.portSpacing
 }
 
 property position: KVector {
@@ -314,6 +339,7 @@ property position: KVector {
 		"The position of a node, port, or label. This is used by the 'Fixed Layout' algorithm to
 		specify a pre-defined position."
 	targets = nodes, ports, labels
+	legacyIds = de.cau.cs.kieler.position
 }
 
 property priority: int {
@@ -322,6 +348,7 @@ property priority: int {
 		"Defines the priority of an object; its meaning depends on the specific layout algorithm
 		and the context where it is used."
 	targets = nodes, edges
+	legacyIds = de.cau.cs.kieler.priority
 }
 
 property randomSeed: int {
@@ -330,12 +357,14 @@ property randomSeed: int {
 		"Seed used for pseudo-random number generators to control the layout algorithm. If the
 		value is 0, the seed shall be determined pseudo-randomly (e.g. from the system time)."
 	targets = parents
+	legacyIds = de.cau.cs.kieler.randomSeed
 }
 
 property separateConnComp: boolean {
 	label = "Separate Connected Components"
 	description = "Whether each connected component should be processed separately."
 	targets = parents
+	legacyIds = de.cau.cs.kieler.separateConnComp
 }
 
 property sizeConstraint: EnumSet<SizeConstraint> {
@@ -346,6 +375,7 @@ property sizeConstraint: EnumSet<SizeConstraint> {
 		node sizes being fixed."
 	default = EnumSet.noneOf(SizeConstraint)
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.sizeConstraint
 }
 
 property sizeOptions: EnumSet<SizeOptions> {
@@ -357,6 +387,7 @@ property sizeOptions: EnumSet<SizeOptions> {
 	default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE,
 		SizeOptions.APPLY_ADDITIONAL_INSETS)
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.sizeOptions
 }
 
 property spacing: float {
@@ -365,6 +396,7 @@ property spacing: float {
 		"Overall spacing between elements. This is mostly interpreted as the minimal distance
 		between each two nodes and should also influence the spacing between edges."
 	targets = parents
+	legacyIds = de.cau.cs.kieler.spacing
 }
 
 
@@ -379,6 +411,7 @@ output property junctionPoints: KVectorChain {
 		depends on the chosen layout algorithm and edge routing style. The points are put into
 		the vector chain with no specific order."
 	targets = edges
+	legacyIds = de.cau.cs.kieler.junctionPoints
 }
 
 programmatic property additionalPortSpace: Spacing.Margins {
@@ -389,6 +422,7 @@ programmatic property additionalPortSpace: Spacing.Margins {
 		example, a top spacing of 20 makes sure that the first port on the western and eastern
 		side is 20 units away from the northern border."
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.additionalPortSpace
 }
 
 programmatic property commentBox: boolean {
@@ -399,6 +433,7 @@ programmatic property commentBox: boolean {
 		comment box specify to which graph elements the comment is related."
 	default = false
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.commentBox
 }
 
 programmatic property edgeLabelPlacement: EdgeLabelPlacement {
@@ -406,6 +441,7 @@ programmatic property edgeLabelPlacement: EdgeLabelPlacement {
 	description = "Gives a hint on where to put edge labels."
 	default = EdgeLabelPlacement.UNDEFINED
 	targets = labels
+	legacyIds = de.cau.cs.kieler.edgeLabelPlacement
 }
 
 programmatic property edgeType: EdgeType {
@@ -415,18 +451,21 @@ programmatic property edgeType: EdgeType {
 		be handled differently from generalizations."
 	default = EdgeType.NONE
 	targets = edges
+	legacyIds = de.cau.cs.kieler.edgeType
 }
 
 programmatic property fontName: String {
 	label = "Font Name"
 	description = "Font name used for a label."
 	targets = labels
+	legacyIds = de.cau.cs.kieler.fontName
 }
 
 programmatic property fontSize: int {
 	label = "Font Size"
 	description = "Font size used for a label."
 	targets = labels
+	legacyIds = de.cau.cs.kieler.fontSize
 }
 
 programmatic property hypernode: boolean {
@@ -434,12 +473,14 @@ programmatic property hypernode: boolean {
 	description = "Whether the node should be handled as a hypernode."
 	default = false
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.hypernode
 }
 
 programmatic property labelManager: ILabelManager {
 	label = "Label Manager"
 	description = "Label managers can shorten labels upon a layout algorithm's request."
 	targets = parents, labels
+	legacyIds = de.cau.cs.kieler.labelManager
 }
 
 programmatic property margins: Spacing.Margins {
@@ -451,6 +492,7 @@ programmatic property margins: Spacing.Margins {
 		ports or labels."
 	default = new Spacing.Margins
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.margins
 }
 
 programmatic property minHeight: float {
@@ -458,6 +500,7 @@ programmatic property minHeight: float {
 	description = "The minimal height to which a node can be reduced."
 	default = 0
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.minHeight
 }
 
 programmatic property minWidth: float {
@@ -465,6 +508,7 @@ programmatic property minWidth: float {
 	description = "The minimal width to which a node can be reduced."
 	default = 0
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.minWidth
 }
 
 programmatic property noLayout: boolean {
@@ -477,12 +521,14 @@ programmatic property noLayout: boolean {
 		layer, use the 'Fixed Layout' algorithm for that node."
 	default = false
 	targets = nodes, edges, ports, labels
+	legacyIds = de.cau.cs.kieler.noLayout
 }
 
 programmatic property portAnchor: KVector {
 	label = "Port Anchor Offset"
 	description = "The offset to the port position where connections shall be attached."
 	targets = ports
+	legacyIds = de.cau.cs.kieler.portAnchor
 }
 
 programmatic property portIndex: int {
@@ -493,6 +539,7 @@ programmatic property portIndex: int {
 		Constraints' is set to FIXED_ORDER and no specific positions are given for the ports.
 		Additionally, the option 'Port Side' must be defined in this case."
 	targets = ports
+	legacyIds = de.cau.cs.kieler.portIndex
 }
 
 programmatic property portLabelPlacement: PortLabelPlacement {
@@ -500,6 +547,7 @@ programmatic property portLabelPlacement: PortLabelPlacement {
 	description = "Decides on a placement method for port labels."
 	default = PortLabelPlacement.OUTSIDE
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.portLabelPlacement
 }
 
 programmatic property portSide: PortSide {
@@ -510,6 +558,7 @@ programmatic property portSide: PortSide {
 		for the ports."
 	default = PortSide.UNDEFINED
 	targets = ports
+	legacyIds = de.cau.cs.kieler.portSide
 }
 
 programmatic property portOffset: float {
@@ -523,6 +572,7 @@ programmatic property portOffset: float {
      	if the port side is south, the port's north border touches the node's south border;
      	if the port side is west, the port's east border touches the node's west border."
 	targets = ports
+	legacyIds = de.cau.cs.kieler.portOffset
 }
 
 programmatic property scaleFactor: float {
@@ -536,6 +586,7 @@ programmatic property scaleFactor: float {
 		currently not supported if 'Layout Hierarchy' is set."
 	default = 1
 	targets = nodes
+	legacyIds = de.cau.cs.kieler.scaleFactor
 	requires layoutHierarchy == false
 }
 
@@ -547,6 +598,7 @@ programmatic property selfLoopInside: boolean {
 		to support compound nodes with hierarchical ports."
 	default = false
 	targets = nodes, edges
+	legacyIds = de.cau.cs.kieler.selfLoopInside
 }
 
 programmatic property thickness: float {
@@ -556,6 +608,7 @@ programmatic property thickness: float {
 		requiring more space to be reserved for it."
 	default = 1
 	targets = edges
+	legacyIds = de.cau.cs.kieler.thickness
 }
 
 
@@ -567,6 +620,7 @@ global property animate: boolean {
 		"Whether the shift from the old layout to the new computed layout shall be animated."
 	default = true
 	targets = parents
+	legacyIds = de.cau.cs.kieler.animate
 }
 
 global property animTimeFactor: int {
@@ -577,6 +631,7 @@ global property animTimeFactor: int {
 		'Minimal Animation Time'."
 	default = 100
 	targets = parents
+	legacyIds = de.cau.cs.kieler.animTimeFactor
 }
 
 global property layoutAncestors: boolean {
@@ -586,6 +641,7 @@ global property layoutAncestors: boolean {
 		diagram shall be included in the layout process."
 	default = false
 	targets = parents
+	legacyIds = de.cau.cs.kieler.layoutAncestors
 }
 
 global property maxAnimTime: int {
@@ -593,6 +649,7 @@ global property maxAnimTime: int {
 	description = "The maximal time for animations, in milliseconds."
 	default = 4000
 	targets = parents
+	legacyIds = de.cau.cs.kieler.maxAnimTime
 }
 
 global property minAnimTime: int {
@@ -600,6 +657,7 @@ global property minAnimTime: int {
 	description = "The minimal time for animations, in milliseconds."
 	default = 400
 	targets = parents
+	legacyIds = de.cau.cs.kieler.minAnimTime
 }
 
 global property progressBar: boolean {
@@ -607,6 +665,7 @@ global property progressBar: boolean {
 	description = "Whether a progress bar shall be displayed during layout computations."
 	default = false
 	targets = parents
+	legacyIds = de.cau.cs.kieler.progressBar
 }
 
 global property zoomToFit: boolean {
@@ -614,4 +673,5 @@ global property zoomToFit: boolean {
 	description = "Whether the zoom level shall be set to view the whole diagram after layout."
 	default = false
 	targets = parents
+	legacyIds = de.cau.cs.kieler.zoomToFit
 }

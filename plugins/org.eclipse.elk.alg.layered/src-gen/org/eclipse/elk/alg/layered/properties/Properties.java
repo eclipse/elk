@@ -534,6 +534,16 @@ public class Properties implements ILayoutMetaDataProvider {
   private final static Boolean HIGH_DEGREE_NODE_TREE_HEIGHT_DEP_HIGH_DEGREE_NODE_TREATMENT = Boolean.valueOf(true);
   
   /**
+   * Required value for dependency between {@link #MIN_WIDTH_UPPER_BOUND_ON_WIDTH} and {@link #NODE_LAYERING}.
+   */
+  private final static LayeringStrategy MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEP_NODE_LAYERING = LayeringStrategy.EXP_MIN_WIDTH;
+  
+  /**
+   * Required value for dependency between {@link #MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR} and {@link #NODE_LAYERING}.
+   */
+  private final static LayeringStrategy MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEP_NODE_LAYERING = LayeringStrategy.EXP_MIN_WIDTH;
+  
+  /**
    * Required value for dependency between {@link #COMPONENTS_COMPACT} and {@link #SEPARATE_CONN_COMP}.
    */
   private final static boolean COMPONENTS_COMPACT_DEP_SEPARATE_CONN_COMP = true;
@@ -646,6 +656,7 @@ public class Properties implements ILayoutMetaDataProvider {
         CompactionStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.compaction",
@@ -660,6 +671,7 @@ public class Properties implements ILayoutMetaDataProvider {
         EnumSet.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.klay.layered.contentAlignment"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.crossMin",
@@ -669,6 +681,7 @@ public class Properties implements ILayoutMetaDataProvider {
         CrossingMinimizationStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.klay.layered.crossMin"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.cycleBreaking",
@@ -678,6 +691,7 @@ public class Properties implements ILayoutMetaDataProvider {
         CycleBreakingStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.klay.layered.cycleBreaking"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.distributeNodes",
@@ -687,6 +701,7 @@ public class Properties implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.distributeNodes"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.edgeLabelSideSelection",
@@ -696,6 +711,7 @@ public class Properties implements ILayoutMetaDataProvider {
         EdgeLabelSideSelection.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.klay.layered.edgeLabelSideSelection"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.edgeLabelSideSelection",
@@ -710,6 +726,7 @@ public class Properties implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.edgeSpacingFactor",
@@ -719,6 +736,7 @@ public class Properties implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.edgeSpacingFactor"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.feedbackEdges",
@@ -728,6 +746,7 @@ public class Properties implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.feedBackEdges"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.fixedAlignment",
@@ -737,6 +756,7 @@ public class Properties implements ILayoutMetaDataProvider {
         FixedAlignment.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.fixedAlignment"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.fixedAlignment",
@@ -751,6 +771,7 @@ public class Properties implements ILayoutMetaDataProvider {
         GreedySwitchType.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.klay.layered.greedySwitch"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.inLayerSpacingFactor",
@@ -760,6 +781,7 @@ public class Properties implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.inLayerSpacingFactor"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.interactiveReferencePoint",
@@ -769,6 +791,7 @@ public class Properties implements ILayoutMetaDataProvider {
         InteractiveReferencePoint.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.interactiveReferencePoint"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.interactiveReferencePoint",
@@ -788,6 +811,7 @@ public class Properties implements ILayoutMetaDataProvider {
         LayerConstraint.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.layerConstraint"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.linearSegmentsDeflectionDampening",
@@ -797,6 +821,7 @@ public class Properties implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.linearSegmentsDeflectionDampening",
@@ -811,6 +836,7 @@ public class Properties implements ILayoutMetaDataProvider {
         LayeringStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.klay.layered.nodeLayering"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.mergeEdges",
@@ -820,6 +846,7 @@ public class Properties implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.mergeEdges"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.mergeHierarchyEdges",
@@ -829,6 +856,7 @@ public class Properties implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.mergeHierarchyEdges"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.mergeHierarchyEdges",
@@ -843,6 +871,7 @@ public class Properties implements ILayoutMetaDataProvider {
         NodePlacementStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.klay.layered.nodePlacement"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.sausageFolding",
@@ -852,6 +881,7 @@ public class Properties implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.sausageFolding"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.sausageFolding",
@@ -866,6 +896,7 @@ public class Properties implements ILayoutMetaDataProvider {
         SelfLoopPlacement.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.selfLoopPlacement",
@@ -880,6 +911,7 @@ public class Properties implements ILayoutMetaDataProvider {
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.thoroughness"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.unnecessaryBendpoints",
@@ -889,6 +921,7 @@ public class Properties implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.unnecessaryBendpoints"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.wideNodesOnMultipleLayers",
@@ -898,6 +931,7 @@ public class Properties implements ILayoutMetaDataProvider {
         WideNodesStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.northOrSouthPort",
@@ -907,6 +941,7 @@ public class Properties implements ILayoutMetaDataProvider {
         Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.northOrSouthPort"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.highDegreeNode_treatment",
@@ -916,6 +951,7 @@ public class Properties implements ILayoutMetaDataProvider {
         Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.highDegreeNode_threshold",
@@ -925,6 +961,7 @@ public class Properties implements ILayoutMetaDataProvider {
         Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.highDegreeNode.threshold"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.highDegreeNode_threshold",
@@ -939,6 +976,7 @@ public class Properties implements ILayoutMetaDataProvider {
         Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.highDegreeNode_treeHeight",
@@ -953,7 +991,13 @@ public class Properties implements ILayoutMetaDataProvider {
         Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth"
     ));
+    registry.addDependency(
+        "org.eclipse.elk.alg.layered.minWidthUpperBoundOnWidth",
+        "org.eclipse.elk.alg.layered.nodeLayering",
+        MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEP_NODE_LAYERING
+    );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.minWidthUpperLayerEstimationScalingFactor",
         "Upper Layer Estimation Scaling Factor [MinWidth Layerer]",
@@ -962,7 +1006,13 @@ public class Properties implements ILayoutMetaDataProvider {
         Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor"
     ));
+    registry.addDependency(
+        "org.eclipse.elk.alg.layered.minWidthUpperLayerEstimationScalingFactor",
+        "org.eclipse.elk.alg.layered.nodeLayering",
+        MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEP_NODE_LAYERING
+    );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.postCompaction",
         "Post Compaction",
@@ -971,6 +1021,7 @@ public class Properties implements ILayoutMetaDataProvider {
         GraphCompactionStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.postCompaction"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.postCompaction_constraints",
@@ -980,6 +1031,7 @@ public class Properties implements ILayoutMetaDataProvider {
         ConstraintCalculationStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.postCompaction.constraints"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.nodePromotion",
@@ -989,6 +1041,7 @@ public class Properties implements ILayoutMetaDataProvider {
         NodePromotionStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.nodePromotion"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.nodePromotion_boundary",
@@ -998,6 +1051,7 @@ public class Properties implements ILayoutMetaDataProvider {
         Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.nodePromotionBoundary"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.nodePromotion_boundary",
@@ -1012,6 +1066,7 @@ public class Properties implements ILayoutMetaDataProvider {
         Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.components.compact"
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.components_compact",

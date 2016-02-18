@@ -781,6 +781,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         String.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.algorithm"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alignment",
@@ -790,6 +791,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         Alignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.animate"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.aspectRatio",
@@ -799,6 +801,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.aspectRatio"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.bendPoints",
@@ -808,6 +811,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         KVectorChain.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.bendPoints"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.borderSpacing",
@@ -817,6 +821,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.borderSpacing"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.debugMode",
@@ -826,6 +831,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.debugMode"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.direction",
@@ -835,6 +841,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         Direction.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.direction"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.edgeLabelPlacementStrategy",
@@ -844,6 +851,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EdgeLabelPlacementStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.edgeLabelPlacementStrategy"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.edgeRouting",
@@ -853,6 +861,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EdgeRouting.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.edgeRouting"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.expandNodes",
@@ -862,6 +871,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.expandNodes"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.hierarchyHandling",
@@ -871,6 +881,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         HierarchyHandling.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.hierarchyHandling"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.interactive",
@@ -880,6 +891,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.interactive"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.labelSpacing",
@@ -889,6 +901,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES, LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.labelSpacing"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layoutHierarchy",
@@ -898,6 +911,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.layoutHierarchy"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layoutPartition",
@@ -907,6 +921,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.partition"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layoutPartitions",
@@ -916,6 +931,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.layoutPartitions"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.nodeLabelInsets",
@@ -925,6 +941,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         Spacing.Insets.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.nodeLabelInset"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.nodeLabelPlacement",
@@ -934,6 +951,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EnumSet.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.nodeLabelPlacement"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portAlignment",
@@ -943,6 +961,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.portAlignment"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portAlignmentNorth",
@@ -952,6 +971,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.portAlignment.north"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portAlignmentSouth",
@@ -961,6 +981,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.portAlignment.south"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portAlignmentWest",
@@ -970,6 +991,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.portAlignment.west"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portAlignmentEast",
@@ -979,6 +1001,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.portAlignment.east"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portConstraints",
@@ -988,6 +1011,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         PortConstraints.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.portConstraints"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portSpacing",
@@ -997,6 +1021,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.portSpacing"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.position",
@@ -1006,6 +1031,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         KVector.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.position"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.priority",
@@ -1015,6 +1041,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         int.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.priority"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.randomSeed",
@@ -1024,6 +1051,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.randomSeed"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.separateConnComp",
@@ -1033,6 +1061,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.separateConnComp"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.sizeConstraint",
@@ -1042,6 +1071,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EnumSet.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.sizeConstraint"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.sizeOptions",
@@ -1051,6 +1081,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EnumSet.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.sizeOptions"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.spacing",
@@ -1060,6 +1091,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.spacing"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.junctionPoints",
@@ -1069,6 +1101,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         KVectorChain.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.junctionPoints"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.additionalPortSpace",
@@ -1078,6 +1111,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         Spacing.Margins.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.additionalPortSpace"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.commentBox",
@@ -1087,6 +1121,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.commentBox"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.edgeLabelPlacement",
@@ -1096,6 +1131,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EdgeLabelPlacement.class,
         EnumSet.of(LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.edgeLabelPlacement"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.edgeType",
@@ -1105,6 +1141,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EdgeType.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.edgeType"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.fontName",
@@ -1114,6 +1151,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         String.class,
         EnumSet.of(LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.fontName"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.fontSize",
@@ -1123,6 +1161,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         int.class,
         EnumSet.of(LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.fontSize"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.hypernode",
@@ -1132,6 +1171,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.hypernode"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.labelManager",
@@ -1141,6 +1181,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         ILabelManager.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.labelManager"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.margins",
@@ -1150,6 +1191,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         Spacing.Margins.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.margins"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.minHeight",
@@ -1159,6 +1201,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.minHeight"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.minWidth",
@@ -1168,6 +1211,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.minWidth"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.noLayout",
@@ -1177,6 +1221,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.noLayout"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portAnchor",
@@ -1186,6 +1231,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         KVector.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portAnchor"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portIndex",
@@ -1195,6 +1241,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         int.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portIndex"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portLabelPlacement",
@@ -1204,6 +1251,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         PortLabelPlacement.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portLabelPlacement"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portSide",
@@ -1213,6 +1261,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         PortSide.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portSide"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portOffset",
@@ -1222,6 +1271,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portOffset"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.scaleFactor",
@@ -1231,6 +1281,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.scaleFactor"
     ));
     registry.addDependency(
         "org.eclipse.elk.scaleFactor",
@@ -1245,6 +1296,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.selfLoopInside"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.thickness",
@@ -1254,6 +1306,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.thickness"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.animate",
@@ -1263,6 +1316,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.animate"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.animTimeFactor",
@@ -1272,6 +1326,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.animTimeFactor"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layoutAncestors",
@@ -1281,6 +1336,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.layoutAncestors"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.maxAnimTime",
@@ -1290,6 +1346,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.maxAnimTime"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.minAnimTime",
@@ -1299,6 +1356,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.minAnimTime"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.progressBar",
@@ -1308,6 +1366,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.progressBar"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.zoomToFit",
@@ -1317,6 +1376,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.zoomToFit"
     ));
     registry.register(new LayoutCategoryData(
         "org.eclipse.elk.Layered",
