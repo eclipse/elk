@@ -43,6 +43,7 @@ public class MetaDataParser extends AbstractContentAssistParser {
 				private static final long serialVersionUID = 1L;
 				{
 					put(grammarAccess.getMdBundleMemberAccess().getAlternatives(), "rule__MdBundleMember__Alternatives");
+					put(grammarAccess.getMdGroupOrPropertyAccess().getAlternatives(), "rule__MdGroupOrProperty__Alternatives");
 					put(grammarAccess.getMdPropertyAccess().getAlternatives_1(), "rule__MdProperty__Alternatives_1");
 					put(grammarAccess.getXAssignmentAccess().getAlternatives(), "rule__XAssignment__Alternatives");
 					put(grammarAccess.getOpMultiAssignAccess().getAlternatives(), "rule__OpMultiAssign__Alternatives");
@@ -90,6 +91,7 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdBundleAccess().getGroup_1(), "rule__MdBundle__Group_1__0");
 					put(grammarAccess.getMdBundleAccess().getGroup_1_2_0(), "rule__MdBundle__Group_1_2_0__0");
 					put(grammarAccess.getMdBundleAccess().getGroup_1_2_1(), "rule__MdBundle__Group_1_2_1__0");
+					put(grammarAccess.getMdGroupAccess().getGroup(), "rule__MdGroup__Group__0");
 					put(grammarAccess.getMdPropertyAccess().getGroup(), "rule__MdProperty__Group__0");
 					put(grammarAccess.getMdPropertyAccess().getGroup_4(), "rule__MdProperty__Group_4__0");
 					put(grammarAccess.getMdPropertyAccess().getGroup_6_0(), "rule__MdProperty__Group_6_0__0");
@@ -301,6 +303,8 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdBundleAccess().getLabelAssignment_1_2_0_2(), "rule__MdBundle__LabelAssignment_1_2_0_2");
 					put(grammarAccess.getMdBundleAccess().getTargetClassAssignment_1_2_1_2(), "rule__MdBundle__TargetClassAssignment_1_2_1_2");
 					put(grammarAccess.getMdBundleAccess().getMembersAssignment_2(), "rule__MdBundle__MembersAssignment_2");
+					put(grammarAccess.getMdGroupAccess().getNameAssignment_1(), "rule__MdGroup__NameAssignment_1");
+					put(grammarAccess.getMdGroupAccess().getChildrenAssignment_3(), "rule__MdGroup__ChildrenAssignment_3");
 					put(grammarAccess.getMdPropertyAccess().getDeprecatedAssignment_0(), "rule__MdProperty__DeprecatedAssignment_0");
 					put(grammarAccess.getMdPropertyAccess().getAdvancedAssignment_1_0(), "rule__MdProperty__AdvancedAssignment_1_0");
 					put(grammarAccess.getMdPropertyAccess().getProgrammaticAssignment_1_1(), "rule__MdProperty__ProgrammaticAssignment_1_1");

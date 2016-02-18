@@ -32,7 +32,15 @@ MdBundle:
     members+=MdBundleMember*;
 
 MdBundleMember:
-    MdProperty | MdAlgorithm | MdCategory;
+    MdGroupOrProperty | MdAlgorithm | MdCategory;
+
+MdGroupOrProperty:
+    MdGroup | MdProperty;
+
+MdGroup:
+    'group' name=ID '{'
+        children+=MdGroupOrProperty*
+    '}';
 
 MdProperty:
     deprecated?='deprecated'?

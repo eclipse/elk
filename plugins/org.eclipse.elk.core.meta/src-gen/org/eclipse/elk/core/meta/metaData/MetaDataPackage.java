@@ -170,40 +170,13 @@ public interface MetaDataPackage extends EPackage
   int MD_BUNDLE_MEMBER = 2;
 
   /**
-   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_BUNDLE_MEMBER__DEPRECATED = 0;
-
-  /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_BUNDLE_MEMBER__NAME = 1;
-
-  /**
-   * The feature id for the '<em><b>Label</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_BUNDLE_MEMBER__LABEL = 2;
-
-  /**
-   * The feature id for the '<em><b>Description</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_BUNDLE_MEMBER__DESCRIPTION = 3;
+  int MD_BUNDLE_MEMBER__NAME = 0;
 
   /**
    * The number of structural features of the '<em>Md Bundle Member</em>' class.
@@ -212,7 +185,72 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_BUNDLE_MEMBER_FEATURE_COUNT = 4;
+  int MD_BUNDLE_MEMBER_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdGroupOrPropertyImpl <em>Md Group Or Property</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.eclipse.elk.core.meta.metaData.impl.MdGroupOrPropertyImpl
+   * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdGroupOrProperty()
+   * @generated
+   */
+  int MD_GROUP_OR_PROPERTY = 3;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_GROUP_OR_PROPERTY__NAME = MD_BUNDLE_MEMBER__NAME;
+
+  /**
+   * The number of structural features of the '<em>Md Group Or Property</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_GROUP_OR_PROPERTY_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 0;
+
+  /**
+   * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdGroupImpl <em>Md Group</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.eclipse.elk.core.meta.metaData.impl.MdGroupImpl
+   * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdGroup()
+   * @generated
+   */
+  int MD_GROUP = 4;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_GROUP__NAME = MD_GROUP_OR_PROPERTY__NAME;
+
+  /**
+   * The feature id for the '<em><b>Children</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_GROUP__CHILDREN = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Md Group</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_GROUP_FEATURE_COUNT = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl <em>Md Property</em>}' class.
@@ -222,16 +260,7 @@ public interface MetaDataPackage extends EPackage
    * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdProperty()
    * @generated
    */
-  int MD_PROPERTY = 3;
-
-  /**
-   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_PROPERTY__DEPRECATED = MD_BUNDLE_MEMBER__DEPRECATED;
+  int MD_PROPERTY = 5;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -240,25 +269,16 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__NAME = MD_BUNDLE_MEMBER__NAME;
+  int MD_PROPERTY__NAME = MD_GROUP_OR_PROPERTY__NAME;
 
   /**
-   * The feature id for the '<em><b>Label</b></em>' attribute.
+   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__LABEL = MD_BUNDLE_MEMBER__LABEL;
-
-  /**
-   * The feature id for the '<em><b>Description</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_PROPERTY__DESCRIPTION = MD_BUNDLE_MEMBER__DESCRIPTION;
+  int MD_PROPERTY__DEPRECATED = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Advanced</b></em>' attribute.
@@ -267,7 +287,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__ADVANCED = MD_BUNDLE_MEMBER_FEATURE_COUNT + 0;
+  int MD_PROPERTY__ADVANCED = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 1;
 
   /**
    * The feature id for the '<em><b>Programmatic</b></em>' attribute.
@@ -276,7 +296,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__PROGRAMMATIC = MD_BUNDLE_MEMBER_FEATURE_COUNT + 1;
+  int MD_PROPERTY__PROGRAMMATIC = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 2;
 
   /**
    * The feature id for the '<em><b>Output</b></em>' attribute.
@@ -285,7 +305,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__OUTPUT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 2;
+  int MD_PROPERTY__OUTPUT = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 3;
 
   /**
    * The feature id for the '<em><b>Global</b></em>' attribute.
@@ -294,7 +314,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__GLOBAL = MD_BUNDLE_MEMBER_FEATURE_COUNT + 3;
+  int MD_PROPERTY__GLOBAL = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 4;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' containment reference.
@@ -303,7 +323,25 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__TYPE = MD_BUNDLE_MEMBER_FEATURE_COUNT + 4;
+  int MD_PROPERTY__TYPE = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 5;
+
+  /**
+   * The feature id for the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_PROPERTY__LABEL = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 6;
+
+  /**
+   * The feature id for the '<em><b>Description</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_PROPERTY__DESCRIPTION = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 7;
 
   /**
    * The feature id for the '<em><b>Default Value</b></em>' containment reference.
@@ -312,7 +350,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__DEFAULT_VALUE = MD_BUNDLE_MEMBER_FEATURE_COUNT + 5;
+  int MD_PROPERTY__DEFAULT_VALUE = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 8;
 
   /**
    * The feature id for the '<em><b>Targets</b></em>' attribute list.
@@ -321,7 +359,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__TARGETS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 6;
+  int MD_PROPERTY__TARGETS = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 9;
 
   /**
    * The feature id for the '<em><b>Legacy Ids</b></em>' attribute list.
@@ -330,7 +368,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__LEGACY_IDS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 7;
+  int MD_PROPERTY__LEGACY_IDS = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 10;
 
   /**
    * The feature id for the '<em><b>Dependencies</b></em>' containment reference list.
@@ -339,7 +377,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__DEPENDENCIES = MD_BUNDLE_MEMBER_FEATURE_COUNT + 8;
+  int MD_PROPERTY__DEPENDENCIES = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 11;
 
   /**
    * The number of structural features of the '<em>Md Property</em>' class.
@@ -348,7 +386,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 9;
+  int MD_PROPERTY_FEATURE_COUNT = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 12;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyDependencyImpl <em>Md Property Dependency</em>}' class.
@@ -358,7 +396,7 @@ public interface MetaDataPackage extends EPackage
    * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdPropertyDependency()
    * @generated
    */
-  int MD_PROPERTY_DEPENDENCY = 4;
+  int MD_PROPERTY_DEPENDENCY = 6;
 
   /**
    * The feature id for the '<em><b>Target</b></em>' reference.
@@ -395,16 +433,7 @@ public interface MetaDataPackage extends EPackage
    * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdAlgorithm()
    * @generated
    */
-  int MD_ALGORITHM = 5;
-
-  /**
-   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_ALGORITHM__DEPRECATED = MD_BUNDLE_MEMBER__DEPRECATED;
+  int MD_ALGORITHM = 7;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -416,22 +445,13 @@ public interface MetaDataPackage extends EPackage
   int MD_ALGORITHM__NAME = MD_BUNDLE_MEMBER__NAME;
 
   /**
-   * The feature id for the '<em><b>Label</b></em>' attribute.
+   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__LABEL = MD_BUNDLE_MEMBER__LABEL;
-
-  /**
-   * The feature id for the '<em><b>Description</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_ALGORITHM__DESCRIPTION = MD_BUNDLE_MEMBER__DESCRIPTION;
+  int MD_ALGORITHM__DEPRECATED = MD_BUNDLE_MEMBER_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Provider</b></em>' containment reference.
@@ -440,7 +460,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__PROVIDER = MD_BUNDLE_MEMBER_FEATURE_COUNT + 0;
+  int MD_ALGORITHM__PROVIDER = MD_BUNDLE_MEMBER_FEATURE_COUNT + 1;
 
   /**
    * The feature id for the '<em><b>Parameter</b></em>' attribute.
@@ -449,7 +469,25 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__PARAMETER = MD_BUNDLE_MEMBER_FEATURE_COUNT + 1;
+  int MD_ALGORITHM__PARAMETER = MD_BUNDLE_MEMBER_FEATURE_COUNT + 2;
+
+  /**
+   * The feature id for the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_ALGORITHM__LABEL = MD_BUNDLE_MEMBER_FEATURE_COUNT + 3;
+
+  /**
+   * The feature id for the '<em><b>Description</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_ALGORITHM__DESCRIPTION = MD_BUNDLE_MEMBER_FEATURE_COUNT + 4;
 
   /**
    * The feature id for the '<em><b>Category</b></em>' reference.
@@ -458,7 +496,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__CATEGORY = MD_BUNDLE_MEMBER_FEATURE_COUNT + 2;
+  int MD_ALGORITHM__CATEGORY = MD_BUNDLE_MEMBER_FEATURE_COUNT + 5;
 
   /**
    * The feature id for the '<em><b>Preview Image</b></em>' attribute.
@@ -467,7 +505,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__PREVIEW_IMAGE = MD_BUNDLE_MEMBER_FEATURE_COUNT + 3;
+  int MD_ALGORITHM__PREVIEW_IMAGE = MD_BUNDLE_MEMBER_FEATURE_COUNT + 6;
 
   /**
    * The feature id for the '<em><b>Supported Features</b></em>' attribute list.
@@ -476,7 +514,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__SUPPORTED_FEATURES = MD_BUNDLE_MEMBER_FEATURE_COUNT + 4;
+  int MD_ALGORITHM__SUPPORTED_FEATURES = MD_BUNDLE_MEMBER_FEATURE_COUNT + 7;
 
   /**
    * The feature id for the '<em><b>Supported Options</b></em>' containment reference list.
@@ -485,7 +523,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__SUPPORTED_OPTIONS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 5;
+  int MD_ALGORITHM__SUPPORTED_OPTIONS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 8;
 
   /**
    * The number of structural features of the '<em>Md Algorithm</em>' class.
@@ -494,7 +532,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 6;
+  int MD_ALGORITHM_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 9;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdCategoryImpl <em>Md Category</em>}' class.
@@ -504,16 +542,7 @@ public interface MetaDataPackage extends EPackage
    * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdCategory()
    * @generated
    */
-  int MD_CATEGORY = 6;
-
-  /**
-   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_CATEGORY__DEPRECATED = MD_BUNDLE_MEMBER__DEPRECATED;
+  int MD_CATEGORY = 8;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -525,13 +554,22 @@ public interface MetaDataPackage extends EPackage
   int MD_CATEGORY__NAME = MD_BUNDLE_MEMBER__NAME;
 
   /**
+   * The feature id for the '<em><b>Deprecated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_CATEGORY__DEPRECATED = MD_BUNDLE_MEMBER_FEATURE_COUNT + 0;
+
+  /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_CATEGORY__LABEL = MD_BUNDLE_MEMBER__LABEL;
+  int MD_CATEGORY__LABEL = MD_BUNDLE_MEMBER_FEATURE_COUNT + 1;
 
   /**
    * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -540,7 +578,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_CATEGORY__DESCRIPTION = MD_BUNDLE_MEMBER__DESCRIPTION;
+  int MD_CATEGORY__DESCRIPTION = MD_BUNDLE_MEMBER_FEATURE_COUNT + 2;
 
   /**
    * The number of structural features of the '<em>Md Category</em>' class.
@@ -549,7 +587,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_CATEGORY_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 0;
+  int MD_CATEGORY_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 3;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl <em>Md Property Support</em>}' class.
@@ -559,7 +597,7 @@ public interface MetaDataPackage extends EPackage
    * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdPropertySupport()
    * @generated
    */
-  int MD_PROPERTY_SUPPORT = 7;
+  int MD_PROPERTY_SUPPORT = 9;
 
   /**
    * The feature id for the '<em><b>Property</b></em>' reference.
@@ -605,7 +643,7 @@ public interface MetaDataPackage extends EPackage
    * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdPropertyTargetType()
    * @generated
    */
-  int MD_PROPERTY_TARGET_TYPE = 8;
+  int MD_PROPERTY_TARGET_TYPE = 10;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.MdGraphFeature <em>Md Graph Feature</em>}' enum.
@@ -615,7 +653,7 @@ public interface MetaDataPackage extends EPackage
    * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdGraphFeature()
    * @generated
    */
-  int MD_GRAPH_FEATURE = 9;
+  int MD_GRAPH_FEATURE = 11;
 
 
   /**
@@ -715,17 +753,6 @@ public interface MetaDataPackage extends EPackage
   EClass getMdBundleMember();
 
   /**
-   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdBundleMember#isDeprecated <em>Deprecated</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Deprecated</em>'.
-   * @see org.eclipse.elk.core.meta.metaData.MdBundleMember#isDeprecated()
-   * @see #getMdBundleMember()
-   * @generated
-   */
-  EAttribute getMdBundleMember_Deprecated();
-
-  /**
    * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdBundleMember#getName <em>Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -737,26 +764,35 @@ public interface MetaDataPackage extends EPackage
   EAttribute getMdBundleMember_Name();
 
   /**
-   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdBundleMember#getLabel <em>Label</em>}'.
+   * Returns the meta object for class '{@link org.eclipse.elk.core.meta.metaData.MdGroupOrProperty <em>Md Group Or Property</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Label</em>'.
-   * @see org.eclipse.elk.core.meta.metaData.MdBundleMember#getLabel()
-   * @see #getMdBundleMember()
+   * @return the meta object for class '<em>Md Group Or Property</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdGroupOrProperty
    * @generated
    */
-  EAttribute getMdBundleMember_Label();
+  EClass getMdGroupOrProperty();
 
   /**
-   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdBundleMember#getDescription <em>Description</em>}'.
+   * Returns the meta object for class '{@link org.eclipse.elk.core.meta.metaData.MdGroup <em>Md Group</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Description</em>'.
-   * @see org.eclipse.elk.core.meta.metaData.MdBundleMember#getDescription()
-   * @see #getMdBundleMember()
+   * @return the meta object for class '<em>Md Group</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdGroup
    * @generated
    */
-  EAttribute getMdBundleMember_Description();
+  EClass getMdGroup();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.eclipse.elk.core.meta.metaData.MdGroup#getChildren <em>Children</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Children</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdGroup#getChildren()
+   * @see #getMdGroup()
+   * @generated
+   */
+  EReference getMdGroup_Children();
 
   /**
    * Returns the meta object for class '{@link org.eclipse.elk.core.meta.metaData.MdProperty <em>Md Property</em>}'.
@@ -767,6 +803,17 @@ public interface MetaDataPackage extends EPackage
    * @generated
    */
   EClass getMdProperty();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdProperty#isDeprecated <em>Deprecated</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Deprecated</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdProperty#isDeprecated()
+   * @see #getMdProperty()
+   * @generated
+   */
+  EAttribute getMdProperty_Deprecated();
 
   /**
    * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdProperty#isAdvanced <em>Advanced</em>}'.
@@ -822,6 +869,28 @@ public interface MetaDataPackage extends EPackage
    * @generated
    */
   EReference getMdProperty_Type();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLabel <em>Label</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Label</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdProperty#getLabel()
+   * @see #getMdProperty()
+   * @generated
+   */
+  EAttribute getMdProperty_Label();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDescription <em>Description</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Description</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdProperty#getDescription()
+   * @see #getMdProperty()
+   * @generated
+   */
+  EAttribute getMdProperty_Description();
 
   /**
    * Returns the meta object for the containment reference '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDefaultValue <em>Default Value</em>}'.
@@ -910,6 +979,17 @@ public interface MetaDataPackage extends EPackage
   EClass getMdAlgorithm();
 
   /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#isDeprecated <em>Deprecated</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Deprecated</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdAlgorithm#isDeprecated()
+   * @see #getMdAlgorithm()
+   * @generated
+   */
+  EAttribute getMdAlgorithm_Deprecated();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getProvider <em>Provider</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -930,6 +1010,28 @@ public interface MetaDataPackage extends EPackage
    * @generated
    */
   EAttribute getMdAlgorithm_Parameter();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getLabel <em>Label</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Label</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdAlgorithm#getLabel()
+   * @see #getMdAlgorithm()
+   * @generated
+   */
+  EAttribute getMdAlgorithm_Label();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDescription <em>Description</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Description</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDescription()
+   * @see #getMdAlgorithm()
+   * @generated
+   */
+  EAttribute getMdAlgorithm_Description();
 
   /**
    * Returns the meta object for the reference '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getCategory <em>Category</em>}'.
@@ -984,6 +1086,39 @@ public interface MetaDataPackage extends EPackage
    * @generated
    */
   EClass getMdCategory();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdCategory#isDeprecated <em>Deprecated</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Deprecated</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdCategory#isDeprecated()
+   * @see #getMdCategory()
+   * @generated
+   */
+  EAttribute getMdCategory_Deprecated();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdCategory#getLabel <em>Label</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Label</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdCategory#getLabel()
+   * @see #getMdCategory()
+   * @generated
+   */
+  EAttribute getMdCategory_Label();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdCategory#getDescription <em>Description</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Description</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdCategory#getDescription()
+   * @see #getMdCategory()
+   * @generated
+   */
+  EAttribute getMdCategory_Description();
 
   /**
    * Returns the meta object for class '{@link org.eclipse.elk.core.meta.metaData.MdPropertySupport <em>Md Property Support</em>}'.
@@ -1150,14 +1285,6 @@ public interface MetaDataPackage extends EPackage
     EClass MD_BUNDLE_MEMBER = eINSTANCE.getMdBundleMember();
 
     /**
-     * The meta object literal for the '<em><b>Deprecated</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute MD_BUNDLE_MEMBER__DEPRECATED = eINSTANCE.getMdBundleMember_Deprecated();
-
-    /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1166,20 +1293,32 @@ public interface MetaDataPackage extends EPackage
     EAttribute MD_BUNDLE_MEMBER__NAME = eINSTANCE.getMdBundleMember_Name();
 
     /**
-     * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
+     * The meta object literal for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdGroupOrPropertyImpl <em>Md Group Or Property</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     * @see org.eclipse.elk.core.meta.metaData.impl.MdGroupOrPropertyImpl
+     * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdGroupOrProperty()
      * @generated
      */
-    EAttribute MD_BUNDLE_MEMBER__LABEL = eINSTANCE.getMdBundleMember_Label();
+    EClass MD_GROUP_OR_PROPERTY = eINSTANCE.getMdGroupOrProperty();
 
     /**
-     * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+     * The meta object literal for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdGroupImpl <em>Md Group</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.eclipse.elk.core.meta.metaData.impl.MdGroupImpl
+     * @see org.eclipse.elk.core.meta.metaData.impl.MetaDataPackageImpl#getMdGroup()
+     * @generated
+     */
+    EClass MD_GROUP = eINSTANCE.getMdGroup();
+
+    /**
+     * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute MD_BUNDLE_MEMBER__DESCRIPTION = eINSTANCE.getMdBundleMember_Description();
+    EReference MD_GROUP__CHILDREN = eINSTANCE.getMdGroup_Children();
 
     /**
      * The meta object literal for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl <em>Md Property</em>}' class.
@@ -1190,6 +1329,14 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EClass MD_PROPERTY = eINSTANCE.getMdProperty();
+
+    /**
+     * The meta object literal for the '<em><b>Deprecated</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_PROPERTY__DEPRECATED = eINSTANCE.getMdProperty_Deprecated();
 
     /**
      * The meta object literal for the '<em><b>Advanced</b></em>' attribute feature.
@@ -1230,6 +1377,22 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EReference MD_PROPERTY__TYPE = eINSTANCE.getMdProperty_Type();
+
+    /**
+     * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_PROPERTY__LABEL = eINSTANCE.getMdProperty_Label();
+
+    /**
+     * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_PROPERTY__DESCRIPTION = eINSTANCE.getMdProperty_Description();
 
     /**
      * The meta object literal for the '<em><b>Default Value</b></em>' containment reference feature.
@@ -1300,6 +1463,14 @@ public interface MetaDataPackage extends EPackage
     EClass MD_ALGORITHM = eINSTANCE.getMdAlgorithm();
 
     /**
+     * The meta object literal for the '<em><b>Deprecated</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_ALGORITHM__DEPRECATED = eINSTANCE.getMdAlgorithm_Deprecated();
+
+    /**
      * The meta object literal for the '<em><b>Provider</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1314,6 +1485,22 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EAttribute MD_ALGORITHM__PARAMETER = eINSTANCE.getMdAlgorithm_Parameter();
+
+    /**
+     * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_ALGORITHM__LABEL = eINSTANCE.getMdAlgorithm_Label();
+
+    /**
+     * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_ALGORITHM__DESCRIPTION = eINSTANCE.getMdAlgorithm_Description();
 
     /**
      * The meta object literal for the '<em><b>Category</b></em>' reference feature.
@@ -1356,6 +1543,30 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EClass MD_CATEGORY = eINSTANCE.getMdCategory();
+
+    /**
+     * The meta object literal for the '<em><b>Deprecated</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_CATEGORY__DEPRECATED = eINSTANCE.getMdCategory_Deprecated();
+
+    /**
+     * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_CATEGORY__LABEL = eINSTANCE.getMdCategory_Label();
+
+    /**
+     * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_CATEGORY__DESCRIPTION = eINSTANCE.getMdCategory_Description();
 
     /**
      * The meta object literal for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl <em>Md Property Support</em>}' class.

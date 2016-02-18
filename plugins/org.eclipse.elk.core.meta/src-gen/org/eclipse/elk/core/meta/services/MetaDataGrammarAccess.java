@@ -167,25 +167,85 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	public class MdBundleMemberElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.core.meta.MetaData.MdBundleMember");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cMdPropertyParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cMdGroupOrPropertyParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cMdAlgorithmParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		private final RuleCall cMdCategoryParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		//MdBundleMember:
-		//	MdProperty | MdAlgorithm | MdCategory;
+		//	MdGroupOrProperty | MdAlgorithm | MdCategory;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//MdProperty | MdAlgorithm | MdCategory
+		//MdGroupOrProperty | MdAlgorithm | MdCategory
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//MdProperty
-		public RuleCall getMdPropertyParserRuleCall_0() { return cMdPropertyParserRuleCall_0; }
+		//MdGroupOrProperty
+		public RuleCall getMdGroupOrPropertyParserRuleCall_0() { return cMdGroupOrPropertyParserRuleCall_0; }
 		
 		//MdAlgorithm
 		public RuleCall getMdAlgorithmParserRuleCall_1() { return cMdAlgorithmParserRuleCall_1; }
 		
 		//MdCategory
 		public RuleCall getMdCategoryParserRuleCall_2() { return cMdCategoryParserRuleCall_2; }
+	}
+	public class MdGroupOrPropertyElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.core.meta.MetaData.MdGroupOrProperty");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cMdGroupParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cMdPropertyParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		
+		//MdGroupOrProperty:
+		//	MdGroup | MdProperty;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//MdGroup | MdProperty
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//MdGroup
+		public RuleCall getMdGroupParserRuleCall_0() { return cMdGroupParserRuleCall_0; }
+		
+		//MdProperty
+		public RuleCall getMdPropertyParserRuleCall_1() { return cMdPropertyParserRuleCall_1; }
+	}
+	public class MdGroupElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.core.meta.MetaData.MdGroup");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cGroupKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cChildrenAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cChildrenMdGroupOrPropertyParserRuleCall_3_0 = (RuleCall)cChildrenAssignment_3.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		
+		//MdGroup:
+		//	'group' name=ID '{'
+		//	children+=MdGroupOrProperty*
+		//	'}';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'group' name=ID '{' children+=MdGroupOrProperty* '}'
+		public Group getGroup() { return cGroup; }
+		
+		//'group'
+		public Keyword getGroupKeyword_0() { return cGroupKeyword_0; }
+		
+		//name=ID
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+		
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		
+		//children+=MdGroupOrProperty*
+		public Assignment getChildrenAssignment_3() { return cChildrenAssignment_3; }
+		
+		//MdGroupOrProperty
+		public RuleCall getChildrenMdGroupOrPropertyParserRuleCall_3_0() { return cChildrenMdGroupOrPropertyParserRuleCall_3_0; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_4() { return cRightCurlyBracketKeyword_4; }
 	}
 	public class MdPropertyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.core.meta.MetaData.MdProperty");
@@ -990,6 +1050,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	private final MdModelElements pMdModel;
 	private final MdBundleElements pMdBundle;
 	private final MdBundleMemberElements pMdBundleMember;
+	private final MdGroupOrPropertyElements pMdGroupOrProperty;
+	private final MdGroupElements pMdGroup;
 	private final MdPropertyElements pMdProperty;
 	private final MdPropertyDependencyElements pMdPropertyDependency;
 	private final MdAlgorithmElements pMdAlgorithm;
@@ -1015,6 +1077,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		this.pMdModel = new MdModelElements();
 		this.pMdBundle = new MdBundleElements();
 		this.pMdBundleMember = new MdBundleMemberElements();
+		this.pMdGroupOrProperty = new MdGroupOrPropertyElements();
+		this.pMdGroup = new MdGroupElements();
 		this.pMdProperty = new MdPropertyElements();
 		this.pMdPropertyDependency = new MdPropertyDependencyElements();
 		this.pMdAlgorithm = new MdAlgorithmElements();
@@ -1082,13 +1146,35 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MdBundleMember:
-	//	MdProperty | MdAlgorithm | MdCategory;
+	//	MdGroupOrProperty | MdAlgorithm | MdCategory;
 	public MdBundleMemberElements getMdBundleMemberAccess() {
 		return pMdBundleMember;
 	}
 	
 	public ParserRule getMdBundleMemberRule() {
 		return getMdBundleMemberAccess().getRule();
+	}
+	
+	//MdGroupOrProperty:
+	//	MdGroup | MdProperty;
+	public MdGroupOrPropertyElements getMdGroupOrPropertyAccess() {
+		return pMdGroupOrProperty;
+	}
+	
+	public ParserRule getMdGroupOrPropertyRule() {
+		return getMdGroupOrPropertyAccess().getRule();
+	}
+	
+	//MdGroup:
+	//	'group' name=ID '{'
+	//	children+=MdGroupOrProperty*
+	//	'}';
+	public MdGroupElements getMdGroupAccess() {
+		return pMdGroup;
+	}
+	
+	public ParserRule getMdGroupRule() {
+		return getMdGroupAccess().getRule();
 	}
 	
 	//MdProperty:

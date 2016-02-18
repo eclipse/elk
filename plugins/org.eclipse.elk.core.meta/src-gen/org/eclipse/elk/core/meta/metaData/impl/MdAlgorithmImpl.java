@@ -44,8 +44,11 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#isDeprecated <em>Deprecated</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getProvider <em>Provider</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getParameter <em>Parameter</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getPreviewImage <em>Preview Image</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getSupportedFeatures <em>Supported Features</em>}</li>
@@ -56,6 +59,26 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  */
 public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
 {
+  /**
+   * The default value of the '{@link #isDeprecated() <em>Deprecated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDeprecated()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean DEPRECATED_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDeprecated() <em>Deprecated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDeprecated()
+   * @generated
+   * @ordered
+   */
+  protected boolean deprecated = DEPRECATED_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getProvider() <em>Provider</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -85,6 +108,46 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * @ordered
    */
   protected String parameter = PARAMETER_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected static final String LABEL_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected String label = LABEL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDescription()
+   * @generated
+   * @ordered
+   */
+  protected static final String DESCRIPTION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDescription()
+   * @generated
+   * @ordered
+   */
+  protected String description = DESCRIPTION_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getCategory() <em>Category</em>}' reference.
@@ -162,6 +225,29 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isDeprecated()
+  {
+    return deprecated;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDeprecated(boolean newDeprecated)
+  {
+    boolean oldDeprecated = deprecated;
+    deprecated = newDeprecated;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_ALGORITHM__DEPRECATED, oldDeprecated, deprecated));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public JvmTypeReference getProvider()
   {
     return provider;
@@ -226,6 +312,52 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
     parameter = newParameter;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_ALGORITHM__PARAMETER, oldParameter, parameter));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getLabel()
+  {
+    return label;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLabel(String newLabel)
+  {
+    String oldLabel = label;
+    label = newLabel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_ALGORITHM__LABEL, oldLabel, label));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getDescription()
+  {
+    return description;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDescription(String newDescription)
+  {
+    String oldDescription = description;
+    description = newDescription;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_ALGORITHM__DESCRIPTION, oldDescription, description));
   }
 
   /**
@@ -350,10 +482,16 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
   {
     switch (featureID)
     {
+      case MetaDataPackage.MD_ALGORITHM__DEPRECATED:
+        return isDeprecated();
       case MetaDataPackage.MD_ALGORITHM__PROVIDER:
         return getProvider();
       case MetaDataPackage.MD_ALGORITHM__PARAMETER:
         return getParameter();
+      case MetaDataPackage.MD_ALGORITHM__LABEL:
+        return getLabel();
+      case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
+        return getDescription();
       case MetaDataPackage.MD_ALGORITHM__CATEGORY:
         if (resolve) return getCategory();
         return basicGetCategory();
@@ -378,11 +516,20 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
   {
     switch (featureID)
     {
+      case MetaDataPackage.MD_ALGORITHM__DEPRECATED:
+        setDeprecated((Boolean)newValue);
+        return;
       case MetaDataPackage.MD_ALGORITHM__PROVIDER:
         setProvider((JvmTypeReference)newValue);
         return;
       case MetaDataPackage.MD_ALGORITHM__PARAMETER:
         setParameter((String)newValue);
+        return;
+      case MetaDataPackage.MD_ALGORITHM__LABEL:
+        setLabel((String)newValue);
+        return;
+      case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
+        setDescription((String)newValue);
         return;
       case MetaDataPackage.MD_ALGORITHM__CATEGORY:
         setCategory((MdCategory)newValue);
@@ -412,11 +559,20 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
   {
     switch (featureID)
     {
+      case MetaDataPackage.MD_ALGORITHM__DEPRECATED:
+        setDeprecated(DEPRECATED_EDEFAULT);
+        return;
       case MetaDataPackage.MD_ALGORITHM__PROVIDER:
         setProvider((JvmTypeReference)null);
         return;
       case MetaDataPackage.MD_ALGORITHM__PARAMETER:
         setParameter(PARAMETER_EDEFAULT);
+        return;
+      case MetaDataPackage.MD_ALGORITHM__LABEL:
+        setLabel(LABEL_EDEFAULT);
+        return;
+      case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
+        setDescription(DESCRIPTION_EDEFAULT);
         return;
       case MetaDataPackage.MD_ALGORITHM__CATEGORY:
         setCategory((MdCategory)null);
@@ -444,10 +600,16 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
   {
     switch (featureID)
     {
+      case MetaDataPackage.MD_ALGORITHM__DEPRECATED:
+        return deprecated != DEPRECATED_EDEFAULT;
       case MetaDataPackage.MD_ALGORITHM__PROVIDER:
         return provider != null;
       case MetaDataPackage.MD_ALGORITHM__PARAMETER:
         return PARAMETER_EDEFAULT == null ? parameter != null : !PARAMETER_EDEFAULT.equals(parameter);
+      case MetaDataPackage.MD_ALGORITHM__LABEL:
+        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+      case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
+        return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
       case MetaDataPackage.MD_ALGORITHM__CATEGORY:
         return category != null;
       case MetaDataPackage.MD_ALGORITHM__PREVIEW_IMAGE:
@@ -471,8 +633,14 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (parameter: ");
+    result.append(" (deprecated: ");
+    result.append(deprecated);
+    result.append(", parameter: ");
     result.append(parameter);
+    result.append(", label: ");
+    result.append(label);
+    result.append(", description: ");
+    result.append(description);
     result.append(", previewImage: ");
     result.append(previewImage);
     result.append(", supportedFeatures: ");

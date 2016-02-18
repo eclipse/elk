@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eclipse.elk.core.meta.metaData.MdAlgorithm;
 import org.eclipse.elk.core.meta.metaData.MdBundle;
 import org.eclipse.elk.core.meta.metaData.MdCategory;
+import org.eclipse.elk.core.meta.metaData.MdGroup;
 import org.eclipse.elk.core.meta.metaData.MdModel;
 import org.eclipse.elk.core.meta.metaData.MdProperty;
 import org.eclipse.elk.core.meta.metaData.MdPropertyDependency;
@@ -96,6 +97,9 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 				return; 
 			case MetaDataPackage.MD_CATEGORY:
 				sequence_MdCategory(context, (MdCategory) semanticObject); 
+				return; 
+			case MetaDataPackage.MD_GROUP:
+				sequence_MdGroup(context, (MdGroup) semanticObject); 
 				return; 
 			case MetaDataPackage.MD_MODEL:
 				sequence_MdModel(context, (MdModel) semanticObject); 
@@ -403,6 +407,20 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     MdBundleMember returns MdGroup
+	 *     MdGroupOrProperty returns MdGroup
+	 *     MdGroup returns MdGroup
+	 *
+	 * Constraint:
+	 *     (name=ID children+=MdGroupOrProperty*)
+	 */
+	protected void sequence_MdGroup(ISerializationContext context, MdGroup semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     MdModel returns MdModel
 	 *
 	 * Constraint:
@@ -440,6 +458,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	/**
 	 * Contexts:
 	 *     MdBundleMember returns MdProperty
+	 *     MdGroupOrProperty returns MdProperty
 	 *     MdProperty returns MdProperty
 	 *
 	 * Constraint:

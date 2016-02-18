@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.meta.jvmmodel
 
+import com.google.common.collect.Iterables
 import com.google.inject.Inject
 import java.util.EnumSet
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider
@@ -20,8 +21,12 @@ import org.eclipse.elk.core.meta.metaData.MdAlgorithm
 import org.eclipse.elk.core.meta.metaData.MdBundle
 import org.eclipse.elk.core.meta.metaData.MdBundleMember
 import org.eclipse.elk.core.meta.metaData.MdCategory
+import org.eclipse.elk.core.meta.metaData.MdGroup
 import org.eclipse.elk.core.meta.metaData.MdModel
 import org.eclipse.elk.core.meta.metaData.MdProperty
+import org.eclipse.elk.core.meta.metaData.MdPropertyDependency
+import org.eclipse.elk.core.meta.metaData.MdPropertySupport
+import org.eclipse.elk.core.options.GraphFeature
 import org.eclipse.elk.core.util.AlgorithmFactory
 import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.properties.Property
@@ -33,9 +38,7 @@ import org.eclipse.xtext.util.Strings
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import org.eclipse.elk.core.meta.metaData.MdPropertyDependency
-import org.eclipse.elk.core.meta.metaData.MdPropertySupport
-import org.eclipse.elk.core.options.GraphFeature
+import java.util.LinkedList
 
 /**
  * Infers a JVM model from the source model. 
@@ -81,14 +84,14 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             documentation = bundle.documentation
             
             // 1. Public constants for all declared properties
-            for (property : bundle.members.filter(MdProperty)) {
+            for (property : bundle.members.allPropertyDefinitions) {
                 val constant = property.toPropertyConstant
                 if (property.defaultValue !== null)
                     members += property.toPropertyDefault
                 members += constant
             }
             // 2. Private constants for required values of option dependencies
-            for (property : bundle.members.filter(MdProperty)) {
+            for (property : bundle.members.allPropertyDefinitions) {
                 for (dependency : property.dependencies) {
                     if (dependency.value !== null)
                         members += dependency.toDependencyValue
@@ -114,6 +117,13 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             ]
             
         ]
+    }
+    
+    private def Iterable<MdProperty> getAllPropertyDefinitions(Iterable<? extends MdBundleMember> elements) {
+        Iterables.concat(
+            elements.filter(MdProperty),
+            elements.filter(MdGroup)
+                    .map[it.children.getAllPropertyDefinitions].flatten)
     }
     
     private def String getQualifiedTargetClass(MdBundle bundle) {
@@ -273,20 +283,39 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         «ENDFOR»
     '''
     
+    private def Iterable<MdGroup> getGroups(MdBundleMember member) {
+        val groups = new LinkedList
+        var group = member.eContainer
+        while (group instanceof MdGroup) {
+            groups.addFirst(group)
+            group = group.eContainer
+        }
+        groups
+    }
+    
     private def String getQualifiedName(MdBundleMember member) {
         val bundle = member.bundle
         val model = bundle.eContainer as MdModel
-        return model.name + '.' + member.name
+        return model.name 
+               + (if (member.groups.empty) '' else '.')
+               + member.groups.map[it.name].join('.') 
+               + '.' + member.name
     }
     
     private def MdBundle getBundle(MdBundleMember member) {
-        return member.eContainer as MdBundle
+        var parent = member.eContainer
+        while (!(parent instanceof MdBundle)) {
+            parent = parent.eContainer
+        }
+        return parent as MdBundle
     }
     
     private def String getConstantName(MdBundleMember member) {
         val name = member.name
         if (name !== null) {
             val result = new StringBuilder
+            result.append(member.groups.map[it.name.toUpperCase].join('_'))
+            if (result.length > 0) result.append('_')
             for (var i = 0; i < name.length; i++) {
                 val c = name.charAt(i)
                 if (Character.isUpperCase(c) && i > 0)

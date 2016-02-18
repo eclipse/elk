@@ -11,13 +11,16 @@
 package org.eclipse.elk.core.meta.validation
 
 import java.util.Map
+import org.eclipse.elk.core.meta.metaData.MdAlgorithm
 import org.eclipse.elk.core.meta.metaData.MdBundle
 import org.eclipse.elk.core.meta.metaData.MdBundleMember
+import org.eclipse.elk.core.meta.metaData.MdGroup
+import org.eclipse.elk.core.meta.metaData.MdProperty
 import org.eclipse.elk.core.meta.metaData.MdPropertySupport
 import org.eclipse.xtext.validation.Check
 
 import static org.eclipse.elk.core.meta.metaData.MetaDataPackage.Literals.*
-import org.eclipse.elk.core.meta.metaData.MdAlgorithm
+import org.eclipse.elk.core.meta.metaData.MdCategory
 
 /**
  * This class contains custom validation rules. 
@@ -28,20 +31,39 @@ class MetaDataValidator extends AbstractMetaDataValidator {
 	
     @Check
     def void checkDuplicateMemberId(MdBundle bundle) {
-        val Map<String, MdBundleMember> ids = newHashMap
-        for (member : bundle.members) {
-            if (ids.containsKey(member.name)) {
-                val otherMember = ids.get(member.name)
+        bundle.members.checkDuplicatePropertyIds
+    }
+    
+    def void checkDuplicatePropertyIds(Iterable<? extends MdBundleMember> elements) {
+        val Map<String, MdAlgorithm> algorithmIds = newHashMap
+        val Map<String, MdCategory> categoryIds = newHashMap
+        val Map<String, MdProperty> propertyIds = newHashMap
+        val Map<String, MdGroup> groupIds = newHashMap
+        for (element : elements) {
+            switch element {
+                MdAlgorithm: algorithmIds.checkExistsAndRemember(element)
+                MdCategory: categoryIds.checkExistsAndRemember(element)
+                MdGroup: {
+                    groupIds.checkExistsAndRemember(element)
+                    element.children.checkDuplicatePropertyIds
+                }
+                MdProperty: propertyIds.checkExistsAndRemember(element)
+            }
+        }
+    }
+    
+    def  <T extends MdBundleMember> void checkExistsAndRemember(Map<String, T> map, T element) {
+        if (map.containsKey(element.name)) {
+                val otherMember = map.get(element.name)
                 if (otherMember !== null) {
                     duplicateName(otherMember)
                     // The first occurrence should be marked only once
-                    ids.put(member.name, null)
+                    map.put(element.name, null)
                 }
-                duplicateName(member)
+                duplicateName(element)
             } else {
-                ids.put(member.name, member)
+                map.put(element.name, element)
             }
-        }
     }
     
     def void duplicateName(MdBundleMember member) {

@@ -25,8 +25,11 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#isDeprecated <em>Deprecated</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getProvider <em>Provider</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getParameter <em>Parameter</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getPreviewImage <em>Preview Image</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getSupportedFeatures <em>Supported Features</em>}</li>
@@ -39,6 +42,32 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  */
 public interface MdAlgorithm extends MdBundleMember
 {
+  /**
+   * Returns the value of the '<em><b>Deprecated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Deprecated</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Deprecated</em>' attribute.
+   * @see #setDeprecated(boolean)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdAlgorithm_Deprecated()
+   * @model
+   * @generated
+   */
+  boolean isDeprecated();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#isDeprecated <em>Deprecated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Deprecated</em>' attribute.
+   * @see #isDeprecated()
+   * @generated
+   */
+  void setDeprecated(boolean value);
+
   /**
    * Returns the value of the '<em><b>Provider</b></em>' containment reference.
    * <!-- begin-user-doc -->
@@ -90,6 +119,58 @@ public interface MdAlgorithm extends MdBundleMember
    * @generated
    */
   void setParameter(String value);
+
+  /**
+   * Returns the value of the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Label</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Label</em>' attribute.
+   * @see #setLabel(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdAlgorithm_Label()
+   * @model
+   * @generated
+   */
+  String getLabel();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getLabel <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Label</em>' attribute.
+   * @see #getLabel()
+   * @generated
+   */
+  void setLabel(String value);
+
+  /**
+   * Returns the value of the '<em><b>Description</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Description</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Description</em>' attribute.
+   * @see #setDescription(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdAlgorithm_Description()
+   * @model
+   * @generated
+   */
+  String getDescription();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDescription <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Description</em>' attribute.
+   * @see #getDescription()
+   * @generated
+   */
+  void setDescription(String value);
 
   /**
    * Returns the value of the '<em><b>Category</b></em>' reference.

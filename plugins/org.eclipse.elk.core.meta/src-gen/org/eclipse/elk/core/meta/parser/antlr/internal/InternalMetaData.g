@@ -313,11 +313,11 @@ ruleMdBundleMember returns [EObject current=null]
 }:
 	(
 		{
-			newCompositeNode(grammarAccess.getMdBundleMemberAccess().getMdPropertyParserRuleCall_0());
+			newCompositeNode(grammarAccess.getMdBundleMemberAccess().getMdGroupOrPropertyParserRuleCall_0());
 		}
-		this_MdProperty_0=ruleMdProperty
+		this_MdGroupOrProperty_0=ruleMdGroupOrProperty
 		{
-			$current = $this_MdProperty_0.current;
+			$current = $this_MdGroupOrProperty_0.current;
 			afterParserOrEnumRuleCall();
 		}
 		    |
@@ -337,6 +337,110 @@ ruleMdBundleMember returns [EObject current=null]
 		{
 			$current = $this_MdCategory_2.current;
 			afterParserOrEnumRuleCall();
+		}
+	)
+;
+
+// Entry rule entryRuleMdGroupOrProperty
+entryRuleMdGroupOrProperty returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getMdGroupOrPropertyRule()); }
+	iv_ruleMdGroupOrProperty=ruleMdGroupOrProperty
+	{ $current=$iv_ruleMdGroupOrProperty.current; }
+	EOF;
+
+// Rule MdGroupOrProperty
+ruleMdGroupOrProperty returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		{
+			newCompositeNode(grammarAccess.getMdGroupOrPropertyAccess().getMdGroupParserRuleCall_0());
+		}
+		this_MdGroup_0=ruleMdGroup
+		{
+			$current = $this_MdGroup_0.current;
+			afterParserOrEnumRuleCall();
+		}
+		    |
+		{
+			newCompositeNode(grammarAccess.getMdGroupOrPropertyAccess().getMdPropertyParserRuleCall_1());
+		}
+		this_MdProperty_1=ruleMdProperty
+		{
+			$current = $this_MdProperty_1.current;
+			afterParserOrEnumRuleCall();
+		}
+	)
+;
+
+// Entry rule entryRuleMdGroup
+entryRuleMdGroup returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getMdGroupRule()); }
+	iv_ruleMdGroup=ruleMdGroup
+	{ $current=$iv_ruleMdGroup.current; }
+	EOF;
+
+// Rule MdGroup
+ruleMdGroup returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='group'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getMdGroupAccess().getGroupKeyword_0());
+		}
+		(
+			(
+				lv_name_1_0=RULE_ID
+				{
+					newLeafNode(lv_name_1_0, grammarAccess.getMdGroupAccess().getNameIDTerminalRuleCall_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getMdGroupRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"name",
+						lv_name_1_0,
+						"org.eclipse.xtext.xbase.Xtype.ID");
+				}
+			)
+		)
+		otherlv_2='{'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getMdGroupAccess().getLeftCurlyBracketKeyword_2());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMdGroupAccess().getChildrenMdGroupOrPropertyParserRuleCall_3_0());
+				}
+				lv_children_3_0=ruleMdGroupOrProperty
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMdGroupRule());
+					}
+					add(
+						$current,
+						"children",
+						lv_children_3_0,
+						"org.eclipse.elk.core.meta.MetaData.MdGroupOrProperty");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		otherlv_4='}'
+		{
+			newLeafNode(otherlv_4, grammarAccess.getMdGroupAccess().getRightCurlyBracketKeyword_4());
 		}
 	)
 ;
