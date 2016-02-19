@@ -65,10 +65,14 @@
         name="org.eclipse.oomph.workingsets.feature.group"/>
     <requirement
         name="net.sf.eclipsecs.feature.group"/>
+    <requirement
+        name="org.eclipse.elk.sdk.feature.feature.group"/>
     <repository
         url="http://eclipse-cs.sf.net/update"/>
     <repository
         url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+    <repository
+        url="http://build.eclipse.org/modeling/elk/updates/nightly/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask
