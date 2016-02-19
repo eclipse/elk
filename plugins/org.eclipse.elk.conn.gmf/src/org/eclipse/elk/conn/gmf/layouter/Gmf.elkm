@@ -25,7 +25,7 @@ algorithm Draw2D(Draw2DLayoutProvider) {
 	description =
 		"'Directed Graph Layout' provided by the Draw2D framework. This is the same algorithm that
 		is used by the standard layout button of GMF diagrams."
-	category = org.eclipse.elk.Layered
+	category = org.eclipse.elk.layered
 	features = multi_edges
 	preview = images/draw2d.png
 	supports org.eclipse.elk.spacing = 16 duplicated

@@ -61,7 +61,7 @@ public class Metadata implements ILayoutMetaDataProvider {
         "Draw2D Layout",
         "\'Directed Graph Layout\' provided by the Draw2D framework. This is the same algorithm that is used by the standard layout button of GMF diagrams.",
         new AlgorithmFactory(Draw2DLayoutProvider.class, ""),
-        "org.eclipse.elk.Layered",
+        "org.eclipse.elk.layered",
         "GMF",
         "images/draw2d.png",
         EnumSet.of(GraphFeature.MULTI_EDGES)
