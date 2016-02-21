@@ -103,15 +103,19 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
      */
     // SUPPRESS CHECKSTYLE NEXT ParameterNumber
     public LayoutOptionData(final String aid,
-            final String aname, final String adescription, final Object adefaultValue,
-            final Class<?> atype, final Set<Target> atargets, 
+            final String aname, final String adescription, 
+            final Object adefaultValue,
+            final Type atype,
+            final Class<?> atypeClass, 
+            final Set<Target> atargets, 
             final Visibility avisibility, 
             final String... alegacyIds) {
         this.id = aid;
         this.name = aname;
         this.description = adescription;
         this.defaultValue = adefaultValue;
-        this.clazz = atype;
+        this.type = atype;
+        this.clazz = atypeClass;
         if (atargets == null) {
             this.targets = EnumSet.noneOf(Target.class);
         } else {
@@ -119,23 +123,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         }
         this.visibility = avisibility;
         this.legacyIds = alegacyIds;
-        if (atype == Boolean.class || atype == boolean.class) {
-            this.type = Type.BOOLEAN;
-        } else if (atype == Integer.class || atype == int.class) {
-            this.type = Type.INT;
-        } else if (Number.class.isAssignableFrom(atype) || atype == float.class) {
-            this.type = Type.FLOAT;
-        } else if (atype == String.class) {
-            this.type = Type.STRING;
-        } else if (Enum.class.isAssignableFrom(atype)) {
-            this.type = Type.ENUM;
-        } else if (EnumSet.class.isAssignableFrom(atype)) {
-            this.type = Type.ENUMSET;
-        } else if (IDataObject.class.isAssignableFrom(atype)) {
-            this.type = Type.OBJECT;
-        } else {
-            this.type = Type.UNDEFINED;
-        }
+        
     }
     
     /**
