@@ -174,6 +174,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Force Model",
         "Determines the model for force calculation.",
         MODEL_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         ForceModelStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -183,6 +184,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Iterations",
         "The number of iterations on the force model.",
         ITERATIONS_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -192,6 +194,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Repulsive Power",
         "Determines how many bend points are added to the edge; such bend points are regarded as repelling particles in the force model",
         REPULSIVE_POWER_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.VISIBLE
@@ -201,6 +204,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "FR Temperature",
         "The temperature is used as a scaling factor for particle displacements.",
         TEMPERATURE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -215,6 +219,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Eades Repulsion",
         "Factor for repulsive forces in Eades\' model.",
         REPULSION_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -225,77 +230,77 @@ public class Properties implements ILayoutMetaDataProvider {
         REPULSION_DEP_MODEL
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "ELK Force",
         "Force-based algorithm provided by the Eclipse Layout Kernel. Implements methods that follow physical analogies by simulating forces that move the nodes into a balanced distribution. Currently the original Eades model and the Fruchterman - Reingold model are supported.",
         new AlgorithmFactory(ForceLayoutProvider.class, ""),
-        "org.eclipse.elk.Force",
+        "org.eclipse.elk.force",
         null,
         "images/force.png",
         EnumSet.of(GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.priority",
         FORCE_SUP_PRIORITY
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.spacing",
         FORCE_SUP_SPACING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.borderSpacing",
         FORCE_SUP_BORDER_SPACING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.labelSpacing",
         FORCE_SUP_LABEL_SPACING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.aspectRatio",
         FORCE_SUP_ASPECT_RATIO
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.randomSeed",
         FORCE_SUP_RANDOM_SEED
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.separateConnComp",
         FORCE_SUP_SEPARATE_CONN_COMP
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.interactive",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.alg.force.model",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.alg.force.temperature",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.alg.force.iterations",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.alg.force.repulsion",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.Force",
+        "org.eclipse.elk.alg.force.force",
         "org.eclipse.elk.alg.force.repulsivePower",
         null
     );
