@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ELK - Graphviz Dot Language Parser
+Bundle-Name: ELK Graphviz Dot Language Parser
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-Version: 0.1.0.qualifier
 Bundle-SymbolicName: org.eclipse.elk.alg.graphviz.dot;singleton:=true

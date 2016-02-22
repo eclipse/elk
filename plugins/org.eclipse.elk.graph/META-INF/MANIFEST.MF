@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ELK - Graph Model
+Bundle-Name: ELK Graph Model
 Bundle-SymbolicName: org.eclipse.elk.graph;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-ClassPath: .

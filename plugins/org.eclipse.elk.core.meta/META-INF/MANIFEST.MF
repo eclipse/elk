@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ELK - Layout Meta Data Language
+Bundle-Name: ELK Layout Meta Data Language
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-Version: 0.1.0.qualifier
 Bundle-SymbolicName: org.eclipse.elk.core.meta; singleton:=true

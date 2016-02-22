@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ELK - Mr. Tree Layout Algorithm
+Bundle-Name: ELK Mr. Tree Layout Algorithm
 Bundle-SymbolicName: org.eclipse.elk.alg.mrtree;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project
