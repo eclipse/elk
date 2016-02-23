@@ -282,7 +282,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     '''
     
     private def Type getOptionType(MdProperty property) {
-        val jvmType = property.type.type
+        val jvmType = property.type?.type
         switch jvmType {
             
             JvmPrimitiveType: switch jvmType.identifier {
@@ -318,7 +318,9 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }    
     
     private def JvmTypeReference getOptionTypeClass(MdProperty property) {
-        switch property.type?.type.identifier {
+        switch property.type?.type?.identifier {
+            case null:
+                typeRef(Void)
             case EnumSet.canonicalName: {
                 val outer = property.type as JvmParameterizedTypeReference
                 typeRef(outer.arguments.head?.type)    
