@@ -32,6 +32,7 @@ import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.LayoutOptions;
@@ -107,6 +108,18 @@ public class Properties implements ILayoutMetaDataProvider {
   public final static IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "org.eclipse.elk.alg.layered.distributeNodes",
             DISTRIBUTE_NODES_DEFAULT);
+  
+  /**
+   * Default value for {@link #EDGE_CENTER_LABEL_PLACEMENT_STRATEGY}.
+   */
+  private final static EdgeLabelPlacementStrategy EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT = EdgeLabelPlacementStrategy.CENTER;
+  
+  /**
+   * Determines in which layer center labels of long edges should be placed.
+   */
+  public final static IProperty<EdgeLabelPlacementStrategy> EDGE_CENTER_LABEL_PLACEMENT_STRATEGY = new Property<EdgeLabelPlacementStrategy>(
+            "org.eclipse.elk.alg.layered.edgeCenterLabelPlacementStrategy",
+            EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT);
   
   /**
    * Default value for {@link #EDGE_LABEL_SIDE_SELECTION}.
@@ -534,33 +547,43 @@ public class Properties implements ILayoutMetaDataProvider {
   private final static Boolean HIGH_DEGREE_NODE_TREE_HEIGHT_DEP_HIGH_DEGREE_NODE_TREATMENT = Boolean.valueOf(true);
   
   /**
-   * Required value for dependency between {@link #COMPONENTS_COMPACT} and {@link #SEPARATE_CONN_COMP}.
+   * Required value for dependency between {@link #MIN_WIDTH_UPPER_BOUND_ON_WIDTH} and {@link #NODE_LAYERING}.
    */
-  private final static boolean COMPONENTS_COMPACT_DEP_SEPARATE_CONN_COMP = true;
+  private final static LayeringStrategy MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEP_NODE_LAYERING = LayeringStrategy.EXP_MIN_WIDTH;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "ELK Layered".
+   * Required value for dependency between {@link #MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR} and {@link #NODE_LAYERING}.
    */
-  private final static float LAYERED_SUP_SPACING = 20;
+  private final static LayeringStrategy MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEP_NODE_LAYERING = LayeringStrategy.EXP_MIN_WIDTH;
   
   /**
-   * Overridden value for Spacing.
+   * Required value for dependency between {@link #COMPONENTS_COMPACT} and {@link #SEPARATE_CONNECTED_COMPONENTS}.
    */
-  public final static IProperty<Float> SPACING = new Property<Float>(
-            LayoutOptions.SPACING,
-            LAYERED_SUP_SPACING);
+  private final static boolean COMPONENTS_COMPACT_DEP_SEPARATE_CONNECTED_COMPONENTS = true;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "ELK Layered".
+   * Default value for {@link #SPACING_NODE} with algorithm "ELK Layered".
    */
-  private final static float LAYERED_SUP_BORDER_SPACING = 12;
+  private final static float LAYERED_SUP_SPACING_NODE = 20;
+  
+  /**
+   * Overridden value for Node Spacing.
+   */
+  public final static IProperty<Float> SPACING_NODE = new Property<Float>(
+            LayoutOptions.SPACING_NODE,
+            LAYERED_SUP_SPACING_NODE);
+  
+  /**
+   * Default value for {@link #SPACING_BORDER} with algorithm "ELK Layered".
+   */
+  private final static float LAYERED_SUP_SPACING_BORDER = 12;
   
   /**
    * Overridden value for Border Spacing.
    */
-  public final static IProperty<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING,
-            LAYERED_SUP_BORDER_SPACING);
+  public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
+            LayoutOptions.SPACING_BORDER,
+            LAYERED_SUP_SPACING_BORDER);
   
   /**
    * Default value for {@link #PRIORITY} with algorithm "ELK Layered".
@@ -587,16 +610,16 @@ public class Properties implements ILayoutMetaDataProvider {
             LAYERED_SUP_EDGE_ROUTING);
   
   /**
-   * Default value for {@link #PORT_OFFSET} with algorithm "ELK Layered".
+   * Default value for {@link #PORT_BORDER_OFFSET} with algorithm "ELK Layered".
    */
-  private final static float LAYERED_SUP_PORT_OFFSET = 0;
+  private final static float LAYERED_SUP_PORT_BORDER_OFFSET = 0;
   
   /**
-   * Overridden value for Port Offset.
+   * Overridden value for Port Border Offset.
    */
-  public final static IProperty<Float> PORT_OFFSET = new Property<Float>(
-            LayoutOptions.PORT_OFFSET,
-            LAYERED_SUP_PORT_OFFSET);
+  public final static IProperty<Float> PORT_BORDER_OFFSET = new Property<Float>(
+            LayoutOptions.PORT_BORDER_OFFSET,
+            LAYERED_SUP_PORT_BORDER_OFFSET);
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "ELK Layered".
@@ -623,9 +646,9 @@ public class Properties implements ILayoutMetaDataProvider {
             LAYERED_SUP_ASPECT_RATIO);
   
   /**
-   * Default value for {@link #SEPARATE_CONN_COMP} with algorithm "ELK Layered".
+   * Default value for {@link #SEPARATE_CONNECTED_COMPONENTS} with algorithm "ELK Layered".
    */
-  private final static boolean LAYERED_SUP_SEPARATE_CONN_COMP = true;
+  private final static boolean LAYERED_SUP_SEPARATE_CONNECTED_COMPONENTS = true;
   
   /**
    * Default value for {@link #DIRECTION} with algorithm "ELK Layered".
@@ -633,13 +656,14 @@ public class Properties implements ILayoutMetaDataProvider {
   private final static Direction LAYERED_SUP_DIRECTION = Direction.RIGHT;
   
   /**
-   * Default value for {@link #PORT_ALIGNMENT} with algorithm "ELK Layered".
+   * Default value for {@link #PORTALIGNMENT_BASIC} with algorithm "ELK Layered".
    */
-  private final static PortAlignment LAYERED_SUP_PORT_ALIGNMENT = PortAlignment.JUSTIFIED;
+  private final static PortAlignment LAYERED_SUP_PORTALIGNMENT_BASIC = PortAlignment.JUSTIFIED;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.compaction",
+        "",
         "Compaction Strategy",
         "Specifies the compaction strategy when using the Brandes and Koepf node placer.",
         COMPACTION_DEFAULT,
@@ -654,6 +678,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.contentAlignment",
+        "",
         "Content Alignment",
         "Specifies how the content of compound nodes is to be aligned, e.g. top-left.",
         CONTENT_ALIGNMENT_DEFAULT,
@@ -663,6 +688,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.crossMin",
+        "",
         "Crossing Minimization",
         "Strategy for crossing minimization.",
         CROSS_MIN_DEFAULT,
@@ -672,6 +698,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.cycleBreaking",
+        "",
         "Cycle Breaking",
         "Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right).",
         CYCLE_BREAKING_DEFAULT,
@@ -681,6 +708,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.distributeNodes",
+        "",
         "Distribute Nodes (Deprecated)",
         "Whether wide nodes should be distributed to several layers.",
         DISTRIBUTE_NODES_DEFAULT,
@@ -689,7 +717,18 @@ public class Properties implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
+        "org.eclipse.elk.alg.layered.edgeCenterLabelPlacementStrategy",
+        "",
+        "Edge Label Placement Strategy",
+        "Determines in which layer center labels of long edges should be placed.",
+        EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT,
+        EdgeLabelPlacementStrategy.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.edgeLabelSideSelection",
+        "",
         "Edge Label Side Selection",
         "Method to decide on edge label sides.",
         EDGE_LABEL_SIDE_SELECTION_DEFAULT,
@@ -704,6 +743,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.edgeNodeSpacingFactor",
+        "",
         "Edge Node Spacing Factor",
         "Factor by which the object spacing is multiplied to arrive at the minimal spacing between an edge and a node.",
         EDGE_NODE_SPACING_FACTOR_DEFAULT,
@@ -713,6 +753,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.edgeSpacingFactor",
+        "",
         "Edge Spacing Factor",
         "Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges.",
         EDGE_SPACING_FACTOR_DEFAULT,
@@ -722,6 +763,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.feedbackEdges",
+        "",
         "Feedback Edges",
         "Whether feedback edges should be highlighted by routing around the nodes.",
         FEEDBACK_EDGES_DEFAULT,
@@ -731,6 +773,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.fixedAlignment",
+        "",
         "Fixed Alignment",
         "Tells the BK node placer to use a certain alignment instead of taking the optimal result.",
         FIXED_ALIGNMENT_DEFAULT,
@@ -745,6 +788,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.greedySwitch",
+        "",
         "Greedy Switch Crossing Minimization",
         "Greedy Switch strategy for crossing minimization.",
         GREEDY_SWITCH_DEFAULT,
@@ -754,6 +798,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.inLayerSpacingFactor",
+        "",
         "In-layer Spacing Factor",
         "Factor by which the usual spacing is multiplied to determine the in-layer spacing between objects.",
         IN_LAYER_SPACING_FACTOR_DEFAULT,
@@ -763,6 +808,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.interactiveReferencePoint",
+        "",
         "Interactive Reference Point",
         "Determines which point of a node is considered by interactive layout phases.",
         INTERACTIVE_REFERENCE_POINT_DEFAULT,
@@ -782,6 +828,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.layerConstraint",
+        "",
         "Layer Constraint",
         "Determines a constraint on the placement of the node regarding the layering.",
         LAYER_CONSTRAINT_DEFAULT,
@@ -791,6 +838,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.linearSegmentsDeflectionDampening",
+        "",
         "Linear Segments Deflection Dampening",
         "Dampens the movement of nodes to keep the diagram from getting too large.",
         LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT,
@@ -805,6 +853,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.nodeLayering",
+        "",
         "Node Layering",
         "Strategy for node layering.",
         NODE_LAYERING_DEFAULT,
@@ -814,6 +863,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.mergeEdges",
+        "",
         "Merge Edges",
         "Edges that have no ports are merged so they touch the connected nodes at the same points. When this option is disabled, one port is created for each edge directly connected to a node. When it is enabled, all such incoming edges share an input port, and all outgoing edges share an output port.",
         MERGE_EDGES_DEFAULT,
@@ -823,6 +873,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.mergeHierarchyEdges",
+        "",
         "Merge Hierarchy-Crossing Edges",
         "If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports as possible. They are broken by the algorithm, with hierarchical ports inserted as required. Usually, one such port is created for each edge at each hierarchy crossing point. With this option set to true, we try to create as few hierarchical ports as possible in the process. In particular, all edges that form a hyperedge can share a port.",
         MERGE_HIERARCHY_EDGES_DEFAULT,
@@ -837,6 +888,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.nodePlacement",
+        "",
         "Node Placement",
         "Strategy for node placement.",
         NODE_PLACEMENT_DEFAULT,
@@ -846,6 +898,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.sausageFolding",
+        "",
         "Sausage Folding",
         "Whether long sausages should be folded up nice and tight.",
         SAUSAGE_FOLDING_DEFAULT,
@@ -860,6 +913,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.selfLoopPlacement",
+        "",
         "Spline Self-Loop Placement",
         null,
         SELF_LOOP_PLACEMENT_DEFAULT,
@@ -874,6 +928,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.thoroughness",
+        "",
         "Thoroughness",
         "How much effort should be spent to produce a nice layout.",
         THOROUGHNESS_DEFAULT,
@@ -883,6 +938,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.unnecessaryBendpoints",
+        "",
         "Add Unnecessary Bendpoints",
         "Adds bend points even if an edge does not change direction. If true, each long edge dummy will contribute a bend point to its edges and hierarchy-crossing edges will always get a bend point where they cross hierarchy boundaries. By default, bend points are only added where an edge changes direction.",
         UNNECESSARY_BENDPOINTS_DEFAULT,
@@ -892,6 +948,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.wideNodesOnMultipleLayers",
+        "",
         "Wide Nodes on Multiple Layers",
         "Strategy to distribute wide nodes over multiple layers.",
         WIDE_NODES_ON_MULTIPLE_LAYERS_DEFAULT,
@@ -901,6 +958,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.northOrSouthPort",
+        "",
         "North or South Port",
         "Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)",
         NORTH_OR_SOUTH_PORT_DEFAULT,
@@ -910,6 +968,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.highDegreeNode_treatment",
+        "",
         "High Degree Node Treatment",
         "Makes room around high degree nodes to place leafs and trees.",
         HIGH_DEGREE_NODE_TREATMENT_DEFAULT,
@@ -919,6 +978,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.highDegreeNode_threshold",
+        "",
         "High Degree Node Threshold",
         "Whether a node is considered to have a high degree.",
         HIGH_DEGREE_NODE_THRESHOLD_DEFAULT,
@@ -933,6 +993,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.highDegreeNode_treeHeight",
+        "",
         "High Degree Node Maximum Tree Height",
         "Maximum height of a subtree connected to a high degree node to be moved to separate layers.",
         HIGH_DEGREE_NODE_TREE_HEIGHT_DEFAULT,
@@ -947,6 +1008,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.minWidthUpperBoundOnWidth",
+        "",
         "Upper Bound On Width [MinWidth Layerer]",
         "Defines a loose upper bound on the width of the MinWidth layerer.",
         MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT,
@@ -954,8 +1016,14 @@ public class Properties implements ILayoutMetaDataProvider {
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
+    registry.addDependency(
+        "org.eclipse.elk.alg.layered.minWidthUpperBoundOnWidth",
+        "org.eclipse.elk.alg.layered.nodeLayering",
+        MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEP_NODE_LAYERING
+    );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.minWidthUpperLayerEstimationScalingFactor",
+        "",
         "Upper Layer Estimation Scaling Factor [MinWidth Layerer]",
         "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.",
         MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT,
@@ -963,8 +1031,14 @@ public class Properties implements ILayoutMetaDataProvider {
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
+    registry.addDependency(
+        "org.eclipse.elk.alg.layered.minWidthUpperLayerEstimationScalingFactor",
+        "org.eclipse.elk.alg.layered.nodeLayering",
+        MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEP_NODE_LAYERING
+    );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.postCompaction",
+        "",
         "Post Compaction",
         "Specifies whether and how post-process compaction is applied.",
         POST_COMPACTION_DEFAULT,
@@ -974,6 +1048,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.postCompaction_constraints",
+        "",
         "Post Compaction Constraint Calculation",
         "Specifies whether and how post-process compaction is applied.",
         POST_COMPACTION_CONSTRAINTS_DEFAULT,
@@ -983,6 +1058,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.nodePromotion",
+        "",
         "Node Promotion",
         "Reduces number of dummy nodes after layering phase (if possible).",
         NODE_PROMOTION_DEFAULT,
@@ -992,6 +1068,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.nodePromotion_boundary",
+        "",
         "Node Promotion Boundary",
         "Limits the number of iterations for node promotion.",
         NODE_PROMOTION_BOUNDARY_DEFAULT,
@@ -1006,6 +1083,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.layered.components_compact",
+        "",
         "Compact Components",
         "Tries to further compact components (disconnected sub-graphs).",
         COMPONENTS_COMPACT_DEFAULT,
@@ -1015,291 +1093,301 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.addDependency(
         "org.eclipse.elk.alg.layered.components_compact",
-        "org.eclipse.elk.separateConnComp",
-        COMPONENTS_COMPACT_DEP_SEPARATE_CONN_COMP
+        "org.eclipse.elk.separateConnectedComponents",
+        COMPONENTS_COMPACT_DEP_SEPARATE_CONNECTED_COMPONENTS
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "ELK Layered",
         "Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as possible into one direction by placing nodes into subsequent layers. This implementation supports different routing styles (straight, orthogonal, splines); if orthogonal routing is selected, arbitrary port constraints are respected, thus enabling the layout of block diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of compound graphs with cross-hierarchy edges is supported when the respective option is activated on the top level.",
         new AlgorithmFactory(LayeredLayoutProvider.class, ""),
-        "org.eclipse.elk.Layered",
+        "org.eclipse.elk.layered",
         null,
         "images/layered.png",
         EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.INSIDE_SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS, GraphFeature.PORTS, GraphFeature.COMPOUND, GraphFeature.CLUSTERS)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.spacing",
-        LAYERED_SUP_SPACING
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.spacing.node",
+        LAYERED_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.borderSpacing",
-        LAYERED_SUP_BORDER_SPACING
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.spacing.border",
+        LAYERED_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.spacing.port",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.spacing.label",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.priority",
         LAYERED_SUP_PRIORITY
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.edgeRouting",
         LAYERED_SUP_EDGE_ROUTING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portOffset",
-        LAYERED_SUP_PORT_OFFSET
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.port.borderOffset",
+        LAYERED_SUP_PORT_BORDER_OFFSET
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.randomSeed",
         LAYERED_SUP_RANDOM_SEED
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.aspectRatio",
         LAYERED_SUP_ASPECT_RATIO
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portSpacing",
-        null
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.labelSpacing",
-        null
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.noLayout",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.portConstraints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portSide",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.port.side",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.debugMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alignment",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.layoutHierarchy",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.separateConnComp",
-        LAYERED_SUP_SEPARATE_CONN_COMP
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.selfLoopInside",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.hierarchyHandling",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.separateConnectedComponents",
+        LAYERED_SUP_SEPARATE_CONNECTED_COMPONENTS
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.insideSelfLoops.activate",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.insideSelfLoops.yo",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.nodeSize.constraints",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.nodeSize.options",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.direction",
         LAYERED_SUP_DIRECTION
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.nodeLabelPlacement",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.nodeLabels.placement",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portLabelPlacement",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.portLabels.placement",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portAlignment",
-        LAYERED_SUP_PORT_ALIGNMENT
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.portAlignment.basic",
+        LAYERED_SUP_PORTALIGNMENT_BASIC
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portAlignmentNorth",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.portAlignment.north",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portAlignmentSouth",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.portAlignment.south",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portAlignmentWest",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.portAlignment.west",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
-        "org.eclipse.elk.portAlignmentEast",
+        "org.eclipse.elk.alg.layered.layered",
+        "org.eclipse.elk.portAlignment.east",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.edgeSpacingFactor",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.edgeNodeSpacingFactor",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.unnecessaryBendpoints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.nodeLayering",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.thoroughness",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.layerConstraint",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.cycleBreaking",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.crossMin",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.greedySwitch",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.mergeEdges",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.mergeHierarchyEdges",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.interactiveReferencePoint",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.nodePlacement",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.fixedAlignment",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.edgeLabelSideSelection",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.feedbackEdges",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.inLayerSpacingFactor",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.wideNodesOnMultipleLayers",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.linearSegmentsDeflectionDampening",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.selfLoopPlacement",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.contentAlignment",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.compaction",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.postCompaction",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.postCompaction_constraints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.components_compact",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.highDegreeNode_treatment",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.highDegreeNode_threshold",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.layered.Layered",
+        "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.alg.layered.highDegreeNode_treeHeight",
         null
     );

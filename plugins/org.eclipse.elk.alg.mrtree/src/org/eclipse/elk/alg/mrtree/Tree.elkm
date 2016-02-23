@@ -17,39 +17,39 @@ import org.eclipse.elk.core.options.Direction
  * Declarations for the ELK Tree layout algorithm.
  */
 bundle {
-    class = properties.Properties
+    class properties.Properties
 }
 
-algorithm MrTree(TreeLayoutProvider) {
-    label = "ELK Mr. Tree"
-    description =
+algorithm mrtree(TreeLayoutProvider) {
+    label "ELK Mr. Tree"
+    description 
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
         the input graph and arranges all nodes according to the resulting parent-children
         hierarchy. I pity the fool who doesn't use Mr. Tree Layout."
-    category = org.eclipse.elk.Tree
-    features = disconnected
-    preview = images/tree.png
-    supports org.eclipse.elk.spacing = 20 duplicated
-    supports org.eclipse.elk.borderSpacing = 20 duplicated
+    category org.eclipse.elk.tree
+    features disconnected
+    preview images/tree.png
+    supports org.eclipse.elk.spacing.node = 20 duplicated
+    supports org.eclipse.elk.spacing.border = 20 duplicated
     supports org.eclipse.elk.aspectRatio = 1.6f duplicated
     supports org.eclipse.elk.priority = 1 duplicated
-    supports org.eclipse.elk.separateConnComp = true
+    supports org.eclipse.elk.separateConnectedComponents = true
     supports org.eclipse.elk.direction = Direction.DOWN
     supports org.eclipse.elk.debugMode
     supports weighting
     supports searchOrder
 }
 
-property weighting: OrderWeighting {
-    label = "Weighting of Nodes"
-    description = "Which weighting to use when computing a node order."
+option weighting: OrderWeighting {
+    label "Weighting of Nodes"
+    description "Which weighting to use when computing a node order."
     default = OrderWeighting.DESCENDANTS
-    targets = parents
+    targets parents
 }
 
-property searchOrder: TreeifyingOrder {
-    label = "Search Order"
-    description = "Which search order to use when computing a spanning tree."
+option searchOrder: TreeifyingOrder {
+    label "Search Order"
+    description "Which search order to use when computing a spanning tree."
     default = TreeifyingOrder.DFS
-    targets = parents
+    targets parents
 }

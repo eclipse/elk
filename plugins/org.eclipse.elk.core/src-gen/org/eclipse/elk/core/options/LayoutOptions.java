@@ -21,7 +21,6 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.EdgeType;
 import org.eclipse.elk.core.options.HierarchyHandling;
@@ -57,7 +56,8 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   private final static Alignment ALIGNMENT_DEFAULT = Alignment.AUTOMATIC;
   
   /**
-   * Alignment of the selected node relative to other nodes in the same row or column.
+   * Alignment of the selected node relative to other nodes,
+   * the exact meaning depends on the used algorithm.
    */
   public final static IProperty<Alignment> ALIGNMENT = new Property<Alignment>(
             "org.eclipse.elk.alignment",
@@ -76,13 +76,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<KVectorChain> BEND_POINTS = new Property<KVectorChain>(
             "org.eclipse.elk.bendPoints");
-  
-  /**
-   * Spacing of the content of a parent node to its inner border. The inner border is the node
-   * border, which is given by width and height, with subtracted insets.
-   */
-  public final static IProperty<Float> BORDER_SPACING = new Property<Float>(
-            "org.eclipse.elk.borderSpacing");
   
   /**
    * Default value for {@link #DEBUG_MODE}.
@@ -108,18 +101,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Direction> DIRECTION = new Property<Direction>(
             "org.eclipse.elk.direction",
             DIRECTION_DEFAULT);
-  
-  /**
-   * Default value for {@link #EDGE_LABEL_PLACEMENT_STRATEGY}.
-   */
-  private final static EdgeLabelPlacementStrategy EDGE_LABEL_PLACEMENT_STRATEGY_DEFAULT = EdgeLabelPlacementStrategy.CENTER;
-  
-  /**
-   * Determines in which layer center labels of long edges should be placed.
-   */
-  public final static IProperty<EdgeLabelPlacementStrategy> EDGE_LABEL_PLACEMENT_STRATEGY = new Property<EdgeLabelPlacementStrategy>(
-            "org.eclipse.elk.edgeLabelPlacementStrategy",
-            EDGE_LABEL_PLACEMENT_STRATEGY_DEFAULT);
   
   /**
    * Default value for {@link #EDGE_ROUTING}.
@@ -155,7 +136,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   
   /**
    * Determines whether the descendants should be layouted separately or together with their
-   * parents. If the root node is set to inherit (or not set at all), the property is assumed
+   * parents. If the root node is set to inherit (or not set at all), the option is assumed
    * as SEPARATE_CHILDREN.
    */
   public final static IProperty<HierarchyHandling> HIERARCHY_HANDLING = new Property<HierarchyHandling>(
@@ -178,18 +159,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             INTERACTIVE_DEFAULT);
   
   /**
-   * Default value for {@link #LABEL_SPACING}.
-   */
-  private final static float LABEL_SPACING_DEFAULT = 0;
-  
-  /**
-   * Determines the amount of space to be left around labels.
-   */
-  public final static IProperty<Float> LABEL_SPACING = new Property<Float>(
-            "org.eclipse.elk.labelSpacing",
-            LABEL_SPACING_DEFAULT);
-  
-  /**
    * Default value for {@link #LAYOUT_HIERARCHY}.
    */
   private final static boolean LAYOUT_HIERARCHY_DEFAULT = false;
@@ -205,110 +174,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             LAYOUT_HIERARCHY_DEFAULT);
   
   /**
-   * Partition to which the node belongs to. If 'layoutPartitions' is true,
-   * all nodes are expected to have a partition.
-   */
-  public final static IProperty<Integer> LAYOUT_PARTITION = new Property<Integer>(
-            "org.eclipse.elk.layoutPartition");
-  
-  /**
-   * Default value for {@link #LAYOUT_PARTITIONS}.
-   */
-  private final static Boolean LAYOUT_PARTITIONS_DEFAULT = Boolean.valueOf(false);
-  
-  /**
-   * Whether to activate partitioned layout.
-   */
-  public final static IProperty<Boolean> LAYOUT_PARTITIONS = new Property<Boolean>(
-            "org.eclipse.elk.layoutPartitions",
-            LAYOUT_PARTITIONS_DEFAULT);
-  
-  /**
-   * Default value for {@link #NODE_LABEL_INSETS}.
-   */
-  private final static Spacing.Insets NODE_LABEL_INSETS_DEFAULT = new Spacing.Insets(0, 0, 0, 0);
-  
-  /**
-   * Define insets for node labels that are placed inside of a node.
-   */
-  public final static IProperty<Spacing.Insets> NODE_LABEL_INSETS = new Property<Spacing.Insets>(
-            "org.eclipse.elk.nodeLabelInsets",
-            NODE_LABEL_INSETS_DEFAULT);
-  
-  /**
-   * Default value for {@link #NODE_LABEL_PLACEMENT}.
-   */
-  private final static EnumSet<NodeLabelPlacement> NODE_LABEL_PLACEMENT_DEFAULT = NodeLabelPlacement.fixed();
-  
-  /**
-   * Hints for where node labels are to be placed; if empty, the node label's position is not
-   * modified.
-   */
-  public final static IProperty<EnumSet<NodeLabelPlacement>> NODE_LABEL_PLACEMENT = new Property<EnumSet<NodeLabelPlacement>>(
-            "org.eclipse.elk.nodeLabelPlacement",
-            NODE_LABEL_PLACEMENT_DEFAULT);
-  
-  /**
-   * Default value for {@link #PORT_ALIGNMENT}.
-   */
-  private final static PortAlignment PORT_ALIGNMENT_DEFAULT = PortAlignment.JUSTIFIED;
-  
-  /**
-   * Defines the default port distribution for a node.
-   */
-  public final static IProperty<PortAlignment> PORT_ALIGNMENT = new Property<PortAlignment>(
-            "org.eclipse.elk.portAlignment",
-            PORT_ALIGNMENT_DEFAULT);
-  
-  /**
-   * Default value for {@link #PORT_ALIGNMENT_NORTH}.
-   */
-  private final static PortAlignment PORT_ALIGNMENT_NORTH_DEFAULT = PortAlignment.UNDEFINED;
-  
-  /**
-   * Defines how ports on the northern side are placed, overriding the node's general port alignment.
-   */
-  public final static IProperty<PortAlignment> PORT_ALIGNMENT_NORTH = new Property<PortAlignment>(
-            "org.eclipse.elk.portAlignmentNorth",
-            PORT_ALIGNMENT_NORTH_DEFAULT);
-  
-  /**
-   * Default value for {@link #PORT_ALIGNMENT_SOUTH}.
-   */
-  private final static PortAlignment PORT_ALIGNMENT_SOUTH_DEFAULT = PortAlignment.UNDEFINED;
-  
-  /**
-   * Defines how ports on the southern side are placed, overriding the node's general port alignment.
-   */
-  public final static IProperty<PortAlignment> PORT_ALIGNMENT_SOUTH = new Property<PortAlignment>(
-            "org.eclipse.elk.portAlignmentSouth",
-            PORT_ALIGNMENT_SOUTH_DEFAULT);
-  
-  /**
-   * Default value for {@link #PORT_ALIGNMENT_WEST}.
-   */
-  private final static PortAlignment PORT_ALIGNMENT_WEST_DEFAULT = PortAlignment.UNDEFINED;
-  
-  /**
-   * Defines how ports on the western side are placed, overriding the node's general port alignment.
-   */
-  public final static IProperty<PortAlignment> PORT_ALIGNMENT_WEST = new Property<PortAlignment>(
-            "org.eclipse.elk.portAlignmentWest",
-            PORT_ALIGNMENT_WEST_DEFAULT);
-  
-  /**
-   * Default value for {@link #PORT_ALIGNMENT_EAST}.
-   */
-  private final static PortAlignment PORT_ALIGNMENT_EAST_DEFAULT = PortAlignment.UNDEFINED;
-  
-  /**
-   * Defines how ports on the eastern side are placed, overriding the node's general port alignment.
-   */
-  public final static IProperty<PortAlignment> PORT_ALIGNMENT_EAST = new Property<PortAlignment>(
-            "org.eclipse.elk.portAlignmentEast",
-            PORT_ALIGNMENT_EAST_DEFAULT);
-  
-  /**
    * Default value for {@link #PORT_CONSTRAINTS}.
    */
   private final static PortConstraints PORT_CONSTRAINTS_DEFAULT = PortConstraints.UNDEFINED;
@@ -319,18 +184,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   public final static IProperty<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
             "org.eclipse.elk.portConstraints",
             PORT_CONSTRAINTS_DEFAULT);
-  
-  /**
-   * Default value for {@link #PORT_SPACING}.
-   */
-  private final static float PORT_SPACING_DEFAULT = 10;
-  
-  /**
-   * Spacing between ports of a given node.
-   */
-  public final static IProperty<Float> PORT_SPACING = new Property<Float>(
-            "org.eclipse.elk.portSpacing",
-            PORT_SPACING_DEFAULT);
   
   /**
    * The position of a node, port, or label. This is used by the 'Fixed Layout' algorithm to
@@ -356,47 +209,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   /**
    * Whether each connected component should be processed separately.
    */
-  public final static IProperty<Boolean> SEPARATE_CONN_COMP = new Property<Boolean>(
-            "org.eclipse.elk.separateConnComp");
+  public final static IProperty<Boolean> SEPARATE_CONNECTED_COMPONENTS = new Property<Boolean>(
+            "org.eclipse.elk.separateConnectedComponents");
   
   /**
-   * Default value for {@link #SIZE_CONSTRAINT}.
-   */
-  private final static EnumSet<SizeConstraint> SIZE_CONSTRAINT_DEFAULT = EnumSet.<SizeConstraint>noneOf(SizeConstraint.class);
-  
-  /**
-   * Constraints for determining node sizes. Each member of the set specifies something that
-   * should be taken into account when calculating node sizes. The empty set corresponds to
-   * node sizes being fixed.
-   */
-  public final static IProperty<EnumSet<SizeConstraint>> SIZE_CONSTRAINT = new Property<EnumSet<SizeConstraint>>(
-            "org.eclipse.elk.sizeConstraint",
-            SIZE_CONSTRAINT_DEFAULT);
-  
-  /**
-   * Default value for {@link #SIZE_OPTIONS}.
-   */
-  private final static EnumSet<SizeOptions> SIZE_OPTIONS_DEFAULT = EnumSet.<SizeOptions>of(SizeOptions.DEFAULT_MINIMUM_SIZE, 
-    SizeOptions.APPLY_ADDITIONAL_INSETS);
-  
-  /**
-   * Options modifying the behavior of the size constraints set on a node. Each member of the
-   * set specifies something that should be taken into account when calculating node sizes.
-   * The empty set corresponds to no further modifications.
-   */
-  public final static IProperty<EnumSet<SizeOptions>> SIZE_OPTIONS = new Property<EnumSet<SizeOptions>>(
-            "org.eclipse.elk.sizeOptions",
-            SIZE_OPTIONS_DEFAULT);
-  
-  /**
-   * Overall spacing between elements. This is mostly interpreted as the minimal distance
-   * between each two nodes and should also influence the spacing between edges.
-   */
-  public final static IProperty<Float> SPACING = new Property<Float>(
-            "org.eclipse.elk.spacing");
-  
-  /**
-   * This property is not used as option, but as output of the layout algorithms. It is
+   * This option is not used as option, but as output of the layout algorithms. It is
    * attached to edges and determines the points where junction symbols should be drawn in
    * order to represent hyperedges with orthogonal routing. Whether such points are computed
    * depends on the chosen layout algorithm and edge routing style. The points are put into
@@ -404,15 +221,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<KVectorChain> JUNCTION_POINTS = new Property<KVectorChain>(
             "org.eclipse.elk.junctionPoints");
-  
-  /**
-   * Additional space around the sets of ports on each node side. For each side of a node,
-   * this property can reserve additional space before and after the ports on each side. For
-   * example, a top spacing of 20 makes sure that the first port on the western and eastern
-   * side is 20 units away from the northern border.
-   */
-  public final static IProperty<Spacing.Margins> ADDITIONAL_PORT_SPACE = new Property<Spacing.Margins>(
-            "org.eclipse.elk.additionalPortSpace");
   
   /**
    * Default value for {@link #COMMENT_BOX}.
@@ -427,43 +235,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Boolean> COMMENT_BOX = new Property<Boolean>(
             "org.eclipse.elk.commentBox",
             COMMENT_BOX_DEFAULT);
-  
-  /**
-   * Default value for {@link #EDGE_LABEL_PLACEMENT}.
-   */
-  private final static EdgeLabelPlacement EDGE_LABEL_PLACEMENT_DEFAULT = EdgeLabelPlacement.UNDEFINED;
-  
-  /**
-   * Gives a hint on where to put edge labels.
-   */
-  public final static IProperty<EdgeLabelPlacement> EDGE_LABEL_PLACEMENT = new Property<EdgeLabelPlacement>(
-            "org.eclipse.elk.edgeLabelPlacement",
-            EDGE_LABEL_PLACEMENT_DEFAULT);
-  
-  /**
-   * Default value for {@link #EDGE_TYPE}.
-   */
-  private final static EdgeType EDGE_TYPE_DEFAULT = EdgeType.NONE;
-  
-  /**
-   * The type of an edge. This is usually used for UML class diagrams, where associations must
-   * be handled differently from generalizations.
-   */
-  public final static IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>(
-            "org.eclipse.elk.edgeType",
-            EDGE_TYPE_DEFAULT);
-  
-  /**
-   * Font name used for a label.
-   */
-  public final static IProperty<String> FONT_NAME = new Property<String>(
-            "org.eclipse.elk.fontName");
-  
-  /**
-   * Font size used for a label.
-   */
-  public final static IProperty<Integer> FONT_SIZE = new Property<Integer>(
-            "org.eclipse.elk.fontSize");
   
   /**
    * Default value for {@link #HYPERNODE}.
@@ -499,30 +270,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             MARGINS_DEFAULT);
   
   /**
-   * Default value for {@link #MIN_HEIGHT}.
-   */
-  private final static float MIN_HEIGHT_DEFAULT = 0;
-  
-  /**
-   * The minimal height to which a node can be reduced.
-   */
-  public final static IProperty<Float> MIN_HEIGHT = new Property<Float>(
-            "org.eclipse.elk.minHeight",
-            MIN_HEIGHT_DEFAULT);
-  
-  /**
-   * Default value for {@link #MIN_WIDTH}.
-   */
-  private final static float MIN_WIDTH_DEFAULT = 0;
-  
-  /**
-   * The minimal width to which a node can be reduced.
-   */
-  public final static IProperty<Float> MIN_WIDTH = new Property<Float>(
-            "org.eclipse.elk.minWidth",
-            MIN_WIDTH_DEFAULT);
-  
-  /**
    * Default value for {@link #NO_LAYOUT}.
    */
   private final static boolean NO_LAYOUT_DEFAULT = false;
@@ -537,59 +284,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Boolean> NO_LAYOUT = new Property<Boolean>(
             "org.eclipse.elk.noLayout",
             NO_LAYOUT_DEFAULT);
-  
-  /**
-   * The offset to the port position where connections shall be attached.
-   */
-  public final static IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
-            "org.eclipse.elk.portAnchor");
-  
-  /**
-   * The index of a port in the fixed order around a node. The order is assumed as clockwise,
-   * starting with the leftmost port on the top side. This option must be set if 'Port
-   * Constraints' is set to FIXED_ORDER and no specific positions are given for the ports.
-   * Additionally, the option 'Port Side' must be defined in this case.
-   */
-  public final static IProperty<Integer> PORT_INDEX = new Property<Integer>(
-            "org.eclipse.elk.portIndex");
-  
-  /**
-   * Default value for {@link #PORT_LABEL_PLACEMENT}.
-   */
-  private final static PortLabelPlacement PORT_LABEL_PLACEMENT_DEFAULT = PortLabelPlacement.OUTSIDE;
-  
-  /**
-   * Decides on a placement method for port labels.
-   */
-  public final static IProperty<PortLabelPlacement> PORT_LABEL_PLACEMENT = new Property<PortLabelPlacement>(
-            "org.eclipse.elk.portLabelPlacement",
-            PORT_LABEL_PLACEMENT_DEFAULT);
-  
-  /**
-   * Default value for {@link #PORT_SIDE}.
-   */
-  private final static PortSide PORT_SIDE_DEFAULT = PortSide.UNDEFINED;
-  
-  /**
-   * The side of a node on which a port is situated. This option must be set if 'Port
-   * Constraints' is set to FIXED_SIDE or FIXED_ORDER and no specific positions are given
-   * for the ports.
-   */
-  public final static IProperty<PortSide> PORT_SIDE = new Property<PortSide>(
-            "org.eclipse.elk.portSide",
-            PORT_SIDE_DEFAULT);
-  
-  /**
-   * The offset of ports on the node border. With a positive offset the port is moved outside
-   * of the node, while with a negative offset the port is moved towards the inside. An offset
-   * of 0 means that the port is placed directly on the node border, i.e.
-   * if the port side is north, the port's south border touches the nodes's north border;
-   * if the port side is east, the port's west border touches the nodes's east border;
-   * if the port side is south, the port's north border touches the node's south border;
-   * if the port side is west, the port's east border touches the node's west border.
-   */
-  public final static IProperty<Float> PORT_OFFSET = new Property<Float>(
-            "org.eclipse.elk.portOffset");
   
   /**
    * Default value for {@link #SCALE_FACTOR}.
@@ -607,33 +301,6 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Float> SCALE_FACTOR = new Property<Float>(
             "org.eclipse.elk.scaleFactor",
             SCALE_FACTOR_DEFAULT);
-  
-  /**
-   * Default value for {@link #SELF_LOOP_INSIDE}.
-   */
-  private final static boolean SELF_LOOP_INSIDE_DEFAULT = false;
-  
-  /**
-   * Whether a self loop should be routed around a node or inside that node. The latter will
-   * make the node a compound node if it isn't already, and will require the layout algorithm
-   * to support compound nodes with hierarchical ports.
-   */
-  public final static IProperty<Boolean> SELF_LOOP_INSIDE = new Property<Boolean>(
-            "org.eclipse.elk.selfLoopInside",
-            SELF_LOOP_INSIDE_DEFAULT);
-  
-  /**
-   * Default value for {@link #THICKNESS}.
-   */
-  private final static float THICKNESS_DEFAULT = 1;
-  
-  /**
-   * The thickness of an edge. This is a hint on the line width used to draw an edge, possibly
-   * requiring more space to be reserved for it.
-   */
-  public final static IProperty<Float> THICKNESS = new Property<Float>(
-            "org.eclipse.elk.thickness",
-            THICKNESS_DEFAULT);
   
   /**
    * Default value for {@link #ANIMATE}.
@@ -723,24 +390,356 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             ZOOM_TO_FIT_DEFAULT);
   
   /**
+   * Default value for {@link #SPACING_BORDER}.
+   */
+  private final static float SPACING_BORDER_DEFAULT = 12;
+  
+  /**
+   * Spacing of the content of a parent node to its inner border. The inner border is the node
+   * border, which is given by width and height, with subtracted insets.
+   */
+  public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
+            "org.eclipse.elk.spacing.border",
+            SPACING_BORDER_DEFAULT);
+  
+  /**
+   * Default value for {@link #SPACING_LABEL}.
+   */
+  private final static float SPACING_LABEL_DEFAULT = 0;
+  
+  /**
+   * Determines the amount of space to be left around labels.
+   */
+  public final static IProperty<Float> SPACING_LABEL = new Property<Float>(
+            "org.eclipse.elk.spacing.label",
+            SPACING_LABEL_DEFAULT);
+  
+  /**
+   * Default value for {@link #SPACING_NODE}.
+   */
+  private final static float SPACING_NODE_DEFAULT = 20;
+  
+  /**
+   * Overall spacing between elements. This is mostly interpreted as the minimal distance
+   * between each two nodes and may also influence the spacing between edges.
+   */
+  public final static IProperty<Float> SPACING_NODE = new Property<Float>(
+            "org.eclipse.elk.spacing.node",
+            SPACING_NODE_DEFAULT);
+  
+  /**
+   * Default value for {@link #SPACING_PORT}.
+   */
+  private final static float SPACING_PORT_DEFAULT = 10;
+  
+  /**
+   * Spacing between ports of a given node.
+   */
+  public final static IProperty<Float> SPACING_PORT = new Property<Float>(
+            "org.eclipse.elk.spacing.port",
+            SPACING_PORT_DEFAULT);
+  
+  /**
+   * Additional space around the sets of ports on each node side. For each side of a node,
+   * this option can reserve additional space before and after the ports on each side. For
+   * example, a top spacing of 20 makes sure that the first port on the western and eastern
+   * side is 20 units away from the northern border.
+   */
+  public final static IProperty<Spacing.Margins> SPACING_PORT_SURROUNDING = new Property<Spacing.Margins>(
+            "org.eclipse.elk.spacing.portSurrounding");
+  
+  /**
+   * Partition to which the node belongs to. If 'layoutPartitions' is true,
+   * all nodes are expected to have a partition.
+   */
+  public final static IProperty<Integer> PARTITIONING_PARTITION = new Property<Integer>(
+            "org.eclipse.elk.partitioning.partition");
+  
+  /**
+   * Default value for {@link #PARTITIONING_ACTIVATE}.
+   */
+  private final static Boolean PARTITIONING_ACTIVATE_DEFAULT = Boolean.valueOf(false);
+  
+  /**
+   * Whether to activate partitioned layout.
+   */
+  public final static IProperty<Boolean> PARTITIONING_ACTIVATE = new Property<Boolean>(
+            "org.eclipse.elk.partitioning.activate",
+            PARTITIONING_ACTIVATE_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODELABELS_INSETS}.
+   */
+  private final static Spacing.Insets NODELABELS_INSETS_DEFAULT = new Spacing.Insets(0, 0, 0, 0);
+  
+  /**
+   * Define insets for node labels that are placed inside of a node.
+   */
+  public final static IProperty<Spacing.Insets> NODELABELS_INSETS = new Property<Spacing.Insets>(
+            "org.eclipse.elk.nodeLabels.insets",
+            NODELABELS_INSETS_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODELABELS_PLACEMENT}.
+   */
+  private final static EnumSet<NodeLabelPlacement> NODELABELS_PLACEMENT_DEFAULT = NodeLabelPlacement.fixed();
+  
+  /**
+   * Hints for where node labels are to be placed; if empty, the node label's position is not
+   * modified.
+   */
+  public final static IProperty<EnumSet<NodeLabelPlacement>> NODELABELS_PLACEMENT = new Property<EnumSet<NodeLabelPlacement>>(
+            "org.eclipse.elk.nodeLabels.placement",
+            NODELABELS_PLACEMENT_DEFAULT);
+  
+  /**
+   * Default value for {@link #PORTALIGNMENT_BASIC}.
+   */
+  private final static PortAlignment PORTALIGNMENT_BASIC_DEFAULT = PortAlignment.JUSTIFIED;
+  
+  /**
+   * Defines the default port distribution for a node. May be overridden for each side individually.
+   */
+  public final static IProperty<PortAlignment> PORTALIGNMENT_BASIC = new Property<PortAlignment>(
+            "org.eclipse.elk.portAlignment.basic",
+            PORTALIGNMENT_BASIC_DEFAULT);
+  
+  /**
+   * Default value for {@link #PORTALIGNMENT_NORTH}.
+   */
+  private final static PortAlignment PORTALIGNMENT_NORTH_DEFAULT = PortAlignment.UNDEFINED;
+  
+  /**
+   * Defines how ports on the northern side are placed, overriding the node's general port alignment.
+   */
+  public final static IProperty<PortAlignment> PORTALIGNMENT_NORTH = new Property<PortAlignment>(
+            "org.eclipse.elk.portAlignment.north",
+            PORTALIGNMENT_NORTH_DEFAULT);
+  
+  /**
+   * Default value for {@link #PORTALIGNMENT_SOUTH}.
+   */
+  private final static PortAlignment PORTALIGNMENT_SOUTH_DEFAULT = PortAlignment.UNDEFINED;
+  
+  /**
+   * Defines how ports on the southern side are placed, overriding the node's general port alignment.
+   */
+  public final static IProperty<PortAlignment> PORTALIGNMENT_SOUTH = new Property<PortAlignment>(
+            "org.eclipse.elk.portAlignment.south",
+            PORTALIGNMENT_SOUTH_DEFAULT);
+  
+  /**
+   * Default value for {@link #PORTALIGNMENT_WEST}.
+   */
+  private final static PortAlignment PORTALIGNMENT_WEST_DEFAULT = PortAlignment.UNDEFINED;
+  
+  /**
+   * Defines how ports on the western side are placed, overriding the node's general port alignment.
+   */
+  public final static IProperty<PortAlignment> PORTALIGNMENT_WEST = new Property<PortAlignment>(
+            "org.eclipse.elk.portAlignment.west",
+            PORTALIGNMENT_WEST_DEFAULT);
+  
+  /**
+   * Default value for {@link #PORTALIGNMENT_EAST}.
+   */
+  private final static PortAlignment PORTALIGNMENT_EAST_DEFAULT = PortAlignment.UNDEFINED;
+  
+  /**
+   * Defines how ports on the eastern side are placed, overriding the node's general port alignment.
+   */
+  public final static IProperty<PortAlignment> PORTALIGNMENT_EAST = new Property<PortAlignment>(
+            "org.eclipse.elk.portAlignment.east",
+            PORTALIGNMENT_EAST_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODESIZE_CONSTRAINTS}.
+   */
+  private final static EnumSet<SizeConstraint> NODESIZE_CONSTRAINTS_DEFAULT = EnumSet.<SizeConstraint>noneOf(SizeConstraint.class);
+  
+  /**
+   * Constraints for determining node sizes. Each member of the set specifies something that
+   * should be taken into account when calculating node sizes. The empty set corresponds to
+   * node sizes being fixed.
+   */
+  public final static IProperty<EnumSet<SizeConstraint>> NODESIZE_CONSTRAINTS = new Property<EnumSet<SizeConstraint>>(
+            "org.eclipse.elk.nodeSize.constraints",
+            NODESIZE_CONSTRAINTS_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODESIZE_OPTIONS}.
+   */
+  private final static EnumSet<SizeOptions> NODESIZE_OPTIONS_DEFAULT = EnumSet.<SizeOptions>of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.APPLY_ADDITIONAL_INSETS);
+  
+  /**
+   * Options modifying the behavior of the size constraints set on a node. Each member of the
+   * set specifies something that should be taken into account when calculating node sizes.
+   * The empty set corresponds to no further modifications.
+   */
+  public final static IProperty<EnumSet<SizeOptions>> NODESIZE_OPTIONS = new Property<EnumSet<SizeOptions>>(
+            "org.eclipse.elk.nodeSize.options",
+            NODESIZE_OPTIONS_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODESIZE_MINIMUM}.
+   */
+  private final static KVector NODESIZE_MINIMUM_DEFAULT = new KVector();
+  
+  /**
+   * The minimal size to which a node can be reduced.
+   */
+  public final static IProperty<KVector> NODESIZE_MINIMUM = new Property<KVector>(
+            "org.eclipse.elk.nodeSize.minimum",
+            NODESIZE_MINIMUM_DEFAULT);
+  
+  /**
+   * Default value for {@link #EDGELABELS_PLACEMENT}.
+   */
+  private final static EdgeLabelPlacement EDGELABELS_PLACEMENT_DEFAULT = EdgeLabelPlacement.UNDEFINED;
+  
+  /**
+   * Gives a hint on where to put edge labels.
+   */
+  public final static IProperty<EdgeLabelPlacement> EDGELABELS_PLACEMENT = new Property<EdgeLabelPlacement>(
+            "org.eclipse.elk.edgeLabels.placement",
+            EDGELABELS_PLACEMENT_DEFAULT);
+  
+  /**
+   * Font name used for a label.
+   */
+  public final static IProperty<String> FONT_NAME = new Property<String>(
+            "org.eclipse.elk.font.name");
+  
+  /**
+   * Font size used for a label.
+   */
+  public final static IProperty<Integer> FONT_SIZE = new Property<Integer>(
+            "org.eclipse.elk.font.size");
+  
+  /**
+   * The offset to the port position where connections shall be attached.
+   */
+  public final static IProperty<KVector> PORT_ANCHOR = new Property<KVector>(
+            "org.eclipse.elk.port.anchor");
+  
+  /**
+   * The index of a port in the fixed order around a node. The order is assumed as clockwise,
+   * starting with the leftmost port on the top side. This option must be set if 'Port
+   * Constraints' is set to FIXED_ORDER and no specific positions are given for the ports.
+   * Additionally, the option 'Port Side' must be defined in this case.
+   */
+  public final static IProperty<Integer> PORT_INDEX = new Property<Integer>(
+            "org.eclipse.elk.port.index");
+  
+  /**
+   * Default value for {@link #PORT_SIDE}.
+   */
+  private final static PortSide PORT_SIDE_DEFAULT = PortSide.UNDEFINED;
+  
+  /**
+   * The side of a node on which a port is situated. This option must be set if 'Port
+   * Constraints' is set to FIXED_SIDE or FIXED_ORDER and no specific positions are given
+   * for the ports.
+   */
+  public final static IProperty<PortSide> PORT_SIDE = new Property<PortSide>(
+            "org.eclipse.elk.port.side",
+            PORT_SIDE_DEFAULT);
+  
+  /**
+   * The offset of ports on the node border. With a positive offset the port is moved outside
+   * of the node, while with a negative offset the port is moved towards the inside. An offset
+   * of 0 means that the port is placed directly on the node border, i.e.
+   * if the port side is north, the port's south border touches the nodes's north border;
+   * if the port side is east, the port's west border touches the nodes's east border;
+   * if the port side is south, the port's north border touches the node's south border;
+   * if the port side is west, the port's east border touches the node's west border.
+   */
+  public final static IProperty<Float> PORT_BORDER_OFFSET = new Property<Float>(
+            "org.eclipse.elk.port.borderOffset");
+  
+  /**
+   * Default value for {@link #PORTLABELS_PLACEMENT}.
+   */
+  private final static PortLabelPlacement PORTLABELS_PLACEMENT_DEFAULT = PortLabelPlacement.OUTSIDE;
+  
+  /**
+   * Decides on a placement method for port labels.
+   */
+  public final static IProperty<PortLabelPlacement> PORTLABELS_PLACEMENT = new Property<PortLabelPlacement>(
+            "org.eclipse.elk.portLabels.placement",
+            PORTLABELS_PLACEMENT_DEFAULT);
+  
+  /**
+   * Default value for {@link #INSIDESELFLOOPS_ACTIVATE}.
+   */
+  private final static Object INSIDESELFLOOPS_ACTIVATE_DEFAULT = Boolean.valueOf(false);
+  
+  /**
+   * Whether this node allows to route self loops inside of it instead of around it. If set to true,
+   * this will make the node a compound node if it isn't already, and will require the layout algorithm
+   * to support compound nodes with hierarchical ports.
+   */
+  public final static IProperty<Object> INSIDESELFLOOPS_ACTIVATE = new Property<Object>(
+            "org.eclipse.elk.insideSelfLoops.activate",
+            INSIDESELFLOOPS_ACTIVATE_DEFAULT);
+  
+  /**
+   * Default value for {@link #INSIDESELFLOOPS_YO}.
+   */
+  private final static boolean INSIDESELFLOOPS_YO_DEFAULT = false;
+  
+  /**
+   * Whether a self loop should be routed inside a node instead of around that node.
+   */
+  public final static IProperty<Boolean> INSIDESELFLOOPS_YO = new Property<Boolean>(
+            "org.eclipse.elk.insideSelfLoops.yo",
+            INSIDESELFLOOPS_YO_DEFAULT);
+  
+  /**
+   * Default value for {@link #EDGE_THICKNESS}.
+   */
+  private final static float EDGE_THICKNESS_DEFAULT = 1;
+  
+  /**
+   * The thickness of an edge. This is a hint on the line width used to draw an edge, possibly
+   * requiring more space to be reserved for it.
+   */
+  public final static IProperty<Float> EDGE_THICKNESS = new Property<Float>(
+            "org.eclipse.elk.edge.thickness",
+            EDGE_THICKNESS_DEFAULT);
+  
+  /**
+   * Default value for {@link #EDGE_TYPE}.
+   */
+  private final static EdgeType EDGE_TYPE_DEFAULT = EdgeType.NONE;
+  
+  /**
+   * The type of an edge. This is usually used for UML class diagrams, where associations must
+   * be handled differently from generalizations.
+   */
+  public final static IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>(
+            "org.eclipse.elk.edge.type",
+            EDGE_TYPE_DEFAULT);
+  
+  /**
    * Required value for dependency between {@link #SCALE_FACTOR} and {@link #LAYOUT_HIERARCHY}.
    */
   private final static boolean SCALE_FACTOR_DEP_LAYOUT_HIERARCHY = false;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Fixed Layout".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Fixed Layout".
    */
-  private final static float FIXED_SUP_BORDER_SPACING = 15;
+  private final static float FIXED_SUP_SPACING_BORDER = 15;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Box Layout".
+   * Default value for {@link #SPACING_NODE} with algorithm "Box Layout".
    */
-  private final static float BOX_SUP_SPACING = 15;
+  private final static float BOX_SUP_SPACING_NODE = 15;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Box Layout".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Box Layout".
    */
-  private final static float BOX_SUP_BORDER_SPACING = 15;
+  private final static float BOX_SUP_SPACING_BORDER = 15;
   
   /**
    * Default value for {@link #PRIORITY} with algorithm "Box Layout".
@@ -758,14 +757,14 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   private final static int RANDOM_SUP_RANDOM_SEED = 0;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Randomizer".
+   * Default value for {@link #SPACING_NODE} with algorithm "Randomizer".
    */
-  private final static float RANDOM_SUP_SPACING = 15;
+  private final static float RANDOM_SUP_SPACING_NODE = 15;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Randomizer".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Randomizer".
    */
-  private final static float RANDOM_SUP_BORDER_SPACING = 15;
+  private final static float RANDOM_SUP_SPACING_BORDER = 15;
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "Randomizer".
@@ -775,6 +774,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.algorithm",
+        "",
         "Layout Algorithm",
         "Select a specific layout algorithm.",
         null,
@@ -784,42 +784,37 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alignment",
+        "",
         "Alignment",
-        "Alignment of the selected node relative to other nodes in the same row or column.",
+        "Alignment of the selected node relative to other nodes, the exact meaning depends on the used algorithm.",
         ALIGNMENT_DEFAULT,
         Alignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.aspectRatio",
+        "",
         "Aspect Ratio",
         "The desired aspect ratio of the drawing, that is the quotient of width by height.",
         null,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.bendPoints",
+        "",
         "Bend Points",
         "A fixed list of bend points for the edge. This is used by the \'Fixed Layout\' algorithm to specify a pre-defined routing for an edge. The vector chain must include the source point, any bend points, and the target point, so it must have at least two points.",
         null,
         KVectorChain.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.borderSpacing",
-        "Border Spacing",
-        "Spacing of the content of a parent node to its inner border. The inner border is the node border, which is given by width and height, with subtracted insets.",
-        null,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.HIDDEN
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.debugMode",
+        "",
         "Debug Mode",
         "Whether additional debug information shall be generated.",
         DEBUG_MODE_DEFAULT,
@@ -829,6 +824,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.direction",
+        "",
         "Direction",
         "Overall direction of edges: horizontal (right / left) or vertical (down / up).",
         DIRECTION_DEFAULT,
@@ -837,16 +833,8 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.edgeLabelPlacementStrategy",
-        "Edge Label Placement Strategy",
-        "Determines in which layer center labels of long edges should be placed.",
-        EDGE_LABEL_PLACEMENT_STRATEGY_DEFAULT,
-        EdgeLabelPlacementStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.edgeRouting",
+        "",
         "Edge Routing",
         "What kind of edge routing style should be applied for the content of a parent node. Algorithms may also set this option to single edges in order to mark them as splines. The bend point list of edges with this option set to SPLINES must be interpreted as control points for a piecewise cubic spline.",
         EDGE_ROUTING_DEFAULT,
@@ -856,42 +844,37 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.expandNodes",
+        "",
         "Expand Nodes",
         "If active, nodes are expanded to fill the area of their parent.",
         EXPAND_NODES_DEFAULT,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.hierarchyHandling",
+        "",
         "Hierarchy Handling",
-        "Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the property is assumed as SEPARATE_CHILDREN.",
+        "Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the option is assumed as SEPARATE_CHILDREN.",
         HIERARCHY_HANDLING_DEFAULT,
         HierarchyHandling.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.interactive",
+        "",
         "Interactive",
         "Whether the algorithm should be run in interactive mode for the content of a parent node. What this means exactly depends on how the specific algorithm interprets this option. Usually in the interactive mode algorithms try to modify the current layout as little as possible.",
         INTERACTIVE_DEFAULT,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.labelSpacing",
-        "Label Spacing",
-        "Determines the amount of space to be left around labels.",
-        LABEL_SPACING_DEFAULT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES, LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layoutHierarchy",
+        "",
         "Layout Hierarchy",
         "Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy level of the graph is processed independently, possibly by different layout algorithms, beginning with the lowest level. If it is set, the algorithm is responsible to process all hierarchy levels that are contained in the associated parent node.",
         LAYOUT_HIERARCHY_DEFAULT,
@@ -900,88 +883,8 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layoutPartition",
-        "Layout Partition",
-        "Partition to which the node belongs to. If \'layoutPartitions\' is true, all nodes are expected to have a partition.",
-        null,
-        Integer.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layoutPartitions",
-        "Layout Partitions",
-        "Whether to activate partitioned layout.",
-        LAYOUT_PARTITIONS_DEFAULT,
-        Boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.nodeLabelInsets",
-        "Node Label Insets",
-        "Define insets for node labels that are placed inside of a node.",
-        NODE_LABEL_INSETS_DEFAULT,
-        Spacing.Insets.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.nodeLabelPlacement",
-        "Node Label Placement",
-        "Hints for where node labels are to be placed; if empty, the node label\'s position is not modified.",
-        NODE_LABEL_PLACEMENT_DEFAULT,
-        EnumSet.class,
-        EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portAlignment",
-        "Port Alignment",
-        "Defines the default port distribution for a node.",
-        PORT_ALIGNMENT_DEFAULT,
-        PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portAlignmentNorth",
-        "Port Alignment (North)",
-        "Defines how ports on the northern side are placed, overriding the node\'s general port alignment.",
-        PORT_ALIGNMENT_NORTH_DEFAULT,
-        PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portAlignmentSouth",
-        "Port Alignment (South)",
-        "Defines how ports on the southern side are placed, overriding the node\'s general port alignment.",
-        PORT_ALIGNMENT_SOUTH_DEFAULT,
-        PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portAlignmentWest",
-        "Port Alignment (West)",
-        "Defines how ports on the western side are placed, overriding the node\'s general port alignment.",
-        PORT_ALIGNMENT_WEST_DEFAULT,
-        PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portAlignmentEast",
-        "Port Alignment (East)",
-        "Defines how ports on the eastern side are placed, overriding the node\'s general port alignment.",
-        PORT_ALIGNMENT_EAST_DEFAULT,
-        PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.portConstraints",
+        "",
         "Port Constraints",
         "Defines constraints of the position of the ports of a node.",
         PORT_CONSTRAINTS_DEFAULT,
@@ -990,43 +893,38 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portSpacing",
-        "Port Spacing",
-        "Spacing between ports of a given node.",
-        PORT_SPACING_DEFAULT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.position",
+        "",
         "Position",
         "The position of a node, port, or label. This is used by the \'Fixed Layout\' algorithm to specify a pre-defined position.",
         null,
         KVector.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.priority",
+        "",
         "Priority",
         "Defines the priority of an object; its meaning depends on the specific layout algorithm and the context where it is used.",
         null,
         int.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.randomSeed",
+        "",
         "Randomization Seed",
         "Seed used for pseudo-random number generators to control the layout algorithm. If the value is 0, the seed shall be determined pseudo-randomly (e.g. from the system time).",
         null,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.separateConnComp",
+        "org.eclipse.elk.separateConnectedComponents",
+        "",
         "Separate Connected Components",
         "Whether each connected component should be processed separately.",
         null,
@@ -1035,52 +933,18 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.sizeConstraint",
-        "Size Constraint",
-        "Constraints for determining node sizes. Each member of the set specifies something that should be taken into account when calculating node sizes. The empty set corresponds to node sizes being fixed.",
-        SIZE_CONSTRAINT_DEFAULT,
-        EnumSet.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.sizeOptions",
-        "Size Options",
-        "Options modifying the behavior of the size constraints set on a node. Each member of the set specifies something that should be taken into account when calculating node sizes. The empty set corresponds to no further modifications.",
-        SIZE_OPTIONS_DEFAULT,
-        EnumSet.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.spacing",
-        "Spacing",
-        "Overall spacing between elements. This is mostly interpreted as the minimal distance between each two nodes and should also influence the spacing between edges.",
-        null,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.junctionPoints",
+        "",
         "Junction Points",
-        "This property is not used as option, but as output of the layout algorithms. It is attached to edges and determines the points where junction symbols should be drawn in order to represent hyperedges with orthogonal routing. Whether such points are computed depends on the chosen layout algorithm and edge routing style. The points are put into the vector chain with no specific order.",
+        "This option is not used as option, but as output of the layout algorithms. It is attached to edges and determines the points where junction symbols should be drawn in order to represent hyperedges with orthogonal routing. Whether such points are computed depends on the chosen layout algorithm and edge routing style. The points are put into the vector chain with no specific order.",
         null,
         KVectorChain.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.additionalPortSpace",
-        "Additional Port Space",
-        "Additional space around the sets of ports on each node side. For each side of a node, this property can reserve additional space before and after the ports on each side. For example, a top spacing of 20 makes sure that the first port on the western and eastern side is 20 units away from the northern border.",
-        null,
-        Spacing.Margins.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.commentBox",
+        "",
         "Comment Box",
         "Whether the node should be regarded as a comment box instead of a regular node. In that case its placement should be similar to how labels are handled. Any edges incident to a comment box specify to which graph elements the comment is related.",
         COMMENT_BOX_DEFAULT,
@@ -1089,43 +953,8 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.HIDDEN
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.edgeLabelPlacement",
-        "Edge Label Placement",
-        "Gives a hint on where to put edge labels.",
-        EDGE_LABEL_PLACEMENT_DEFAULT,
-        EdgeLabelPlacement.class,
-        EnumSet.of(LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.edgeType",
-        "Edge Type",
-        "The type of an edge. This is usually used for UML class diagrams, where associations must be handled differently from generalizations.",
-        EDGE_TYPE_DEFAULT,
-        EdgeType.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.fontName",
-        "Font Name",
-        "Font name used for a label.",
-        null,
-        String.class,
-        EnumSet.of(LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.fontSize",
-        "Font Size",
-        "Font size used for a label.",
-        null,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.hypernode",
+        "",
         "Hypernode",
         "Whether the node should be handled as a hypernode.",
         HYPERNODE_DEFAULT,
@@ -1135,6 +964,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.labelManager",
+        "",
         "Label Manager",
         "Label managers can shorten labels upon a layout algorithm\'s request.",
         null,
@@ -1144,6 +974,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.margins",
+        "",
         "Margins",
         "Margins define additional space around the actual bounds of a graph element. For instance, ports or labels being placed on the outside of a node\'s border might introduce such a margin. The margin is used to guarantee non-overlap of other graph elements with those ports or labels.",
         MARGINS_DEFAULT,
@@ -1152,25 +983,8 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.HIDDEN
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.minHeight",
-        "Minimal Height",
-        "The minimal height to which a node can be reduced.",
-        MIN_HEIGHT_DEFAULT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.minWidth",
-        "Minimal Width",
-        "The minimal width to which a node can be reduced.",
-        MIN_WIDTH_DEFAULT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.noLayout",
+        "",
         "No Layout",
         "No layout is done for the associated element. This is used to mark parts of a diagram to avoid their inclusion in the layout graph, or to mark parts of the layout graph to prevent layout engines from processing them. If you wish to exclude the contents of a compound node from automatic layout, while the node itself is still considered on its own layer, use the \'Fixed Layout\' algorithm for that node.",
         NO_LAYOUT_DEFAULT,
@@ -1179,52 +993,8 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.HIDDEN
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portAnchor",
-        "Port Anchor Offset",
-        "The offset to the port position where connections shall be attached.",
-        null,
-        KVector.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portIndex",
-        "Port Index",
-        "The index of a port in the fixed order around a node. The order is assumed as clockwise, starting with the leftmost port on the top side. This option must be set if \'Port Constraints\' is set to FIXED_ORDER and no specific positions are given for the ports. Additionally, the option \'Port Side\' must be defined in this case.",
-        null,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portLabelPlacement",
-        "Port Label Placement",
-        "Decides on a placement method for port labels.",
-        PORT_LABEL_PLACEMENT_DEFAULT,
-        PortLabelPlacement.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portSide",
-        "Port Side",
-        "The side of a node on which a port is situated. This option must be set if \'Port Constraints\' is set to FIXED_SIDE or FIXED_ORDER and no specific positions are given for the ports.",
-        PORT_SIDE_DEFAULT,
-        PortSide.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.portOffset",
-        "Port Offset",
-        "The offset of ports on the node border. With a positive offset the port is moved outside of the node, while with a negative offset the port is moved towards the inside. An offset of 0 means that the port is placed directly on the node border, i.e. if the port side is north, the port\'s south border touches the nodes\'s north border; if the port side is east, the port\'s west border touches the nodes\'s east border; if the port side is south, the port\'s north border touches the node\'s south border; if the port side is west, the port\'s east border touches the node\'s west border.",
-        null,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.scaleFactor",
+        "",
         "Scale Factor",
         "The scaling factor to be applied to the corresponding node in recursive layout. It causes the corresponding node\'s size to be adjusted, and its ports and labels to be sized and placed accordingly after the layout of that node has been determined (and before the node itself and its siblings are arranged). The scaling is not reverted afterwards, so the resulting layout graph contains the adjusted size and position data. This option is currently not supported if \'Layout Hierarchy\' is set.",
         SCALE_FACTOR_DEFAULT,
@@ -1238,25 +1008,8 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         SCALE_FACTOR_DEP_LAYOUT_HIERARCHY
     );
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.selfLoopInside",
-        "Route Self Loop Inside",
-        "Whether a self loop should be routed around a node or inside that node. The latter will make the node a compound node if it isn\'t already, and will require the layout algorithm to support compound nodes with hierarchical ports.",
-        SELF_LOOP_INSIDE_DEFAULT,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.thickness",
-        "Thickness",
-        "The thickness of an edge. This is a hint on the line width used to draw an edge, possibly requiring more space to be reserved for it.",
-        THICKNESS_DEFAULT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.HIDDEN
-    ));
-    registry.register(new LayoutOptionData(
         "org.eclipse.elk.animate",
+        "",
         "Animate",
         "Whether the shift from the old layout to the new computed layout shall be animated.",
         ANIMATE_DEFAULT,
@@ -1266,6 +1019,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.animTimeFactor",
+        "",
         "Animation Time Factor",
         "Factor for computation of animation time. The higher the value, the longer the animation time. If the value is 0, the resulting time is always equal to the minimum defined by \'Minimal Animation Time\'.",
         ANIM_TIME_FACTOR_DEFAULT,
@@ -1275,6 +1029,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layoutAncestors",
+        "",
         "Layout Ancestors",
         "Whether the hierarchy levels on the path from the selected element to the root of the diagram shall be included in the layout process.",
         LAYOUT_ANCESTORS_DEFAULT,
@@ -1284,6 +1039,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.maxAnimTime",
+        "",
         "Maximal Animation Time",
         "The maximal time for animations, in milliseconds.",
         MAX_ANIM_TIME_DEFAULT,
@@ -1293,6 +1049,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.minAnimTime",
+        "",
         "Minimal Animation Time",
         "The minimal time for animations, in milliseconds.",
         MIN_ANIM_TIME_DEFAULT,
@@ -1302,6 +1059,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.progressBar",
+        "",
         "Progress Bar",
         "Whether a progress bar shall be displayed during layout computations.",
         PROGRESS_BAR_DEFAULT,
@@ -1311,6 +1069,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.zoomToFit",
+        "",
         "Zoom to Fit",
         "Whether the zoom level shall be set to view the whole diagram after layout.",
         ZOOM_TO_FIT_DEFAULT,
@@ -1319,32 +1078,32 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.HIDDEN
     ));
     registry.register(new LayoutCategoryData(
-        "org.eclipse.elk.Layered",
+        "org.eclipse.elk.layered",
         "Layered",
         "The layer-based method was introduced by Sugiyama, Tagawa and Toda in 1981. It emphasizes the direction of edges by pointing as many edges as possible into the same direction. The nodes are arranged in layers, which are sometimes called \"hierarchies\", and then reordered such that the number of edge crossings is minimized. Afterwards, concrete coordinates are computed for the nodes and edge bend points."
     ));
     registry.register(new LayoutCategoryData(
-        "org.eclipse.elk.Orthogonal",
+        "org.eclipse.elk.orthogonal",
         "Orthogonal",
         "Orthogonal methods that follow the \"topology-shape-metrics\" approach by Batini, Nardelli and Tamassia \'86. The first phase determines the topology of the drawing by applying a planarization technique, which results in a planar representation of the graph. The orthogonal shape is computed in the second phase, which aims at minimizing the number of edge bends, and is called orthogonalization. The third phase leads to concrete coordinates for nodes and edge bend points by applying a compaction method, thus defining the metrics."
     ));
     registry.register(new LayoutCategoryData(
-        "org.eclipse.elk.Force",
+        "org.eclipse.elk.force",
         "Force",
         "Layout algorithms that follow physical analogies by simulating a system of attractive and repulsive forces. The first successful method of this kind was proposed by Eades in 1984."
     ));
     registry.register(new LayoutCategoryData(
-        "org.eclipse.elk.Circle",
+        "org.eclipse.elk.circle",
         "Circle",
-        "Circular layout algorithms emphasize cycles or biconnected components of a graph by arranging them in circles. This is useful if a drawing is desired where such components are clearly grouped, or where cycles are shown as prominent properties of the graph."
+        "Circular layout algorithms emphasize cycles or biconnected components of a graph by arranging them in circles. This is useful if a drawing is desired where such components are clearly grouped, or where cycles are shown as prominent OPTIONS of the graph."
     ));
     registry.register(new LayoutCategoryData(
-        "org.eclipse.elk.Tree",
+        "org.eclipse.elk.tree",
         "Tree",
         "Specialized layout methods for trees, i.e. acyclic graphs. The regular structure of graphs that have no undirected cycles can be emphasized using an algorithm of this type."
     ));
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.Fixed",
+        "org.eclipse.elk.fixed",
         "Fixed Layout",
         "Keeps the current layout as it is, without any automatic modification. Optional coordinates can be given for nodes and edge bend points.",
         new AlgorithmFactory(FixedLayoutProvider.class, ""),
@@ -1354,22 +1113,22 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         null
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.Fixed",
+        "org.eclipse.elk.fixed",
         "org.eclipse.elk.position",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Fixed",
+        "org.eclipse.elk.fixed",
         "org.eclipse.elk.bendPoints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Fixed",
-        "org.eclipse.elk.borderSpacing",
-        FIXED_SUP_BORDER_SPACING
+        "org.eclipse.elk.fixed",
+        "org.eclipse.elk.spacing.border",
+        FIXED_SUP_SPACING_BORDER
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.Box",
+        "org.eclipse.elk.box",
         "Box Layout",
         "Algorithm for packing of unconnected boxes, i.e. graphs without edges.",
         new AlgorithmFactory(BoxLayoutProvider.class, ""),
@@ -1379,47 +1138,47 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         null
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.Box",
-        "org.eclipse.elk.spacing",
-        BOX_SUP_SPACING
+        "org.eclipse.elk.box",
+        "org.eclipse.elk.spacing.node",
+        BOX_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Box",
-        "org.eclipse.elk.borderSpacing",
-        BOX_SUP_BORDER_SPACING
+        "org.eclipse.elk.box",
+        "org.eclipse.elk.spacing.border",
+        BOX_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Box",
+        "org.eclipse.elk.box",
         "org.eclipse.elk.priority",
         BOX_SUP_PRIORITY
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Box",
+        "org.eclipse.elk.box",
         "org.eclipse.elk.expandNodes",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Box",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.box",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Box",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.box",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Box",
+        "org.eclipse.elk.box",
         "org.eclipse.elk.aspectRatio",
         BOX_SUP_ASPECT_RATIO
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Box",
+        "org.eclipse.elk.box",
         "org.eclipse.elk.interactive",
         null
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.Random",
+        "org.eclipse.elk.random",
         "Randomizer",
         "Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be useful to demonstrate the power of \"real\" layout algorithms.",
         new AlgorithmFactory(RandomLayoutProvider.class, ""),
@@ -1429,22 +1188,22 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         null
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.Random",
+        "org.eclipse.elk.random",
         "org.eclipse.elk.randomSeed",
         RANDOM_SUP_RANDOM_SEED
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Random",
-        "org.eclipse.elk.spacing",
-        RANDOM_SUP_SPACING
+        "org.eclipse.elk.random",
+        "org.eclipse.elk.spacing.node",
+        RANDOM_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Random",
-        "org.eclipse.elk.borderSpacing",
-        RANDOM_SUP_BORDER_SPACING
+        "org.eclipse.elk.random",
+        "org.eclipse.elk.spacing.border",
+        RANDOM_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.Random",
+        "org.eclipse.elk.random",
         "org.eclipse.elk.aspectRatio",
         RANDOM_SUP_ASPECT_RATIO
     );
