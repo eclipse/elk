@@ -369,7 +369,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *         provider=JvmTypeReference 
 	 *         parameter=ID? 
 	 *         (
-	 *             (label=STRING | description=STRING | category=[MdCategory|QualifiedName] | previewImage=Path)? 
+	 *             (label=STRING | description=STRING | documentation=STRING | category=[MdCategory|QualifiedName] | previewImage=Path)? 
 	 *             (supportedFeatures+=MdGraphFeature supportedFeatures+=MdGraphFeature*)?
 	 *         )+ 
 	 *         supportedOptions+=MdPropertySupport*
@@ -385,7 +385,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *     MdBundle returns MdBundle
 	 *
 	 * Constraint:
-	 *     ((label=STRING | targetClass=QualifiedName)* members+=MdBundleMember*)
+	 *     ((label=STRING | targetClass=QualifiedName | documentationFolder=Path)* members+=MdBundleMember*)
 	 */
 	protected void sequence_MdBundle(ISerializationContext context, MdBundle semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -398,7 +398,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *     MdCategory returns MdCategory
 	 *
 	 * Constraint:
-	 *     (deprecated?='deprecated'? name=ID (label=STRING | description=STRING)*)
+	 *     (deprecated?='deprecated'? name=ID (label=STRING | description=STRING | documentation=STRING)*)
 	 */
 	protected void sequence_MdCategory(ISerializationContext context, MdCategory semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -448,7 +448,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *     MdPropertySupport returns MdPropertySupport
 	 *
 	 * Constraint:
-	 *     (property=[MdProperty|QualifiedName] (value=XExpression duplicated?='duplicated'?)?)
+	 *     (property=[MdProperty|QualifiedName] (value=XExpression duplicated?='duplicated'?)? documentation=STRING?)
 	 */
 	protected void sequence_MdPropertySupport(ISerializationContext context, MdPropertySupport semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -468,7 +468,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *         name=ID 
 	 *         type=JvmTypeReference? 
 	 *         (
-	 *             (label=STRING | description=STRING | defaultValue=XExpression)? 
+	 *             (label=STRING | description=STRING | documentation=STRING | defaultValue=XExpression)? 
 	 *             (targets+=MdPropertyTargetType targets+=MdPropertyTargetType*)? 
 	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)?
 	 *         )+ 

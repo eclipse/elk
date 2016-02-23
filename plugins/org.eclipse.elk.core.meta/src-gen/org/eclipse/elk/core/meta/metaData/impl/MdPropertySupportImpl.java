@@ -38,6 +38,7 @@ import org.eclipse.xtext.xbase.XExpression;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl#getProperty <em>Property</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl#isDuplicated <em>Duplicated</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl#getDocumentation <em>Documentation</em>}</li>
  * </ul>
  *
  * @generated
@@ -83,6 +84,26 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
    * @ordered
    */
   protected boolean duplicated = DUPLICATED_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocumentation()
+   * @generated
+   * @ordered
+   */
+  protected static final String DOCUMENTATION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocumentation()
+   * @generated
+   * @ordered
+   */
+  protected String documentation = DOCUMENTATION_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -224,6 +245,29 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getDocumentation()
+  {
+    return documentation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDocumentation(String newDocumentation)
+  {
+    String oldDocumentation = documentation;
+    documentation = newDocumentation;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION, oldDocumentation, documentation));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -252,6 +296,8 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
         return getValue();
       case MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED:
         return isDuplicated();
+      case MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION:
+        return getDocumentation();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -274,6 +320,9 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
         return;
       case MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED:
         setDuplicated((Boolean)newValue);
+        return;
+      case MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION:
+        setDocumentation((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -298,6 +347,9 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
       case MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED:
         setDuplicated(DUPLICATED_EDEFAULT);
         return;
+      case MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION:
+        setDocumentation(DOCUMENTATION_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -318,6 +370,8 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
         return value != null;
       case MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED:
         return duplicated != DUPLICATED_EDEFAULT;
+      case MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION:
+        return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
     }
     return super.eIsSet(featureID);
   }
@@ -335,6 +389,8 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (duplicated: ");
     result.append(duplicated);
+    result.append(", documentation: ");
+    result.append(documentation);
     result.append(')');
     return result.toString();
   }

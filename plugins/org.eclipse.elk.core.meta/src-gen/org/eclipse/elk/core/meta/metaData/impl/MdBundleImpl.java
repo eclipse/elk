@@ -42,6 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getTargetClass <em>Target Class</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getDocumentationFolder <em>Documentation Folder</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getMembers <em>Members</em>}</li>
  * </ul>
  *
@@ -88,6 +89,26 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * @ordered
    */
   protected String targetClass = TARGET_CLASS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getDocumentationFolder() <em>Documentation Folder</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocumentationFolder()
+   * @generated
+   * @ordered
+   */
+  protected static final String DOCUMENTATION_FOLDER_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDocumentationFolder() <em>Documentation Folder</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocumentationFolder()
+   * @generated
+   * @ordered
+   */
+  protected String documentationFolder = DOCUMENTATION_FOLDER_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getMembers() <em>Members</em>}' containment reference list.
@@ -171,6 +192,29 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getDocumentationFolder()
+  {
+    return documentationFolder;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDocumentationFolder(String newDocumentationFolder)
+  {
+    String oldDocumentationFolder = documentationFolder;
+    documentationFolder = newDocumentationFolder;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER, oldDocumentationFolder, documentationFolder));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<MdBundleMember> getMembers()
   {
     if (members == null)
@@ -210,6 +254,8 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
         return getLabel();
       case MetaDataPackage.MD_BUNDLE__TARGET_CLASS:
         return getTargetClass();
+      case MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER:
+        return getDocumentationFolder();
       case MetaDataPackage.MD_BUNDLE__MEMBERS:
         return getMembers();
     }
@@ -232,6 +278,9 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
         return;
       case MetaDataPackage.MD_BUNDLE__TARGET_CLASS:
         setTargetClass((String)newValue);
+        return;
+      case MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER:
+        setDocumentationFolder((String)newValue);
         return;
       case MetaDataPackage.MD_BUNDLE__MEMBERS:
         getMembers().clear();
@@ -257,6 +306,9 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
       case MetaDataPackage.MD_BUNDLE__TARGET_CLASS:
         setTargetClass(TARGET_CLASS_EDEFAULT);
         return;
+      case MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER:
+        setDocumentationFolder(DOCUMENTATION_FOLDER_EDEFAULT);
+        return;
       case MetaDataPackage.MD_BUNDLE__MEMBERS:
         getMembers().clear();
         return;
@@ -278,6 +330,8 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
         return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case MetaDataPackage.MD_BUNDLE__TARGET_CLASS:
         return TARGET_CLASS_EDEFAULT == null ? targetClass != null : !TARGET_CLASS_EDEFAULT.equals(targetClass);
+      case MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER:
+        return DOCUMENTATION_FOLDER_EDEFAULT == null ? documentationFolder != null : !DOCUMENTATION_FOLDER_EDEFAULT.equals(documentationFolder);
       case MetaDataPackage.MD_BUNDLE__MEMBERS:
         return members != null && !members.isEmpty();
     }
@@ -299,6 +353,8 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
     result.append(label);
     result.append(", targetClass: ");
     result.append(targetClass);
+    result.append(", documentationFolder: ");
+    result.append(documentationFolder);
     result.append(')');
     return result.toString();
   }

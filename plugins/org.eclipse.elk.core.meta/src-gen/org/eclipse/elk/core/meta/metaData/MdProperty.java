@@ -35,6 +35,7 @@ import org.eclipse.xtext.xbase.XExpression;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDefaultValue <em>Default Value</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLegacyIds <em>Legacy Ids</em>}</li>
@@ -254,6 +255,32 @@ public interface MdProperty extends MdGroupOrProperty
    * @generated
    */
   void setDescription(String value);
+
+  /**
+   * Returns the value of the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Documentation</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Documentation</em>' attribute.
+   * @see #setDocumentation(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Documentation()
+   * @model
+   * @generated
+   */
+  String getDocumentation();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDocumentation <em>Documentation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Documentation</em>' attribute.
+   * @see #getDocumentation()
+   * @generated
+   */
+  void setDocumentation(String value);
 
   /**
    * Returns the value of the '<em><b>Default Value</b></em>' containment reference.
