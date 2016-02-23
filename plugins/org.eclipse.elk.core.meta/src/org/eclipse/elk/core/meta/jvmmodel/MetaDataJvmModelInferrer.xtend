@@ -13,10 +13,12 @@ package org.eclipse.elk.core.meta.jvmmodel
 import com.google.common.collect.Iterables
 import com.google.inject.Inject
 import java.util.EnumSet
+import java.util.LinkedList
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider
 import org.eclipse.elk.core.data.LayoutAlgorithmData
 import org.eclipse.elk.core.data.LayoutCategoryData
 import org.eclipse.elk.core.data.LayoutOptionData
+import org.eclipse.elk.core.data.LayoutOptionData.Type
 import org.eclipse.elk.core.meta.metaData.MdAlgorithm
 import org.eclipse.elk.core.meta.metaData.MdBundle
 import org.eclipse.elk.core.meta.metaData.MdBundleMember
@@ -28,17 +30,22 @@ import org.eclipse.elk.core.meta.metaData.MdPropertyDependency
 import org.eclipse.elk.core.meta.metaData.MdPropertySupport
 import org.eclipse.elk.core.options.GraphFeature
 import org.eclipse.elk.core.util.AlgorithmFactory
+import org.eclipse.elk.core.util.IDataObject
 import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.properties.Property
 import org.eclipse.xtend2.lib.StringConcatenationClient
 import org.eclipse.xtext.common.types.JvmDeclaredType
+import org.eclipse.xtext.common.types.JvmEnumerationType
+import org.eclipse.xtext.common.types.JvmGenericType
+import org.eclipse.xtext.common.types.JvmParameterizedTypeReference
+import org.eclipse.xtext.common.types.JvmPrimitiveType
+import org.eclipse.xtext.common.types.JvmTypeReference
 import org.eclipse.xtext.common.types.JvmVisibility
 import org.eclipse.xtext.common.types.util.Primitives
 import org.eclipse.xtext.util.Strings
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import java.util.LinkedList
 
 /**
  * Infers a JVM model from the source model. 
@@ -213,7 +220,8 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 «ELSE»
                     «property.defaultConstantName»,
                 «ENDIF»
-                «typeRef(property.type?.type)».class,
+                «LayoutOptionData».Type.«property.optionType»,
+                «property.optionTypeClass».class,
                 «IF property.targets.empty»
                     null,
                 «ELSE»
@@ -292,6 +300,55 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             group = group.eContainer
         }
         groups
+    }
+    
+    private def Type getOptionType(MdProperty property) {
+        val jvmType = property.type?.type
+        switch jvmType {
+            
+            JvmPrimitiveType: switch jvmType.identifier {
+                case boolean.name:  return Type.BOOLEAN
+                case int.name:      return Type.INT
+                case float.name:    return Type.FLOAT
+            } 
+            
+            JvmGenericType: switch jvmType.identifier {
+                case Boolean.canonicalName:   return Type.BOOLEAN
+                case Integer.canonicalName:   return Type.INT
+                case Float.canonicalName:     return Type.FLOAT
+                case String.canonicalName:    return Type.STRING
+                case EnumSet.canonicalName:   return Type.ENUMSET
+                case jvmType.hasSupertype(IDataObject): return Type.OBJECT
+            }
+            
+            JvmEnumerationType: return Type.ENUM
+            
+        }
+        return Type.UNDEFINED;
+    }
+    
+    private def boolean hasSupertype(JvmDeclaredType type, Class<?> superType) {
+        if (type.superTypes.findFirst[ t | t.qualifiedName == superType.canonicalName] != null) {
+            return true;
+        } else {
+            return type.superTypes
+                        .map[rt | rt.type]
+                        .filter(JvmDeclaredType)
+                        .findFirst[t | t.hasSupertype(superType) ] != null
+        }
+    }    
+    
+    private def JvmTypeReference getOptionTypeClass(MdProperty property) {
+        switch property.type?.type?.identifier {
+            case null:
+                typeRef(Void)
+            case EnumSet.canonicalName: {
+                val outer = property.type as JvmParameterizedTypeReference
+                typeRef(outer.arguments.head?.type)    
+            }
+            default:
+                typeRef(property.type?.type)
+        }
     }
     
     private def String getQualifiedName(MdBundleMember member) {

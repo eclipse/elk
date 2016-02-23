@@ -56,60 +56,60 @@ public class Properties implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #SPACING_NODE} with algorithm "ELK Mr. Tree".
    */
-  private final static float MRTREE_SUP_SPACING_NODE = 20;
+  private final static float MR_TREE_SUP_SPACING_NODE = 20;
   
   /**
    * Overridden value for Node Spacing.
    */
   public final static IProperty<Float> SPACING_NODE = new Property<Float>(
             LayoutOptions.SPACING_NODE,
-            MRTREE_SUP_SPACING_NODE);
+            MR_TREE_SUP_SPACING_NODE);
   
   /**
    * Default value for {@link #SPACING_BORDER} with algorithm "ELK Mr. Tree".
    */
-  private final static float MRTREE_SUP_SPACING_BORDER = 20;
+  private final static float MR_TREE_SUP_SPACING_BORDER = 20;
   
   /**
    * Overridden value for Border Spacing.
    */
   public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
             LayoutOptions.SPACING_BORDER,
-            MRTREE_SUP_SPACING_BORDER);
+            MR_TREE_SUP_SPACING_BORDER);
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "ELK Mr. Tree".
    */
-  private final static float MRTREE_SUP_ASPECT_RATIO = 1.6f;
+  private final static float MR_TREE_SUP_ASPECT_RATIO = 1.6f;
   
   /**
    * Overridden value for Aspect Ratio.
    */
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO,
-            MRTREE_SUP_ASPECT_RATIO);
+            MR_TREE_SUP_ASPECT_RATIO);
   
   /**
    * Default value for {@link #PRIORITY} with algorithm "ELK Mr. Tree".
    */
-  private final static int MRTREE_SUP_PRIORITY = 1;
+  private final static int MR_TREE_SUP_PRIORITY = 1;
   
   /**
    * Overridden value for Priority.
    */
   public final static IProperty<Integer> PRIORITY = new Property<Integer>(
             LayoutOptions.PRIORITY,
-            MRTREE_SUP_PRIORITY);
+            MR_TREE_SUP_PRIORITY);
   
   /**
    * Default value for {@link #SEPARATE_CONNECTED_COMPONENTS} with algorithm "ELK Mr. Tree".
    */
-  private final static boolean MRTREE_SUP_SEPARATE_CONNECTED_COMPONENTS = true;
+  private final static boolean MR_TREE_SUP_SEPARATE_CONNECTED_COMPONENTS = true;
   
   /**
    * Default value for {@link #DIRECTION} with algorithm "ELK Mr. Tree".
    */
-  private final static Direction MRTREE_SUP_DIRECTION = Direction.DOWN;
+  private final static Direction MR_TREE_SUP_DIRECTION = Direction.DOWN;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
@@ -118,6 +118,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Weighting of Nodes",
         "Which weighting to use when computing a node order.",
         WEIGHTING_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         OrderWeighting.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -128,12 +129,13 @@ public class Properties implements ILayoutMetaDataProvider {
         "Search Order",
         "Which search order to use when computing a spanning tree.",
         SEARCH_ORDER_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         TreeifyingOrder.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "ELK Mr. Tree",
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of the input graph and arranges all nodes according to the resulting parent-children hierarchy. I pity the fool who doesn\'t use Mr. Tree Layout.",
         new AlgorithmFactory(TreeLayoutProvider.class, ""),
@@ -143,47 +145,47 @@ public class Properties implements ILayoutMetaDataProvider {
         EnumSet.of(GraphFeature.DISCONNECTED)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.spacing.node",
-        MRTREE_SUP_SPACING_NODE
+        MR_TREE_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.spacing.border",
-        MRTREE_SUP_SPACING_BORDER
+        MR_TREE_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.aspectRatio",
-        MRTREE_SUP_ASPECT_RATIO
+        MR_TREE_SUP_ASPECT_RATIO
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.priority",
-        MRTREE_SUP_PRIORITY
+        MR_TREE_SUP_PRIORITY
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.separateConnectedComponents",
-        MRTREE_SUP_SEPARATE_CONNECTED_COMPONENTS
+        MR_TREE_SUP_SEPARATE_CONNECTED_COMPONENTS
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.direction",
-        MRTREE_SUP_DIRECTION
+        MR_TREE_SUP_DIRECTION
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.debugMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.alg.mrtree.weighting",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.mrtree.mrtree",
+        "org.eclipse.elk.alg.mrtree.mrTree",
         "org.eclipse.elk.alg.mrtree.searchOrder",
         null
     );

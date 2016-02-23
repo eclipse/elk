@@ -778,6 +778,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Layout Algorithm",
         "Select a specific layout algorithm.",
         null,
+        LayoutOptionData.Type.STRING,
         String.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -788,9 +789,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Alignment",
         "Alignment of the selected node relative to other nodes, the exact meaning depends on the used algorithm.",
         ALIGNMENT_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         Alignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.animate"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.aspectRatio",
@@ -798,9 +801,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Aspect Ratio",
         "The desired aspect ratio of the drawing, that is the quotient of width by height.",
         null,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.aspectRatio"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.bendPoints",
@@ -808,9 +813,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Bend Points",
         "A fixed list of bend points for the edge. This is used by the \'Fixed Layout\' algorithm to specify a pre-defined routing for an edge. The vector chain must include the source point, any bend points, and the target point, so it must have at least two points.",
         null,
+        LayoutOptionData.Type.OBJECT,
         KVectorChain.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.bendPoints"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.debugMode",
@@ -818,9 +825,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Debug Mode",
         "Whether additional debug information shall be generated.",
         DEBUG_MODE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.debugMode"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.direction",
@@ -828,9 +837,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Direction",
         "Overall direction of edges: horizontal (right / left) or vertical (down / up).",
         DIRECTION_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         Direction.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.direction"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.edgeRouting",
@@ -838,9 +849,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Edge Routing",
         "What kind of edge routing style should be applied for the content of a parent node. Algorithms may also set this option to single edges in order to mark them as splines. The bend point list of edges with this option set to SPLINES must be interpreted as control points for a piecewise cubic spline.",
         EDGE_ROUTING_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         EdgeRouting.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.edgeRouting"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.expandNodes",
@@ -848,9 +861,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Expand Nodes",
         "If active, nodes are expanded to fill the area of their parent.",
         EXPAND_NODES_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.expandNodes"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.hierarchyHandling",
@@ -858,9 +873,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Hierarchy Handling",
         "Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the option is assumed as SEPARATE_CHILDREN.",
         HIERARCHY_HANDLING_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         HierarchyHandling.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.hierarchyHandling"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.interactive",
@@ -868,6 +885,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Interactive",
         "Whether the algorithm should be run in interactive mode for the content of a parent node. What this means exactly depends on how the specific algorithm interprets this option. Usually in the interactive mode algorithms try to modify the current layout as little as possible.",
         INTERACTIVE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -878,9 +896,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Layout Hierarchy",
         "Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy level of the graph is processed independently, possibly by different layout algorithms, beginning with the lowest level. If it is set, the algorithm is responsible to process all hierarchy levels that are contained in the associated parent node.",
         LAYOUT_HIERARCHY_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.layoutHierarchy"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portConstraints",
@@ -888,9 +908,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Port Constraints",
         "Defines constraints of the position of the ports of a node.",
         PORT_CONSTRAINTS_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         PortConstraints.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.portConstraints"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.position",
@@ -898,9 +920,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Position",
         "The position of a node, port, or label. This is used by the \'Fixed Layout\' algorithm to specify a pre-defined position.",
         null,
+        LayoutOptionData.Type.OBJECT,
         KVector.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.position"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.priority",
@@ -908,9 +932,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Priority",
         "Defines the priority of an object; its meaning depends on the specific layout algorithm and the context where it is used.",
         null,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.priority"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.randomSeed",
@@ -918,9 +944,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Randomization Seed",
         "Seed used for pseudo-random number generators to control the layout algorithm. If the value is 0, the seed shall be determined pseudo-randomly (e.g. from the system time).",
         null,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.randomSeed"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.separateConnectedComponents",
@@ -928,9 +956,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Separate Connected Components",
         "Whether each connected component should be processed separately.",
         null,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.separateConnComp"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.junctionPoints",
@@ -938,9 +968,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Junction Points",
         "This option is not used as option, but as output of the layout algorithms. It is attached to edges and determines the points where junction symbols should be drawn in order to represent hyperedges with orthogonal routing. Whether such points are computed depends on the chosen layout algorithm and edge routing style. The points are put into the vector chain with no specific order.",
         null,
+        LayoutOptionData.Type.OBJECT,
         KVectorChain.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.junctionPoints"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.commentBox",
@@ -948,9 +980,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Comment Box",
         "Whether the node should be regarded as a comment box instead of a regular node. In that case its placement should be similar to how labels are handled. Any edges incident to a comment box specify to which graph elements the comment is related.",
         COMMENT_BOX_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.commentBox"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.hypernode",
@@ -958,9 +992,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Hypernode",
         "Whether the node should be handled as a hypernode.",
         HYPERNODE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.hypernode"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.labelManager",
@@ -968,6 +1004,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Label Manager",
         "Label managers can shorten labels upon a layout algorithm\'s request.",
         null,
+        LayoutOptionData.Type.UNDEFINED,
         ILabelManager.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
@@ -978,9 +1015,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Margins",
         "Margins define additional space around the actual bounds of a graph element. For instance, ports or labels being placed on the outside of a node\'s border might introduce such a margin. The margin is used to guarantee non-overlap of other graph elements with those ports or labels.",
         MARGINS_DEFAULT,
+        LayoutOptionData.Type.OBJECT,
         Spacing.Margins.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.margins"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.noLayout",
@@ -988,6 +1027,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "No Layout",
         "No layout is done for the associated element. This is used to mark parts of a diagram to avoid their inclusion in the layout graph, or to mark parts of the layout graph to prevent layout engines from processing them. If you wish to exclude the contents of a compound node from automatic layout, while the node itself is still considered on its own layer, use the \'Fixed Layout\' algorithm for that node.",
         NO_LAYOUT_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
@@ -998,9 +1038,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Scale Factor",
         "The scaling factor to be applied to the corresponding node in recursive layout. It causes the corresponding node\'s size to be adjusted, and its ports and labels to be sized and placed accordingly after the layout of that node has been determined (and before the node itself and its siblings are arranged). The scaling is not reverted afterwards, so the resulting layout graph contains the adjusted size and position data. This option is currently not supported if \'Layout Hierarchy\' is set.",
         SCALE_FACTOR_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.scaleFactor"
     ));
     registry.addDependency(
         "org.eclipse.elk.scaleFactor",
@@ -1013,9 +1055,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Animate",
         "Whether the shift from the old layout to the new computed layout shall be animated.",
         ANIMATE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.animate"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.animTimeFactor",
@@ -1023,9 +1067,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Animation Time Factor",
         "Factor for computation of animation time. The higher the value, the longer the animation time. If the value is 0, the resulting time is always equal to the minimum defined by \'Minimal Animation Time\'.",
         ANIM_TIME_FACTOR_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.animTimeFactor"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layoutAncestors",
@@ -1033,9 +1079,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Layout Ancestors",
         "Whether the hierarchy levels on the path from the selected element to the root of the diagram shall be included in the layout process.",
         LAYOUT_ANCESTORS_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.layoutAncestors"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.maxAnimTime",
@@ -1043,9 +1091,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Maximal Animation Time",
         "The maximal time for animations, in milliseconds.",
         MAX_ANIM_TIME_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.maxAnimTime"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.minAnimTime",
@@ -1053,9 +1103,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Minimal Animation Time",
         "The minimal time for animations, in milliseconds.",
         MIN_ANIM_TIME_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.minAnimTime"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.progressBar",
@@ -1063,9 +1115,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Progress Bar",
         "Whether a progress bar shall be displayed during layout computations.",
         PROGRESS_BAR_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.progressBar"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.zoomToFit",
@@ -1073,9 +1127,11 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         "Zoom to Fit",
         "Whether the zoom level shall be set to view the whole diagram after layout.",
         ZOOM_TO_FIT_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.zoomToFit"
     ));
     registry.register(new LayoutCategoryData(
         "org.eclipse.elk.layered",

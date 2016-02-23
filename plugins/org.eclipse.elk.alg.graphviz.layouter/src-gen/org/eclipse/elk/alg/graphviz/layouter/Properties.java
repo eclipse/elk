@@ -258,6 +258,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Adapt Port Positions",
         "Whether ports should be moved to the point where edges cross the node\'s bounds.",
         ADAPT_PORT_POSITIONS_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -268,6 +269,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Concentrate Edges",
         "Merges multiedges into a single edge and causes partially parallel edges to share part of their paths.",
         CONCENTRATE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -278,6 +280,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Epsilon",
         "Terminating condition. If the length squared of all energy gradients are less than epsilon, the algorithm stops.",
         null,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -288,6 +291,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Iterations Factor",
         "Multiplicative scale factor for the maximal number of iterations used during crossing minimization, node ranking, and node positioning.",
         null,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -298,6 +302,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Label Angle",
         "Angle between head / tail positioned edge labels and the corresponding edge.",
         LABEL_ANGLE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.VISIBLE
@@ -308,6 +313,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Label Distance",
         "Distance of head / tail positioned edge labels to the source or target node.",
         LABEL_DISTANCE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.VISIBLE
@@ -318,6 +324,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Layer Spacing Factor",
         "Factor for the spacing of different layers (ranks).",
         LAYER_SPACING_FACTOR_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -328,6 +335,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Max. Iterations",
         "The maximum number of iterations.",
         null,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -338,6 +346,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Distance Model",
         "Specifies how the distance matrix is computed for the input graph.",
         NEATO_MODEL_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         NeatoModel.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -348,6 +357,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Overlap Removal",
         "Determines if and how node overlaps should be removed.",
         OVERLAP_MODE_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         OverlapMode.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE

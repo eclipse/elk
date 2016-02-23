@@ -175,6 +175,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Force Model",
         "Determines the model for force calculation.",
         MODEL_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         ForceModelStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -185,6 +186,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Iterations",
         "The number of iterations on the force model.",
         ITERATIONS_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -195,6 +197,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Repulsive Power",
         "Determines how many bend points are added to the edge; such bend points are regarded as repelling particles in the force model",
         REPULSIVE_POWER_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.VISIBLE
@@ -205,6 +208,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "FR Temperature",
         "The temperature is used as a scaling factor for particle displacements.",
         TEMPERATURE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -220,6 +224,7 @@ public class Properties implements ILayoutMetaDataProvider {
         "Eades Repulsion",
         "Factor for repulsive forces in Eades\' model.",
         REPULSION_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE

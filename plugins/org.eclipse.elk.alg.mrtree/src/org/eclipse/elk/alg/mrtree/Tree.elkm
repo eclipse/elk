@@ -20,7 +20,7 @@ bundle {
     class properties.Properties
 }
 
-algorithm mrtree(TreeLayoutProvider) {
+algorithm mrTree(TreeLayoutProvider) {
     label "ELK Mr. Tree"
     description 
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
