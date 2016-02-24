@@ -38,7 +38,7 @@ public interface KGraphPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNAME = "kgraph";
+    String eNAME = "graph";
 
     /**
      * The package namespace URI.
@@ -54,7 +54,7 @@ public interface KGraphPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNS_PREFIX = "kgraph";
+    String eNS_PREFIX = "graph";
 
     /**
      * The singleton instance of the package.

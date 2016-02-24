@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="KIELER - Kiel Integrated Environment for Layout Eclipse RichClient&#xA;&#xA;http://www.informatik.uni-kiel.de/rtsys/kieler/&#xA;&#xA;Copyright 2009 by&#xA;+ Kiel University&#xA;  + Department of Computer Science&#xA;    + Real-Time and Embedded Systems Group&#xA;&#xA;This code is provided under the terms of the Eclipse Public License (EPL).&#xA;See the file epl-v10.html for the license text."
-    modelDirectory="/de.cau.cs.kieler.core.kgraph/src" editDirectory="/de.cau.cs.kieler.core.kgraph.edit/src"
-    editorDirectory="/de.cau.cs.kieler.core.kgraph.editor/src" modelPluginID="de.cau.cs.kieler.core.kgraph"
-    modelName="KGraph" editPluginClass="de.cau.cs.kieler.core.kgraph.provider.KGraphEditPlugin"
-    editorPluginClass="de.cau.cs.kieler.core.kgraph.presentation.KGraphEditorPlugin"
-    testSuiteClass="de.cau.cs.kieler.core.kgraph.tests.KGraphAllTests" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.core.kgraph.edit"
+    modelDirectory="/org.eclipse.elk.graph/src" editDirectory="/org.eclipse.elk.graph.edit/src"
+    editorDirectory="/org.eclipse.elk.graph.editor/src" modelPluginID="org.eclipse.elk.graph"
+    modelName="KGraph" editPluginClass="org.eclipse.elk.graph.provider.KGraphEditPlugin"
+    editorPluginClass="org.eclipse.elk.graph.presentation.KGraphEditorPlugin"
+    testSuiteClass="org.eclipse.elk.graph.tests.KGraphAllTests" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="org.eclipse.elk.graph.edit"
     language="">
   <foreignModel>kgraph.ecore</foreignModel>
-  <genPackages prefix="KGraph" basePackage="de.cau.cs.kieler.core" disposableProviderFactory="true"
+  <genPackages prefix="KGraph" basePackage="org.eclipse.elk" disposableProviderFactory="true"
       fileExtensions="kgraph,kgx" ecorePackage="kgraph.ecore#/">
     <genDataTypes ecoreDataType="kgraph.ecore#//IProperty">
       <genTypeParameters ecoreTypeParameter="kgraph.ecore#//IProperty/T"/>
