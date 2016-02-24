@@ -142,6 +142,40 @@ public class LayoutMetaDataService {
     }
 
     /**
+     * Returns the layout algorithm data associated with the given ID with a fallback to the algorithm with the given
+     * default ID. If neither of which are found, returns the first layout algorithm data in the list of registered
+     * layout algorithms. If no layout algorithms are registered, {@code null} is returned.
+     * 
+     * @param algorithmId
+     *            layout algorithm identifier.
+     * @param defaultId
+     *            fallback layout algorithm identifier.
+     * @return the layout algorithm data or {@code null} if no layout algorithm at all is registered.
+     */
+    public final LayoutAlgorithmData getAlgorithmDataOrDefault(final String algorithmId, final String defaultId) {
+        // If the algorithm ID is empty, use a default layout algorithm
+        final String finalDefaultId = defaultId == null ? "" : defaultId;
+        final String finalAlgorithmId = algorithmId == null || algorithmId.isEmpty() ? finalDefaultId : algorithmId;
+
+        // Query the meta data service for the algorithm's data
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
+        LayoutAlgorithmData result = layoutDataService.getAlgorithmData(finalAlgorithmId);
+
+        if (result != null) {
+            return result;
+        }
+
+        // We didn't any algorithm yet, so simply return the first one in the list
+        Collection<LayoutAlgorithmData> allAlgorithmData = layoutDataService.getAlgorithmData();
+        if (!allAlgorithmData.isEmpty()) {
+            return allAlgorithmData.iterator().next();
+        }
+
+        // Right, at this point we simply give up
+        return null;
+    }
+
+    /**
      * Returns the layout option data associated with the given identifier.
      * 
      * @param id

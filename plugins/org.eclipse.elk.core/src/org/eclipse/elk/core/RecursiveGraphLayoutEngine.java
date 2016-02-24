@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.Queue;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.HierarchyHandling;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KEdge;
@@ -39,7 +40,7 @@ import com.google.common.collect.Lists;
  * @author ars
  * @author msp
  */
-public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
+public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     
     /**
      * Performs recursive layout on the given layout graph.
@@ -210,7 +211,9 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     protected LayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
         String algorithmId = nodeLayout.getProperty(CoreOptions.ALGORITHM);
-        LayoutAlgorithmData result = getAlgorithm(algorithmId);
+        LayoutAlgorithmData result = LayoutMetaDataService.getInstance().getAlgorithmDataOrDefault(
+                algorithmId, getDefaultLayoutAlgorithmID());
+        
         if (result == null) {
             if (algorithmId == null || algorithmId.isEmpty()) {
                 throw new UnsupportedConfigurationException("No layout algorithm has been specified ("
@@ -223,12 +226,13 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     }
     
     /**
-     * Returns a layout algorithm descriptor for the given identifier.
+     * Returns the ID of the layout algorithm to be used by default.
      * 
-     * @param algorithmId an algorithm identifier, or {@code null} to get a default algorithm
-     * @return a matching algorithm or default algorithm
+     * @return the default layout algorithm's ID.
      */
-    protected abstract LayoutAlgorithmData getAlgorithm(final String algorithmId);
+    public String getDefaultLayoutAlgorithmID() {
+        return "org.eclipse.elk.layered";
+    }
 
     /**
      * Determines the total number of layout nodes in the given layout graph.

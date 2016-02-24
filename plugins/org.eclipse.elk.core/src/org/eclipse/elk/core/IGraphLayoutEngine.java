@@ -25,12 +25,26 @@ public interface IGraphLayoutEngine {
     /**
      * Performs layout on the given layout graph.
      * 
-     * @param layoutGraph the top-level node of the graph to be laid out
-     * @param progressMonitor monitor to which progress of the layout algorithms is reported
-     * @throws UnsupportedGraphException if the given graph is not supported by this algorithm
-     * @throws UnsupportedConfigurationException if the layout configuration included in the graph
-     *      is inconsistent or incompatible
+     * @param layoutGraph
+     *            the top-level node of the graph to be laid out
+     * @param progressMonitor
+     *            monitor to which progress of the layout algorithms is reported
+     * @throws UnsupportedGraphException
+     *             if the given graph is not supported by this algorithm
+     * @throws UnsupportedConfigurationException
+     *             if the layout configuration included in the graph is inconsistent or incompatible
      */
     void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor);
+
+    /**
+     * Returns the ID of the layout algorithm used by this layout engine if no algorithm is explicitly set in the graph.
+     * 
+     * @implSpec The default implementation returns {@code "org.eclipse.elk.layered"}.
+     * 
+     * @return ID of the default layout algorithm.
+     */
+    default String getDefaultLayoutAlgorithmID() {
+        return "org.eclipse.elk.layered";
+    }
 
 }

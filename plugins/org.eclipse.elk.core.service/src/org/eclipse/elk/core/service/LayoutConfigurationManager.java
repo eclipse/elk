@@ -10,19 +10,18 @@
  *******************************************************************************/
 package org.eclipse.elk.core.service;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
-import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
 
@@ -41,25 +40,6 @@ import com.google.inject.Singleton;
 public class LayoutConfigurationManager {
     
     /**
-     * A specialized version of the recursive graph layout engine that uses a layout configuration
-     * manager to obtain layout algorithm meta data for a given algorithm identifier.
-     */
-    public static class GraphLayoutEngine extends RecursiveGraphLayoutEngine {
-        
-        @Inject
-        private LayoutConfigurationManager configManager;
-        
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected LayoutAlgorithmData getAlgorithm(final String algorithmId) {
-            return configManager.getAlgorithm(algorithmId);
-        }
-        
-    }
-    
-    /**
      * Suffix appended to layout option identifiers to mark them as applied recursively to all
      * contained elements.
      */
@@ -71,27 +51,9 @@ public class LayoutConfigurationManager {
     @Inject(optional = true)
     private ILayoutConfigurationStore.Provider configProvider;
     
-    /**
-     * Return a layout algorithm data instance for the given layout algorithm identifier. The id can be
-     * attached to some graph element in order to select an algorithm. If no id is given, a default
-     * algorithm is selected.
-     * 
-     * @return a layout algorithm, or {@code null} if none was found for the given hint
-     */
-    public LayoutAlgorithmData getAlgorithm(final String algorithmId) {
-        final String finalAlgorithmId = algorithmId == null || algorithmId.isEmpty()
-                ? "org.eclipse.elk.layered" : algorithmId;
-        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
-        LayoutAlgorithmData result = layoutDataService.getAlgorithmData(finalAlgorithmId);
-        if (result != null) {
-            return result;
-        }
-        Collection<LayoutAlgorithmData> allAlgorithmData = layoutDataService.getAlgorithmData();
-        if (!allAlgorithmData.isEmpty()) {
-            return allAlgorithmData.iterator().next();
-        }
-        return null;
-    }
+    /** The graph layout engine defines the default layout algorithm to be used. */
+    @Inject
+    private IGraphLayoutEngine graphLayoutEngine;
     
     /**
      * Return a layout algorithm data instance from the given configuration store. If no specific
@@ -100,7 +62,9 @@ public class LayoutConfigurationManager {
      * @return a layout algorithm, or {@code null} if none was found for the given configuration
      */
     public LayoutAlgorithmData getAlgorithm(final ILayoutConfigurationStore config) {
-        return getAlgorithm((String) getRawOptionValue(CoreOptions.ALGORITHM, config));
+        return LayoutMetaDataService.getInstance().getAlgorithmDataOrDefault(
+                (String) getRawOptionValue(CoreOptions.ALGORITHM, config),
+                graphLayoutEngine.getDefaultLayoutAlgorithmID());
     }
     
     /**
@@ -144,7 +108,8 @@ public class LayoutConfigurationManager {
     public Object getOptionValue(final LayoutOptionData optionData, final ILayoutConfigurationStore config) {
         Object result = getRawOptionValue(optionData, config);
         if (optionData.equals(CoreOptions.ALGORITHM)) {
-            LayoutAlgorithmData algoData = getAlgorithm((String) result);
+            LayoutAlgorithmData algoData = LayoutMetaDataService.getInstance().getAlgorithmDataOrDefault(
+                    (String) result, graphLayoutEngine.getDefaultLayoutAlgorithmID());
             if (algoData != null) {
                 return algoData.getId();
             }

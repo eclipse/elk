@@ -11,7 +11,7 @@
 package org.eclipse.elk.core.service.internal;
 
 import org.eclipse.elk.core.IGraphLayoutEngine;
-import org.eclipse.elk.core.service.LayoutConfigurationManager;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 
 import com.google.inject.Binder;
@@ -27,7 +27,7 @@ public class DefaultModule implements Module {
      */
     @Override
     public void configure(final Binder binder) {
-        binder.bind(IGraphLayoutEngine.class).to(LayoutConfigurationManager.GraphLayoutEngine.class);
+        binder.bind(IGraphLayoutEngine.class).to(RecursiveGraphLayoutEngine.class);
     }
 
 }
