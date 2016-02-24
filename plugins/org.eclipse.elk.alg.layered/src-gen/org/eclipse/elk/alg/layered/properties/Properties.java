@@ -656,9 +656,9 @@ public class Properties implements ILayoutMetaDataProvider {
   private final static Direction LAYERED_SUP_DIRECTION = Direction.RIGHT;
   
   /**
-   * Default value for {@link #PORTALIGNMENT_BASIC} with algorithm "ELK Layered".
+   * Default value for {@link #PORT_ALIGNMENT_BASIC} with algorithm "ELK Layered".
    */
-  private final static PortAlignment LAYERED_SUP_PORTALIGNMENT_BASIC = PortAlignment.JUSTIFIED;
+  private final static PortAlignment LAYERED_SUP_PORT_ALIGNMENT_BASIC = PortAlignment.JUSTIFIED;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
@@ -1301,7 +1301,7 @@ public class Properties implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.alg.layered.layered",
         "org.eclipse.elk.portAlignment.basic",
-        LAYERED_SUP_PORTALIGNMENT_BASIC
+        LAYERED_SUP_PORT_ALIGNMENT_BASIC
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.layered.layered",

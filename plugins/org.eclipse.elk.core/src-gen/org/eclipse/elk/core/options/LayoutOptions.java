@@ -468,141 +468,141 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             PARTITIONING_ACTIVATE_DEFAULT);
   
   /**
-   * Default value for {@link #NODELABELS_INSETS}.
+   * Default value for {@link #NODE_LABELS_INSETS}.
    */
-  private final static Spacing.Insets NODELABELS_INSETS_DEFAULT = new Spacing.Insets(0, 0, 0, 0);
+  private final static Spacing.Insets NODE_LABELS_INSETS_DEFAULT = new Spacing.Insets(0, 0, 0, 0);
   
   /**
    * Define insets for node labels that are placed inside of a node.
    */
-  public final static IProperty<Spacing.Insets> NODELABELS_INSETS = new Property<Spacing.Insets>(
+  public final static IProperty<Spacing.Insets> NODE_LABELS_INSETS = new Property<Spacing.Insets>(
             "org.eclipse.elk.nodeLabels.insets",
-            NODELABELS_INSETS_DEFAULT);
+            NODE_LABELS_INSETS_DEFAULT);
   
   /**
-   * Default value for {@link #NODELABELS_PLACEMENT}.
+   * Default value for {@link #NODE_LABELS_PLACEMENT}.
    */
-  private final static EnumSet<NodeLabelPlacement> NODELABELS_PLACEMENT_DEFAULT = NodeLabelPlacement.fixed();
+  private final static EnumSet<NodeLabelPlacement> NODE_LABELS_PLACEMENT_DEFAULT = NodeLabelPlacement.fixed();
   
   /**
    * Hints for where node labels are to be placed; if empty, the node label's position is not
    * modified.
    */
-  public final static IProperty<EnumSet<NodeLabelPlacement>> NODELABELS_PLACEMENT = new Property<EnumSet<NodeLabelPlacement>>(
+  public final static IProperty<EnumSet<NodeLabelPlacement>> NODE_LABELS_PLACEMENT = new Property<EnumSet<NodeLabelPlacement>>(
             "org.eclipse.elk.nodeLabels.placement",
-            NODELABELS_PLACEMENT_DEFAULT);
+            NODE_LABELS_PLACEMENT_DEFAULT);
   
   /**
-   * Default value for {@link #PORTALIGNMENT_BASIC}.
+   * Default value for {@link #PORT_ALIGNMENT_BASIC}.
    */
-  private final static PortAlignment PORTALIGNMENT_BASIC_DEFAULT = PortAlignment.JUSTIFIED;
+  private final static PortAlignment PORT_ALIGNMENT_BASIC_DEFAULT = PortAlignment.JUSTIFIED;
   
   /**
    * Defines the default port distribution for a node. May be overridden for each side individually.
    */
-  public final static IProperty<PortAlignment> PORTALIGNMENT_BASIC = new Property<PortAlignment>(
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_BASIC = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.basic",
-            PORTALIGNMENT_BASIC_DEFAULT);
+            PORT_ALIGNMENT_BASIC_DEFAULT);
   
   /**
-   * Default value for {@link #PORTALIGNMENT_NORTH}.
+   * Default value for {@link #PORT_ALIGNMENT_NORTH}.
    */
-  private final static PortAlignment PORTALIGNMENT_NORTH_DEFAULT = PortAlignment.UNDEFINED;
+  private final static PortAlignment PORT_ALIGNMENT_NORTH_DEFAULT = PortAlignment.UNDEFINED;
   
   /**
    * Defines how ports on the northern side are placed, overriding the node's general port alignment.
    */
-  public final static IProperty<PortAlignment> PORTALIGNMENT_NORTH = new Property<PortAlignment>(
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_NORTH = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.north",
-            PORTALIGNMENT_NORTH_DEFAULT);
+            PORT_ALIGNMENT_NORTH_DEFAULT);
   
   /**
-   * Default value for {@link #PORTALIGNMENT_SOUTH}.
+   * Default value for {@link #PORT_ALIGNMENT_SOUTH}.
    */
-  private final static PortAlignment PORTALIGNMENT_SOUTH_DEFAULT = PortAlignment.UNDEFINED;
+  private final static PortAlignment PORT_ALIGNMENT_SOUTH_DEFAULT = PortAlignment.UNDEFINED;
   
   /**
    * Defines how ports on the southern side are placed, overriding the node's general port alignment.
    */
-  public final static IProperty<PortAlignment> PORTALIGNMENT_SOUTH = new Property<PortAlignment>(
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_SOUTH = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.south",
-            PORTALIGNMENT_SOUTH_DEFAULT);
+            PORT_ALIGNMENT_SOUTH_DEFAULT);
   
   /**
-   * Default value for {@link #PORTALIGNMENT_WEST}.
+   * Default value for {@link #PORT_ALIGNMENT_WEST}.
    */
-  private final static PortAlignment PORTALIGNMENT_WEST_DEFAULT = PortAlignment.UNDEFINED;
+  private final static PortAlignment PORT_ALIGNMENT_WEST_DEFAULT = PortAlignment.UNDEFINED;
   
   /**
    * Defines how ports on the western side are placed, overriding the node's general port alignment.
    */
-  public final static IProperty<PortAlignment> PORTALIGNMENT_WEST = new Property<PortAlignment>(
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_WEST = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.west",
-            PORTALIGNMENT_WEST_DEFAULT);
+            PORT_ALIGNMENT_WEST_DEFAULT);
   
   /**
-   * Default value for {@link #PORTALIGNMENT_EAST}.
+   * Default value for {@link #PORT_ALIGNMENT_EAST}.
    */
-  private final static PortAlignment PORTALIGNMENT_EAST_DEFAULT = PortAlignment.UNDEFINED;
+  private final static PortAlignment PORT_ALIGNMENT_EAST_DEFAULT = PortAlignment.UNDEFINED;
   
   /**
    * Defines how ports on the eastern side are placed, overriding the node's general port alignment.
    */
-  public final static IProperty<PortAlignment> PORTALIGNMENT_EAST = new Property<PortAlignment>(
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_EAST = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.east",
-            PORTALIGNMENT_EAST_DEFAULT);
+            PORT_ALIGNMENT_EAST_DEFAULT);
   
   /**
-   * Default value for {@link #NODESIZE_CONSTRAINTS}.
+   * Default value for {@link #NODE_SIZE_CONSTRAINTS}.
    */
-  private final static EnumSet<SizeConstraint> NODESIZE_CONSTRAINTS_DEFAULT = EnumSet.<SizeConstraint>noneOf(SizeConstraint.class);
+  private final static EnumSet<SizeConstraint> NODE_SIZE_CONSTRAINTS_DEFAULT = EnumSet.<SizeConstraint>noneOf(SizeConstraint.class);
   
   /**
    * Constraints for determining node sizes. Each member of the set specifies something that
    * should be taken into account when calculating node sizes. The empty set corresponds to
    * node sizes being fixed.
    */
-  public final static IProperty<EnumSet<SizeConstraint>> NODESIZE_CONSTRAINTS = new Property<EnumSet<SizeConstraint>>(
+  public final static IProperty<EnumSet<SizeConstraint>> NODE_SIZE_CONSTRAINTS = new Property<EnumSet<SizeConstraint>>(
             "org.eclipse.elk.nodeSize.constraints",
-            NODESIZE_CONSTRAINTS_DEFAULT);
+            NODE_SIZE_CONSTRAINTS_DEFAULT);
   
   /**
-   * Default value for {@link #NODESIZE_OPTIONS}.
+   * Default value for {@link #NODE_SIZE_OPTIONS}.
    */
-  private final static EnumSet<SizeOptions> NODESIZE_OPTIONS_DEFAULT = EnumSet.<SizeOptions>of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.APPLY_ADDITIONAL_INSETS);
+  private final static EnumSet<SizeOptions> NODE_SIZE_OPTIONS_DEFAULT = EnumSet.<SizeOptions>of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.APPLY_ADDITIONAL_INSETS);
   
   /**
    * Options modifying the behavior of the size constraints set on a node. Each member of the
    * set specifies something that should be taken into account when calculating node sizes.
    * The empty set corresponds to no further modifications.
    */
-  public final static IProperty<EnumSet<SizeOptions>> NODESIZE_OPTIONS = new Property<EnumSet<SizeOptions>>(
+  public final static IProperty<EnumSet<SizeOptions>> NODE_SIZE_OPTIONS = new Property<EnumSet<SizeOptions>>(
             "org.eclipse.elk.nodeSize.options",
-            NODESIZE_OPTIONS_DEFAULT);
+            NODE_SIZE_OPTIONS_DEFAULT);
   
   /**
-   * Default value for {@link #NODESIZE_MINIMUM}.
+   * Default value for {@link #NODE_SIZE_MINIMUM}.
    */
-  private final static KVector NODESIZE_MINIMUM_DEFAULT = new KVector();
+  private final static KVector NODE_SIZE_MINIMUM_DEFAULT = new KVector();
   
   /**
    * The minimal size to which a node can be reduced.
    */
-  public final static IProperty<KVector> NODESIZE_MINIMUM = new Property<KVector>(
+  public final static IProperty<KVector> NODE_SIZE_MINIMUM = new Property<KVector>(
             "org.eclipse.elk.nodeSize.minimum",
-            NODESIZE_MINIMUM_DEFAULT);
+            NODE_SIZE_MINIMUM_DEFAULT);
   
   /**
-   * Default value for {@link #EDGELABELS_PLACEMENT}.
+   * Default value for {@link #EDGE_LABELS_PLACEMENT}.
    */
-  private final static EdgeLabelPlacement EDGELABELS_PLACEMENT_DEFAULT = EdgeLabelPlacement.UNDEFINED;
+  private final static EdgeLabelPlacement EDGE_LABELS_PLACEMENT_DEFAULT = EdgeLabelPlacement.UNDEFINED;
   
   /**
    * Gives a hint on where to put edge labels.
    */
-  public final static IProperty<EdgeLabelPlacement> EDGELABELS_PLACEMENT = new Property<EdgeLabelPlacement>(
+  public final static IProperty<EdgeLabelPlacement> EDGE_LABELS_PLACEMENT = new Property<EdgeLabelPlacement>(
             "org.eclipse.elk.edgeLabels.placement",
-            EDGELABELS_PLACEMENT_DEFAULT);
+            EDGE_LABELS_PLACEMENT_DEFAULT);
   
   /**
    * Font name used for a label.
@@ -658,42 +658,42 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             "org.eclipse.elk.port.borderOffset");
   
   /**
-   * Default value for {@link #PORTLABELS_PLACEMENT}.
+   * Default value for {@link #PORT_LABELS_PLACEMENT}.
    */
-  private final static PortLabelPlacement PORTLABELS_PLACEMENT_DEFAULT = PortLabelPlacement.OUTSIDE;
+  private final static PortLabelPlacement PORT_LABELS_PLACEMENT_DEFAULT = PortLabelPlacement.OUTSIDE;
   
   /**
    * Decides on a placement method for port labels.
    */
-  public final static IProperty<PortLabelPlacement> PORTLABELS_PLACEMENT = new Property<PortLabelPlacement>(
+  public final static IProperty<PortLabelPlacement> PORT_LABELS_PLACEMENT = new Property<PortLabelPlacement>(
             "org.eclipse.elk.portLabels.placement",
-            PORTLABELS_PLACEMENT_DEFAULT);
+            PORT_LABELS_PLACEMENT_DEFAULT);
   
   /**
-   * Default value for {@link #INSIDESELFLOOPS_ACTIVATE}.
+   * Default value for {@link #INSIDE_SELF_LOOPS_ACTIVATE}.
    */
-  private final static Object INSIDESELFLOOPS_ACTIVATE_DEFAULT = Boolean.valueOf(false);
+  private final static Object INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT = Boolean.valueOf(false);
   
   /**
    * Whether this node allows to route self loops inside of it instead of around it. If set to true,
    * this will make the node a compound node if it isn't already, and will require the layout algorithm
    * to support compound nodes with hierarchical ports.
    */
-  public final static IProperty<Object> INSIDESELFLOOPS_ACTIVATE = new Property<Object>(
+  public final static IProperty<Object> INSIDE_SELF_LOOPS_ACTIVATE = new Property<Object>(
             "org.eclipse.elk.insideSelfLoops.activate",
-            INSIDESELFLOOPS_ACTIVATE_DEFAULT);
+            INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT);
   
   /**
-   * Default value for {@link #INSIDESELFLOOPS_YO}.
+   * Default value for {@link #INSIDE_SELF_LOOPS_YO}.
    */
-  private final static boolean INSIDESELFLOOPS_YO_DEFAULT = false;
+  private final static boolean INSIDE_SELF_LOOPS_YO_DEFAULT = false;
   
   /**
    * Whether a self loop should be routed inside a node instead of around that node.
    */
-  public final static IProperty<Boolean> INSIDESELFLOOPS_YO = new Property<Boolean>(
+  public final static IProperty<Boolean> INSIDE_SELF_LOOPS_YO = new Property<Boolean>(
             "org.eclipse.elk.insideSelfLoops.yo",
-            INSIDESELFLOOPS_YO_DEFAULT);
+            INSIDE_SELF_LOOPS_YO_DEFAULT);
   
   /**
    * Default value for {@link #EDGE_THICKNESS}.

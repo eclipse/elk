@@ -372,16 +372,22 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         val name = member.name
         if (name !== null) {
             val result = new StringBuilder
-            result.append(member.groups.map[it.name.toUpperCase].join('_'))
+            result.append(member.groups.map[it.name.toUpperCaseWithUnderscores].join('_'))
             if (result.length > 0) result.append('_')
-            for (var i = 0; i < name.length; i++) {
-                val c = name.charAt(i)
-                if (Character.isUpperCase(c) && i > 0)
-                    result.append('_')
-                result.append(Character.toUpperCase(c))
-            }
+            result.append(name.toUpperCaseWithUnderscores)
             return result.toString
         }
+    }
+    
+    private def String toUpperCaseWithUnderscores(String str) {
+        val result = new StringBuilder
+        for (var i = 0; i < str.length; i++) {
+            val c = str.charAt(i)
+            if (Character.isUpperCase(c) && i > 0)
+                result.append('_')
+            result.append(Character.toUpperCase(c))
+        }
+        return result.toString
     }
     
     private def getDefaultConstantName(MdProperty property) {
