@@ -13,9 +13,9 @@ package org.eclipse.elk.core.ui;
 import java.util.EnumSet;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;

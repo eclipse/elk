@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
-<plugin>
-  <extension-point id="layoutConnectors" name="Layout Connectors" schema="schema/layoutConnectors.exsd"/>
-  <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
-
-</plugin>

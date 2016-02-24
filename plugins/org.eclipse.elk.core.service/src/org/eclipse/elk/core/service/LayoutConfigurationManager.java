@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.CoreOptions;

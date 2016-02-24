@@ -10,8 +10,12 @@
             uri="http://elk.eclipse.org/KLayoutData">
       </package>
    </extension>
+   
+   <extension-point id="layoutConnectors" name="Layout Connectors" schema="schema/layoutConnectors.exsd"/>
+   <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
+  
    <extension
-         point="org.eclipse.elk.core.service.layoutProviders">
+         point="org.eclipse.elk.core.layoutProviders">
       <provider
             class="org.eclipse.elk.core.options.CoreOptions">
       </provider>

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.service.internal;
 
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.IPropertyValueProxy;

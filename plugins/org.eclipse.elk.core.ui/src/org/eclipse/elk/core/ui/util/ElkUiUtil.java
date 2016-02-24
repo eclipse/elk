@@ -11,9 +11,9 @@
 package org.eclipse.elk.core.ui.util;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.transaction.RecordingCommand;

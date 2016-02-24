@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.views;
 
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.jface.viewers.DialogCellEditor;

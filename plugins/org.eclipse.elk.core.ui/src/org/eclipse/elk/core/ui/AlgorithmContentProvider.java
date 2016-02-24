@@ -16,7 +16,7 @@ import java.util.Map;
 import org.eclipse.elk.core.data.ILayoutMetaData;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutCategoryData;
-import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 

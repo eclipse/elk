@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.elk.core.service" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.elk.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
-         <meta.schema plugin="org.eclipse.elk.core.service" id="layoutProviders" name="Layout Providers"/>
-      </appinfo>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.elk.core" id="layoutProviders" name="Layout Providers"/>
+      </appInfo>
       <documentation>
          The Layout Providers extension point allows plug-ins to add new layout providers to be used with the Eclipse Layout Kernel. Layout providers are algorithms that automatically compute layout information for an instance of the &lt;code&gt;KGraph&lt;/code&gt; data structure.
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
@@ -39,9 +39,9 @@
                <documentation>
                   An optional name of the extension instance.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -59,27 +59,27 @@
                <documentation>
                   Qualified name of a layout metadata provider class.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.elk.core.data.ILayoutMetaDataProvider"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          0.1.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example for a layout provider extension:
 &lt;pre&gt;
@@ -114,9 +114,9 @@
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiinfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          All data that is contributed to this extension point is gathered in the singleton class &lt;code&gt;org.eclipse.elk.core.LayoutDataService&lt;/code&gt;. This is the point where registered data can be read at runtime.
 &lt;p&gt;
@@ -125,18 +125,18 @@
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Registered layout providers are made available through the Eclipse Layout Kernel. The layout kernel organizes appropriate selection of layout providers for layout of a graphical diagram, and provides means to manually select layout providers for each part of the diagram.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright 2008 by&lt;br&gt;
 &amp;nbsp;+ Kiel University&lt;br&gt;

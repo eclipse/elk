@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.elk.core.service.layoutProviders">
+         point="org.eclipse.elk.core.layoutProviders">
       <provider
             class="org.eclipse.elk.alg.mrtree.properties.MrTreeOptions">
       </provider>

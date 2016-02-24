@@ -17,12 +17,12 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.ILayoutSetup;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
-import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.util.ElkUiUtil;
 import org.eclipse.elk.core.util.Pair;

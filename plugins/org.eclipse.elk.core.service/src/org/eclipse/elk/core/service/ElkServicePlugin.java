@@ -13,10 +13,16 @@ package org.eclipse.elk.core.service;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.service.util.MonitoredOperation;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.HashMultimap;
@@ -50,8 +56,7 @@ public final class ElkServicePlugin extends AbstractUIPlugin {
     private ExecutorService executorService;
     
     /** map of currently running layout operations. */
-    private final Multimap<Pair<IWorkbenchPart, Object>, MonitoredOperation> runningOperations
-            = HashMultimap.create();
+    private final Multimap<Pair<IWorkbenchPart, Object>, MonitoredOperation> runningOperations = HashMultimap.create();
     
     /**
      * {@inheritDoc}
@@ -60,6 +65,8 @@ public final class ElkServicePlugin extends AbstractUIPlugin {
     public void start(final BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        
+        loadLayoutProviders();
     }
 
     /**
@@ -93,6 +100,38 @@ public final class ElkServicePlugin extends AbstractUIPlugin {
      */
     public Multimap<Pair<IWorkbenchPart, Object>, MonitoredOperation> getRunningOperations() {
         return runningOperations;
+    }
+    
+    
+    /** identifier of the extension point for layout providers. */
+    protected static final String EXTP_ID_LAYOUT_PROVIDERS = "org.eclipse.elk.core.layoutProviders";
+    /** name of the 'provider' element in the 'layout providers' extension point. */
+    protected static final String ELEMENT_PROVIDER = "provider";
+    /** name of the 'class' attribute in the extension points. */
+    protected static final String ATTRIBUTE_CLASS = "class";
+    
+    /**
+     * Creates a new instance, loading the extension point information in the process.
+     */
+    private void loadLayoutProviders() {
+        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
+        LayoutMetaDataService service = LayoutMetaDataService.getInstance();
+        
+        for (IConfigurationElement element : extensions) {
+            try {
+                if (ELEMENT_PROVIDER.equals(element.getName())) {
+                    ILayoutMetaDataProvider provider = (ILayoutMetaDataProvider)
+                            element.createExecutableExtension(ATTRIBUTE_CLASS);
+                    
+                    if (provider != null) {
+                        service.registerLayoutMetaDataProvider(provider);
+                    }
+                }
+            } catch (CoreException exception) {
+                StatusManager.getManager().handle(exception, ElkServicePlugin.PLUGIN_ID);
+            }
+        }
     }
     
 }

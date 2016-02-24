@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.graphviz.layouter.preferences;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizLayoutProvider;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizTool;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FileFieldEditor;

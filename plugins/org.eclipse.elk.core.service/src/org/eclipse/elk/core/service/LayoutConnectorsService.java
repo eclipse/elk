@@ -17,7 +17,6 @@ import java.util.ListIterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.service.internal.DefaultModule;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -35,8 +34,7 @@ import com.google.inject.Injector;
 public class LayoutConnectorsService {
 
     /** Identifier of the extension point for layout connectors. */
-    protected static final String EXTP_ID_LAYOUT_CONNECTORS =
-            "org.eclipse.elk.core.service.layoutConnectors";
+    protected static final String EXTP_ID_LAYOUT_CONNECTORS = "org.eclipse.elk.core.service.layoutConnectors";
     /** Name of the 'setup' element in the 'layoutConnectors' extension point. */
     protected static final String ELEMENT_SETUP = "setup";
     /** Name of the 'class' attribute in the extension points. */
