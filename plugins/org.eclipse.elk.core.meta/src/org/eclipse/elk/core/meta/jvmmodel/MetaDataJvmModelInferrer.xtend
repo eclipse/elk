@@ -151,7 +151,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             initializer = '''
                 new «Property»<«property.type.asWrapperTypeIfPrimitive ?: typeRef(Object)»>(
                         «property.qualifiedName.toCodeString»«IF property.defaultValue !== null»,
-                        «property.defaultConstantName»«ENDIF»)'''
+                        «property.defaultConstantName»«ENDIF»)«»'''
             documentation = property.description.trimLines
         ]
     }
@@ -209,7 +209,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }
     
     private def StringConcatenationClient registerLayoutOptions(MdBundle bundle) '''
-        «FOR property : bundle.members.filter(MdProperty)»
+        «FOR property : bundle.members.getAllPropertyDefinitions»
             registry.register(new «LayoutOptionData»(
                 «property.qualifiedName.toCodeString»,
                 «property.groups.map[name].join('.').toCodeString»,
@@ -310,12 +310,15 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 case boolean.name:  return Type.BOOLEAN
                 case int.name:      return Type.INT
                 case float.name:    return Type.FLOAT
+                // TODO it may be better to prevent double from the start
+                case double.name:   return Type.FLOAT
             } 
             
             JvmGenericType: switch jvmType.identifier {
                 case Boolean.canonicalName:   return Type.BOOLEAN
                 case Integer.canonicalName:   return Type.INT
                 case Float.canonicalName:     return Type.FLOAT
+                case Double.canonicalName:    return Type.FLOAT
                 case String.canonicalName:    return Type.STRING
                 case EnumSet.canonicalName:   return Type.ENUMSET
                 case jvmType.hasSupertype(IDataObject): return Type.OBJECT
@@ -342,6 +345,8 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         switch property.type?.type?.identifier {
             case null:
                 typeRef(Void)
+            case Double.canonicalName:
+                typeRef(Float)
             case EnumSet.canonicalName: {
                 val outer = property.type as JvmParameterizedTypeReference
                 typeRef(outer.arguments.head?.type)    

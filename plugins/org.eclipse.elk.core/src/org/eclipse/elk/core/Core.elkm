@@ -113,7 +113,7 @@ algorithm random(RandomLayoutProvider) {
 	supports aspectRatio = 1.6f
 }
 
-//------- UI OPTIONS
+//------- UI OPTIONS 
 
 option ^algorithm: String {
 	label "Layout Algorithm"  
@@ -215,7 +215,7 @@ group spacing {
 		description
 			"Spacing of the content of a parent node to its inner border. The inner border is the node
 			border, which is given by width and height, with subtracted insets."
-		default = 12
+		default = 12f
 		targets parents
 		legacyIds de.cau.cs.kieler.borderSpacing
 	}
@@ -413,8 +413,8 @@ group nodeSize {
 			node sizes being fixed."
 		default = EnumSet.noneOf(SizeConstraint)
 		targets nodes
-	}
-	
+	} 
+	 
 	option options: EnumSet<SizeOptions> {
 		label "Node Size Options"
 		description
@@ -424,11 +424,22 @@ group nodeSize {
 		default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.APPLY_ADDITIONAL_INSETS)
 		targets nodes
 	}
-	
+	 
 	advanced option minimum: KVector {
 		label "Node Size Minimum"
 		description "The minimal size to which a node can be reduced."
-		default = new KVector
+		targets nodes
+	} 
+	
+	deprecated advanced option minWidth: float {
+		label "Minimum Width"
+		default = 0
+		targets nodes
+	}
+	
+	deprecated advanced option minHeight: float {
+		label "Minimum Height"
+		default = 0 
 		targets nodes
 	}
 }
@@ -604,8 +615,8 @@ programmatic option scaleFactor: float {
 // --- INSIDE SELF LOOPS
 group insideSelfLoops {
 
-	programmatic option activate {
-		label "Activate Inside Self Loops"
+	programmatic option activate: boolean {
+		label "Activate Inside Self Loops" 
 		description
 			"Whether this node allows to route self loops inside of it instead of around it. If set to true,
 			this will make the node a compound node if it isn't already, and will require the layout algorithm

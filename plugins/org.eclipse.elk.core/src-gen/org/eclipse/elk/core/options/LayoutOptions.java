@@ -392,7 +392,7 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #SPACING_BORDER}.
    */
-  private final static float SPACING_BORDER_DEFAULT = 12;
+  private final static float SPACING_BORDER_DEFAULT = 12f;
   
   /**
    * Spacing of the content of a parent node to its inner border. The inner border is the node
@@ -581,16 +581,28 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
             NODE_SIZE_OPTIONS_DEFAULT);
   
   /**
-   * Default value for {@link #NODE_SIZE_MINIMUM}.
-   */
-  private final static KVector NODE_SIZE_MINIMUM_DEFAULT = new KVector();
-  
-  /**
    * The minimal size to which a node can be reduced.
    */
   public final static IProperty<KVector> NODE_SIZE_MINIMUM = new Property<KVector>(
-            "org.eclipse.elk.nodeSize.minimum",
-            NODE_SIZE_MINIMUM_DEFAULT);
+            "org.eclipse.elk.nodeSize.minimum");
+  
+  /**
+   * Default value for {@link #NODE_SIZE_MIN_WIDTH}.
+   */
+  private final static float NODE_SIZE_MIN_WIDTH_DEFAULT = 0;
+  
+  public final static IProperty<Float> NODE_SIZE_MIN_WIDTH = new Property<Float>(
+            "org.eclipse.elk.nodeSize.minWidth",
+            NODE_SIZE_MIN_WIDTH_DEFAULT);
+  
+  /**
+   * Default value for {@link #NODE_SIZE_MIN_HEIGHT}.
+   */
+  private final static float NODE_SIZE_MIN_HEIGHT_DEFAULT = 0;
+  
+  public final static IProperty<Float> NODE_SIZE_MIN_HEIGHT = new Property<Float>(
+            "org.eclipse.elk.nodeSize.minHeight",
+            NODE_SIZE_MIN_HEIGHT_DEFAULT);
   
   /**
    * Default value for {@link #EDGE_LABELS_PLACEMENT}.
@@ -672,14 +684,14 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #INSIDE_SELF_LOOPS_ACTIVATE}.
    */
-  private final static Object INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT = Boolean.valueOf(false);
+  private final static boolean INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT = false;
   
   /**
    * Whether this node allows to route self loops inside of it instead of around it. If set to true,
    * this will make the node a compound node if it isn't already, and will require the layout algorithm
    * to support compound nodes with hierarchical ports.
    */
-  public final static IProperty<Object> INSIDE_SELF_LOOPS_ACTIVATE = new Property<Object>(
+  public final static IProperty<Boolean> INSIDE_SELF_LOOPS_ACTIVATE = new Property<Boolean>(
             "org.eclipse.elk.insideSelfLoops.activate",
             INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT);
   
@@ -1132,6 +1144,372 @@ public class LayoutOptions implements ILayoutMetaDataProvider {
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.zoomToFit"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.spacing.border",
+        "spacing",
+        "Border Spacing",
+        "Spacing of the content of a parent node to its inner border. The inner border is the node border, which is given by width and height, with subtracted insets.",
+        SPACING_BORDER_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.borderSpacing"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.spacing.label",
+        "spacing",
+        "Label Spacing",
+        "Determines the amount of space to be left around labels.",
+        SPACING_LABEL_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.EDGES, LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.labelSpacing"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.spacing.node",
+        "spacing",
+        "Node Spacing",
+        "Overall spacing between elements. This is mostly interpreted as the minimal distance between each two nodes and may also influence the spacing between edges.",
+        SPACING_NODE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.spacing"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.spacing.port",
+        "spacing",
+        "Port Spacing",
+        "Spacing between ports of a given node.",
+        SPACING_PORT_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.portSpacing"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.spacing.portSurrounding",
+        "spacing",
+        "Additional Port Space",
+        "Additional space around the sets of ports on each node side. For each side of a node, this option can reserve additional space before and after the ports on each side. For example, a top spacing of 20 makes sure that the first port on the western and eastern side is 20 units away from the northern border.",
+        null,
+        LayoutOptionData.Type.OBJECT,
+        Spacing.Margins.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.partitioning.partition",
+        "partitioning",
+        "Layout Partition",
+        "Partition to which the node belongs to. If \'layoutPartitions\' is true, all nodes are expected to have a partition.",
+        null,
+        LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.partition"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.partitioning.activate",
+        "partitioning",
+        "Layout Partitioning",
+        "Whether to activate partitioned layout.",
+        PARTITIONING_ACTIVATE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.layoutPartitions"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.nodeLabels.insets",
+        "nodeLabels",
+        "Node Label Insets",
+        "Define insets for node labels that are placed inside of a node.",
+        NODE_LABELS_INSETS_DEFAULT,
+        LayoutOptionData.Type.OBJECT,
+        Spacing.Insets.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.nodeLabelInset"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.nodeLabels.placement",
+        "nodeLabels",
+        "Node Label Placement",
+        "Hints for where node labels are to be placed; if empty, the node label\'s position is not modified.",
+        NODE_LABELS_PLACEMENT_DEFAULT,
+        LayoutOptionData.Type.ENUMSET,
+        NodeLabelPlacement.class,
+        EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.LABELS),
+        LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.nodeLabelPlacement"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.portAlignment.basic",
+        "portAlignment",
+        "Port Alignment",
+        "Defines the default port distribution for a node. May be overridden for each side individually.",
+        PORT_ALIGNMENT_BASIC_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        PortAlignment.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.VISIBLE
+        , "de.cau.cs.kieler.portAlignment"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.portAlignment.north",
+        "portAlignment",
+        "Port Alignment (North)",
+        "Defines how ports on the northern side are placed, overriding the node\'s general port alignment.",
+        PORT_ALIGNMENT_NORTH_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        PortAlignment.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.portAlignment.north"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.portAlignment.south",
+        "portAlignment",
+        "Port Alignment (South)",
+        "Defines how ports on the southern side are placed, overriding the node\'s general port alignment.",
+        PORT_ALIGNMENT_SOUTH_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        PortAlignment.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.portAlignment.south"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.portAlignment.west",
+        "portAlignment",
+        "Port Alignment (West)",
+        "Defines how ports on the western side are placed, overriding the node\'s general port alignment.",
+        PORT_ALIGNMENT_WEST_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        PortAlignment.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.portAlignment.west"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.portAlignment.east",
+        "portAlignment",
+        "Port Alignment (East)",
+        "Defines how ports on the eastern side are placed, overriding the node\'s general port alignment.",
+        PORT_ALIGNMENT_EAST_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        PortAlignment.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.portAlignment.east"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.nodeSize.constraints",
+        "nodeSize",
+        "Node Size Constraints",
+        "Constraints for determining node sizes. Each member of the set specifies something that should be taken into account when calculating node sizes. The empty set corresponds to node sizes being fixed.",
+        NODE_SIZE_CONSTRAINTS_DEFAULT,
+        LayoutOptionData.Type.ENUMSET,
+        SizeConstraint.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.nodeSize.options",
+        "nodeSize",
+        "Node Size Options",
+        "Options modifying the behavior of the size constraints set on a node. Each member of the set specifies something that should be taken into account when calculating node sizes. The empty set corresponds to no further modifications.",
+        NODE_SIZE_OPTIONS_DEFAULT,
+        LayoutOptionData.Type.ENUMSET,
+        SizeOptions.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.nodeSize.minimum",
+        "nodeSize",
+        "Node Size Minimum",
+        "The minimal size to which a node can be reduced.",
+        null,
+        LayoutOptionData.Type.OBJECT,
+        KVector.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.nodeSize.minWidth",
+        "nodeSize",
+        "Minimum Width",
+        null,
+        NODE_SIZE_MIN_WIDTH_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.nodeSize.minHeight",
+        "nodeSize",
+        "Minimum Height",
+        null,
+        NODE_SIZE_MIN_HEIGHT_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.edgeLabels.placement",
+        "edgeLabels",
+        "Edge Label Placement",
+        "Gives a hint on where to put edge labels.",
+        EDGE_LABELS_PLACEMENT_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        EdgeLabelPlacement.class,
+        EnumSet.of(LayoutOptionData.Target.LABELS),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.edgeLabelPlacement"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.font.name",
+        "font",
+        "Font Name",
+        "Font name used for a label.",
+        null,
+        LayoutOptionData.Type.STRING,
+        String.class,
+        EnumSet.of(LayoutOptionData.Target.LABELS),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.fontName"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.font.size",
+        "font",
+        "Font Size",
+        "Font size used for a label.",
+        null,
+        LayoutOptionData.Type.INT,
+        int.class,
+        EnumSet.of(LayoutOptionData.Target.LABELS),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.fontSize"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.port.anchor",
+        "port",
+        "Port Anchor Offset",
+        "The offset to the port position where connections shall be attached.",
+        null,
+        LayoutOptionData.Type.OBJECT,
+        KVector.class,
+        EnumSet.of(LayoutOptionData.Target.PORTS),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portAnchor"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.port.index",
+        "port",
+        "Port Index",
+        "The index of a port in the fixed order around a node. The order is assumed as clockwise, starting with the leftmost port on the top side. This option must be set if \'Port Constraints\' is set to FIXED_ORDER and no specific positions are given for the ports. Additionally, the option \'Port Side\' must be defined in this case.",
+        null,
+        LayoutOptionData.Type.INT,
+        int.class,
+        EnumSet.of(LayoutOptionData.Target.PORTS),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portIndex"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.port.side",
+        "port",
+        "Port Side",
+        "The side of a node on which a port is situated. This option must be set if \'Port Constraints\' is set to FIXED_SIDE or FIXED_ORDER and no specific positions are given for the ports.",
+        PORT_SIDE_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        PortSide.class,
+        EnumSet.of(LayoutOptionData.Target.PORTS),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portSide"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.port.borderOffset",
+        "port",
+        "Port Border Offset",
+        "The offset of ports on the node border. With a positive offset the port is moved outside of the node, while with a negative offset the port is moved towards the inside. An offset of 0 means that the port is placed directly on the node border, i.e. if the port side is north, the port\'s south border touches the nodes\'s north border; if the port side is east, the port\'s west border touches the nodes\'s east border; if the port side is south, the port\'s north border touches the node\'s south border; if the port side is west, the port\'s east border touches the node\'s west border.",
+        null,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.PORTS),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portOffset"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.portLabels.placement",
+        "portLabels",
+        "Port Label Placement",
+        "Decides on a placement method for port labels.",
+        PORT_LABELS_PLACEMENT_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        PortLabelPlacement.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.portLabelPlacement"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.insideSelfLoops.activate",
+        "insideSelfLoops",
+        "Activate Inside Self Loops",
+        "Whether this node allows to route self loops inside of it instead of around it. If set to true, this will make the node a compound node if it isn\'t already, and will require the layout algorithm to support compound nodes with hierarchical ports.",
+        INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
+        boolean.class,
+        EnumSet.of(LayoutOptionData.Target.NODES),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.selfLoopInside"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.insideSelfLoops.yo",
+        "insideSelfLoops",
+        "Inside Self Loop",
+        "Whether a self loop should be routed inside a node instead of around that node.",
+        INSIDE_SELF_LOOPS_YO_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
+        boolean.class,
+        EnumSet.of(LayoutOptionData.Target.EDGES),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.selfLoopInside"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.edge.thickness",
+        "edge",
+        "Edge Thickness",
+        "The thickness of an edge. This is a hint on the line width used to draw an edge, possibly requiring more space to be reserved for it.",
+        EDGE_THICKNESS_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.EDGES),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.thickness"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.edge.type",
+        "edge",
+        "Edge Type",
+        "The type of an edge. This is usually used for UML class diagrams, where associations must be handled differently from generalizations.",
+        EDGE_TYPE_DEFAULT,
+        LayoutOptionData.Type.ENUM,
+        EdgeType.class,
+        EnumSet.of(LayoutOptionData.Target.EDGES),
+        LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.edgeType"
     ));
     registry.register(new LayoutCategoryData(
         "org.eclipse.elk.layered",
