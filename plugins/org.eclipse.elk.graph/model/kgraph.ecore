@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="kgraph" nsURI="http://elk.eclipse.org/KGraph" nsPrefix="kgraph">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="graph" nsURI="http://elk.eclipse.org/KGraph" nsPrefix="graph">
   <eClassifiers xsi:type="ecore:EClass" name="KGraphElement" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="This is the superclass of all elements of a graph such as nodes, edges, ports,&#xA;and labels. A graph element may contain an arbitrary number of additional&#xA;data instances."/>
@@ -155,10 +155,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         transient="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="IProperty" instanceClassName="org.eclipse.elk.properties.IProperty">
+  <eClassifiers xsi:type="ecore:EDataType" name="IProperty" instanceClassName="org.eclipse.elk.graph.properties.IProperty">
     <eTypeParameters name="T"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IPropertyHolder" instanceClassName="org.eclipse.elk.properties.IPropertyHolder"
+  <eClassifiers xsi:type="ecore:EClass" name="IPropertyHolder" instanceClassName="org.eclipse.elk.graph.properties.IPropertyHolder"
       abstract="true" interface="true">
     <eOperations name="setProperty" eType="#//IPropertyHolder">
       <eTypeParameters name="T"/>
