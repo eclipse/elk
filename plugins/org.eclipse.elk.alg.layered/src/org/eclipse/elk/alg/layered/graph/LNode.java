@@ -449,7 +449,7 @@ public final class LNode extends LShape {
         LGraph thegraph = getGraph();
         
         LInsets graphInsets = thegraph.getInsets();
-        float borderSpacing = thegraph.getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = thegraph.getProperty(Properties.SPACING_BORDER);
         KVector offset = thegraph.getOffset();
         KVector pos = getPosition();
         

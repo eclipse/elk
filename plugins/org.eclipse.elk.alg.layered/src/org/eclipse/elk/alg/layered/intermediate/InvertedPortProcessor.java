@@ -208,7 +208,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         ListIterator<LLabel> labelIterator = edge.getLabels().listIterator();
         while (labelIterator.hasNext()) {
             LLabel label = labelIterator.next();
-            EdgeLabelPlacement labelPlacement = label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            EdgeLabelPlacement labelPlacement = label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
             
             if (labelPlacement == EdgeLabelPlacement.HEAD) {
                 labelIterator.remove();

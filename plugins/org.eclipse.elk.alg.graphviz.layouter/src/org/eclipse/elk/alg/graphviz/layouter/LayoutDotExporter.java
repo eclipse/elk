@@ -57,7 +57,7 @@ public class LayoutDotExporter extends DotExporter {
         transData.setProperty(TRANSFORM_EDGE_LAYOUT, false);
         transData.setProperty(TRANSFORM_NODE_LABELS, false);
         transData.setProperty(ADAPT_PORT_POSITIONS, parentLayout.getProperty(Properties.ADAPT_PORT_POSITIONS));
-        transData.setProperty(BORDER_SPACING, parentLayout.getProperty(LayoutOptions.BORDER_SPACING));
+        transData.setProperty(BORDER_SPACING, parentLayout.getProperty(LayoutOptions.SPACING_BORDER));
         super.transform(transData);
     }
     
@@ -82,7 +82,7 @@ public class LayoutDotExporter extends DotExporter {
         List<Attribute> edgeAttrs = setGeneralEdgeAttributes(statements);
 
         // set minimal spacing
-        Float spacing = parentLayout.getProperty(LayoutOptions.SPACING);
+        Float spacing = parentLayout.getProperty(LayoutOptions.SPACING_NODE);
         if (spacing == null || spacing < 0) {
             switch (command) {
             case CIRCO:
@@ -186,7 +186,7 @@ public class LayoutDotExporter extends DotExporter {
                         + "\""));
             }
             // enable or disable connected component packing
-            Boolean pack = parentLayout.getProperty(LayoutOptions.SEPARATE_CONN_COMP);
+            Boolean pack = parentLayout.getProperty(LayoutOptions.SEPARATE_CONNECTED_COMPONENTS);
             if (command == Command.TWOPI || pack != null && pack.booleanValue()) {
                 graphAttrs.add(createAttribute(Attributes.PACK, spacing.intValue()));
             }
@@ -223,7 +223,7 @@ public class LayoutDotExporter extends DotExporter {
         // set label distance and angle
         if (Iterables.any(kedge.getLabels(), (KLabel label) -> {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            EdgeLabelPlacement elp = labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            EdgeLabelPlacement elp = labelLayout.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
             return elp == EdgeLabelPlacement.HEAD || elp == EdgeLabelPlacement.TAIL;
         })) {
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);

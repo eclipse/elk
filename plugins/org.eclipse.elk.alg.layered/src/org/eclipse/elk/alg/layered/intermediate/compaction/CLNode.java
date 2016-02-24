@@ -50,7 +50,7 @@ public final class CLNode extends CNode {
      */
     public CLNode(final LNode lNode, final LGraph layeredGraph) {
         // getting the spacing properties
-        horizontalSpacing = (double) layeredGraph.getProperty(Properties.SPACING);
+        horizontalSpacing = (double) layeredGraph.getProperty(Properties.SPACING_NODE);
         verticalSpacing = horizontalSpacing
                         * layeredGraph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);
         

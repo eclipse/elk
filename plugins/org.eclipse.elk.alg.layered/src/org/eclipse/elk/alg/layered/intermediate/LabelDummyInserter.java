@@ -57,7 +57,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
     /** Predicate that checks for center labels. */
     private static final Predicate<LLabel> CENTER_LABEL = new Predicate<LLabel>() {
         public boolean apply(final LLabel label) {
-            return label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+            return label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT)
                     == EdgeLabelPlacement.CENTER;
         }
     };
@@ -70,7 +70,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
         
         List<LNode> newDummyNodes = Lists.newArrayList();
         
-        float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        float labelSpacing = layeredGraph.getProperty(LayoutOptions.SPACING_LABEL);
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
 
         for (LNode node : layeredGraph.getLayerlessNodes()) {
@@ -101,10 +101,10 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         LongEdgeSplitter.splitEdge(edge, dummyNode);
                         
                         // Set thickness of the edge and place ports at its center
-                        float thickness = edge.getProperty(LayoutOptions.THICKNESS);
+                        float thickness = edge.getProperty(LayoutOptions.EDGE_THICKNESS);
                         if (thickness < 0) {
                             thickness = 0;
-                            edge.setProperty(LayoutOptions.THICKNESS, thickness);
+                            edge.setProperty(LayoutOptions.EDGE_THICKNESS, thickness);
                         }
                         double portPos = Math.floor(thickness / 2);
 
@@ -120,7 +120,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         while (iterator.hasNext()) {
                             LLabel label = iterator.next();
                             
-                            if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                            if (label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT)
                                     == EdgeLabelPlacement.CENTER) {
                                 
                                 // The way we stack labels depends on the layout direction

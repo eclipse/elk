@@ -113,7 +113,7 @@ public final class BigNodesLabelHandler {
             // this is necessary to avoid unnecessary spacing to be introduced due to
             // outside label placement
             for (int i = 1; i < dummies.size() - 1; ++i) {
-                dummies.get(i).setProperty(LayoutOptions.NODE_LABEL_PLACEMENT,
+                dummies.get(i).setProperty(LayoutOptions.NODE_LABELS_PLACEMENT,
                         NodeLabelPlacement.insideCenter());
             }
 
@@ -121,7 +121,7 @@ public final class BigNodesLabelHandler {
             for (final LLabel l : Lists.newLinkedList(node.getLabels())) {
 
                 EnumSet<NodeLabelPlacement> placement =
-                        node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+                        node.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT);
 
                 // we handle two cases differently where labels are placed outside, horizontally
                 // left or right and vertically centered
@@ -216,7 +216,7 @@ public final class BigNodesLabelHandler {
 
                 public Void apply(final Void v) {
                     EnumSet<NodeLabelPlacement> placement =
-                            node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+                            node.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT);
 
                     // CHECKSTYLEOFF EmptyBlock
                     if (placement.equals(NodeLabelPlacement.fixed())) {

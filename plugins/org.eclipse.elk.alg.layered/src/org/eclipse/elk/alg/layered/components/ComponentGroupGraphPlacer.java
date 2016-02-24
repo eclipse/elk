@@ -95,7 +95,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         
         // Place components in each group
         KVector offset = new KVector();
-        float spacing = 2 * firstComponent.getProperty(Properties.SPACING);
+        float spacing = 2 * firstComponent.getProperty(Properties.SPACING_NODE);
         
         for (ComponentGroup group : componentGroups) {
             // Place the components

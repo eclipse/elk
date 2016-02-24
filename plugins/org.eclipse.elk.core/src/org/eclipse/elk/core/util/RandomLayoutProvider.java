@@ -68,11 +68,11 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         }
         
         // get spacing values
-        Float spacing = parentLayout.getProperty(LayoutOptions.SPACING);
+        Float spacing = parentLayout.getProperty(LayoutOptions.SPACING_NODE);
         if (spacing == null || spacing < 0) {
             spacing = DEF_SPACING;
         }
-        Float offset = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        Float offset = parentLayout.getProperty(LayoutOptions.SPACING_BORDER);
         if (offset == null || offset < 0) {
             offset = DEF_SPACING;
         }

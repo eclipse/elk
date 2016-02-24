@@ -78,7 +78,7 @@ class KGraphLayoutTransferrer {
         KInsets kInsets = parentLayout.getInsets();
         
         // We may need to apply increased top/left insets
-        final EnumSet<SizeOptions> sizeOptions = parentLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
+        final EnumSet<SizeOptions> sizeOptions = parentLayout.getProperty(LayoutOptions.NODE_SIZE_OPTIONS);
         KVector additionalInsets = new KVector();
         if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_INSETS)) {
             additionalInsets.x = lInsets.left - kInsets.getLeft();
@@ -168,7 +168,7 @@ class KGraphLayoutTransferrer {
         nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
         
         // Set the node size, if necessary
-        if (!nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()
+        if (!nodeLayout.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS).isEmpty()
                 || lnode.getProperty(InternalProperties.NESTED_LGRAPH) != null) {
             nodeLayout.setWidth((float) lnode.getSize().x);
             nodeLayout.setHeight((float) lnode.getSize().y);
@@ -188,11 +188,11 @@ class KGraphLayoutTransferrer {
         // Set node label positions, if they were not fixed
         // (that is at least one of the node or the label has a node label placement set)
         final boolean nodeHasLabelPlacement =
-                !lnode.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty();
+                !lnode.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT).isEmpty();
         
         for (LLabel llabel : lnode.getLabels()) {
             if (nodeHasLabelPlacement
-                    || !llabel.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
+                    || !llabel.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT).isEmpty()) {
                 KLabel klabel = (KLabel) llabel.getProperty(InternalProperties.ORIGIN);
                 KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
                 klabelLayout.applyVector(llabel.getPosition());
@@ -200,7 +200,7 @@ class KGraphLayoutTransferrer {
         }
         
         // Set port label positions, if they were not fixed
-        if (lnode.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) != PortLabelPlacement.FIXED) {
+        if (lnode.getProperty(LayoutOptions.PORT_LABELS_PLACEMENT) != PortLabelPlacement.FIXED) {
             for (LPort lport : lnode.getPorts()) {
                 for (LLabel label : lport.getLabels()) {
                     KLabel klabel = (KLabel) label.getProperty(InternalProperties.ORIGIN);
@@ -320,7 +320,7 @@ class KGraphLayoutTransferrer {
         KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
         
         KVector actualGraphSize = lgraph.getActualSize();
-        knodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+        knodeLayout.setProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
 
         if (lgraph.getProperty(InternalProperties.PARENT_LNODE) == null) {
             Set<GraphProperties> graphProps = lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES);

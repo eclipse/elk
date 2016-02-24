@@ -95,7 +95,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        spacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
+        spacing = layeredGraph.getProperty(Properties.SPACING_NODE).doubleValue();
         direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();
@@ -284,8 +284,8 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             // copy some properties
             dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                     src.getProperty(LayoutOptions.PORT_CONSTRAINTS));
-            dummy.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, 
-                    src.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT));
+            dummy.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT, 
+                    src.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT));
             
             dummy.id = dummyID++;
 

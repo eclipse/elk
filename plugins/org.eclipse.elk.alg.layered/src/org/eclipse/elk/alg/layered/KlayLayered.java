@@ -484,9 +484,9 @@ public final class KlayLayered {
      * @param lgraph the graph to resize.
      */
     private void resizeGraph(final LGraph lgraph) {
-        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayoutOptions.SIZE_CONSTRAINT);
-        Set<SizeOptions> sizeOptions = lgraph.getProperty(LayoutOptions.SIZE_OPTIONS);
-        float borderSpacing = lgraph.getProperty(Properties.BORDER_SPACING);
+        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS);
+        Set<SizeOptions> sizeOptions = lgraph.getProperty(LayoutOptions.NODE_SIZE_OPTIONS);
+        float borderSpacing = lgraph.getProperty(Properties.SPACING_BORDER);
         
         // add the border spacing to the graph size and graph offset
         lgraph.getOffset().x += borderSpacing;
@@ -496,15 +496,22 @@ public final class KlayLayered {
         
         // the graph size now contains the border spacing, so clear it in order to keep
         // graph.getActualSize() working properly
-        lgraph.setProperty(Properties.BORDER_SPACING, 0f);
+        lgraph.setProperty(Properties.SPACING_BORDER, 0f);
         
         KVector calculatedSize = lgraph.getActualSize();
         KVector adjustedSize = new KVector(calculatedSize);
         
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            float minWidth = lgraph.getProperty(LayoutOptions.MIN_WIDTH);
-            float minHeight = lgraph.getProperty(LayoutOptions.MIN_HEIGHT);
+            KVector minSize = lgraph.getProperty(LayoutOptions.NODE_SIZE_MINIMUM);
+            float minWidth, minHeight;
+            if (minSize == null) {
+                minWidth = lgraph.getProperty(LayoutOptions.NODE_SIZE_MIN_WIDTH);
+                minHeight = lgraph.getProperty(LayoutOptions.NODE_SIZE_MIN_HEIGHT);
+            } else {
+                minWidth = (float) minSize.x;
+                minHeight = (float) minSize.y;
+            }
             
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {

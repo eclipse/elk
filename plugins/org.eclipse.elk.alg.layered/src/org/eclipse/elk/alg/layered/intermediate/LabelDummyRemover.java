@@ -59,7 +59,7 @@ public final class LabelDummyRemover implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy removal", 1);
         
-        float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        float labelSpacing = layeredGraph.getProperty(LayoutOptions.SPACING_LABEL);
         Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         
         for (Layer layer : layeredGraph.getLayers()) {
@@ -73,7 +73,7 @@ public final class LabelDummyRemover implements ILayoutProcessor {
                 if (node.getType() == NodeType.LABEL) {
                     // First, place labels on position of dummy node 
                     LEdge originEdge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
-                    double thickness = originEdge.getProperty(LayoutOptions.THICKNESS).doubleValue();
+                    double thickness = originEdge.getProperty(LayoutOptions.EDGE_THICKNESS).doubleValue();
                     
                     KVector currLabelPos = new KVector(node.getPosition());
                     

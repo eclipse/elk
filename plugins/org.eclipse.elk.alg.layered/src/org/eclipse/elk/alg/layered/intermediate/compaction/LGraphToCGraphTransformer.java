@@ -336,7 +336,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     
     private void applyExternalPortPositions(final KVector topLeft, final KVector bottomRight) {
         
-        double borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING).doubleValue();
+        double borderSpacing = layeredGraph.getProperty(LayoutOptions.SPACING_BORDER).doubleValue();
         
         for (CNode cNode : cGraph.cNodes) {
             if (cNode instanceof CLNode) {

@@ -59,7 +59,7 @@ public final class ComponentsProcessor {
      * @return a list of components that can be processed one by one.
      */
     public List<FGraph> split(final FGraph graph) {
-        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CONN_COMP);
+        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CONNECTED_COMPONENTS);
         if (separate == null || separate.booleanValue()) {
             boolean[] visited = new boolean[graph.getNodes().size()];
             List<FEdge>[] incidence = buildIncidenceLists(graph);
@@ -213,7 +213,7 @@ public final class ComponentsProcessor {
         }
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
                 * result.getProperty(Properties.ASPECT_RATIO));
-        double spacing = result.getProperty(Properties.SPACING).doubleValue();
+        double spacing = result.getProperty(Properties.SPACING_NODE).doubleValue();
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;

@@ -149,7 +149,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        spacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
+        spacing = layeredGraph.getProperty(Properties.SPACING_NODE).doubleValue();
         direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();
@@ -497,8 +497,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
             
             longEdgeDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                     start.getProperty(LayoutOptions.PORT_CONSTRAINTS));
-            longEdgeDummy.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT,
-                    start.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT));
+            longEdgeDummy.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT,
+                    start.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT));
             
             dummies.add(0, longEdgeDummy);
             
@@ -559,8 +559,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
             // copy some properties
             longEdgeDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                     start.getProperty(LayoutOptions.PORT_CONSTRAINTS));
-            longEdgeDummy.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT,
-                    start.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT));
+            longEdgeDummy.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT,
+                    start.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT));
 
             // adapt the origin
             // Remark: we allow the big node to have an arbitrary amount of
@@ -978,8 +978,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
             // copy some properties
             dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                     src.getProperty(LayoutOptions.PORT_CONSTRAINTS));
-            dummy.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT,
-                    src.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT));
+            dummy.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT,
+                    src.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT));
 
             dummy.id = dummyID++;
 

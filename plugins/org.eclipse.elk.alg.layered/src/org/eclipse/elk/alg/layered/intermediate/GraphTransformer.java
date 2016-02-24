@@ -218,7 +218,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node the node.
      */
     private void mirrorNodeLabelPlacementX(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -395,7 +395,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node the node.
      */
     private void mirrorNodeLabelPlacementY(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -550,7 +550,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node the node.
      */
     private void transposeNodeLabelPlacement(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -589,7 +589,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         }
         
         // Apply new placement
-        node.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, newPlacement);
+        node.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT, newPlacement);
     }
     
     /**
@@ -687,10 +687,13 @@ public final class GraphTransformer implements ILayoutProcessor {
      */
     private void transposeProperties(final LNode node) {
         // Transpose MIN_HEIGHT and MIN_WIDTH
-        float minHeight = node.getProperty(LayoutOptions.MIN_HEIGHT);
-        float minWidth = node.getProperty(LayoutOptions.MIN_WIDTH);
-        node.setProperty(LayoutOptions.MIN_WIDTH, minHeight);
-        node.setProperty(LayoutOptions.MIN_HEIGHT, minWidth);
+        KVector minSize = node.getProperty(LayoutOptions.NODE_SIZE_MINIMUM);
+        if (minSize == null) {
+            minSize = new KVector(
+                    node.getProperty(LayoutOptions.NODE_SIZE_MIN_WIDTH).doubleValue(),
+                    node.getProperty(LayoutOptions.NODE_SIZE_MIN_HEIGHT).doubleValue());
+        }
+        node.setProperty(LayoutOptions.NODE_SIZE_MINIMUM, new KVector(minSize.y, minSize.x));
         
         // Transpose ALIGNMENT
         switch (node.getProperty(LayoutOptions.ALIGNMENT)) {

@@ -76,7 +76,7 @@ public final class EndLabelProcessor implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("End label placement", 1);
         
-        float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        float labelSpacing = layeredGraph.getProperty(LayoutOptions.SPACING_LABEL);
         
         // Initialize the offset maps
         northOffset = Maps.newHashMap();
@@ -88,10 +88,10 @@ public final class EndLabelProcessor implements ILayoutProcessor {
                 for (LEdge edge : node.getOutgoingEdges()) {
                     for (LLabel label : edge.getLabels()) {
                         // Only consider end labels
-                        if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                        if (label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT)
                                 == EdgeLabelPlacement.TAIL
                                 ||
-                            label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                            label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT)
                                 == EdgeLabelPlacement.HEAD) {
                             
                             placeEndLabel(node, edge, label, labelSpacing);
@@ -118,9 +118,9 @@ public final class EndLabelProcessor implements ILayoutProcessor {
         // Get the nearest port (source port for tail labels, target port for head labels)
         LPort port = null;
         
-        if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == EdgeLabelPlacement.TAIL) {
+        if (label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.TAIL) {
             port = edge.getSource();
-        } else if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == EdgeLabelPlacement.HEAD) {
+        } else if (label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD) {
             port = edge.getTarget();
         }
         

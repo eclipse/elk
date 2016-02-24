@@ -116,7 +116,7 @@ public final class NodeMarginCalculator  {
      * Calculates and assigns margins to all nodes.
      */
     public void process() {
-        float spacing = adapter.getProperty(LayoutOptions.LABEL_SPACING);
+        float spacing = adapter.getProperty(LayoutOptions.SPACING_LABEL);
 
         // Iterate through all nodes
         for (NodeAdapter<?> node : adapter.getNodes()) {
@@ -187,7 +187,7 @@ public final class NodeMarginCalculator  {
                 KVector requiredPortLabelSpace = new KVector(-labelSpacing, -labelSpacing);
                 
                 // TODO: maybe leave space for manually placed ports 
-                if (node.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
+                if (node.getProperty(LayoutOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.OUTSIDE) {
                     for (LabelAdapter<?> label : port.getLabels()) {
                         requiredPortLabelSpace.x += label.getSize().x + labelSpacing;
                         requiredPortLabelSpace.y += label.getSize().y + labelSpacing;
@@ -240,7 +240,7 @@ public final class NodeMarginCalculator  {
         // For each edge, the tail labels of outgoing edges ...
         for (EdgeAdapter<?> edge : outgoingEdges) {
             for (LabelAdapter<?> label : edge.getLabels()) {
-                if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == EdgeLabelPlacement.TAIL) {
+                if (label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.TAIL) {
                     computeLabelBox(labelBox, label, false, node, port, portLabelSpace, labelSpacing);
                     boundingBox.union(labelBox);
                 }
@@ -250,7 +250,7 @@ public final class NodeMarginCalculator  {
         // ... and the head label of incoming edges shall be considered
         for (EdgeAdapter<?> edge : incomingEdges) {
             for (LabelAdapter<?> label : edge.getLabels()) {
-                if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) == EdgeLabelPlacement.HEAD) {
+                if (label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD) {
                     computeLabelBox(labelBox, label, true, node, port, portLabelSpace, labelSpacing);
                     boundingBox.union(labelBox);
                 }

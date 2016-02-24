@@ -136,11 +136,11 @@ public final class LGraphAdapters {
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
             // handle some special cases
-            if (prop.equals(LayoutOptions.SPACING)) {
+            if (prop.equals(LayoutOptions.SPACING_NODE)) {
                 // cast is ok, as both properties are Floats
-                return (P) element.getProperty(Properties.SPACING);
-            } else if (prop.equals(LayoutOptions.PORT_OFFSET)) {
-                return (P) element.getProperty(Properties.PORT_OFFSET);
+                return (P) element.getProperty(Properties.SPACING_NODE);
+            } else if (prop.equals(LayoutOptions.PORT_BORDER_OFFSET)) {
+                return (P) element.getProperty(Properties.PORT_BORDER_OFFSET);
             }
 
             return element.getProperty(prop);

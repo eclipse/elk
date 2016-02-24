@@ -430,7 +430,7 @@ public class ComponentsCompactor {
         Segments segments = edgeToSegments(externalEdge, externalExtension);
         
         // #2 all 'inner' segments contribute to the hull (consider the edge's thickness)
-        double thickness = Math.max(externalEdge.getProperty(LayoutOptions.THICKNESS).doubleValue(), 1);
+        double thickness = Math.max(externalEdge.getProperty(LayoutOptions.EDGE_THICKNESS).doubleValue(), 1);
         for (Pair<KVector, KVector> segment : segments.innerSegments) {
             Rectangle rect = segmentToRectangle(segment.getFirst(), segment.getSecond(), thickness);
             hullPoints.add(rect);

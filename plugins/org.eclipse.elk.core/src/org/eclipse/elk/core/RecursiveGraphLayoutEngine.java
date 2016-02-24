@@ -341,13 +341,13 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     protected List<KEdge> gatherInsideSelfLoops(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         
-        if (nodeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+        if (nodeLayout.getProperty(LayoutOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
             List<KEdge> insideSelfLoops = Lists.newArrayListWithCapacity(node.getOutgoingEdges().size());
             
             for (KEdge edge : node.getOutgoingEdges()) {
                 if (edge.getTarget() == node) {
                     final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                    if (edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+                    if (edgeLayout.getProperty(LayoutOptions.INSIDE_SELF_LOOPS_YO)) {
                         insideSelfLoops.add(edge);
                     }
                 }

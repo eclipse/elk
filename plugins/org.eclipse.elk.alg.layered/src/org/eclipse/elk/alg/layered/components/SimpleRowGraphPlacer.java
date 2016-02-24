@@ -99,7 +99,7 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         }
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
                 * target.getProperty(Properties.ASPECT_RATIO));
-        double spacing = SPACING_FACTOR * target.getProperty(Properties.SPACING);
+        double spacing = SPACING_FACTOR * target.getProperty(Properties.SPACING_NODE);
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
@@ -122,7 +122,7 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         target.getSize().x = broadestRow;
         target.getSize().y = ypos + highestBox;
         
-        double regularSpacing = target.getProperty(Properties.SPACING).doubleValue();
+        double regularSpacing = target.getProperty(Properties.SPACING_NODE).doubleValue();
 
         // if compaction is desired, do so!
         if (firstComponent.getProperty(Properties.COMPONENTS_COMPACT)) {

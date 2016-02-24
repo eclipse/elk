@@ -54,7 +54,7 @@ public final class CLEdge extends CNode {
      */
     public CLEdge(final VerticalSegment vSeg, final LGraph layeredGraph) {
         // getting the spacing properties
-        horizontalSpacing = layeredGraph.getProperty(Properties.SPACING)
+        horizontalSpacing = layeredGraph.getProperty(Properties.SPACING_NODE)
                           * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         verticalSpacing = horizontalSpacing
                         * layeredGraph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);

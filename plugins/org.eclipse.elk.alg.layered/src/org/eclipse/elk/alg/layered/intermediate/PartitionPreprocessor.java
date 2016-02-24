@@ -64,7 +64,7 @@ public class PartitionPreprocessor implements ILayoutProcessor {
         partitions = Lists.newArrayList();
         // Sort nodes into partitions.
         for (LNode node : lGraph.getLayerlessNodes()) {
-            Integer index = node.getProperty(LayoutOptions.LAYOUT_PARTITION);
+            Integer index = node.getProperty(LayoutOptions.PARTITIONING_PARTITION);
             // We assume every node has a partition set.
             assert index != null : "Missing partition property at " + node.toString();
             retrievePartition(index).add(node);

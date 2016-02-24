@@ -579,7 +579,7 @@ public class DiagramLayoutEngine {
                                 // Do not layout the content of the child node
                                 childConfig.setProperty(LayoutOptions.NO_LAYOUT, true);
                                 // Do not change the size of the child node
-                                childConfig.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+                                childConfig.setProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
                                 // Do not move the ports of the child node
                                 childConfig.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
                             }

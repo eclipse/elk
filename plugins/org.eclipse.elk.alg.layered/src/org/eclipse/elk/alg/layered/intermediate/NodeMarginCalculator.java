@@ -64,7 +64,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
         KimlNodeDimensionCalculation.calculateNodeMargins(LGraphAdapters.adapt(layeredGraph, true));
 
         // Iterate through the layers to additionally handle comments
-        double spacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
+        double spacing = layeredGraph.getProperty(Properties.SPACING_NODE).doubleValue();
         for (Layer layer : layeredGraph) {
             // Iterate through the layer's nodes
             for (LNode node : layer) {

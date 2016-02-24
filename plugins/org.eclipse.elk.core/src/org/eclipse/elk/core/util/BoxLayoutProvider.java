@@ -50,12 +50,12 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // set option for minimal spacing
-        Float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
+        Float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING_NODE);
         if (objSpacing == null || objSpacing < 0) {
             objSpacing = DEF_SPACING;
         }
         // set option for border spacing
-        Float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        Float borderSpacing = parentLayout.getProperty(LayoutOptions.SPACING_BORDER);
         if (borderSpacing == null || borderSpacing < 0) {
             borderSpacing = DEF_SPACING;
         }
@@ -137,10 +137,18 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         KInsets insets = parentLayout.getInsets();
-        float minWidth = Math.max(parentLayout.getProperty(LayoutOptions.MIN_WIDTH)
-                - insets.getLeft() - insets.getRight(), 0);
-        float minHeight = Math.max(parentLayout.getProperty(LayoutOptions.MIN_HEIGHT)
-                - insets.getTop() - insets.getBottom(), 0);
+        KVector minSize = parentLayout.getProperty(LayoutOptions.NODE_SIZE_MINIMUM);
+        float minWidth, minHeight;
+        if (minSize == null) {
+            minWidth = Math.max(parentLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_WIDTH)
+                    - insets.getLeft() - insets.getRight(), 0);
+            minHeight = Math.max(parentLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_HEIGHT)
+                    - insets.getTop() - insets.getBottom(), 0);
+        } else {
+            minWidth = (float) minSize.x;
+            minHeight = (float) minSize.y; 
+        }
+        
         Float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;

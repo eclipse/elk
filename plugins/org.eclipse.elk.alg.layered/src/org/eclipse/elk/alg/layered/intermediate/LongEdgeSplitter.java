@@ -141,10 +141,10 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         LPort oldEdgeTarget = edge.getTarget();
         
         // Set thickness of the edge
-        float thickness = edge.getProperty(LayoutOptions.THICKNESS);
+        float thickness = edge.getProperty(LayoutOptions.EDGE_THICKNESS);
         if (thickness < 0) {
             thickness = 0;
-            edge.setProperty(LayoutOptions.THICKNESS, thickness);
+            edge.setProperty(LayoutOptions.EDGE_THICKNESS, thickness);
         }
         dummyNode.getSize().y = thickness;
         double portPos = Math.floor(thickness / 2);
@@ -218,7 +218,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         ListIterator<LLabel> labelIterator = oldEdge.getLabels().listIterator();
         while (labelIterator.hasNext()) {
             LLabel label = labelIterator.next();
-            EdgeLabelPlacement labelPlacement = label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            EdgeLabelPlacement labelPlacement = label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
             
             if (labelPlacement == EdgeLabelPlacement.HEAD) {
                 labelIterator.remove();

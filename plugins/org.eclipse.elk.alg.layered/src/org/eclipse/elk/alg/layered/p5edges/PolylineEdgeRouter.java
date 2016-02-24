@@ -193,7 +193,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Polyline edge routing", 1);
         
-        final float nodeSpacing = layeredGraph.getProperty(Properties.SPACING);
+        final float nodeSpacing = layeredGraph.getProperty(Properties.SPACING_NODE);
         final float edgeSpaceFac = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
         double xpos = 0.0;

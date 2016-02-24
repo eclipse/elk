@@ -250,7 +250,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         PortConstraints constraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         KVector graphSize = layeredGraph.getSize();
         LInsets graphInsets = layeredGraph.getInsets();
-        float borderSpacing = layeredGraph.getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = layeredGraph.getProperty(Properties.SPACING_BORDER);
         double graphWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
         double northY = 0 - graphInsets.top - borderSpacing - layeredGraph.getOffset().y;
         double southY = graphSize.y + graphInsets.top + graphInsets.bottom + 2 * borderSpacing
@@ -429,7 +429,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      */
     private void assignAscendingCoordinates(final LNode[] dummies, final LGraph graph) {
         // Find the edge distance
-        float edgeSpacing = graph.getProperty(Properties.SPACING)
+        float edgeSpacing = graph.getProperty(Properties.SPACING_NODE)
                 * graph.getProperty(Properties.EDGE_SPACING_FACTOR);
         
         // Now, iterate over the array, remembering the last assigned position. If we find a
@@ -467,7 +467,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         Set<LNode> southernTargetLayer = Sets.newLinkedHashSet();
         
         // Find some routing parameters
-        double nodeSpacing = layeredGraph.getProperty(Properties.SPACING).doubleValue();
+        double nodeSpacing = layeredGraph.getProperty(Properties.SPACING_NODE).doubleValue();
         double edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
@@ -679,7 +679,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         // Get some geometric values from the graph
         LInsets insets = graph.getInsets();
-        float borderSpacing = graph.getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = graph.getProperty(Properties.SPACING_BORDER);
         KVector offset = graph.getOffset();
         KVector graphActualSize = graph.getActualSize();
         

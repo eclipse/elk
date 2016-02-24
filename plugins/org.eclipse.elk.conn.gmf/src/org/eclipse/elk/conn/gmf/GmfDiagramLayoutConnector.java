@@ -668,8 +668,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         // determine minimal size of the node
         try {
             Dimension minSize = nodeFigure.getMinimumSize();
-            nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
-            nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
+            nodeLayout.setProperty(LayoutOptions.NODE_SIZE_MINIMUM, new KVector(minSize.width, minSize.height));
         } catch (SWTException exception) {
             // getMinimumSize() can cause this exception when fonts are disposed for some reason;
             // ignore exception and leave the default minimal size
@@ -1101,20 +1100,20 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
-                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABELS_PLACEMENT,
                                     EdgeLabelPlacement.HEAD);
                             break;
                         case ConnectionLocator.MIDDLE:
-                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABELS_PLACEMENT,
                                     EdgeLabelPlacement.CENTER);
                             break;
                         case ConnectionLocator.TARGET:
-                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                            labelLayout.setProperty(LayoutOptions.EDGE_LABELS_PLACEMENT,
                                     EdgeLabelPlacement.TAIL);
                             break;
                         }
                     } else {
-                        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                        labelLayout.setProperty(LayoutOptions.EDGE_LABELS_PLACEMENT,
                                 placement);
                     }
                     Font font = labelFigure.getFont();

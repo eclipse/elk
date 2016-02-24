@@ -425,7 +425,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         PointList bendPoints = getBendPoints((KEdge) parent, connectionEditPart.getFigure(), scale);
         EObject modelElement = connectionEditPart.getNotationView().getElement();
         EdgeLabelPlacement labelPlacement = labelLayout
-                .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+                .getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
         // for labels of the opposite reference of an ecore reference,
         // the list of bend points must be reversed
         if (modelElement instanceof EReference && labelPlacement == EdgeLabelPlacement.TAIL) {

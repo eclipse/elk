@@ -92,7 +92,7 @@ final class GraphConfigurator {
 //        lgraph.checkProperties(InternalProperties.SPACING, InternalProperties.BORDER_SPACING,
 //                Properties.THOROUGHNESS, InternalProperties.ASPECT_RATIO);
         
-        float spacing = lgraph.getProperty(Properties.SPACING);
+        float spacing = lgraph.getProperty(Properties.SPACING_NODE);
         if (lgraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
             // Edge spacing is determined by the product of object spacing and edge spacing factor.
             // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.

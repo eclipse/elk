@@ -326,7 +326,7 @@ public final class ElkUtil {
      */
     public static KVector resizeNode(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS);
         if (sizeConstraint.isEmpty()) {
             return null;
         }
@@ -404,16 +404,23 @@ public final class ElkUtil {
             final boolean movePorts, final boolean moveLabels) {
         
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+        Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS);
         
         KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
         KVector newSize;
         
         // Calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            Set<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
-            float minWidth = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
-            float minHeight = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
+            Set<SizeOptions> sizeOptions = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_OPTIONS);
+            KVector minSize = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MINIMUM);
+            float minWidth, minHeight;
+            if (minSize == null) {
+                minWidth = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_WIDTH);
+                minHeight = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_HEIGHT);
+            } else {
+                minWidth = (float) minSize.x;
+                minHeight = (float) minSize.y; 
+            }
             
             // If minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
@@ -507,7 +514,7 @@ public final class ElkUtil {
         }
         
         // set fixed size option for the node: now the size is assumed to stay as determined here
-        nodeLayout.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+        nodeLayout.setProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
         
         return new KVector(widthRatio, heightRatio);
     }
@@ -980,7 +987,7 @@ public final class ElkUtil {
         // Make sure the node has a size if the size constraints are fixed
         KShapeLayout sl = node.getData(KShapeLayout.class);
         if (sl != null) {
-            Set<SizeConstraint> sc = sl.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+            Set<SizeConstraint> sc = sl.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS);
             
             if (sc.equals(SizeConstraint.fixed()) && sl.getWidth() == 0f && sl.getHeight() == 0f) {
                 sl.setWidth(DEFAULT_MIN_WIDTH * 2 * 2);
@@ -991,9 +998,9 @@ public final class ElkUtil {
         // label
         ensureLabel(node);
         if (sl != null) {
-            Set<NodeLabelPlacement> nlp = sl.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+            Set<NodeLabelPlacement> nlp = sl.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT);
             if (nlp.equals(NodeLabelPlacement.fixed())) {
-                sl.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, NodeLabelPlacement.insideCenter());
+                sl.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideCenter());
             }
         }
         
@@ -1029,9 +1036,9 @@ public final class ElkUtil {
 
         KLayoutData ld = edge.getData(KLayoutData.class);
         if (ld != null) {
-            EdgeLabelPlacement elp = ld.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            EdgeLabelPlacement elp = ld.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
             if (elp == EdgeLabelPlacement.UNDEFINED) {
-                ld.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.CENTER);
+                ld.setProperty(LayoutOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER);
             }
         }
     }

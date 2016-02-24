@@ -201,7 +201,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                     
                     // find the index of the dummy edge we will move the label to
                     int targetDummyEdgeIndex = -1;
-                    switch (currLabel.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
+                    switch (currLabel.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT)) {
                     case HEAD:
                         targetDummyEdgeIndex = edgeSegments.size() - 1;
                         break;
@@ -551,7 +551,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     private void processInsideSelfLoops(final LGraph nestedGraph, final LNode node) {
         // Check if inside self loops are enabled for the node
-        if (!node.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+        if (!node.getProperty(LayoutOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
             return;
         }
         
@@ -564,7 +564,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             for (LEdge outEdge : outEdges) {
                 boolean isSelfLoop = outEdge.getTarget().getNode() == node;
                 boolean isInsideSelfLoop = isSelfLoop
-                        && outEdge.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                        && outEdge.getProperty(LayoutOptions.INSIDE_SELF_LOOPS_YO);
                 
                 if (isInsideSelfLoop) {
                     // Check if the ports have already been transformed into external port dummies
@@ -726,9 +726,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             externalPort.origEdges.add(origEdge);
             
             // merge the properties of the original edges
-            float thickness = Math.max(externalPort.newEdge.getProperty(LayoutOptions.THICKNESS),
-                    origEdge.getProperty(LayoutOptions.THICKNESS));
-            externalPort.newEdge.setProperty(LayoutOptions.THICKNESS, thickness);
+            float thickness = Math.max(externalPort.newEdge.getProperty(LayoutOptions.EDGE_THICKNESS),
+                    origEdge.getProperty(LayoutOptions.EDGE_THICKNESS));
+            externalPort.newEdge.setProperty(LayoutOptions.EDGE_THICKNESS, thickness);
         }
 
         crossHierarchyMap.put(origEdge,
@@ -800,7 +800,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         } else {
             // we create a new dummy node in any case, and since there is no port yet we have to
             // create one as well
-            float thickness = edge.getProperty(LayoutOptions.THICKNESS);
+            float thickness = edge.getProperty(LayoutOptions.EDGE_THICKNESS);
             dummyNode = LGraphUtil.createExternalPortDummy(
                     createExternalPortProperties(graph),
                     parentNode.getProperty(LayoutOptions.PORT_CONSTRAINTS),
@@ -837,9 +837,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      */
     private static IPropertyHolder createExternalPortProperties(final LGraph graph) {
         IPropertyHolder propertyHolder = new MapPropertyHolder();
-        float offset = graph.getProperty(Properties.SPACING)
+        float offset = graph.getProperty(Properties.SPACING_NODE)
                 * graph.getProperty(Properties.EDGE_SPACING_FACTOR) / 2;
-        propertyHolder.setProperty(Properties.PORT_OFFSET, offset);
+        propertyHolder.setProperty(Properties.PORT_BORDER_OFFSET, offset);
         return propertyHolder;
     }
     
@@ -869,7 +869,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             port.setSide(PortSide.fromDirection(layoutDirection));
             break;
         }
-        port.setProperty(Properties.PORT_OFFSET, dummyNode.getProperty(Properties.PORT_OFFSET));
+        port.setProperty(Properties.PORT_BORDER_OFFSET, dummyNode.getProperty(Properties.PORT_BORDER_OFFSET));
         dummyNode.setProperty(InternalProperties.ORIGIN, port);
         dummyNodeMap.put(port, dummyNode);
         return port;

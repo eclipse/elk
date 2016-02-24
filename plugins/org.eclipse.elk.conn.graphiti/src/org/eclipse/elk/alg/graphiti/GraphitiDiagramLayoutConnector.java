@@ -406,8 +406,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
         nodeLayout.resetModificationFlag();
 
         // this very minimal size configuration should be corrected in subclasses
-        nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
-        nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, MIN_SIZE);
+        nodeLayout.setProperty(LayoutOptions.NODE_SIZE_MINIMUM, new KVector(MIN_SIZE, MIN_SIZE));
 
         mapping.getGraphMap().put(childNode, shape);
 
@@ -733,7 +732,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
                 placement = EdgeLabelPlacement.TAIL;
             }
         }
-        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
+        labelLayout.setProperty(LayoutOptions.EDGE_LABELS_PLACEMENT, placement);
 
         // set label position
         KVector labelPos;

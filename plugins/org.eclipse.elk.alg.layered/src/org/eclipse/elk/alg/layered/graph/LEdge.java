@@ -87,12 +87,12 @@ public final class LEdge extends LGraphElement {
         
         // Switch end labels
         for (LLabel label : labels) {
-            EdgeLabelPlacement labelPlacement = label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            EdgeLabelPlacement labelPlacement = label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
             
             if (labelPlacement == EdgeLabelPlacement.TAIL) {
-                label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.HEAD);
+                label.setProperty(LayoutOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.HEAD);
             } else if (labelPlacement == EdgeLabelPlacement.HEAD) {
-                label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.TAIL);
+                label.setProperty(LayoutOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.TAIL);
             }
         }
         

@@ -105,7 +105,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      * @return the graph's size including borders.
      */
     public KVector getActualSize() {
-        float borderSpacing = getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = getProperty(Properties.SPACING_BORDER);
         return new KVector(
                 size.x + insets.left + insets.right + (2 * borderSpacing),
                 size.y + insets.top + insets.bottom + (2 * borderSpacing));

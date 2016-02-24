@@ -74,7 +74,7 @@ public class SausageFolding implements ILayoutProcessor {
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Sausage Folding", 1);
         
-        spacing = graph.getProperty(Properties.SPACING).doubleValue();
+        spacing = graph.getProperty(Properties.SPACING_NODE).doubleValue();
         inLayerSpacing = spacing * graph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);
 
         // determine the maximal dimensions of layers
@@ -266,10 +266,10 @@ public class SausageFolding implements ILayoutProcessor {
             dummyNode.setLayer(nextLayer);
 
             // Set thickness of the edge
-            float thickness = edge.getProperty(LayoutOptions.THICKNESS);
+            float thickness = edge.getProperty(LayoutOptions.EDGE_THICKNESS);
             if (thickness < 0) {
                 thickness = 0;
-                edge.setProperty(LayoutOptions.THICKNESS, thickness);
+                edge.setProperty(LayoutOptions.EDGE_THICKNESS, thickness);
             }
             dummyNode.getSize().y = thickness;
             double portPos = Math.floor(thickness / 2);

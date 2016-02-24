@@ -66,11 +66,18 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 nodeLayout.applyVector(pos);
                 // set the fixed size of the node
                 // TODO Think about whether this makes sense with the new size constraint options.
-                if (nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).contains(
+                if (nodeLayout.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS).contains(
                         SizeConstraint.MINIMUM_SIZE)) {
                     
-                    float width = nodeLayout.getProperty(LayoutOptions.MIN_WIDTH);
-                    float height = nodeLayout.getProperty(LayoutOptions.MIN_HEIGHT);
+                    KVector minSize = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MINIMUM);
+                    float width, height;
+                    if (minSize == null) {
+                        width = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_WIDTH);
+                        height = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_HEIGHT);
+                    } else {
+                        width = (float) minSize.x;
+                        height = (float) minSize.y; 
+                    }
                     if (width > 0 && height > 0) {
                         ElkUtil.resizeNode(node, width, height, true, true);
                     }
@@ -141,7 +148,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         }
         
         // set size of the parent node
-        Float borderSpacing = parentLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        Float borderSpacing = parentLayout.getProperty(LayoutOptions.SPACING_BORDER);
         if (borderSpacing == null || borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }

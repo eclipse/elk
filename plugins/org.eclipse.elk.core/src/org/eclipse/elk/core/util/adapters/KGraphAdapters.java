@@ -82,7 +82,7 @@ public final class KGraphAdapters {
             GraphElementAdapter<T> {
         
         private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
-                LayoutOptions.PORT_OFFSET, 0.0f);
+                LayoutOptions.PORT_BORDER_OFFSET, 0.0f);
         
         // let the elements be accessed by extending classes
         // CHECKSTYLEOFF VisibilityModifier
@@ -122,7 +122,7 @@ public final class KGraphAdapters {
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
             // the nodespacing implementation requires a default value for the offset property
-            if (prop.equals(LayoutOptions.PORT_OFFSET)) {
+            if (prop.equals(LayoutOptions.PORT_BORDER_OFFSET)) {
                 return (P) layout.getProperty(OFFSET_PROXY);
             }
             
