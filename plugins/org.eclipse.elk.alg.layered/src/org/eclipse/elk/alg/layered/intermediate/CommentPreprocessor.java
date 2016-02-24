@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -59,7 +59,7 @@ public final class CommentPreprocessor implements ILayoutProcessor {
         Iterator<LNode> nodeIter = layeredGraph.getLayerlessNodes().iterator();
         while (nodeIter.hasNext()) {
             LNode node = nodeIter.next();
-            if (node.getProperty(LayoutOptions.COMMENT_BOX)) {
+            if (node.getProperty(CoreOptions.COMMENT_BOX)) {
                 int edgeCount = 0;
                 LEdge edge = null;
                 LPort oppositePort = null;
@@ -76,7 +76,7 @@ public final class CommentPreprocessor implements ILayoutProcessor {
                 }
                 
                 if (edgeCount == 1 && oppositePort.getDegree() == 1
-                        && !oppositePort.getNode().getProperty(LayoutOptions.COMMENT_BOX)) {
+                        && !oppositePort.getNode().getProperty(CoreOptions.COMMENT_BOX)) {
                     // found a comment that has exactly one connection
                     processBox(node, edge, oppositePort, oppositePort.getNode());
                     nodeIter.remove();
@@ -118,11 +118,11 @@ public final class CommentPreprocessor implements ILayoutProcessor {
     private void processBox(final LNode box, final LEdge edge, final LPort oppositePort,
             final LNode realNode) {
         boolean topFirst, onlyTop = false, onlyBottom = false;
-        if (realNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+        if (realNode.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
             boolean hasNorth = false, hasSouth = false;
             portLoop: for (LPort port1 : realNode.getPorts()) {
                 for (LPort port2 : port1.getConnectedPorts()) {
-                    if (!port2.getNode().getProperty(LayoutOptions.COMMENT_BOX)) {
+                    if (!port2.getNode().getProperty(CoreOptions.COMMENT_BOX)) {
                         if (port1.getSide() == PortSide.NORTH) {
                             hasNorth = true;
                             break portLoop;

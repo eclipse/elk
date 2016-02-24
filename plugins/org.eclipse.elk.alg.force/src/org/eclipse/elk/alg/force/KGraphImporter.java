@@ -18,12 +18,12 @@ import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.properties.InternalProperties;
-import org.eclipse.elk.alg.force.properties.Properties;
+import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
@@ -100,7 +100,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             elemMap.put(knode, newNode);
             
             // port constraints cannot be undefined
-            PortConstraints portConstraints = nodeLayout.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+            PortConstraints portConstraints = nodeLayout.getProperty(CoreOptions.PORT_CONSTRAINTS);
             if (portConstraints == PortConstraints.UNDEFINED) {
                 portConstraints = PortConstraints.FREE;
             }
@@ -166,10 +166,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         
         // determine the border spacing, which influences the offset
         KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
-        float borderSpacing = fgraph.getProperty(Properties.SPACING_BORDER);
+        float borderSpacing = fgraph.getProperty(ForceOptions.SPACING_BORDER);
         if (borderSpacing < 0) {
-            borderSpacing = Properties.SPACING_BORDER.getDefault();
-            fgraph.setProperty(Properties.SPACING_BORDER, borderSpacing);
+            borderSpacing = ForceOptions.SPACING_BORDER.getDefault();
+            fgraph.setProperty(ForceOptions.SPACING_BORDER, borderSpacing);
         }
         
         // calculate the offset from border spacing and node distribution

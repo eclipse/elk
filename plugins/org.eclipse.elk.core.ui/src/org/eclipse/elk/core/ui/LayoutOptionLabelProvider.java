@@ -14,7 +14,7 @@ import java.util.EnumSet;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -84,7 +84,7 @@ public class LayoutOptionLabelProvider extends LabelProvider {
     public String getText(final Object element) {
         switch (optionData.getType()) {
         case STRING:
-            if (LayoutOptions.ALGORITHM.equals(optionData)) {
+            if (CoreOptions.ALGORITHM.equals(optionData)) {
                 LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
                 LayoutAlgorithmData algorithmData = layoutDataService.getAlgorithmData((String) element);
                 if (algorithmData != null) {

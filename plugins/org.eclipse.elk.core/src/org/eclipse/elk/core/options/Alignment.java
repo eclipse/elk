@@ -11,7 +11,7 @@
 package org.eclipse.elk.core.options;
 
 /**
- * Enumeration of node alignment options. To be accessed using {@link LayoutOptions#ALIGNMENT}.
+ * Enumeration of node alignment options. To be accessed using {@link CoreOptions#ALIGNMENT}.
  *
  * @author msp
  * @kieler.design 2011-03-14 reviewed by cmot, cds

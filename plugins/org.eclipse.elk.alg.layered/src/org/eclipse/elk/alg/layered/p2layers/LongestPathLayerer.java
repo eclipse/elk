@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.WideNodesStrategy;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -76,17 +76,17 @@ public final class LongestPathLayerer implements ILayoutPhase {
                 IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
 
         // Additional dependencies
-        if (graph.getProperty(Properties.DISTRIBUTE_NODES)
-                || graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
+        if (graph.getProperty(LayeredOptions.DISTRIBUTE_NODES)
+                || graph.getProperty(LayeredOptions.WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.AGGRESSIVE) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
             
-        } else if (graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
+        } else if (graph.getProperty(LayeredOptions.WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.CAREFUL) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
         }
         
-        if (graph.getProperty(Properties.SAUSAGE_FOLDING)) {
+        if (graph.getProperty(LayeredOptions.SAUSAGE_FOLDING)) {
             strategy.addBeforePhase4(IntermediateProcessorStrategy.SAUSAGE_COMPACTION);
         }
         

@@ -16,8 +16,8 @@ import org.eclipse.elk.alg.force.model.ForceModelStrategy;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.GraphFeature;
-import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
@@ -26,7 +26,7 @@ import org.eclipse.elk.graph.properties.Property;
  * Declarations for the ELK Force layout algorithm.
  */
 @SuppressWarnings("all")
-public class Properties implements ILayoutMetaDataProvider {
+public class ForceOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #MODEL}.
    */
@@ -107,7 +107,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Priority.
    */
   public final static IProperty<Integer> PRIORITY = new Property<Integer>(
-            LayoutOptions.PRIORITY,
+            CoreOptions.PRIORITY,
             FORCE_SUP_PRIORITY);
   
   /**
@@ -119,7 +119,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Node Spacing.
    */
   public final static IProperty<Float> SPACING_NODE = new Property<Float>(
-            LayoutOptions.SPACING_NODE,
+            CoreOptions.SPACING_NODE,
             FORCE_SUP_SPACING_NODE);
   
   /**
@@ -131,7 +131,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Border Spacing.
    */
   public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
-            LayoutOptions.SPACING_BORDER,
+            CoreOptions.SPACING_BORDER,
             FORCE_SUP_SPACING_BORDER);
   
   /**
@@ -143,7 +143,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Label Spacing.
    */
   public final static IProperty<Float> SPACING_LABEL = new Property<Float>(
-            LayoutOptions.SPACING_LABEL,
+            CoreOptions.SPACING_LABEL,
             FORCE_SUP_SPACING_LABEL);
   
   /**
@@ -155,7 +155,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Aspect Ratio.
    */
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO,
+            CoreOptions.ASPECT_RATIO,
             FORCE_SUP_ASPECT_RATIO);
   
   /**

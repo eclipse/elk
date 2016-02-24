@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.data.LayoutOptionData.Target;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.gef.EditPart;
@@ -124,14 +124,14 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
     
     /**
      * Return a map of default options. The base implementation only assigns the option
-     * {@link LayoutOptions#COMMENT_BOX} to instances of {@link NoteEditPart}. More defaults can
+     * {@link CoreOptions#COMMENT_BOX} to instances of {@link NoteEditPart}. More defaults can
      * be specified in subclasses.
      */
     protected Map<String, Object> getDefaultOptions() {
         Map<String, Object> result = null;
         if (editPart instanceof NoteEditPart) {
             result = Maps.newHashMapWithExpectedSize(1);
-            result.put(LayoutOptions.COMMENT_BOX.getId(), true);
+            result.put(CoreOptions.COMMENT_BOX.getId(), true);
         }
         return result;
     }

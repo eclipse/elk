@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayerConstraint;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -79,16 +79,16 @@ public class BigNodesIntermediateProcessor implements ILayoutProcessor {
 
                 // handle LAST and LAST_SEPARATE differently
                 // condense the nodes to the right side and move the layer constraint
-                if ((node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.LAST)
-                        || (node.getProperty(Properties.LAYER_CONSTRAINT) 
+                if ((node.getProperty(LayeredOptions.LAYER_CONSTRAINT) == LayerConstraint.LAST)
+                        || (node.getProperty(LayeredOptions.LAYER_CONSTRAINT) 
                                 == LayerConstraint.LAST_SEPARATE)) {
 
                     // condense
                     LNode last = condenseBigNodesChain(node, false);
                     // move the layer constraint property
-                    last.setProperty(Properties.LAYER_CONSTRAINT,
-                            node.getProperty(Properties.LAYER_CONSTRAINT));
-                    node.setProperty(Properties.LAYER_CONSTRAINT, LayerConstraint.NONE);
+                    last.setProperty(LayeredOptions.LAYER_CONSTRAINT,
+                            node.getProperty(LayeredOptions.LAYER_CONSTRAINT));
+                    node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.NONE);
                 } else {
                     // only condense
                     condenseBigNodesChain(node, true);
@@ -143,8 +143,8 @@ public class BigNodesIntermediateProcessor implements ILayoutProcessor {
     }
 
     /**
-     * @return true, if the {@link Properties#BIG_NODE_INITIAL} property is set and an
-     *         {@link Properties#ORIGIN} is set.
+     * @return true, if the {@link LayeredOptions#BIG_NODE_INITIAL} property is set and an
+     *         {@link LayeredOptions#ORIGIN} is set.
      */
     private boolean isInitialBigNode(final LNode node) {
         return (node.getProperty(InternalProperties.BIG_NODE_INITIAL))

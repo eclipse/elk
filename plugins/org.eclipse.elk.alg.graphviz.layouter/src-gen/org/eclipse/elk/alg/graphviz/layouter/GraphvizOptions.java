@@ -25,7 +25,7 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
-public class Properties implements ILayoutMetaDataProvider {
+public class GraphvizOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #ADAPT_PORT_POSITIONS}.
    */

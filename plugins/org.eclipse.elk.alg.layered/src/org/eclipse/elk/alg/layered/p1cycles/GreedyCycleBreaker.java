@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
@@ -111,7 +111,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                         continue;
                     }
                     
-                    int priority = edge.getProperty(Properties.PRIORITY);
+                    int priority = edge.getProperty(LayeredOptions.PRIORITY);
                     indeg[index] += priority > 0 ? priority + 1 : 1;
                 }
                 
@@ -121,7 +121,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                         continue;
                     }
                     
-                    int priority = edge.getProperty(Properties.PRIORITY);
+                    int priority = edge.getProperty(LayeredOptions.PRIORITY);
                     outdeg[index] += priority > 0 ? priority + 1 : 1;
                 }
             }
@@ -245,7 +245,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                     continue;
                 }
                 
-                int priority = edge.getProperty(Properties.PRIORITY);
+                int priority = edge.getProperty(LayeredOptions.PRIORITY);
                 if (priority < 0) {
                     priority = 0;
                 }

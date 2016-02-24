@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 
 /**
@@ -67,7 +67,7 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         for (LGraph graph : components) {
             int priority = 0;
             for (LNode node : graph.getLayerlessNodes()) {
-                priority += node.getProperty(Properties.PRIORITY);
+                priority += node.getProperty(LayeredOptions.PRIORITY);
             }
             graph.id = priority;
         }
@@ -98,8 +98,8 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             totalArea += size.x * size.y;
         }
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
-                * target.getProperty(Properties.ASPECT_RATIO));
-        double spacing = SPACING_FACTOR * target.getProperty(Properties.SPACING_NODE);
+                * target.getProperty(LayeredOptions.ASPECT_RATIO));
+        double spacing = SPACING_FACTOR * target.getProperty(LayeredOptions.SPACING_NODE);
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
@@ -122,10 +122,10 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         target.getSize().x = broadestRow;
         target.getSize().y = ypos + highestBox;
         
-        double regularSpacing = target.getProperty(Properties.SPACING_NODE).doubleValue();
+        double regularSpacing = target.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
 
         // if compaction is desired, do so!
-        if (firstComponent.getProperty(Properties.COMPONENTS_COMPACT)) {
+        if (firstComponent.getProperty(LayeredOptions.COMPONENTS_COMPACT)) {
             ComponentsCompactor compactor = new ComponentsCompactor();
             compactor.compact(components, target.getSize(), regularSpacing);
 

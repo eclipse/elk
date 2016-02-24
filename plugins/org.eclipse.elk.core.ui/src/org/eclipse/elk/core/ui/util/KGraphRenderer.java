@@ -24,7 +24,7 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.EdgeType;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KLabel;
@@ -435,7 +435,7 @@ public class KGraphRenderer {
         }
         if (!rect.painted && rect.intersects(area)) {
             KVectorChain bendPoints = edgeLayout.createVectorChain();
-            if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
+            if (edgeLayout.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
                 bendPoints = ElkMath.approximateBezierSpline(bendPoints);
             }
             bendPoints.scale(scale).offset(offset);
@@ -445,7 +445,7 @@ public class KGraphRenderer {
                         (int) Math.round(point2.x), (int) Math.round(point2.y));
                 point1 = point2;
             }
-            if (edgeLayout.getProperty(LayoutOptions.EDGE_TYPE) != EdgeType.UNDIRECTED) {
+            if (edgeLayout.getProperty(CoreOptions.EDGE_TYPE) != EdgeType.UNDIRECTED) {
                 // draw an arrow at the last segment of the connection
                 int[] arrowPoly = makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
                 if (arrowPoly != null) {
@@ -456,7 +456,7 @@ public class KGraphRenderer {
         }
         
         // paint junction points
-        KVectorChain vc = edgeLayout.getProperty(LayoutOptions.JUNCTION_POINTS);
+        KVectorChain vc = edgeLayout.getProperty(CoreOptions.JUNCTION_POINTS);
         if (vc != null) {
             for (KVector v : vc) {
                 KVector center = v.clone().scale(scale).add(offset).sub(2, 2);

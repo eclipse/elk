@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortLabelPlacement;
@@ -68,7 +68,7 @@ public class LabelAndNodeSizeProcessor {
      * {@inheritDoc}
      */
     public void process(final GraphAdapter<?> layeredGraph) {
-        final double labelSpacing = layeredGraph.getProperty(LayoutOptions.SPACING_LABEL).doubleValue();
+        final double labelSpacing = layeredGraph.getProperty(CoreOptions.SPACING_LABEL).doubleValue();
 
         // Iterate over all the graph's nodes
         for (final NodeAdapter<?> node : layeredGraph.getNodes()) {
@@ -80,15 +80,15 @@ public class LabelAndNodeSizeProcessor {
              */
             final NodeData data = new NodeData(node);
             data.labelSpacing = labelSpacing;
-            data.portSpacing = node.getProperty(LayoutOptions.SPACING_PORT).doubleValue();
-            data.nodeLabelInsets = node.getProperty(LayoutOptions.NODE_LABELS_INSETS);
+            data.portSpacing = node.getProperty(CoreOptions.SPACING_PORT).doubleValue();
+            data.nodeLabelInsets = node.getProperty(CoreOptions.NODE_LABELS_INSETS);
 
             /*
              * PHASE 1 (SAD DUCK):
              * PLACE PORT LABELS Port labels are placed and port margins are calculated.
              */
             final PortLabelPlacement labelPlacement =
-                    node.getProperty(LayoutOptions.PORT_LABELS_PLACEMENT);
+                    node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT);
             final boolean compoundNodeMode = node.isCompoundNode();
 
             // Place port labels and calculate the margins
@@ -98,7 +98,7 @@ public class LabelAndNodeSizeProcessor {
             }
 
             // Count ports on each side and calculate how much space they require
-            calculatePortInformation(data, node.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS)
+            calculatePortInformation(data, node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS)
                     .contains(SizeConstraint.PORT_LABELS));
 
             /*
@@ -440,20 +440,20 @@ public class LabelAndNodeSizeProcessor {
 
 
         // Get the port distribution from the node.
-        PortAlignment portAlignment = data.node.getProperty(LayoutOptions.PORT_ALIGNMENT_BASIC);
+        PortAlignment portAlignment = data.node.getProperty(CoreOptions.PORT_ALIGNMENT_BASIC);
         // Use JUSTIFIED as default.
         portAlignment =
                 portAlignment == PortAlignment.UNDEFINED ? PortAlignment.JUSTIFIED : portAlignment;
 
         // For each side get the port distribution. If it's UNDEFINED, replace it with the nodes policy.
         data.portAlignment[PortSide.NORTH.ordinal()] =
-                data.node.getProperty(LayoutOptions.PORT_ALIGNMENT_NORTH);
+                data.node.getProperty(CoreOptions.PORT_ALIGNMENT_NORTH);
         data.portAlignment[PortSide.SOUTH.ordinal()] =
-                data.node.getProperty(LayoutOptions.PORT_ALIGNMENT_SOUTH);
+                data.node.getProperty(CoreOptions.PORT_ALIGNMENT_SOUTH);
         data.portAlignment[PortSide.WEST.ordinal()] =
-                data.node.getProperty(LayoutOptions.PORT_ALIGNMENT_WEST);
+                data.node.getProperty(CoreOptions.PORT_ALIGNMENT_WEST);
         data.portAlignment[PortSide.EAST.ordinal()] =
-                data.node.getProperty(LayoutOptions.PORT_ALIGNMENT_EAST);
+                data.node.getProperty(CoreOptions.PORT_ALIGNMENT_EAST);
         for (PortSide side : PortSide.values()) {
             data.portAlignment[side.ordinal()] =
                     data.portAlignment[side.ordinal()] == PortAlignment.UNDEFINED
@@ -461,7 +461,7 @@ public class LabelAndNodeSizeProcessor {
         }
 
         data.hasAdditionalPortSpace =
-                data.node.getProperty(LayoutOptions.SPACING_PORT_SURROUNDING) != null;
+                data.node.getProperty(CoreOptions.SPACING_PORT_SURROUNDING) != null;
 
         // Calculate how many gaps we have between ports:
         // single port                                          --> 2 gaps
@@ -532,10 +532,10 @@ public class LabelAndNodeSizeProcessor {
         final KVector nodeSize = data.node.getSize();
         final KVector originalNodeSize = new KVector(nodeSize);
         final EnumSet<SizeConstraint> sizeConstraint =
-                data.node.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS);
-        final EnumSet<SizeOptions> sizeOptions = data.node.getProperty(LayoutOptions.NODE_SIZE_OPTIONS);
+                data.node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
+        final EnumSet<SizeOptions> sizeOptions = data.node.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
         final PortConstraints portConstraints =
-                data.node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+                data.node.getProperty(CoreOptions.PORT_CONSTRAINTS);
         final boolean accountForLabels = sizeConstraint.contains(SizeConstraint.PORT_LABELS);
 
         // If the size constraint is empty, we can't do anything
@@ -599,11 +599,11 @@ public class LabelAndNodeSizeProcessor {
 
         // Respect minimum size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            KVector minSize = data.node.getProperty(LayoutOptions.NODE_SIZE_MINIMUM);
+            KVector minSize = data.node.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
             double minWidth, minHeight;
             if (minSize == null) {
-                minWidth = data.node.getProperty(LayoutOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
-                minHeight = data.node.getProperty(LayoutOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
+                minWidth = data.node.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
+                minHeight = data.node.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
             } else {
                 minWidth = minSize.x;
                 minHeight = minSize.y;
@@ -792,7 +792,7 @@ public class LabelAndNodeSizeProcessor {
 
         if (data.hasAdditionalPortSpace) {
             final Margins additionalPortSpace =
-                    data.node.getProperty(LayoutOptions.SPACING_PORT_SURROUNDING);
+                    data.node.getProperty(CoreOptions.SPACING_PORT_SURROUNDING);
             additionalWidth = additionalPortSpace.left + additionalPortSpace.right;
             additionalHeight = additionalPortSpace.top + additionalPortSpace.bottom;
         } else {
@@ -843,7 +843,7 @@ public class LabelAndNodeSizeProcessor {
             final boolean accountForLabels) {
 
         // Port positions must be fixed for this method to be called
-        assert node.getProperty(LayoutOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
+        assert node.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
 
         final KVector result = new KVector();
 
@@ -886,7 +886,7 @@ public class LabelAndNodeSizeProcessor {
             return;
         }
         final PortConstraints portConstraints =
-                data.node.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+                data.node.getProperty(CoreOptions.PORT_CONSTRAINTS);
 
         if (portConstraints == PortConstraints.FIXED_POS) {
             // Fixed Position
@@ -896,7 +896,7 @@ public class LabelAndNodeSizeProcessor {
             placeFixedRatioNodePorts(data.node);
         } else {
             // Free, Fixed Side, Fixed Order
-            if (data.node.getProperty(LayoutOptions.HYPERNODE)
+            if (data.node.getProperty(CoreOptions.HYPERNODE)
                     || (data.node.getSize().x == 0 && data.node.getSize().y == 0)) {
 
                 placeHypernodePorts(data.node);
@@ -917,7 +917,7 @@ public class LabelAndNodeSizeProcessor {
         final KVector nodeSize = node.getSize();
 
         for (final PortAdapter<?> port : node.getPorts()) {
-            Float portOffset = port.getProperty(LayoutOptions.PORT_BORDER_OFFSET);
+            Float portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             if (portOffset == null) {
                 portOffset = 0f;
             }
@@ -955,7 +955,7 @@ public class LabelAndNodeSizeProcessor {
         // coordinate set to the node's current width; the same goes for the y coordinate of
         // southern ports
         for (final PortAdapter<?> port : node.getPorts()) {
-            Float portOffset = port.getProperty(LayoutOptions.PORT_BORDER_OFFSET);
+            Float portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             if (portOffset == null) {
                 portOffset = 0f;
             }
@@ -1008,7 +1008,7 @@ public class LabelAndNodeSizeProcessor {
     private void placeNodePorts(final NodeData data) {
         final KVector nodeSize = data.node.getSize();
         final boolean accountForLabels =
-                data.node.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS).contains(
+                data.node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS).contains(
                         SizeConstraint.PORT_LABELS);
 
         // Let someone compute the port placement data we'll need
@@ -1016,7 +1016,7 @@ public class LabelAndNodeSizeProcessor {
 
         // Arrange the ports
         for (final PortAdapter<?> port : data.node.getPorts()) {
-            Float portOffset = port.getProperty(LayoutOptions.PORT_BORDER_OFFSET);
+            Float portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             if (portOffset == null) {
                 portOffset = 0f;
             }
@@ -1076,7 +1076,7 @@ public class LabelAndNodeSizeProcessor {
         // The way we calculate everything depends on whether any additional port space is specified
         Margins additionalPortSpace;
         if (data.hasAdditionalPortSpace) {
-            additionalPortSpace = data.node.getProperty(LayoutOptions.SPACING_PORT_SURROUNDING);
+            additionalPortSpace = data.node.getProperty(CoreOptions.SPACING_PORT_SURROUNDING);
         } else {
             // No additional port space set, so we set it to port spacing.
             additionalPortSpace = new Margins(

@@ -14,11 +14,11 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 
 /**
  * Container class for a variety of spacing values that are either specified in the general
- * {@link LayoutOptions} class or KLay Layered's dedicated {@link Properties} class.
+ * {@link CoreOptions} class or KLay Layered's dedicated {@link LayeredOptions} class.
  * 
  * This class allows to either select the recorded spacing values directly or to query for spacing
  * values using one of the convenience methods. The methods do not provide results for every
@@ -77,13 +77,13 @@ public final class Spacings {
      */
     public Spacings(final LGraph graph) {
 
-        nodeSpacing = graph.getProperty(Properties.SPACING_NODE);
-        inLayerSpacingFactor = graph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);
-        edgeEdgeSpacing = nodeSpacing * graph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        edgeNodeSpacing = nodeSpacing * graph.getProperty(Properties.EDGE_NODE_SPACING_FACTOR);
-        portSpacing = graph.getProperty(LayoutOptions.SPACING_PORT);
-        externalPortSpacing = graph.getProperty(LayoutOptions.SPACING_PORT);
-        labelSpacing = graph.getProperty(LayoutOptions.SPACING_LABEL);
+        nodeSpacing = graph.getProperty(LayeredOptions.SPACING_NODE);
+        inLayerSpacingFactor = graph.getProperty(LayeredOptions.IN_LAYER_SPACING_FACTOR);
+        edgeEdgeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
+        edgeNodeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.EDGE_NODE_SPACING_FACTOR);
+        portSpacing = graph.getProperty(CoreOptions.SPACING_PORT);
+        externalPortSpacing = graph.getProperty(CoreOptions.SPACING_PORT);
+        labelSpacing = graph.getProperty(CoreOptions.SPACING_LABEL);
 
         // pre calculate the spacings between pairs of node types
         int n = NodeType.values().length;

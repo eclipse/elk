@@ -21,7 +21,7 @@ import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.HierarchyHandling;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KEdge;
@@ -80,7 +80,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         final KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
         
         // Check if the node should be laid out at all
-        if (layoutNodeShapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+        if (layoutNodeShapeLayout.getProperty(CoreOptions.NO_LAYOUT)) {
             return Collections.emptyList();
         }
         
@@ -113,7 +113,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // if the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
             int nodeCount;
-            if (layoutNodeShapeLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING)
+            if (layoutNodeShapeLayout.getProperty(CoreOptions.HIERARCHY_HANDLING)
                         == HierarchyHandling.INCLUDE_CHILDREN && (algorithmData.supportsFeature(GraphFeature.COMPOUND)
                     || algorithmData.supportsFeature(GraphFeature.CLUSTERS))) {
                 
@@ -131,7 +131,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     evaluateHierarchyHandlingInheritance(knode);
                     final KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
                     final boolean stopHierarchy = knodeLayout.getProperty(
-                            LayoutOptions.HIERARCHY_HANDLING) == HierarchyHandling.SEPARATE_CHILDREN;
+                            CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.SEPARATE_CHILDREN;
 
                     if (stopHierarchy || !getAlgorithm(knode).equals(algorithmData)) {
                         // Hierarchical layout is stopped by explicitly disabling or switching
@@ -140,7 +140,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                         // Explicitly disable hierarchical layout for the child node. Simplifies the
                         // handling of switching algorithms in the layouter.
-                        knodeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING,
+                        knodeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING,
                                 HierarchyHandling.SEPARATE_CHILDREN);
 
                         // apply the LayoutOptions.SCALE_FACTOR if present
@@ -172,7 +172,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // from being laid out again
             for (final KEdge selfLoop : childrenInsideSelfLoops) {
                 KEdgeLayout edgeLayout = selfLoop.getData(KEdgeLayout.class);
-                edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
+                edgeLayout.setProperty(CoreOptions.NO_LAYOUT, true);
             }
 
             // get an instance of the layout provider
@@ -209,7 +209,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     protected LayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
         KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
-        String algorithmId = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
+        String algorithmId = nodeLayout.getProperty(CoreOptions.ALGORITHM);
         LayoutAlgorithmData result = getAlgorithm(algorithmId);
         if (result == null) {
             if (algorithmId == null || algorithmId.isEmpty()) {
@@ -261,8 +261,8 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     // Hierarchy Handling
     
     /**
-     * Evaluates one level of inheritance for property {@link LayoutOptions#HIERARCHY_HANDLING}.
-     * Additionally provides legacy support for property {@link LayoutOptions#LAYOUT_HIERARCHY} and
+     * Evaluates one level of inheritance for property {@link CoreOptions#HIERARCHY_HANDLING}.
+     * Additionally provides legacy support for property {@link CoreOptions#LAYOUT_HIERARCHY} and
      * replaces it with the new property. If the root node is evaluated and it is set to inherit (or
      * not set at all) the property is set to {@link HierarchyHandling#SEPARATE_CHILDREN}.
      * 
@@ -273,26 +273,26 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         KLayoutData layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
         // Pre-process the hierarchy handling by replacing the deprecated LAYOUT_HIERARCHY
         // property with the new hierarchy handling property
-        boolean hasLayoutHierarchy = layoutNodeShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);
+        boolean hasLayoutHierarchy = layoutNodeShapeLayout.getProperty(CoreOptions.LAYOUT_HIERARCHY);
         if (hasLayoutHierarchy) {
-            layoutNodeShapeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING,
+            layoutNodeShapeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING,
                     HierarchyHandling.INCLUDE_CHILDREN);
         }
         
         // Pre-process the hierarchy handling to substitute inherited handling by the parent
         // value. If the root node is set to inherit, it is set to separate the children.
-        if (layoutNodeShapeLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) == HierarchyHandling.INHERIT) {
+        if (layoutNodeShapeLayout.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INHERIT) {
             if (layoutNode.getParent() == null) {
                 // Set root node to separate children handling
-                layoutNodeShapeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING,
+                layoutNodeShapeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING,
                         HierarchyHandling.SEPARATE_CHILDREN);
             } else {
                 // Set hierarchy handling to the value of the parent. 
                 // It is safe to assume that the parent has been handled before and is not set to
                 // INHERIT anymore.
                 HierarchyHandling parentHandling = layoutNode.getParent().getData(KShapeLayout.class)
-                        .getProperty(LayoutOptions.HIERARCHY_HANDLING);
-                layoutNodeShapeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING, parentHandling);
+                        .getProperty(CoreOptions.HIERARCHY_HANDLING);
+                layoutNodeShapeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING, parentHandling);
             }
         }
     }
@@ -310,7 +310,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         // count the content of the given node
         int count = layoutNode.getChildren().size();
         for (KNode childNode : layoutNode.getChildren()) {
-            if (childNode.getData(KShapeLayout.class).getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+            if (childNode.getData(KShapeLayout.class).getProperty(CoreOptions.HIERARCHY_HANDLING) 
                     != HierarchyHandling.SEPARATE_CHILDREN
                     && getAlgorithm(layoutNode).equals(getAlgorithm(childNode))) {
                 
@@ -330,7 +330,7 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     /**
      * Returns a list of self loops of the given node that should be routed inside that node instead
      * of around it. For the node to even be considered for inside self loop processing, its
-     * {@link LayoutOptions#SELF_LOOP_INSIDE} property must be set to {@code true}. The returned
+     * {@link CoreOptions#SELF_LOOP_INSIDE} property must be set to {@code true}. The returned
      * list will then consist of those of its outgoing edges that are self loops and that have that
      * property set to {@code true} as well.
      * 
@@ -341,13 +341,13 @@ public abstract class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     protected List<KEdge> gatherInsideSelfLoops(final KNode node) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
         
-        if (nodeLayout.getProperty(LayoutOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
+        if (nodeLayout.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
             List<KEdge> insideSelfLoops = Lists.newArrayListWithCapacity(node.getOutgoingEdges().size());
             
             for (KEdge edge : node.getOutgoingEdges()) {
                 if (edge.getTarget() == node) {
                     final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                    if (edgeLayout.getProperty(LayoutOptions.INSIDE_SELF_LOOPS_YO)) {
+                    if (edgeLayout.getProperty(CoreOptions.INSIDE_SELF_LOOPS_YO)) {
                         insideSelfLoops.add(edge);
                     }
                 }

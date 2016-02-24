@@ -41,7 +41,7 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
@@ -256,7 +256,7 @@ public class DotExporter {
         boolean hierarchy = transData.getProperty(HIERARCHY);
         boolean transformEdgeLayout = transData.getProperty(TRANSFORM_EDGE_LAYOUT);
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
+        Direction direction = parentLayout.getProperty(CoreOptions.DIRECTION);
         boolean vertical = direction == Direction.DOWN || direction == Direction.UP
                 || direction == Direction.UNDEFINED;
         LinkedList<KNode> nodes = new LinkedList<KNode>(parent.getChildren());
@@ -472,7 +472,7 @@ public class DotExporter {
         for (KLabel label : kedge.getLabels()) {
             StringBuilder buffer = midLabel;
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            EdgeLabelPlacement placement = labelLayout.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
+            EdgeLabelPlacement placement = labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
             boolean takeFontName = false, takeFontSize = false;
             switch (placement) {
             case HEAD:
@@ -497,10 +497,10 @@ public class DotExporter {
             }
             buffer.append(label.getText());
             if (takeFontName) {
-                fontName = labelLayout.getProperty(LayoutOptions.FONT_NAME);
+                fontName = labelLayout.getProperty(CoreOptions.FONT_NAME);
             }
             if (takeFontSize) {
-                fontSize = labelLayout.getProperty(LayoutOptions.FONT_SIZE);
+                fontSize = labelLayout.getProperty(CoreOptions.FONT_SIZE);
                 // increase the font size to let Graphviz prepare more room for
                 // the label
                 if (fontSize > 0) {
@@ -512,7 +512,7 @@ public class DotExporter {
         // set mid label: if empty, it is filled with a dummy string to avoid
         // edge overlapping
         if (midLabel.length() > 0) {
-            float labelSpacing = edgeLayout.getProperty(LayoutOptions.SPACING_LABEL);
+            float labelSpacing = edgeLayout.getProperty(CoreOptions.SPACING_LABEL);
             if (labelSpacing < 1) {
                 labelSpacing = 0f;
             }
@@ -673,7 +673,7 @@ public class DotExporter {
                                     nodeOffset.y = -(baseOffset.y + topy);
                                 }
                                 ElkUtil.resizeNode(parentNode, width, height, false, true);
-                                parentLayout.setProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS,
+                                parentLayout.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS,
                                         SizeConstraint.fixed());
                                 break attr_loop;
                             } catch (NumberFormatException exception) {
@@ -861,7 +861,7 @@ public class DotExporter {
         }
         
         if (transData.getProperty(USE_SPLINES)) {
-            edgeLayout.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+            edgeLayout.setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
         }
 
         // process the edge labels
@@ -893,7 +893,7 @@ public class DotExporter {
         float combinedWidth = 0.0f, combinedHeight = 0.0f;
         for (KLabel label : kedge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            EdgeLabelPlacement elp = labelLayout.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
+            EdgeLabelPlacement elp = labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
             if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED
                     && placement == EdgeLabelPlacement.CENTER) {
                 combinedWidth = Math.max(combinedWidth, labelLayout.getWidth());
@@ -907,7 +907,7 @@ public class DotExporter {
             float ypos = (float) (pos.y - combinedHeight / 2 + offset.y);
             for (KLabel label : kedge.getLabels()) {
                 KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                EdgeLabelPlacement elp = labelLayout.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
+                EdgeLabelPlacement elp = labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
                 if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED
                         && placement == EdgeLabelPlacement.CENTER) {
                     float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;

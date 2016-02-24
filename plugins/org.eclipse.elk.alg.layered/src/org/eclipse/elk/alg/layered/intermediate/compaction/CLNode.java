@@ -15,7 +15,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
@@ -50,9 +50,9 @@ public final class CLNode extends CNode {
      */
     public CLNode(final LNode lNode, final LGraph layeredGraph) {
         // getting the spacing properties
-        horizontalSpacing = (double) layeredGraph.getProperty(Properties.SPACING_NODE);
+        horizontalSpacing = (double) layeredGraph.getProperty(LayeredOptions.SPACING_NODE);
         verticalSpacing = horizontalSpacing
-                        * layeredGraph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);
+                        * layeredGraph.getProperty(LayeredOptions.IN_LAYER_SPACING_FACTOR);
         
         // calculating the necessary hitbox dimensions
         this.lNode = lNode;

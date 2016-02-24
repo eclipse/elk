@@ -28,7 +28,7 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -1029,10 +1029,10 @@ public final class OrthogonalRoutingGenerator {
             if (!createdJunctionPoints.contains(pos)) {
                 
                 // create a new junction point for the edge at the bend point's position
-                KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
                 if (junctionPoints == null) {
                     junctionPoints = new KVectorChain();
-                    edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                    edge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
                 }
                 
                 KVector jpoint = new KVector(pos);

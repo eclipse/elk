@@ -20,14 +20,14 @@ import org.eclipse.elk.core.util.BoxLayoutProvider
 import org.eclipse.elk.core.util.RandomLayoutProvider
 
 // Sort based on normal - advanced - programmatic - global - output and within the groups alphabetically
-// If different types are within a group, move the group to the first category
+// If different types are within a group, move the group to the first category 
 
 /**
  * Core definitions of the Eclipse Layout Kernel.
  */
 bundle {
 	label "ELK"
-	class core.options.LayoutOptions
+	class core.options.CoreOptions  
 }
 
 category layered {

@@ -29,7 +29,7 @@ import org.eclipse.elk.core.options.PortAlignment
  * Declarations for the ELK Layered layout algorithm.
  */
 bundle {
-    class properties.Properties
+    class properties.LayeredOptions  
 }
 
 algorithm layered(LayeredLayoutProvider) {

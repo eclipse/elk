@@ -19,7 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -49,10 +49,10 @@ import com.google.common.collect.Lists;
  * the promotion is applied. Furthermore there are different strategies to handle the node
  * promotion.
  * <ul>
- * <li>{@link Properties#NODE_PROMOTION}: {@link Enum} that contains the handling strategies and
+ * <li>{@link LayeredOptions#NODE_PROMOTION}: {@link Enum} that contains the handling strategies and
  * enables or disables the node promotion. For more information look at
  * {@link NodePromotionStrategy}.</li>
- * <li>{@link Properties#NODE_PROMOTION_BOUNDARY}: Sets an upper bound for the iterations of the
+ * <li>{@link LayeredOptions#NODE_PROMOTION_BOUNDARY}: Sets an upper bound for the iterations of the
  * node promotion. Is calculated by a percentage of the number of all nodes or of the number of only
  * the dummy nodes. The algorithm stops if this boundary is reached, even if it's still possible to
  * promote nodes.</li>
@@ -137,11 +137,11 @@ public class NodePromotion implements ILayoutProcessor {
 
         precalculateAndSetInformation();
 
-        promotionStrategy = layeredGraph.getProperty(Properties.NODE_PROMOTION);
+        promotionStrategy = layeredGraph.getProperty(LayeredOptions.NODE_PROMOTION);
 
         // If the promotion strategy is set to DUMMYNODE_PERCENTAGE or NODECOUNT_PERCENTAGE this
         // value will have an effect on the termination criterion of the node promotion.
-        int promoteUntil = masterGraph.getProperty(Properties.NODE_PROMOTION_BOUNDARY).intValue();
+        int promoteUntil = masterGraph.getProperty(LayeredOptions.NODE_PROMOTION_BOUNDARY).intValue();
 
         // Dummy function that's got no other choice but to say "it's true".
         Function<Pair<Integer, Integer>, Boolean> funFunction = (pair) -> true;
@@ -222,10 +222,10 @@ public class NodePromotion implements ILayoutProcessor {
         // and there might some more changes about where which edge and node might end up at last.
         // Calculate approximative addition of space for a node.
         nodeSizeAffix =
-                masterGraph.getProperty(Properties.SPACING_NODE)
-                        * masterGraph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);
+                masterGraph.getProperty(LayeredOptions.SPACING_NODE)
+                        * masterGraph.getProperty(LayeredOptions.IN_LAYER_SPACING_FACTOR);
         // And calculate an approximative size of a dummy node inside the graph.
-        dummySize = nodeSizeAffix * masterGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        dummySize = nodeSizeAffix * masterGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
 
         maxHeight = masterGraph.getLayers().size();
         int layerID = maxHeight - 1;

@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.force.model.ForceModelStrategy
  * Declarations for the ELK Force layout algorithm.
  */
 bundle {
-    class properties.Properties
+    class properties.ForceOptions  
 }
 
 algorithm force(ForceLayoutProvider) {

@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -158,7 +158,7 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         // Assign index values to the ports of the left layer
         int sourceCount = 0;
         for (LNode node : leftLayer) {
-            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Assign index values in the order north - east - south - west
                 for (LPort port : node.getPorts()) {
                     int portEdges = 0;
@@ -192,7 +192,7 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         // Assign index values to the ports of the right layer
         int targetCount = 0;
         for (LNode node : rightLayer) {
-            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Determine how many input ports there are on the north side
                 // (note that the standard port order is north - east - south - west)
                 int northInputPorts = 0;

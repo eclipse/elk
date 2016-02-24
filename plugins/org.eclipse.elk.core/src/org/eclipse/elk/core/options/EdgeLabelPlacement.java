@@ -12,7 +12,7 @@ package org.eclipse.elk.core.options;
 
 /**
  * Definition of placement positions for edge labels. To be accessed using
- * {@link LayoutOptions#EDGE_LABEL_PLACEMENT}.
+ * {@link CoreOptions#EDGE_LABEL_PLACEMENT}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch

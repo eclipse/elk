@@ -20,7 +20,7 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.KNode;
 
 /**
@@ -50,19 +50,19 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Box layout", 2);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         // set option for minimal spacing
-        Float objSpacing = parentLayout.getProperty(LayoutOptions.SPACING_NODE);
+        Float objSpacing = parentLayout.getProperty(CoreOptions.SPACING_NODE);
         if (objSpacing == null || objSpacing < 0) {
             objSpacing = DEF_SPACING;
         }
         // set option for border spacing
-        Float borderSpacing = parentLayout.getProperty(LayoutOptions.SPACING_BORDER);
+        Float borderSpacing = parentLayout.getProperty(CoreOptions.SPACING_BORDER);
         if (borderSpacing == null || borderSpacing < 0) {
             borderSpacing = DEF_SPACING;
         }
         // set expand nodes option
-        boolean expandNodes = parentLayout.getProperty(LayoutOptions.EXPAND_NODES);
+        boolean expandNodes = parentLayout.getProperty(CoreOptions.EXPAND_NODES);
         // set interactive option
-        boolean interactive = parentLayout.getProperty(LayoutOptions.INTERACTIVE);
+        boolean interactive = parentLayout.getProperty(CoreOptions.INTERACTIVE);
 
         // sort boxes according to priority and position or size
         List<KNode> sortedBoxes = sort(layoutNode, interactive);
@@ -88,12 +88,12 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         Collections.sort(sortedBoxes, new Comparator<KNode>() {
             public int compare(final KNode child1, final KNode child2) {
                 KShapeLayout layout1 = child1.getData(KShapeLayout.class);
-                Integer prio1 = layout1.getProperty(LayoutOptions.PRIORITY);
+                Integer prio1 = layout1.getProperty(CoreOptions.PRIORITY);
                 if (prio1 == null) {
                     prio1 = 0;
                 }
                 KShapeLayout layout2 = child2.getData(KShapeLayout.class);
-                Integer prio2 = layout2.getProperty(LayoutOptions.PRIORITY);
+                Integer prio2 = layout2.getProperty(CoreOptions.PRIORITY);
                 if (prio2 == null) {
                     prio2 = 0;
                 }
@@ -137,19 +137,19 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         KInsets insets = parentLayout.getInsets();
-        KVector minSize = parentLayout.getProperty(LayoutOptions.NODE_SIZE_MINIMUM);
+        KVector minSize = parentLayout.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
         float minWidth, minHeight;
         if (minSize == null) {
-            minWidth = Math.max(parentLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_WIDTH)
+            minWidth = Math.max(parentLayout.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH)
                     - insets.getLeft() - insets.getRight(), 0);
-            minHeight = Math.max(parentLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_HEIGHT)
+            minHeight = Math.max(parentLayout.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT)
                     - insets.getTop() - insets.getBottom(), 0);
         } else {
             minWidth = (float) minSize.x;
             minHeight = (float) minSize.y; 
         }
         
-        Float aspectRatio = parentLayout.getProperty(LayoutOptions.ASPECT_RATIO);
+        Float aspectRatio = parentLayout.getProperty(CoreOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }

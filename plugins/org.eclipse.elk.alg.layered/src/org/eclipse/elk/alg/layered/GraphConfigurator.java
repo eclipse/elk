@@ -24,12 +24,12 @@ import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrate
 import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -92,20 +92,20 @@ final class GraphConfigurator {
 //        lgraph.checkProperties(InternalProperties.SPACING, InternalProperties.BORDER_SPACING,
 //                Properties.THOROUGHNESS, InternalProperties.ASPECT_RATIO);
         
-        float spacing = lgraph.getProperty(Properties.SPACING_NODE);
-        if (lgraph.getProperty(Properties.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
+        float spacing = lgraph.getProperty(LayeredOptions.SPACING_NODE);
+        if (lgraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
             // Edge spacing is determined by the product of object spacing and edge spacing factor.
             // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
-            lgraph.setProperty(Properties.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
+            lgraph.setProperty(LayeredOptions.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
         }
         
-        Direction direction = lgraph.getProperty(LayoutOptions.DIRECTION);
+        Direction direction = lgraph.getProperty(CoreOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
-            lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
+            lgraph.setProperty(CoreOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
         }
         
         // set the random number generator based on the random seed option
-        Integer randomSeed = lgraph.getProperty(Properties.RANDOM_SEED);
+        Integer randomSeed = lgraph.getProperty(LayeredOptions.RANDOM_SEED);
         if (randomSeed == 0) {
             lgraph.setProperty(InternalProperties.RANDOM, new Random());
         } else {
@@ -132,12 +132,12 @@ final class GraphConfigurator {
         configureGraphProperties(lgraph);
         
         // get instances for the different phases of our algorithm
-        ILayoutPhase cycleBreaker = cachedLayoutPhase(lgraph.getProperty(Properties.CYCLE_BREAKING));
-        ILayoutPhase layerer = cachedLayoutPhase(lgraph.getProperty(Properties.NODE_LAYERING));
-        ILayoutPhase crossingMinimizer = cachedLayoutPhase(lgraph.getProperty(Properties.CROSS_MIN));
-        ILayoutPhase nodePlacer = cachedLayoutPhase(lgraph.getProperty(Properties.NODE_PLACEMENT));
+        ILayoutPhase cycleBreaker = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.CYCLE_BREAKING));
+        ILayoutPhase layerer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.NODE_LAYERING));
+        ILayoutPhase crossingMinimizer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.CROSS_MIN));
+        ILayoutPhase nodePlacer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.NODE_PLACEMENT));
         ILayoutPhase edgeRouter = cachedLayoutPhase(
-                EdgeRouterFactory.factoryFor(lgraph.getProperty(Properties.EDGE_ROUTING)));
+                EdgeRouterFactory.factoryFor(lgraph.getProperty(LayeredOptions.EDGE_ROUTING)));
 
         // determine intermediate processor configuration
         IntermediateProcessingConfiguration intermediateProcessingConfiguration =
@@ -246,7 +246,7 @@ final class GraphConfigurator {
                 IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
 
         // port side processor, put to first slot only if requested and routing is orthogonal
-        if (lgraph.getProperty(Properties.FEEDBACK_EDGES)) {
+        if (lgraph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
             configuration.addBeforePhase1(IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
         } else {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
@@ -258,7 +258,7 @@ final class GraphConfigurator {
         }
 
         // graph transformations for unusual layout directions
-        switch (lgraph.getProperty(LayoutOptions.DIRECTION)) {
+        switch (lgraph.getProperty(CoreOptions.DIRECTION)) {
         case LEFT:
             configuration
                 .addBeforePhase1(IntermediateProcessorStrategy.LEFT_DIR_PREPROCESSOR)
@@ -288,7 +288,7 @@ final class GraphConfigurator {
         }
         
         // Node-Promotion application for reduction of dummy nodes after layering
-        if (lgraph.getProperty(Properties.NODE_PROMOTION) != NodePromotionStrategy.NONE) {
+        if (lgraph.getProperty(LayeredOptions.NODE_PROMOTION) != NodePromotionStrategy.NONE) {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
         }
 
@@ -299,13 +299,13 @@ final class GraphConfigurator {
         }
         
         // Additional horizontal compaction depends on orthogonal edge routing
-        if (lgraph.getProperty(Properties.POST_COMPACTION) != GraphCompactionStrategy.NONE
-              && lgraph.getProperty(Properties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+        if (lgraph.getProperty(LayeredOptions.POST_COMPACTION) != GraphCompactionStrategy.NONE
+              && lgraph.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
             configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
         }
         
         // Move trees of high degree nodes to separate layers
-        if (lgraph.getProperty(Properties.HIGH_DEGREE_NODE_TREATMENT)) {
+        if (lgraph.getProperty(LayeredOptions.HIGH_DEGREE_NODE_TREATMENT)) {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.HIGH_DEGREE_NODE_LAYER_PROCESSOR);
         }
 

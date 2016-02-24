@@ -31,7 +31,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.SelfLoopPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -47,7 +47,7 @@ import com.google.common.collect.Sets;
  * Unhides ports that were hidden by the {@link SplineSelfLoopPreProcessor} before. A sorting of the
  * components is done, in respect to the size of text labels of the edges. The ports are re-added to
  * the node in a crossing minimizing order that depends on the
- * {@link Properties#SPLINE_SELF_LOOP_PLACEMENT} property of the graph.
+ * {@link LayeredOptions#SPLINE_SELF_LOOP_PLACEMENT} property of the graph.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
@@ -76,7 +76,7 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor {
         
         /** Stores which loop placement strategy to choose. */
         final SelfLoopPlacement loopPlacement = 
-                layeredGraph.getProperty(Properties.SELF_LOOP_PLACEMENT);
+                layeredGraph.getProperty(LayeredOptions.SELF_LOOP_PLACEMENT);
         
         ////////////////////////////////////////////////////////
         // There are two main jobs to be done:

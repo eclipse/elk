@@ -23,7 +23,7 @@ import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutCategoryData;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -226,7 +226,7 @@ public class LayoutMetaDataService {
         List<LayoutOptionData> optionDataList = new LinkedList<LayoutOptionData>();
         for (LayoutOptionData optionData : layoutOptionMap.values()) {
             if (algorithmData.knowsOption(optionData)
-                    || LayoutOptions.ALGORITHM.equals(optionData)) {
+                    || CoreOptions.ALGORITHM.equals(optionData)) {
                 if (optionData.getTargets().contains(targetType)) {
                     optionDataList.add(optionData);
                 }

@@ -31,7 +31,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * The port order depends on the connected ports in other layers. Also, the actual port distribution
  * mechanism used is determined randomly. 
  * Also handles ports with the 
- * {@link de.cau.cs.kieler.klay.layered.properties.Properties#NORTH_OR_SOUTH_PORT 
+ * {@link de.cau.cs.kieler.klay.layered.properties.LayeredOptions#NORTH_OR_SOUTH_PORT 
  * Properties#NORTH_OR_SOUTH_PORT} property.
  * 
  * <dl>

@@ -17,7 +17,7 @@ import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
@@ -82,7 +82,7 @@ public final class KGraphAdapters {
             GraphElementAdapter<T> {
         
         private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
-                LayoutOptions.PORT_BORDER_OFFSET, 0.0f);
+                CoreOptions.PORT_BORDER_OFFSET, 0.0f);
         
         // let the elements be accessed by extending classes
         // CHECKSTYLEOFF VisibilityModifier
@@ -122,7 +122,7 @@ public final class KGraphAdapters {
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
             // the nodespacing implementation requires a default value for the offset property
-            if (prop.equals(LayoutOptions.PORT_BORDER_OFFSET)) {
+            if (prop.equals(CoreOptions.PORT_BORDER_OFFSET)) {
                 return (P) layout.getProperty(OFFSET_PROXY);
             }
             
@@ -184,7 +184,7 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public Margins getMargin() {
-            Margins margins = layout.getProperty(LayoutOptions.MARGINS);
+            Margins margins = layout.getProperty(CoreOptions.MARGINS);
             if (margins == null) {
                 margins = new Margins();
             }
@@ -197,7 +197,7 @@ public final class KGraphAdapters {
         public void setMargin(final Margins margin) {
             // analog to the insets case, we copy the margins object here
             Margins newMargin = new Margins(margin); 
-            layout.setProperty(LayoutOptions.MARGINS, newMargin);
+            layout.setProperty(CoreOptions.MARGINS, newMargin);
         }
         
         /**
@@ -342,7 +342,7 @@ public final class KGraphAdapters {
         public void sortPortList(final Comparator<?> comparator) {
             // Iterate through the nodes of all layers
             KLayoutData layout = element.getData(KLayoutData.class);
-            if (layout.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (layout.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 ECollections.sort(element.getPorts(), (Comparator<KPort>) comparator);
             }
         }
@@ -408,7 +408,7 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public PortSide getSide() {
-            return layout.getProperty(LayoutOptions.PORT_SIDE);
+            return layout.getProperty(CoreOptions.PORT_SIDE);
         }
 
         /**
@@ -532,8 +532,8 @@ public final class KGraphAdapters {
             KShapeLayout layout1 = port1.getData(KShapeLayout.class);
             KShapeLayout layout2 = port2.getData(KShapeLayout.class);
             int ordinalDifference =
-                    layout1.getProperty(LayoutOptions.PORT_SIDE).ordinal()
-                            - layout2.getProperty(LayoutOptions.PORT_SIDE).ordinal();
+                    layout1.getProperty(CoreOptions.PORT_SIDE).ordinal()
+                            - layout2.getProperty(CoreOptions.PORT_SIDE).ordinal();
 
             // Sort by side first
             if (ordinalDifference != 0) {
@@ -541,8 +541,8 @@ public final class KGraphAdapters {
             }
 
             // In case of equal sides, sort by port index property
-            Integer index1 = layout1.getProperty(LayoutOptions.PORT_INDEX);
-            Integer index2 = layout2.getProperty(LayoutOptions.PORT_INDEX);
+            Integer index1 = layout1.getProperty(CoreOptions.PORT_INDEX);
+            Integer index2 = layout2.getProperty(CoreOptions.PORT_INDEX);
             if (index1 != null && index2 != null) {
                 int indexDifference = index1 - index2;
                 if (indexDifference != 0) {
@@ -551,7 +551,7 @@ public final class KGraphAdapters {
             }
 
             // In case of equal index, sort by position
-            switch (layout1.getProperty(LayoutOptions.PORT_SIDE)) {
+            switch (layout1.getProperty(CoreOptions.PORT_SIDE)) {
             case NORTH:
                 // Compare x coordinates
                 return Double.compare(layout1.getXpos(), layout2.getXpos());

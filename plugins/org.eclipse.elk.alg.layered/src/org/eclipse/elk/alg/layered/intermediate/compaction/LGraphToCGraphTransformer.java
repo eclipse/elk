@@ -30,7 +30,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
 
@@ -105,7 +105,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                 // comment boxes are part of a node's margins 
                 //  hence we can neglect them here without the risk 
                 // of other nodes overlapping them after compaction
-                if (node.getProperty(LayoutOptions.COMMENT_BOX)) {
+                if (node.getProperty(CoreOptions.COMMENT_BOX)) {
                     if (!Iterables.isEmpty(node.getConnectedEdges())) {
                         LEdge e = Iterables.get(node.getConnectedEdges(), 0);
                         LNode other = e.getSource().getNode();
@@ -336,7 +336,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     
     private void applyExternalPortPositions(final KVector topLeft, final KVector bottomRight) {
         
-        double borderSpacing = layeredGraph.getProperty(LayoutOptions.SPACING_BORDER).doubleValue();
+        double borderSpacing = layeredGraph.getProperty(CoreOptions.SPACING_BORDER).doubleValue();
         
         for (CNode cNode : cGraph.cNodes) {
             if (cNode instanceof CLNode) {

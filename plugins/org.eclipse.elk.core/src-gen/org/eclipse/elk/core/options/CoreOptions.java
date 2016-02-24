@@ -43,7 +43,7 @@ import org.eclipse.elk.graph.properties.Property;
  * Core definitions of the Eclipse Layout Kernel.
  */
 @SuppressWarnings("all")
-public class LayoutOptions implements ILayoutMetaDataProvider {
+public class CoreOptions implements ILayoutMetaDataProvider {
   /**
    * Select a specific layout algorithm.
    */

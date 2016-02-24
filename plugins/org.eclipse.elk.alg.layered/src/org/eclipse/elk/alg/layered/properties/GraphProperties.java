@@ -16,7 +16,7 @@ package org.eclipse.elk.alg.layered.properties;
  * doesn't contain self-loops in the first place.
  * 
  * <p>An {@code EnumSet} for this enumeration can be attached to a graph via the
- * {@link Properties#GRAPH_PROPERTIES} property.</p>
+ * {@link LayeredOptions#GRAPH_PROPERTIES} property.</p>
  * 
  * <p>{@link org.eclipse.elk.core.options.GraphFeature GraphFeature} serves a similar purpose in KIML.
  * However, since this enumeration is more specific to what KLay Layered supports, the two should stay

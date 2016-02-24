@@ -31,11 +31,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 
 import com.google.common.collect.Lists;
 
@@ -95,7 +95,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         
         // Place components in each group
         KVector offset = new KVector();
-        float spacing = 2 * firstComponent.getProperty(Properties.SPACING_NODE);
+        float spacing = 2 * firstComponent.getProperty(LayeredOptions.SPACING_NODE);
         
         for (ComponentGroup group : componentGroups) {
             // Place the components
@@ -113,9 +113,9 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         target.getSize().y = offset.y - spacing;
         
         // if compaction is desired, do so!cing;
-        if (firstComponent.getProperty(Properties.COMPONENTS_COMPACT)
+        if (firstComponent.getProperty(LayeredOptions.COMPONENTS_COMPACT)
                 // the compaction only supports orthogonally routed edges
-                && firstComponent.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+                && firstComponent.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
 
             // apply graph offsets (which we reset later on)
             // since the compaction works in a common coordinate system
@@ -376,7 +376,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         }
         
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
-                * components.iterator().next().getProperty(Properties.ASPECT_RATIO));
+                * components.iterator().next().getProperty(LayeredOptions.ASPECT_RATIO));
         
         // Place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;

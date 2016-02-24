@@ -32,7 +32,7 @@ import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.p5edges.PolylineEdgeRouter;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
@@ -135,8 +135,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Spline edge routing", 1);
         // Retrieve some generic values
-        final float nodeSpacing = layeredGraph.getProperty(Properties.SPACING_NODE);
-        edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        final float nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE);
+        edgeSpacing = nodeSpacing * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
         double xpos = 0.0;
 
         final Iterator<Layer> layerIterator = layeredGraph.iterator();
@@ -315,7 +315,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         }
 
         if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
-                || graph.getProperty(Properties.FEEDBACK_EDGES)) {
+                || graph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
             
             configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
 

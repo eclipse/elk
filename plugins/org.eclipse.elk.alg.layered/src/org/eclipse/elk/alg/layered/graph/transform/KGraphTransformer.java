@@ -15,7 +15,7 @@ import org.eclipse.elk.graph.KNode;
 
 /**
  * Manages the transformation of KGraphs to LayeredGraphs. Sets the
- * {@link org.eclipse.elk.alg.layered.properties.Properties#GRAPH_PROPERTIES GRAPH_PROPERTIES}
+ * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions#GRAPH_PROPERTIES GRAPH_PROPERTIES}
  * property on imported graphs.
  * 
  * @author msp

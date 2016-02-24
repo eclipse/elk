@@ -15,7 +15,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -28,7 +28,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * using inverted ports. This can only be handled correctly if the {@link InvertedPortProcessor}
  * is active. In the third slot, however, the port sides are assigned <em>after</em> edges
  * are reversed, so no inverted ports will occur. This behavior is controlled by the option
- * {@link org.eclipse.elk.alg.layered.properties.Properties#FEEDBACK_EDGES FEEDBACK_EDGES}.
+ * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions#FEEDBACK_EDGES FEEDBACK_EDGES}.
  * 
  * <dl>
  *   <dt>Precondition:</dt><dd>a layered graph.</dd>
@@ -73,7 +73,7 @@ public final class PortSideProcessor implements ILayoutProcessor {
      * @param node a node
      */
     private void process(final LNode node) {
-        if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+        if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
             // Check whether there are ports with undefined side
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.UNDEFINED) {
@@ -85,7 +85,7 @@ public final class PortSideProcessor implements ILayoutProcessor {
             for (LPort port : node.getPorts()) {
                 setPortSide(port);
             }
-            node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         }
     }
     

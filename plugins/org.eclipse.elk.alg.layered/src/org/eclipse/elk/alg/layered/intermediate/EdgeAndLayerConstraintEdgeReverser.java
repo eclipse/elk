@@ -19,8 +19,8 @@ import org.eclipse.elk.alg.layered.properties.EdgeConstraint;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayerConstraint;
 import org.eclipse.elk.alg.layered.properties.PortType;
-import org.eclipse.elk.alg.layered.properties.Properties;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -58,7 +58,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
         // Iterate through the list of nodes
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             // Check if there is a layer constraint
-            LayerConstraint layerConstraint = node.getProperty(Properties.LAYER_CONSTRAINT);
+            LayerConstraint layerConstraint = node.getProperty(LayeredOptions.LAYER_CONSTRAINT);
             EdgeConstraint edgeConstraint = null;
             
             switch (layerConstraint) {
@@ -91,7 +91,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                 // Note that this behavior is only desired if none of the connected nodes have 
                 // layer constraints set. Otherwise this processing causes issues with an external 
                 // port dummy with FIRST_SEPARATE and an inverted ports on the target node's EAST side.
-                if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()
+                if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()
                         && !node.getPorts().isEmpty()) {
                     
                     boolean allPortsReversed = true;
@@ -108,7 +108,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                         if (port.getSide() == PortSide.WEST) {
                             for (LEdge e : port.getOutgoingEdges()) {
                                 LayerConstraint lc = e.getTarget().getNode()
-                                                .getProperty(Properties.LAYER_CONSTRAINT);
+                                                .getProperty(LayeredOptions.LAYER_CONSTRAINT);
                                 if (lc == LayerConstraint.LAST
                                         || lc == LayerConstraint.LAST_SEPARATE) {
                                     allPortsReversed = false;
@@ -121,7 +121,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                         if (port.getSide() == PortSide.EAST) {
                             for (LEdge e : port.getIncomingEdges()) {
                                 LayerConstraint lc = e.getSource().getNode()
-                                                .getProperty(Properties.LAYER_CONSTRAINT);
+                                                .getProperty(LayeredOptions.LAYER_CONSTRAINT);
                                 if (lc == LayerConstraint.FIRST
                                         || lc == LayerConstraint.FIRST_SEPARATE) {
                                     allPortsReversed = false;
@@ -162,7 +162,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                 
                 for (LEdge edge : outgoing) {
                     LayerConstraint targetLayerConstraint = edge.getTarget().getNode().getProperty(
-                            Properties.LAYER_CONSTRAINT);
+                            LayeredOptions.LAYER_CONSTRAINT);
                     
                     // We leave an edge untouched if it has already been reversed or if it runs from a
                     // LAST to a LAST_SEPARATE node (such outgoing edges are allowed for LAST nodes)
@@ -182,7 +182,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                 
                 for (LEdge edge : incoming) {
                     LayerConstraint sourceLayerConstraint = edge.getSource().getNode().getProperty(
-                            Properties.LAYER_CONSTRAINT);
+                            LayeredOptions.LAYER_CONSTRAINT);
                     
                     // We leave an edge untouched if it has already been reversed or if it runs from a
                     // FIRST_SEPARATE to a FIRST node (such incoming edges are allowed for FIRST nodes)

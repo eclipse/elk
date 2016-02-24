@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -49,12 +49,12 @@ import com.google.common.collect.Sets;
  * 
  * MinWidth takes two additional parameters, which can be configured as a property:
  * <ul>
- * <li>Upper Bound On Width {@link Properties#UPPER_BOUND_ON_WIDTH} – Defines a loose upper bound on
+ * <li>Upper Bound On Width {@link LayeredOptions#UPPER_BOUND_ON_WIDTH} – Defines a loose upper bound on
  * the width of the MinWidth layerer. Defaults to -1 (special value for using both 1, 2, 3 and 4 as
  * values and choosing the narrowest layering afterwards), lower bound is 1.</li>
  * <li>Upper Layer Estimation Scaling Factor
- * {@link Properties#UPPER_LAYER_ESTIMATION_SCALING_FACTOR} – Multiplied with
- * {@link Properties#UPPER_BOUND_ON_WIDTH} for defining an upper bound on the width of layers which
+ * {@link LayeredOptions#UPPER_LAYER_ESTIMATION_SCALING_FACTOR} – Multiplied with
+ * {@link LayeredOptions#UPPER_BOUND_ON_WIDTH} for defining an upper bound on the width of layers which
  * haven't been placed yet, but whose maximum width had been (roughly) estimated by the MinWidth
  * algorithm. Compensates for too high estimations. Defaults to -1 (special value for using both 1
  * and 2 as values and choosing the narrowest layering afterwards), lower bound is 1.</li>
@@ -142,15 +142,15 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // The algorithm requires DAG G = (V, E). In this version self-loops are allowed (as we're
         // going to filter them). Additional properties as described above (called UBW and c in the
         // original paper):
-        final int upperBoundOnWidth = layeredGraph.getProperty(Properties.MIN_WIDTH_UPPER_BOUND_ON_WIDTH);
+        final int upperBoundOnWidth = layeredGraph.getProperty(LayeredOptions.MIN_WIDTH_UPPER_BOUND_ON_WIDTH);
         final int compensator =
-                layeredGraph.getProperty(Properties.MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
+                layeredGraph.getProperty(LayeredOptions.MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
 
         // First step to consider the real size of nodes: Initialize the dummy size with the spacing
         // properties
         dummySize =
-                layeredGraph.getProperty(Properties.SPACING_NODE)
-                        * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+                layeredGraph.getProperty(LayeredOptions.SPACING_NODE)
+                        * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
 
         // Compute the minimum nodes size (of the real nodes). We're going to use this value in the
         // next step to normalize the different node sizes.

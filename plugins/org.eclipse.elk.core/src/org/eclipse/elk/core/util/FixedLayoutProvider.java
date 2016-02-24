@@ -18,7 +18,7 @@ import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KLabel;
@@ -27,7 +27,7 @@ import org.eclipse.elk.graph.KPort;
 
 /**
  * A layout provider that sets fixed positions for all elements. These positions are taken
- * from the {@link LayoutOptions#POSITION} and {@link LayoutOptions#BEND_POINTS} options.
+ * from the {@link CoreOptions#POSITION} and {@link CoreOptions#BEND_POINTS} options.
  * Elements that have no position option attached just stay where they are.
  * This is useful for at least two things:
  * <ul>
@@ -55,25 +55,25 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
     public void layout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Fixed Layout", 1);
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+        EdgeRouting edgeRouting = parentLayout.getProperty(CoreOptions.EDGE_ROUTING);
         float maxx = 0, maxy = 0;
         
         for (KNode node : layoutNode.getChildren()) {
             KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             // set the fixed position of the node, or leave it as it is
-            KVector pos = nodeLayout.getProperty(LayoutOptions.POSITION);
+            KVector pos = nodeLayout.getProperty(CoreOptions.POSITION);
             if (pos != null) {
                 nodeLayout.applyVector(pos);
                 // set the fixed size of the node
                 // TODO Think about whether this makes sense with the new size constraint options.
-                if (nodeLayout.getProperty(LayoutOptions.NODE_SIZE_CONSTRAINTS).contains(
+                if (nodeLayout.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS).contains(
                         SizeConstraint.MINIMUM_SIZE)) {
                     
-                    KVector minSize = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MINIMUM);
+                    KVector minSize = nodeLayout.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
                     float width, height;
                     if (minSize == null) {
-                        width = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_WIDTH);
-                        height = nodeLayout.getProperty(LayoutOptions.NODE_SIZE_MIN_HEIGHT);
+                        width = nodeLayout.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
+                        height = nodeLayout.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
                     } else {
                         width = (float) minSize.x;
                         height = (float) minSize.y; 
@@ -89,7 +89,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             // set the fixed position of the node labels, or leave them as they are
             for (KLabel label : node.getLabels()) {
                 KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                pos = labelLayout.getProperty(LayoutOptions.POSITION);
+                pos = labelLayout.getProperty(CoreOptions.POSITION);
                 if (pos != null) {
                     labelLayout.applyVector(pos);
                 }
@@ -102,7 +102,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             // set the fixed position of the ports, or leave them as they are
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                pos = portLayout.getProperty(LayoutOptions.POSITION);
+                pos = portLayout.getProperty(CoreOptions.POSITION);
                 if (pos != null) {
                     portLayout.applyVector(pos);
                 }
@@ -114,7 +114,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 // set the fixed position of the port labels, or leave them as they are
                 for (KLabel label : port.getLabels()) {
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                    pos = labelLayout.getProperty(LayoutOptions.POSITION);
+                    pos = labelLayout.getProperty(CoreOptions.POSITION);
                     if (pos != null) {
                         labelLayout.applyVector(pos);
                     }
@@ -148,7 +148,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         }
         
         // set size of the parent node
-        Float borderSpacing = parentLayout.getProperty(LayoutOptions.SPACING_BORDER);
+        Float borderSpacing = parentLayout.getProperty(CoreOptions.SPACING_BORDER);
         if (borderSpacing == null || borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
@@ -169,7 +169,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         boolean sameHierarchy = edge.getSource().getParent() == edge.getTarget().getParent();
         KVector maxv = new KVector();
-        KVectorChain bendPoints = edgeLayout.getProperty(LayoutOptions.BEND_POINTS);
+        KVectorChain bendPoints = edgeLayout.getProperty(CoreOptions.BEND_POINTS);
         // we need at least two bend points, since the source point and target point must be included
         if (bendPoints != null && bendPoints.size() >= 2) {
             edgeLayout.applyVectorChain(bendPoints);
@@ -186,7 +186,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         // set the fixed position of the edge labels, or leave them as they are
         for (KLabel label : edge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            KVector pos = labelLayout.getProperty(LayoutOptions.POSITION);
+            KVector pos = labelLayout.getProperty(CoreOptions.POSITION);
             if (pos != null) {
                 labelLayout.applyVector(pos);
             }
@@ -208,9 +208,9 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
         KVectorChain junctionPoints = ElkUtil.determineJunctionPoints(edge);
         if (junctionPoints.isEmpty()) {
-            edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+            edgeLayout.setProperty(CoreOptions.JUNCTION_POINTS, null);
         } else {
-            edgeLayout.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+            edgeLayout.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
         }
         
     }

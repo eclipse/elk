@@ -11,7 +11,7 @@
 package org.eclipse.elk.core.ui.views;
 
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
@@ -42,7 +42,7 @@ public class AlgorithmCellEditor extends DialogCellEditor {
     public AlgorithmCellEditor(final Composite parent) {
         super(parent);
         LayoutOptionData algorithmOption = LayoutMetaDataService.getInstance().getOptionData(
-                LayoutOptions.ALGORITHM.getId());
+                CoreOptions.ALGORITHM.getId());
         labelProvider = new LayoutOptionLabelProvider(algorithmOption);
     }
     

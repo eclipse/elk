@@ -30,7 +30,7 @@ import org.eclipse.elk.alg.graphviz.layouter.util.ForkedOutputStream;
 import org.eclipse.elk.alg.graphviz.layouter.util.ForwardingInputStream;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.elk.graph.KNode;
@@ -124,7 +124,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             progressMonitor.done();
             return;
         }
-        boolean debugMode = parentNode.getData(KShapeLayout.class).getProperty(LayoutOptions.DEBUG_MODE);
+        boolean debugMode = parentNode.getData(KShapeLayout.class).getProperty(CoreOptions.DEBUG_MODE);
         myCallNo = ++serialCallNo;
 
         // start the graphviz process, or retrieve the previously used process

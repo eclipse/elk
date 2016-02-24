@@ -32,7 +32,7 @@ import org.eclipse.elk.alg.layered.p3order.counting.HyperedgeCrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -283,7 +283,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         int bestSweepCrossings = Integer.MAX_VALUE;
 
         // Determine the requested number of runs
-        int runCount = layeredGraph.getProperty(Properties.THOROUGHNESS);
+        int runCount = layeredGraph.getProperty(LayeredOptions.THOROUGHNESS);
 
         // Initialize barycenter states used by the barycenter heuristic and forster 
         // assign ids to layers and nodes

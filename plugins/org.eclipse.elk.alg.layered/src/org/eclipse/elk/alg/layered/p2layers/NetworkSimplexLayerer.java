@@ -27,7 +27,7 @@ import org.eclipse.elk.alg.layered.networksimplex.NEdge;
 import org.eclipse.elk.alg.layered.networksimplex.NGraph;
 import org.eclipse.elk.alg.layered.networksimplex.NNode;
 import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.WideNodesStrategy;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -113,13 +113,13 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
 
         // Additional dependencies
-        if (graph.getProperty(Properties.DISTRIBUTE_NODES)
-                || graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
+        if (graph.getProperty(LayeredOptions.DISTRIBUTE_NODES)
+                || graph.getProperty(LayeredOptions.WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.AGGRESSIVE) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
             wideNodesStrategy = WideNodesStrategy.AGGRESSIVE;
             
-        } else if (graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
+        } else if (graph.getProperty(LayeredOptions.WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.CAREFUL) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
             wideNodesStrategy = WideNodesStrategy.CAREFUL;
@@ -242,7 +242,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 }
                 
                 NEdge.of(lEdge)
-                     .weight(1 * Math.max(1, lEdge.getProperty(Properties.PRIORITY)))
+                     .weight(1 * Math.max(1, lEdge.getProperty(LayeredOptions.PRIORITY)))
                      .delta(1)
                      .source(nodeMap.get(lEdge.getSource().getNode()))
                      .target(nodeMap.get(lEdge.getTarget().getNode()))
@@ -287,7 +287,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         monitor.begin("Network simplex layering", 1);
 
         layeredGraph = theLayeredGraph;
-        int thoroughness = theLayeredGraph.getProperty(Properties.THOROUGHNESS) * ITER_LIMIT_FACTOR;
+        int thoroughness = theLayeredGraph.getProperty(LayeredOptions.THOROUGHNESS) * ITER_LIMIT_FACTOR;
 
         List<LNode> theNodes = layeredGraph.getLayerlessNodes();
         if (theNodes.size() < 1) {

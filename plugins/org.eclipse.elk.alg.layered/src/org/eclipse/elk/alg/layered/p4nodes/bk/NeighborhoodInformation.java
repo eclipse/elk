@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.Lists;
@@ -133,14 +133,14 @@ public final class NeighborhoodInformation {
                 int maxPriority = 0;
 
                 for (LEdge edge : n.getOutgoingEdges()) {
-                    if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
-                        maxPriority = edge.getProperty(Properties.PRIORITY);
+                    if (edge.getProperty(LayeredOptions.PRIORITY) > maxPriority) {
+                        maxPriority = edge.getProperty(LayeredOptions.PRIORITY);
                     }
                 }
 
                 for (LEdge edge : n.getOutgoingEdges()) {
                     if (n.getLayer() != edge.getTarget().getNode().getLayer()
-                            && edge.getProperty(Properties.PRIORITY) == maxPriority) {
+                            && edge.getProperty(LayeredOptions.PRIORITY) == maxPriority) {
 
                         result.add(Pair.of(edge.getTarget().getNode(), edge));
                     }
@@ -167,14 +167,14 @@ public final class NeighborhoodInformation {
                 int maxPriority = 0;
                 
                 for (LEdge edge : n.getIncomingEdges()) {
-                    if (edge.getProperty(Properties.PRIORITY) > maxPriority) {
-                        maxPriority = edge.getProperty(Properties.PRIORITY);
+                    if (edge.getProperty(LayeredOptions.PRIORITY) > maxPriority) {
+                        maxPriority = edge.getProperty(LayeredOptions.PRIORITY);
                     }
                 }
                 
                 for (LEdge edge : n.getIncomingEdges()) {
                     if (n.getLayer() != edge.getSource().getNode().getLayer()
-                            && edge.getProperty(Properties.PRIORITY) == maxPriority) {
+                            && edge.getProperty(LayeredOptions.PRIORITY) == maxPriority) {
                         result.add(Pair.of(edge.getSource().getNode(), edge));
                     }
                 }

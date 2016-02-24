@@ -21,7 +21,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
  * Restores the direction of reversed edges. (edges with the property
- * {@link org.eclipse.elk.alg.layered.properties.Properties#REVERSED} set to {@code true})
+ * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions#REVERSED} set to {@code true})
  * 
  * <p>All edges are traversed to look for reversed edges. If such edges are found,
  * they are restored, the ports they are connected to being restored as well.</p>

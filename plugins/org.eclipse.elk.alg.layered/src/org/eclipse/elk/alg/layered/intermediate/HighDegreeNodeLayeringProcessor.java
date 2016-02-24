@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -65,8 +65,8 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
         this.layeredGraph = graph;
         
         // retrieve some properties
-        int degreeThreshold = graph.getProperty(Properties.HIGH_DEGREE_NODE_THRESHOLD);
-        int treeHeightThreshold = graph.getProperty(Properties.HIGH_DEGREE_NODE_TREE_HEIGHT);
+        int degreeThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODE_THRESHOLD);
+        int treeHeightThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODE_TREE_HEIGHT);
 
         // now iterate through all layer
         final ListIterator<Layer> layerIt = graph.getLayers().listIterator();

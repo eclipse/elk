@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.mrtree.graph.TGraph;
  * {@link org.eclipse.elk.alg.mrtree.KGraphImporter KGraphImporter}
  * instead of implementing this interface directly.
  * 
- * <p>Graph importers are encouraged to set the {@link Properties#GRAPH_PROPERTIES}
+ * <p>Graph importers are encouraged to set the {@link MrTreeOptions#GRAPH_PROPERTIES}
  * property on imported graphs.</p>
  *
  * @param <T> the type of graph that this importer can transform into a layered graph.

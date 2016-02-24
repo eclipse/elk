@@ -22,9 +22,9 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -134,7 +134,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
     public void process(final LGraph theLayeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Big nodes pre-processing", 1);
 
-        debug = theLayeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
+        debug = theLayeredGraph.getProperty(CoreOptions.DEBUG_MODE);
         
         this.layeredGraph = theLayeredGraph;
         List<LNode> nodes = Lists.newArrayList();
@@ -149,8 +149,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        spacing = layeredGraph.getProperty(Properties.SPACING_NODE).doubleValue();
-        direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
+        spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
+        direction = layeredGraph.getProperty(CoreOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();
 
@@ -209,8 +209,8 @@ public class BigNodesSplitter implements ILayoutProcessor {
      */
     private boolean isProcessorApplicable(final BigNode node) {
 
-        if (node.node.getProperty(LayoutOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_RATIO
-                || node.node.getProperty(LayoutOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS) {
+        if (node.node.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_RATIO
+                || node.node.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS) {
             for (LPort port : node.node.getPorts()) {
                 if (port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH) {
                     return false;
@@ -230,7 +230,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         // likewise edges connected to the right side of the node
         Iterable<LEdge> eastwardEdges;
 
-        if (node.node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+        if (node.node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
             List<Iterable<LEdge>> tmp = Lists.newArrayList();
             for (LPort p : node.node.getPorts(PortSide.WEST)) {
                 tmp.add(p.getConnectedEdges());
@@ -337,7 +337,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
             // if ports are free to be moved on the sides, we have to move all outgoing edges as
             // well as these will be assigned to the east side later
             if (direction == Direction.RIGHT
-                    && !node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                    && !node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
                 for (LEdge e : node.getOutgoingEdges()) {
                     eastPorts.add(e.getSource());
                 }
@@ -495,10 +495,10 @@ public class BigNodesSplitter implements ILayoutProcessor {
             start.setProperty(InternalProperties.BIG_NODE_INITIAL, false);
             start.setType(NodeType.BIG_NODE);
             
-            longEdgeDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,
-                    start.getProperty(LayoutOptions.PORT_CONSTRAINTS));
-            longEdgeDummy.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT,
-                    start.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT));
+            longEdgeDummy.setProperty(CoreOptions.PORT_CONSTRAINTS,
+                    start.getProperty(CoreOptions.PORT_CONSTRAINTS));
+            longEdgeDummy.setProperty(CoreOptions.NODE_LABELS_PLACEMENT,
+                    start.getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
             
             dummies.add(0, longEdgeDummy);
             
@@ -557,10 +557,10 @@ public class BigNodesSplitter implements ILayoutProcessor {
             longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_TARGET, null);
 
             // copy some properties
-            longEdgeDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,
-                    start.getProperty(LayoutOptions.PORT_CONSTRAINTS));
-            longEdgeDummy.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT,
-                    start.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT));
+            longEdgeDummy.setProperty(CoreOptions.PORT_CONSTRAINTS,
+                    start.getProperty(CoreOptions.PORT_CONSTRAINTS));
+            longEdgeDummy.setProperty(CoreOptions.NODE_LABELS_PLACEMENT,
+                    start.getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
 
             // adapt the origin
             // Remark: we allow the big node to have an arbitrary amount of
@@ -976,10 +976,10 @@ public class BigNodesSplitter implements ILayoutProcessor {
             dummy.setType(NodeType.BIG_NODE);
 
             // copy some properties
-            dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,
-                    src.getProperty(LayoutOptions.PORT_CONSTRAINTS));
-            dummy.setProperty(LayoutOptions.NODE_LABELS_PLACEMENT,
-                    src.getProperty(LayoutOptions.NODE_LABELS_PLACEMENT));
+            dummy.setProperty(CoreOptions.PORT_CONSTRAINTS,
+                    src.getProperty(CoreOptions.PORT_CONSTRAINTS));
+            dummy.setProperty(CoreOptions.NODE_LABELS_PLACEMENT,
+                    src.getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
 
             dummy.id = dummyID++;
 

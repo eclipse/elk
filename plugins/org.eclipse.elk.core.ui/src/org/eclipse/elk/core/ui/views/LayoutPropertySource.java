@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.ILayoutSetup;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
@@ -98,7 +98,7 @@ public class LayoutPropertySource implements IPropertySource {
      */
     protected void filterOptions(final List<LayoutOptionData> optionData) {
         // the layout algorithm option always affects other options
-        dependencyOptions.add(LayoutOptions.ALGORITHM.getId());
+        dependencyOptions.add(CoreOptions.ALGORITHM.getId());
         
         ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
         while (optionIter.hasNext()) {

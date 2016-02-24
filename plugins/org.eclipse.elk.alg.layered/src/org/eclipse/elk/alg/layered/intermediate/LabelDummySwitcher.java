@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
@@ -99,7 +99,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         List<LNode> rightLongEdgeDummies = Lists.newArrayList();
 
         EdgeLabelPlacementStrategy strategy =
-                layeredGraph.getProperty(Properties.EDGE_CENTER_LABEL_PLACEMENT_STRATEGY);
+                layeredGraph.getProperty(LayeredOptions.EDGE_CENTER_LABEL_PLACEMENT_STRATEGY);
         if (strategy == EdgeLabelPlacementStrategy.WIDEST_LAYER) {
             // Gather all layer widths if required
             final List<Layer> layers = layeredGraph.getLayers();

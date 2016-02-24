@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -119,7 +119,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         
         dummyNode.setType(NodeType.LONG_EDGE);
         dummyNode.setProperty(InternalProperties.ORIGIN, edgeToSplit);
-        dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
+        dummyNode.setProperty(CoreOptions.PORT_CONSTRAINTS,
                 PortConstraints.FIXED_POS);
         dummyNode.setLayer(targetLayer);
         
@@ -141,10 +141,10 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         LPort oldEdgeTarget = edge.getTarget();
         
         // Set thickness of the edge
-        float thickness = edge.getProperty(LayoutOptions.EDGE_THICKNESS);
+        float thickness = edge.getProperty(CoreOptions.EDGE_THICKNESS);
         if (thickness < 0) {
             thickness = 0;
-            edge.setProperty(LayoutOptions.EDGE_THICKNESS, thickness);
+            edge.setProperty(CoreOptions.EDGE_THICKNESS, thickness);
         }
         dummyNode.getSize().y = thickness;
         double portPos = Math.floor(thickness / 2);
@@ -165,7 +165,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         // Create a dummy edge
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
-        dummyEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+        dummyEdge.setProperty(CoreOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(oldEdgeTarget);
         
@@ -218,7 +218,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         ListIterator<LLabel> labelIterator = oldEdge.getLabels().listIterator();
         while (labelIterator.hasNext()) {
             LLabel label = labelIterator.next();
-            EdgeLabelPlacement labelPlacement = label.getProperty(LayoutOptions.EDGE_LABELS_PLACEMENT);
+            EdgeLabelPlacement labelPlacement = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
             
             if (labelPlacement == EdgeLabelPlacement.HEAD) {
                 labelIterator.remove();

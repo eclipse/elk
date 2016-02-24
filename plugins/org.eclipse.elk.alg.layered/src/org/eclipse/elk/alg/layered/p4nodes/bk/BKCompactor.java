@@ -24,7 +24,7 @@ import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 import org.eclipse.elk.alg.layered.p4nodes.bk.ThresholdStrategy.NullThresholdStrategy;
 import org.eclipse.elk.alg.layered.p4nodes.bk.ThresholdStrategy.SimpleThresholdStrategy;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
 
 import com.google.common.collect.Lists;
@@ -60,7 +60,7 @@ public class BKCompactor implements ICompactor {
         spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         
         // configure the requested threshold strategy
-        if (layeredGraph.getProperty(Properties.COMPACTION) 
+        if (layeredGraph.getProperty(LayeredOptions.COMPACTION) 
                 == CompactionStrategy.IMPROVE_STRAIGHTNESS) {
             threshStrategy = new SimpleThresholdStrategy();
         } else {

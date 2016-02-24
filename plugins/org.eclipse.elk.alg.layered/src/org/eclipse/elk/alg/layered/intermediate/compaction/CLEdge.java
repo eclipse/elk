@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.layered.compaction.oned.CompareFuzzy;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Direction;
@@ -54,10 +54,10 @@ public final class CLEdge extends CNode {
      */
     public CLEdge(final VerticalSegment vSeg, final LGraph layeredGraph) {
         // getting the spacing properties
-        horizontalSpacing = layeredGraph.getProperty(Properties.SPACING_NODE)
-                          * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        horizontalSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE)
+                          * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
         verticalSpacing = horizontalSpacing
-                        * layeredGraph.getProperty(Properties.IN_LAYER_SPACING_FACTOR);
+                        * layeredGraph.getProperty(LayeredOptions.IN_LAYER_SPACING_FACTOR);
         
         bends = new KVectorChain();
         juctionPoints = new KVectorChain();

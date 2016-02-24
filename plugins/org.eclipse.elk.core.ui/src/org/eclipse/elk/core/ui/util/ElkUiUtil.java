@@ -12,7 +12,7 @@ package org.eclipse.elk.core.ui.util;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.LayoutMetaDataService;
 import org.eclipse.emf.common.command.AbstractCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -108,7 +108,7 @@ public final class ElkUiUtil {
             }
         }
         // the only option data that is added without explicit support by layouters is layout hint
-        return LayoutMetaDataService.getInstance().getOptionData(LayoutOptions.ALGORITHM.getId());
+        return LayoutMetaDataService.getInstance().getOptionData(CoreOptions.ALGORITHM.getId());
     }
 
 }

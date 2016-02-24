@@ -15,7 +15,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.jface.viewers.CellEditor;
@@ -67,7 +67,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     public CellEditor createPropertyEditor(final Composite parent) {
         switch (optionData.getType()) {
         case STRING:
-            if (LayoutOptions.ALGORITHM.equals(optionData)) {
+            if (CoreOptions.ALGORITHM.equals(optionData)) {
                 return new AlgorithmCellEditor(parent);
             } else {
                 return new TextCellEditor(parent);

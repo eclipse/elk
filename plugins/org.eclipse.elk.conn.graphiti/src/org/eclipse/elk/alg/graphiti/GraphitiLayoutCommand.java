@@ -25,7 +25,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
@@ -204,14 +204,14 @@ public class GraphitiLayoutCommand extends RecordingCommand {
         if (knode.getParent() != null) {
             KShapeLayout parentLayout = knode.getParent().getData(KShapeLayout.class);
             KInsets parentInsets = parentLayout.getInsets();
-            Margins parentMargins = parentLayout.getProperty(LayoutOptions.MARGINS);
+            Margins parentMargins = parentLayout.getProperty(CoreOptions.MARGINS);
             xpos += parentMargins.left + parentInsets.getLeft();
             ypos += parentMargins.top + parentInsets.getTop();
         }
         
         float width = shapeLayout.getWidth();
         float height = shapeLayout.getHeight();
-        Margins nodeMargins = shapeLayout.getProperty(LayoutOptions.MARGINS);
+        Margins nodeMargins = shapeLayout.getProperty(CoreOptions.MARGINS);
         xpos -= nodeMargins.left;
         ypos -= nodeMargins.top;
         width += nodeMargins.left + nodeMargins.right;
@@ -315,7 +315,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             bendPoints.add(targetPoint.getX() + offset.x, targetPoint.getY() + offset.y);
 
             // transform spline control points into approximated bend points
-            EdgeRouting edgeRouting = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
+            EdgeRouting edgeRouting = edgeLayout.getProperty(CoreOptions.EDGE_ROUTING);
             if (edgeRouting == EdgeRouting.SPLINES
                     && edgeLayout.getBendPoints().size() >= 1) {
                 bendPoints = ElkMath.approximateBezierSpline(bendPoints);

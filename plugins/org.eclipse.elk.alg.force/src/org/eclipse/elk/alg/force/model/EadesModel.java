@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.force.model;
 
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FParticle;
-import org.eclipse.elk.alg.force.properties.Properties;
+import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.core.math.KVector;
 
 /**
@@ -28,11 +28,11 @@ public final class EadesModel extends AbstractForceModel {
     private static final double ZERO_FACTOR = 100;
 
     /** the maximal number of iterations after which the model stops. */
-    private int maxIterations = Properties.ITERATIONS.getDefault();
+    private int maxIterations = ForceOptions.ITERATIONS.getDefault();
     /** the spring length that determines the optimal distance of connected nodes. */
-    private double springLength = Properties.SPACING_NODE.getDefault();
+    private double springLength = ForceOptions.SPACING_NODE.getDefault();
     /** additional factor for repulsive forces. */
-    private double repulsionFactor = Properties.REPULSION.getDefault();
+    private double repulsionFactor = ForceOptions.REPULSION.getDefault();
     
     /**
      * {@inheritDoc}
@@ -40,9 +40,9 @@ public final class EadesModel extends AbstractForceModel {
     @Override
     protected void initialize(final FGraph graph) {
         super.initialize(graph);
-        maxIterations = graph.getProperty(Properties.ITERATIONS);
-        springLength = graph.getProperty(Properties.SPACING_NODE).doubleValue();
-        repulsionFactor = graph.getProperty(Properties.REPULSION).doubleValue();
+        maxIterations = graph.getProperty(ForceOptions.ITERATIONS);
+        springLength = graph.getProperty(ForceOptions.SPACING_NODE).doubleValue();
+        repulsionFactor = graph.getProperty(ForceOptions.REPULSION).doubleValue();
     }
     
     /**
@@ -71,7 +71,7 @@ public final class EadesModel extends AbstractForceModel {
         if (connection > 0) {
             force = -attractive(d, springLength) * connection;
         } else {
-            force = repulsive(d, repulsionFactor) * forcer.getProperty(Properties.PRIORITY);
+            force = repulsive(d, repulsionFactor) * forcer.getProperty(ForceOptions.PRIORITY);
         }
 
         // scale distance vector to the amount of repulsive forces

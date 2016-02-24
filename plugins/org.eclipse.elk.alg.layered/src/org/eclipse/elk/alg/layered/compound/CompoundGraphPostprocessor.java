@@ -25,10 +25,10 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.base.Predicate;
@@ -63,7 +63,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
             new Predicate<CrossHierarchyEdge>() {
         
         public boolean apply(final CrossHierarchyEdge chEdge) {
-            KVectorChain jps = chEdge.getEdge().getProperty(LayoutOptions.JUNCTION_POINTS);
+            KVectorChain jps = chEdge.getEdge().getProperty(CoreOptions.JUNCTION_POINTS);
             return jps != null && !jps.isEmpty();
         }
         
@@ -77,7 +77,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
         monitor.begin("Compound graph postprocessor", 1);
         
         // whether bend points should be added whenever crossing a hierarchy boundary
-        boolean addUnnecessaryBendpoints = graph.getProperty(Properties.UNNECESSARY_BENDPOINTS);
+        boolean addUnnecessaryBendpoints = graph.getProperty(LayeredOptions.UNNECESSARY_BENDPOINTS);
         
         // restore the cross-hierarchy map that was built by the preprocessor
         Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap = graph.getProperty(
@@ -108,17 +108,17 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
             }
 
             // check whether there are any junction points
-            KVectorChain junctionPoints = origEdge.getProperty(LayoutOptions.JUNCTION_POINTS);
+            KVectorChain junctionPoints = origEdge.getProperty(CoreOptions.JUNCTION_POINTS);
             if (Iterables.any(crossHierarchyEdges, HAS_JUNCTION_POINTS_PREDICATE)) {
                 // if so, make sure the original edge has an empty non-null junction point list
                 if (junctionPoints == null) {
                     junctionPoints = new KVectorChain();
-                    origEdge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                    origEdge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
                 } else {
                     junctionPoints.clear();
                 }
             } else if (junctionPoints != null) {
-                origEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+                origEdge.setProperty(CoreOptions.JUNCTION_POINTS, null);
             }
             
             // apply the computed layouts to the cross-hierarchy edge
@@ -171,7 +171,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                 }
                 
                 // copy junction points
-                KVectorChain ledgeJPs = ledge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                KVectorChain ledgeJPs = ledge.getProperty(CoreOptions.JUNCTION_POINTS);
                 if (ledgeJPs != null) {
                     KVectorChain jpCopies = new KVectorChain();
                     jpCopies.addAllAsCopies(0, ledgeJPs);

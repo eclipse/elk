@@ -17,9 +17,9 @@ import org.eclipse.elk.alg.mrtree.properties.TreeifyingOrder;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.GraphFeature;
-import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
@@ -28,7 +28,7 @@ import org.eclipse.elk.graph.properties.Property;
  * Declarations for the ELK Tree layout algorithm.
  */
 @SuppressWarnings("all")
-public class Properties implements ILayoutMetaDataProvider {
+public class MrTreeOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #WEIGHTING}.
    */
@@ -62,7 +62,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Node Spacing.
    */
   public final static IProperty<Float> SPACING_NODE = new Property<Float>(
-            LayoutOptions.SPACING_NODE,
+            CoreOptions.SPACING_NODE,
             MR_TREE_SUP_SPACING_NODE);
   
   /**
@@ -74,7 +74,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Border Spacing.
    */
   public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
-            LayoutOptions.SPACING_BORDER,
+            CoreOptions.SPACING_BORDER,
             MR_TREE_SUP_SPACING_BORDER);
   
   /**
@@ -86,7 +86,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Aspect Ratio.
    */
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO,
+            CoreOptions.ASPECT_RATIO,
             MR_TREE_SUP_ASPECT_RATIO);
   
   /**
@@ -98,7 +98,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Priority.
    */
   public final static IProperty<Integer> PRIORITY = new Property<Integer>(
-            LayoutOptions.PRIORITY,
+            CoreOptions.PRIORITY,
             MR_TREE_SUP_PRIORITY);
   
   /**

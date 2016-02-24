@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.properties.PortType;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -449,7 +449,7 @@ public final class LNode extends LShape {
         LGraph thegraph = getGraph();
         
         LInsets graphInsets = thegraph.getInsets();
-        float borderSpacing = thegraph.getProperty(Properties.SPACING_BORDER);
+        float borderSpacing = thegraph.getProperty(LayeredOptions.SPACING_BORDER);
         KVector offset = thegraph.getOffset();
         KVector pos = getPosition();
         
@@ -464,13 +464,13 @@ public final class LNode extends LShape {
 
     /**
      * Returns the position of this node's interactive reference point. This position depends on the
-     * graph's {@link Properties#INTERACTIVE_REFERENCE_POINT} property. It determines on which
+     * graph's {@link LayeredOptions#INTERACTIVE_REFERENCE_POINT} property. It determines on which
      * basis node positions are compared with each other in interactive layout phases.
      * 
      * @return the node's anchor point position.
      */
     public KVector getInteractiveReferencePoint() {
-        switch (getGraph().getProperty(Properties.INTERACTIVE_REFERENCE_POINT)) {
+        switch (getGraph().getProperty(LayeredOptions.INTERACTIVE_REFERENCE_POINT)) {
         case CENTER:
             KVector nodePos = getPosition();
             KVector nodeSize = getSize();

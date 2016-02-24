@@ -19,7 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -138,7 +138,7 @@ public abstract class AbstractPortDistributor {
      * @param node node whose ports shall be sorted
      */
     private void distributePorts(final LNode node) {
-        if (!node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+        if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             // the order of ports on each side is variable, so distribute the ports
             if (node.getPorts().size() > 1) {
                 // array of port barycenter values calculated from ranks of connected ports
@@ -286,7 +286,7 @@ public abstract class AbstractPortDistributor {
                 // sort the ports by considering the side, type, and barycenter values
                 sortPorts(node, portBarycenter);
             }
-            node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         }
     }
 
