@@ -65,7 +65,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * 
      * @return {@code this}
      */
-    public LayoutConfigurator setClearLayout(boolean doClearLayout) {
+    public LayoutConfigurator setClearLayout(final boolean doClearLayout) {
         this.clearLayout = doClearLayout;
         return this;
     }
@@ -76,7 +76,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * 
      * @return {@code this}
      */
-    public LayoutConfigurator setFilter(Predicate<Pair<KGraphElement, IProperty<?>>> filter) {
+    public LayoutConfigurator setFilter(final Predicate<Pair<KGraphElement, IProperty<?>>> filter) {
         this.optionFilter = filter;
         return this;
     }
@@ -85,7 +85,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * Add and return a property holder for the given element. If such a property holder is
      * already present, the previous instance is returned.
      */
-    public IPropertyHolder configure(KGraphElement element) {
+    public IPropertyHolder configure(final KGraphElement element) {
         MapPropertyHolder result = elementOptionMap.get(element);
         if (result == null) {
             result = new MapPropertyHolder();
@@ -97,7 +97,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     /**
      * Return the stored property holder for the given element, or {@code null} if none is present.
      */
-    public IPropertyHolder getProperties(KGraphElement element) {
+    public IPropertyHolder getProperties(final KGraphElement element) {
         return elementOptionMap.get(element);
     }
     
@@ -105,7 +105,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * Add and return a property holder for the given element class. If such a property holder is
      * already present, the previous instance is returned.
      */
-    public IPropertyHolder configure(Class<? extends KGraphElement> elementClass) {
+    public IPropertyHolder configure(final Class<? extends KGraphElement> elementClass) {
         MapPropertyHolder result = classOptionMap.get(elementClass);
         if (result == null) {
             result = new MapPropertyHolder();
@@ -117,7 +117,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     /**
      * Return the stored property holder for the given element class, or {@code null} if none is present.
      */
-    public IPropertyHolder getProperties(Class<? extends KGraphElement> elementClass) {
+    public IPropertyHolder getProperties(final Class<? extends KGraphElement> elementClass) {
         return classOptionMap.get(elementClass);
     }
 
@@ -161,7 +161,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * 
      * @return {@code this}
      */
-    public LayoutConfigurator overrideWith(LayoutConfigurator other) {
+    public LayoutConfigurator overrideWith(final LayoutConfigurator other) {
         for (Map.Entry<KGraphElement, MapPropertyHolder> entry : other.elementOptionMap.entrySet()) {
             MapPropertyHolder thisHolder = this.elementOptionMap.get(entry.getKey());
             if (thisHolder == null) {
