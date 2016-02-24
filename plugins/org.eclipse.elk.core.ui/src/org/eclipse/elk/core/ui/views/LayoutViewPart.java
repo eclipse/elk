@@ -17,25 +17,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
-import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
@@ -202,10 +194,6 @@ public class LayoutViewPart extends ViewPart {
         // add actions to the toolbar, view menu, and context menu
         IActionBars actionBars = getViewSite().getActionBars();
         page.setActionBars(actionBars);
-        addPopupActions(page.getControl().getMenu());
-        IMenuManager menuManager = actionBars.getMenuManager();
-        menuManager.add(new RestoreDefaultsAction(this, Messages.getString("kiml.ui.30"), false));
-        menuManager.add(new RestoreDefaultsAction(this, Messages.getString("kiml.ui.82"), true));
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         
         // CHECKSTYLEON MagicNumber
@@ -321,46 +309,6 @@ public class LayoutViewPart extends ViewPart {
             }
         }
         return entries;
-    }
-    
-    /**
-     * Adds the specific view actions to the given menu.
-     * 
-     * @param menu context menu to enrich with actions
-     */
-    private void addPopupActions(final Menu menu) {
-        final DiagramDefaultAction applyOptionAction
-                = new DiagramDefaultAction(this, Messages.getString("kiml.ui.10"));
-        
-        // dirty hack to add actions to an existing menu without having the menu manager
-        menu.addMenuListener(new MenuAdapter() {
-            public void menuShown(final MenuEvent event) {
-                MenuItem diagramDefaultItem = null;
-                for (MenuItem item : menu.getItems()) {
-                    if (item.getData() instanceof IContributionItem) {
-                        String itemId = ((IContributionItem) item.getData()).getId();
-                        if (DiagramDefaultAction.ACTION_ID.equals(itemId)) {
-                            diagramDefaultItem = item;
-                        }
-                    }
-                }
-                
-                // Add the "set as default for this diagram" action
-                if (currentPropSourceProvider != null
-                        && !currentPropSourceProvider.getConfigurationStores().isEmpty()) {
-                    if (diagramDefaultItem == null) {
-                        ContributionItem contributionItem = new ActionContributionItem(
-                                applyOptionAction);
-                        contributionItem.setId(DiagramDefaultAction.ACTION_ID);
-                        contributionItem.fill(menu, -1);
-                    } else {
-                        diagramDefaultItem.setEnabled(true);
-                    }
-                } else if (diagramDefaultItem != null) {
-                    diagramDefaultItem.setEnabled(false);
-                }
-            }
-        });
     }
 
 }

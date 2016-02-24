@@ -40,12 +40,6 @@ import com.google.inject.Singleton;
 public class LayoutConfigurationManager {
     
     /**
-     * Suffix appended to layout option identifiers to mark them as applied recursively to all
-     * contained elements.
-     */
-    private static final String RECURSIVE_SUFFIX = "#recursive";
-    
-    /**
      * Optional provider for layout configuration stores.
      */
     @Inject(optional = true)
@@ -158,16 +152,7 @@ public class LayoutConfigurationManager {
      */
     protected Object getRawOptionValue(final IProperty<?> option, final ILayoutConfigurationStore config) {
         Object result = config.getOptionValue(option.getId());
-        if (result == null) {
-            String recursiveOptionId = option.getId() + RECURSIVE_SUFFIX;
-            ILayoutConfigurationStore current = config;
-            do {
-                result = current.getOptionValue(recursiveOptionId);
-                if (result == null) {
-                    current = current.getParent();
-                }
-            } while (current != null && result == null);
-        }
+        
         if (result instanceof String && option instanceof LayoutOptionData) {
             return ((LayoutOptionData) option).parseValue((String) result);
         } else {
@@ -212,17 +197,6 @@ public class LayoutConfigurationManager {
     }
     
     /**
-     * Set a default value for the given layout option. The value will be considered for all elements of
-     * the containing diagram.
-     */
-    public void setDefaultValue(final LayoutOptionData optionData, final String value,
-            final ILayoutConfigurationStore config) {
-        config.setOptionValue(optionData.getId(), null);
-        ILayoutConfigurationStore rootConfig = getRoot(config);
-        rootConfig.setOptionValue(optionData.getId() + RECURSIVE_SUFFIX, value);
-    }
-    
-    /**
      * Return the root configuration store for the given one by going up the parent hierarchy.
      */
     protected ILayoutConfigurationStore getRoot(final ILayoutConfigurationStore config) {
@@ -243,21 +217,7 @@ public class LayoutConfigurationManager {
      */
     public void clearOptionValues(final ILayoutConfigurationStore config) {
         for (String optionId : config.getAffectedOptions()) {
-            if (!optionId.endsWith(RECURSIVE_SUFFIX)) {
-                config.setOptionValue(optionId, null);
-            }
-        }
-    }
-    
-    /**
-     * Clear all default layout option values for the given configuration store.
-     */
-    public void clearDefaultOptionValues(final ILayoutConfigurationStore config) {
-        ILayoutConfigurationStore rootConfig = getRoot(config);
-        for (String optionId : rootConfig.getAffectedOptions()) {
-            if (optionId.endsWith(RECURSIVE_SUFFIX)) {
-                config.setOptionValue(optionId, null);
-            }
+            config.setOptionValue(optionId, null);
         }
     }
     
@@ -299,19 +259,17 @@ public class LayoutConfigurationManager {
     protected void configureElement(final KGraphElement element,
             final ILayoutConfigurationStore configStore, final LayoutConfigurator configurator,
             final boolean recursiveOnly) {
+        
         ILayoutConfigurationStore parentStore = configStore.getParent();
         if (parentStore != null) {
             configureElement(element, parentStore, configurator, true);
         }
         
-        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
-        for (String optionId : configStore.getAffectedOptions()) {
-            boolean isRecursive = optionId.endsWith(RECURSIVE_SUFFIX);
-            if (isRecursive || !recursiveOnly) {
+        if (!recursiveOnly) {
+            LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
+            for (String optionId : configStore.getAffectedOptions()) {
                 Object value = configStore.getOptionValue(optionId);
-                String rawId = isRecursive ? optionId.substring(0, optionId.length() - RECURSIVE_SUFFIX.length())
-                        : optionId;
-                LayoutOptionData optionData = layoutDataService.getOptionData(rawId);
+                LayoutOptionData optionData = layoutDataService.getOptionData(optionId);
                 if (optionData != null && value != null) {
                     if (value instanceof String) {
                         value = optionData.parseValue((String) value);
