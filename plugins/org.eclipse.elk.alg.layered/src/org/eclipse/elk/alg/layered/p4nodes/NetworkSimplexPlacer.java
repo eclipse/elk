@@ -27,7 +27,7 @@ import org.eclipse.elk.alg.layered.networksimplex.NNode;
 import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -206,7 +206,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
         // --------------------------------
         // #2 execute the network simplex
         // --------------------------------
-        int iterLimit = layeredGraph.getProperty(Properties.THOROUGHNESS) * (int) Math.sqrt(nodeCnt);
+        int iterLimit = layeredGraph.getProperty(LayeredOptions.THOROUGHNESS) * (int) Math.sqrt(nodeCnt);
         
         NetworkSimplex.forGraph(graph)
             .withIterationLimit(iterLimit)
@@ -234,7 +234,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
      */
     private int getEdgeWeight(final LEdge edge) {
         
-        int priority = Math.max(1, edge.getProperty(Properties.PRIORITY));
+        int priority = Math.max(1, edge.getProperty(LayeredOptions.PRIORITY));
         
         int edgeTypeWeight;
         if (edge.getSource().getNode().getType() == NodeType.NORMAL

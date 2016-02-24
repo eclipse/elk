@@ -35,7 +35,7 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
@@ -430,7 +430,7 @@ public class ComponentsCompactor {
         Segments segments = edgeToSegments(externalEdge, externalExtension);
         
         // #2 all 'inner' segments contribute to the hull (consider the edge's thickness)
-        double thickness = Math.max(externalEdge.getProperty(LayoutOptions.THICKNESS).doubleValue(), 1);
+        double thickness = Math.max(externalEdge.getProperty(CoreOptions.EDGE_THICKNESS).doubleValue(), 1);
         for (Pair<KVector, KVector> segment : segments.innerSegments) {
             Rectangle rect = segmentToRectangle(segment.getFirst(), segment.getSecond(), thickness);
             hullPoints.add(rect);
@@ -611,7 +611,7 @@ public class ComponentsCompactor {
     
     /**
      * Basically, this is a wrapper around an {@link LGraph} since the {@link LGraph} represents a
-     * connected component, if the user desires to (i.e. {@link LayoutOptions#SEPARATE_CC} is true).
+     * connected component, if the user desires to (i.e. {@link CoreOptions#SEPARATE_CC} is true).
      */
     private class InternalComponent implements IComponent<LNode, Set<LEdge>> {
         

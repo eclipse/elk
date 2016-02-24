@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.core.meta.jvmmodel
 
+import com.google.common.collect.Iterables
 import com.google.inject.Inject
 import java.util.EnumSet
+import java.util.LinkedList
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider
 import org.eclipse.elk.core.data.LayoutAlgorithmData
 import org.eclipse.elk.core.data.LayoutCategoryData
@@ -21,6 +23,7 @@ import org.eclipse.elk.core.meta.metaData.MdAlgorithm
 import org.eclipse.elk.core.meta.metaData.MdBundle
 import org.eclipse.elk.core.meta.metaData.MdBundleMember
 import org.eclipse.elk.core.meta.metaData.MdCategory
+import org.eclipse.elk.core.meta.metaData.MdGroup
 import org.eclipse.elk.core.meta.metaData.MdModel
 import org.eclipse.elk.core.meta.metaData.MdProperty
 import org.eclipse.elk.core.meta.metaData.MdPropertyDependency
@@ -88,14 +91,14 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             documentation = bundle.documentation
             
             // 1. Public constants for all declared properties
-            for (property : bundle.members.filter(MdProperty)) {
+            for (property : bundle.members.allPropertyDefinitions) {
                 val constant = property.toPropertyConstant
                 if (property.defaultValue !== null)
                     members += property.toPropertyDefault
                 members += constant
             }
             // 2. Private constants for required values of option dependencies
-            for (property : bundle.members.filter(MdProperty)) {
+            for (property : bundle.members.allPropertyDefinitions) {
                 for (dependency : property.dependencies) {
                     if (dependency.value !== null)
                         members += dependency.toDependencyValue
@@ -123,6 +126,13 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         ]
     }
     
+    private def Iterable<MdProperty> getAllPropertyDefinitions(Iterable<? extends MdBundleMember> elements) {
+        Iterables.concat(
+            elements.filter(MdProperty),
+            elements.filter(MdGroup)
+                    .map[it.children.getAllPropertyDefinitions].flatten)
+    }
+    
     private def String getQualifiedTargetClass(MdBundle bundle) {
         val model = bundle.eContainer as MdModel
         val bundleClass = bundle.targetClass ?: 'Metadata'
@@ -141,7 +151,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             initializer = '''
                 new «Property»<«property.type.asWrapperTypeIfPrimitive ?: typeRef(Object)»>(
                         «property.qualifiedName.toCodeString»«IF property.defaultValue !== null»,
-                        «property.defaultConstantName»«ENDIF»)'''
+                        «property.defaultConstantName»«ENDIF»)«»'''
             documentation = property.description.trimLines
         ]
     }
@@ -199,9 +209,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }
     
     private def StringConcatenationClient registerLayoutOptions(MdBundle bundle) '''
-        «FOR property : bundle.members.filter(MdProperty)»
+        «FOR property : bundle.members.getAllPropertyDefinitions»
             registry.register(new «LayoutOptionData»(
                 «property.qualifiedName.toCodeString»,
+                «property.groups.map[name].join('.').toCodeString»,
                 «(property.label ?: property.name).shrinkWhiteSpace.toCodeString»,
                 «property.description.shrinkWhiteSpace.toCodeString»,
                 «IF property.defaultValue === null»
@@ -281,6 +292,16 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         «ENDFOR»
     '''
     
+    private def Iterable<MdGroup> getGroups(MdBundleMember member) {
+        val groups = new LinkedList
+        var group = member.eContainer
+        while (group instanceof MdGroup) {
+            groups.addFirst(group)
+            group = group.eContainer
+        }
+        groups
+    }
+    
     private def Type getOptionType(MdProperty property) {
         val jvmType = property.type?.type
         switch jvmType {
@@ -289,12 +310,15 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 case boolean.name:  return Type.BOOLEAN
                 case int.name:      return Type.INT
                 case float.name:    return Type.FLOAT
+                // TODO it may be better to prevent double from the start
+                case double.name:   return Type.FLOAT
             } 
             
             JvmGenericType: switch jvmType.identifier {
                 case Boolean.canonicalName:   return Type.BOOLEAN
                 case Integer.canonicalName:   return Type.INT
                 case Float.canonicalName:     return Type.FLOAT
+                case Double.canonicalName:    return Type.FLOAT
                 case String.canonicalName:    return Type.STRING
                 case EnumSet.canonicalName:   return Type.ENUMSET
                 case jvmType.hasSupertype(IDataObject): return Type.OBJECT
@@ -321,6 +345,8 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         switch property.type?.type?.identifier {
             case null:
                 typeRef(Void)
+            case Double.canonicalName:
+                typeRef(Float)
             case EnumSet.canonicalName: {
                 val outer = property.type as JvmParameterizedTypeReference
                 typeRef(outer.arguments.head?.type)    
@@ -333,25 +359,40 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     private def String getQualifiedName(MdBundleMember member) {
         val bundle = member.bundle
         val model = bundle.eContainer as MdModel
-        return model.name + '.' + member.name
+        return model.name 
+               + (if (member.groups.empty) '' else '.')
+               + member.groups.map[it.name].join('.') 
+               + '.' + member.name
     }
     
     private def MdBundle getBundle(MdBundleMember member) {
-        return member.eContainer as MdBundle
+        var parent = member.eContainer
+        while (!(parent instanceof MdBundle)) {
+            parent = parent.eContainer
+        }
+        return parent as MdBundle
     }
     
     private def String getConstantName(MdBundleMember member) {
         val name = member.name
         if (name !== null) {
             val result = new StringBuilder
-            for (var i = 0; i < name.length; i++) {
-                val c = name.charAt(i)
-                if (Character.isUpperCase(c) && i > 0)
-                    result.append('_')
-                result.append(Character.toUpperCase(c))
-            }
+            result.append(member.groups.map[it.name.toUpperCaseWithUnderscores].join('_'))
+            if (result.length > 0) result.append('_')
+            result.append(name.toUpperCaseWithUnderscores)
             return result.toString
         }
+    }
+    
+    private def String toUpperCaseWithUnderscores(String str) {
+        val result = new StringBuilder
+        for (var i = 0; i < str.length; i++) {
+            val c = str.charAt(i)
+            if (Character.isUpperCase(c) && i > 0)
+                result.append('_')
+            result.append(Character.toUpperCase(c))
+        }
+        return result.toString
     }
     
     private def getDefaultConstantName(MdProperty property) {

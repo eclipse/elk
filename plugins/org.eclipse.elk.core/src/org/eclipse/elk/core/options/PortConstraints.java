@@ -11,7 +11,7 @@
 package org.eclipse.elk.core.options;
 
 /**
- * Definition of port constraints. To be accessed using {@link LayoutOptions#PORT_CONSTRAINTS}.
+ * Definition of port constraints. To be accessed using {@link CoreOptions#PORT_CONSTRAINTS}.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch

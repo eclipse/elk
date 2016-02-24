@@ -20,9 +20,9 @@ import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.graph.FParticle;
 import org.eclipse.elk.alg.force.properties.InternalProperties;
-import org.eclipse.elk.alg.force.properties.Properties;
+import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -62,7 +62,7 @@ public abstract class AbstractForceModel {
                 DISP_BOUND_FACTOR * DISP_BOUND_FACTOR);
         
         // if interactive mode is off, randomize the layout
-        if (!fgraph.getProperty(LayoutOptions.INTERACTIVE)) {
+        if (!fgraph.getProperty(CoreOptions.INTERACTIVE)) {
             double posScale = graph.getNodes().size();
             for (FNode node : fgraph.getNodes()) {
                 KVector pos = node.getPosition();
@@ -74,7 +74,7 @@ public abstract class AbstractForceModel {
         // create bend points for node repulsion
         List<FBendpoint> bends = fgraph.getBendpoints();
         for (FEdge edge : fgraph.getEdges()) {
-            int count = edge.getProperty(Properties.REPULSIVE_POWER);
+            int count = edge.getProperty(ForceOptions.REPULSIVE_POWER);
             if (count > 0) {
                 for (int i = 0; i < count; i++) {
                     bends.add(new FBendpoint(edge));

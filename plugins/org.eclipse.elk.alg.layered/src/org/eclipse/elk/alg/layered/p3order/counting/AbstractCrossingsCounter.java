@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
 
@@ -274,7 +274,7 @@ public abstract class AbstractCrossingsCounter {
         for (int nodeIndex = 0; nodeIndex < layer.length; nodeIndex++) {
             LNode node = layer[nodeIndex];
 
-            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort easternPort : node.getPorts(PortSide.EAST)) {
                     if (easternPort.getDegree() > 0) {
                         currentEasternNumber += easternPort.getDegree();
@@ -300,7 +300,7 @@ public abstract class AbstractCrossingsCounter {
         for (int nodeIndex = layer.length - 1; nodeIndex >= 0; nodeIndex--) {
             LNode node = layer[nodeIndex];
 
-            if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort westernPort : node.getPorts(PortSide.WEST)) {
                     if (westernPort.getDegree() > 0) {
                         currentWesternNumber += westernPort.getDegree();
@@ -403,7 +403,7 @@ public abstract class AbstractCrossingsCounter {
                 }
                 
                 // Check if the current normal node has a fixed port order; if not, we can ignore it
-                if (!currentNormalNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                if (!currentNormalNode.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                     continue;
                 }
                 

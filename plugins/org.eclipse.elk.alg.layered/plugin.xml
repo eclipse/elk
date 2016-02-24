@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.elk.core.service.layoutProviders">
       <provider
-            class="org.eclipse.elk.alg.layered.properties.Properties">
+            class="org.eclipse.elk.alg.layered.properties.LayeredOptions">
       </provider>
       
    </extension>

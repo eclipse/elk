@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
-import org.eclipse.elk.alg.mrtree.properties.Properties;
+import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -89,7 +89,7 @@ public class NodePlacer implements ILayoutPhase {
         progressMonitor.begin("Processor order nodes", 2);
 
         /** set the spacing according to the user inputs */
-        spacing = tGraph.getProperty(Properties.SPACING).doubleValue();
+        spacing = tGraph.getProperty(MrTreeOptions.SPACING_NODE).doubleValue();
 
         /** find the root node of this component */
         LinkedList<TNode> roots = new LinkedList<TNode>();

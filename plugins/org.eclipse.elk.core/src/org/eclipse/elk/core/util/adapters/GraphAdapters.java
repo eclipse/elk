@@ -73,7 +73,7 @@ public interface GraphAdapters {
          * @param <P>
          *            the contained type of the property.
          * @return the value of the requested property.
-         * @see org.eclipse.elk.core.options.LayoutOptions
+         * @see org.eclipse.elk.core.options.CoreOptions
          * 
          */
         <P> P getProperty(final IProperty<P> prop);

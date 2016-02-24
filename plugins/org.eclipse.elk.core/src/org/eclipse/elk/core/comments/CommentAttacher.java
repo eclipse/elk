@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Queue;
 
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.KEdge;
@@ -28,7 +28,7 @@ import com.google.common.collect.Maps;
 
 /**
  * Main class of the comment attachment framework. Comment attachment infers the relation between nodes
- * marked as representing comments (through the {@link LayoutOptions#COMMENT_BOX} property) and nodes
+ * marked as representing comments (through the {@link CoreOptions#COMMENT_BOX} property) and nodes
  * they refer to. Running the framework results in edges being introduced between these pairs of nodes,
  * which allows layout algorithms to place them close to each other. Not doing this would usually lead
  * to comments and nodes not being placed close to each other, thereby breaking the visual link between
@@ -518,7 +518,7 @@ public final class CommentAttacher {
      */
     public static boolean isComment(final KNode node) {
         KLayoutData layoutData = node.getData(KLayoutData.class);
-        return layoutData.getProperty(LayoutOptions.COMMENT_BOX);
+        return layoutData.getProperty(CoreOptions.COMMENT_BOX);
     }
     
 }

@@ -25,10 +25,10 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -147,7 +147,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
-                || graph.getProperty(Properties.FEEDBACK_EDGES)) {
+                || graph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
             
             configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
 
@@ -193,8 +193,8 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Polyline edge routing", 1);
         
-        final float nodeSpacing = layeredGraph.getProperty(Properties.SPACING);
-        final float edgeSpaceFac = layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        final float nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE);
+        final float edgeSpaceFac = layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
         
         double xpos = 0.0;
         double layerSpacing = 0.0;
@@ -438,10 +438,10 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
             
             if (addJunctionPoint && !createdJunctionPoints.contains(bendPoint)) {
                 // create a new junction point for the edge at the bend point's position
-                KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
                 if (junctionPoints == null) {
                     junctionPoints = new KVectorChain();
-                    edge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                    edge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
                 }
                 
                 KVector jpoint = new KVector(bendPoint);

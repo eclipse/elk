@@ -21,9 +21,9 @@ import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.properties.InternalProperties;
-import org.eclipse.elk.alg.force.properties.Properties;
+import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 
 import com.google.common.collect.Lists;
 
@@ -59,7 +59,7 @@ public final class ComponentsProcessor {
      * @return a list of components that can be processed one by one.
      */
     public List<FGraph> split(final FGraph graph) {
-        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CONN_COMP);
+        Boolean separate = graph.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
         if (separate == null || separate.booleanValue()) {
             boolean[] visited = new boolean[graph.getNodes().size()];
             List<FEdge>[] incidence = buildIncidenceLists(graph);
@@ -172,13 +172,13 @@ public final class ComponentsProcessor {
             double minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE,
                     maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
             for (FNode node : graph.getNodes()) {
-                priority += node.getProperty(Properties.PRIORITY);
+                priority += node.getProperty(ForceOptions.PRIORITY);
                 minx = Math.min(minx, node.getPosition().x);
                 miny = Math.min(miny, node.getPosition().y);
                 maxx = Math.max(maxx, node.getPosition().x + node.getSize().x);
                 maxy = Math.max(maxy, node.getPosition().y + node.getSize().y);
             }
-            graph.setProperty(Properties.PRIORITY, priority);
+            graph.setProperty(ForceOptions.PRIORITY, priority);
             graph.setProperty(InternalProperties.BB_UPLEFT, new KVector(minx, miny));
             graph.setProperty(InternalProperties.BB_LOWRIGHT, new KVector(maxx, maxy));
         }
@@ -186,8 +186,8 @@ public final class ComponentsProcessor {
         // sort the components by their priority and size
         Collections.sort(components, new Comparator<FGraph>() {
             public int compare(final FGraph graph1, final FGraph graph2) {
-                int prio = graph2.getProperty(Properties.PRIORITY)
-                        - graph1.getProperty(Properties.PRIORITY);
+                int prio = graph2.getProperty(ForceOptions.PRIORITY)
+                        - graph1.getProperty(ForceOptions.PRIORITY);
                 if (prio == 0) {
                     KVector size1 = graph1.getProperty(InternalProperties.BB_LOWRIGHT).clone().sub(
                             graph1.getProperty(InternalProperties.BB_UPLEFT));
@@ -212,8 +212,8 @@ public final class ComponentsProcessor {
             totalArea += size.x * size.y;
         }
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
-                * result.getProperty(Properties.ASPECT_RATIO));
-        double spacing = result.getProperty(Properties.SPACING).doubleValue();
+                * result.getProperty(ForceOptions.ASPECT_RATIO));
+        double spacing = result.getProperty(ForceOptions.SPACING_NODE).doubleValue();
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;

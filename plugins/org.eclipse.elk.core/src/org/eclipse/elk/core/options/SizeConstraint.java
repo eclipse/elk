@@ -17,7 +17,7 @@ import java.util.EnumSet;
  * corresponds to something a layout algorithm should pay attention to when calculating node sizes.
  * Usually, one will use a combination of these values in an {@code EnumSet} instance, with the
  * empty set meaning that node sizes are fixed. <b>This enumeration is not set directly on
- * {@link LayoutOptions#SIZE_CONSTRAINT}; instead, an {@code EnumSet} over this enumeration is used
+ * {@link CoreOptions#SIZE_CONSTRAINT}; instead, an {@code EnumSet} over this enumeration is used
  * there.</b>
  * 
  * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>

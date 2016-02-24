@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.nodespacing.Rectangle;
@@ -48,7 +48,7 @@ public final class LabelSpaceCalculation {
     public static Insets calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
             final double labelSpacing) {
 
-        Insets nodeLabelInsets = node.getProperty(LayoutOptions.NODE_LABEL_INSETS);
+        Insets nodeLabelInsets = node.getProperty(CoreOptions.NODE_LABELS_INSETS);
 
         return calculateRequiredNodeLabelSpace(node, labelSpacing, nodeLabelInsets,
                 new HashMap<LabelLocation, LabelGroup>(), new Insets(node.getInsets()));
@@ -85,7 +85,7 @@ public final class LabelSpaceCalculation {
         
         // Retrieve the node's label placement policy
         final LabelLocation nodeLabelPlacement = LabelLocation.fromNodeLabelPlacement(
-                node.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT));
+                node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
 
         // Compute a bounding box for each location where labels should be placed.
         // The size is calculated from the size of all labels stacked vertically at that location.
@@ -93,7 +93,7 @@ public final class LabelSpaceCalculation {
         for (final LabelAdapter<?> label : node.getLabels()) {
             LabelLocation labelPlacement =
                     LabelLocation.fromNodeLabelPlacement(label
-                            .getProperty(LayoutOptions.NODE_LABEL_PLACEMENT));
+                            .getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
             // If no valid placement is set on the label, use the node's placement policy.
             if (labelPlacement == LabelLocation.UNDEFINED) {
                 labelPlacement = nodeLabelPlacement;

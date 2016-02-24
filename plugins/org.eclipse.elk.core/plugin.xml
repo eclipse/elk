@@ -13,7 +13,7 @@
    <extension
          point="org.eclipse.elk.core.service.layoutProviders">
       <provider
-            class="org.eclipse.elk.core.options.LayoutOptions">
+            class="org.eclipse.elk.core.options.CoreOptions">
       </provider>
    </extension>
 

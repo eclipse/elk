@@ -24,7 +24,7 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -57,7 +57,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
     /** Predicate that checks for center labels. */
     private static final Predicate<LLabel> CENTER_LABEL = new Predicate<LLabel>() {
         public boolean apply(final LLabel label) {
-            return label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+            return label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)
                     == EdgeLabelPlacement.CENTER;
         }
     };
@@ -70,8 +70,8 @@ public final class LabelDummyInserter implements ILayoutProcessor {
         
         List<LNode> newDummyNodes = Lists.newArrayList();
         
-        float labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
-        Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
+        float labelSpacing = layeredGraph.getProperty(CoreOptions.SPACING_LABEL);
+        Direction layoutDirection = layeredGraph.getProperty(CoreOptions.DIRECTION);
 
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             for (LPort port : node.getPorts()) {
@@ -90,7 +90,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         
                         dummyNode.setProperty(InternalProperties.ORIGIN, edge);
                         dummyNode.setProperty(InternalProperties.REPRESENTED_LABELS, representedLabels);
-                        dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
+                        dummyNode.setProperty(CoreOptions.PORT_CONSTRAINTS,
                                 PortConstraints.FIXED_POS);
                         dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, edge.getSource());
                         dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, edge.getTarget());
@@ -101,10 +101,10 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         LongEdgeSplitter.splitEdge(edge, dummyNode);
                         
                         // Set thickness of the edge and place ports at its center
-                        float thickness = edge.getProperty(LayoutOptions.THICKNESS);
+                        float thickness = edge.getProperty(CoreOptions.EDGE_THICKNESS);
                         if (thickness < 0) {
                             thickness = 0;
-                            edge.setProperty(LayoutOptions.THICKNESS, thickness);
+                            edge.setProperty(CoreOptions.EDGE_THICKNESS, thickness);
                         }
                         double portPos = Math.floor(thickness / 2);
 
@@ -120,7 +120,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         while (iterator.hasNext()) {
                             LLabel label = iterator.next();
                             
-                            if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
+                            if (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)
                                     == EdgeLabelPlacement.CENTER) {
                                 
                                 // The way we stack labels depends on the layout direction

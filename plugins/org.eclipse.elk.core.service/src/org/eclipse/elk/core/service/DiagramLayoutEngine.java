@@ -25,7 +25,7 @@ import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.service.util.MonitoredOperation;
@@ -220,10 +220,10 @@ public class DiagramLayoutEngine {
             final boolean zoomToFit) {
         Parameters params = new Parameters();
         params.getGlobalSettings()
-            .setProperty(LayoutOptions.ANIMATE, animate)
-            .setProperty(LayoutOptions.PROGRESS_BAR, progressBar)
-            .setProperty(LayoutOptions.LAYOUT_ANCESTORS, layoutAncestors)
-            .setProperty(LayoutOptions.ZOOM_TO_FIT, zoomToFit);
+            .setProperty(CoreOptions.ANIMATE, animate)
+            .setProperty(CoreOptions.PROGRESS_BAR, progressBar)
+            .setProperty(CoreOptions.LAYOUT_ANCESTORS, layoutAncestors)
+            .setProperty(CoreOptions.ZOOM_TO_FIT, zoomToFit);
         return invokeLayout(workbenchPart, diagramPart, params);
     }
     
@@ -355,7 +355,7 @@ public class DiagramLayoutEngine {
             // First phase: build the layout graph
             @Override
             protected void preUIexec() {
-                boolean layoutAncestors = finalParams.getGlobalSettings().getProperty(LayoutOptions.LAYOUT_ANCESTORS);
+                boolean layoutAncestors = finalParams.getGlobalSettings().getProperty(CoreOptions.LAYOUT_ANCESTORS);
                 LayoutMapping mapping;
                 if (layoutAncestors && workbenchPart != null) {
                     mapping = connector.buildLayoutGraph(workbenchPart, null);
@@ -411,7 +411,7 @@ public class DiagramLayoutEngine {
         }
 
         try {
-            boolean progressBar = finalParams.getGlobalSettings().getProperty(LayoutOptions.PROGRESS_BAR);
+            boolean progressBar = finalParams.getGlobalSettings().getProperty(CoreOptions.PROGRESS_BAR);
             if (progressBar) {
                 // Perform layout with a progress bar
                 monitoredOperation.runMonitored();
@@ -561,7 +561,7 @@ public class DiagramLayoutEngine {
             final Parameters params) {
         mapping.setProperty(MAPPING_CONNECTOR, connector);
         
-        boolean layoutAncestors = params.getGlobalSettings().getProperty(LayoutOptions.LAYOUT_ANCESTORS);
+        boolean layoutAncestors = params.getGlobalSettings().getProperty(CoreOptions.LAYOUT_ANCESTORS);
         if (layoutAncestors) {
             // Mark all parallel areas for exclusion from layout
             KGraphElement graphElem = mapping.getGraphMap().inverse().get(mapping.getParentElement());
@@ -577,11 +577,11 @@ public class DiagramLayoutEngine {
                             for (LayoutConfigurator c : params.configurators) {
                                 IPropertyHolder childConfig = c.configure(child);
                                 // Do not layout the content of the child node
-                                childConfig.setProperty(LayoutOptions.NO_LAYOUT, true);
+                                childConfig.setProperty(CoreOptions.NO_LAYOUT, true);
                                 // Do not change the size of the child node
-                                childConfig.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
+                                childConfig.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
                                 // Do not move the ports of the child node
-                                childConfig.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+                                childConfig.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
                             }
                         }
                     }

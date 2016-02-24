@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.force.graph;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.alg.force.properties.Properties;
+import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 import com.google.common.collect.Iterables;
@@ -102,7 +102,7 @@ public final class FGraph extends MapPropertyHolder {
         } else if (particle1 instanceof FBendpoint && particle2 instanceof FBendpoint) {
             FBendpoint bpoint1 = (FBendpoint) particle1, bpoint2 = (FBendpoint) particle2;
             if (bpoint1.getEdge() == bpoint2.getEdge()) {
-                return bpoint2.getEdge().getProperty(Properties.PRIORITY);
+                return bpoint2.getEdge().getProperty(ForceOptions.PRIORITY);
             }
         }
         return 0;
@@ -115,7 +115,7 @@ public final class FGraph extends MapPropertyHolder {
         int n = nodes.size();
         adjacency = new int[n][n];
         for (FEdge edge : edges) {
-            adjacency[edge.getSource().id][edge.getTarget().id] += edge.getProperty(Properties.PRIORITY);
+            adjacency[edge.getSource().id][edge.getTarget().id] += edge.getProperty(ForceOptions.PRIORITY);
         }
     }
 

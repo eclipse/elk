@@ -15,7 +15,7 @@ import org.eclipse.elk.alg.layered.compaction.oned.CompareFuzzy;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 
 /**
  * Represents a vertical segment on a single {@link LEdge} that is merged with intersecting
@@ -78,7 +78,7 @@ public final class VerticalSegment implements Comparable<VerticalSegment> {
         }
 
         // adding junction points
-        KVectorChain inJPs = lEdge.getProperty(LayoutOptions.JUNCTION_POINTS);
+        KVectorChain inJPs = lEdge.getProperty(CoreOptions.JUNCTION_POINTS);
         // this property could be null
         if (inJPs != null) {
             for (KVector jp : inJPs) {

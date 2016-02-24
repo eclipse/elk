@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -125,8 +125,8 @@ public class StretchWidthLayerer implements ILayoutPhase {
         widthUp = 0;
         // initialize the dummy size with the spacing properties
         dummySize =
-                layeredGraph.getProperty(Properties.SPACING)
-                        * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+                layeredGraph.getProperty(LayeredOptions.SPACING_NODE)
+                        * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
         // Sort the nodes at beginning, since the rank will not change.
         // The list is sorted in descending order by the rank.
         // It has to be computed first

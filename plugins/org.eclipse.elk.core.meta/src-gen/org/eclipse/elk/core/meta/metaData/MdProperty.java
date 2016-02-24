@@ -27,11 +27,15 @@ import org.eclipse.xtext.xbase.XExpression;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isDeprecated <em>Deprecated</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isAdvanced <em>Advanced</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isProgrammatic <em>Programmatic</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isOutput <em>Output</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isGlobal <em>Global</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getType <em>Type</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDefaultValue <em>Default Value</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLegacyIds <em>Legacy Ids</em>}</li>
@@ -42,8 +46,34 @@ import org.eclipse.xtext.xbase.XExpression;
  * @model
  * @generated
  */
-public interface MdProperty extends MdBundleMember
+public interface MdProperty extends MdGroupOrProperty
 {
+  /**
+   * Returns the value of the '<em><b>Deprecated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Deprecated</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Deprecated</em>' attribute.
+   * @see #setDeprecated(boolean)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Deprecated()
+   * @model
+   * @generated
+   */
+  boolean isDeprecated();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#isDeprecated <em>Deprecated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Deprecated</em>' attribute.
+   * @see #isDeprecated()
+   * @generated
+   */
+  void setDeprecated(boolean value);
+
   /**
    * Returns the value of the '<em><b>Advanced</b></em>' attribute.
    * <!-- begin-user-doc -->
@@ -173,6 +203,84 @@ public interface MdProperty extends MdBundleMember
    * @generated
    */
   void setType(JvmTypeReference value);
+
+  /**
+   * Returns the value of the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Label</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Label</em>' attribute.
+   * @see #setLabel(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Label()
+   * @model
+   * @generated
+   */
+  String getLabel();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLabel <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Label</em>' attribute.
+   * @see #getLabel()
+   * @generated
+   */
+  void setLabel(String value);
+
+  /**
+   * Returns the value of the '<em><b>Description</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Description</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Description</em>' attribute.
+   * @see #setDescription(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Description()
+   * @model
+   * @generated
+   */
+  String getDescription();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDescription <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Description</em>' attribute.
+   * @see #getDescription()
+   * @generated
+   */
+  void setDescription(String value);
+
+  /**
+   * Returns the value of the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Documentation</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Documentation</em>' attribute.
+   * @see #setDocumentation(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Documentation()
+   * @model
+   * @generated
+   */
+  String getDocumentation();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDocumentation <em>Documentation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Documentation</em>' attribute.
+   * @see #getDocumentation()
+   * @generated
+   */
+  void setDocumentation(String value);
 
   /**
    * Returns the value of the '<em><b>Default Value</b></em>' containment reference.

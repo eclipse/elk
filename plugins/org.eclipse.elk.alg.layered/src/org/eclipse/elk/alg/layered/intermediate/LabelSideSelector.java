@@ -25,8 +25,8 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
@@ -72,7 +72,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
-        EdgeLabelSideSelection mode = layeredGraph.getProperty(Properties.EDGE_LABEL_SIDE_SELECTION);
+        EdgeLabelSideSelection mode = layeredGraph.getProperty(LayeredOptions.EDGE_LABEL_SIDE_SELECTION);
         monitor.begin("Label side selection (" + mode + ")", 1);
         
         // Calculate all label sides depending on the given strategy
@@ -114,7 +114,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 if (lNode.getType() == NodeType.LABEL) {
                     if (lNode.getProperty(InternalProperties.LABEL_SIDE) == LabelSide.ABOVE) {
                         LEdge originEdge = (LEdge) lNode.getProperty(InternalProperties.ORIGIN);
-                        float thickness = originEdge.getProperty(LayoutOptions.THICKNESS);
+                        float thickness = originEdge.getProperty(CoreOptions.EDGE_THICKNESS);
                         double portPos = lNode.getSize().y - Math.ceil(thickness / 2);
                         for (LPort port : lNode.getPorts()) {
                             port.getPosition().y = portPos;

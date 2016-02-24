@@ -17,7 +17,7 @@ package org.eclipse.elk.alg.mrtree.properties;
  * 
  * <p>
  * An {@code EnumSet} for this enumeration can be attached to a graph via the
- * {@link Properties#GRAPH_PROPERTIES} property.
+ * {@link MrTreeOptions#GRAPH_PROPERTIES} property.
  * </p>
  * 
  * TODO this is not used yet 

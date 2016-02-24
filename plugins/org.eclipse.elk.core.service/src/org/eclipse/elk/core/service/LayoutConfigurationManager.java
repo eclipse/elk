@@ -21,7 +21,7 @@ import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.GraphFeature;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
 
@@ -99,7 +99,7 @@ public class LayoutConfigurationManager {
      * @return a layout algorithm, or {@code null} if none was found for the given configuration
      */
     public LayoutAlgorithmData getAlgorithm(final ILayoutConfigurationStore config) {
-        return getAlgorithm((String) getRawOptionValue(LayoutOptions.ALGORITHM, config));
+        return getAlgorithm((String) getRawOptionValue(CoreOptions.ALGORITHM, config));
     }
     
     /**
@@ -142,7 +142,7 @@ public class LayoutConfigurationManager {
      */
     public Object getOptionValue(final LayoutOptionData optionData, final ILayoutConfigurationStore config) {
         Object result = getRawOptionValue(optionData, config);
-        if (optionData.equals(LayoutOptions.ALGORITHM)) {
+        if (optionData.equals(CoreOptions.ALGORITHM)) {
             LayoutAlgorithmData algoData = getAlgorithm((String) result);
             if (algoData != null) {
                 return algoData.getId();
@@ -233,7 +233,7 @@ public class LayoutConfigurationManager {
      * i.e. to process all contained hierarchy levels with a single layout algorithm invocation.
      */
     protected boolean isFullHierarchyLayout(final ILayoutConfigurationStore config) {
-        Object layoutHierarchyVal = config.getOptionValue(LayoutOptions.LAYOUT_HIERARCHY.getId());
+        Object layoutHierarchyVal = config.getOptionValue(CoreOptions.LAYOUT_HIERARCHY.getId());
         boolean layoutHierarchy = layoutHierarchyVal instanceof Boolean ? (Boolean) layoutHierarchyVal
                 : Boolean.parseBoolean((String) layoutHierarchyVal);
         if (layoutHierarchy) {

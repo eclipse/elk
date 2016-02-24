@@ -20,10 +20,10 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -67,7 +67,7 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
         monitor.begin("Edge joining", 1);
         
         final boolean addUnnecessaryBendpoints =
-                layeredGraph.getProperty(Properties.UNNECESSARY_BENDPOINTS);
+                layeredGraph.getProperty(LayeredOptions.UNNECESSARY_BENDPOINTS);
         
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
@@ -158,13 +158,13 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
             
             // Join their junction points
             KVectorChain survivingJunctionPoints = survivingEdge.getProperty(
-                    LayoutOptions.JUNCTION_POINTS);
+                    CoreOptions.JUNCTION_POINTS);
             KVectorChain droppedJunctionsPoints = droppedEdge.getProperty(
-                    LayoutOptions.JUNCTION_POINTS);
+                    CoreOptions.JUNCTION_POINTS);
             if (droppedJunctionsPoints != null) {
                 if (survivingJunctionPoints == null) {
                     survivingJunctionPoints = new KVectorChain();
-                    survivingEdge.setProperty(LayoutOptions.JUNCTION_POINTS,
+                    survivingEdge.setProperty(CoreOptions.JUNCTION_POINTS,
                             survivingJunctionPoints);
                 }
                 for (KVector jp : droppedJunctionsPoints) {

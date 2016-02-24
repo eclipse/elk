@@ -27,9 +27,9 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -240,11 +240,11 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 int inprio = Integer.MIN_VALUE, outprio = Integer.MIN_VALUE;
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getIncomingEdges()) {
-                        int prio = edge.getProperty(Properties.PRIORITY);
+                        int prio = edge.getProperty(LayeredOptions.PRIORITY);
                         inprio = Math.max(inprio, prio);
                     }
                     for (LEdge edge : port.getOutgoingEdges()) {
-                        int prio = edge.getProperty(Properties.PRIORITY);
+                        int prio = edge.getProperty(LayeredOptions.PRIORITY);
                         outprio = Math.max(outprio, prio);
                     }
                 }
@@ -457,7 +457,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         }
 
         // Write debug output graph
-        if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
+        if (layeredGraph.getProperty(CoreOptions.DEBUG_MODE)) {
             DebugUtil.writeDebugGraph(layeredGraph, segmentList, outgoingList);
         }
     }
@@ -622,10 +622,10 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      */
     private void balancePlacement(final LGraph layeredGraph) {
         double deflectionDampening = layeredGraph.getProperty(
-                Properties.LINEAR_SEGMENTS_DEFLECTION_DAMPENING).doubleValue();
+                LayeredOptions.LINEAR_SEGMENTS_DEFLECTION_DAMPENING).doubleValue();
         
         // Determine a suitable number of pendulum iterations
-        int thoroughness = layeredGraph.getProperty(Properties.THOROUGHNESS);
+        int thoroughness = layeredGraph.getProperty(LayeredOptions.THOROUGHNESS);
         int pendulumIters = PENDULUM_ITERS;
         int finalIters = FINAL_ITERS;
         double threshold = THRESHOLD_FACTOR / thoroughness;
@@ -718,7 +718,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                         if (segment != linearSegments[otherNode.id]) {
                             int otherPrio = Math.max(otherNode.getProperty(INPUT_PRIO),
                                     otherNode.getProperty(OUTPUT_PRIO));
-                            int prio = edge.getProperty(Properties.PRIORITY);
+                            int prio = edge.getProperty(LayeredOptions.PRIORITY);
                             if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
                                         + otherPort.getPosition().y + otherPort.getAnchor().y
@@ -736,7 +736,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                         if (segment != linearSegments[otherNode.id]) {
                             int otherPrio = Math.max(otherNode.getProperty(INPUT_PRIO),
                                     otherNode.getProperty(OUTPUT_PRIO));
-                            int prio = edge.getProperty(Properties.PRIORITY);
+                            int prio = edge.getProperty(LayeredOptions.PRIORITY);
                             if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
                                         + otherPort.getPosition().y + otherPort.getAnchor().y

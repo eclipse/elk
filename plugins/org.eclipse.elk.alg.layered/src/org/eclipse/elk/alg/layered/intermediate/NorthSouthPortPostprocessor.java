@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -55,7 +55,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
         
         // Spline edge routing manages bend points in the edge router. Differentiate behaviour
         // depending on edge router.
-        EdgeRouting routing = layeredGraph.getProperty(LayoutOptions.EDGE_ROUTING);
+        EdgeRouting routing = layeredGraph.getProperty(CoreOptions.EDGE_ROUTING);
 
         // Iterate through the layers
         for (Layer layer : layeredGraph) {
@@ -156,10 +156,10 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
             
             // Check if a junction point should be added
             if (addJunctionPoints) {
-                KVectorChain junctionPoints = inEdge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                KVectorChain junctionPoints = inEdge.getProperty(CoreOptions.JUNCTION_POINTS);
                 if (junctionPoints == null) {
                     junctionPoints = new KVectorChain();
-                    inEdge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                    inEdge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
                 }
                 junctionPoints.add(new KVector(x, y));
             }
@@ -193,10 +193,10 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
             
             // Check if a junction point should be added
             if (addJunctionPoints) {
-                KVectorChain junctionPoints = outEdge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                KVectorChain junctionPoints = outEdge.getProperty(CoreOptions.JUNCTION_POINTS);
                 if (junctionPoints == null) {
                     junctionPoints = new KVectorChain();
-                    outEdge.setProperty(LayoutOptions.JUNCTION_POINTS, junctionPoints);
+                    outEdge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
                 }
                 junctionPoints.add(new KVector(x, y));
             }

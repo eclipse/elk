@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
-import org.eclipse.elk.alg.mrtree.properties.Properties;
+import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
@@ -160,10 +160,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KShapeLayout graphLayout = kgraph.getData(KShapeLayout.class);
 
         // check border spacing and update if necessary
-        float borderSpacing = tGraph.getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = tGraph.getProperty(MrTreeOptions.SPACING_BORDER);
         if (borderSpacing < 0) {
-            borderSpacing = Properties.SPACING.getDefault();
-            tGraph.setProperty(Properties.BORDER_SPACING, borderSpacing);
+            borderSpacing = MrTreeOptions.SPACING_NODE.getDefault();
+            tGraph.setProperty(MrTreeOptions.SPACING_BORDER, borderSpacing);
         }
 
         // calculate the offset from border spacing and node distribution

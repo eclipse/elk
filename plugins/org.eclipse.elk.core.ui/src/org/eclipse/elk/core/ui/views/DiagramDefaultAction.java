@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
@@ -82,7 +82,7 @@ public class DiagramDefaultAction extends Action {
         }
 
         final String value;
-        if (optionData.equals(LayoutOptions.ALGORITHM)) {
+        if (optionData.equals(CoreOptions.ALGORITHM)) {
             value = LayoutPropertySource.getLayoutHint((String) entry.getValueAsString());
         } else {
             value = entry.getValueAsString();

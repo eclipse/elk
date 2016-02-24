@@ -21,7 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -76,7 +76,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
 
-        GraphCompactionStrategy strategy = layeredGraph.getProperty(Properties.POST_COMPACTION);
+        GraphCompactionStrategy strategy = layeredGraph.getProperty(LayeredOptions.POST_COMPACTION);
         if (strategy == GraphCompactionStrategy.NONE) {
             return;
         }
@@ -94,7 +94,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         // ---
         // select constraint algorithm
         // - 
-        switch (layeredGraph.getProperty(Properties.POST_COMPACTION_CONSTRAINTS)) {
+        switch (layeredGraph.getProperty(LayeredOptions.POST_COMPACTION_CONSTRAINTS)) {
             case SCANLINE:
                 odc.setConstraintAlgorithm(EDGE_AWARE_SCANLINE_CONSTRAINTS);
                 break;

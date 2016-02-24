@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -70,7 +70,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Greedy switch crossing reduction", 1);
 
-        greedySwitchType = graph.getProperty(Properties.GREEDY_SWITCH);
+        greedySwitchType = graph.getProperty(LayeredOptions.GREEDY_SWITCH);
 
         int layerCount = graph.getLayers().size();
         if (layerCount < 2 || greedySwitchType == GreedySwitchType.OFF) {

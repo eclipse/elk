@@ -15,7 +15,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 /**
  * Interface for importer classes for the layered graph structure.
  * 
- * <p>Graph importers are encouraged to set the {@link Properties#GRAPH_PROPERTIES}
+ * <p>Graph importers are encouraged to set the {@link LayeredOptions#GRAPH_PROPERTIES}
  * property on imported graphs.</p>
  *
  * @param <T> the type of graph that this importer can transform into a layered graph.

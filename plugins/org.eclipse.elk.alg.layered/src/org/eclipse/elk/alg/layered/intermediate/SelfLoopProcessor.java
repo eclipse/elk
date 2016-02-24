@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -160,7 +160,7 @@ public final class SelfLoopProcessor implements ILayoutProcessor {
         dummyNode.setType(NodeType.LONG_EDGE);
         
         dummyNode.setProperty(InternalProperties.ORIGIN, edge);
-        dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummyNode.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, sourcePort);
         dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, targetPort);
         
@@ -177,7 +177,7 @@ public final class SelfLoopProcessor implements ILayoutProcessor {
         // Create a dummy edge
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
-        dummyEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
+        dummyEdge.setProperty(CoreOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(targetPort);
         

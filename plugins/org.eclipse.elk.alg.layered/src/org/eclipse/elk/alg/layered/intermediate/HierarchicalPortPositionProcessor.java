@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -81,7 +81,7 @@ public final class HierarchicalPortPositionProcessor implements ILayoutProcessor
      * @param graphHeight height of the graph.
      */
     private void fixCoordinates(final Layer layer, final LGraph layeredGraph) {
-        PortConstraints portConstraints = layeredGraph.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        PortConstraints portConstraints = layeredGraph.getProperty(CoreOptions.PORT_CONSTRAINTS);
         if (!(portConstraints.isRatioFixed() || portConstraints.isPosFixed())) {
             // If coordinates are free to be set, we're done
             return;
@@ -110,7 +110,7 @@ public final class HierarchicalPortPositionProcessor implements ILayoutProcessor
             }
 
             // Apply the node's new Y coordinate
-            node.getPosition().y = finalYCoordinate - node.getProperty(LayoutOptions.PORT_ANCHOR).y;
+            node.getPosition().y = finalYCoordinate - node.getProperty(CoreOptions.PORT_ANCHOR).y;
             node.borderToContentAreaCoordinates(false, true);
         }
     }

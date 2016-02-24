@@ -23,9 +23,9 @@ import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
-import org.eclipse.elk.alg.mrtree.properties.Properties;
+import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Lists;
@@ -77,7 +77,7 @@ public class ComponentsProcessor {
      * @return a list of components that can be processed one by one
      */
     public List<TGraph> split(final TGraph graph) {
-        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CONN_COMP);
+        Boolean separate = graph.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
         if (separate == null || separate.booleanValue()) {
             initialize(graph);
 
@@ -167,13 +167,13 @@ public class ComponentsProcessor {
             double minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE;
             double maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
             for (TNode node : graph.getNodes()) {
-                priority += node.getProperty(Properties.PRIORITY);
+                priority += node.getProperty(MrTreeOptions.PRIORITY);
                 minx = Math.min(minx, node.getPosition().x);
                 miny = Math.min(miny, node.getPosition().y);
                 maxx = Math.max(maxx, node.getPosition().x + node.getSize().x);
                 maxy = Math.max(maxy, node.getPosition().y + node.getSize().y);
             }
-            graph.setProperty(Properties.PRIORITY, priority);
+            graph.setProperty(MrTreeOptions.PRIORITY, priority);
             graph.setProperty(InternalProperties.BB_UPLEFT, new KVector(minx, miny));
             graph.setProperty(InternalProperties.BB_LOWRIGHT, new KVector(maxx, maxy));
         }
@@ -181,8 +181,8 @@ public class ComponentsProcessor {
         // sort the components by their priority and size
         Collections.sort(components, new Comparator<TGraph>() {
             public int compare(final TGraph graph1, final TGraph graph2) {
-                int prio = graph2.getProperty(Properties.PRIORITY)
-                        - graph1.getProperty(Properties.PRIORITY);
+                int prio = graph2.getProperty(MrTreeOptions.PRIORITY)
+                        - graph1.getProperty(MrTreeOptions.PRIORITY);
                 if (prio == 0) {
                     KVector size1 = graph1.getProperty(InternalProperties.BB_LOWRIGHT).clone().sub(
                             graph1.getProperty(InternalProperties.BB_UPLEFT));
@@ -207,8 +207,8 @@ public class ComponentsProcessor {
             totalArea += size.x * size.y;
         }
         maxRowWidth = Math.max(maxRowWidth,
-                (float) Math.sqrt(totalArea) * result.getProperty(Properties.ASPECT_RATIO));
-        double spacing = result.getProperty(Properties.SPACING).doubleValue();
+                (float) Math.sqrt(totalArea) * result.getProperty(MrTreeOptions.ASPECT_RATIO));
+        double spacing = result.getProperty(MrTreeOptions.SPACING_NODE).doubleValue();
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
@@ -232,7 +232,7 @@ public class ComponentsProcessor {
         Map<IProperty<?>, Object> debug = new HashMap<IProperty<?>, Object>();
 
         for (TGraph tGraph : components) {
-            boolean debugMode = tGraph.getProperty(LayoutOptions.DEBUG_MODE);
+            boolean debugMode = tGraph.getProperty(CoreOptions.DEBUG_MODE);
             Map<IProperty<?>, Object> propComp = tGraph.getAllProperties();
             for (Entry<IProperty<?>, Object> entry : propComp.entrySet()) {
                 if (propMerge.containsKey(entry.getKey())) {

@@ -36,7 +36,7 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
@@ -248,10 +248,10 @@ public class DotImporter {
             if (Attributes.LAYOUT.equals(name)) {
                 Command command = Command.parse(value);
                 if (command != Command.INVALID) {
-                    target.setProperty(LayoutOptions.ALGORITHM,
+                    target.setProperty(CoreOptions.ALGORITHM,
                             "org.eclipse.elk.algorithm.graphviz." + command);
                 } else {
-                    target.setProperty(LayoutOptions.ALGORITHM, value);
+                    target.setProperty(CoreOptions.ALGORITHM, value);
                 }
             } else if (Attributes.WIDTH.equals(name)) {
                 target.setProperty(PROP_DEF_WIDTH, Float.valueOf(value)
@@ -261,38 +261,38 @@ public class DotImporter {
                         * DotExporter.DPI);
             } else if (Attributes.FIXEDSIZE.equals(name)) {
                 Boolean fixedSize = Boolean.valueOf(value);
-                target.setProperty(LayoutOptions.SIZE_CONSTRAINT,
+                target.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS,
                         fixedSize ? SizeConstraint.fixed() : EnumSet.of(SizeConstraint.MINIMUM_SIZE));
             } else if (Attributes.NODESEP.equals(name)) {
-                target.setProperty(LayoutOptions.SPACING, Float.valueOf(value));
+                target.setProperty(CoreOptions.SPACING_NODE, Float.valueOf(value));
             } else if (Attributes.PACK.equals(name)) {
-                target.setProperty(LayoutOptions.SEPARATE_CONN_COMP, Boolean.valueOf(value));
+                target.setProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS, Boolean.valueOf(value));
             } else if (Attributes.PAD.equals(name)) {
                 if (value.indexOf(',') >= 0) {
                     KVector pad = new KVector();
                     pad.parse(value);
-                    target.setProperty(LayoutOptions.BORDER_SPACING, (float) (pad.x + pad.y) / 2);
+                    target.setProperty(CoreOptions.SPACING_BORDER, (float) (pad.x + pad.y) / 2);
                 } else {
-                    target.setProperty(LayoutOptions.BORDER_SPACING, Float.valueOf(value));
+                    target.setProperty(CoreOptions.SPACING_BORDER, Float.valueOf(value));
                 }
             } else if (Attributes.RANKDIR.equals(name)) {
                 if (value.equals("TB")) {
-                    target.setProperty(LayoutOptions.DIRECTION, Direction.DOWN);
+                    target.setProperty(CoreOptions.DIRECTION, Direction.DOWN);
                 } else if (value.equals("BT")) {
-                    target.setProperty(LayoutOptions.DIRECTION, Direction.UP);
+                    target.setProperty(CoreOptions.DIRECTION, Direction.UP);
                 } else if (value.equals("LR")) {
-                    target.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
+                    target.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
                 } else if (value.equals("RL")) {
-                    target.setProperty(LayoutOptions.DIRECTION, Direction.LEFT);
+                    target.setProperty(CoreOptions.DIRECTION, Direction.LEFT);
                 }
             } else if (Attributes.SPLINES.equals(name)) {
                 if (value.equals("spline") || value.equals("true")) {
-                    target.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+                    target.setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
                 } else if (value.equals("polyline") || value.equals("line")
                         || value.equals("false")) {
-                    target.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
+                    target.setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
                 } else if (value.equals("ortho")) {
-                    target.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+                    target.setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
                 }
             } else if (Attributes.START.equals(name)) {
                 if (value.startsWith("random")) {
@@ -302,10 +302,10 @@ public class DotImporter {
                     } catch (NumberFormatException e) {
                         // ignore exception
                     }
-                    target.setProperty(LayoutOptions.RANDOM_SEED, random);
+                    target.setProperty(CoreOptions.RANDOM_SEED, random);
                 }
             } else if (Attributes.WEIGHT.equals(name)) {
-                target.setProperty(LayoutOptions.PRIORITY, (int) Float.parseFloat(value));
+                target.setProperty(CoreOptions.PRIORITY, (int) Float.parseFloat(value));
             }
         } catch (NumberFormatException exception) {
             transData.log("Discarding attribute " + attribute.getName() + "="
@@ -507,17 +507,17 @@ public class DotImporter {
                 if (Attributes.LABEL.equals(attr.getName())) {
                     KLabel label = ElkUtil.createInitializedLabel(kedge);
                     label.setText(value);
-                    label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                    label.getData(KShapeLayout.class).setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
                             EdgeLabelPlacement.CENTER);
                 } else if (Attributes.HEADLABEL.equals(attr.getName())) {
                     KLabel label = ElkUtil.createInitializedLabel(kedge);
                     label.setText(value);
-                    label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                    label.getData(KShapeLayout.class).setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
                             EdgeLabelPlacement.HEAD);
                 } else if (Attributes.TAILLABEL.equals(attr.getName())) {
                     KLabel label = ElkUtil.createInitializedLabel(kedge);
                     label.setText(value);
-                    label.getData(KShapeLayout.class).setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                    label.getData(KShapeLayout.class).setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
                             EdgeLabelPlacement.TAIL);
                 } else {
                     transformAttribute(edgeLayout, attr, transData);
@@ -633,7 +633,7 @@ public class DotImporter {
         for (KLabel label : edge.getLabels()) {
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             String attrKey = null;
-            switch (labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)) {
+            switch (labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)) {
             case CENTER:
                 attrKey = Attributes.LABELPOS;
                 break;

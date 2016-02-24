@@ -21,7 +21,7 @@ import org.eclipse.elk.alg.layered.properties.PortType;
  * A data holder used to pass information on hierarchy crossing edges from the
  * {@link CompoundGraphPreprocessor} to the {@link CompoundGraphPostprocessor}.
  * Instances of this class are held in a multimap attached to the top-level graph via the
- * {@link org.eclipse.elk.alg.layered.properties.Properties#CROSS_HIERARCHY_MAP CROSS_HIERARCHY_MAP}
+ * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions#CROSS_HIERARCHY_MAP CROSS_HIERARCHY_MAP}
  * property.
  *
  * @author msp

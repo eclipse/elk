@@ -24,26 +24,36 @@ MdBundle:
     (
         'bundle' '{'
             (
-                ('label' '=' label=STRING)?
-                & ('class' '=' targetClass=QualifiedName)?
+                ('label' label=STRING)?
+                & ('class' targetClass=QualifiedName)?
+                & ('documentationFolder' documentationFolder=Path)?
             )
         '}'
     )?
     members+=MdBundleMember*;
 
 MdBundleMember:
-    MdProperty | MdAlgorithm | MdCategory;
+    MdGroupOrProperty | MdAlgorithm | MdCategory;
+
+MdGroupOrProperty:
+    MdGroup | MdProperty;
+
+MdGroup:
+    'group' name=ID '{'
+        children+=MdGroupOrProperty*
+    '}';
 
 MdProperty:
     deprecated?='deprecated'?
     (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
-    'property' name=ID (':' type=JvmTypeReference)? '{'
+    'option' name=ID (':' type=JvmTypeReference)? '{'
         (
-            ('label' '=' label=STRING)?
-            & ('description' '=' description=STRING)?
+            ('label' label=STRING)?
+            & ('description' description=STRING)?
+            & ('documentation' documentation=STRING)?   // "@docu/priority.md"
             & ('default' '=' defaultValue=XExpression)?
-            & ('targets' '=' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
-            & ('legacyIds' '=' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
+            & ('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
+            & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
         )
         (dependencies+=MdPropertyDependency)*
     '}';
@@ -55,11 +65,12 @@ MdAlgorithm:
     deprecated?='deprecated'?
     'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{'
         (
-            ('label' '=' label=STRING)?
-            & ('description' '=' description=STRING)?
-            & ('category' '=' category=[MdCategory|QualifiedName])?
-            & ('preview' '=' previewImage=Path)?
-            & ('features' '=' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
+            ('label' label=STRING)?
+            & ('description' description=STRING)?
+            & ('documentation' documentation=STRING)?
+            & ('category' category=[MdCategory|QualifiedName])?
+            & ('preview' previewImage=Path)?
+            & ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
         )
         (supportedOptions+=MdPropertySupport)*
     '}';
@@ -68,16 +79,19 @@ MdCategory:
     deprecated?='deprecated'?
     'category' name=ID '{'
         (
-            ('label' '=' label=STRING)?
-            & ('description' '=' description=STRING)?
+            ('label' label=STRING)?
+            & ('description' description=STRING)?
+            & ('documentation' documentation=STRING)?
         )
     '}';
 
 MdPropertySupport:
-    'supports' property=[MdProperty|QualifiedName] ('=' value=XExpression duplicated?='duplicated'?)?;
+    'supports' property=[MdProperty|QualifiedName] ('=' value=XExpression duplicated?='duplicated'?)?
+    ('documentation' documentation=STRING)?
+    ;
 
 Path:
-    QualifiedName ('/' QualifiedName)*;
+    QualifiedName (('/' | '-') QualifiedName)*;
 
 enum MdPropertyTargetType:
     parents | nodes | edges | ports | labels;

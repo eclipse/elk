@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eclipse.elk.core.meta.metaData.MdAlgorithm;
 import org.eclipse.elk.core.meta.metaData.MdBundle;
 import org.eclipse.elk.core.meta.metaData.MdCategory;
+import org.eclipse.elk.core.meta.metaData.MdGroup;
 import org.eclipse.elk.core.meta.metaData.MdModel;
 import org.eclipse.elk.core.meta.metaData.MdProperty;
 import org.eclipse.elk.core.meta.metaData.MdPropertyDependency;
@@ -96,6 +97,9 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 				return; 
 			case MetaDataPackage.MD_CATEGORY:
 				sequence_MdCategory(context, (MdCategory) semanticObject); 
+				return; 
+			case MetaDataPackage.MD_GROUP:
+				sequence_MdGroup(context, (MdGroup) semanticObject); 
 				return; 
 			case MetaDataPackage.MD_MODEL:
 				sequence_MdModel(context, (MdModel) semanticObject); 
@@ -365,7 +369,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *         provider=JvmTypeReference 
 	 *         parameter=ID? 
 	 *         (
-	 *             (label=STRING | description=STRING | category=[MdCategory|QualifiedName] | previewImage=Path)? 
+	 *             (label=STRING | description=STRING | documentation=STRING | category=[MdCategory|QualifiedName] | previewImage=Path)? 
 	 *             (supportedFeatures+=MdGraphFeature supportedFeatures+=MdGraphFeature*)?
 	 *         )+ 
 	 *         supportedOptions+=MdPropertySupport*
@@ -381,7 +385,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *     MdBundle returns MdBundle
 	 *
 	 * Constraint:
-	 *     ((label=STRING | targetClass=QualifiedName)* members+=MdBundleMember*)
+	 *     ((label=STRING | targetClass=QualifiedName | documentationFolder=Path)* members+=MdBundleMember*)
 	 */
 	protected void sequence_MdBundle(ISerializationContext context, MdBundle semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -394,9 +398,23 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *     MdCategory returns MdCategory
 	 *
 	 * Constraint:
-	 *     (deprecated?='deprecated'? name=ID (label=STRING | description=STRING)*)
+	 *     (deprecated?='deprecated'? name=ID (label=STRING | description=STRING | documentation=STRING)*)
 	 */
 	protected void sequence_MdCategory(ISerializationContext context, MdCategory semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     MdBundleMember returns MdGroup
+	 *     MdGroupOrProperty returns MdGroup
+	 *     MdGroup returns MdGroup
+	 *
+	 * Constraint:
+	 *     (name=ID children+=MdGroupOrProperty*)
+	 */
+	protected void sequence_MdGroup(ISerializationContext context, MdGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -430,7 +448,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *     MdPropertySupport returns MdPropertySupport
 	 *
 	 * Constraint:
-	 *     (property=[MdProperty|QualifiedName] (value=XExpression duplicated?='duplicated'?)?)
+	 *     (property=[MdProperty|QualifiedName] (value=XExpression duplicated?='duplicated'?)? documentation=STRING?)
 	 */
 	protected void sequence_MdPropertySupport(ISerializationContext context, MdPropertySupport semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -440,6 +458,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	/**
 	 * Contexts:
 	 *     MdBundleMember returns MdProperty
+	 *     MdGroupOrProperty returns MdProperty
 	 *     MdProperty returns MdProperty
 	 *
 	 * Constraint:
@@ -449,7 +468,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *         name=ID 
 	 *         type=JvmTypeReference? 
 	 *         (
-	 *             (label=STRING | description=STRING | defaultValue=XExpression)? 
+	 *             (label=STRING | description=STRING | documentation=STRING | defaultValue=XExpression)? 
 	 *             (targets+=MdPropertyTargetType targets+=MdPropertyTargetType*)? 
 	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)?
 	 *         )+ 

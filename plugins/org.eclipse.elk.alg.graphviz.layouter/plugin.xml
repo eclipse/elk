@@ -20,7 +20,7 @@
    <extension
          point="org.eclipse.elk.core.service.layoutProviders">
       <provider
-            class="org.eclipse.elk.alg.graphviz.layouter.Properties">
+            class="org.eclipse.elk.alg.graphviz.layouter.GraphvizOptions">
       </provider>
       
    </extension>

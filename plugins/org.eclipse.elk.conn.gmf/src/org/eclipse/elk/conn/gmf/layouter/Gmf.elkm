@@ -16,20 +16,20 @@ import org.eclipse.elk.core.options.Direction
  * Layout algorithms contributed by GMF / GEF.
  */
 bundle {
-	label = "GMF"
-	class = Metadata
+	label "GMF"
+	class Metadata
 }
 
 algorithm Draw2D(Draw2DLayoutProvider) {
-	label = "Draw2D Layout"
-	description =
+	label "Draw2D Layout"
+	description
 		"'Directed Graph Layout' provided by the Draw2D framework. This is the same algorithm that
 		is used by the standard layout button of GMF diagrams."
-	category = org.eclipse.elk.layered
-	features = multi_edges
-	preview = images/draw2d.png
-	supports org.eclipse.elk.spacing = 16 duplicated
-	supports org.eclipse.elk.borderSpacing = 16 duplicated
+	category org.eclipse.elk.layered
+	features multi_edges
+	preview images/draw2d.png
+	supports org.eclipse.elk.spacing.node = 16 duplicated
+	supports org.eclipse.elk.spacing.border = 16 duplicated
 	supports org.eclipse.elk.direction = Direction.RIGHT
-	supports org.eclipse.elk.sizeConstraint
+	supports org.eclipse.elk.nodeSize.constraints
 }

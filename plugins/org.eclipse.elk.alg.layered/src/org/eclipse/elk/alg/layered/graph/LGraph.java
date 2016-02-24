@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.Lists;
@@ -105,7 +105,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      * @return the graph's size including borders.
      */
     public KVector getActualSize() {
-        float borderSpacing = getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = getProperty(LayeredOptions.SPACING_BORDER);
         return new KVector(
                 size.x + insets.left + insets.right + (2 * borderSpacing),
                 size.y + insets.top + insets.bottom + (2 * borderSpacing));

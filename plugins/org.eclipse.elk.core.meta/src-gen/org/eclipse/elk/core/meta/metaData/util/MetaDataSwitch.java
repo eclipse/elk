@@ -103,10 +103,28 @@ public class MetaDataSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case MetaDataPackage.MD_GROUP_OR_PROPERTY:
+      {
+        MdGroupOrProperty mdGroupOrProperty = (MdGroupOrProperty)theEObject;
+        T result = caseMdGroupOrProperty(mdGroupOrProperty);
+        if (result == null) result = caseMdBundleMember(mdGroupOrProperty);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case MetaDataPackage.MD_GROUP:
+      {
+        MdGroup mdGroup = (MdGroup)theEObject;
+        T result = caseMdGroup(mdGroup);
+        if (result == null) result = caseMdGroupOrProperty(mdGroup);
+        if (result == null) result = caseMdBundleMember(mdGroup);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case MetaDataPackage.MD_PROPERTY:
       {
         MdProperty mdProperty = (MdProperty)theEObject;
         T result = caseMdProperty(mdProperty);
+        if (result == null) result = caseMdGroupOrProperty(mdProperty);
         if (result == null) result = caseMdBundleMember(mdProperty);
         if (result == null) result = defaultCase(theEObject);
         return result;
@@ -189,6 +207,38 @@ public class MetaDataSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseMdBundleMember(MdBundleMember object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Md Group Or Property</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Md Group Or Property</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMdGroupOrProperty(MdGroupOrProperty object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Md Group</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Md Group</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMdGroup(MdGroup object)
   {
     return null;
   }

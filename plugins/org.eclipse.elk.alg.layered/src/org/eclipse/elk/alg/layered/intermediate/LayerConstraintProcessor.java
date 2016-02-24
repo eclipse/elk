@@ -19,7 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.LayerConstraint;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -73,7 +73,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
             LNode [] nodes = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
             
             for (LNode node : nodes) {
-                LayerConstraint constraint = node.getProperty(Properties.LAYER_CONSTRAINT);
+                LayerConstraint constraint = node.getProperty(LayeredOptions.LAYER_CONSTRAINT);
                 
                 // Check if there is a layer constraint
                 switch (constraint) {
@@ -110,7 +110,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
             boolean moveAllowed = true;
             Layer sndFirstLayer = layers.get(1);
             for (LNode node : firstLayer) {
-                if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.NONE) {
+                if (node.getProperty(LayeredOptions.LAYER_CONSTRAINT) == LayerConstraint.NONE) {
                     moveAllowed = false;
                     break;
                 }
@@ -140,7 +140,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
             boolean moveAllowed = true;
             Layer sndLastLayer = layers.get(layers.size() - 2);
             for (LNode node : lastLayer) {
-                if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.NONE) {
+                if (node.getProperty(LayeredOptions.LAYER_CONSTRAINT) == LayerConstraint.NONE) {
                     moveAllowed = false;
                     break;
                 }
@@ -199,7 +199,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
                 }
             } else {
                 for (LEdge incoming : port.getIncomingEdges()) {
-                    if (incoming.getSource().getNode().getProperty(Properties.LAYER_CONSTRAINT)
+                    if (incoming.getSource().getNode().getProperty(LayeredOptions.LAYER_CONSTRAINT)
                             != LayerConstraint.FIRST_SEPARATE) {
                         
                         throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
@@ -230,7 +230,7 @@ public final class LayerConstraintProcessor implements ILayoutProcessor {
                 }
             } else {
                 for (LEdge outgoing : port.getOutgoingEdges()) {
-                    if (outgoing.getTarget().getNode().getProperty(Properties.LAYER_CONSTRAINT)
+                    if (outgoing.getTarget().getNode().getProperty(LayeredOptions.LAYER_CONSTRAINT)
                             != LayerConstraint.LAST_SEPARATE) {
 
                         throw new UnsupportedConfigurationException("Node '" + node.getDesignation()

@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
-import org.eclipse.elk.alg.mrtree.properties.Properties;
+import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
 import org.eclipse.elk.alg.mrtree.properties.TreeifyingOrder;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -97,7 +97,7 @@ public class DFSTreeifyer implements ILayoutPhase {
      *            where to collect the edges
      */
     private void collectEdges(final TGraph tGraph) {
-        TreeifyingOrder treeifyingOrder = tGraph.getProperty(Properties.SEARCH_ORDER);
+        TreeifyingOrder treeifyingOrder = tGraph.getProperty(MrTreeOptions.SEARCH_ORDER);
 
         // start DFS on every node in graph
         for (TNode tNode : tGraph.getNodes()) {

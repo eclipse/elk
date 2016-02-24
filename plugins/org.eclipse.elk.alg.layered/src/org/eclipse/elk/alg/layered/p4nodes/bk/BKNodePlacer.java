@@ -29,8 +29,8 @@ import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 import org.eclipse.elk.alg.layered.properties.FixedAlignment;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -164,9 +164,9 @@ public final class BKNodePlacer implements ILayoutPhase {
         ni = NeighborhoodInformation.buildFor(layeredGraph);
 
         // Regard possible other layout options.
-        debugMode = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
+        debugMode = layeredGraph.getProperty(CoreOptions.DEBUG_MODE);
         produceBalancedLayout =
-                layeredGraph.getProperty(Properties.FIXED_ALIGNMENT) == FixedAlignment.BALANCED;
+                layeredGraph.getProperty(LayeredOptions.FIXED_ALIGNMENT) == FixedAlignment.BALANCED;
 
         // Phase which marks type 1 conflicts, no difference between the directions so only
         // one run is required.
@@ -176,7 +176,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         BKAlignedLayout rightdown = null, rightup = null, leftdown = null, leftup = null;
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
         List<BKAlignedLayout> layouts = Lists.newArrayListWithCapacity(4);
-        switch (layeredGraph.getProperty(Properties.FIXED_ALIGNMENT)) {
+        switch (layeredGraph.getProperty(LayeredOptions.FIXED_ALIGNMENT)) {
             case LEFTDOWN:
                 leftdown =
                       new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);

@@ -27,9 +27,9 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.ContentAlignment;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -400,7 +400,7 @@ public final class KlayLayered {
         List<ILayoutProcessor> algorithm = lgraph.getProperty(InternalProperties.PROCESSORS);
         float monitorProgress = 1.0f / algorithm.size();
 
-        if (lgraph.getProperty(LayoutOptions.DEBUG_MODE)) {
+        if (lgraph.getProperty(CoreOptions.DEBUG_MODE)) {
             // Debug Mode!
             // Print the algorithm configuration and output the whole graph to a file
             // before each slot execution
@@ -484,9 +484,9 @@ public final class KlayLayered {
      * @param lgraph the graph to resize.
      */
     private void resizeGraph(final LGraph lgraph) {
-        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayoutOptions.SIZE_CONSTRAINT);
-        Set<SizeOptions> sizeOptions = lgraph.getProperty(LayoutOptions.SIZE_OPTIONS);
-        float borderSpacing = lgraph.getProperty(Properties.BORDER_SPACING);
+        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
+        Set<SizeOptions> sizeOptions = lgraph.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
+        float borderSpacing = lgraph.getProperty(LayeredOptions.SPACING_BORDER);
         
         // add the border spacing to the graph size and graph offset
         lgraph.getOffset().x += borderSpacing;
@@ -496,15 +496,22 @@ public final class KlayLayered {
         
         // the graph size now contains the border spacing, so clear it in order to keep
         // graph.getActualSize() working properly
-        lgraph.setProperty(Properties.BORDER_SPACING, 0f);
+        lgraph.setProperty(LayeredOptions.SPACING_BORDER, 0f);
         
         KVector calculatedSize = lgraph.getActualSize();
         KVector adjustedSize = new KVector(calculatedSize);
         
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            float minWidth = lgraph.getProperty(LayoutOptions.MIN_WIDTH);
-            float minHeight = lgraph.getProperty(LayoutOptions.MIN_HEIGHT);
+            KVector minSize = lgraph.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
+            float minWidth, minHeight;
+            if (minSize == null) {
+                minWidth = lgraph.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
+                minHeight = lgraph.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
+            } else {
+                minWidth = (float) minSize.x;
+                minHeight = (float) minSize.y;
+            }
             
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
@@ -543,7 +550,7 @@ public final class KlayLayered {
         
         // obey to specified alignment constraints
         Set<ContentAlignment> contentAlignment =
-                lgraph.getProperty(Properties.CONTENT_ALIGNMENT);
+                lgraph.getProperty(LayeredOptions.CONTENT_ALIGNMENT);
         
         // horizontal alignment
         if (newSize.x > oldSize.x) {
@@ -615,7 +622,7 @@ public final class KlayLayered {
         if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
             // Ports have positions assigned
-            node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
             node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
                     .add(GraphProperties.NON_FREE_PORTS);
             LGraphUtil.resizeNode(node, actualGraphSize, false, true);

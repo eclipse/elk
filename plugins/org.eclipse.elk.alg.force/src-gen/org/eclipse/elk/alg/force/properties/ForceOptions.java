@@ -16,8 +16,8 @@ import org.eclipse.elk.alg.force.model.ForceModelStrategy;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.GraphFeature;
-import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
@@ -26,7 +26,7 @@ import org.eclipse.elk.graph.properties.Property;
  * Declarations for the ELK Force layout algorithm.
  */
 @SuppressWarnings("all")
-public class Properties implements ILayoutMetaDataProvider {
+public class ForceOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #MODEL}.
    */
@@ -107,44 +107,44 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Priority.
    */
   public final static IProperty<Integer> PRIORITY = new Property<Integer>(
-            LayoutOptions.PRIORITY,
+            CoreOptions.PRIORITY,
             FORCE_SUP_PRIORITY);
   
   /**
-   * Default value for {@link #SPACING} with algorithm "ELK Force".
+   * Default value for {@link #SPACING_NODE} with algorithm "ELK Force".
    */
-  private final static float FORCE_SUP_SPACING = 80;
+  private final static float FORCE_SUP_SPACING_NODE = 80;
   
   /**
-   * Overridden value for Spacing.
+   * Overridden value for Node Spacing.
    */
-  public final static IProperty<Float> SPACING = new Property<Float>(
-            LayoutOptions.SPACING,
-            FORCE_SUP_SPACING);
+  public final static IProperty<Float> SPACING_NODE = new Property<Float>(
+            CoreOptions.SPACING_NODE,
+            FORCE_SUP_SPACING_NODE);
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "ELK Force".
+   * Default value for {@link #SPACING_BORDER} with algorithm "ELK Force".
    */
-  private final static float FORCE_SUP_BORDER_SPACING = 50;
+  private final static float FORCE_SUP_SPACING_BORDER = 50;
   
   /**
    * Overridden value for Border Spacing.
    */
-  public final static IProperty<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING,
-            FORCE_SUP_BORDER_SPACING);
+  public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
+            CoreOptions.SPACING_BORDER,
+            FORCE_SUP_SPACING_BORDER);
   
   /**
-   * Default value for {@link #LABEL_SPACING} with algorithm "ELK Force".
+   * Default value for {@link #SPACING_LABEL} with algorithm "ELK Force".
    */
-  private final static float FORCE_SUP_LABEL_SPACING = 5;
+  private final static float FORCE_SUP_SPACING_LABEL = 5;
   
   /**
    * Overridden value for Label Spacing.
    */
-  public final static IProperty<Float> LABEL_SPACING = new Property<Float>(
-            LayoutOptions.LABEL_SPACING,
-            FORCE_SUP_LABEL_SPACING);
+  public final static IProperty<Float> SPACING_LABEL = new Property<Float>(
+            CoreOptions.SPACING_LABEL,
+            FORCE_SUP_SPACING_LABEL);
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "ELK Force".
@@ -155,7 +155,7 @@ public class Properties implements ILayoutMetaDataProvider {
    * Overridden value for Aspect Ratio.
    */
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO,
+            CoreOptions.ASPECT_RATIO,
             FORCE_SUP_ASPECT_RATIO);
   
   /**
@@ -164,13 +164,14 @@ public class Properties implements ILayoutMetaDataProvider {
   private final static int FORCE_SUP_RANDOM_SEED = 1;
   
   /**
-   * Default value for {@link #SEPARATE_CONN_COMP} with algorithm "ELK Force".
+   * Default value for {@link #SEPARATE_CONNECTED_COMPONENTS} with algorithm "ELK Force".
    */
-  private final static boolean FORCE_SUP_SEPARATE_CONN_COMP = true;
+  private final static boolean FORCE_SUP_SEPARATE_CONNECTED_COMPONENTS = true;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.force.model",
+        "",
         "Force Model",
         "Determines the model for force calculation.",
         MODEL_DEFAULT,
@@ -181,6 +182,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.force.iterations",
+        "",
         "Iterations",
         "The number of iterations on the force model.",
         ITERATIONS_DEFAULT,
@@ -191,6 +193,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.force.repulsivePower",
+        "",
         "Repulsive Power",
         "Determines how many bend points are added to the edge; such bend points are regarded as repelling particles in the force model",
         REPULSIVE_POWER_DEFAULT,
@@ -201,6 +204,7 @@ public class Properties implements ILayoutMetaDataProvider {
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.force.temperature",
+        "",
         "FR Temperature",
         "The temperature is used as a scaling factor for particle displacements.",
         TEMPERATURE_DEFAULT,
@@ -216,6 +220,7 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.alg.force.repulsion",
+        "",
         "Eades Repulsion",
         "Factor for repulsive forces in Eades\' model.",
         REPULSION_DEFAULT,
@@ -246,18 +251,18 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.spacing",
-        FORCE_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        FORCE_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.borderSpacing",
-        FORCE_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        FORCE_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.labelSpacing",
-        FORCE_SUP_LABEL_SPACING
+        "org.eclipse.elk.spacing.label",
+        FORCE_SUP_SPACING_LABEL
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.force.force",
@@ -271,8 +276,8 @@ public class Properties implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.separateConnComp",
-        FORCE_SUP_SEPARATE_CONN_COMP
+        "org.eclipse.elk.separateConnectedComponents",
+        FORCE_SUP_SEPARATE_CONNECTED_COMPONENTS
     );
     registry.addOptionSupport(
         "org.eclipse.elk.alg.force.force",

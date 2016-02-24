@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 
 /**
  * Takes a list of layered graphs and combines them into a single graph, placing them according to some
@@ -79,7 +79,7 @@ abstract class AbstractGraphPlacer {
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     edge.getBendPoints().offset(graphOffset);
-                    KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                    KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         junctionPoints.offset(graphOffset);
                     }
@@ -127,7 +127,7 @@ abstract class AbstractGraphPlacer {
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     edge.getBendPoints().offset(graphOffset);
-                    KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                    KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         junctionPoints.offset(graphOffset);
                     }

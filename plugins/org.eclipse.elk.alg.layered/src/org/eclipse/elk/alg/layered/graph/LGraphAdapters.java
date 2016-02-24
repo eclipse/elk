@@ -16,9 +16,9 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
@@ -136,11 +136,11 @@ public final class LGraphAdapters {
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
             // handle some special cases
-            if (prop.equals(LayoutOptions.SPACING)) {
+            if (prop.equals(CoreOptions.SPACING_NODE)) {
                 // cast is ok, as both properties are Floats
-                return (P) element.getProperty(Properties.SPACING);
-            } else if (prop.equals(LayoutOptions.PORT_OFFSET)) {
-                return (P) element.getProperty(Properties.PORT_OFFSET);
+                return (P) element.getProperty(LayeredOptions.SPACING_NODE);
+            } else if (prop.equals(CoreOptions.PORT_BORDER_OFFSET)) {
+                return (P) element.getProperty(LayeredOptions.PORT_BORDER_OFFSET);
             }
 
             return element.getProperty(prop);
@@ -342,7 +342,7 @@ public final class LGraphAdapters {
          */
         @SuppressWarnings("unchecked")
         public void sortPortList(final Comparator<?> comparator) {
-            if (element.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (element.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // We need to sort the port list accordingly
                 Collections.sort(element.getPorts(), (Comparator<LPort>) comparator);
             }
@@ -597,8 +597,8 @@ public final class LGraphAdapters {
             }
             
             // In case of equal sides, sort by port index property
-            Integer index1 = port1.getProperty(LayoutOptions.PORT_INDEX);
-            Integer index2 = port2.getProperty(LayoutOptions.PORT_INDEX);
+            Integer index1 = port1.getProperty(CoreOptions.PORT_INDEX);
+            Integer index2 = port2.getProperty(CoreOptions.PORT_INDEX);
             if (index1 != null && index2 != null) {
                 int indexDifference = index1 - index2;
                 if (indexDifference != 0) {

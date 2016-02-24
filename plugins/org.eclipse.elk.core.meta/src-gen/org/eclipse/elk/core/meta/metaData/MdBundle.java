@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getTargetClass <em>Target Class</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getDocumentationFolder <em>Documentation Folder</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getMembers <em>Members</em>}</li>
  * </ul>
  *
@@ -87,6 +88,32 @@ public interface MdBundle extends EObject
    * @generated
    */
   void setTargetClass(String value);
+
+  /**
+   * Returns the value of the '<em><b>Documentation Folder</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Documentation Folder</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Documentation Folder</em>' attribute.
+   * @see #setDocumentationFolder(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdBundle_DocumentationFolder()
+   * @model
+   * @generated
+   */
+  String getDocumentationFolder();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdBundle#getDocumentationFolder <em>Documentation Folder</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Documentation Folder</em>' attribute.
+   * @see #getDocumentationFolder()
+   * @generated
+   */
+  void setDocumentationFolder(String value);
 
   /**
    * Returns the value of the '<em><b>Members</b></em>' containment reference list.

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.KNode;
 
@@ -76,7 +76,7 @@ public class SiblingAttachmentTargetProvider implements IAttachmentTargetProvide
      */
     private boolean isCommentNode(final KGraphElement graphElement) {
         KLayoutData layoutData = graphElement.getData(KLayoutData.class);
-        return graphElement instanceof KNode && layoutData.getProperty(LayoutOptions.COMMENT_BOX);
+        return graphElement instanceof KNode && layoutData.getProperty(CoreOptions.COMMENT_BOX);
     }
 
 }

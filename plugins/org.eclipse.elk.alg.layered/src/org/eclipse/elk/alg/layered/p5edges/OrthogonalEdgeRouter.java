@@ -23,9 +23,9 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Properties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -175,7 +175,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         }
         
         if (graphProperties.contains(GraphProperties.NON_FREE_PORTS)
-                || graph.getProperty(Properties.FEEDBACK_EDGES)) {
+                || graph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
             
             configuration.addAll(INVERTED_PORT_PROCESSING_ADDITIONS);
 
@@ -215,7 +215,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         
         // Retrieve some generic values
         Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
-        boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
+        boolean debug = layeredGraph.getProperty(CoreOptions.DEBUG_MODE);
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(

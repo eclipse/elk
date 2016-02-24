@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.force.model;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.graph.FParticle;
-import org.eclipse.elk.alg.force.properties.Properties;
+import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.core.math.KVector;
 
 /**
@@ -33,7 +33,7 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
     private static final double ZERO_FACTOR = 100;
     
     /** the current temperature of the system. */
-    private double temperature = Properties.TEMPERATURE.getDefault();
+    private double temperature = ForceOptions.TEMPERATURE.getDefault();
     /** the temperature threshold for stopping the model. */
     private double threshold;
     /** the main constant used for force calculations. */
@@ -45,8 +45,8 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
     @Override
     protected void initialize(final FGraph graph) {
         super.initialize(graph);
-        temperature = graph.getProperty(Properties.TEMPERATURE).doubleValue();
-        threshold = temperature / graph.getProperty(Properties.ITERATIONS);
+        temperature = graph.getProperty(ForceOptions.TEMPERATURE).doubleValue();
+        threshold = temperature / graph.getProperty(ForceOptions.ITERATIONS);
         
         // calculate an appropriate value for K
         int n = graph.getNodes().size();
@@ -57,7 +57,7 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
             totalHeight += v.getSize().y;
         }
         double area = totalWidth * totalHeight;
-        double c = graph.getProperty(Properties.SPACING) * SPACING_FACTOR;
+        double c = graph.getProperty(ForceOptions.SPACING_NODE) * SPACING_FACTOR;
         k = Math.sqrt(area / (2 * n)) * c;
     }
 
@@ -82,7 +82,7 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
         double d = Math.max(0, length - forcer.getRadius() - forcee.getRadius());
         
         // calculate repulsive force, independent of adjacency
-        double force = repulsive(d, k) * forcer.getProperty(Properties.PRIORITY);
+        double force = repulsive(d, k) * forcer.getProperty(ForceOptions.PRIORITY);
         
         // calculate attractive force, depending of adjacency
         int connection = getGraph().getConnection(forcer, forcee);

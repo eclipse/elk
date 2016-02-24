@@ -60,6 +60,24 @@ public interface MetaDataFactory extends EFactory
   MdBundleMember createMdBundleMember();
 
   /**
+   * Returns a new object of class '<em>Md Group Or Property</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Md Group Or Property</em>'.
+   * @generated
+   */
+  MdGroupOrProperty createMdGroupOrProperty();
+
+  /**
+   * Returns a new object of class '<em>Md Group</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Md Group</em>'.
+   * @generated
+   */
+  MdGroup createMdGroup();
+
+  /**
    * Returns a new object of class '<em>Md Property</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

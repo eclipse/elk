@@ -28,6 +28,7 @@ import org.eclipse.xtext.xbase.XExpression;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdPropertySupport#getProperty <em>Property</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdPropertySupport#getValue <em>Value</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdPropertySupport#isDuplicated <em>Duplicated</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdPropertySupport#getDocumentation <em>Documentation</em>}</li>
  * </ul>
  *
  * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdPropertySupport()
@@ -113,5 +114,31 @@ public interface MdPropertySupport extends EObject
    * @generated
    */
   void setDuplicated(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Documentation</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Documentation</em>' attribute.
+   * @see #setDocumentation(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdPropertySupport_Documentation()
+   * @model
+   * @generated
+   */
+  String getDocumentation();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdPropertySupport#getDocumentation <em>Documentation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Documentation</em>' attribute.
+   * @see #getDocumentation()
+   * @generated
+   */
+  void setDocumentation(String value);
 
 } // MdPropertySupport

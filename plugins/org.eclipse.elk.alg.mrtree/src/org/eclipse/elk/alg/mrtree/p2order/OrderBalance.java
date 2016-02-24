@@ -26,7 +26,7 @@ import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
 import org.eclipse.elk.alg.mrtree.properties.OrderWeighting;
-import org.eclipse.elk.alg.mrtree.properties.Properties;
+import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.IProperty;
 
@@ -72,7 +72,7 @@ public class OrderBalance implements ILayoutPhase {
         progressMonitor.begin("Processor arrange node", 1);
 
         /** get the weighting from the userinterface */
-        if (tGraph.getProperty(Properties.WEIGHTING).equals(OrderWeighting.DESCENDANTS)) {
+        if (tGraph.getProperty(MrTreeOptions.WEIGHTING).equals(OrderWeighting.DESCENDANTS)) {
             weighting = InternalProperties.DESCENDANTS;
         } else {
             weighting = InternalProperties.FAN;

@@ -45,11 +45,15 @@ import org.eclipse.xtext.xbase.XExpression;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isDeprecated <em>Deprecated</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isAdvanced <em>Advanced</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isProgrammatic <em>Programmatic</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isOutput <em>Output</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isGlobal <em>Global</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getType <em>Type</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDefaultValue <em>Default Value</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getLegacyIds <em>Legacy Ids</em>}</li>
@@ -58,8 +62,28 @@ import org.eclipse.xtext.xbase.XExpression;
  *
  * @generated
  */
-public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
+public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
 {
+  /**
+   * The default value of the '{@link #isDeprecated() <em>Deprecated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDeprecated()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean DEPRECATED_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDeprecated() <em>Deprecated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDeprecated()
+   * @generated
+   * @ordered
+   */
+  protected boolean deprecated = DEPRECATED_EDEFAULT;
+
   /**
    * The default value of the '{@link #isAdvanced() <em>Advanced</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -151,6 +175,66 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
   protected JvmTypeReference type;
 
   /**
+   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected static final String LABEL_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected String label = LABEL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDescription()
+   * @generated
+   * @ordered
+   */
+  protected static final String DESCRIPTION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDescription()
+   * @generated
+   * @ordered
+   */
+  protected String description = DESCRIPTION_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocumentation()
+   * @generated
+   * @ordered
+   */
+  protected static final String DOCUMENTATION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocumentation()
+   * @generated
+   * @ordered
+   */
+  protected String documentation = DOCUMENTATION_EDEFAULT;
+
+  /**
    * The cached value of the '{@link #getDefaultValue() <em>Default Value</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -209,6 +293,29 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
   protected EClass eStaticClass()
   {
     return MetaDataPackage.Literals.MD_PROPERTY;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isDeprecated()
+  {
+    return deprecated;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDeprecated(boolean newDeprecated)
+  {
+    boolean oldDeprecated = deprecated;
+    deprecated = newDeprecated;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__DEPRECATED, oldDeprecated, deprecated));
   }
 
   /**
@@ -356,6 +463,75 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getLabel()
+  {
+    return label;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLabel(String newLabel)
+  {
+    String oldLabel = label;
+    label = newLabel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__LABEL, oldLabel, label));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getDescription()
+  {
+    return description;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDescription(String newDescription)
+  {
+    String oldDescription = description;
+    description = newDescription;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__DESCRIPTION, oldDescription, description));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getDocumentation()
+  {
+    return documentation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDocumentation(String newDocumentation)
+  {
+    String oldDocumentation = documentation;
+    documentation = newDocumentation;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__DOCUMENTATION, oldDocumentation, documentation));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public XExpression getDefaultValue()
   {
     return defaultValue;
@@ -471,6 +647,8 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
   {
     switch (featureID)
     {
+      case MetaDataPackage.MD_PROPERTY__DEPRECATED:
+        return isDeprecated();
       case MetaDataPackage.MD_PROPERTY__ADVANCED:
         return isAdvanced();
       case MetaDataPackage.MD_PROPERTY__PROGRAMMATIC:
@@ -481,6 +659,12 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
         return isGlobal();
       case MetaDataPackage.MD_PROPERTY__TYPE:
         return getType();
+      case MetaDataPackage.MD_PROPERTY__LABEL:
+        return getLabel();
+      case MetaDataPackage.MD_PROPERTY__DESCRIPTION:
+        return getDescription();
+      case MetaDataPackage.MD_PROPERTY__DOCUMENTATION:
+        return getDocumentation();
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         return getDefaultValue();
       case MetaDataPackage.MD_PROPERTY__TARGETS:
@@ -504,6 +688,9 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
   {
     switch (featureID)
     {
+      case MetaDataPackage.MD_PROPERTY__DEPRECATED:
+        setDeprecated((Boolean)newValue);
+        return;
       case MetaDataPackage.MD_PROPERTY__ADVANCED:
         setAdvanced((Boolean)newValue);
         return;
@@ -518,6 +705,15 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
         return;
       case MetaDataPackage.MD_PROPERTY__TYPE:
         setType((JvmTypeReference)newValue);
+        return;
+      case MetaDataPackage.MD_PROPERTY__LABEL:
+        setLabel((String)newValue);
+        return;
+      case MetaDataPackage.MD_PROPERTY__DESCRIPTION:
+        setDescription((String)newValue);
+        return;
+      case MetaDataPackage.MD_PROPERTY__DOCUMENTATION:
+        setDocumentation((String)newValue);
         return;
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         setDefaultValue((XExpression)newValue);
@@ -548,6 +744,9 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
   {
     switch (featureID)
     {
+      case MetaDataPackage.MD_PROPERTY__DEPRECATED:
+        setDeprecated(DEPRECATED_EDEFAULT);
+        return;
       case MetaDataPackage.MD_PROPERTY__ADVANCED:
         setAdvanced(ADVANCED_EDEFAULT);
         return;
@@ -562,6 +761,15 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
         return;
       case MetaDataPackage.MD_PROPERTY__TYPE:
         setType((JvmTypeReference)null);
+        return;
+      case MetaDataPackage.MD_PROPERTY__LABEL:
+        setLabel(LABEL_EDEFAULT);
+        return;
+      case MetaDataPackage.MD_PROPERTY__DESCRIPTION:
+        setDescription(DESCRIPTION_EDEFAULT);
+        return;
+      case MetaDataPackage.MD_PROPERTY__DOCUMENTATION:
+        setDocumentation(DOCUMENTATION_EDEFAULT);
         return;
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         setDefaultValue((XExpression)null);
@@ -589,6 +797,8 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
   {
     switch (featureID)
     {
+      case MetaDataPackage.MD_PROPERTY__DEPRECATED:
+        return deprecated != DEPRECATED_EDEFAULT;
       case MetaDataPackage.MD_PROPERTY__ADVANCED:
         return advanced != ADVANCED_EDEFAULT;
       case MetaDataPackage.MD_PROPERTY__PROGRAMMATIC:
@@ -599,6 +809,12 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
         return global != GLOBAL_EDEFAULT;
       case MetaDataPackage.MD_PROPERTY__TYPE:
         return type != null;
+      case MetaDataPackage.MD_PROPERTY__LABEL:
+        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+      case MetaDataPackage.MD_PROPERTY__DESCRIPTION:
+        return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+      case MetaDataPackage.MD_PROPERTY__DOCUMENTATION:
+        return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         return defaultValue != null;
       case MetaDataPackage.MD_PROPERTY__TARGETS:
@@ -622,7 +838,9 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (advanced: ");
+    result.append(" (deprecated: ");
+    result.append(deprecated);
+    result.append(", advanced: ");
     result.append(advanced);
     result.append(", programmatic: ");
     result.append(programmatic);
@@ -630,6 +848,12 @@ public class MdPropertyImpl extends MdBundleMemberImpl implements MdProperty
     result.append(output);
     result.append(", global: ");
     result.append(global);
+    result.append(", label: ");
+    result.append(label);
+    result.append(", description: ");
+    result.append(description);
+    result.append(", documentation: ");
+    result.append(documentation);
     result.append(", targets: ");
     result.append(targets);
     result.append(", legacyIds: ");

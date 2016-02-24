@@ -25,7 +25,7 @@ import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -254,7 +254,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * {@inheritDoc}
      */
     public void applyLayout(final LayoutMapping mapping, final IPropertyHolder settings) {
-        boolean zoomToFit = settings.getProperty(LayoutOptions.ZOOM_TO_FIT);
+        boolean zoomToFit = settings.getProperty(CoreOptions.ZOOM_TO_FIT);
         Object layoutGraphObj = mapping.getParentElement();
         if (zoomToFit && layoutGraphObj instanceof EditPart) {
             // determine pre- or post-layout zoom
@@ -386,14 +386,14 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
         KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
         computeInsets(nodeLayout.getInsets(), shape);
         Margins nodeMargins = computeMargins(shape);
-        nodeLayout.setProperty(LayoutOptions.MARGINS, nodeMargins);
+        nodeLayout.setProperty(CoreOptions.MARGINS, nodeMargins);
         GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
         if (parentNode == null) {
             nodeLayout.setPos(nodeGa.getX() + (float) nodeMargins.left,
                     nodeGa.getY() + (float) nodeMargins.top);
         } else {
             KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-            Margins parentMargins = parentLayout.getProperty(LayoutOptions.MARGINS);
+            Margins parentMargins = parentLayout.getProperty(CoreOptions.MARGINS);
             KInsets parentInsets = parentLayout.getInsets();
             nodeLayout.setPos(nodeGa.getX() + (float) (nodeMargins.left - parentMargins.left)
                     - parentInsets.getLeft(),
@@ -406,8 +406,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
         nodeLayout.resetModificationFlag();
 
         // this very minimal size configuration should be corrected in subclasses
-        nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, MIN_SIZE);
-        nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, MIN_SIZE);
+        nodeLayout.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(MIN_SIZE, MIN_SIZE));
 
         mapping.getGraphMap().put(childNode, shape);
 
@@ -733,7 +732,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
                 placement = EdgeLabelPlacement.TAIL;
             }
         }
-        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, placement);
+        labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, placement);
 
         // set label position
         KVector labelPos;

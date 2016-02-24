@@ -78,6 +78,8 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
       case MetaDataPackage.MD_MODEL: return createMdModel();
       case MetaDataPackage.MD_BUNDLE: return createMdBundle();
       case MetaDataPackage.MD_BUNDLE_MEMBER: return createMdBundleMember();
+      case MetaDataPackage.MD_GROUP_OR_PROPERTY: return createMdGroupOrProperty();
+      case MetaDataPackage.MD_GROUP: return createMdGroup();
       case MetaDataPackage.MD_PROPERTY: return createMdProperty();
       case MetaDataPackage.MD_PROPERTY_DEPENDENCY: return createMdPropertyDependency();
       case MetaDataPackage.MD_ALGORITHM: return createMdAlgorithm();
@@ -157,6 +159,28 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
   {
     MdBundleMemberImpl mdBundleMember = new MdBundleMemberImpl();
     return mdBundleMember;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public MdGroupOrProperty createMdGroupOrProperty()
+  {
+    MdGroupOrPropertyImpl mdGroupOrProperty = new MdGroupOrPropertyImpl();
+    return mdGroupOrProperty;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public MdGroup createMdGroup()
+  {
+    MdGroupImpl mdGroup = new MdGroupImpl();
+    return mdGroup;
   }
 
   /**

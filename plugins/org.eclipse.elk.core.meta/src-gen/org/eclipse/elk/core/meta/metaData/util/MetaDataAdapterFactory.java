@@ -100,6 +100,16 @@ public class MetaDataAdapterFactory extends AdapterFactoryImpl
         return createMdBundleMemberAdapter();
       }
       @Override
+      public Adapter caseMdGroupOrProperty(MdGroupOrProperty object)
+      {
+        return createMdGroupOrPropertyAdapter();
+      }
+      @Override
+      public Adapter caseMdGroup(MdGroup object)
+      {
+        return createMdGroupAdapter();
+      }
+      @Override
       public Adapter caseMdProperty(MdProperty object)
       {
         return createMdPropertyAdapter();
@@ -187,6 +197,36 @@ public class MetaDataAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createMdBundleMemberAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdGroupOrProperty <em>Md Group Or Property</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.elk.core.meta.metaData.MdGroupOrProperty
+   * @generated
+   */
+  public Adapter createMdGroupOrPropertyAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdGroup <em>Md Group</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.eclipse.elk.core.meta.metaData.MdGroup
+   * @generated
+   */
+  public Adapter createMdGroupAdapter()
   {
     return null;
   }

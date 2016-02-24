@@ -19,7 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -64,7 +64,7 @@ public class PartitionPreprocessor implements ILayoutProcessor {
         partitions = Lists.newArrayList();
         // Sort nodes into partitions.
         for (LNode node : lGraph.getLayerlessNodes()) {
-            Integer index = node.getProperty(LayoutOptions.LAYOUT_PARTITION);
+            Integer index = node.getProperty(CoreOptions.PARTITIONING_PARTITION);
             // We assume every node has a partition set.
             assert index != null : "Missing partition property at " + node.toString();
             retrievePartition(index).add(node);
@@ -86,7 +86,7 @@ public class PartitionPreprocessor implements ILayoutProcessor {
                     
                     LEdge edge = new LEdge();
                     edge.setProperty(InternalProperties.PARTITION_DUMMY, true);
-                    edge.setProperty(LayoutOptions.PRIORITY, PARTITION_CONSTRAINT_EDGE_PRIORITY);
+                    edge.setProperty(CoreOptions.PRIORITY, PARTITION_CONSTRAINT_EDGE_PRIORITY);
                     edge.setSource(sourcePort);
                     edge.setTarget(targetPort);
                 }

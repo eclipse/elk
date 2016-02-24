@@ -22,7 +22,7 @@ import java.util.EnumSet;
  *   <li>Exactly one of the {@link #H_LEFT}, {@link #H_CENTER}, and {@link #H_RIGHT} options.</li>
  *   <li>Exactly one of the {@link #V_TOP}, {@link #V_CENTER}, and {@link #V_BOTTOM} options.</li>
  * </ul>
- * <p><b>This enumeration is not set directly on {@link LayoutOptions#NODE_LABEL_PLACEMENT}; instead,
+ * <p><b>This enumeration is not set directly on {@link CoreOptions#NODE_LABEL_PLACEMENT}; instead,
  * an {@code EnumSet} over this enumeration is used there.</b></p>
  * 
  * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>

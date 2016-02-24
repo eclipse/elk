@@ -38,7 +38,7 @@ import org.eclipse.elk.core.klayoutdata.impl.KEdgeLayoutImpl;
 import org.eclipse.elk.core.klayoutdata.impl.KShapeLayoutImpl;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -353,7 +353,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      * {@inheritDoc}
      */
     public void applyLayout(final LayoutMapping mapping, final IPropertyHolder settings) {
-        boolean zoomToFit = settings.getProperty(LayoutOptions.ZOOM_TO_FIT);
+        boolean zoomToFit = settings.getProperty(CoreOptions.ZOOM_TO_FIT);
         IWorkbenchPart workbenchPart = mapping.getWorkbenchPart();
         int animationTime = calcAnimationTime(mapping, settings,
                 workbenchPart != null && !workbenchPart.getSite().getPage().isPartVisible(workbenchPart));
@@ -411,17 +411,17 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     protected int calcAnimationTime(final LayoutMapping mapping, final IPropertyHolder settings,
             final boolean viewerNotVisible) {
         
-        boolean animate = settings.getProperty(LayoutOptions.ANIMATE);
+        boolean animate = settings.getProperty(CoreOptions.ANIMATE);
         if (animate) {
-            int minTime = settings.getProperty(LayoutOptions.MIN_ANIM_TIME);
+            int minTime = settings.getProperty(CoreOptions.MIN_ANIM_TIME);
             if (minTime < 0) {
                 minTime = 0;
             }
-            int maxTime = settings.getProperty(LayoutOptions.MAX_ANIM_TIME);
+            int maxTime = settings.getProperty(CoreOptions.MAX_ANIM_TIME);
             if (maxTime < minTime) {
                 maxTime = minTime;
             }
-            int factor = settings.getProperty(LayoutOptions.ANIM_TIME_FACTOR);
+            int factor = settings.getProperty(CoreOptions.ANIM_TIME_FACTOR);
             if (factor > 0) {
                 int graphSize = countNodes(mapping.getLayoutGraph());
                 int time = minTime + (int) (factor * Math.sqrt(graphSize));
@@ -668,8 +668,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         // determine minimal size of the node
         try {
             Dimension minSize = nodeFigure.getMinimumSize();
-            nodeLayout.setProperty(LayoutOptions.MIN_WIDTH, (float) minSize.width);
-            nodeLayout.setProperty(LayoutOptions.MIN_HEIGHT, (float) minSize.height);
+            nodeLayout.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(minSize.width, minSize.height));
         } catch (SWTException exception) {
             // getMinimumSize() can cause this exception when fonts are disposed for some reason;
             // ignore exception and leave the default minimal size
@@ -856,8 +855,8 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                 Dimension size = labelFigure.getPreferredSize();
                 labelLayout.setSize(size.width, size.height);
                 if (font != null && !font.isDisposed()) {
-                    labelLayout.setProperty(LayoutOptions.FONT_NAME, font.getFontData()[0].getName());
-                    labelLayout.setProperty(LayoutOptions.FONT_SIZE, font.getFontData()[0].getHeight());
+                    labelLayout.setProperty(CoreOptions.FONT_NAME, font.getFontData()[0].getName());
+                    labelLayout.setProperty(CoreOptions.FONT_SIZE, font.getFontData()[0].getHeight());
                 }
             } catch (SWTException exception) {
                 // ignore exception and leave the label size to (0, 0)
@@ -1101,27 +1100,27 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
-                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                            labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
                                     EdgeLabelPlacement.HEAD);
                             break;
                         case ConnectionLocator.MIDDLE:
-                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                            labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
                                     EdgeLabelPlacement.CENTER);
                             break;
                         case ConnectionLocator.TARGET:
-                            labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                            labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
                                     EdgeLabelPlacement.TAIL);
                             break;
                         }
                     } else {
-                        labelLayout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                        labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
                                 placement);
                     }
                     Font font = labelFigure.getFont();
                     if (font != null && !font.isDisposed()) {
-                        labelLayout.setProperty(LayoutOptions.FONT_NAME,
+                        labelLayout.setProperty(CoreOptions.FONT_NAME,
                                 font.getFontData()[0].getName());
-                        labelLayout.setProperty(LayoutOptions.FONT_SIZE,
+                        labelLayout.setProperty(CoreOptions.FONT_SIZE,
                                 font.getFontData()[0].getHeight());
                     }
                     labelLayout.setXpos(labelBounds.x - (float) offset.x);

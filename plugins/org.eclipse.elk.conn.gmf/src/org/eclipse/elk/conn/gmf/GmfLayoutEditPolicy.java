@@ -31,7 +31,7 @@ import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.util.WrappedException;
@@ -228,7 +228,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             
             // retrieve junction points and transform them to absolute coordinates
             KVectorChain junctionPoints = kedge.getData(KEdgeLayout.class)
-                    .getProperty(LayoutOptions.JUNCTION_POINTS);
+                    .getProperty(CoreOptions.JUNCTION_POINTS);
             String serializedJP = null;
             if (junctionPoints != null) {
                 KNode referenceNode = kedge.getSource();
@@ -425,7 +425,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         PointList bendPoints = getBendPoints((KEdge) parent, connectionEditPart.getFigure(), scale);
         EObject modelElement = connectionEditPart.getNotationView().getElement();
         EdgeLabelPlacement labelPlacement = labelLayout
-                .getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+                .getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
         // for labels of the opposite reference of an ecore reference,
         // the list of bend points must be reversed
         if (modelElement instanceof EReference && labelPlacement == EdgeLabelPlacement.TAIL) {
@@ -479,7 +479,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
 
             // for connections that support splines the control points are passed without change
             boolean approx = handleSplineConnection(edgeFigure,
-                    edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING));
+                    edgeLayout.getProperty(CoreOptions.EDGE_ROUTING));
             // in other cases an approximation is used
             if (approx && bendPoints.size() >= 1) {
                 bendPoints = ElkMath.approximateBezierSpline(bendPoints);

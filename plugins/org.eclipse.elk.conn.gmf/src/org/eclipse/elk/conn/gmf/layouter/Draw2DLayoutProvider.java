@@ -30,7 +30,7 @@ import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
@@ -92,17 +92,17 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         
         // set layout options for the graph
         KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        float minSpacing = parentLayout.getProperty(Metadata.SPACING);
+        float minSpacing = parentLayout.getProperty(Metadata.SPACING_NODE);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
         graph.setDefaultPadding(new Insets((int) minSpacing));
-        float borderSpacing = parentLayout.getProperty(Metadata.BORDER_SPACING);
+        float borderSpacing = parentLayout.getProperty(Metadata.SPACING_BORDER);
         if (borderSpacing < 0) {
             borderSpacing = DEF_MIN_SPACING;
         }
         graph.setMargin(new Insets((int) borderSpacing));
-        Direction layoutDirection = parentLayout.getProperty(LayoutOptions.DIRECTION);
+        Direction layoutDirection = parentLayout.getProperty(CoreOptions.DIRECTION);
         switch (layoutDirection) {
         case UP:
         case DOWN:
