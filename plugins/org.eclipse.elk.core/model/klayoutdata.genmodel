@@ -2,11 +2,11 @@
 <genmodel:GenModel xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="KIELER - Kiel Integrated Environment for Layout Eclipse RichClient&#xA;&#xA;http://www.informatik.uni-kiel.de/rtsys/kieler/&#xA;&#xA;Copyright 2009 by&#xA;+ Kiel University&#xA;  + Department of Computer Science&#xA;    + Real-Time and Embedded Systems Group&#xA;&#xA;This code is provided under the terms of the Eclipse Public License (EPL).&#xA;See the file epl-v10.html for the license text."
-    modelDirectory="/de.cau.cs.kieler.kiml/src" modelPluginID="de.cau.cs.kieler.kiml"
+    modelDirectory="/org.eclipse.elk.core/src" modelPluginID="org.eclipse.elk.core"
     modelName="KLayoutData" importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0"
-    copyrightFields="false" usedGenPackages="platform:/resource/de.cau.cs.kieler.core.kgraph/model/kgraph.genmodel#//kgraph">
+    copyrightFields="false">
   <foreignModel>klayoutdata.ecore</foreignModel>
-  <genPackages prefix="KLayoutData" basePackage="de.cau.cs.kieler.kiml" disposableProviderFactory="true"
+  <genPackages prefix="KLayoutData" basePackage="org.eclipse.elk.core" disposableProviderFactory="true"
       ecorePackage="klayoutdata.ecore#/">
     <genClasses ecoreClass="klayoutdata.ecore#//KShapeLayout">
       <genFeatures createChild="false" propertyDescription="The x coordinate position"
