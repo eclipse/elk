@@ -1449,7 +1449,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         float.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.HIDDEN
-        , "de.cau.cs.kieler.portOffset"
+        , "de.cau.cs.kieler.offset"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.portLabels.placement",

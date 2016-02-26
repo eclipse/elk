@@ -581,7 +581,7 @@ group port {
 	     	if the port side is south, the port's north border touches the node's south border;
 	     	if the port side is west, the port's east border touches the node's west border."
 		targets ports
-		legacyIds de.cau.cs.kieler.portOffset
+		legacyIds de.cau.cs.kieler.offset
 	}
 }
 
