@@ -213,26 +213,7 @@ public class LayoutMetaDataService {
 
         // nothing found? try suffix map
         if (data == null) {
-
-            // find the longest matching suffix
-            String[] split = suffix.split("\\.");
-            StringBuilder tmpSuffix = new StringBuilder();
-            LayoutOptionData needle = null;
-
-            int i = split.length - 1;
-            do {
-                data = needle;
-                if (tmpSuffix.length() > 0) {
-                    tmpSuffix.insert(0, '.');
-                }
-                tmpSuffix.insert(0, split[i]);
-                needle = optionSuffixMap.get(tmpSuffix.toString());
-                i--;
-            } while (needle != null && i >= 0);
-
-            if (needle != null) {
-                data = needle;
-            }
+            data = optionSuffixMap.get(suffix);
         }
 
         return data;
@@ -307,17 +288,47 @@ public class LayoutMetaDataService {
 
         @Override
         public void register(final LayoutOptionData optionData) {
+            
+            // #1 register fully qualified id
             String id = optionData.getId();
             layoutOptionMap.put(id, optionData);
 
-            // register as suffix (which include groups)
+            // #2 register allowed suffixes (this may include every group)
+            // Example: allowed suffixes for 'org.eclipse.elk.foo.bar.option' are 
+            //  --> foo.bar.option
+            //  --> bar.option
+            //  --> option
             String suffix = id.substring(id.lastIndexOf('.') + 1, id.length());
-            optionSuffixMap.put(optionData.getGroup() + '.' + suffix, optionData);
+            if (optionData.getGroup() != null && !optionData.getGroup().isEmpty()) {
+                suffix = optionData.getGroup() + '.' + suffix;
+            } 
+            String[] split = suffix.split("\\.");
+            StringBuilder tmpSuffix = new StringBuilder();
+            int i = split.length - 1;
+            do {
+                if (tmpSuffix.length() > 0) {
+                    tmpSuffix.insert(0, '.');
+                }
+                tmpSuffix.insert(0, split[i]);
+                if (optionSuffixMap.containsKey(tmpSuffix.toString())) {
+                    // this suffix is not unique -> it's invalid
+                    optionSuffixMap.put(tmpSuffix.toString(), null);
+                } else {
+                    optionSuffixMap.put(tmpSuffix.toString(), optionData);
+                }
+                i--;
+            } while (i >= 0);
 
-            // register legacy options
+            // #3 register legacy options
             if (optionData.getLegacyIds() != null) {
                 for (String legacyId : optionData.getLegacyIds()) {
                     layoutOptionMap.put(legacyId, optionData);
+                    String legacySuffix =
+                            legacyId.substring(legacyId.lastIndexOf('.') + 1, legacyId.length());
+                    // legacy ids are only considered as valid suffix if they are unique
+                    if (!optionSuffixMap.containsKey(legacySuffix)) {
+                        optionSuffixMap.put(legacySuffix, optionData);
+                    }
                 }
             }
         }
