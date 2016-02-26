@@ -13,8 +13,8 @@ package org.eclipse.elk.core.ui.util;
 import java.io.IOException;
 import java.util.Map;
 
-import org.eclipse.elk.core.service.util.ElkServiceUtil;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -63,7 +63,7 @@ public class KGraphResourceFactory implements Resource.Factory {
                 EObject o = this.getContents().get(0);
                 if (o instanceof KNode) {
                     // parse persisted key-value pairs using KIML's layout data service
-                    ElkServiceUtil.loadDataElements((KNode) o);
+                    GraphDataUtil.loadDataElements((KNode) o);
                     // validate layout data and references and fill in missing data
                     ElkUtil.validate((KNode) o);
                 }

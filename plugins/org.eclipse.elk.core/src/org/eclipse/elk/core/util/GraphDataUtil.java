@@ -8,7 +8,7 @@
  * Contributors:
  *    spoenemann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.service.util;
+package org.eclipse.elk.core.util;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -17,8 +17,7 @@ import java.util.Map;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.service.internal.LayoutOptionProxy;
-import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.internal.LayoutOptionProxy;
 import org.eclipse.elk.graph.EMapPropertyHolder;
 import org.eclipse.elk.graph.KGraphData;
 import org.eclipse.elk.graph.KGraphPackage;
@@ -39,9 +38,9 @@ import com.google.common.collect.Maps;
 /**
  * Utilites for interacting with graphs based on metadata from the extension services.
  */
-public final class ElkServiceUtil {
+public final class GraphDataUtil {
     
-    private ElkServiceUtil() { }
+    private GraphDataUtil() { }
     
     /**
      * Set a layout option using a serialized key / value pair.

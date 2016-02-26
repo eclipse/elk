@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.service.internal;
+package org.eclipse.elk.core.util.internal;
 
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
