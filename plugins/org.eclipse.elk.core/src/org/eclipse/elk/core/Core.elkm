@@ -27,7 +27,8 @@ import org.eclipse.elk.core.util.RandomLayoutProvider
  */
 bundle {
 	label "ELK"
-	class core.options.CoreOptions  
+	class core.options.CoreOptions 
+	idPrefix org.eclipse.elk 
 }
 
 category layered {

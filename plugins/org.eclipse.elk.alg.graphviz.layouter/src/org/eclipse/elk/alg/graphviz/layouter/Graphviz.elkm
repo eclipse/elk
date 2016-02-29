@@ -17,7 +17,8 @@ import org.eclipse.elk.core.options.EdgeRouting
 
 bundle {
 	label "Graphviz"
-	class layouter.GraphvizOptions  
+	class layouter.GraphvizOptions
+	idPrefix org.eclipse.elk.graphviz
 }
 
 algorithm dot(GraphvizLayoutProvider#DOT) {

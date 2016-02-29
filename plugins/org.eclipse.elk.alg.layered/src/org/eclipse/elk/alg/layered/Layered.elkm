@@ -30,6 +30,7 @@ import org.eclipse.elk.core.options.PortAlignment
  */
 bundle {
     class properties.LayeredOptions  
+    idPrefix org.eclipse.elk.layered  
 }
 
 algorithm layered(LayeredLayoutProvider) {

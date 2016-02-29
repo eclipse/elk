@@ -17,7 +17,8 @@ import org.eclipse.elk.core.options.Direction
  * Declarations for the ELK Tree layout algorithm.
  */
 bundle {
-    class properties.MrTreeOptions  
+    class properties.MrTreeOptions
+    idPrefix org.eclipse.elk.mrtree
 }
 
 algorithm mrTree(TreeLayoutProvider) {
