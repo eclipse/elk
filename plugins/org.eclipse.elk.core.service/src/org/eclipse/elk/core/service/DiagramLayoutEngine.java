@@ -517,7 +517,7 @@ public class DiagramLayoutEngine {
     /**
      * Create a diagram layout configuration and add it to the setup.
      */
-    protected <T> void addDiagramConfig(final Parameters params, final LayoutMapping layoutMapping) {
+    protected void addDiagramConfig(final Parameters params, final LayoutMapping layoutMapping) {
         LayoutConfigurator diagramConfig = configManager.createConfigurator(layoutMapping);
         if (params.configurators.isEmpty()) {
             params.addLayoutRun(diagramConfig);
