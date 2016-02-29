@@ -385,7 +385,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *     MdBundle returns MdBundle
 	 *
 	 * Constraint:
-	 *     ((label=STRING | targetClass=QualifiedName | documentationFolder=Path)* members+=MdBundleMember*)
+	 *     ((label=STRING | targetClass=QualifiedName | documentationFolder=Path | idPrefix=QualifiedName)* members+=MdBundleMember*)
 	 */
 	protected void sequence_MdBundle(ISerializationContext context, MdBundle semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

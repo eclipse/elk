@@ -287,6 +287,40 @@ ruleMdBundle returns [EObject current=null]
 							getUnorderedGroupHelper().returnFromSelection(grammarAccess.getMdBundleAccess().getUnorderedGroup_1_2());
 						}
 					)
+				)|
+				(
+					{getUnorderedGroupHelper().canSelect(grammarAccess.getMdBundleAccess().getUnorderedGroup_1_2(), 3)}?=>(
+						{
+							getUnorderedGroupHelper().select(grammarAccess.getMdBundleAccess().getUnorderedGroup_1_2(), 3);
+						}
+									({true}?=>(otherlv_10='idPrefix'
+									{
+										newLeafNode(otherlv_10, grammarAccess.getMdBundleAccess().getIdPrefixKeyword_1_2_3_0());
+									}
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getMdBundleAccess().getIdPrefixQualifiedNameParserRuleCall_1_2_3_1_0());
+											}
+											lv_idPrefix_11_0=ruleQualifiedName
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getMdBundleRule());
+												}
+												set(
+													$current,
+													"idPrefix",
+													lv_idPrefix_11_0,
+													"org.eclipse.xtext.xbase.Xbase.QualifiedName");
+												afterParserOrEnumRuleCall();
+											}
+										)
+									)
+									))
+						{ 
+							getUnorderedGroupHelper().returnFromSelection(grammarAccess.getMdBundleAccess().getUnorderedGroup_1_2());
+						}
+					)
 				)
 						)*
 					)
@@ -295,9 +329,9 @@ ruleMdBundle returns [EObject current=null]
 					  getUnorderedGroupHelper().leave(grammarAccess.getMdBundleAccess().getUnorderedGroup_1_2());
 					}
 			)
-			otherlv_10='}'
+			otherlv_12='}'
 			{
-				newLeafNode(otherlv_10, grammarAccess.getMdBundleAccess().getRightCurlyBracketKeyword_1_3());
+				newLeafNode(otherlv_12, grammarAccess.getMdBundleAccess().getRightCurlyBracketKeyword_1_3());
 			}
 		)?
 		(
@@ -305,7 +339,7 @@ ruleMdBundle returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getMdBundleAccess().getMembersMdBundleMemberParserRuleCall_2_0());
 				}
-				lv_members_11_0=ruleMdBundleMember
+				lv_members_13_0=ruleMdBundleMember
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMdBundleRule());
@@ -313,7 +347,7 @@ ruleMdBundle returns [EObject current=null]
 					add(
 						$current,
 						"members",
-						lv_members_11_0,
+						lv_members_13_0,
 						"org.eclipse.elk.core.meta.MetaData.MdBundleMember");
 					afterParserOrEnumRuleCall();
 				}

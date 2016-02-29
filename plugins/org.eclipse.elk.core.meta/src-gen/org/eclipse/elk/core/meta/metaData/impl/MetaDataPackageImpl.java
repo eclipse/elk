@@ -285,9 +285,19 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getMdBundle_IdPrefix()
+  {
+    return (EAttribute)mdBundleEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getMdBundle_Members()
   {
-    return (EReference)mdBundleEClass.getEStructuralFeatures().get(3);
+    return (EReference)mdBundleEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -779,6 +789,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     createEAttribute(mdBundleEClass, MD_BUNDLE__LABEL);
     createEAttribute(mdBundleEClass, MD_BUNDLE__TARGET_CLASS);
     createEAttribute(mdBundleEClass, MD_BUNDLE__DOCUMENTATION_FOLDER);
+    createEAttribute(mdBundleEClass, MD_BUNDLE__ID_PREFIX);
     createEReference(mdBundleEClass, MD_BUNDLE__MEMBERS);
 
     mdBundleMemberEClass = createEClass(MD_BUNDLE_MEMBER);
@@ -887,6 +898,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     initEAttribute(getMdBundle_Label(), ecorePackage.getEString(), "label", null, 0, 1, MdBundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdBundle_TargetClass(), ecorePackage.getEString(), "targetClass", null, 0, 1, MdBundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdBundle_DocumentationFolder(), ecorePackage.getEString(), "documentationFolder", null, 0, 1, MdBundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdBundle_IdPrefix(), ecorePackage.getEString(), "idPrefix", null, 0, 1, MdBundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMdBundle_Members(), this.getMdBundleMember(), null, "members", null, 0, -1, MdBundle.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(mdBundleMemberEClass, MdBundleMember.class, "MdBundleMember", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

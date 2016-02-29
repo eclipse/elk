@@ -27,6 +27,7 @@ MdBundle:
                 ('label' label=STRING)?
                 & ('class' targetClass=QualifiedName)?
                 & ('documentationFolder' documentationFolder=Path)?
+                & ('idPrefix' idPrefix=QualifiedName)?
             )
         '}'
     )?

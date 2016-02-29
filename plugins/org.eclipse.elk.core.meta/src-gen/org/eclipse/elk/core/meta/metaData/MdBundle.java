@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getDocumentationFolder <em>Documentation Folder</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getIdPrefix <em>Id Prefix</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundle#getMembers <em>Members</em>}</li>
  * </ul>
  *
@@ -114,6 +115,32 @@ public interface MdBundle extends EObject
    * @generated
    */
   void setDocumentationFolder(String value);
+
+  /**
+   * Returns the value of the '<em><b>Id Prefix</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Id Prefix</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Id Prefix</em>' attribute.
+   * @see #setIdPrefix(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdBundle_IdPrefix()
+   * @model
+   * @generated
+   */
+  String getIdPrefix();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdBundle#getIdPrefix <em>Id Prefix</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Id Prefix</em>' attribute.
+   * @see #getIdPrefix()
+   * @generated
+   */
+  void setIdPrefix(String value);
 
   /**
    * Returns the value of the '<em><b>Members</b></em>' containment reference list.

@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getDocumentationFolder <em>Documentation Folder</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getIdPrefix <em>Id Prefix</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleImpl#getMembers <em>Members</em>}</li>
  * </ul>
  *
@@ -109,6 +110,26 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * @ordered
    */
   protected String documentationFolder = DOCUMENTATION_FOLDER_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getIdPrefix() <em>Id Prefix</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getIdPrefix()
+   * @generated
+   * @ordered
+   */
+  protected static final String ID_PREFIX_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getIdPrefix() <em>Id Prefix</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getIdPrefix()
+   * @generated
+   * @ordered
+   */
+  protected String idPrefix = ID_PREFIX_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getMembers() <em>Members</em>}' containment reference list.
@@ -215,6 +236,29 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getIdPrefix()
+  {
+    return idPrefix;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setIdPrefix(String newIdPrefix)
+  {
+    String oldIdPrefix = idPrefix;
+    idPrefix = newIdPrefix;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_BUNDLE__ID_PREFIX, oldIdPrefix, idPrefix));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<MdBundleMember> getMembers()
   {
     if (members == null)
@@ -256,6 +300,8 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
         return getTargetClass();
       case MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER:
         return getDocumentationFolder();
+      case MetaDataPackage.MD_BUNDLE__ID_PREFIX:
+        return getIdPrefix();
       case MetaDataPackage.MD_BUNDLE__MEMBERS:
         return getMembers();
     }
@@ -281,6 +327,9 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
         return;
       case MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER:
         setDocumentationFolder((String)newValue);
+        return;
+      case MetaDataPackage.MD_BUNDLE__ID_PREFIX:
+        setIdPrefix((String)newValue);
         return;
       case MetaDataPackage.MD_BUNDLE__MEMBERS:
         getMembers().clear();
@@ -309,6 +358,9 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
       case MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER:
         setDocumentationFolder(DOCUMENTATION_FOLDER_EDEFAULT);
         return;
+      case MetaDataPackage.MD_BUNDLE__ID_PREFIX:
+        setIdPrefix(ID_PREFIX_EDEFAULT);
+        return;
       case MetaDataPackage.MD_BUNDLE__MEMBERS:
         getMembers().clear();
         return;
@@ -332,6 +384,8 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
         return TARGET_CLASS_EDEFAULT == null ? targetClass != null : !TARGET_CLASS_EDEFAULT.equals(targetClass);
       case MetaDataPackage.MD_BUNDLE__DOCUMENTATION_FOLDER:
         return DOCUMENTATION_FOLDER_EDEFAULT == null ? documentationFolder != null : !DOCUMENTATION_FOLDER_EDEFAULT.equals(documentationFolder);
+      case MetaDataPackage.MD_BUNDLE__ID_PREFIX:
+        return ID_PREFIX_EDEFAULT == null ? idPrefix != null : !ID_PREFIX_EDEFAULT.equals(idPrefix);
       case MetaDataPackage.MD_BUNDLE__MEMBERS:
         return members != null && !members.isEmpty();
     }
@@ -355,6 +409,8 @@ public class MdBundleImpl extends MinimalEObjectImpl.Container implements MdBund
     result.append(targetClass);
     result.append(", documentationFolder: ");
     result.append(documentationFolder);
+    result.append(", idPrefix: ");
+    result.append(idPrefix);
     result.append(')');
     return result.toString();
   }

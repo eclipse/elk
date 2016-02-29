@@ -97,6 +97,10 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cDocumentationFolderKeyword_1_2_2_0 = (Keyword)cGroup_1_2_2.eContents().get(0);
 		private final Assignment cDocumentationFolderAssignment_1_2_2_1 = (Assignment)cGroup_1_2_2.eContents().get(1);
 		private final RuleCall cDocumentationFolderPathParserRuleCall_1_2_2_1_0 = (RuleCall)cDocumentationFolderAssignment_1_2_2_1.eContents().get(0);
+		private final Group cGroup_1_2_3 = (Group)cUnorderedGroup_1_2.eContents().get(3);
+		private final Keyword cIdPrefixKeyword_1_2_3_0 = (Keyword)cGroup_1_2_3.eContents().get(0);
+		private final Assignment cIdPrefixAssignment_1_2_3_1 = (Assignment)cGroup_1_2_3.eContents().get(1);
+		private final RuleCall cIdPrefixQualifiedNameParserRuleCall_1_2_3_1_0 = (RuleCall)cIdPrefixAssignment_1_2_3_1.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_1_3 = (Keyword)cGroup_1.eContents().get(3);
 		private final Assignment cMembersAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cMembersMdBundleMemberParserRuleCall_2_0 = (RuleCall)cMembersAssignment_2.eContents().get(0);
@@ -104,20 +108,21 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//MdBundle:
 		//	{MdBundle} ('bundle' '{' (('label' label=STRING)?
 		//	& ('class' targetClass=QualifiedName)?
-		//	& ('documentationFolder' documentationFolder=Path)?)
+		//	& ('documentationFolder' documentationFolder=Path)?
+		//	& ('idPrefix' idPrefix=QualifiedName)?)
 		//	'}')?
 		//	members+=MdBundleMember*;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{MdBundle} ('bundle' '{' (('label' label=STRING)? & ('class' targetClass=QualifiedName)? & ('documentationFolder'
-		//documentationFolder=Path)?) '}')? members+=MdBundleMember*
+		//documentationFolder=Path)? & ('idPrefix' idPrefix=QualifiedName)?) '}')? members+=MdBundleMember*
 		public Group getGroup() { return cGroup; }
 		
 		//{MdBundle}
 		public Action getMdBundleAction_0() { return cMdBundleAction_0; }
 		
 		//('bundle' '{' (('label' label=STRING)? & ('class' targetClass=QualifiedName)? & ('documentationFolder'
-		//documentationFolder=Path)?) '}')?
+		//documentationFolder=Path)? & ('idPrefix' idPrefix=QualifiedName)?) '}')?
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//'bundle'
@@ -126,7 +131,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//'{'
 		public Keyword getLeftCurlyBracketKeyword_1_1() { return cLeftCurlyBracketKeyword_1_1; }
 		
-		//(('label' label=STRING)? & ('class' targetClass=QualifiedName)? & ('documentationFolder' documentationFolder=Path)?)
+		//(('label' label=STRING)? & ('class' targetClass=QualifiedName)? & ('documentationFolder' documentationFolder=Path)? &
+		//('idPrefix' idPrefix=QualifiedName)?)
 		public UnorderedGroup getUnorderedGroup_1_2() { return cUnorderedGroup_1_2; }
 		
 		//('label' label=STRING)?
@@ -164,6 +170,18 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Path
 		public RuleCall getDocumentationFolderPathParserRuleCall_1_2_2_1_0() { return cDocumentationFolderPathParserRuleCall_1_2_2_1_0; }
+		
+		//('idPrefix' idPrefix=QualifiedName)?
+		public Group getGroup_1_2_3() { return cGroup_1_2_3; }
+		
+		//'idPrefix'
+		public Keyword getIdPrefixKeyword_1_2_3_0() { return cIdPrefixKeyword_1_2_3_0; }
+		
+		//idPrefix=QualifiedName
+		public Assignment getIdPrefixAssignment_1_2_3_1() { return cIdPrefixAssignment_1_2_3_1; }
+		
+		//QualifiedName
+		public RuleCall getIdPrefixQualifiedNameParserRuleCall_1_2_3_1_0() { return cIdPrefixQualifiedNameParserRuleCall_1_2_3_1_0; }
 		
 		//'}'
 		public Keyword getRightCurlyBracketKeyword_1_3() { return cRightCurlyBracketKeyword_1_3; }
@@ -1179,7 +1197,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	//MdBundle:
 	//	{MdBundle} ('bundle' '{' (('label' label=STRING)?
 	//	& ('class' targetClass=QualifiedName)?
-	//	& ('documentationFolder' documentationFolder=Path)?)
+	//	& ('documentationFolder' documentationFolder=Path)?
+	//	& ('idPrefix' idPrefix=QualifiedName)?)
 	//	'}')?
 	//	members+=MdBundleMember*;
 	public MdBundleElements getMdBundleAccess() {

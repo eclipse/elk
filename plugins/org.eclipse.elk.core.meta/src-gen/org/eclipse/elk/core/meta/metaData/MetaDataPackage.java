@@ -151,13 +151,22 @@ public interface MetaDataPackage extends EPackage
   int MD_BUNDLE__DOCUMENTATION_FOLDER = 2;
 
   /**
+   * The feature id for the '<em><b>Id Prefix</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_BUNDLE__ID_PREFIX = 3;
+
+  /**
    * The feature id for the '<em><b>Members</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_BUNDLE__MEMBERS = 3;
+  int MD_BUNDLE__MEMBERS = 4;
 
   /**
    * The number of structural features of the '<em>Md Bundle</em>' class.
@@ -166,7 +175,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_BUNDLE_FEATURE_COUNT = 4;
+  int MD_BUNDLE_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdBundleMemberImpl <em>Md Bundle Member</em>}' class.
@@ -788,6 +797,17 @@ public interface MetaDataPackage extends EPackage
   EAttribute getMdBundle_DocumentationFolder();
 
   /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdBundle#getIdPrefix <em>Id Prefix</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id Prefix</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdBundle#getIdPrefix()
+   * @see #getMdBundle()
+   * @generated
+   */
+  EAttribute getMdBundle_IdPrefix();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.eclipse.elk.core.meta.metaData.MdBundle#getMembers <em>Members</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1373,6 +1393,14 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EAttribute MD_BUNDLE__DOCUMENTATION_FOLDER = eINSTANCE.getMdBundle_DocumentationFolder();
+
+    /**
+     * The meta object literal for the '<em><b>Id Prefix</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_BUNDLE__ID_PREFIX = eINSTANCE.getMdBundle_IdPrefix();
 
     /**
      * The meta object literal for the '<em><b>Members</b></em>' containment reference list feature.

@@ -93,6 +93,7 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdBundleAccess().getGroup_1_2_0(), "rule__MdBundle__Group_1_2_0__0");
 					put(grammarAccess.getMdBundleAccess().getGroup_1_2_1(), "rule__MdBundle__Group_1_2_1__0");
 					put(grammarAccess.getMdBundleAccess().getGroup_1_2_2(), "rule__MdBundle__Group_1_2_2__0");
+					put(grammarAccess.getMdBundleAccess().getGroup_1_2_3(), "rule__MdBundle__Group_1_2_3__0");
 					put(grammarAccess.getMdGroupAccess().getGroup(), "rule__MdGroup__Group__0");
 					put(grammarAccess.getMdPropertyAccess().getGroup(), "rule__MdProperty__Group__0");
 					put(grammarAccess.getMdPropertyAccess().getGroup_4(), "rule__MdProperty__Group_4__0");
@@ -309,6 +310,7 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdBundleAccess().getLabelAssignment_1_2_0_1(), "rule__MdBundle__LabelAssignment_1_2_0_1");
 					put(grammarAccess.getMdBundleAccess().getTargetClassAssignment_1_2_1_1(), "rule__MdBundle__TargetClassAssignment_1_2_1_1");
 					put(grammarAccess.getMdBundleAccess().getDocumentationFolderAssignment_1_2_2_1(), "rule__MdBundle__DocumentationFolderAssignment_1_2_2_1");
+					put(grammarAccess.getMdBundleAccess().getIdPrefixAssignment_1_2_3_1(), "rule__MdBundle__IdPrefixAssignment_1_2_3_1");
 					put(grammarAccess.getMdBundleAccess().getMembersAssignment_2(), "rule__MdBundle__MembersAssignment_2");
 					put(grammarAccess.getMdGroupAccess().getNameAssignment_1(), "rule__MdGroup__NameAssignment_1");
 					put(grammarAccess.getMdGroupAccess().getChildrenAssignment_3(), "rule__MdGroup__ChildrenAssignment_3");

@@ -359,7 +359,13 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     private def String getQualifiedName(MdBundleMember member) {
         val bundle = member.bundle
         val model = bundle.eContainer as MdModel
-        return model.name 
+        var prefix = bundle.idPrefix ?: model.name
+        // if the last part of the idPrefix would be repeated by the 
+        // member's name, we skip it
+        if (member.name == prefix.substring(prefix.lastIndexOf('.') + 1, prefix.length)) {
+           prefix = prefix.substring(0, prefix.lastIndexOf('.')) 
+        }
+        return prefix
                + (if (member.groups.empty) '' else '.')
                + member.groups.map[it.name].join('.') 
                + '.' + member.name
