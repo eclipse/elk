@@ -36,7 +36,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    * Determines the model for force calculation.
    */
   public final static IProperty<ForceModelStrategy> MODEL = new Property<ForceModelStrategy>(
-            "org.eclipse.elk.alg.force.model",
+            "org.eclipse.elk.force.model",
             MODEL_DEFAULT);
   
   /**
@@ -48,7 +48,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    * The number of iterations on the force model.
    */
   public final static IProperty<Integer> ITERATIONS = new Property<Integer>(
-            "org.eclipse.elk.alg.force.iterations",
+            "org.eclipse.elk.force.iterations",
             ITERATIONS_DEFAULT);
   
   /**
@@ -61,7 +61,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    * repelling particles in the force model
    */
   public final static IProperty<Integer> REPULSIVE_POWER = new Property<Integer>(
-            "org.eclipse.elk.alg.force.repulsivePower",
+            "org.eclipse.elk.force.repulsivePower",
             REPULSIVE_POWER_DEFAULT);
   
   /**
@@ -73,7 +73,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    * The temperature is used as a scaling factor for particle displacements.
    */
   public final static IProperty<Float> TEMPERATURE = new Property<Float>(
-            "org.eclipse.elk.alg.force.temperature",
+            "org.eclipse.elk.force.temperature",
             TEMPERATURE_DEFAULT);
   
   /**
@@ -85,7 +85,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    * Factor for repulsive forces in Eades' model.
    */
   public final static IProperty<Float> REPULSION = new Property<Float>(
-            "org.eclipse.elk.alg.force.repulsion",
+            "org.eclipse.elk.force.repulsion",
             REPULSION_DEFAULT);
   
   /**
@@ -170,7 +170,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.force.model",
+        "org.eclipse.elk.force.model",
         "",
         "Force Model",
         "Determines the model for force calculation.",
@@ -181,7 +181,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.force.iterations",
+        "org.eclipse.elk.force.iterations",
         "",
         "Iterations",
         "The number of iterations on the force model.",
@@ -192,7 +192,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.force.repulsivePower",
+        "org.eclipse.elk.force.repulsivePower",
         "",
         "Repulsive Power",
         "Determines how many bend points are added to the edge; such bend points are regarded as repelling particles in the force model",
@@ -203,7 +203,7 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.force.temperature",
+        "org.eclipse.elk.force.temperature",
         "",
         "FR Temperature",
         "The temperature is used as a scaling factor for particle displacements.",
@@ -214,12 +214,12 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.addDependency(
-        "org.eclipse.elk.alg.force.temperature",
-        "org.eclipse.elk.alg.force.model",
+        "org.eclipse.elk.force.temperature",
+        "org.eclipse.elk.force.model",
         TEMPERATURE_DEP_MODEL
     );
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.force.repulsion",
+        "org.eclipse.elk.force.repulsion",
         "",
         "Eades Repulsion",
         "Factor for repulsive forces in Eades\' model.",
@@ -230,12 +230,12 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.addDependency(
-        "org.eclipse.elk.alg.force.repulsion",
-        "org.eclipse.elk.alg.force.model",
+        "org.eclipse.elk.force.repulsion",
+        "org.eclipse.elk.force.model",
         REPULSION_DEP_MODEL
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "ELK Force",
         "Force-based algorithm provided by the Eclipse Layout Kernel. Implements methods that follow physical analogies by simulating forces that move the nodes into a balanced distribution. Currently the original Eades model and the Fruchterman - Reingold model are supported.",
         new AlgorithmFactory(ForceLayoutProvider.class, ""),
@@ -245,68 +245,68 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         EnumSet.of(GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "org.eclipse.elk.priority",
         FORCE_SUP_PRIORITY
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "org.eclipse.elk.spacing.node",
         FORCE_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "org.eclipse.elk.spacing.border",
         FORCE_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "org.eclipse.elk.spacing.label",
         FORCE_SUP_SPACING_LABEL
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "org.eclipse.elk.aspectRatio",
         FORCE_SUP_ASPECT_RATIO
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "org.eclipse.elk.randomSeed",
         FORCE_SUP_RANDOM_SEED
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "org.eclipse.elk.separateConnectedComponents",
         FORCE_SUP_SEPARATE_CONNECTED_COMPONENTS
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
+        "org.eclipse.elk.force",
         "org.eclipse.elk.interactive",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.alg.force.model",
+        "org.eclipse.elk.force",
+        "org.eclipse.elk.force.model",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.alg.force.temperature",
+        "org.eclipse.elk.force",
+        "org.eclipse.elk.force.temperature",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.alg.force.iterations",
+        "org.eclipse.elk.force",
+        "org.eclipse.elk.force.iterations",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.alg.force.repulsion",
+        "org.eclipse.elk.force",
+        "org.eclipse.elk.force.repulsion",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.force.force",
-        "org.eclipse.elk.alg.force.repulsivePower",
+        "org.eclipse.elk.force",
+        "org.eclipse.elk.force.repulsivePower",
         null
     );
   }

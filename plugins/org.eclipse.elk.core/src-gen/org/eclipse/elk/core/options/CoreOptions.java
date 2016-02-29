@@ -1536,6 +1536,11 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Tree",
         "Specialized layout methods for trees, i.e. acyclic graphs. The regular structure of graphs that have no undirected cycles can be emphasized using an algorithm of this type."
     ));
+    registry.register(new LayoutCategoryData(
+        "org.eclipse.elk.planar",
+        "Planar",
+        "Algorithms that require a planar or upward planar graph. Most of these algorithms are theoretically interesting, but not practically usable."
+    ));
     registry.register(new LayoutAlgorithmData(
         "org.eclipse.elk.fixed",
         "Fixed Layout",

@@ -35,7 +35,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    * Whether ports should be moved to the point where edges cross the node's bounds.
    */
   public final static IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
-            "org.eclipse.elk.alg.graphviz.adaptPortPositions",
+            "org.eclipse.elk.graphviz.adaptPortPositions",
             ADAPT_PORT_POSITIONS_DEFAULT);
   
   /**
@@ -48,7 +48,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    * their paths.
    */
   public final static IProperty<Boolean> CONCENTRATE = new Property<Boolean>(
-            "org.eclipse.elk.alg.graphviz.concentrate",
+            "org.eclipse.elk.graphviz.concentrate",
             CONCENTRATE_DEFAULT);
   
   /**
@@ -56,14 +56,14 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    * epsilon, the algorithm stops.
    */
   public final static IProperty<Float> EPSILON = new Property<Float>(
-            "org.eclipse.elk.alg.graphviz.epsilon");
+            "org.eclipse.elk.graphviz.epsilon");
   
   /**
    * Multiplicative scale factor for the maximal number of iterations used during crossing
    * minimization, node ranking, and node positioning.
    */
   public final static IProperty<Float> ITERATIONS_FACTOR = new Property<Float>(
-            "org.eclipse.elk.alg.graphviz.iterationsFactor");
+            "org.eclipse.elk.graphviz.iterationsFactor");
   
   /**
    * Default value for {@link #LABEL_ANGLE}.
@@ -74,7 +74,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    * Angle between head / tail positioned edge labels and the corresponding edge.
    */
   public final static IProperty<Float> LABEL_ANGLE = new Property<Float>(
-            "org.eclipse.elk.alg.graphviz.labelAngle",
+            "org.eclipse.elk.graphviz.labelAngle",
             LABEL_ANGLE_DEFAULT);
   
   /**
@@ -86,7 +86,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    * Distance of head / tail positioned edge labels to the source or target node.
    */
   public final static IProperty<Float> LABEL_DISTANCE = new Property<Float>(
-            "org.eclipse.elk.alg.graphviz.labelDistance",
+            "org.eclipse.elk.graphviz.labelDistance",
             LABEL_DISTANCE_DEFAULT);
   
   /**
@@ -98,14 +98,14 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    * Factor for the spacing of different layers (ranks).
    */
   public final static IProperty<Float> LAYER_SPACING_FACTOR = new Property<Float>(
-            "org.eclipse.elk.alg.graphviz.layerSpacingFactor",
+            "org.eclipse.elk.graphviz.layerSpacingFactor",
             LAYER_SPACING_FACTOR_DEFAULT);
   
   /**
    * The maximum number of iterations.
    */
   public final static IProperty<Integer> MAXITER = new Property<Integer>(
-            "org.eclipse.elk.alg.graphviz.maxiter");
+            "org.eclipse.elk.graphviz.maxiter");
   
   /**
    * Default value for {@link #NEATO_MODEL}.
@@ -116,7 +116,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    * Specifies how the distance matrix is computed for the input graph.
    */
   public final static IProperty<NeatoModel> NEATO_MODEL = new Property<NeatoModel>(
-            "org.eclipse.elk.alg.graphviz.neatoModel",
+            "org.eclipse.elk.graphviz.neatoModel",
             NEATO_MODEL_DEFAULT);
   
   /**
@@ -128,7 +128,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    * Determines if and how node overlaps should be removed.
    */
   public final static IProperty<OverlapMode> OVERLAP_MODE = new Property<OverlapMode>(
-            "org.eclipse.elk.alg.graphviz.overlapMode",
+            "org.eclipse.elk.graphviz.overlapMode",
             OVERLAP_MODE_DEFAULT);
   
   /**
@@ -253,7 +253,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.adaptPortPositions",
+        "org.eclipse.elk.graphviz.adaptPortPositions",
         "",
         "Adapt Port Positions",
         "Whether ports should be moved to the point where edges cross the node\'s bounds.",
@@ -264,7 +264,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.concentrate",
+        "org.eclipse.elk.graphviz.concentrate",
         "",
         "Concentrate Edges",
         "Merges multiedges into a single edge and causes partially parallel edges to share part of their paths.",
@@ -275,7 +275,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.epsilon",
+        "org.eclipse.elk.graphviz.epsilon",
         "",
         "Epsilon",
         "Terminating condition. If the length squared of all energy gradients are less than epsilon, the algorithm stops.",
@@ -286,7 +286,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.iterationsFactor",
+        "org.eclipse.elk.graphviz.iterationsFactor",
         "",
         "Iterations Factor",
         "Multiplicative scale factor for the maximal number of iterations used during crossing minimization, node ranking, and node positioning.",
@@ -297,7 +297,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.labelAngle",
+        "org.eclipse.elk.graphviz.labelAngle",
         "",
         "Label Angle",
         "Angle between head / tail positioned edge labels and the corresponding edge.",
@@ -308,7 +308,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.labelDistance",
+        "org.eclipse.elk.graphviz.labelDistance",
         "",
         "Label Distance",
         "Distance of head / tail positioned edge labels to the source or target node.",
@@ -319,7 +319,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.layerSpacingFactor",
+        "org.eclipse.elk.graphviz.layerSpacingFactor",
         "",
         "Layer Spacing Factor",
         "Factor for the spacing of different layers (ranks).",
@@ -330,7 +330,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.maxiter",
+        "org.eclipse.elk.graphviz.maxiter",
         "",
         "Max. Iterations",
         "The maximum number of iterations.",
@@ -341,7 +341,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.neatoModel",
+        "org.eclipse.elk.graphviz.neatoModel",
         "",
         "Distance Model",
         "Specifies how the distance matrix is computed for the input graph.",
@@ -352,7 +352,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.alg.graphviz.overlapMode",
+        "org.eclipse.elk.graphviz.overlapMode",
         "",
         "Overlap Removal",
         "Determines if and how node overlaps should be removed.",
@@ -363,7 +363,7 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "Dot",
         "Layered drawings of directed graphs. The algorithm aims edges in the same direction (top to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge length. Edges are routed as spline curves and are thus drawn very smoothly. This algorithm is very suitable for state machine and activity diagrams, where the direction of edges has an important role.",
         new AlgorithmFactory(GraphvizLayoutProvider.class, "DOT"),
@@ -373,82 +373,82 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS, GraphFeature.COMPOUND, GraphFeature.CLUSTERS)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.direction",
         DOT_SUP_DIRECTION
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.spacing.node",
         DOT_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.spacing.border",
         DOT_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.spacing.label",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.edgeRouting",
         DOT_SUP_EDGE_ROUTING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.debugMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
+        "org.eclipse.elk.graphviz.dot",
         "org.eclipse.elk.hierarchyHandling",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
-        "org.eclipse.elk.alg.graphviz.iterationsFactor",
+        "org.eclipse.elk.graphviz.dot",
+        "org.eclipse.elk.graphviz.iterationsFactor",
         DOT_SUP_ITERATIONS_FACTOR
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
-        "org.eclipse.elk.alg.graphviz.concentrate",
+        "org.eclipse.elk.graphviz.dot",
+        "org.eclipse.elk.graphviz.concentrate",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
-        "org.eclipse.elk.alg.graphviz.labelDistance",
+        "org.eclipse.elk.graphviz.dot",
+        "org.eclipse.elk.graphviz.labelDistance",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
-        "org.eclipse.elk.alg.graphviz.labelAngle",
+        "org.eclipse.elk.graphviz.dot",
+        "org.eclipse.elk.graphviz.labelAngle",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
-        "org.eclipse.elk.alg.graphviz.layerSpacingFactor",
+        "org.eclipse.elk.graphviz.dot",
+        "org.eclipse.elk.graphviz.layerSpacingFactor",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.dot",
-        "org.eclipse.elk.alg.graphviz.adaptPortPositions",
+        "org.eclipse.elk.graphviz.dot",
+        "org.eclipse.elk.graphviz.adaptPortPositions",
         null
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "Neato",
         "Spring model layouts. Neato attempts to minimize a global energy function, which is equivalent to statistical multi-dimensional scaling. The solution is achieved using stress majorization, though the older Kamada-Kawai algorithm, using steepest descent, is also available.",
         new AlgorithmFactory(GraphvizLayoutProvider.class, "NEATO"),
@@ -458,97 +458,97 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.spacing.node",
         NEATO_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.spacing.border",
         NEATO_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.spacing.label",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.randomSeed",
         NEATO_SUP_RANDOM_SEED
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.interactive",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.edgeRouting",
         NEATO_SUP_EDGE_ROUTING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.debugMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
+        "org.eclipse.elk.graphviz.neato",
         "org.eclipse.elk.separateConnectedComponents",
         NEATO_SUP_SEPARATE_CONNECTED_COMPONENTS
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
-        "org.eclipse.elk.alg.graphviz.concentrate",
+        "org.eclipse.elk.graphviz.neato",
+        "org.eclipse.elk.graphviz.concentrate",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
-        "org.eclipse.elk.alg.graphviz.epsilon",
+        "org.eclipse.elk.graphviz.neato",
+        "org.eclipse.elk.graphviz.epsilon",
         NEATO_SUP_EPSILON
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
-        "org.eclipse.elk.alg.graphviz.labelDistance",
+        "org.eclipse.elk.graphviz.neato",
+        "org.eclipse.elk.graphviz.labelDistance",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
-        "org.eclipse.elk.alg.graphviz.labelAngle",
+        "org.eclipse.elk.graphviz.neato",
+        "org.eclipse.elk.graphviz.labelAngle",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
-        "org.eclipse.elk.alg.graphviz.maxiter",
+        "org.eclipse.elk.graphviz.neato",
+        "org.eclipse.elk.graphviz.maxiter",
         NEATO_SUP_MAXITER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
-        "org.eclipse.elk.alg.graphviz.neatoModel",
+        "org.eclipse.elk.graphviz.neato",
+        "org.eclipse.elk.graphviz.neatoModel",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
-        "org.eclipse.elk.alg.graphviz.overlapMode",
+        "org.eclipse.elk.graphviz.neato",
+        "org.eclipse.elk.graphviz.overlapMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.neato",
-        "org.eclipse.elk.alg.graphviz.adaptPortPositions",
+        "org.eclipse.elk.graphviz.neato",
+        "org.eclipse.elk.graphviz.adaptPortPositions",
         null
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "FDP",
         "Spring model layouts similar to those of Neato, but does this by reducing forces rather than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a multigrid solver that handles larger graphs and clustered undirected graphs.",
         new AlgorithmFactory(GraphvizLayoutProvider.class, "FDP"),
@@ -558,87 +558,87 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS, GraphFeature.CLUSTERS)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.spacing.node",
         FDP_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.spacing.border",
         FDP_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.spacing.label",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.interactive",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.edgeRouting",
         FDP_SUP_EDGE_ROUTING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.debugMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.hierarchyHandling",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
+        "org.eclipse.elk.graphviz.fdp",
         "org.eclipse.elk.separateConnectedComponents",
         FDP_SUP_SEPARATE_CONNECTED_COMPONENTS
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
-        "org.eclipse.elk.alg.graphviz.concentrate",
+        "org.eclipse.elk.graphviz.fdp",
+        "org.eclipse.elk.graphviz.concentrate",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
-        "org.eclipse.elk.alg.graphviz.labelDistance",
+        "org.eclipse.elk.graphviz.fdp",
+        "org.eclipse.elk.graphviz.labelDistance",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
-        "org.eclipse.elk.alg.graphviz.labelAngle",
+        "org.eclipse.elk.graphviz.fdp",
+        "org.eclipse.elk.graphviz.labelAngle",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
-        "org.eclipse.elk.alg.graphviz.maxiter",
+        "org.eclipse.elk.graphviz.fdp",
+        "org.eclipse.elk.graphviz.maxiter",
         FDP_SUP_MAXITER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
-        "org.eclipse.elk.alg.graphviz.overlapMode",
+        "org.eclipse.elk.graphviz.fdp",
+        "org.eclipse.elk.graphviz.overlapMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.fdp",
-        "org.eclipse.elk.alg.graphviz.adaptPortPositions",
+        "org.eclipse.elk.graphviz.fdp",
+        "org.eclipse.elk.graphviz.adaptPortPositions",
         null
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.graphviz.twopi",
+        "org.eclipse.elk.graphviz.twopi",
         "Twopi",
         "Radial layouts, after Wills \'97. The nodes are placed on concentric circles depending on their distance from a given root node. The algorithm is designed to handle not only small graphs, but also very large ones.",
         new AlgorithmFactory(GraphvizLayoutProvider.class, "TWOPI"),
@@ -648,67 +648,67 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
+        "org.eclipse.elk.graphviz.twopi",
         "org.eclipse.elk.spacing.node",
         TWOPI_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
+        "org.eclipse.elk.graphviz.twopi",
         "org.eclipse.elk.spacing.border",
         TWOPI_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
+        "org.eclipse.elk.graphviz.twopi",
         "org.eclipse.elk.spacing.label",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
+        "org.eclipse.elk.graphviz.twopi",
         "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
+        "org.eclipse.elk.graphviz.twopi",
         "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
+        "org.eclipse.elk.graphviz.twopi",
         "org.eclipse.elk.edgeRouting",
         TWOPI_SUP_EDGE_ROUTING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
+        "org.eclipse.elk.graphviz.twopi",
         "org.eclipse.elk.debugMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
-        "org.eclipse.elk.alg.graphviz.concentrate",
+        "org.eclipse.elk.graphviz.twopi",
+        "org.eclipse.elk.graphviz.concentrate",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
-        "org.eclipse.elk.alg.graphviz.labelDistance",
+        "org.eclipse.elk.graphviz.twopi",
+        "org.eclipse.elk.graphviz.labelDistance",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
-        "org.eclipse.elk.alg.graphviz.labelAngle",
+        "org.eclipse.elk.graphviz.twopi",
+        "org.eclipse.elk.graphviz.labelAngle",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
-        "org.eclipse.elk.alg.graphviz.overlapMode",
+        "org.eclipse.elk.graphviz.twopi",
+        "org.eclipse.elk.graphviz.overlapMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.twopi",
-        "org.eclipse.elk.alg.graphviz.adaptPortPositions",
+        "org.eclipse.elk.graphviz.twopi",
+        "org.eclipse.elk.graphviz.adaptPortPositions",
         null
     );
     registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "Circo",
         "Circular layout, after Six and Tollis \'99, Kaufmann and Wiese \'02. The algorithm finds biconnected components and arranges each component in a circle, trying to minimize the number of crossings inside the circle. This is suitable for certain diagrams of multiple cyclic structures such as certain telecommunications networks.",
         new AlgorithmFactory(GraphvizLayoutProvider.class, "CIRCO"),
@@ -718,68 +718,68 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
     ));
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "org.eclipse.elk.spacing.node",
         CIRCO_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "org.eclipse.elk.spacing.border",
         CIRCO_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "org.eclipse.elk.spacing.label",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "org.eclipse.elk.edgeRouting",
         CIRCO_SUP_EDGE_ROUTING
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "org.eclipse.elk.debugMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
+        "org.eclipse.elk.graphviz.circo",
         "org.eclipse.elk.separateConnectedComponents",
         CIRCO_SUP_SEPARATE_CONNECTED_COMPONENTS
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
-        "org.eclipse.elk.alg.graphviz.concentrate",
+        "org.eclipse.elk.graphviz.circo",
+        "org.eclipse.elk.graphviz.concentrate",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
-        "org.eclipse.elk.alg.graphviz.labelDistance",
+        "org.eclipse.elk.graphviz.circo",
+        "org.eclipse.elk.graphviz.labelDistance",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
-        "org.eclipse.elk.alg.graphviz.labelAngle",
+        "org.eclipse.elk.graphviz.circo",
+        "org.eclipse.elk.graphviz.labelAngle",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
-        "org.eclipse.elk.alg.graphviz.overlapMode",
+        "org.eclipse.elk.graphviz.circo",
+        "org.eclipse.elk.graphviz.overlapMode",
         null
     );
     registry.addOptionSupport(
-        "org.eclipse.elk.alg.graphviz.circo",
-        "org.eclipse.elk.alg.graphviz.adaptPortPositions",
+        "org.eclipse.elk.graphviz.circo",
+        "org.eclipse.elk.graphviz.adaptPortPositions",
         null
     );
   }

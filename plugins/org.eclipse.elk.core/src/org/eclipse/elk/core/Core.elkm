@@ -75,6 +75,13 @@ category tree {
 		that have no undirected cycles can be emphasized using an algorithm of this type."
 }
 
+category planar { 
+    label "Planar"
+    description  
+        "Algorithms that require a planar or upward planar graph. Most of these algorithms are 
+        theoretically interesting, but not practically usable."
+}
+
 
 //------- UTILITY ALGORITHMS
 
