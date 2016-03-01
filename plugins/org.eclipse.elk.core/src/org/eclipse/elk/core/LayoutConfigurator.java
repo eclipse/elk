@@ -17,6 +17,7 @@ import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.elk.graph.properties.IProperty;
@@ -124,7 +125,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     @SuppressWarnings("unchecked")
     @Override
     public void visit(final KGraphElement element) {
-        KLayoutData layout = element instanceof KEdgeLayout
+        KLayoutData layout = element instanceof KEdge
                 ? element.getData(KEdgeLayout.class) : element.getData(KShapeLayout.class);
         if (clearLayout) {
             layout.getProperties().clear();
