@@ -136,7 +136,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         monitor.begin("Spline edge routing", 1);
         // Retrieve some generic values
         final float nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE);
-        edgeSpacing = nodeSpacing * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
+        edgeSpacing = nodeSpacing * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
         double xpos = 0.0;
 
         final Iterator<Layer> layerIterator = layeredGraph.iterator();
@@ -1148,8 +1148,9 @@ public final class SplineEdgeRouter implements ILayoutPhase {
          * (LEFT or RIGHT) they are laying on.
          * @param sourceSide The side of the source.
          */
-        public SplineHyperEdge(final LPort singlePort, final Set<Pair<SideToProcess, LEdge>> edges,
+        SplineHyperEdge(final LPort singlePort, final Set<Pair<SideToProcess, LEdge>> edges,
                 final SideToProcess sourceSide) {
+            
             if (sourceSide == SideToProcess.LEFT) {
                 leftPorts.add(singlePort);
             } else {
@@ -1198,8 +1199,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
          * @param sourceSide On witch Layer (LEFT or RIGHT) lays the source port.
          * @param targetSide On witch Layer (LEFT or RIGHT) lays the target port.
          */
-        public SplineHyperEdge(final LEdge edge, 
-                final SideToProcess sourceSide, final SideToProcess targetSide) {
+        SplineHyperEdge(final LEdge edge, final SideToProcess sourceSide, final SideToProcess targetSide) {
             // adding left and right ports
             if (sourceSide == SideToProcess.LEFT) {
                 leftPorts.add(edge.getSource());

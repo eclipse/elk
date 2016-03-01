@@ -55,9 +55,9 @@ public final class CLEdge extends CNode {
     public CLEdge(final VerticalSegment vSeg, final LGraph layeredGraph) {
         // getting the spacing properties
         horizontalSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE)
-                          * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
+                          * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
         verticalSpacing = horizontalSpacing
-                        * layeredGraph.getProperty(LayeredOptions.IN_LAYER_SPACING_FACTOR);
+                        * layeredGraph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
         
         bends = new KVectorChain();
         juctionPoints = new KVectorChain();

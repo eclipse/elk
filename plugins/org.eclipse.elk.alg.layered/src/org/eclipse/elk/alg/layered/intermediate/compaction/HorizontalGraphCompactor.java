@@ -76,7 +76,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
 
-        GraphCompactionStrategy strategy = layeredGraph.getProperty(LayeredOptions.POST_COMPACTION);
+        GraphCompactionStrategy strategy = layeredGraph.getProperty(LayeredOptions.COMPACTION_POST_COMPACTION_STRATEGY);
         if (strategy == GraphCompactionStrategy.NONE) {
             return;
         }
@@ -94,7 +94,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         // ---
         // select constraint algorithm
         // - 
-        switch (layeredGraph.getProperty(LayeredOptions.POST_COMPACTION_CONSTRAINTS)) {
+        switch (layeredGraph.getProperty(LayeredOptions.COMPACTION_POST_COMPACTION_CONSTRAINTS)) {
             case SCANLINE:
                 odc.setConstraintAlgorithm(EDGE_AWARE_SCANLINE_CONSTRAINTS);
                 break;

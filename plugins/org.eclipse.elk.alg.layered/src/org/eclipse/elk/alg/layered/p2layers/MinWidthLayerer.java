@@ -142,15 +142,15 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // The algorithm requires DAG G = (V, E). In this version self-loops are allowed (as we're
         // going to filter them). Additional properties as described above (called UBW and c in the
         // original paper):
-        final int upperBoundOnWidth = layeredGraph.getProperty(LayeredOptions.MIN_WIDTH_UPPER_BOUND_ON_WIDTH);
+        final int upperBoundOnWidth = layeredGraph.getProperty(LayeredOptions.LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH);
         final int compensator =
-                layeredGraph.getProperty(LayeredOptions.MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
+                layeredGraph.getProperty(LayeredOptions.LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
 
         // First step to consider the real size of nodes: Initialize the dummy size with the spacing
         // properties
         dummySize =
                 layeredGraph.getProperty(LayeredOptions.SPACING_NODE)
-                        * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
+                        * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
 
         // Compute the minimum nodes size (of the real nodes). We're going to use this value in the
         // next step to normalize the different node sizes.

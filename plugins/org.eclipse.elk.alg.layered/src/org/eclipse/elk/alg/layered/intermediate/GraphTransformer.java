@@ -277,21 +277,21 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node the node whose layer constraint to mirror.
      */
     private void mirrorLayerConstraintX(final LNode node) {
-        switch (node.getProperty(LayeredOptions.LAYER_CONSTRAINT)) {
+        switch (node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT)) {
         case FIRST:
-            node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.LAST);
+            node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.LAST);
             break;
             
         case FIRST_SEPARATE:
-            node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
+            node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
             break;
 
         case LAST:
-            node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.FIRST);
+            node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.FIRST);
             break;
             
         case LAST_SEPARATE:
-            node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
+            node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
             break;
         }
     }
@@ -658,20 +658,20 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node the node whose layer constraint to mirror.
      */
     private void transposeLayerConstraint(final LNode node) {
-        LayerConstraint layerConstraint = node.getProperty(LayeredOptions.LAYER_CONSTRAINT);
+        LayerConstraint layerConstraint = node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
         InLayerConstraint inLayerConstraint = node.getProperty(InternalProperties.IN_LAYER_CONSTRAINT);
         
         if (layerConstraint == LayerConstraint.FIRST_SEPARATE) {
-            node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.NONE);
+            node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.NONE);
             node.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.TOP);
         } else if (layerConstraint == LayerConstraint.LAST_SEPARATE) {
-            node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.NONE);
+            node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.NONE);
             node.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.BOTTOM);
         } else if (inLayerConstraint == InLayerConstraint.TOP) {
-            node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
+            node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
             node.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.NONE);
         } else if (inLayerConstraint == InLayerConstraint.BOTTOM) {
-            node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
+            node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
             node.setProperty(InternalProperties.IN_LAYER_CONSTRAINT, InLayerConstraint.NONE);
         }
     }

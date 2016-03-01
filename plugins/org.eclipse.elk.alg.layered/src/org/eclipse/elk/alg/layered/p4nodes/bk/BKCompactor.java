@@ -60,8 +60,9 @@ public class BKCompactor implements ICompactor {
         spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         
         // configure the requested threshold strategy
-        if (layeredGraph.getProperty(LayeredOptions.COMPACTION) 
-                == CompactionStrategy.IMPROVE_STRAIGHTNESS) {
+        if (layeredGraph.getProperty(LayeredOptions.NODE_PLACEMENT_BK_EDGE_STRAIGHTENING) 
+                == EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS) {
+            
             threshStrategy = new SimpleThresholdStrategy();
         } else {
             // mimics the original compaction strategy without additional straightening

@@ -78,9 +78,9 @@ public final class Spacings {
     public Spacings(final LGraph graph) {
 
         nodeSpacing = graph.getProperty(LayeredOptions.SPACING_NODE);
-        inLayerSpacingFactor = graph.getProperty(LayeredOptions.IN_LAYER_SPACING_FACTOR);
-        edgeEdgeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
-        edgeNodeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.EDGE_NODE_SPACING_FACTOR);
+        inLayerSpacingFactor = graph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
+        edgeEdgeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
+        edgeNodeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.SPACING_EDGE_NODE_SPACING_FACTOR);
         portSpacing = graph.getProperty(CoreOptions.SPACING_PORT);
         externalPortSpacing = graph.getProperty(CoreOptions.SPACING_PORT);
         labelSpacing = graph.getProperty(CoreOptions.SPACING_LABEL);

@@ -839,9 +839,10 @@ class KGraphImporter {
         }
         
         // Copy the original bend points of the edge in case they are required
-        boolean bendPointsRequired =
-                lgraph.getProperty(LayeredOptions.CROSS_MIN) == CrossingMinimizationStrategy.INTERACTIVE
-                || lgraph.getProperty(LayeredOptions.NODE_PLACEMENT) == NodePlacementStrategy.INTERACTIVE;
+        CrossingMinimizationStrategy crossMinStrat = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY);
+        NodePlacementStrategy nodePlaceStrat = lgraph.getProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY);
+        boolean bendPointsRequired = crossMinStrat == CrossingMinimizationStrategy.INTERACTIVE
+                || nodePlaceStrat == NodePlacementStrategy.INTERACTIVE;
         
         if (!kedgeLayout.getBendPoints().isEmpty() && bendPointsRequired) {
             KVectorChain bendpoints = new KVectorChain();

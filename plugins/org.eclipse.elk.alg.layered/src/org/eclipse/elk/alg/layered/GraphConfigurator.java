@@ -93,10 +93,10 @@ final class GraphConfigurator {
 //                Properties.THOROUGHNESS, InternalProperties.ASPECT_RATIO);
         
         float spacing = lgraph.getProperty(LayeredOptions.SPACING_NODE);
-        if (lgraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
+        if (lgraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
             // Edge spacing is determined by the product of object spacing and edge spacing factor.
             // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
-            lgraph.setProperty(LayeredOptions.EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
+            lgraph.setProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
         }
         
         Direction direction = lgraph.getProperty(CoreOptions.DIRECTION);
@@ -132,10 +132,11 @@ final class GraphConfigurator {
         configureGraphProperties(lgraph);
         
         // get instances for the different phases of our algorithm
-        ILayoutPhase cycleBreaker = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.CYCLE_BREAKING));
-        ILayoutPhase layerer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.NODE_LAYERING));
-        ILayoutPhase crossingMinimizer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.CROSS_MIN));
-        ILayoutPhase nodePlacer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.NODE_PLACEMENT));
+        ILayoutPhase cycleBreaker = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY));
+        ILayoutPhase layerer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.LAYERING_STRATEGY));
+        ILayoutPhase crossingMinimizer = cachedLayoutPhase(lgraph.getProperty(
+                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY));
+        ILayoutPhase nodePlacer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY));
         ILayoutPhase edgeRouter = cachedLayoutPhase(
                 EdgeRouterFactory.factoryFor(lgraph.getProperty(LayeredOptions.EDGE_ROUTING)));
 
@@ -288,7 +289,7 @@ final class GraphConfigurator {
         }
         
         // Node-Promotion application for reduction of dummy nodes after layering
-        if (lgraph.getProperty(LayeredOptions.NODE_PROMOTION) != NodePromotionStrategy.NONE) {
+        if (lgraph.getProperty(LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY) != NodePromotionStrategy.NONE) {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
         }
 
@@ -299,13 +300,13 @@ final class GraphConfigurator {
         }
         
         // Additional horizontal compaction depends on orthogonal edge routing
-        if (lgraph.getProperty(LayeredOptions.POST_COMPACTION) != GraphCompactionStrategy.NONE
+        if (lgraph.getProperty(LayeredOptions.COMPACTION_POST_COMPACTION_STRATEGY) != GraphCompactionStrategy.NONE
               && lgraph.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
             configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
         }
         
         // Move trees of high degree nodes to separate layers
-        if (lgraph.getProperty(LayeredOptions.HIGH_DEGREE_NODE_TREATMENT)) {
+        if (lgraph.getProperty(LayeredOptions.HIGH_DEGREE_NODES_TREATMENT)) {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.HIGH_DEGREE_NODE_LAYER_PROCESSOR);
         }
 

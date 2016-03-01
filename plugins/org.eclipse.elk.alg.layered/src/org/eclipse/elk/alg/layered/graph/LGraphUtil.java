@@ -795,7 +795,7 @@ public final class LGraphUtil {
         // at the dummy's center
         switch (finalExternalPortSide) {
         case WEST:
-            dummy.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
+            dummy.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.FIRST_SEPARATE);
             dummy.setProperty(InternalProperties.EDGE_CONSTRAINT, EdgeConstraint.OUTGOING_ONLY);
             dummy.getSize().y = portSize.y;
             dummyPort.setSide(PortSide.EAST);
@@ -803,7 +803,7 @@ public final class LGraphUtil {
             break;
         
         case EAST:
-            dummy.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
+            dummy.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.LAST_SEPARATE);
             dummy.setProperty(InternalProperties.EDGE_CONSTRAINT, EdgeConstraint.INCOMING_ONLY);
             dummy.getSize().y = portSize.y;
             dummyPort.setSide(PortSide.WEST);

@@ -137,11 +137,11 @@ public class NodePromotion implements ILayoutProcessor {
 
         precalculateAndSetInformation();
 
-        promotionStrategy = layeredGraph.getProperty(LayeredOptions.NODE_PROMOTION);
+        promotionStrategy = layeredGraph.getProperty(LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY);
 
         // If the promotion strategy is set to DUMMYNODE_PERCENTAGE or NODECOUNT_PERCENTAGE this
         // value will have an effect on the termination criterion of the node promotion.
-        int promoteUntil = masterGraph.getProperty(LayeredOptions.NODE_PROMOTION_BOUNDARY).intValue();
+        int promoteUntil = masterGraph.getProperty(LayeredOptions.LAYERING_NODE_PROMOTION_MAX_ITERATIONS).intValue();
 
         // Dummy function that's got no other choice but to say "it's true".
         Function<Pair<Integer, Integer>, Boolean> funFunction = (pair) -> true;
@@ -223,9 +223,9 @@ public class NodePromotion implements ILayoutProcessor {
         // Calculate approximative addition of space for a node.
         nodeSizeAffix =
                 masterGraph.getProperty(LayeredOptions.SPACING_NODE)
-                        * masterGraph.getProperty(LayeredOptions.IN_LAYER_SPACING_FACTOR);
+                        * masterGraph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
         // And calculate an approximative size of a dummy node inside the graph.
-        dummySize = nodeSizeAffix * masterGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
+        dummySize = nodeSizeAffix * masterGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
 
         maxHeight = masterGraph.getLayers().size();
         int layerID = maxHeight - 1;

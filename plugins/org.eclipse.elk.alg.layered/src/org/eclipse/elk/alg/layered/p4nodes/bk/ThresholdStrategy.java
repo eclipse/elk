@@ -418,7 +418,7 @@ public abstract class ThresholdStrategy {
         /** the edge that was selected to be straightened. */
         LEdge edge;
         
-        public Postprocessable(final LNode free, final boolean isRoot) {
+        Postprocessable(final LNode free, final boolean isRoot) {
             this.free = free;
             this.isRoot = isRoot;
         }

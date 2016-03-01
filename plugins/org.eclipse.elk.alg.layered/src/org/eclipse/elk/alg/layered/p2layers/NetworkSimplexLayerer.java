@@ -99,27 +99,25 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
     /** User-configured strategy to handle wide nodes. */
     private WideNodesStrategy wideNodesStrategy = WideNodesStrategy.OFF;
     
+    
     // =============================== Initialization Methods =====================================
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("deprecation")
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(final LGraph graph) {
         // Basic strategy
         IntermediateProcessingConfiguration strategy =
                 IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
 
         // Additional dependencies
-        if (graph.getProperty(LayeredOptions.DISTRIBUTE_NODES)
-                || graph.getProperty(LayeredOptions.WIDE_NODES_ON_MULTIPLE_LAYERS) 
+        if (graph.getProperty(LayeredOptions.LAYERING_DISTRIBUTE_NODES)
+                || graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.AGGRESSIVE) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
             wideNodesStrategy = WideNodesStrategy.AGGRESSIVE;
             
-        } else if (graph.getProperty(LayeredOptions.WIDE_NODES_ON_MULTIPLE_LAYERS) 
+        } else if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.CAREFUL) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
             wideNodesStrategy = WideNodesStrategy.CAREFUL;

@@ -88,7 +88,7 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor {
 
                 // SUPPRESS CHECKSTYLE NEXT 50 InnerAssignment
                 case EXTERNAL_PORT:
-                    LayerConstraint lc = node.getProperty(LayeredOptions.LAYER_CONSTRAINT);
+                    LayerConstraint lc = node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
                     if (lc == LayerConstraint.FIRST_SEPARATE) {
                         // it's a WEST port
                         node.getPosition().x = minX - ARBITRARY_SPACING;

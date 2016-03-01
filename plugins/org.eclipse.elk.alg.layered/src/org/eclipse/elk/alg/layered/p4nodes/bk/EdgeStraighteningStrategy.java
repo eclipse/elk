@@ -15,9 +15,9 @@ package org.eclipse.elk.alg.layered.p4nodes.bk;
  * 
  * @author uru
  */
-public enum CompactionStrategy {
+public enum EdgeStraighteningStrategy {
     /** As specified in the original paper. */
-    CLASSIC,
+    NONE,
     /** An integrated method trying to increase the number of straight edges. */
     IMPROVE_STRAIGHTNESS,
 }

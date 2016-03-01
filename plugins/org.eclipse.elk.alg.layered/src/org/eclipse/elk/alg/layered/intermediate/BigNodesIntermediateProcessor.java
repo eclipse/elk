@@ -79,16 +79,16 @@ public class BigNodesIntermediateProcessor implements ILayoutProcessor {
 
                 // handle LAST and LAST_SEPARATE differently
                 // condense the nodes to the right side and move the layer constraint
-                if ((node.getProperty(LayeredOptions.LAYER_CONSTRAINT) == LayerConstraint.LAST)
-                        || (node.getProperty(LayeredOptions.LAYER_CONSTRAINT) 
+                if ((node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.LAST)
+                        || (node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) 
                                 == LayerConstraint.LAST_SEPARATE)) {
 
                     // condense
                     LNode last = condenseBigNodesChain(node, false);
                     // move the layer constraint property
-                    last.setProperty(LayeredOptions.LAYER_CONSTRAINT,
-                            node.getProperty(LayeredOptions.LAYER_CONSTRAINT));
-                    node.setProperty(LayeredOptions.LAYER_CONSTRAINT, LayerConstraint.NONE);
+                    last.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT,
+                            node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT));
+                    node.setProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT, LayerConstraint.NONE);
                 } else {
                     // only condense
                     condenseBigNodesChain(node, true);

@@ -125,7 +125,7 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         double regularSpacing = target.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
 
         // if compaction is desired, do so!
-        if (firstComponent.getProperty(LayeredOptions.COMPONENTS_COMPACT)) {
+        if (firstComponent.getProperty(LayeredOptions.COMPACTION_CONNECTED_COMPONENTS)) {
             ComponentsCompactor compactor = new ComponentsCompactor();
             compactor.compact(components, target.getSize(), regularSpacing);
 

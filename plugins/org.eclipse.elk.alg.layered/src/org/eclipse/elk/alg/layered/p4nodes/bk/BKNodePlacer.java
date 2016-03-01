@@ -166,7 +166,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         // Regard possible other layout options.
         debugMode = layeredGraph.getProperty(CoreOptions.DEBUG_MODE);
         produceBalancedLayout =
-                layeredGraph.getProperty(LayeredOptions.FIXED_ALIGNMENT) == FixedAlignment.BALANCED;
+                layeredGraph.getProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT) == FixedAlignment.BALANCED;
 
         // Phase which marks type 1 conflicts, no difference between the directions so only
         // one run is required.
@@ -176,7 +176,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         BKAlignedLayout rightdown = null, rightup = null, leftdown = null, leftup = null;
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
         List<BKAlignedLayout> layouts = Lists.newArrayListWithCapacity(4);
-        switch (layeredGraph.getProperty(LayeredOptions.FIXED_ALIGNMENT)) {
+        switch (layeredGraph.getProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT)) {
             case LEFTDOWN:
                 leftdown =
                       new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);

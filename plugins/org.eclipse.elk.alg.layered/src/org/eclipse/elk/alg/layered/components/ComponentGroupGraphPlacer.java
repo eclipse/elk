@@ -113,7 +113,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         target.getSize().y = offset.y - spacing;
         
         // if compaction is desired, do so!cing;
-        if (firstComponent.getProperty(LayeredOptions.COMPONENTS_COMPACT)
+        if (firstComponent.getProperty(LayeredOptions.COMPACTION_CONNECTED_COMPONENTS)
                 // the compaction only supports orthogonally routed edges
                 && firstComponent.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
 

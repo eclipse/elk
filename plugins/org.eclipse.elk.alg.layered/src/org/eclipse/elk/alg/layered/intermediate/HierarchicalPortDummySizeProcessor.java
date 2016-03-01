@@ -66,7 +66,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
         
         // Calculate the width difference (this assumes CENTER node alignment)
         double normalSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
-        double smallSpacing = normalSpacing * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
+        double smallSpacing = normalSpacing * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
         double delta = smallSpacing * 2;
         
         // Iterate through the layers

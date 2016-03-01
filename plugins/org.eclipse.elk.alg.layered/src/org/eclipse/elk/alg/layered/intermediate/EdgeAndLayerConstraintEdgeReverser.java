@@ -58,7 +58,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
         // Iterate through the list of nodes
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             // Check if there is a layer constraint
-            LayerConstraint layerConstraint = node.getProperty(LayeredOptions.LAYER_CONSTRAINT);
+            LayerConstraint layerConstraint = node.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
             EdgeConstraint edgeConstraint = null;
             
             switch (layerConstraint) {
@@ -108,7 +108,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                         if (port.getSide() == PortSide.WEST) {
                             for (LEdge e : port.getOutgoingEdges()) {
                                 LayerConstraint lc = e.getTarget().getNode()
-                                                .getProperty(LayeredOptions.LAYER_CONSTRAINT);
+                                                .getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
                                 if (lc == LayerConstraint.LAST
                                         || lc == LayerConstraint.LAST_SEPARATE) {
                                     allPortsReversed = false;
@@ -121,7 +121,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                         if (port.getSide() == PortSide.EAST) {
                             for (LEdge e : port.getIncomingEdges()) {
                                 LayerConstraint lc = e.getSource().getNode()
-                                                .getProperty(LayeredOptions.LAYER_CONSTRAINT);
+                                                .getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
                                 if (lc == LayerConstraint.FIRST
                                         || lc == LayerConstraint.FIRST_SEPARATE) {
                                     allPortsReversed = false;
@@ -162,7 +162,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                 
                 for (LEdge edge : outgoing) {
                     LayerConstraint targetLayerConstraint = edge.getTarget().getNode().getProperty(
-                            LayeredOptions.LAYER_CONSTRAINT);
+                            LayeredOptions.LAYERING_LAYER_CONSTRAINT);
                     
                     // We leave an edge untouched if it has already been reversed or if it runs from a
                     // LAST to a LAST_SEPARATE node (such outgoing edges are allowed for LAST nodes)
@@ -182,7 +182,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                 
                 for (LEdge edge : incoming) {
                     LayerConstraint sourceLayerConstraint = edge.getSource().getNode().getProperty(
-                            LayeredOptions.LAYER_CONSTRAINT);
+                            LayeredOptions.LAYERING_LAYER_CONSTRAINT);
                     
                     // We leave an edge untouched if it has already been reversed or if it runs from a
                     // FIRST_SEPARATE to a FIRST node (such incoming edges are allowed for FIRST nodes)

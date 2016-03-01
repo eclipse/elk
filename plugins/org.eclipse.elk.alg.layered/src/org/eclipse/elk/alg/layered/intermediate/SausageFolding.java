@@ -75,7 +75,7 @@ public class SausageFolding implements ILayoutProcessor {
         progressMonitor.begin("Sausage Folding", 1);
         
         spacing = graph.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
-        inLayerSpacing = spacing * graph.getProperty(LayeredOptions.IN_LAYER_SPACING_FACTOR);
+        inLayerSpacing = spacing * graph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
 
         // determine the maximal dimensions of layers
         double maxHeight = determineMaximalHeight(graph); // sum of heights of nodes in the layer

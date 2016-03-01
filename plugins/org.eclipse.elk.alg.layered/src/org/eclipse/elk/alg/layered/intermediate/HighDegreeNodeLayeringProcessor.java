@@ -65,8 +65,8 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
         this.layeredGraph = graph;
         
         // retrieve some properties
-        int degreeThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODE_THRESHOLD);
-        int treeHeightThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODE_TREE_HEIGHT);
+        int degreeThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODES_THRESHOLD);
+        int treeHeightThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODES_TREE_HEIGHT);
 
         // now iterate through all layer
         final ListIterator<Layer> layerIt = graph.getLayers().listIterator();

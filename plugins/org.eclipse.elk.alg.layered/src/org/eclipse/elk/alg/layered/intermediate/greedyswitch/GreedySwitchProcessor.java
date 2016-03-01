@@ -70,7 +70,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Greedy switch crossing reduction", 1);
 
-        greedySwitchType = graph.getProperty(LayeredOptions.GREEDY_SWITCH);
+        greedySwitchType = graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH);
 
         int layerCount = graph.getLayers().size();
         if (layerCount < 2 || greedySwitchType == GreedySwitchType.OFF) {

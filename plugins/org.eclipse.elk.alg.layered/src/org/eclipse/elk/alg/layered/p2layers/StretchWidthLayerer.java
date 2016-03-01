@@ -97,8 +97,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
+    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(final LGraph graph) {
         return IntermediateProcessingConfiguration
                 .createEmpty()
                 .addBeforePhase1(
@@ -126,7 +125,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // initialize the dummy size with the spacing properties
         dummySize =
                 layeredGraph.getProperty(LayeredOptions.SPACING_NODE)
-                        * layeredGraph.getProperty(LayeredOptions.EDGE_SPACING_FACTOR);
+                        * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
         // Sort the nodes at beginning, since the rank will not change.
         // The list is sorted in descending order by the rank.
         // It has to be computed first

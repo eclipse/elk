@@ -19,18 +19,18 @@ import org.eclipse.elk.alg.layered.p1cycles.CycleBreakingStrategy
 import org.eclipse.elk.alg.layered.p2layers.LayeringStrategy
 import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy
 import org.eclipse.elk.alg.layered.p4nodes.NodePlacementStrategy
-import org.eclipse.elk.alg.layered.p4nodes.bk.CompactionStrategy
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
+import org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy
 
 /**
  * Declarations for the ELK Layered layout algorithm.
  */
 bundle {
     class properties.LayeredOptions  
-    idPrefix org.eclipse.elk.layered  
+    idPrefix org.eclipse.elk.alg.layered  
 }
 
 algorithm layered(LayeredLayoutProvider) {
@@ -75,79 +75,355 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.portAlignment.south
 	supports org.eclipse.elk.portAlignment.west
 	supports org.eclipse.elk.portAlignment.east
-	supports edgeSpacingFactor
-	supports edgeNodeSpacingFactor
+	supports org.eclipse.elk.alg.layered.spacing.edgeNodeSpacingFactor
+	supports org.eclipse.elk.alg.layered.spacing.edgeNodeSpacingFactor
 	supports unnecessaryBendpoints
-	supports nodeLayering
+	supports org.eclipse.elk.alg.layered.layering.strategy
 	supports thoroughness
-	supports layerConstraint
-	supports cycleBreaking
-	supports crossMin
-	supports greedySwitch
+	supports org.eclipse.elk.alg.layered.layering.layerConstraint
+	supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
+	supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
+	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch
 	supports mergeEdges
 	supports mergeHierarchyEdges
 	supports interactiveReferencePoint
-	supports nodePlacement
-	supports fixedAlignment
+	supports org.eclipse.elk.alg.layered.nodePlacement.strategy
+	supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
 	supports edgeLabelSideSelection
 	supports feedbackEdges
-	supports inLayerSpacingFactor
-	supports wideNodesOnMultipleLayers
-	supports linearSegmentsDeflectionDampening
-	supports selfLoopPlacement
+	supports org.eclipse.elk.alg.layered.spacing.inLayerSpacingFactor
+	supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
+	supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
+	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopPlacement
 	supports contentAlignment
-	supports compaction
-	supports postCompaction
-	supports postCompaction_constraints
-	supports components_compact
-	supports highDegreeNode_treatment
-	supports highDegreeNode_threshold
-	supports highDegreeNode_treeHeight
+	supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
+	supports org.eclipse.elk.alg.layered.compaction.postCompaction.strategy
+	supports org.eclipse.elk.alg.layered.compaction.postCompaction.constraints
+	supports org.eclipse.elk.alg.layered.compaction.connectedComponents
+	supports org.eclipse.elk.alg.layered.highDegreeNodes.treatment
+	supports org.eclipse.elk.alg.layered.highDegreeNodes.threshold
+	supports org.eclipse.elk.alg.layered.highDegreeNodes.treeHeight
 }
 
-advanced option compaction: CompactionStrategy {
-	label "Compaction Strategy"
-	description "Specifies the compaction strategy when using the Brandes and Koepf node placer."
-	default = CompactionStrategy.IMPROVE_STRAIGHTNESS
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy
-	requires nodePlacement == NodePlacementStrategy.BRANDES_KOEPF
+
+/* ------------------------
+ *    phase 1
+ * ------------------------*/
+group cycleBreaking {
+    
+    option strategy: CycleBreakingStrategy {
+        label "Cycle Breaking Strategy"
+        description
+            "Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines
+            which edges to reverse to break the cycles. Reversed edges will end up pointing to the
+            opposite direction of regular edges (that is, reversed edges will point left if edges
+            usually point right)."
+        default = CycleBreakingStrategy.GREEDY
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.cycleBreaking
+    }
+    
 }
 
-option contentAlignment: EnumSet<ContentAlignment> {
+
+/* ------------------------
+ *    phase 2
+ * ------------------------*/
+group layering {
+    
+    option strategy: LayeringStrategy {
+        label "Node Layering Strategy"
+        description "Strategy for node layering."
+        default = LayeringStrategy.NETWORK_SIMPLEX
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.nodeLayering
+    }
+    
+    advanced option layerConstraint: LayerConstraint {
+        label "Layer Constraint"
+        description "Determines a constraint on the placement of the node regarding the layering."
+        default = LayerConstraint.NONE
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.layerConstraint
+    }
+    
+    deprecated advanced option distributeNodes: boolean {
+        label "Distribute Nodes (Deprecated)"
+        description "Whether wide nodes should be distributed to several layers."
+        default = false
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.distributeNodes
+    }
+
+    advanced option wideNodesOnMultipleLayers: WideNodesStrategy {
+        label "Wide Nodes on Multiple Layers"
+        description "Strategy to distribute wide nodes over multiple layers."
+        default = WideNodesStrategy.OFF
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers
+    }
+    
+    
+    group minWidth {
+        
+        advanced option upperBoundOnWidth: int {
+            label "Upper Bound On Width [MinWidth Layerer]"
+            description "Defines a loose upper bound on the width of the MinWidth layerer."
+            default = 4
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth
+            requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.EXP_MIN_WIDTH
+        }
+        
+        advanced option upperLayerEstimationScalingFactor: int {
+            label "Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
+            description "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations."
+            default = 2
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor
+            requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.EXP_MIN_WIDTH
+        }
+        
+    }
+    
+    group nodePromotion {
+        
+        advanced option strategy: NodePromotionStrategy {
+            label "Node Promotion Strategy"
+            description "Reduces number of dummy nodes after layering phase (if possible)."
+            default = NodePromotionStrategy.NONE
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.nodePromotion
+        }
+        
+        advanced option maxIterations: int {
+            label "Max Node Promotion Iterations"
+            description "Limits the number of iterations for node promotion."
+            default = 0
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.nodePromotionBoundary
+            requires org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
+        }
+
+    }
+    
+}
+
+
+/* ------------------------
+ *    phase 3
+ * ------------------------*/
+group crossingMinimization {
+    
+    option strategy: CrossingMinimizationStrategy {
+        label "Crossing Minimization Strategy"
+        description "Strategy for crossing minimization."
+        default = CrossingMinimizationStrategy.LAYER_SWEEP
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.crossMin
+    }
+    
+    advanced option greedySwitch: GreedySwitchType {
+        label "Greedy Switch Crossing Minimization"
+        description "Greedy Switch strategy for crossing minimization."
+        default = GreedySwitchType.TWO_SIDED
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.greedySwitch
+    }
+    
+}
+
+
+/* ------------------------
+ *    phase 4
+ * ------------------------*/
+group nodePlacement {
+
+    option strategy: NodePlacementStrategy {
+        label "Node Placement Strategy"
+        description "Strategy for node placement."
+        default = NodePlacementStrategy.BRANDES_KOEPF
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.nodePlacement
+    }
+    
+    group bk {
+        
+        advanced option edgeStraightening: EdgeStraighteningStrategy {
+        	label "Edge Straightening"
+        	description
+        	    "Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges
+                at the expense of diagram size."
+        	default = EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS
+        	targets parents
+        	legacyIds de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy
+        	requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
+        }
+        
+        // TODO Turn this into two layout options
+        advanced option fixedAlignment: FixedAlignment {
+            label "Fixed Alignment"
+            description
+                "Tells the BK node placer to use a certain alignment instead of taking the optimal result."
+            default = FixedAlignment.NONE
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.fixedAlignment
+            requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
+        }
+        
+    }
+    
+    
+    group linearSegments {
+        
+        advanced option deflectionDampening: float {
+            label "Linear Segments Deflection Dampening"
+            description "Dampens the movement of nodes to keep the diagram from getting too large."
+            default = 0.3f
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening
+            requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.LINEAR_SEGMENTS
+        }
+        
+    }
+    
+}
+
+
+/* ------------------------
+ *    phase 5
+ * ------------------------*/
+group edgeRouting {
+
+    option selfLoopPlacement: SelfLoopPlacement {
+        label "Spline Self-Loop Placement"
+        default = SelfLoopPlacement.NORTH_STACKED
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement
+        requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+    }
+    
+}
+
+
+/* ------------------------
+ *    spacing
+ * ------------------------*/
+group spacing {
+
+    advanced option edgeNodeSpacingFactor: float {
+        label "Edge Node Spacing Factor"
+        description
+            "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
+            an edge and a node."
+        default = 0.5f
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor
+    }
+    
+    advanced option edgeSpacingFactor: float {
+        label "Edge Spacing Factor"
+        description
+            "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
+            edges."
+        default = 0.5f
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.edgeSpacingFactor
+    }
+    
+    advanced option inLayerSpacingFactor: float {
+        label "In-layer Spacing Factor"
+        description
+            "Factor by which the usual spacing is multiplied to determine the in-layer spacing between
+            objects."
+        default = 1
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.inLayerSpacingFactor
+    }
+    
+}
+
+
+/* ------------------------
+ *    compaction
+ * ------------------------*/
+group compaction {
+    
+    group postCompaction {
+        
+        advanced option strategy: GraphCompactionStrategy {
+            label "Post Compaction Strategy"
+            description "Specifies whether and how post-process compaction is applied."
+            default = GraphCompactionStrategy.NONE
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.postCompaction
+        }
+        
+        advanced option constraints: ConstraintCalculationStrategy {
+            label "Post Compaction Constraint Calculation"
+            description "Specifies whether and how post-process compaction is applied."
+            default = ConstraintCalculationStrategy.SCANLINE
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.postCompaction.constraints
+        }
+        
+    }
+    
+    advanced option connectedComponents: boolean {
+        label "Connected Components Compaction"
+        description "Tries to further compact components (disconnected sub-graphs)."
+        default = false
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.components.compact
+        requires org.eclipse.elk.separateConnectedComponents == true
+    }
+    
+}
+
+
+/* ------------------------
+ *    high degree nodes
+ * ------------------------*/
+group highDegreeNodes {
+    
+    advanced option treatment: boolean {
+        label "High Degree Node Treatment"
+        description "Makes room around high degree nodes to place leafs and trees."
+        default = false
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.treatment
+    }
+    
+    advanced option threshold: int {
+        label "High Degree Node Threshold"
+        description "Whether a node is considered to have a high degree."
+        default = 16
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.threshold
+        requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
+    }
+    
+    advanced option treeHeight: int {
+        label "High Degree Node Maximum Tree Height"
+        description "Maximum height of a subtree connected to a high degree node to be moved to separate layers."
+        default = 5
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight
+        requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
+    }
+
+}
+
+
+/* ------------------------
+ *    miscellaneous
+ * ------------------------*/
+advanced option contentAlignment: EnumSet<ContentAlignment> {
 	label "Content Alignment"
 	description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
 	default = EnumSet.noneOf(ContentAlignment)
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
-}
-
-option crossMin: CrossingMinimizationStrategy {
-	label "Crossing Minimization"
-	description "Strategy for crossing minimization."
-	default = CrossingMinimizationStrategy.LAYER_SWEEP
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.crossMin
-}
-
-option cycleBreaking: CycleBreakingStrategy {
-	label "Cycle Breaking"
-	description
-		"Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines
-		which edges to reverse to break the cycles. Reversed edges will end up pointing to the
-		opposite direction of regular edges (that is, reversed edges will point left if edges
-		usually point right)."
-	default = CycleBreakingStrategy.GREEDY
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.cycleBreaking
-}
-
-deprecated advanced option distributeNodes: boolean {
-	label "Distribute Nodes (Deprecated)"
-	description "Whether wide nodes should be distributed to several layers."
-	default = false
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.distributeNodes
 }
 
 advanced option edgeCenterLabelPlacementStrategy: EdgeLabelPlacementStrategy {
@@ -158,7 +434,6 @@ advanced option edgeCenterLabelPlacementStrategy: EdgeLabelPlacementStrategy {
 	legacyIds de.cau.cs.kieler.edgeLabelPlacementStrategy
 }
 
-
 option edgeLabelSideSelection: EdgeLabelSideSelection {
 	label "Edge Label Side Selection"
 	description "Method to decide on edge label sides."
@@ -166,26 +441,6 @@ option edgeLabelSideSelection: EdgeLabelSideSelection {
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.edgeLabelSideSelection
 	requires org.eclipse.elk.edgeRouting == EdgeRouting.ORTHOGONAL
-}
-
-advanced option edgeNodeSpacingFactor: float {
-	label "Edge Node Spacing Factor"
-	description
-		"Factor by which the object spacing is multiplied to arrive at the minimal spacing between
-		an edge and a node."
-	default = 0.5f
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor
-}
-
-advanced option edgeSpacingFactor: float {
-	label "Edge Spacing Factor"
-	description
-		"Factor by which the object spacing is multiplied to arrive at the minimal spacing between
-		edges."
-	default = 0.5f
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.edgeSpacingFactor
 }
 
 advanced option feedbackEdges: boolean {
@@ -196,67 +451,14 @@ advanced option feedbackEdges: boolean {
 	legacyIds de.cau.cs.kieler.klay.layered.feedBackEdges
 }
 
-advanced option fixedAlignment: FixedAlignment {
-	label "Fixed Alignment"
-	description
-		"Tells the BK node placer to use a certain alignment instead of taking the optimal result."
-	default = FixedAlignment.NONE
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.fixedAlignment
-	requires nodePlacement == NodePlacementStrategy.BRANDES_KOEPF
-}
-
-option greedySwitch: GreedySwitchType {
-	label "Greedy Switch Crossing Minimization"
-	description "Greedy Switch strategy for crossing minimization."
-	default = GreedySwitchType.TWO_SIDED
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.greedySwitch
-}
-
-advanced option inLayerSpacingFactor: float {
-	label "In-layer Spacing Factor"
-	description
-		"Factor by which the usual spacing is multiplied to determine the in-layer spacing between
-		objects."
-	default = 1
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.inLayerSpacingFactor
-}
-
 advanced option interactiveReferencePoint: InteractiveReferencePoint {
 	label "Interactive Reference Point"
 	description "Determines which point of a node is considered by interactive layout phases."
 	default = InteractiveReferencePoint.CENTER
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.interactiveReferencePoint
-	requires cycleBreaking == CycleBreakingStrategy.INTERACTIVE
-	requires crossMin == CrossingMinimizationStrategy.INTERACTIVE
-}
-
-advanced option layerConstraint: LayerConstraint {
-	label "Layer Constraint"
-	description "Determines a constraint on the placement of the node regarding the layering."
-	default = LayerConstraint.NONE
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.layerConstraint
-}
-
-advanced option linearSegmentsDeflectionDampening: float {
-	label "Linear Segments Deflection Dampening"
-	description "Dampens the movement of nodes to keep the diagram from getting too large."
-	default = 0.3f
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening
-	requires nodePlacement == NodePlacementStrategy.LINEAR_SEGMENTS
-}
-
-option nodeLayering: LayeringStrategy {
-	label "Node Layering"
-	description "Strategy for node layering."
-	default = LayeringStrategy.NETWORK_SIMPLEX
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.nodeLayering
+	requires org.eclipse.elk.alg.layered.cycleBreaking.strategy == CycleBreakingStrategy.INTERACTIVE
+	requires org.eclipse.elk.alg.layered.crossingMinimization.strategy == CrossingMinimizationStrategy.INTERACTIVE
 }
 
 advanced option mergeEdges: boolean {
@@ -282,15 +484,6 @@ advanced option mergeHierarchyEdges: boolean {
 	default = true
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.mergeHierarchyEdges
-	requires org.eclipse.elk.layoutHierarchy == true
-}
-
-option nodePlacement: NodePlacementStrategy {
-	label "Node Placement"
-	description "Strategy for node placement."
-	default = NodePlacementStrategy.BRANDES_KOEPF
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.nodePlacement
 }
 
 advanced option sausageFolding: boolean {
@@ -299,15 +492,7 @@ advanced option sausageFolding: boolean {
 	default = false
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.sausageFolding
-	requires nodeLayering == LayeringStrategy.LONGEST_PATH
-}
-
-option selfLoopPlacement: SelfLoopPlacement {
-	label "Spline Self-Loop Placement"
-	default = SelfLoopPlacement.NORTH_STACKED
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement
-	requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+	requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.LONGEST_PATH
 }
 
 advanced option thoroughness: int {
@@ -330,108 +515,12 @@ advanced option unnecessaryBendpoints: boolean {
 	legacyIds de.cau.cs.kieler.klay.layered.unnecessaryBendpoints
 }
 
-advanced option wideNodesOnMultipleLayers: WideNodesStrategy {
-	label "Wide Nodes on Multiple Layers"
-	description "Strategy to distribute wide nodes over multiple layers."
-	default = WideNodesStrategy.OFF
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers
-}
-
-advanced option northOrSouthPort: Boolean {
+advanced option northOrSouthPort: boolean {
 	label "North or South Port"
-	description "Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)"
+	description
+        "Specifies that this port can either be placed on the north side of a node or on the south
+        side (if port constraints permit)"
 	default = false
 	targets ports
 	legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
 }
-
-/* ------------------------
- *    high degree nodes
- * ------------------------*/
-advanced option highDegreeNode_treatment: Boolean {
-	label "High Degree Node Treatment"
-	description "Makes room around high degree nodes to place leafs and trees."
-	default = false
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.treatment
-}
-
-advanced option highDegreeNode_threshold: Integer {
-	label "High Degree Node Threshold"
-	description "Whether a node is considered to have a high degree."
-	default = 16
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.threshold
-	requires highDegreeNode_treatment == true
-}
-
-advanced option highDegreeNode_treeHeight: Integer {
-	label "High Degree Node Maximum Tree Height"
-	description "Maximum height of a subtree connected to a high degree node to be moved to separate layers."
-	default = 5
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight
-	requires highDegreeNode_treatment == true
-}
-
-advanced option minWidthUpperBoundOnWidth: Integer {
-	label "Upper Bound On Width [MinWidth Layerer]"
-	description "Defines a loose upper bound on the width of the MinWidth layerer."
-	default = 4
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth
-	requires nodeLayering == LayeringStrategy.EXP_MIN_WIDTH
-}
-
-advanced option minWidthUpperLayerEstimationScalingFactor: Integer {
-	label "Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
-	description "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations."
-	default = 2
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor
-	requires nodeLayering == LayeringStrategy.EXP_MIN_WIDTH
-}
-
-advanced option postCompaction: GraphCompactionStrategy {
-	label "Post Compaction"
-	description "Specifies whether and how post-process compaction is applied."
-	default = GraphCompactionStrategy.NONE
-	targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.postCompaction
-}
-
-advanced option postCompaction_constraints: ConstraintCalculationStrategy {
-	label "Post Compaction Constraint Calculation"
-	description "Specifies whether and how post-process compaction is applied."
-	default = ConstraintCalculationStrategy.SCANLINE
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.postCompaction.constraints
-}
-
-advanced option nodePromotion: NodePromotionStrategy {
-	label "Node Promotion"
-	description "Reduces number of dummy nodes after layering phase (if possible)."
-	default = NodePromotionStrategy.NONE
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.nodePromotion
-}
-
-advanced option nodePromotion_boundary: Integer {
-	label "Node Promotion Boundary"
-	description "Limits the number of iterations for node promotion."
-	default = 0
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.nodePromotionBoundary
-	requires nodePromotion
-}
-
-advanced option components_compact: Boolean {
-	label "Compact Components"
-	description "Tries to further compact components (disconnected sub-graphs)."
-	default = false
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.components.compact
-	requires org.eclipse.elk.separateConnectedComponents == true
-}
-
