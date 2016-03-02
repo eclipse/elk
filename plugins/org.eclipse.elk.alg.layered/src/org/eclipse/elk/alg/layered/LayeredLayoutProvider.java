@@ -33,7 +33,7 @@ import org.eclipse.elk.graph.KNode;
 public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     /** the layout provider id. */
-    public static final String ID = "org.eclipse.elk.alg.layered";
+    public static final String ID = "org.eclipse.elk.layered";
     
     ///////////////////////////////////////////////////////////////////////////////
     // Variables

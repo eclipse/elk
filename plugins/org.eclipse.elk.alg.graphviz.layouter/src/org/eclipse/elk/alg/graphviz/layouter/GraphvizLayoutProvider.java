@@ -54,7 +54,7 @@ import com.google.inject.Injector;
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 
     /** the layout provider id. */
-    public static final String ID = "org.eclipse.elk.alg.graphviz";
+    public static final String ID = "org.eclipse.elk.graphviz";
 
     /** preference constant for determining whether to reuse a single Graphviz process. */
     public static final String PREF_GRAPHVIZ_REUSE_PROCESS = "graphviz.reuseProcess";

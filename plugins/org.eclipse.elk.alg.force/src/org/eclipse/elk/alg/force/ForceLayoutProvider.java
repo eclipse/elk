@@ -35,7 +35,7 @@ import org.eclipse.elk.graph.KNode;
 public final class ForceLayoutProvider extends AbstractLayoutProvider {
 
     /** the layout provider id. */
-    public static final String ID = "org.eclipse.elk.alg.force";
+    public static final String ID = "org.eclipse.elk.force";
     
     /** the force model used by this layout algorithm. */
     private AbstractForceModel forceModel;
