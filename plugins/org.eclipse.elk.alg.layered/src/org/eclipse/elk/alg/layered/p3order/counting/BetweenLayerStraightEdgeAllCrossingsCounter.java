@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
+package org.eclipse.elk.alg.layered.p3order.counting;
 
 import java.util.ListIterator;
 
@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.BetweenLayerEdgeAllCrossingsCounter;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -29,14 +30,19 @@ import org.eclipse.elk.core.options.PortSide;
  * 
  * @author msp
  */
-public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCrossingsCounter {
+public final class BetweenLayerStraightEdgeAllCrossingsCounter extends
+        BetweenLayerEdgeAllCrossingsCounter {
+
 
     /**
      * @param nodeOrder
      *            a node order.
+     * @param assumeFixedPortOrder
+     * @param numPorts
      */
-    public BetweenLayerStraightEdgeAllCrossingsCounter(final LNode[][] nodeOrder) {
-        super(nodeOrder);
+    private BetweenLayerStraightEdgeAllCrossingsCounter(final boolean assumeFixedPortOrder,
+            final int numPorts) {
+        super(assumeFixedPortOrder, numPorts);
     }
 
     /**
@@ -50,7 +56,7 @@ public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdg
         Layer rightLayerRef = rightLayer[0].getLayer();
         for (LNode node : rightLayer) {
             assert node.getLayer() == rightLayerRef;
-            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (isPortOrderFixed(node)) {
                 // Determine how many input ports there are on the north side
                 // (note that the standard port order is north - east - south - west)
                 int northInputPorts = 0;
@@ -108,12 +114,23 @@ public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdg
             }
         }
 
+        int[] southSequence =
+                sortEdgeTargetsBySourceAndTargetPos(leftLayer, edgeCount,
+                        rightLayerRef);
+
+        int crossCount =
+                buildAccumulatorTreeAndCountCrossings(targetCount, edgeCount, southSequence);
+
+        return crossCount;
+    }
+
+    private int[] sortEdgeTargetsBySourceAndTargetPos(final LNode[] leftLayer, final int edgeCount,
+            final Layer rightLayerRef) {
         // Determine the sequence of edge target positions sorted by source and target index
         int[] southSequence = new int[edgeCount];
         int i = 0;
         for (LNode node : leftLayer) {
-            assert node.getLayer() == leftLayerRef;
-            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (isPortOrderFixed(node)) {
                 // Iterate output ports in their natural order, that is north - east - south - west
                 for (LPort port : node.getPorts()) {
                     int start = i;
@@ -140,11 +157,12 @@ public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdg
                 }
             }
         }
+        return southSequence;
+    }
 
-        int crossCount =
-                buildAccumulatorTreeAndCountCrossings(targetCount, edgeCount, southSequence);
-
-        return crossCount;
+    private boolean isPortOrderFixed(final LNode node) {
+        return isAssumeFixedPortOrder()
+                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private int buildAccumulatorTreeAndCountCrossings(final int targetCount, final int edgeCount,
@@ -214,5 +232,29 @@ public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdg
         }
 
         return -currentStart - 1;
+    }
+
+    /**
+     * Create BetweenLayerStraightEdgeAllCrossingsCounter.
+     * 
+     * @param numPorts
+     *            number of ports in complete graph.
+     * @return new BetweenLayerStraightEdgeAllCrossingsCounter object.
+     */
+    public static BetweenLayerStraightEdgeAllCrossingsCounter create(
+            final int numPorts) {
+        return new BetweenLayerStraightEdgeAllCrossingsCounter(false, numPorts);
+    }
+
+    /**
+     * Create BetweenLayerStraightEdgeAllCrossingsCounter assuming all port orders to be fixed.
+     * 
+     * @param numPorts
+     *            number of ports in complete graph.
+     * @return new BetweenLayerStraightEdgeAllCrossingsCounter object.
+     */
+    public static BetweenLayerStraightEdgeAllCrossingsCounter createAssumingPortOrderFixed(
+            final int numPorts) {
+        return new BetweenLayerStraightEdgeAllCrossingsCounter(true, numPorts);
     }
 }

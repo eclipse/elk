@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.graph;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
+import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -39,49 +44,6 @@ public final class LPort extends LShape {
 
     /** the serial version UID. */
     private static final long serialVersionUID = -3406558719744943360L;
-    
-    /** a predicate that checks for output ports, that is ports with outgoing edges. */
-    public static final Predicate<LPort> OUTPUT_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return !port.outgoingEdges.isEmpty();
-        }
-    };
-
-    /** a predicate that checks for input ports, that is ports with incoming edges. */
-    public static final Predicate<LPort> INPUT_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return !port.incomingEdges.isEmpty();
-        }
-    };
-    
-    /** a predicate that checks for north-side ports. */
-    public static final Predicate<LPort> NORTH_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return port.side == PortSide.NORTH;
-        }
-    };
-    
-    /** a predicate that checks for east-side ports. */
-    public static final Predicate<LPort> EAST_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return port.side == PortSide.EAST;
-        }
-    };
-    
-    /** a predicate that checks for south-side ports. */
-    public static final Predicate<LPort> SOUTH_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return port.side == PortSide.SOUTH;
-        }
-    };
-    
-    /** a predicate that checks for west-side ports. */
-    public static final Predicate<LPort> WEST_PREDICATE = new Predicate<LPort>() {
-        public boolean apply(final LPort port) {
-            return port.side == PortSide.WEST;
-        }
-    };
-    
     /** the owning node. */
     private LNode owner;
     /** the port side. */
@@ -92,11 +54,11 @@ public final class LPort extends LShape {
     private final LInsets margin = new LInsets();
     /** this port's labels. */
     private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
+
     /** the edges going into the port. */
-    private final List<LEdge> incomingEdges = Lists.newArrayListWithCapacity(4);
+    private final List<LEdge> incomingEdges = new NoteChangeList<>(4);
     /** the edges going out of the port. */
-    private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
-    
+    private final List<LEdge> outgoingEdges = new NoteChangeList<>(4);
 
     /**
      * Returns the node that owns this port.
@@ -108,11 +70,35 @@ public final class LPort extends LShape {
     }
 
     /**
-     * Sets the owning node and adds itself to the node's list of ports.
-     * If the port was previously in another node, it is removed from that
-     * node's list of ports. Be careful not to use this method while
-     * iterating through the ports list of the old node nor of the new node,
-     * since that could lead to {@link java.util.ConcurrentModificationException}s.
+     * Return predicate for filtering by portType.
+     * 
+     * @param portType
+     * @return predicate
+     */
+    public static Predicate<LPort> getInOutputPredicate(PortType portType) {
+        if (portType == PortType.OUTPUT) {
+            return port -> !port.getOutgoingEdges().isEmpty();
+        } else if (portType == PortType.INPUT) {
+            return port -> !port.getIncomingEdges().isEmpty();
+        }
+        throw new UnsupportedOperationException("Can't filter on undefined PortType");
+    }
+
+    /**
+     * Return predicate for filtering by side.
+     * 
+     * @param side
+     * @return predicate
+     */
+    public static Predicate<? super LPort> sidePredicate(PortSide side) {
+        return port -> port.getSide() == side;
+    }
+
+    /**
+     * Sets the owning node and adds itself to the node's list of ports. If the port was previously
+     * in another node, it is removed from that node's list of ports. Be careful not to use this
+     * method while iterating through the ports list of the old node nor of the new node, since that
+     * could lead to {@link java.util.ConcurrentModificationException}s.
      * 
      * @param node the owner to set
      */
@@ -120,9 +106,9 @@ public final class LPort extends LShape {
         if (this.owner != null) {
             this.owner.getPorts().remove(this);
         }
-        
+
         this.owner = node;
-        
+
         if (this.owner != null) {
             this.owner.getPorts().add(this);
         }
@@ -148,7 +134,7 @@ public final class LPort extends LShape {
         }
         this.side = theside;
     }
-    
+
     /**
      * Returns the anchor position of the port. This is the point where edges should be attached,
      * relative to the port's position. Should only be modified when the port position is changed.
@@ -158,7 +144,7 @@ public final class LPort extends LShape {
     public KVector getAnchor() {
         return anchor;
     }
-    
+
     /**
      * Returns the absolute anchor position of the port. This is the point where edges should be
      * attached, relative to the containing graph. This method creates a new vector, so modifying
@@ -169,7 +155,7 @@ public final class LPort extends LShape {
     public KVector getAbsoluteAnchor() {
         return KVector.sum(owner.getPosition(), this.getPosition(), anchor);
     }
-    
+
     /**
      * Returns the margin around this port. The margin is typically used to reserve space for the
      * port's labels.
@@ -179,7 +165,7 @@ public final class LPort extends LShape {
     public LInsets getMargin() {
         return margin;
     }
-    
+
     /**
      * Returns this port's labels.
      * 
@@ -188,7 +174,7 @@ public final class LPort extends LShape {
     public List<LLabel> getLabels() {
         return labels;
     }
-    
+
     /**
      * Returns the name of the port. The name is derived from the text of the first label, if any.
      * 
@@ -200,7 +186,7 @@ public final class LPort extends LShape {
         }
         return null;
     }
-    
+
     /**
      * Returns this port's degree, that is, the number of edges connected to it.
      * 
@@ -209,7 +195,7 @@ public final class LPort extends LShape {
     public int getDegree() {
         return incomingEdges.size() + outgoingEdges.size();
     }
-    
+
     /**
      * Returns the number of incoming edges minus the number of outgoing edges. This
      * is the net flow of the port.
@@ -237,16 +223,24 @@ public final class LPort extends LShape {
     public List<LEdge> getOutgoingEdges() {
         return outgoingEdges;
     }
-    
+
     /**
      * Returns an iterable over all connected edges, both incoming and outgoing.
      * 
      * @return an iterable over all connected edges.
      */
     public Iterable<LEdge> getConnectedEdges() {
-        return Iterables.concat(incomingEdges, outgoingEdges);
+        if (edgeListsHaveChanged) {
+            connectedEdges = new ArrayList<>(incomingEdges.size() + outgoingEdges.size());
+            connectedEdges.addAll(incomingEdges);
+            connectedEdges.addAll(outgoingEdges);
+            edgeListsHaveChanged = false;
+        }
+        return connectedEdges;
     }
-    
+
+    private List<LEdge> connectedEdges;
+
     /**
      * Returns an iterable over all the port's predecessor ports. Predecessor ports are source
      * ports of incoming edges of this port.
@@ -256,24 +250,24 @@ public final class LPort extends LShape {
     public Iterable<LPort> getPredecessorPorts() {
         return new Iterable<LPort>() {
             public Iterator<LPort> iterator() {
-                final Iterator<LEdge> edgesIter = incomingEdges.iterator();
-                
-                return new Iterator<LPort>() {
-                    public boolean hasNext() {
-                        return edgesIter.hasNext();
-                    }
-                    public LPort next() {
-                        return edgesIter.next().getSource();
-                    }
-                    public void remove() {
-                        edgesIter.remove();
-                    }
-                };
+            final Iterator<LEdge> edgesIter = incomingEdges.iterator();
+
+            return new Iterator<LPort>() {
+                public boolean hasNext() {
+                    return edgesIter.hasNext();
+                }
+                public LPort next() {
+                    return edgesIter.next().getSource();
+                }
+                public void remove() {
+                    edgesIter.remove();
+                }
+            };
             }
-            
+
         };
     }
-    
+
     /**
      * Returns an iterable over all the port's successor ports. Successor ports are target
      * ports of outgoing edges of this port.
@@ -283,21 +277,21 @@ public final class LPort extends LShape {
     public Iterable<LPort> getSuccessorPorts() {
         return new Iterable<LPort>() {
             public Iterator<LPort> iterator() {
-                final Iterator<LEdge> edgesIter = outgoingEdges.iterator();
-                
-                return new Iterator<LPort>() {
-                    public boolean hasNext() {
-                        return edgesIter.hasNext();
-                    }
-                    public LPort next() {
-                        return edgesIter.next().getTarget();
-                    }
-                    public void remove() {
-                        edgesIter.remove();
-                    }
-                };
+            final Iterator<LEdge> edgesIter = outgoingEdges.iterator();
+
+            return new Iterator<LPort>() {
+                public boolean hasNext() {
+                    return edgesIter.hasNext();
+                }
+                public LPort next() {
+                    return edgesIter.next().getTarget();
+                }
+                public void remove() {
+                    edgesIter.remove();
+                }
+            };
             }
-            
+
         };
     }
 
@@ -309,7 +303,7 @@ public final class LPort extends LShape {
     public Iterable<LPort> getConnectedPorts() {
         return Iterables.concat(getPredecessorPorts(), getSuccessorPorts());
     }
-    
+
     /**
      * Returns the index of the port in the containing node's list of ports. Note
      * that this method has linear running time in the number of ports, so use
@@ -337,5 +331,94 @@ public final class LPort extends LShape {
             return "p_" + text;
         }
     }
-    
+
+    private boolean edgeListsHaveChanged = true;
+
+    private class NoteChangeList<T> extends ArrayList<T> {
+
+        private static final long serialVersionUID = 33124633927146694L;
+
+        public NoteChangeList(final int initialCapacity) {
+            super(initialCapacity);
+        }
+
+        @Override
+        public boolean add(final T e) {
+            edgeListsHaveChanged = true;
+            return super.add(e);
+        }
+
+        @Override
+        public boolean remove(final Object o) {
+            edgeListsHaveChanged = true;
+            return super.remove(o);
+        }
+
+        @Override
+        public boolean addAll(final Collection<? extends T> c) {
+            edgeListsHaveChanged = true;
+            return super.addAll(c);
+        }
+
+        @Override
+        public boolean addAll(final int index, final Collection<? extends T> c) {
+            edgeListsHaveChanged = true;
+            return super.addAll(index, c);
+        }
+
+        @Override
+        public boolean removeAll(final Collection<?> c) {
+            edgeListsHaveChanged = true;
+            return super.removeAll(c);
+        }
+
+        @Override
+        public boolean retainAll(final Collection<?> c) {
+            edgeListsHaveChanged = true;
+            return super.retainAll(c);
+        }
+
+        @Override
+        public void replaceAll(final UnaryOperator<T> operator) {
+            edgeListsHaveChanged = true;
+            super.replaceAll(operator);
+        }
+
+        @Override
+        public boolean removeIf(final java.util.function.Predicate<? super T> filter) {
+            edgeListsHaveChanged = true;
+            return super.removeIf(filter);
+        }
+
+        @Override
+        public void sort(final Comparator<? super T> c) {
+            edgeListsHaveChanged = true;
+            super.sort(c);
+        }
+
+        @Override
+        public void clear() {
+            edgeListsHaveChanged = true;
+            super.clear();
+        }
+
+        @Override
+        public T set(final int index, final T element) {
+            edgeListsHaveChanged = true;
+            return super.set(index, element);
+        }
+
+        @Override
+        public void add(final int index, final T element) {
+            edgeListsHaveChanged = true;
+            super.add(index, element);
+        }
+
+        @Override
+        public T remove(final int index) {
+            edgeListsHaveChanged = true;
+            return super.remove(index);
+        }
+    }
+
 }

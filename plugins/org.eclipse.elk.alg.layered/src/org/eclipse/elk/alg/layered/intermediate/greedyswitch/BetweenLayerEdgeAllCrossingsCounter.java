@@ -16,7 +16,9 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 /**
  * Abstract super class for counting all between-layer edge crossings. Subclasses must implement
  * {@link #countCrossings(LNode[], LNode[])} which counts crossings between two layers. They can use
- * the {@code port.id} fields and the {@code portPos} array (accessible through {@link #getPortPos()}.
+ * the {@code port.id} fields and the {@code portPos} array (accessible through
+ * {@link #getPortPos()}. TODO-alan this class and it's children are only needed by the old
+ * greedyswitchprocessor and hopefully will die some day.
  * 
  * @author alan
  */
@@ -25,14 +27,20 @@ public abstract class BetweenLayerEdgeAllCrossingsCounter {
     /**
      * Port position array used for counting the number of edge crossings.
      */
-    private int[] portPos;
+    private final int[] portPos;
+    private final boolean assumeFixedPortOrder;
 
     /**
-     * @param graph
-     *            a graph
+     * @param assumeFixedPortOrder
+     *            whether or not to assume all port orders fixed.
+     * @param numPorts
+     *            number of ports in complete graph.
      */
-    public BetweenLayerEdgeAllCrossingsCounter(final LNode[][] graph) {
-        initialize(graph);
+    protected BetweenLayerEdgeAllCrossingsCounter(final boolean assumeFixedPortOrder,
+            final int numPorts) {
+        this.assumeFixedPortOrder = assumeFixedPortOrder;
+        // Initialize the port positions and ranks arrays
+        portPos = new int[numPorts];
     }
 
     /**
@@ -46,24 +54,17 @@ public abstract class BetweenLayerEdgeAllCrossingsCounter {
      */
     public abstract int countCrossings(LNode[] leftLayer, LNode[] rightLayer);
 
-    private void initialize(final LNode[][] graph) {
-        int portCount = 0;
-        for (LNode[] layer : graph) {
-            for (LNode node : layer) {
-                for (LPort port : node.getPorts()) {
-                    port.id = portCount++;
-                }
-            }
-        }
-
-        // Initialize the port positions and ranks arrays
-        portPos = new int[portCount];
-    }
-
     /**
      * @return the portPos
      */
     protected final int[] getPortPos() {
         return portPos;
+    }
+
+    /**
+     * @return whether or not to assume all port orders fixed.
+     */
+    public boolean isAssumeFixedPortOrder() {
+        return assumeFixedPortOrder;
     }
 }

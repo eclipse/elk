@@ -26,6 +26,8 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
+
+
 /**
  * Crossings counter implementation specialized for hyperedges. It also works for normal edges, but
  * is considerably slower compared to other implementations. For normal edges the computed number of
@@ -39,7 +41,7 @@ import org.eclipse.elk.core.options.PortSide;
  * 
  * @author msp
  */
-public class BetweenLayerHyperedgeAllCrossingsCounter extends
+public final class BetweenLayerHyperedgeAllCrossingsCounter extends
         BetweenLayerEdgeAllCrossingsCounter {
 
     /**
@@ -48,8 +50,9 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
      * @param graph
      *            The current order of the nodes.
      */
-    public BetweenLayerHyperedgeAllCrossingsCounter(final LNode[][] graph) {
-        super(graph);
+    private BetweenLayerHyperedgeAllCrossingsCounter(final boolean assumeFixedPortOrder,
+            final int numPorts) {
+        super(assumeFixedPortOrder, numPorts);
     }
 
     /**
@@ -67,6 +70,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
         /**
          * {@inheritDoc}
          */
+        @Override
         public int compareTo(final Hyperedge other) {
             if (upperLeft < other.upperLeft) {
                 return -1;
@@ -106,6 +110,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
         /**
          * {@inheritDoc}
          */
+        @Override
         public int compareTo(final HyperedgeCorner other) {
             if (position < other.position) {
                 return -1;
@@ -144,7 +149,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
         // Assign index values to the ports of the left layer
         int sourceCount = 0;
         for (LNode node : leftLayer) {
-            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (isPortOrderFixed(node)) {
                 // Assign index values in the order north - east - south - west
                 for (LPort port : node.getPorts()) {
                     int portEdges = 0;
@@ -178,7 +183,7 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
         // Assign index values to the ports of the right layer
         int targetCount = 0;
         for (LNode node : rightLayer) {
-            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (isPortOrderFixed(node)) {
                 // Determine how many input ports there are on the north side
                 // (note that the standard port order is north - east - south - west)
                 int northInputPorts = 0;
@@ -402,5 +407,34 @@ public class BetweenLayerHyperedgeAllCrossingsCounter extends
         }
 
         return crossings;
+    }
+
+    private boolean isPortOrderFixed(final LNode node) {
+        return isAssumeFixedPortOrder()
+                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+    }
+
+    /**
+     * Create BetweenLayerHyperedgeAllCrossingsCounter.
+     * 
+     * @param numPorts
+     *            number of ports in complete graph.
+     * @return new BetweenLayerHyperedgeAllCrossingsCounter object.
+     */
+    public static BetweenLayerHyperedgeAllCrossingsCounter create(
+            final int numPorts) {
+        return new BetweenLayerHyperedgeAllCrossingsCounter(false, numPorts);
+    }
+
+    /**
+     * Create BetweenLayerHyperedgeAllCrossingsCounter assuming all port orders to be fixed.
+     * 
+     * @param numPorts
+     *            number of ports in complete graph.
+     * @return new BetweenLayerHyperedgeAllCrossingsCounter object.
+     */
+    public static BetweenLayerHyperedgeAllCrossingsCounter createAssumingPortOrderFixed(
+            final int numPorts) {
+        return new BetweenLayerHyperedgeAllCrossingsCounter(true, numPorts);
     }
 }

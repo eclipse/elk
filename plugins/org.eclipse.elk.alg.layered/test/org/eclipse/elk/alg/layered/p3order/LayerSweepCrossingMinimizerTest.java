@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.junit.Test;
 

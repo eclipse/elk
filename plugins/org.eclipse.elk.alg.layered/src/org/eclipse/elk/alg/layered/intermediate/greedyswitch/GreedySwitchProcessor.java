@@ -15,10 +15,12 @@ import java.util.ListIterator;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -59,14 +61,15 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private LNode[][] bestNodeOrder;
     /** Counts all crossings in a graph. */
     private AllCrossingsCounter crossingCounter;
-    /** The current crossings are calculated and saved when using the one-sided method. */
-    private int currentCrossings;
     /** Used for the best of up or down setting. */
-    private boolean sweepDownwardInLayer = true;
+    private final boolean sweepDownwardInLayer = true;
+    private boolean[] useHyperEdgeCounter;
+    private int portNum;
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Greedy switch crossing reduction", 1);
 
@@ -80,33 +83,13 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
 
         initialize(graph);
 
-        if (greedySwitchType.useBestOfUpOrDown()) {
-            compareSweepingUpwardOrDownward();
-        } else {
-            sweepOneSidedOrTwoSided();
-        }
+        sweepOneSidedOrTwoSided();
 
         setAsGraph(bestNodeOrder);
 
         progressMonitor.done();
     }
 
-    private void compareSweepingUpwardOrDownward() {
-        sweepOneSidedOrTwoSided();
-
-        LNode[][] downwardSweepOrder = copyNodeOrder();
-        int downwardSweepCrossings = getCrossingCount();
-
-        // try other direction
-        sweepDownwardInLayer = !sweepDownwardInLayer;
-        currentNodeOrder = originalNodeOrder;
-        sweepOneSidedOrTwoSided();
-        int upwardSweepCrossings = getCrossingCount();
-
-        if (downwardSweepCrossings <= upwardSweepCrossings) {
-            setAsBestNodeOrder(downwardSweepOrder);
-        }
-    }
 
     private void sweepOneSidedOrTwoSided() {
         if (greedySwitchType.isOneSided()) {
@@ -114,23 +97,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         } else {
             twoSidedlayerSweep();
         }
-    }
-
-    private LNode[][] copyNodeOrder() {
-        LNode[][] order = new LNode[bestNodeOrder.length][];
-        for (int i = 0; i < order.length; i++) {
-            // gwt 2.6 does not support Arrays.copyOf, thus we do it
-            // the old school way
-            int length = bestNodeOrder[i].length;
-            LNode[] copy = new LNode[length];
-            System.arraycopy(bestNodeOrder[i], 0, copy, 0, length);
-            order[i] = copy;
-        }
-        return order;
-    }
-
-    private int getCrossingCount() {
-        return greedySwitchType.isOneSided() ? currentCrossings : countCurrentNumberOfCrossings();
     }
 
     /**
@@ -160,7 +126,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             oldNumberOfCrossings = crossingsInGraph;
             crossingsInGraph = countCurrentNumberOfCrossings();
         }
-        currentCrossings = oldNumberOfCrossings;
     }
 
     /**
@@ -199,8 +164,8 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
 
     private SwitchDecider getNewSwitchDecider(final int freeLayerIndex, final CrossingCountSide side) {
         CrossingMatrixFiller crossingMatrixFiller =
-                new CrossingMatrixFiller(greedySwitchType, currentNodeOrder, freeLayerIndex, side);
-        return new SwitchDecider(freeLayerIndex, currentNodeOrder, crossingMatrixFiller);
+                CrossingMatrixFiller.create(greedySwitchType, currentNodeOrder, freeLayerIndex, side);
+        return SwitchDecider.create(freeLayerIndex, currentNodeOrder, crossingMatrixFiller);
     }
 
     private boolean sweepBackwardReducingCrossings() {
@@ -218,11 +183,18 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex) {
         boolean improved = false;
         boolean continueSwitching;
+        int maxIterations = (int) Math.pow(currentNodeOrder[freeLayerIndex].length, 2);
+        int iterations = 0;
         do {
             if (sweepDownwardInLayer) {
                 continueSwitching = sweepDownwardInLayer(freeLayerIndex);
             } else {
                 continueSwitching = sweepUpwardInLayer(freeLayerIndex);
+            }
+            iterations++;
+            if (iterations > maxIterations) {
+                assert false : "Infinite loop prevented in greedy switch";
+                return false;
             }
 
             improved |= continueSwitching;
@@ -267,7 +239,8 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     }
 
     private int countCurrentNumberOfCrossings() {
-        return crossingCounter.countAllCrossingsInGraphWithOrder(currentNodeOrder);
+        return crossingCounter.countAllCrossingsInGraphWithOrder(currentNodeOrder,
+                useHyperEdgeCounter, portNum);
     }
 
     private void setAsBestNodeOrder(final LNode[][] nodeOrder) {
@@ -300,13 +273,16 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
         }
     }
 
+    /**
+     * @param graph
+     */
     private void initialize(final LGraph graph) {
         layeredGraph = graph;
         int layerCount = graph.getLayers().size();
         bestNodeOrder = new LNode[layerCount][];
         currentNodeOrder = new LNode[layerCount][];
         originalNodeOrder = new LNode[layerCount][];
-
+        portNum = 0;
         ListIterator<Layer> layerIter = graph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
@@ -324,15 +300,20 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             while (nodeIter.hasNext()) {
                 LNode node = nodeIter.next();
                 node.id = id++;
-
+                for (LPort port : node.getPorts()) {
+                    port.id = portNum;
+                    portNum++;
+                }
                 currentNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
                 bestNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
                 originalNodeOrder[layerIndex][nodeIter.previousIndex()] = node;
             }
         }
-        crossingCounter = new AllCrossingsCounter(currentNodeOrder);
+        crossingCounter = AllCrossingsCounter.create();
         if (greedySwitchType.useHyperedgeCounter()) {
-            crossingCounter.useHyperedgeCounter();
+            crossingCounter.alwaysUseHyperedgeCounter();
         }
+        // TODO-alan this is wrong but I'm just assuming the whole class will be removed some day
+        useHyperEdgeCounter = AllCrossingsCounter.getHyperedges(currentNodeOrder, PortSide.EAST);
     }
 }

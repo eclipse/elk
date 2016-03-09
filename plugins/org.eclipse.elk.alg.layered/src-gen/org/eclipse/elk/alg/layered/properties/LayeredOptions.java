@@ -47,6 +47,30 @@ import org.eclipse.elk.graph.properties.Property;
 @SuppressWarnings("all")
 public class LayeredOptions implements ILayoutMetaDataProvider {
   /**
+   * Default value for {@link #CROSS_MIN_RECURSIVE}.
+   */
+  private final static boolean CROSS_MIN_RECURSIVE_DEFAULT = false;
+  
+  /**
+   * Process all hierarchical graphs recursively.
+   */
+  public final static IProperty<Boolean> CROSS_MIN_RECURSIVE = new Property<Boolean>(
+            "org.eclipse.elk.layered.crossMinRecursive",
+            CROSS_MIN_RECURSIVE_DEFAULT);
+  
+  /**
+   * Default value for {@link #RECURSIVE_BOUNDARY}.
+   */
+  private final static float RECURSIVE_BOUNDARY_DEFAULT = 0.2f;
+  
+  /**
+   * Process all hierarchical graphs recursively.
+   */
+  public final static IProperty<Float> RECURSIVE_BOUNDARY = new Property<Float>(
+            "org.eclipse.elk.layered.recursiveBoundary",
+            RECURSIVE_BOUNDARY_DEFAULT);
+  
+  /**
    * Default value for {@link #CONTENT_ALIGNMENT}.
    */
   private final static EnumSet<ContentAlignment> CONTENT_ALIGNMENT_DEFAULT = EnumSet.<ContentAlignment>noneOf(ContentAlignment.class);
@@ -658,6 +682,30 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
   private final static PortAlignment LAYERED_SUP_PORT_ALIGNMENT_BASIC = PortAlignment.JUSTIFIED;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layered.crossMinRecursive",
+        "",
+        "Recursive sweep",
+        "Process all hierarchical graphs recursively.",
+        CROSS_MIN_RECURSIVE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
+        boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.crossMinRec"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layered.recursiveBoundary",
+        "",
+        "Recursive sweep",
+        "Process all hierarchical graphs recursively.",
+        RECURSIVE_BOUNDARY_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+        , "de.cau.cs.kieler.klay.layered.recursiveBoundary"
+    ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layered.contentAlignment",
         "",

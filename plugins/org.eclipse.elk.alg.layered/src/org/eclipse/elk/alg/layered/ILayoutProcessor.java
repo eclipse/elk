@@ -32,4 +32,7 @@ public interface ILayoutProcessor {
      */
     void process(LGraph layeredGraph, IElkProgressMonitor progressMonitor);
     
+    default boolean operatesOnFullHierarchy() {
+        return false;
+    }
 }

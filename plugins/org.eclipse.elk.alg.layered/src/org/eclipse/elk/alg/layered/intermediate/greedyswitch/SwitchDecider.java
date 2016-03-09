@@ -29,7 +29,11 @@ import org.eclipse.elk.core.options.PortSide;
  * 
  * @author alan
  */
-public class SwitchDecider {
+/**
+ * @author alan
+ *
+ */
+public final class SwitchDecider {
     private final LNode[] freeLayer;
     private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
@@ -44,9 +48,11 @@ public class SwitchDecider {
      *            The graph as LNode[][]
      * @param crossingMatrixFiller
      *            the crossing matrix filler
+     * @param assumeCompoundNodeFixedPortOrder
      */
-    public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
-            final CrossingMatrixFiller crossingMatrixFiller) {
+    private SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
+            final CrossingMatrixFiller crossingMatrixFiller,
+            final boolean assumeCompoundNodeFixedPortOrder) {
         
         this.crossingMatrixFiller = crossingMatrixFiller;
         if (freeLayerIndex >= graph.length) {
@@ -55,24 +61,29 @@ public class SwitchDecider {
         }
         freeLayer = graph[freeLayerIndex];
 
-        inLayerCounter = new InLayerEdgeTwoNodeCrossingCounter(freeLayer);
+        inLayerCounter =
+                assumeCompoundNodeFixedPortOrder ? InLayerEdgeTwoNodeCrossingCounter
+                        .createAssumingHierarchicalNodePortOrderFixed(freeLayer)
+                        : InLayerEdgeTwoNodeCrossingCounter.create(freeLayer);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
     }
 
     /**
+     * Notifies in-layer counter of node switch for efficiency reasons.
+     * 
      * @param upperNode
      *            a node
      * @param lowerNode
      *            a node
      */
-    public final void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
+    public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
         inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
     }
 
     /**
      * {@inheritDoc}
      */
-    public final boolean doesSwitchReduceCrossings(final int upperNodeIndex,
+    public boolean doesSwitchReduceCrossings(final int upperNodeIndex,
             final int lowerNodeIndex) {
         
         if (constraintsPreventSwitch(upperNodeIndex, lowerNodeIndex)) {
@@ -84,7 +95,6 @@ public class SwitchDecider {
 
         inLayerCounter.countCrossingsBetweenNodes(upperNode, lowerNode);
         northSouthCounter.countCrossings(upperNode, lowerNode);
-
         int upperLowerCrossings =
                 crossingMatrixFiller.getCrossingMatrixEntry(upperNode, lowerNode)
                         + inLayerCounter.getUpperLowerCrossings()
@@ -190,5 +200,39 @@ public class SwitchDecider {
         WEST,
         /** Consider crossings to the east of the free layer. */
         EAST
+    }
+
+
+    /**
+     * Creates SwitchDecider not assuming fixed port order. Crossings between edges connected to
+     * node with free port order are assumed to be non-existent. Note that this is not always true.
+     * 
+     * @param freeLayerIndex
+     *            Index of layer being reordered.
+     * @param graph
+     *            Node order of complete graph
+     * @param crossingMatrixFiller
+     *            The filler for the crossing matrix
+     * @return the Decider.
+     */
+    public static SwitchDecider create(final int freeLayerIndex, final LNode[][] graph,
+            final CrossingMatrixFiller crossingMatrixFiller) {
+        return new SwitchDecider(freeLayerIndex, graph, crossingMatrixFiller, false);
+    }
+
+    /**
+     * Creates SwitchDecider assuming fixed port order.
+     * 
+     * @param freeLayerIndex
+     *            Index of layer being reordered.
+     * @param graph
+     *            Node order of complete graph
+     * @param crossingMatrixFiller
+     *            The filler for the crossing matrix
+     * @return the Decider.
+     */
+    public static SwitchDecider createAssumingFixedPortOrder(final int freeLayerIndex,
+            final LNode[][] graph, final CrossingMatrixFiller crossingMatrixFiller) {
+        return new SwitchDecider(freeLayerIndex, graph, crossingMatrixFiller, true);
     }
 }

@@ -16,16 +16,21 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.counting.InLayerEdgeAllCrossingsCounter;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
 
 /**
- * Counts crossings between in-layer edges incident to two nodes.
+ * Counts crossings between in-layer edges incident to two nodes. In the case where there is free
+ * port order and two edges go into one port, this crossing counter can in some cases count to few
+ * crossings. See the ignored test in the test class.
  * 
  * @author alan
  */
-public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
+// * TODO-alan consider replacing using new counter or join two node with allcrossingscounter or
+// rewrite using new idea and IndexTree...
+public final class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
 
     private final List<ComparableEdgeAndPort> relevantEdgesAndPorts;
     private int upperLowerCrossings;
@@ -38,9 +43,11 @@ public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCo
      * 
      * @param nodeOrder
      *            the current order of the layer to be counted in.
+     * @param assumeCompoundNodePortOrderFixed
      */
-    public InLayerEdgeTwoNodeCrossingCounter(final LNode[] nodeOrder) {
-        super(nodeOrder);
+    private InLayerEdgeTwoNodeCrossingCounter(final LNode[] nodeOrder,
+            final boolean assumeCompoundNodePortOrderFixed) {
+        super(nodeOrder, false, assumeCompoundNodePortOrderFixed);
         relevantEdgesAndPorts = Lists.newArrayList();
     }
 
@@ -113,8 +120,8 @@ public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCo
 
         if (isInLayer(edge) && notConnectedToOtherNode(edge, node)) {
             LPort otherEnd = otherEndOf(edge, port);
-            relevantEdgesAndPorts.add(new ComparableEdgeAndPort(otherEnd, edge,
-                    positionOf(otherEnd)));
+            relevantEdgesAndPorts
+                    .add(new ComparableEdgeAndPort(otherEnd, edge, positionOf(otherEnd)));
         }
     }
 
@@ -150,11 +157,21 @@ public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCo
 
         @Override
         public int compareTo(final ComparableEdgeAndPort o) {
-            return portPosition < o.portPosition || portPosition == o.portPosition
-                    && isInLayer(edge) && isInLayer(o.edge)
-                    && positionOf(otherEndOf(edge, port)) > positionOf(otherEndOf(o.edge, o.port)) ? -1
-                    : portPosition == o.portPosition
-                            && otherEndOf(edge, port) == otherEndOf(edge, port) ? 0 : 1;
+            boolean thisPortBeforeOther = portPosition < o.portPosition;
+            boolean thisPortAtSamePositionAsOther = portPosition == o.portPosition;
+            boolean bothEdgesAreInLayerAndThisEdgeEndAfterOther = isInLayer(edge)
+                    && isInLayer(o.edge)
+                    && positionOf(otherEndOf(edge, port)) > positionOf(otherEndOf(o.edge, o.port));
+            boolean edgesPointToSamePositions = otherEndOf(edge, port) == otherEndOf(edge, port);
+
+            if (thisPortBeforeOther || thisPortAtSamePositionAsOther
+                    && bothEdgesAreInLayerAndThisEdgeEndAfterOther) {
+                return -1;
+            } else if (thisPortAtSamePositionAsOther && edgesPointToSamePositions) {
+                return 0;
+            } else {
+                return 1;
+            }
         }
 
         @Override
@@ -184,4 +201,32 @@ public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCo
         return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
+    /**
+     * Does not assume fixed port order. Crossings between edges connected to node with free port
+     * order are assumed to be non-existent. Note that this is not always true.
+     * 
+     * @param nodeOrder
+     *            the current order of nodes in layer.
+     * 
+     * @return the counter
+     */
+    public static InLayerEdgeTwoNodeCrossingCounter create(final LNode[] nodeOrder) {
+        return new InLayerEdgeTwoNodeCrossingCounter(nodeOrder, false);
+    }
+
+    /**
+     * Does not assume fixed port order. Crossings between edges connected to node with free port
+     * order are assumed to be non-existent. Note that this is not always true.
+     * 
+     * @param nodeOrder
+     *            the current order of nodes in layer.
+     * 
+     * @return the counter
+     */
+    public static InLayerEdgeTwoNodeCrossingCounter createAssumingHierarchicalNodePortOrderFixed(
+            final LNode[] nodeOrder) {
+        return new InLayerEdgeTwoNodeCrossingCounter(nodeOrder, true);
+    }
+
 }
+

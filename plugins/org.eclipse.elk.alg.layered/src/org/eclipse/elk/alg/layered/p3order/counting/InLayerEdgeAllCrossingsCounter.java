@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
+package org.eclipse.elk.alg.layered.p3order.counting;
 
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +17,9 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.InLayerEdgeTwoNodeCrossingCounter;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.PortIterable;
+import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -43,14 +46,23 @@ public class InLayerEdgeAllCrossingsCounter {
     /** We store port-positions in mutlisets, as nodes without fixed order have the same port ids. */
     private final SortedMultiset<Integer> inLayerPorts;
     private final Set<LEdge> inLayerEdges;
+    private final boolean assumeFixedPortOrder;
+    private final boolean assumeCompoundNodePortOrderFixed;
 
     /**
      * Create InLayerEdgeAllCrossingsCounter.
      * 
      * @param nodeOrder
      *            the current node order.
+     * @param assumeFixedPortOrder
+     *            assume all port orders to be fixed.
+     * @param assumeCompoundNodePortOrderFixed
+     *            Whether to assume that the order of ports on compound nodes is fixed or not.
      */
-    public InLayerEdgeAllCrossingsCounter(final LNode[] nodeOrder) {
+    public InLayerEdgeAllCrossingsCounter(final LNode[] nodeOrder,
+            final boolean assumeFixedPortOrder, final boolean assumeCompoundNodePortOrderFixed) {
+        this.assumeFixedPortOrder = assumeFixedPortOrder;
+        this.assumeCompoundNodePortOrderFixed = assumeCompoundNodePortOrderFixed;
         eastNodeCardinalities = Maps.newHashMap();
         westNodeCardinalities = Maps.newHashMap();
         portPositions = Maps.newHashMap();
@@ -99,8 +111,20 @@ public class InLayerEdgeAllCrossingsCounter {
         return currentPortId;
     }
 
-    private boolean portOrderIsFixedFor(final LNode node) {
-        return node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+    /**
+     * Whether port order is fixed or not.
+     * 
+     * @param node
+     *            the node
+     * @return Whether port order is fixed or not.
+     */
+    protected boolean portOrderIsFixedFor(final LNode node) {
+        return assumeFixedPortOrder || assumeCompoundNodePortOrderFixed && hasNestedGraph(node)
+                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+    }
+
+    private boolean hasNestedGraph(final LNode node) {
+        return node.getProperty(InternalProperties.NESTED_LGRAPH) != null;
     }
 
     /**
@@ -120,7 +144,12 @@ public class InLayerEdgeAllCrossingsCounter {
         for (LNode node : nodeOrder) {
             Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, portSide);
             for (LPort port : ports) {
-                for (LEdge edge : port.getConnectedEdges()) {
+                for (LEdge edge : port.getIncomingEdges()) {
+                    if (!edge.isSelfLoop()) {
+                        crossings += countCrossingsOn(edge, port);
+                    }
+                }
+                for (LEdge edge : port.getOutgoingEdges()) {
                     if (!edge.isSelfLoop()) {
                         crossings += countCrossingsOn(edge, port);
                     }
@@ -235,5 +264,27 @@ public class InLayerEdgeAllCrossingsCounter {
         for (LPort port : ports) {
             portPositions.put(port, positionOf(port) - cardinalities.get(firstNode));
         }
+    }
+
+    /**
+     * Create InLayerEdgeAllCrossingsCounter.
+     * 
+     * @param graph
+     *            the graph to count crossings on.
+     * @return new BetweenLayerStraightEdgeAllCrossingsCounter object.
+     */
+    public static InLayerEdgeAllCrossingsCounter create(final LNode[] graph) {
+        return new InLayerEdgeAllCrossingsCounter(graph, false, false);
+    }
+
+    /**
+     * Create InLayerEdgeAllCrossingsCounter assuming all port orders to be fixed.
+     * 
+     * @param graph
+     *            the graph to count crossings on.
+     * @return new BetweenLayerStraightEdgeAllCrossingsCounter object.
+     */
+    public static InLayerEdgeAllCrossingsCounter createAssumingPortOrderFixed(final LNode[] graph) {
+        return new InLayerEdgeAllCrossingsCounter(graph, true, false);
     }
 }

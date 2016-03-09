@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic.BarycenterState;
 import org.eclipse.elk.alg.layered.p3order.constraints.ForsterConstraintResolver;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;

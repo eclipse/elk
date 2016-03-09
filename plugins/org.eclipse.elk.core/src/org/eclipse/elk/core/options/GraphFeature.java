@@ -32,7 +32,7 @@ public enum GraphFeature {
     PORTS("Edges are connected to nodes over ports."),
     /**
      * Edges that connect nodes from different hierarchy levels and are incident to compound nodes.
-     * @see LayoutOptions#LAYOUT_HIERARCHY
+     * @see CoreOptions#LAYOUT_HIERARCHY
      */
     COMPOUND("Edges that connect nodes from different hierarchy levels"
             + "and are incident to compound nodes."),

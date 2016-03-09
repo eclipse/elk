@@ -412,12 +412,29 @@ group highDegreeNodes {
         requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
     }
 
-}
+} 
 
 
 /* ------------------------
  *    miscellaneous
  * ------------------------*/
+ 
+advanced option crossMinRecursive: boolean {
+	label "Recursive sweep"
+	description "Process all hierarchical graphs recursively."
+	default = false
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.crossMinRec
+}
+
+advanced option recursiveBoundary: float {
+	label "Recursive sweep"
+	description "Process all hierarchical graphs recursively."
+	default = 0.2f
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.recursiveBoundary
+}
+
 advanced option contentAlignment: EnumSet<ContentAlignment> {
 	label "Content Alignment"
 	description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."

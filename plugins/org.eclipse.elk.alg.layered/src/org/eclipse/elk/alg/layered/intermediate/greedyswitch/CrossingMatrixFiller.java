@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
  * 
  * @author alan
  */
-public class CrossingMatrixFiller {
+public final class CrossingMatrixFiller {
     private final boolean[][] isCrossingMatrixFilled;
     private final int[][] crossingMatrix;
     private final BetweenLayerEdgeTwoNodeCrossingsCounter inBetweenLayerCrossingCounter;
@@ -30,9 +30,12 @@ public class CrossingMatrixFiller {
     // SUPPRESS CHECKSTYLE NEXT 30 Javadoc
     /**
      * Constructs class which manages the crossing matrix.
+     * 
+     * @param assumeFixedPortOrder
      */
-    public CrossingMatrixFiller(final GreedySwitchType greedyType, final LNode[][] graph,
-            final int freeLayerIndex, final CrossingCountSide direction) {
+    private CrossingMatrixFiller(final GreedySwitchType greedyType, final LNode[][] graph,
+            final int freeLayerIndex, final CrossingCountSide direction,
+            final boolean assumeFixedPortOrder) {
         
         this.direction = direction;
         oneSided = greedyType.isOneSided();
@@ -42,7 +45,9 @@ public class CrossingMatrixFiller {
         crossingMatrix = new int[freeLayer.length][freeLayer.length];
 
         inBetweenLayerCrossingCounter =
-                new BetweenLayerEdgeTwoNodeCrossingsCounter(graph, freeLayerIndex);
+                assumeFixedPortOrder ? BetweenLayerEdgeTwoNodeCrossingsCounter
+                        .createAssumingPortOrderFixed(graph, freeLayerIndex)
+                        : BetweenLayerEdgeTwoNodeCrossingsCounter.create(graph, freeLayerIndex);
     }
 
     /**
@@ -74,6 +79,44 @@ public class CrossingMatrixFiller {
                 inBetweenLayerCrossingCounter.getUpperLowerCrossings();
         crossingMatrix[lowerNode.id][upperNode.id] =
                 inBetweenLayerCrossingCounter.getLowerUpperCrossings();
+    }
+
+    /**
+     * Does not assume fixed port order. Crossings between edges connected to node with free port
+     * order are assumed to be non-existent. Note that this is not always true.
+     * 
+     * @param greedyType
+     *            The mode of the greedy switcher.
+     * @param graph
+     *            The current node order in the graph.
+     * @param freeLayerIndex
+     *            The index of the layer whose nodes are being reordered.
+     * @param direction
+     *            The direction of the sweep.
+     * @return the filler.
+     */
+    public static CrossingMatrixFiller create(final GreedySwitchType greedyType, final LNode[][] graph,
+            final int freeLayerIndex, final CrossingCountSide direction) {
+        return new CrossingMatrixFiller(greedyType, graph, freeLayerIndex, direction, false);
+    }
+
+    /**
+     * Assumes fixed port order.
+     * 
+     * @param greedyType
+     *            The mode of the greedy switcher.
+     * @param graph
+     *            The current node order in the graph.
+     * @param freeLayerIndex
+     *            The index of the layer whose nodes are being reordered.
+     * @param direction
+     *            The direction of the sweep.
+     * @return the filler.
+     */
+    public static CrossingMatrixFiller createAssumingFixedPortOrder(
+            final GreedySwitchType greedyType, final LNode[][] graph, final int freeLayerIndex,
+            final CrossingCountSide direction) {
+        return new CrossingMatrixFiller(greedyType, graph, freeLayerIndex, direction, true);
     }
 
 }

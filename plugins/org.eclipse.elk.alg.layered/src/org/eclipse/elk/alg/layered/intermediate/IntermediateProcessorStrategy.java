@@ -89,7 +89,8 @@ public enum IntermediateProcessorStrategy {
     NORTH_SOUTH_PORT_PREPROCESSOR,
 
     // Before Phase 4
-
+    /** Hierachical greedy switch crossing reduction. */
+    HIERARCHICAL_GREEDY_SWITCH,
     /** Greedy switch crossing reduction. */
     GREEDY_SWITCH,
     /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
@@ -143,6 +144,8 @@ public enum IntermediateProcessorStrategy {
     HORIZONTAL_COMPACTOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
+    /** In hierarchical graphs, maps a child graph to its parent node. */
+    HIERARCHICAL_NODE_RESIZER,
     /** Mirrors the graph to perform a right-to-left drawing. */
     LEFT_DIR_POSTPROCESSOR,
     /** Transposes the graph to perform a top-bottom drawing. */
@@ -151,6 +154,7 @@ public enum IntermediateProcessorStrategy {
     UP_DIR_POSTPROCESSOR,
     /** Place end labels on edges. */
     END_LABEL_PROCESSOR;
+    
 
     /**
      * Creates an instance of the layout processor described by this instance.
