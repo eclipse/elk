@@ -1,13 +1,17 @@
-/*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * Contributors:
- *     Kiel University - initial API and implementation
- *******************************************************************************/
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2010 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+
 package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -31,15 +35,34 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public final class NodeRelativePortDistributor extends AbstractPortDistributor {
     
+    private final boolean assumePortOrderFixed;
+
     /**
-     * Constructs a node-relative port distributor with the given array of ranks.
-     * All ports are required to be assigned ids in the range of the given array.
+     * Constructs a node-relative port distributor with the given array of ranks. All ports are
+     * required to be assigned ids in the range of the given array.
      * 
      * @param portRanks
      *            The array of port ranks
+     * @param nodePositions
      */
-    public NodeRelativePortDistributor(final float[] portRanks) {
+    private NodeRelativePortDistributor(final float[] portRanks, final boolean assumePortOrderFixed,
+            final int[][] nodePositions) {
+        super(portRanks, nodePositions);
+        this.assumePortOrderFixed = assumePortOrderFixed;
+    }
+
+    /**
+     * Constructs a node-relative port distributor with the given array of ranks. All ports are
+     * required to be assigned ids in the range of the given array.
+     * 
+     * @param portRanks
+     *            The array of port ranks
+     * @param nodePositions
+     */
+    private NodeRelativePortDistributor(final float[] portRanks,
+            final boolean assumePortOrderFixed) {
         super(portRanks);
+        this.assumePortOrderFixed = assumePortOrderFixed;
     }
 
     /**
@@ -49,7 +72,7 @@ public final class NodeRelativePortDistributor extends AbstractPortDistributor {
     protected float calculatePortRanks(final LNode node, final float rankSum, final PortType type) {
         float[] portRanks = getPortRanks();
 
-        if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+        if (isPortOrderFixedOn(node)) {
 
             switch (type) {
             case INPUT: {
@@ -114,6 +137,11 @@ public final class NodeRelativePortDistributor extends AbstractPortDistributor {
         return 1;
     }
 
+    private boolean isPortOrderFixedOn(final LNode node) {
+        return assumePortOrderFixed
+                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+    }
+
     private static final float INCR_ONE = 0.3f;
     private static final float INCR_TWO = 0.5f;
     private static final float INCR_THREE = 0.7f;
@@ -160,6 +188,32 @@ public final class NodeRelativePortDistributor extends AbstractPortDistributor {
             throw new IllegalArgumentException("Port type is undefined");
         }
         return 0;
+    }
+
+    /**
+     * Create Port Distributor.
+     * 
+     * @param portRanks
+     *            port rank values: length is amount of ports addressed by their id.
+     * @return new port distributor.
+     */
+    public static NodeRelativePortDistributor create(final float[] portRanks) {
+        return new NodeRelativePortDistributor(portRanks, false);
+    }
+
+    /**
+     * Create Port Distributor which for calculation of port ranks assumes all port order to be
+     * fixed.
+     * 
+     * @param portRanks
+     *            port rank values: length is amount of ports addressed by their id.
+     * @param nodePositions
+     *            An array showing the current node positions.
+     * @return new port distributor.
+     */
+    public static NodeRelativePortDistributor createPortOrderFixedInOtherLayers(
+            final float[] portRanks, final int[][] nodePositions) {
+        return new NodeRelativePortDistributor(portRanks, true, nodePositions);
     }
 
 }

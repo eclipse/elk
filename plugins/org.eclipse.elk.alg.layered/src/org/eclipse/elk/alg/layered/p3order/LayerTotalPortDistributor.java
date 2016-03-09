@@ -25,17 +25,44 @@ import org.eclipse.elk.core.options.PortSide;
  *
  * @author msp
  */
+/**
+ * Calculates port ranks in a layer-total way.
+ * 
+ * <p>Port ranks are calculated by giving each node {@code i} a range of values {@code [i,i+x]},
+ * where {@code x} is the number of input ports or output ports. Hence nodes with many ports are
+ * assigned a broader range of ranks than nodes with few ports.</p>
+ *
+ * @author msp
+ */
 public final class LayerTotalPortDistributor extends AbstractPortDistributor {
 
+    private final boolean assumePortOrderFixed;
+
     /**
-     * Constructs a layer-total port distributor with the given array of ranks.
-     * All ports are required to be assigned ids in the range of the given array.
+     * Constructs a layer-total port distributor with the given array of ranks. All ports are
+     * required to be assigned ids in the range of the given array.
      * 
      * @param portRanks
-     *            The array of port ranks
+     *            The array of port ranks comment
+     * @param nodePositions
      */
-    public LayerTotalPortDistributor(final float[] portRanks) {
+    private LayerTotalPortDistributor(final float[] portRanks, final boolean assumePortOrderFixed,
+            final int[][] nodePositions) {
+        super(portRanks, nodePositions);
+        this.assumePortOrderFixed = assumePortOrderFixed;
+    }
+
+    /**
+     * Constructs a layer-total port distributor with the given array of ranks. All ports are
+     * required to be assigned ids in the range of the given array.
+     * 
+     * @param portRanks
+     *            The array of port ranks comment
+     * @param nodePositions
+     */
+    private LayerTotalPortDistributor(final float[] portRanks, final boolean assumePortOrderFixed) {
         super(portRanks);
+        this.assumePortOrderFixed = assumePortOrderFixed;
     }
 
     /**
@@ -45,7 +72,7 @@ public final class LayerTotalPortDistributor extends AbstractPortDistributor {
     protected float calculatePortRanks(final LNode node, final float rankSum, final PortType type) {
         float[] portRanks = getPortRanks();
 
-        if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+        if (portOrderFixedOn(node)) {
 
             switch (type) {
             case INPUT: {
@@ -115,6 +142,11 @@ public final class LayerTotalPortDistributor extends AbstractPortDistributor {
         }
     }
 
+    private boolean portOrderFixedOn(final LNode node) {
+        return assumePortOrderFixed
+                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+    }
+
     private static final float INCR_ONE = 1;
     private static final float INCR_TWO = 2;
     private static final float INCR_THREE = 3;
@@ -161,6 +193,32 @@ public final class LayerTotalPortDistributor extends AbstractPortDistributor {
             throw new IllegalArgumentException("Port type is undefined");
         }
         return 0;
+    }
+
+    /**
+     * Create Port Distributor.
+     * 
+     * @param portRanks
+     *            port rank values: length is amount of ports addressed by their id.
+     * @return new port distributor.
+     */
+    public static LayerTotalPortDistributor create(final float[] portRanks) {
+        return new LayerTotalPortDistributor(portRanks, false);
+    }
+
+    /**
+     * Create Port Distributor which for calculation of port ranks assumes all port order to be
+     * fixed.
+     * 
+     * @param portRanks
+     *            port rank values: length is amount of ports addressed by their id.
+     * @param nodePositions
+     *            An array showing the current node positions.
+     * @return new port distributor.
+     */
+    public static LayerTotalPortDistributor createPortOrderFixedInOtherLayers(
+            final float[] portRanks, final int[][] nodePositions) {
+        return new LayerTotalPortDistributor(portRanks, true, nodePositions);
     }
 
 }

@@ -94,8 +94,8 @@ public class PortDistributionProcessor implements ILayoutProcessor {
         // Randomly determine which port distributor implementation to use
         Random random = layeredGraph.getProperty(InternalProperties.RANDOM);
         AbstractPortDistributor portDistributor = random.nextBoolean()
-                ? new NodeRelativePortDistributor(new float[portCount])
-                : new LayerTotalPortDistributor(new float[portCount]);
+                ? NodeRelativePortDistributor.create(new float[portCount])
+                : LayerTotalPortDistributor.create(new float[portCount]);
         portDistributor.distributePorts(graphArray);
         
         progressMonitor.done();
