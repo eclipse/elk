@@ -84,9 +84,9 @@ public class DiagramLayoutEngine {
      * <pre>
      * DiagramLayoutEngine.Parameters params = new DiagramLayoutEngine.Parameters();
      * params.addLayoutRun().configure(KNode.class)
-     *         .setProperty(CoreOptions.ALGORITHM, "org.eclipse.elk.algorithm.layered")
-     *         .setProperty(CoreOptions.SPACING, 30.0f)
-     *         .setProperty(CoreOptions.ANIMATE, true);
+     *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.layered")
+     *         .setProperty(LayoutOptions.SPACING, 30.0f)
+     *         .setProperty(LayoutOptions.ANIMATE, true);
      * DiagramLayoutEngine.invokeLayout(workbenchPart, diagramPart, params);
      * </pre>
      * If multiple configurators are given, the layout is computed multiple times:
@@ -96,9 +96,9 @@ public class DiagramLayoutEngine {
      * <pre>
      * DiagramLayoutEngine.Parameters params = new DiagramLayoutEngine.Parameters();
      * params.addLayoutRun().configure(KNode.class)
-     *         .setProperty(CoreOptions.ALGORITHM, "org.eclipse.elk.algorithm.force");
+     *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.force");
      * params.addLayoutRun().setClearLayout(true).configure(KNode.class)
-     *         .setProperty(CoreOptions.ALGORITHM, "de.cau.cs.kieler.kiml.libavoid");
+     *         .setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.kiml.libavoid");
      * DiagramLayoutEngine.invokeLayout(workbenchPart, diagramPart, params);
      * </pre>
      * <b>Note:</b> By using the {@link LayoutConfigurator} approach as shown above, the Layout

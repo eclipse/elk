@@ -22,6 +22,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Before;
 import org.junit.Test;

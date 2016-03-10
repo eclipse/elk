@@ -388,7 +388,7 @@ public class ComponentsCompactor {
             final KVector offset) {
         
         // extract the relevant margins object.
-        //  there's CoreOptions.MARGINS as well,
+        //  there's LayoutOptions.MARGINS as well,
         //  however, this is only used outside of klay.
         LInsets margins = null;
         if (element instanceof LNode) {

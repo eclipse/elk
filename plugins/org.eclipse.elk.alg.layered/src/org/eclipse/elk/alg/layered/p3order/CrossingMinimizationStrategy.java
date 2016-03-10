@@ -27,6 +27,13 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
      * A heuristic that sweeps through the layers trying to minimize the crossings locally.
      */
     LAYER_SWEEP,
+
+    /**
+     * A heuristic that sweeps through the layers and all nested graphs within the layers, trying to
+     * minimize the crossings locally.
+     */
+    HIERARCHICAL_LAYER_SWEEP,
+
     /**
      * Allow user interaction by considering the previous node positioning. The actual positions
      * as given in the input diagram are considered here. This means that if the user moves
@@ -42,6 +49,9 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
         switch (this) {
         case LAYER_SWEEP:
             return new LayerSweepCrossingMinimizer();
+            
+        case HIERARCHICAL_LAYER_SWEEP:
+            return new LayerSweepHierarchicalCrossingMinimizer();
             
         case INTERACTIVE:
             return new InteractiveCrossingMinimizer();

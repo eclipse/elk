@@ -8,14 +8,11 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
+package org.eclipse.elk.alg.layered.p3order.counting;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.counting.BetweenLayerStraightEdgeAllCrossingsCounter;
-import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
-import org.eclipse.elk.alg.layered.p3order.counting.HyperedgeCrossingsCounter;
-import org.eclipse.elk.alg.layered.p3order.counting.NorthSouthEdgeAllCrossingsCounter;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.BetweenLayerHyperedgeAllCrossingsCounter;
 import org.eclipse.elk.core.options.PortSide;
 
 /**

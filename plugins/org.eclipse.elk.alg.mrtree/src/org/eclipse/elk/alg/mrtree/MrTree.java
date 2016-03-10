@@ -216,7 +216,7 @@ public final class MrTree {
     // IntermediateProcessingConfiguration();
     //
     // // graph transformations for unusual layout directions
-    // switch (graph.getProperty(CoreOptions.DIRECTION)) {
+    // switch (graph.getProperty(LayoutOptions.DIRECTION)) {
     // case LEFT:
     // // ADD LEFT_DIR_POSTPROCESSOR to IntermediateProcessingConfiguration
     // break;

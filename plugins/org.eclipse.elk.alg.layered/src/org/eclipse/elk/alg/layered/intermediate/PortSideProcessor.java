@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -95,7 +96,11 @@ public final class PortSideProcessor implements ILayoutProcessor {
      * @param port the port to set side and anchor position
      */
     public static void setPortSide(final LPort port) {
-        if (port.getNetFlow() < 0) {
+        //TODO-alan test
+        LNode portDummy = port.getProperty(InternalProperties.PORT_DUMMY);
+        if (portDummy != null) {
+            port.setSide(portDummy.getProperty(InternalProperties.EXT_PORT_SIDE));
+        } else if (port.getNetFlow() < 0) {
             port.setSide(PortSide.EAST);
             // adapt the anchor so outgoing edges are attached right
             port.getAnchor().x = port.getSize().x;

@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
+import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -288,7 +289,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             Layer layer = layerIter.next();
 
             int layerNodeCount = layer.getNodes().size();
-            assert layerNodeCount > 0;
+            assert layerNodeCount > 0; 
 
             int layerIndex = layerIter.previousIndex();
             bestNodeOrder[layerIndex] = new LNode[layerNodeCount];

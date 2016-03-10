@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -25,11 +26,11 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -89,7 +90,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     /** map of original edges to generated cross-hierarchy edges. */
     private Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap;
     /** map of ports to their assigned dummy nodes in the nested graphs. */
-    private final Map<LPort, LNode> dummyNodeMap = Maps.newHashMap();
+    private final Map<LPort, LNode> dummyNodeMap = Maps.newLinkedHashMap();
 
     
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +108,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         // create new dummy edges at hierarchy bounds and move the labels around accordingly
         transformHierarchyEdges(graph, null);
         moveLabelsAndRemoveOriginalEdges(graph);
-        
+
+        setSidesOfPortsToSidesOfDummyNodes();
+
         // Attach cross hierarchy map to the graph and cleanup
         graph.setProperty(InternalProperties.CROSS_HIERARCHY_MAP, crossHierarchyMap);
         crossHierarchyMap = null;
@@ -116,7 +119,28 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         monitor.done();
     }
     
-    /**
+    /** Ensures that for each dummy node the external port and vice versa is set. Since the side of
+    * the dummy node has also already been calculated, we set this fixed here. Therefore the
+    * compound node has a fixed side constraint, with some sides still set to UNDEFINED. This must
+    * be dealt with later. TODO-alan test
+    */
+   private void setSidesOfPortsToSidesOfDummyNodes() {
+       for (Entry<LPort, LNode> e : dummyNodeMap.entrySet()) {
+           LPort externalPort = e.getKey();
+           LNode dummyNode = e.getValue();
+           dummyNode.setProperty(InternalProperties.ORIGIN, externalPort);
+           externalPort.setProperty(InternalProperties.PORT_DUMMY, dummyNode);
+           externalPort.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
+           externalPort.setSide(dummyNode.getProperty(InternalProperties.EXT_PORT_SIDE)); 
+           dummyNode.getProperty(InternalProperties.EXT_PORT_SIDE);
+           externalPort.getNode().setProperty(CoreOptions.PORT_CONSTRAINTS,
+                   PortConstraints.FIXED_SIDE);
+           externalPort.getNode().getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
+                   .add(GraphProperties.NON_FREE_PORTS); 
+       }
+   }
+
+   /**
      * Recursively transform cross-hierarchy edges into sequences of dummy ports and dummy edges.
      * 
      * @param graph

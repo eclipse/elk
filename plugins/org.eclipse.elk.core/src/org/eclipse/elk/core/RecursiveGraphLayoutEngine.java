@@ -144,7 +144,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                         knodeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING,
                                 HierarchyHandling.SEPARATE_CHILDREN);
 
-                        // apply the CoreOptions.SCALE_FACTOR if present
+                        // apply the LayoutOptions.SCALE_FACTOR if present
                         ElkUtil.applyConfiguredNodeScaling(knode);
                     } else {
                         // Child should be included in current layout, possibly adding its own
@@ -160,7 +160,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     List<KEdge> childLayoutSelfLoops = layoutRecursively(child, progressMonitor); 
                     childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                     
-                    // apply the CoreOptions.SCALE_FACTOR if present
+                    // apply the LayoutOptions.SCALE_FACTOR if present
                     ElkUtil.applyConfiguredNodeScaling(child);
                 }
             }
