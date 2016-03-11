@@ -150,7 +150,7 @@ public final class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCross
         /** The position of the port. */
         private final int portPosition;
 
-        public ComparableEdgeAndPort(final LPort port, final LEdge edge, final int portPosition) {
+        ComparableEdgeAndPort(final LPort port, final LEdge edge, final int portPosition) {
             this.port = port;
             this.edge = edge;
             this.portPosition = portPosition;

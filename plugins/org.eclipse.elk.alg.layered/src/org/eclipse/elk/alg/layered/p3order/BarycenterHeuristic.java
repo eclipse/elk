@@ -79,10 +79,10 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
      *            the random number generator
      * @param portDistributor
      *            calculates the port ranks for the barycenter heuristic.
-     * @param barycenters
+     * @param barycenterState
      *            the barycenters accessed by layer.id and node.id
      */
-    public BarycenterHeuristic( final BarycenterState[][] barycenterState, 
+    public BarycenterHeuristic(final BarycenterState[][] barycenterState, 
             final IConstraintResolver constraintResolver, final Random random,
             final AbstractPortDistributor portDistributor) {
         this(barycenterState, constraintResolver, random, portDistributor.getPortRanks());

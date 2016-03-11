@@ -13,7 +13,6 @@ package org.eclipse.elk.alg.layered.p3order;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
 
 /**
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that

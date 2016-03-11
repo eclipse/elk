@@ -1,21 +1,17 @@
-/*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+/*******************************************************************************
+ * Copyright (c) 2010, 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
- * Copyright 2010 by
- * + Kiel University
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- * 
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- */
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -64,8 +60,18 @@ class GraphData {
     private final List<LGraph> childGraphs;
     private final boolean externalPorts;
     private final CrossMinType crossMinType;
-
-    public GraphData(final LGraph graph, final CrossMinType crossMinType,
+    
+    /**
+     * Create object collecting info about compound graph.
+     * 
+     * @param graph
+     *            The graph
+     * @param crossMinType
+     *            The CrossMinimizer
+     * @param processAllGraphsRecursively
+     *            forces all graphs to be layouted recursively.
+     */
+    GraphData(final LGraph graph, final CrossMinType crossMinType,
             final boolean processAllGraphsRecursively) {
         lGraph = graph;
         this.crossMinType = crossMinType;

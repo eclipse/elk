@@ -69,14 +69,16 @@ public final class PortIterable implements Iterable<LPort> {
         return createListView(side, node, PortOrder.COUNTER_CLOCKWISE);
     }
 
-    private static List<LPort> createListView(PortSide side, LNode node, PortOrder order) {
+    private static List<LPort> createListView(final PortSide side, final LNode node, final PortOrder order) {
         final List<LPort> ports = node.getPorts(side);
-        if (counterClockwise(side, order))
+        if (counterClockwise(side, order)) {
             return Lists.reverse(ports);
-        else return ports;
+        } else {
+            return ports;
+        }
     }
 
-    private static boolean counterClockwise(PortSide side, PortOrder order) {
+    private static boolean counterClockwise(final PortSide side, final PortOrder order) {
         return order == PortOrder.COUNTER_CLOCKWISE || order == PortOrder.NORTHSOUTH_EASTWEST
                 && (side == PortSide.SOUTH || side == PortSide.WEST);
     }

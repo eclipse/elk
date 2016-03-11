@@ -1,16 +1,13 @@
-/*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+/*******************************************************************************
+ * Copyright (c) 2016 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
- * Copyright 2010 by
- * + Kiel University
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- * 
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- */
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.ArrayList;
@@ -40,7 +37,7 @@ class SweepCopy {
      * 
      * @param nodeOrderIn
      */
-    public SweepCopy(final LNode[][] nodeOrderIn) {
+    SweepCopy(final LNode[][] nodeOrderIn) {
         nodeOrder = deepCopy(nodeOrderIn);
         portOrders = Lists.newArrayList();
         for (LNode[] lNodes : nodeOrderIn) {
@@ -52,7 +49,7 @@ class SweepCopy {
         }
     }
 
-    public SweepCopy(final SweepCopy sc) {
+    SweepCopy(final SweepCopy sc) {
         nodeOrder = deepCopy(sc.nodeOrder);
         lastSweepDirection = sc.lastSweepDirection;
         portOrders = ImmutableList.copyOf(sc.portOrders);

@@ -11,7 +11,6 @@
 package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 
 /**
  * Abstract super class for counting all between-layer edge crossings. Subclasses must implement

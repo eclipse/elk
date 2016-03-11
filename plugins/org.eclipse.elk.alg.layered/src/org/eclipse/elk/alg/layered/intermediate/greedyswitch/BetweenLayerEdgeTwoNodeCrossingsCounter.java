@@ -264,8 +264,8 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
         private int size;
         private int currentSize;
         private int currentIndex;
-
-        public AdjacencyList(final LNode node, final PortSide side) {
+        
+        AdjacencyList(final LNode node, final PortSide side) {
             this.node = node;
             this.side = side;
             adjacencyList = Lists.newArrayList();
@@ -386,7 +386,7 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
             /** The current number of adjacencies with the same position. */
             private int currentCardinality;
 
-            public Adjacency(final int adjacentPortPosition, final LPort port) {
+            Adjacency(final int adjacentPortPosition, final LPort port) {
                 position = adjacentPortPosition;
                 cardinality = 1;
                 currentCardinality = 1;

@@ -11,7 +11,6 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;

@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order.counting;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
-
-import com.google.common.collect.Maps;
 
 /**
  * Counts all crossings caused by the ordering of north/south ports and between north/south edges
