@@ -55,8 +55,8 @@ public abstract class AbstractPortDistributor {
     private final boolean[] isPreSorted;
 
     /**
-     * Constructs a port distributor for the given array of port ranks. All ports are required to be
-     * assigned ids in the range of the given array.
+     * Constructs a port distributor for the given array of port ranks.
+     * All ports are required to be assigned ids in the range of the given array.
      * 
      * @param portRanks
      *            The array of port ranks

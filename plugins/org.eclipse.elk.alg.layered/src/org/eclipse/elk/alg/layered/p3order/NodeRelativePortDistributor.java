@@ -1,17 +1,13 @@
-/*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+/*******************************************************************************
+ * Copyright (c) 2010, 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
- * Copyright 2010 by
- * + Kiel University
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- * 
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- */
-
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -38,12 +34,11 @@ public final class NodeRelativePortDistributor extends AbstractPortDistributor {
     private final boolean assumePortOrderFixed;
 
     /**
-     * Constructs a node-relative port distributor with the given array of ranks. All ports are
-     * required to be assigned ids in the range of the given array.
+     * Constructs a node-relative port distributor with the given array of ranks.
+     * All ports are required to be assigned ids in the range of the given array.
      * 
      * @param portRanks
      *            The array of port ranks
-     * @param nodePositions
      */
     private NodeRelativePortDistributor(final float[] portRanks, final boolean assumePortOrderFixed,
             final int[][] nodePositions) {

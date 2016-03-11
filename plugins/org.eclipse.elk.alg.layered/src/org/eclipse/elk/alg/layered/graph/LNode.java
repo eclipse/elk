@@ -104,8 +104,7 @@ public final class LNode extends LShape {
     /**
      * Creates a node.
      *
-     * @param graph
-     *            the graph for which the node is created
+     * @param graph the graph for which the node is created 
      */
     public LNode(final LGraph graph) {
         this.graph = graph;
@@ -281,8 +280,7 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of given side.
      *
-     * @param side
-     *            a port side
+     * @param side a port side
      * @return an iterable for the ports of given side
      */
     public List<LPort> getPorts(final PortSide side) {
@@ -302,10 +300,8 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of a given type and side.
      *
-     * @param portType
-     *            a port type.
-     * @param side
-     *            a port side.
+     * @param portType a port type.
+     * @param side a port side.
      * @return an iterable for the ports of the given type and side.
      */
     public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {
@@ -382,10 +378,9 @@ public final class LNode extends LShape {
      * Returns the node's insets. The insets describe the area inside the node that is used by
      * ports, port labels, and node labels.
      *
-     * <p>
-     * The insets are not automatically updated. Rather, the insets have to be calculated once the
-     * port and label positions are fixed. Usually this is right before node placement starts.
-     * </p>
+     * <p>The insets are not automatically updated. Rather, the insets have to be calculated
+     * once the port and label positions are fixed. Usually this is right before node placement
+     * starts.</p>
      *
      * @return the node's insets. May be modified.
      */

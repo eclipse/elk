@@ -26,8 +26,6 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
-
-
 /**
  * Crossings counter implementation specialized for hyperedges. It also works for normal edges, but
  * is considerably slower compared to other implementations. For normal edges the computed number of

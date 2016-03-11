@@ -25,22 +25,12 @@ import org.eclipse.elk.core.options.PortSide;
  *
  * @author msp
  */
-/**
- * Calculates port ranks in a layer-total way.
- * 
- * <p>Port ranks are calculated by giving each node {@code i} a range of values {@code [i,i+x]},
- * where {@code x} is the number of input ports or output ports. Hence nodes with many ports are
- * assigned a broader range of ranks than nodes with few ports.</p>
- *
- * @author msp
- */
 public final class LayerTotalPortDistributor extends AbstractPortDistributor {
 
     private final boolean assumePortOrderFixed;
-
     /**
-     * Constructs a layer-total port distributor with the given array of ranks. All ports are
-     * required to be assigned ids in the range of the given array.
+     * Constructs a layer-total port distributor with the given array of ranks.
+     * All ports are required to be assigned ids in the range of the given array.
      * 
      * @param portRanks
      *            The array of port ranks comment
@@ -51,14 +41,11 @@ public final class LayerTotalPortDistributor extends AbstractPortDistributor {
         super(portRanks, nodePositions);
         this.assumePortOrderFixed = assumePortOrderFixed;
     }
-
+    
     /**
      * Constructs a layer-total port distributor with the given array of ranks. All ports are
      * required to be assigned ids in the range of the given array.
-     * 
-     * @param portRanks
-     *            The array of port ranks comment
-     * @param nodePositions
+     *            The array of port ranks
      */
     private LayerTotalPortDistributor(final float[] portRanks, final boolean assumePortOrderFixed) {
         super(portRanks);

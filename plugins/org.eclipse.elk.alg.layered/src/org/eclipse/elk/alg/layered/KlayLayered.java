@@ -43,11 +43,12 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
 /**
- * The main entry point into KLay Layered. KLay Layered is a layout algorithm after the layered layout method proposed
- * by Sugiyama et al. It is structured into five main phases: cycle breaking, layering, crossing minimization, node
- * placement, and edge routing. Before these phases and after the last phase so called intermediate layout processors
- * can be inserted that do some kind of pre or post processing. Implementations of the different main phases specify the
- * intermediate layout processors they require, which are automatically collected and inserted between the main phases.
+ * The main entry point into KLay Layered. KLay Layered is a layout algorithm after the layered
+ * layout method proposed by Sugiyama et al. It is structured into five main phases: cycle breaking,
+ * layering, crossing minimization, node placement, and edge routing. Before these phases and after
+ * the last phase so called intermediate layout processors can be inserted that do some kind of pre
+ * or post processing. Implementations of the different main phases specify the intermediate layout
+ * processors they require, which are automatically collected and inserted between the main phases.
  * The layout provider itself also specifies some dependencies.
  * 
  * <pre>
@@ -63,30 +64,28 @@ import org.eclipse.elk.core.util.Pair;
  *   Phase 1   Phase 2   Phase 3   Phase 4   Phase 5
  * </pre>
  * 
- * <p>
- * To use KLay Layered to layout a given graph, there are three possibilities depending on the kind of graph that is to
- * be laid out:
- * </p>
+ * <p>To use KLay Layered to layout a given graph, there are three possibilities depending on the kind
+ * of graph that is to be laid out:</p>
  * <ol>
- * <li>{@link #doLayout(LGraph, IElkProgressMonitor)} computes a layout for the given graph, without any subgraphs it
- * might have.</li>
- * <li>{@link #doCompoundLayout(LGraph, IElkProgressMonitor)} computes a layout for the given graph and for its
- * subgraphs, if any. (Subgraphs are attached to nodes through the {@link InternalProperties#NESTED_LGRAPH} property.)
- * </li>
+ *   <li>{@link #doLayout(LGraph, IElkProgressMonitor)} computes a layout for the given graph, without
+ *     any subgraphs it might have.</li>
+ *   <li>{@link #doCompoundLayout(LGraph, IElkProgressMonitor)} computes a layout for the given graph
+ *     and for its subgraphs, if any. (Subgraphs are attached to nodes through the
+ *     {@link InternalProperties#NESTED_LGRAPH} property.)</li>
  * <li>If you have a {@code KGraph} instead of an {@code LGraph}, you might want to use
- * {@link LayeredLayoutProvider#doLayout(org.eclipse.elk.graph.KNode, IElkProgressMonitor)} instead.</li>
+ *     {@link LayeredLayoutProvider#doLayout(org.eclipse.elk.graph.KNode, IElkProgressMonitor)}
+ *     instead.</li>
  * </ol>
- * <p>
- * In addition to regular layout runs, this class provides methods for automatic unit testing based around the concept
- * of <em>test runs</em>. A test run is executed as follows:
- * </p>
+ * <p>In addition to regular layout runs, this class provides methods for automatic unit testing based
+ * around the concept of <em>test runs</em>. A test run is executed as follows:</p>
  * <ol>
- * <li>Call {@link #prepareLayoutTest(LGraph)} to start a new run. The given graph might be split into its connected
- * components, which are put into the returned state object.</li>
- * <li>Call one of the actual test methods. {@link #runLayoutTestStep(TestExecutionState)} runs the next step of the
- * algorithm. {@link #runLayoutTestUntil(Class, TestExecutionState)} runs the algorithm until a given layout processor
- * has finished executing (its sibling, {@link #runLayoutTestUntil(Class, boolean, TestExecutionState)}, can also stop
- * just before a given layout processor starts executing). All of these methods resume execution from where the
+ *   <li>Call {@link #prepareLayoutTest(LGraph)} to start a new run. The given graph might be split
+ *       into its connected components, which are put into the returned state object.</li>
+ *   <li>Call one of the actual test methods. {@link #runLayoutTestStep(TestExecutionState)} runs the
+ *       next step of the algorithm. {@link #runLayoutTestUntil(Class, TestExecutionState)} runs the
+ *       algorithm until a given layout processor has finished executing (its sibling,
+ *       {@link #runLayoutTestUntil(Class, boolean, TestExecutionState)}, can also stop just before a
+ *       given layout processor starts executing). All of these methods resume execution from where the
  * algorithm has stopped previously.</li>
  * </ol>
  * 
@@ -113,17 +112,16 @@ public final class KlayLayered {
     /** compound graph postprocessor. */
     private CompoundGraphPostprocessor compoundGraphPostprocessor = new CompoundGraphPostprocessor();
 
+
     ////////////////////////////////////////////////////////////////////////////////
     // Regular Layout
 
     /**
-     * Does a layout on the given graph. If the graph contains compound nodes (see class documentation), the nested
-     * graphs are ignored.
+     * Does a layout on the given graph. If the graph contains compound nodes (see class documentation),
+     * the nested graphs are ignored.
      * 
-     * @param lgraph
-     *            the graph to layout
-     * @param monitor
-     *            a progress monitor to show progress information in, or {@code null}
+     * @param lgraph the graph to layout
+     * @param monitor a progress monitor to show progress information in, or {@code null}
      * @see #doCompoundLayout(LGraph, IElkProgressMonitor)
      */
     public void doLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
@@ -159,16 +157,16 @@ public final class KlayLayered {
         theMonitor.done();
     }
 
+
     ////////////////////////////////////////////////////////////////////////////////
     // Compound Graph Layout
 
     /**
-     * Does a layout on the given compound graph. Connected components processing is currently not supported.
+     * Does a layout on the given compound graph. Connected components processing is currently not
+     * supported.
      * 
-     * @param lgraph
-     *            the graph to layout
-     * @param monitor
-     *            a progress monitor to show progress information in, or {@code null}
+     * @param lgraph the graph to layout
+     * @param monitor a progress monitor to show progress information in, or {@code null}
      */
     public void doCompoundLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
         IElkProgressMonitor theMonitor = monitor;
@@ -298,10 +296,8 @@ public final class KlayLayered {
     /**
      * Do a recursive compound graph layout.
      * 
-     * @param lgraph
-     *            the graph
-     * @param monitor
-     *            a progress monitor to show progress information
+     * @param lgraph the graph
+     * @param monitor a progress monitor to show progress information
      */
     private void recursiveLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Recursive layout", 2);
@@ -363,11 +359,10 @@ public final class KlayLayered {
     }
 
     /**
-     * Prepares a test run of the layout algorithm. After this method has run, call {@link #layoutTestStep()} as often
-     * as there are layout processors.
+     * Prepares a test run of the layout algorithm. After this method has run, call
+     * {@link #layoutTestStep()} as often as there are layout processors.
      * 
-     * @param lgraph
-     *            the input graph to initialize the test run with.
+     * @param lgraph the input graph to initialize the test run with.
      * @return the test execution state
      */
     public TestExecutionState prepareLayoutTest(final LGraph lgraph) {
@@ -388,10 +383,9 @@ public final class KlayLayered {
     /**
      * Checks if the current test run still has processors to be executed for the algorithm to finish.
      * 
-     * @param state
-     *            the current test execution state
-     * @return {@code true} if the current test run has not finished yet. If there is no current test run, the result is
-     *         undefined.
+     * @param state the current test execution state
+     * @return {@code true} if the current test run has not finished yet. If there is no current
+     *         test run, the result is undefined.
      */
     public boolean isLayoutTestFinished(final TestExecutionState state) {
         LGraph graph = state.graphs.get(0);
@@ -400,24 +394,24 @@ public final class KlayLayered {
     }
 
     /**
-     * Runs the algorithm on the current test graphs up to the point where the given phase or processor has finished
-     * executing. If parts of the algorithm were already executed using this or other layout test methods, execution is
-     * resumed from there. If the given phase or processor is not among those processors that have not yet executed, an
-     * exception is thrown. Also, if there is no current layout test run, an exception is thrown.
+     * Runs the algorithm on the current test graphs up to the point where the given phase or
+     * processor has finished executing. If parts of the algorithm were already executed using this
+     * or other layout test methods, execution is resumed from there. If the given phase or
+     * processor is not among those processors that have not yet executed, an exception is thrown.
+     * Also, if there is no current layout test run, an exception is thrown.
      * 
-     * @param phase
-     *            the phase or processor to stop after
-     * @param inclusive
-     *            {@code true} if the specified phase should be executed as well
-     * @param state
-     *            the current test execution state
+     * @param phase the phase or processor to stop after
+     * @param inclusive {@code true} if the specified phase should be executed as well
+     * @param state the current test execution state
      * @throws IllegalArgumentException
-     *             if the given layout processor is not part of the processors that are still to be executed.
+     *             if the given layout processor is not part of the processors that are still to be
+     *             executed.
      */
-    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase, final boolean inclusive,
-            final TestExecutionState state) {
+    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
+            final boolean inclusive, final TestExecutionState state) {
 
-        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
+        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
+                InternalProperties.PROCESSORS);
 
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
@@ -444,7 +438,8 @@ public final class KlayLayered {
             // to differentiate between 'it's ok' and 'it's not'.
             // throw new IllegalArgumentException(
             // "Given processor not part of the remaining algorithm.");
-            System.err.println("Given processor " + phase + " not part of the remaining algorithm.");
+            System.err
+                    .println("Given processor " + phase + " not part of the remaining algorithm.");
         }
 
         // perform the layout up to and including that phase
@@ -455,27 +450,25 @@ public final class KlayLayered {
     }
 
     /**
-     * Performs the {@link #runLayoutTestUntil(Class, boolean)} methods with {@code inclusive} set to {@code true}.
+     * Performs the {@link #runLayoutTestUntil(Class, boolean)} methods with {@code inclusive} set
+     * to {@code true}.
      * 
-     * @param phase
-     *            the phase or processor to stop after
-     * @param state
-     *            the current test execution state
+     * @param phase the phase or processor to stop after
+     * @param state the current test execution state
      * @see KlayLayered#runLayoutTestUntil(Class, boolean)
      */
-    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase, final TestExecutionState state) {
+    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
+            final TestExecutionState state) {
 
         runLayoutTestUntil(phase, true, state);
     }
 
     /**
-     * Runs the next step of the current layout test run. Throws exceptions if no layout test run is currently active or
-     * if the current run has finished.
+     * Runs the next step of the current layout test run. Throws exceptions if no layout test run is
+     * currently active or if the current run has finished.
      * 
-     * @param state
-     *            the current test execution state
-     * @throws IllegalStateException
-     *             if the given state has finished executing
+     * @param state the current test execution state
+     * @throws IllegalStateException if the given state has finished executing
      */
     public void runLayoutTestStep(final TestExecutionState state) {
         if (isLayoutTestFinished(state)) {
@@ -483,22 +476,23 @@ public final class KlayLayered {
         }
 
         // perform the next layout step
-        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
+        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
+                InternalProperties.PROCESSORS);
         layoutTest(state.graphs, algorithm.get(state.step));
         state.step++;
     }
 
     /**
-     * Returns the current list of layout processors that make up the algorithm. This list is only valid and meaningful
-     * while a layout test is being run.
+     * Returns the current list of layout processors that make up the algorithm. This list is only
+     * valid and meaningful while a layout test is being run.
      * 
-     * @param state
-     *            the current test execution state
+     * @param state the current test execution state
      * @return the algorithm's current configuration.
      */
     public List<ILayoutProcessor> getLayoutTestConfiguration(final TestExecutionState state) {
         return state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
     }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     // Actual Layout
@@ -506,10 +500,8 @@ public final class KlayLayered {
     /**
      * Perform the five phases of the layered layouter.
      * 
-     * @param lgraph
-     *            the graph that is to be laid out
-     * @param monitor
-     *            a progress monitor
+     * @param lgraph the graph that is to be laid out
+     * @param monitor a progress monitor
      */
     private void layout(final LGraph lgraph, final IElkProgressMonitor monitor) {
         boolean monitorStarted = monitor.isRunning();
@@ -527,7 +519,8 @@ public final class KlayLayered {
             System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
             int i = 0;
             for (ILayoutProcessor processor : algorithm) {
-                System.out.println("   Slot " + String.format("%1$02d", i++) + ": " + processor.getClass().getName());
+                System.out.println("   Slot " + String.format("%1$02d", i++) + ": "
+                        + processor.getClass().getName());
             }
 
             // Invoke each layout processor
@@ -573,12 +566,9 @@ public final class KlayLayered {
     /**
      * Executes the given layout processor on the given list of graphs.
      * 
-     * @param lgraphs
-     *            the list of graphs to be laid out.
-     * @param monitor
-     *            a progress monitor.
-     * @param processor
-     *            processor to execute.
+     * @param lgraphs the list of graphs to be laid out.
+     * @param monitor a progress monitor.
+     * @param processor processor to execute.
      */
     private void layoutTest(final List<LGraph> lgraphs, final ILayoutProcessor processor) {
         // invoke the layout processor on each of the given graphs
@@ -587,24 +577,22 @@ public final class KlayLayered {
         }
     }
 
+
     ////////////////////////////////////////////////////////////////////////////////
     // Graph Postprocessing (Size and External Ports)
 
     /**
-     * Sets the size of the given graph such that size constraints are adhered to. Furthermore, the border spacing is
-     * added to the graph size and the graph offset. Afterwards, the border spacing property is reset to 0.
+     * Sets the size of the given graph such that size constraints are adhered to.
+     * Furthermore, the border spacing is added to the graph size and the graph offset.
+     * Afterwards, the border spacing property is reset to 0.
      * 
-     * <p>
-     * Major parts of this method are adapted from
-     * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.KNode, float, float, boolean)}.
-     * </p>
+     * <p>Major parts of this method are adapted from
+     * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.KNode, float, float, boolean)}.</p>
      * 
-     * <p>
-     * Note: This method doesn't care about labels of compound nodes since those labels are not attached to the graph.
-     * </p>
+     * <p>Note: This method doesn't care about labels of compound nodes since those labels are not
+     * attached to the graph.</p>
      * 
-     * @param lgraph
-     *            the graph to resize.
+     * @param lgraph the graph to resize.
      */
     private void resizeGraph(final LGraph lgraph) {
         Set<SizeConstraint> sizeConstraint = lgraph.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
@@ -655,10 +643,11 @@ public final class KlayLayered {
         resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);
     }
 
+
     /**
-     * Applies a new effective size to a graph that previously had an old size calculated by the layout algorithm. This
-     * method takes care of adjusting content alignments as well as external ports that would be misplaced if the new
-     * size is larger than the old one.
+     * Applies a new effective size to a graph that previously had an old size calculated by the
+     * layout algorithm. This method takes care of adjusting content alignments as well as external
+     * ports that would be misplaced if the new size is larger than the old one.
      * 
      * @param lgraph
      *            the graph to apply the size to.
@@ -667,10 +656,12 @@ public final class KlayLayered {
      * @param newSize
      *            new size that may be larger than the old one.
      */
-    private void resizeGraphNoReallyIMeanIt(final LGraph lgraph, final KVector oldSize, final KVector newSize) {
+    private void resizeGraphNoReallyIMeanIt(final LGraph lgraph, final KVector oldSize,
+            final KVector newSize) {
 
         // obey to specified alignment constraints
-        Set<ContentAlignment> contentAlignment = lgraph.getProperty(LayeredOptions.CONTENT_ALIGNMENT);
+        Set<ContentAlignment> contentAlignment =
+                lgraph.getProperty(LayeredOptions.CONTENT_ALIGNMENT);
 
         // horizontal alignment
         if (newSize.x > oldSize.x) {
@@ -691,7 +682,8 @@ public final class KlayLayered {
         }
 
         // correct the position of eastern and southern hierarchical ports, if necessary
-        if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)
+        if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
+                GraphProperties.EXTERNAL_PORTS)
                 && (newSize.x > oldSize.x || newSize.y > oldSize.y)) {
 
             // iterate over the graph's nodes, looking for eastern / southern external ports
@@ -719,10 +711,8 @@ public final class KlayLayered {
     /**
      * Transfer the layout of the given graph to the given associated node.
      * 
-     * @param node
-     *            a compound node
-     * @param lgraph
-     *            the graph nested in the compound node
+     * @param node a compound node
+     * @param lgraph the graph nested in the compound node
      */
     private void graphLayoutToNode(final LNode node, final LGraph lgraph) {
         // Process external ports
@@ -730,8 +720,8 @@ public final class KlayLayered {
             Object origin = childNode.getProperty(InternalProperties.ORIGIN);
             if (origin instanceof LPort) {
                 LPort port = (LPort) origin;
-                KVector portPosition =
-                        LGraphUtil.getExternalPortPosition(lgraph, childNode, port.getSize().x, port.getSize().y);
+                KVector portPosition = LGraphUtil.getExternalPortPosition(lgraph, childNode,
+                        port.getSize().x, port.getSize().y);
                 port.getPosition().x = portPosition.x;
                 port.getPosition().y = portPosition.y;
                 port.setSide(childNode.getProperty(InternalProperties.EXT_PORT_SIDE));
@@ -740,10 +730,12 @@ public final class KlayLayered {
 
         // Setup the parent node
         KVector actualGraphSize = lgraph.getActualSize();
-        if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
+        if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
+                GraphProperties.EXTERNAL_PORTS)) {
             // Ports have positions assigned
             node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES).add(GraphProperties.NON_FREE_PORTS);
+            node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
+                    .add(GraphProperties.NON_FREE_PORTS);
             LGraphUtil.resizeNode(node, actualGraphSize, false, true);
         } else {
             // Ports have not been positioned yet - leave this for next layouter
