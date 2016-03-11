@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -6,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -29,7 +38,9 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
-
+// CHECKSTYLEOFF javadoc
+// CHECKSTYLEOFF MagicNumber
+// CHECKSTYLEOFF MethodName
 @RunWith(Parameterized.class)
 public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreator {
     private final CrossMinType crossMinType;
@@ -37,7 +48,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
     /**
      * Constructor called by Parameterized.
-     * 
+     *
      * @param gT
      *            greedyType
      */
@@ -47,7 +58,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
     /**
      * Sets the Parameters to be tested as all elements of the GreedySwitchType enum.
-     * 
+     *
      * @return parameters
      */
     @Parameters(name = "{0}")
@@ -85,12 +96,12 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      * ||_|  *|
      * |------|
      * </pre>
-     * 
+     *
      * Sweep backward first.
      */
     @Test
     public void givenCompoundGraphWhereOrderIsOnlyCorrectedOnForwardSweep_RemovesCrossing() {
-        LNode node = addNodeToLayer(makeLayer(graph));
+        LNode node = addNodeToLayer(makeLayer(getGraph()));
         LGraph innerGraph = nestedGraph(node);
         LNode leftInnerNode = addNodeToLayer(makeLayer(innerGraph));
         setFixedOrderConstraint(leftInnerNode);
@@ -102,7 +113,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         List<LNode> expectedOrderRightInner = switchOrderOfNodesInLayer(0, 1, rightInnerLayer);
         List<LPort> expectedPortOrderLeft = copyPortsInIndexOrder(leftInnerNode, 0, 1);
 
-        random.setNextBoolean(false);
+        getRandom().setNextBoolean(false);
         setUpAndMinimizeCrossings();
 
         assertThat(leftInnerNode.getPorts(), is(expectedPortOrderLeft));
@@ -121,7 +132,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void givenSingleHierarchicalNodeWithCross_RemovesCrossing() {
-        LNode node = addNodeToLayer(makeLayer(graph));
+        LNode node = addNodeToLayer(makeLayer(getGraph()));
         LGraph innerGraph = nestedGraph(node);
         LNode[] innerNodesleft = addNodesToLayer(2, makeLayer(innerGraph));
         LNode[] innerNodesRight = addNodesToLayer(2, makeLayer(innerGraph));
@@ -147,8 +158,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void givenSimpleHierarchicalCross_ShouldResultInNoCrossing() {
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode rightOuterNode = addNodeToLayer(makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
 
@@ -189,8 +200,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void givenSimpleHierarchicalCrossSweepingFromRightToLeft_ShouldResultInNoCrossing() {
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode rightOuterNode = addNodeToLayer(makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
         addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[0]);
@@ -207,7 +218,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         List<LPort> expectedOrderOfPortsLeft =
                 Lists.newArrayList(leftOuterPorts[1], leftOuterPorts[0]);
 
-        random.setNextBoolean(false);
+        getRandom().setNextBoolean(false);
         setUpAndMinimizeCrossings();
 
         assertThat(leftOuterNode.getPorts(), is(expectedOrderOfPortsLeft));
@@ -228,9 +239,9 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      * .           ^
      *           port orders fixed
      * </pre>
-     * 
+     *
      * First Layer and last layer in fixed order.
-     * 
+     *
      * @return graph of the form above.
      */
     @Test
@@ -259,7 +270,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
 
-        Layer middleLayer = graph.getLayers().get(1);
+        Layer middleLayer = getGraph().getLayers().get(1);
         assertTrue(middleLayer.toString(), inOrder(middleNodes[0], middleNodes[1], middleLayer));
         assertThat(middleNodes[2].getPorts(), is(expectedPortOrderBottomMiddleNode));
     }
@@ -277,10 +288,10 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      *             ^
      *           port orders fixed
      * </pre>
-     * 
+     *
      * First Layer and last layer in fixed order. Should leave this order, since the fixable port
      * order is already corrected before counting.
-     * 
+     *
      * @return graph of the form above.
      */
     @Test
@@ -307,7 +318,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
 
-        Layer middleLayer = graph.getLayers().get(1);
+        Layer middleLayer = getGraph().getLayers().get(1);
         assertTrue(middleLayer.toString(), inOrder(middleNodes[0], middleNodes[1], middleLayer));
         assertThat(middleNodes[2].getPorts(), is(expectedPortOrderBottomMiddleNode));
     }
@@ -323,9 +334,9 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void resolvesInNotTakenSweepDirectionInLayerPortOrderCrossingsAfterSwitch() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer(graph));
-        LNode[] middleNodes = addNodesToLayer(2, makeLayer(graph));
-        LNode rightNode = addNodeToLayer(makeLayer(graph));
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode[] middleNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode rightNode = addNodeToLayer(makeLayer(getGraph()));
 
         eastWestEdgeFromTo(middleNodes[0], rightNode);
         eastWestEdgeFromTo(middleNodes[0], rightNode);
@@ -340,7 +351,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
 
-        assertThat(graph.getLayers().get(1).getNodes(), is(expectedNodeOrderMiddleLayer));
+        assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedNodeOrderMiddleLayer));
         assertThat(middleNodes[0].getPorts(), is(expectedPortOrderMiddleTopNode));
     }
 
@@ -350,14 +361,14 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      *  \  | |
      * *-+-| |
      *   |/|_|
-     *   |\  
+     *   |\
      *   --*
      * </pre>
      */
     @Test
     public void resolvesInLayerPortOrderCrossingsAfterSwitch() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer(graph));
-        LNode[] middleNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode[] middleNodes = addNodesToLayer(2, makeLayer(getGraph()));
 
         eastWestEdgeFromTo(leftNodes[0], middleNodes[1]);
         addInLayerEdge(middleNodes[1], middleNodes[0], PortSide.WEST);
@@ -370,14 +381,14 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         setUpAndMinimizeCrossings();
 
         if (crossMinType == CrossMinType.BARYCENTER) {
-            assertThat(graph.getLayers().get(1).getNodes(), is(expectedNodeOrderMiddleLayer));
+            assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedNodeOrderMiddleLayer));
             assertThat(middleNodes[0].getPorts(), is(expectedPortOrderMiddleTopNode));
         }
     }
 
     /**
      * Assumes both nodes to actually be in layer.
-     * 
+     *
      * @param firstNode
      * @param secondNode
      * @param layer
@@ -427,8 +438,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void givenCrossWithNoExternalPortDummiesOnOneNestedGraph_ShouldRemoveCrossing() {
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode rightOuterNode = addNodeToLayer(makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
         addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[0]);
@@ -447,7 +458,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
     /**
      * <pre>
-     * ____  
+     * ____
      * |*-+  *
      * |  |\/
      * |*-+/\
@@ -456,8 +467,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void givenCrossBetweenCompoundAndNonCompoundNodes_ShouldRemoveCrossing() {
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         eastWestEdgeFromTo(leftOuterPorts[0], rightNodes[1]);
         eastWestEdgeFromTo(leftOuterPorts[1], rightNodes[0]);
@@ -467,12 +478,12 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
 
-        assertThat(expectedOrderRight, is(graph.getLayers().get(1).getNodes()));
+        assertThat(expectedOrderRight, is(getGraph().getLayers().get(1).getNodes()));
     }
 
     /**
      * <pre>
-     * ______  
+     * ______
      * |*  *+-*
      * | \/ |
      * | /\ |
@@ -483,8 +494,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
     @Test
     public void givenCrossInFirstLevelCompoundNode_ShouldRemoveCrossing() {
         // parent graph
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         eastWestEdgeFromTo(leftOuterPorts[0], rightNodes[0]);
         eastWestEdgeFromTo(leftOuterPorts[1], rightNodes[1]);
@@ -504,7 +515,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
 
-        assertThat(graph.getLayers().get(1).getNodes(), is(expectedOrderRight));
+        assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedOrderRight));
     }
 
     /**
@@ -515,13 +526,13 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      *  /\| |
      * *  |_|
      * </pre>
-     * 
+     *
      * port order fixed.
      */
     @Test
     public void givenGraphWithoutNesting_ShouldImproveOnBackwardSweep() {
-        Layer leftLayer = makeLayer(graph);
-        Layer rightLayer = makeLayer(graph);
+        Layer leftLayer = makeLayer(getGraph());
+        Layer rightLayer = makeLayer(getGraph());
         LNode leftTopNode = addNodeToLayer(leftLayer);
         LNode leftBottomNode = addNodeToLayer(leftLayer);
         LNode rightNode = addNodeToLayer(rightLayer);
@@ -531,7 +542,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         List<LNode> expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
 
-        random.setNextBoolean(false); // sweeps backward
+        getRandom().setNextBoolean(false); // sweeps backward
         setUpAndMinimizeCrossings();
 
         assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
@@ -546,7 +557,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      *  \/
      *  /\
      * *  *
-     * 
+     *
      * </pre>
      */
     @Test
@@ -576,7 +587,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      * | |/x\  | |
      * |_|/ \*-|_|
      * </pre>
-     * 
+     *
      * port order fixed.
      */
     @Test
@@ -609,13 +620,13 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      * |*-+/\+-*|
      * |--|  |--|
      * </pre>
-     * 
+     *
      * With external origins of port dummies on right node wrong way around.
      */
     @Test
     public void givenNestedGraphWithWronglySortedDummyNodes_ShouldSortAndResolveCrossing() {
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode rightOuterNode = addNodeToLayer(makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
         addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[0]);
@@ -656,13 +667,13 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      * |*-+/\+-*|
      * |--|  |--|
      * </pre>
-     * 
+     *
      * With external origins of port dummies on right node wrong way around.
      */
     @Test
     public void allRecursive_nestedGraphWithWronglySortedDummyNodes_crossingStays() {
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode rightOuterNode = addNodeToLayer(makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
         addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[0]);
@@ -677,7 +688,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         eastWestEdgeFromTo(rightInnerDummyNodes[0], rightInnerNodes[0]);
         eastWestEdgeFromTo(rightInnerDummyNodes[1], rightInnerNodes[1]);
 
-        graph.setProperty(LayeredOptions.CROSS_MIN_RECURSIVE, true);
+        getGraph().setProperty(LayeredOptions.CROSS_MIN_RECURSIVE, true);
 
         List<LNode> expectedNormalNodeOrderRight = Lists.newArrayList(rightInnerNodes);
 
@@ -701,7 +712,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      * // \\  |  |
      * *   *==|__|
      * </pre>
-     * 
+     *
      * This test was used in development and can be reused if there is a problem with the
      * thoroughness value. It is deactivated because it depends on a random value and is slow.
      */
@@ -723,21 +734,21 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
 
-        assertThat(graph.getLayers().get(0).getNodes(), is(expectedWrongOrder));
+        assertThat(getGraph().getLayers().get(0).getNodes(), is(expectedWrongOrder));
 
-        graph.setProperty(InternalProperties.RANDOM, new Random()); // AAA! Random in Test!!!
-        graph.setProperty(LayeredOptions.THOROUGHNESS, 100);
+        getGraph().setProperty(InternalProperties.RANDOM, new Random()); // AAA! Random in Test!!!
+        getGraph().setProperty(LayeredOptions.THOROUGHNESS, 100);
         for (int i = 0; i < 100; i++) {
             setUpAndMinimizeCrossings();
-            assertThat(graph.getLayers().get(0).getNodes(), is(expectedCorrectOrder));
-            graph.getLayers().get(0).getNodes().clear();
-            graph.getLayers().get(0).getNodes().addAll(expectedWrongOrder);
+            assertThat(getGraph().getLayers().get(0).getNodes(), is(expectedCorrectOrder));
+            getGraph().getLayers().get(0).getNodes().clear();
+            getGraph().getLayers().get(0).getNodes().addAll(expectedWrongOrder);
         }
     }
 
     /**
      * <pre>
-     * ____  
+     * ____
      * |  |\ /-*
      * |  | x
      * |*-+/ \-*
@@ -764,19 +775,19 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
 
-        assertThat(graph.getLayers().get(1).getNodes(), is(expectedCorrectOrder));
+        assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedCorrectOrder));
     }
 
     /**
      * <pre>
-     * ____  
+     * ____
      * |  |\ /-*
      * |  | x
      * |*-+/ \-*
      * |  p
      * |--|
      * </pre>
-     * 
+     *
      * p is a port with no edge.
      */
     @Test
@@ -800,7 +811,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         List<LNode> expectedCorrectOrder = switchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
-        assertThat(graph.getLayers().get(1).getNodes(), is(expectedCorrectOrder));
+        assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedCorrectOrder));
 
     }
 
@@ -814,13 +825,13 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      *      \
      *       *
      * </pre>
-     * 
+     *
      * Right layer has fixed port order, left has free.
      */
     @Ignore
     public void showsErrorInCrossingCountingAlgorithmsForFreePortOrder() {
-        LNode leftNode = addNodeToLayer(makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
         setFixedOrderConstraint(rightNodes[0]);
         setFixedOrderConstraint(rightNodes[1]);
         // setFixedOrderConstraint(leftNode);
@@ -837,7 +848,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
 
-        assertThat(graph.getLayers().get(1).getNodes(), is(expectedCorrectOrder));
+        assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedCorrectOrder));
     }
 
     /**
@@ -850,9 +861,9 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void nonRecursive_givenGraphWithCrossingWithFixedPortOrderToHierarchicalGraph_ShouldRemoveCrossing() {
-        LNode leftNode = addNodeToLayer(makeLayer(graph));
+        LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
         setFixedOrderConstraint(leftNode);
-        LNode rightOuterNode = addNodeToLayer(makeLayer(graph));
+        LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
         eastWestEdgeFromTo(leftNode, rightOuterNode);
         LPort rightOuterPort = addPortOnSide(rightOuterNode, PortSide.WEST);
         LPort leftLowerPort = addPortOnSide(leftNode, PortSide.EAST);
@@ -869,7 +880,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         setUpAndMinimizeCrossings();
         if (crossMinType.isDeterministic()) {
-            assertThat(graph.getLayers().get(1).getNodes().get(0).getPorts(),
+            assertThat(getGraph().getLayers().get(1).getNodes().get(0).getPorts(),
                     is(expectedPortOrderRight));
         }
     }
@@ -885,10 +896,10 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void givenGraphWhichMustTransportSwitchedPortOrderThroughHierarchy_ShouldContainNoCrossing() {
-        LNode leftNode = addNodeToLayer(makeLayer(graph));
+        LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
         // setFixedOrderConstraint(leftNode);
-        LNode middleOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode middleOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
 
         LPort[] middleOuterRightPorts = addPortsOnSide(2, middleOuterNode, PortSide.EAST);
         eastWestEdgeFromTo(middleOuterRightPorts[0], rightNodes[0]);
@@ -913,11 +924,11 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         List<LPort> expextedPorts = copyPortsInIndexOrder(middleOuterNode, 1, 0, 3, 2);
 
-        setAllGraphsToGreedySwitchType(graph, GreedySwitchType.ONE_SIDED);
+        setAllGraphsToGreedySwitchType(getGraph(), GreedySwitchType.ONE_SIDED);
 
         setUpAndMinimizeCrossings();
 
-        assertThat(graph.getLayers().get(1).getNodes().get(0).getPorts(), is(expextedPorts));
+        assertThat(getGraph().getLayers().get(1).getNodes().get(0).getPorts(), is(expextedPorts));
     }
 
     /**
@@ -931,9 +942,9 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void givenGraphTransportsSwitchedPortsThroughHierarchyFromEastToWest_ShouldContainNoCrossing() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer(graph));
-        LNode middleOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode rightNode = addNodeToLayer(makeLayer(graph));
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode middleOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode rightNode = addNodeToLayer(makeLayer(getGraph()));
         // setFixedOrderConstraint(rightNode);
 
         LPort[] leftPortsRightNode = addPortsOnSide(2, rightNode, PortSide.WEST);
@@ -961,10 +972,10 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
                 copyPortsInIndexOrder(middleOuterNode, 1, 0, 3, 2);
 
         // sweep backward
-        random.setNextBoolean(false);
+        getRandom().setNextBoolean(false);
         setUpAndMinimizeCrossings();
 
-        assertThat(graph.getLayers().get(1).getNodes().get(0).getPorts(),
+        assertThat(getGraph().getLayers().get(1).getNodes().get(0).getPorts(),
                 is(expectedPortOrderMiddleNode));
     }
 
@@ -977,14 +988,14 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      * |*-+/\+-*|
      * |--|  |--|
      *   |_____*
-     * 
+     *
      * </pre>
      */
     @Test
     public void givenSimpleHierarchicalCrossWithNorthSouthEdge_ShouldResultInNoCrossing() {
-        LNode[] leftNodes = addNodesToLayer(3, makeLayer(graph));
+        LNode[] leftNodes = addNodesToLayer(3, makeLayer(getGraph()));
         LNode leftOuterNode = leftNodes[1];
-        LNode[] rightNodes = addNodesToLayer(3, makeLayer(graph));
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer(getGraph()));
         LNode rightOuterNode = rightNodes[1];
 
         // adds first port, so must be before other edges.
@@ -1026,22 +1037,22 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      *  / \
      * *---*
      * </pre>
-     * 
+     *
      * Node order free left bottom node.
      */
     @Test
     public void givenCrossWhichWouldCauseCrossingIfPortOrderWouldBeFixed_ShouldBeRemoved() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
         eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
         eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
         eastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
 
-        List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, graph.getLayers().get(1));
+        List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, getGraph().getLayers().get(1));
 
         setUpAndMinimizeCrossings();
 
-        List<LNode> actualOrderRight = graph.getLayers().get(1).getNodes();
+        List<LNode> actualOrderRight = getGraph().getLayers().get(1).getNodes();
         assertThat(actualOrderRight, is(expectedOrderRight));
 
     }
@@ -1067,8 +1078,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
     public void givenSimpleHierarchicalNodeWithLowConnectivity_DoesNotUseHierarchySweep() {
         if (!crossMinType.isDeterministic()) {
 
-            LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-            LNode rightOuterNode = addNodeToLayer(makeLayer(graph));
+            LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+            LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
             LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
             LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
 
@@ -1085,7 +1096,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
                 eastWestEdgeFromTo(leftNodes[i], rightNodes[i]);
             }
 
-            graph.setProperty(LayeredOptions.RECURSIVE_BOUNDARY, 0.2f);
+            getGraph().setProperty(LayeredOptions.RECURSIVE_BOUNDARY, 0.2f);
 
             List<LNode> expectedExternalDummyOrderRight =
                     Lists.newArrayList(rightInnerGraph.getLayers().get(0));
@@ -1107,7 +1118,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
     /**
      * <pre>
-     *  
+     *
      * __________________
      * |___        ___  |
      * || |===*  --| |  |    ______
@@ -1121,9 +1132,9 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      * .            |
      *           port orders fixed
      * </pre>
-     * 
+     *
      * First Layer and last layer in fixed order.
-     * 
+     *
      * @return graph of the form above.
      */
     @Test
@@ -1177,7 +1188,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
     /**
      * <pre>
-     * _______  
+     * _______
      * |*  *-|--*
      * | \/  |
      * | /\  |
@@ -1194,8 +1205,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
     @Test
     public void recursiveLayout_givenCrossInFirstLevelCompoundNode_sortsPortsAccordingly() {
         // parent graph
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         eastWestEdgeFromTo(leftOuterPorts[0], rightNodes[0]);
         eastWestEdgeFromTo(leftOuterPorts[1], rightNodes[1]);
@@ -1222,7 +1233,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         if (!crossMinType.isDeterministic()) {
             assertThat(leftOuterNode.getPorts(), is(expectedPortOrderLeft));
-            assertThat(graph.getLayers().get(1).getNodes(), is(expectedOrderRight));
+            assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedOrderRight));
         }
     }
 
@@ -1252,11 +1263,11 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
         List<LNode> expectedOrderRight = Lists.newArrayList(rightNodes);
 
-        random.setNextBoolean(false);
+        getRandom().setNextBoolean(false);
         setUpAndMinimizeCrossings();
 
         if (crossMinType == CrossMinType.BARYCENTER) {
-            assertThat(graph.getLayers().get(1).getNodes(), is(expectedOrderRight));
+            assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedOrderRight));
         }
     }
 
@@ -1267,7 +1278,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      *   //*--|  |
      * //|    |  |
      *|| --*--|__|
-     * \\ 
+     * \\
      *  \\
      *   \\
      *     *
@@ -1286,7 +1297,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         addEdgeBetweenPorts(portOne, portTwo);
         addEdgeBetweenPorts(portOne, portTwo);
         setFixedOrderConstraint(rightNode);
-        List<LNode> actualOrder = graph.getLayers().get(0).getNodes();
+        List<LNode> actualOrder = getGraph().getLayers().get(0).getNodes();
 
         List<LNode> expectedOrderBarycenter = getListCopyInIndexOrder(actualOrder, 1, 0, 2, 3);
         List<LNode> expectedOrderGreedySwitch = getListCopyInIndexOrder(actualOrder, 1, 0, 2, 3);
@@ -1301,7 +1312,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
 
     /**
      * <pre>
-     * ______  
+     * ______
      * |*  *+-*
      * | \/ |
      * | /\ |
@@ -1312,8 +1323,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
     @Test
     public void allRecursive_crossInFirstLevelCompoundNode_ShouldRemoveCrossing() {
         // parent graph
-        LNode leftOuterNode = addNodeToLayer(makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         eastWestEdgeFromTo(leftOuterPorts[0], rightNodes[0]);
         eastWestEdgeFromTo(leftOuterPorts[1], rightNodes[1]);
@@ -1328,12 +1339,12 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         eastWestEdgeFromTo(leftInnerNodesRight[1], leftInnerDummyNodes[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[0], leftInnerNodesRight[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[1], leftInnerNodesRight[0]);
-        graph.setProperty(LayeredOptions.CROSS_MIN_RECURSIVE, true);
+        getGraph().setProperty(LayeredOptions.CROSS_MIN_RECURSIVE, true);
         List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
 
-        assertThat(graph.getLayers().get(1).getNodes(), is(expectedOrderRight));
+        assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedOrderRight));
     }
 
     // TODO-alan change design to be able to test thouroughness value with dummy heuristic.
@@ -1348,11 +1359,11 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
     }
 
     private void setUpAndMinimizeCrossings() {
-        setAllGraphsToGreedySwitchType(graph, GreedySwitchType.ONE_SIDED);
+        setAllGraphsToGreedySwitchType(getGraph(), GreedySwitchType.ONE_SIDED);
         if (crossMinType == CrossMinType.BARYCENTER) {
-            graph.setProperty(LayeredOptions.THOROUGHNESS, 1);
+            getGraph().setProperty(LayeredOptions.THOROUGHNESS, 1);
         }
-        crossMin.process(graph, new BasicProgressMonitor());
+        crossMin.process(getGraph(), new BasicProgressMonitor());
     }
 
     private void setAllGraphsToGreedySwitchType(final LGraph graph,

@@ -1,16 +1,13 @@
-/*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+/*******************************************************************************
+ * Copyright (c) 2011, 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- *
- * Copyright 2014 by
- * + Kiel University
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- *
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- */
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -28,404 +25,408 @@ import org.junit.Test;
  *
  */
 public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphCreator {
-	private InLayerEdgeTwoNodeCrossingCounter counter;
-	private int lowerUpperCrossings;
-	private int upperLowerCrossings;
-	private LNode[] nodeOrder;
+    private InLayerEdgeTwoNodeCrossingCounter counter;
+    private int lowerUpperCrossings;
+    private int upperLowerCrossings;
+    private LNode[] nodeOrder;
 
-	@Test
-	public void ignoresInBetweenLayerEdges() {
-		getCrossFormedGraph();
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    //CHECKSTYLEOFF javadoc
+    //CHECKSTYLEOFF MagicNumber
+    //CHECKSTYLEOFF MethodName
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+    @Test
+    public void ignoresInBetweenLayerEdges() {
+        getCrossFormedGraph();
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	@Test
-	public void countInLayerEdgeWithNormalEdgeCrossing() {
-		getInLayerEdgesGraph();
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+    @Test
+    public void countInLayerEdgeWithNormalEdgeCrossing() {
+        getInLayerEdgesGraph();
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	@Test
-	public void crossingsWhenSwitched() {
-		getInLayerEdgesGraphWhichResultsInCrossingsWhenSwitched();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
+    @Test
+    public void crossingsWhenSwitched() {
+        getInLayerEdgesGraphWhichResultsInCrossingsWhenSwitched();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
-	@Test
-	public void inLayerEdgeOnLowerNode() {
-		getInLayerEdgesGraph();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    @Test
+    public void inLayerEdgeOnLowerNode() {
+        getInLayerEdgesGraph();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	@Test
-	public void switchNodeOrder() {
-		getInLayerEdgesGraph();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		initCrossingCounterForLayerIndex(1);
-		switchOrderAndNotifyCounter(1, 2);
+    @Test
+    public void switchNodeOrder() {
+        getInLayerEdgesGraph();
 
-		countCrossings(0, 1);
+        initCrossingCounterForLayerIndex(1);
+        switchOrderAndNotifyCounter(1, 2);
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossings(0, 1);
 
-	@Test
-	public void fixedPortOrderCrossingToInBetweenLayerEdge() {
-		getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
-		switchOrderAndNotifyCounter(0, 1);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossings(0, 1);
+    @Test
+    public void fixedPortOrderCrossingToInBetweenLayerEdge() {
+        getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
+        switchOrderAndNotifyCounter(0, 1);
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-	}
+        countCrossings(0, 1);
 
-	@Test
-	public void fixedPortOrderCrossingsAndNormalEdgeCrossings() {
-		getInLayerEdgesWithFixedPortOrderAndNormalEdgeCrossings();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    @Test
+    public void fixedPortOrderCrossingsAndNormalEdgeCrossings() {
+        getInLayerEdgesWithFixedPortOrderAndNormalEdgeCrossings();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-		switchOrderAndNotifyCounter(0, 1);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
 
-		countCrossings(0, 1);
+        switchOrderAndNotifyCounter(0, 1);
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
-	}
+        countCrossings(0, 1);
 
-	@Test
-	public void ignoresSelfLoops() {
-		getCrossWithManySelfLoopsGraph();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    @Test
+    public void ignoresSelfLoops() {
+        getCrossWithManySelfLoopsGraph();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	@Test
-	public void ignoresCrossingsWhenPortOrderNotSet() {
-		getInLayerEdgesCrossingsButNoFixedOrder();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    @Test
+    public void ignoresCrossingsWhenPortOrderNotSet() {
+        getInLayerEdgesCrossingsButNoFixedOrder();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	}
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
 
-	@Test
-	public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLower() {
-		getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLower();
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
+    @Test
+    public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLower() {
+        getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLower();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
-	}
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
 
-	/**
-	 *
-	 * <pre>
-	 *      *
-	 *     /____
-	 *     \|  |
-	 *    //|  | <-- count between this node
-	 * *-++-|  |
-	 *   || |__|
-	 *   ||
-	 * *-++-*    <-- and this node
-	 *    \\
-	 *      *
-	 * .
-	 * </pre>
-	 *
-	 * Port order not fixed.
-	 *
-	 */
-	@Test
-	public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLowerLowerUpsideDown() {
-		getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLowerUpsideDown();
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
+    /**
+     *
+     * <pre>
+     *      *
+     *     /____
+     *     \|  |
+     *    //|  | <-- count between this node
+     * *-++-|  |
+     *   || |__|
+     *   ||
+     * *-++-*    <-- and this node
+     *    \\
+     *      *
+     * .
+     * </pre>
+     *
+     * Port order not fixed.
+     *
+     */
+    @Test
+    public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLowerLowerUpsideDown() {
+        getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLowerUpsideDown();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
-	}
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
 
-	@Test
-	public void crossingsOnBothSides() {
-		getInLayerCrossingsOnBothSides();
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    @Test
+    public void crossingsOnBothSides() {
+        getInLayerCrossingsOnBothSides();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	@Test
-	public void fixedPortOrderInLayerNoCrossings() {
-		getFixedPortOrderInLayerEdgesDontCrossEachOther();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+    @Test
+    public void fixedPortOrderInLayerNoCrossings() {
+        getFixedPortOrderInLayerEdgesDontCrossEachOther();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
-	@Test
-	public void fixedPortOrderInLayerWithAlwaysRemaingCrossingsAreNotCounted() {
-		getFixedPortOrderInLayerEdgesWithCrossings();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+    @Test
+    public void fixedPortOrderInLayerWithAlwaysRemaingCrossingsAreNotCounted() {
+        getFixedPortOrderInLayerEdgesWithCrossings();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
-	@Test
-	public void oneNode() {
-		getOneNodeGraph();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 0, 0);
+    @Test
+    public void oneNode() {
+        getOneNodeGraph();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 0);
 
-	@Test
-	public void moreComplex() {
-		getMoreComplexInLayerGraph();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    @Test
+    public void moreComplex() {
+        getMoreComplexInLayerGraph();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(6));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(6));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	@Test
-	public void downwardInLayerEdgesOnLowerNode() {
-		getInLayerEdgesFixedPortOrderInLayerAndInBetweenLayerCrossing();
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(6));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(6));
+    }
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
-	}
+    @Test
+    public void downwardInLayerEdgesOnLowerNode() {
+        getInLayerEdgesFixedPortOrderInLayerAndInBetweenLayerCrossing();
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	@Test
-	public void oneLayerInLayerCrossingShouldDisappearAfterAnySwitch() {
-		getOneLayerWithInLayerCrossings();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+    @Test
+    public void oneLayerInLayerCrossingShouldDisappearAfterAnySwitch() {
+        getOneLayerWithInLayerCrossings();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 1, 2);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+        countCrossingsInLayerForUpperNodeLowerNode(0, 1, 2);
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 2, 3);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+        countCrossingsInLayerForUpperNodeLowerNode(0, 2, 3);
 
-		switchOrderAndNotifyCounter(0, 1);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
 
-		countCrossings(0, 1);
+        switchOrderAndNotifyCounter(0, 1);
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+        countCrossings(0, 1);
 
-		switchOrderAndNotifyCounter(0, 1);
-		switchOrderAndNotifyCounter(1, 2);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
 
-		countCrossings(1, 2);
+        switchOrderAndNotifyCounter(0, 1);
+        switchOrderAndNotifyCounter(1, 2);
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+        countCrossings(1, 2);
 
-		switchOrderAndNotifyCounter(1, 2);
-		switchOrderAndNotifyCounter(2, 3);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
 
-		countCrossings(2, 3);
+        switchOrderAndNotifyCounter(1, 2);
+        switchOrderAndNotifyCounter(2, 3);
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-	}
+        countCrossings(2, 3);
 
-	@Test
-	public void moreThanOneEdgeIntoAPort() {
-		getInLayerEdgesMultipleEdgesIntoSinglePort();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
+    @Test
+    public void moreThanOneEdgeIntoAPort() {
+        getInLayerEdgesMultipleEdgesIntoSinglePort();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
-	@Test
-	public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
-		multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    @Test
+    public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
+        multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-	@Test
-	public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
-		multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+    @Test
+    public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
+        multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
-		countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
-	@Test
-	public void inLayerEdgesPassEachOther() {
-		getInLayerOneLayerNoCrossings();
-		countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-		countCrossingsInLayerForUpperNodeLowerNode(0, 1, 2);
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-		countCrossingsInLayerForUpperNodeLowerNode(0, 2, 3);
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-	}
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-	@Test
-	public void noPortOrderConstraintShouldResolveCrossing() {
-		getInLayerEdgesDownwardGraphNoFixedOrder();
-		countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+    @Test
+    public void inLayerEdgesPassEachOther() {
+        getInLayerOneLayerNoCrossings();
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+        countCrossingsInLayerForUpperNodeLowerNode(0, 1, 2);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+        countCrossingsInLayerForUpperNodeLowerNode(0, 2, 3);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
+    }
 
-	@Test
-	public void fixedPortOrderCrossingToInLayerEdge() {
-		getInLayerEdgesFixedPortOrderInLayerCrossing();
+    @Test
+    public void noPortOrderConstraintShouldResolveCrossing() {
+        getInLayerEdgesDownwardGraphNoFixedOrder();
+        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 1, 2);
+    @Test
+    public void fixedPortOrderCrossingToInLayerEdge() {
+        getInLayerEdgesFixedPortOrderInLayerCrossing();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(0, 1, 2);
 
-	@Test
-	public void fixedPortOrderTwoInLayerEdgesCrossEachOther() {
-		getFixedPortOrderTwoInLayerEdgesCrossEachOther();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+    @Test
+    public void fixedPortOrderTwoInLayerEdgesCrossEachOther() {
+        getFixedPortOrderTwoInLayerEdgesCrossEachOther();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
-	/**
-	 * <pre>
-	 * *------
-	 * *---\ |
-	 * ___ | |
-	 * | |--/
-	 * |_|
-	 * </pre>
-	 */
-	@Test
-	public void multipleEdgesIntoOnePort_ShouldNotCauseCrossing() {
-		LNode[] nodes = addNodesToLayer(3, makeLayer(graph));
-		addInLayerEdge(nodes[0], nodes[2], PortSide.EAST);
-		addInLayerEdge(nodes[1], nodes[2], PortSide.EAST);
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+    /**
+     * <pre>
+     * *------
+     * *---\ |
+     * ___ | |
+     * | |--/
+     * |_|
+     * </pre>
+     */
+    @Test
+    public void multipleEdgesIntoOnePort_ShouldNotCauseCrossing() {
+        LNode[] nodes = addNodesToLayer(3, makeLayer(getGraph()));
+        addInLayerEdge(nodes[0], nodes[2], PortSide.EAST);
+        addInLayerEdge(nodes[1], nodes[2], PortSide.EAST);
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
-	@Ignore
-	// this case is not supported by the current algorithm
-	public void multipleEdgesIntoOnePortAndFreePortOrderCausesCrossings() {
-		multipleEdgesIntoOnePortAndFreePortOrder();
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+    @Ignore
+    // this case is not supported by the current algorithm
+    public void multipleEdgesIntoOnePortAndFreePortOrderCausesCrossings() {
+        multipleEdgesIntoOnePortAndFreePortOrder();
 
-		assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
-		assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-	}
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
-	private void countCrossingsInLayerForUpperNodeLowerNode(final int layerIndex, final int upperNodeIndex,
-			final int lowerNodeIndex) {
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
 
-		initCrossingCounterForLayerIndex(layerIndex);
+    private void countCrossingsInLayerForUpperNodeLowerNode(final int layerIndex, final int upperNodeIndex,
+            final int lowerNodeIndex) {
 
-		countCrossings(upperNodeIndex, lowerNodeIndex);
-	}
+        initCrossingCounterForLayerIndex(layerIndex);
 
-	private void countCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
-		counter.countCrossingsBetweenNodes(nodeOrder[upperNodeIndex], nodeOrder[lowerNodeIndex]);
-		upperLowerCrossings = counter.getUpperLowerCrossings();
-		lowerUpperCrossings = counter.getLowerUpperCrossings();
-	}
+        countCrossings(upperNodeIndex, lowerNodeIndex);
+    }
 
-	/**
-	 * Initializes Crossing counter, sets nodeOrder with the nodes from the
-	 * layer being considered and numbers its in ascending form as required by
-	 * the counter.
-	 *
-	 * @param layerIndex
-	 */
-	private void initCrossingCounterForLayerIndex(final int layerIndex) {
-		LNode[][] currentOrder = graph.toNodeArray();
-		nodeOrder = currentOrder[layerIndex];
-		numberIdsAscendinglyIn(nodeOrder);
-		counter = InLayerEdgeTwoNodeCrossingCounter.createAssumingHierarchicalNodePortOrderFixed(nodeOrder);
-	}
+    private void countCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
+        counter.countCrossingsBetweenNodes(nodeOrder[upperNodeIndex], nodeOrder[lowerNodeIndex]);
+        upperLowerCrossings = counter.getUpperLowerCrossings();
+        lowerUpperCrossings = counter.getLowerUpperCrossings();
+    }
 
-	private void numberIdsAscendinglyIn(final LNode[] nodes) {
-		for (int i = 0; i < nodes.length; i++) {
-			nodes[i].id = i;
-		}
-	}
+    /**
+     * Initializes Crossing counter, sets nodeOrder with the nodes from the
+     * layer being considered and numbers its in ascending form as required by
+     * the counter.
+     *
+     * @param layerIndex
+     */
+    private void initCrossingCounterForLayerIndex(final int layerIndex) {
+        LNode[][] currentOrder = getGraph().toNodeArray();
+        nodeOrder = currentOrder[layerIndex];
+        numberIdsAscendinglyIn(nodeOrder);
+        counter = InLayerEdgeTwoNodeCrossingCounter.createAssumingHierarchicalNodePortOrderFixed(nodeOrder);
+    }
 
-	private void switchOrderAndNotifyCounter(final int indexOne, final int indexTwo) {
-		counter.notifyOfSwitch(nodeOrder[indexOne], nodeOrder[indexTwo]);
-		LNode one = nodeOrder[indexOne];
-		nodeOrder[indexOne] = nodeOrder[indexTwo];
-		nodeOrder[indexTwo] = one;
-	}
+    private void numberIdsAscendinglyIn(final LNode[] nodes) {
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i].id = i;
+        }
+    }
+
+    private void switchOrderAndNotifyCounter(final int indexOne, final int indexTwo) {
+        counter.notifyOfSwitch(nodeOrder[indexOne], nodeOrder[indexTwo]);
+        LNode one = nodeOrder[indexOne];
+        nodeOrder[indexOne] = nodeOrder[indexTwo];
+        nodeOrder[indexTwo] = one;
+    }
 }

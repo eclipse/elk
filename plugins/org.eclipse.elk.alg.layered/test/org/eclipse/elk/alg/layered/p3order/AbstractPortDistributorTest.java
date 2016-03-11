@@ -1,16 +1,13 @@
-/*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+/*******************************************************************************
+ * Copyright (c) 2011, 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
- * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- * 
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- */
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -34,6 +31,9 @@ import com.google.common.collect.Lists;
  *
  */
 public class AbstractPortDistributorTest extends TestGraphCreator {
+    // CHECKSTYLEOFF javadoc
+    // CHECKSTYLEOFF MagicNumber
+    // CHECKSTYLEOFF MethodName
     /**
      * <pre>
      * *  ___
@@ -44,8 +44,8 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
      */
     @Test
     public void distributePortsOnSide_GivenCrossOnWesternSide_ShouldRemoveCrossing() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer(graph));
-        LNode rightNode = addNodeToLayer(makeLayer(graph));
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode rightNode = addNodeToLayer(makeLayer(getGraph()));
         eastWestEdgeFromTo(leftNodes[0], rightNode);
         eastWestEdgeFromTo(leftNodes[1], rightNode);
 
@@ -61,16 +61,16 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
      * <pre>
      * *  ___  *
      *  \/| |\/
-     *  /\| |/\ 
+     *  /\| |/\
      * *  |_|  *
      * </pre>
-     * 
+     *
      */
     @Test
     public void distributePortsOfGraph_GivenCrossOnBothSides_ShouldRemoveCrossin() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer(graph));
-        LNode middleNode = addNodeToLayer(makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode middleNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
         eastWestEdgeFromTo(middleNode, rightNodes[1]);
         eastWestEdgeFromTo(middleNode, rightNodes[0]);
         eastWestEdgeFromTo(leftNodes[0], middleNode);
@@ -88,7 +88,7 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
                 LayerTotalPortDistributor.create(new float[numberOfPorts]);
 
 
-        portDist.distributePorts(graph.toNodeArray());
+        portDist.distributePorts(getGraph().toNodeArray());
     }
 
     /**
@@ -101,8 +101,8 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
      */
     @Test
     public void distributePortsOfGraph_GivenCrossOnEasternSide_ShouldRemoveCrossing() {
-        LNode leftNode = addNodeToLayer(makeLayer(graph));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(graph));
+        LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
         eastWestEdgeFromTo(leftNode, rightNodes[1]);
         eastWestEdgeFromTo(leftNode, rightNodes[0]);
 
@@ -124,7 +124,7 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
      */
     @Test
     public void distributePortsOfGraph_GivenInLayerEdgePortOrderCrossing_ShouldRemoveIt() {
-        LNode[] nodes = addNodesToLayer(3, makeLayer(graph));
+        LNode[] nodes = addNodesToLayer(3, makeLayer(getGraph()));
         addInLayerEdge(nodes[0], nodes[2], PortSide.EAST);
         addInLayerEdge(nodes[1], nodes[2], PortSide.EAST);
 
@@ -138,7 +138,7 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
     /**
      * <pre>
      *     *-->*
-     *     | 
+     *     |
      *   *-+-->*
      *   | |
      *  _|_|_
@@ -173,19 +173,19 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
      */
     @Test
     public void distributePortsWhileSweeping_givenSimpleCross_ShouldRemoveCrossing() {
-        LNode leftNode = addNodeToLayer(makeLayer(graph));
-        LNode rightNode = addNodeToLayer(makeLayer(graph));
+        LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode rightNode = addNodeToLayer(makeLayer(getGraph()));
         eastWestEdgeFromTo(leftNode, rightNode);
         eastWestEdgeFromTo(leftNode, rightNode);
         List<LPort> expectedPortRightNode = copyPortsInIndexOrder(rightNode, 1, 0);
         setUpIds();
         AbstractPortDistributor portDist = LayerTotalPortDistributor
                 .createPortOrderFixedInOtherLayers(new float[4], new int[2][1]);
-        portDist.distributePortsWhileSweeping(graph.toNodeArray(), 1, true);
+        portDist.distributePortsWhileSweeping(getGraph().toNodeArray(), 1, true);
 
         assertThat(rightNode.getPorts(), is(expectedPortRightNode));
     }
-    
+
     /**
      * <pre>
      * ____
