@@ -22,10 +22,11 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * Counts in-layer and between layer crossings. Does not count North-South crossings.
- * 
+ *
  * @author alan
  *
  */
@@ -45,23 +46,23 @@ public final class CrossingsCounter {
     }
 
     /*
-     * The aim was to count in-layer edges in O(n log n). We step through each edge and add the 
+     * The aim was to count in-layer edges in O(n log n). We step through each edge and add the
      * position of the end of the edge to a sorted list. Each time we meet the same edge again,
-     * we delete it from the list again. Each time we add an edge end position, the number of crossings 
+     * we delete it from the list again. Each time we add an edge end position, the number of crossings
      * is the index of the this position in the sorted list. The implementation of this list
      * guarantees that adding, deleting and finding indices is log n.
      * @formatter:off
      *           List
-     * 0--       [2]      
+     * 0--       [2]
      * 1-+-|     [2,3]
-     *   | | 
+     *   | |
      * 2-- |     [3]
      * 3----     []
      * @formatter:on
      */
     /**
      * Only count in-layer crossings on the given side.
-     * 
+     *
      * @param nodes
      *            order of nodes in layer in question.
      * @param side
@@ -78,7 +79,7 @@ public final class CrossingsCounter {
 
     /**
      * Only count in-layer crossings on both sides of a layer.
-     * 
+     *
      * @param nodes
      *            order of nodes in layer in question.
      * @return number of crossings.
@@ -89,7 +90,7 @@ public final class CrossingsCounter {
     }
 
     /*
-     * Between-layer crossings become in-layer crossings if we fold the right layer downward and 
+     * Between-layer crossings become in-layer crossings if we fold the right layer downward and
      * pretend that we are in a single layer. For example:
      * @formatter:off
      * 0  3
@@ -99,7 +100,7 @@ public final class CrossingsCounter {
      * becomes:
      * 0--
      * 1-+-|
-     *   | | 
+     *   | |
      * 2-- |
      * 3----
      * Ta daaa!
@@ -108,7 +109,7 @@ public final class CrossingsCounter {
     */
     /**
      * Count in-layer and between-layer crossings between the two given layers.
-     * 
+     *
      * @param leftLayerNodes
      *            left layer
      * @param rightLayerNodes
@@ -133,8 +134,47 @@ public final class CrossingsCounter {
         return crossings;
     }
 
-    private int setPortPositions(final PortSide side, final Iterable<LNode> leftLayer,
-            final int startPos) {
+    /**
+     * Initializes the counter for counting crosses on a specific side of two layers.
+     *
+     * @param leftLayerNodes
+     *            Nodes in western layer.
+     * @param rightLayerNodes
+     *            Nodes in eastern layer.
+     * @param sideToCountOn
+     *            Side on which the crossings are counted.
+     */
+    public void initForCountingBetweenOnSide(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes,
+            final PortSide sideToCountOn) {
+        countBothInAndBetweenLayerCrossings = true;
+        Iterable<LNode> leftLayerIter;
+        Iterable<LNode> rightLayerReverseIter;
+        if (sideToCountOn == PortSide.EAST) {
+            leftLayerIter = () -> Iterators.forArray(leftLayerNodes);
+            rightLayerReverseIter = () -> descendingIterator(rightLayerNodes);
+        } else {
+            leftLayerIter = () -> Iterators.forArray(rightLayerNodes);
+            rightLayerReverseIter = () -> descendingIterator(leftLayerNodes);
+        }
+
+        int numPorts = setPortPositions(sideToCountOn, leftLayerIter, 0);
+        numPorts = setPortPositions(sideToCountOn.opposed(), rightLayerReverseIter, numPorts);
+
+        indexTree = new SortedIntList(numPorts);
+    }
+
+    /**
+     * Count crossings between two ports. Before using this method, the layers must be initialized beforehand.
+     * @param portOne
+     * @param portTwo
+     * @return
+     */
+    public int countCrossingsBetweenPorts(final LPort portOne, final LPort portTwo) {
+        assert portOne.getSide() == portTwo.getSide();
+        return countWithFixedPortOrder(Lists.newArrayList(portOne, portTwo));
+    }
+
+    private int setPortPositions(final PortSide side, final Iterable<LNode> leftLayer, final int startPos) {
         int currentPortPos = startPos;
         for (LNode node : leftLayer) {
 
@@ -180,7 +220,7 @@ public final class CrossingsCounter {
      * Assumes that crossings caused by port order on nodes with free port order can always be
      * removed by port sorting and therefore don't need to be counted. Note that this is not always
      * true!
-     * 
+     *
      * @param ports
      *            the ports
      * @return crossings
@@ -303,10 +343,10 @@ public final class CrossingsCounter {
     /**
      * Does not assume fixed port order. Crossings between edges connected to node with free port
      * order are assumed to be non-existent. Note that this is not always true.
-     * 
+     *
      * @param portPositions
      *            array the length of the number of ports in the graph.
-     * 
+     *
      * @return the counter
      */
     public static CrossingsCounter create(final int[] portPositions) {
@@ -316,10 +356,10 @@ public final class CrossingsCounter {
 
     /**
      * Assumes fixed port order.
-     * 
+     *
      * @param portPositions
      *            array the length of the number of ports in the graph.
-     * 
+     *
      * @return the counter
      */
     public static CrossingsCounter createAssumingPortOrderFixed(
@@ -333,7 +373,7 @@ public final class CrossingsCounter {
      * <p/>
      * Implemented as a binary tree where each leaf stores the number of integers at the leaf index
      * and each node stores the number of values in the left branch of the node.
-     * 
+     *
      * @author alan
      *
      */
@@ -344,7 +384,7 @@ public final class CrossingsCounter {
 
         /**
          * Sorted list of integers storing values in range 0 to the maxNumber passed on creation.
-         * 
+         *
          * @param maxNumber
          *            the maximum value which can be stored in this list.
          */
@@ -426,4 +466,5 @@ public final class CrossingsCounter {
             return sb.toString();
         }
     }
+
 }

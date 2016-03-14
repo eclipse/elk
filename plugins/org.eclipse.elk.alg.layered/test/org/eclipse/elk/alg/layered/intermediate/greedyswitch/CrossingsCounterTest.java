@@ -30,7 +30,6 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
     private CrossingsCounter counter;
     private LNode[][] order;
 
-
     @Test
     public void countInLayerCrossingsOnBothSides_ignoresInBetweenLayerEdges() {
         getCrossFormedGraph();
@@ -424,6 +423,30 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         counter = CrossingsCounter.createAssumingPortOrderFixed(new int[getNumPorts(order())]);
 
         assertThat(counter.countCrossingsBetweenLayers(order()[0], order()[1]), is(1));
+    }
+
+    /**
+     * <pre>
+     * *   /*
+     * |  /
+     * \ /____
+     *  x/|  |
+     * |/\|  |
+     * *  |__|
+     * </pre>
+     */
+    @Test
+    public void givenCounterWhichAssumesFixedPortOrderCrossings_CountsPortCrossingsOnTwoPorts() {
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        eastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
+        eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
+
+        counter = CrossingsCounter.createAssumingPortOrderFixed(new int[getNumPorts(order())]);
+        counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.WEST);
+        assertThat(counter.countCrossingsBetweenPorts(rightNodes[1].getPorts().get(1), rightNodes[1].getPorts().get(0)),
+                is(1));
     }
 
     private int getNumPorts(final LNode[][] currentOrder) {
