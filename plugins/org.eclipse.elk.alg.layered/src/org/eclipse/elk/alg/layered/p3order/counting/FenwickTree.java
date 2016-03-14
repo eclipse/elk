@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2015 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order.counting;
 
 /**
@@ -15,12 +25,23 @@ public class FenwickTree {
     private int[] numsPerIndex;
     private int size = 0;
 
+    /**
+     * Construct tree given maximum number of elements.
+     *
+     * @param maxNum
+     *            maximum number elements.
+     */
     public FenwickTree(final int maxNum) {
-        System.out.println(maxNum);
         binarySums = new int[maxNum + 1];
         numsPerIndex = new int[maxNum];
     }
 
+    /**
+     * Increment given index.
+     *
+     * @param index
+     *            The index to increment.
+     */
     public void add(final int index) {
         size++;
         numsPerIndex[index]++;
@@ -32,6 +53,13 @@ public class FenwickTree {
         }
     }
 
+    /**
+     * Sum all entries before given index, i.e. index - 1.
+     *
+     * @param index
+     *            Not included end index.
+     * @return sum.
+     */
     public int sumBefore(final int index) {
         int i = index;
         int sum = 0;
@@ -39,15 +67,24 @@ public class FenwickTree {
             sum += binarySums[i];
             i -= i & -i;
         }
-        System.out.println("Sum " + sum);
         return sum;
     }
 
+    /**
+     * Return size of tree.
+     *
+     * @return size
+     */
     public int size() {
-        System.out.println("Size " + size);
         return size;
     }
 
+    /**
+     * Remove all entries for one index.
+     *
+     * @param index
+     *            the index
+     */
     public void removeAll(final int index) {
         int numEntries = numsPerIndex[index];
         numsPerIndex[index] = 0;

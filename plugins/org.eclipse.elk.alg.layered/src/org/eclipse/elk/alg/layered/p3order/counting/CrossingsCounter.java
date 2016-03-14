@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order.counting;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -126,7 +125,6 @@ public final class CrossingsCounter {
 
         numPorts = setPortPositions(PortSide.EAST, leftLayerIter, 0);
         numPorts = setPortPositions(PortSide.WEST, rightLayerReverseIter, numPorts);
-        System.out.println(Arrays.toString(portPositions));
         indexTree = new FenwickTree(numPorts);
 
         int crossings = addEdgesAndCountCrossingsOn(PortSide.EAST, leftLayerIter);
