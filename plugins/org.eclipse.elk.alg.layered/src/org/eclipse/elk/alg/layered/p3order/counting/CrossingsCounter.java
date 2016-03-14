@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order.counting;
 
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -32,10 +32,11 @@ import com.google.common.collect.Lists;
  */
 public final class CrossingsCounter {
     private final int[] portPositions;
-    private SortedIntList indexTree;
+    private FenwickTree indexTree;
     private final boolean assumeFixedPortOrder;
     private final boolean assumeCompoundNodePortOrderFixed;
     private boolean countBothInAndBetweenLayerCrossings;
+    private int numPorts;
 
     private CrossingsCounter(final int[] portPositions,
             final boolean assumeFixedPortOrder, final boolean assumeCompoundNodePortOrderFixed) {
@@ -72,8 +73,8 @@ public final class CrossingsCounter {
     public int countInLayerCrossingsOnSide(final LNode[] nodes, final PortSide side) {
         Iterable<LNode> nodesIter = () -> Iterators.forArray(nodes);
         countBothInAndBetweenLayerCrossings = false;
-        int numPorts = setPortPositions(side, nodesIter, 0);
-        indexTree = new SortedIntList(numPorts);
+        numPorts = setPortPositions(side, nodesIter, 0);
+        indexTree = new FenwickTree(numPorts);
         return addEdgesAndCountCrossingsOn(side, nodesIter);
     }
 
@@ -123,10 +124,10 @@ public final class CrossingsCounter {
         Iterable<LNode> leftLayerIter = () -> Iterators.forArray(leftLayerNodes);
         Iterable<LNode> rightLayerReverseIter = () -> descendingIterator(rightLayerNodes);
 
-        int numPorts = setPortPositions(PortSide.EAST, leftLayerIter, 0);
+        numPorts = setPortPositions(PortSide.EAST, leftLayerIter, 0);
         numPorts = setPortPositions(PortSide.WEST, rightLayerReverseIter, numPorts);
-
-        indexTree = new SortedIntList(numPorts);
+        System.out.println(Arrays.toString(portPositions));
+        indexTree = new FenwickTree(numPorts);
 
         int crossings = addEdgesAndCountCrossingsOn(PortSide.EAST, leftLayerIter);
         crossings += addEdgesAndCountCrossingsOn(PortSide.WEST, rightLayerReverseIter);
@@ -157,10 +158,10 @@ public final class CrossingsCounter {
             rightLayerReverseIter = () -> descendingIterator(leftLayerNodes);
         }
 
-        int numPorts = setPortPositions(sideToCountOn, leftLayerIter, 0);
+        numPorts = setPortPositions(sideToCountOn, leftLayerIter, 0);
         numPorts = setPortPositions(sideToCountOn.opposed(), rightLayerReverseIter, numPorts);
 
-        indexTree = new SortedIntList(numPorts);
+        indexTree = new FenwickTree(numPorts);
     }
 
     /**
@@ -171,7 +172,22 @@ public final class CrossingsCounter {
      */
     public int countCrossingsBetweenPorts(final LPort portOne, final LPort portTwo) {
         assert portOne.getSide() == portTwo.getSide();
+        indexTree = new FenwickTree(numPorts);
         return countWithFixedPortOrder(Lists.newArrayList(portOne, portTwo));
+    }
+
+    /**
+     * Notify counter of port switch.
+     *
+     * @param topPort
+     *            The port previously further north.
+     * @param bottomPort
+     *            The port previously further south.
+     */
+    public void switchPorts(final LPort topPort, final LPort bottomPort) {
+        int topPortPos = portPositions[topPort.id];
+        portPositions[topPort.id] = portPositions[bottomPort.id];
+        portPositions[bottomPort.id] = topPortPos;
     }
 
     private int setPortPositions(final PortSide side, final Iterable<LNode> leftLayer, final int startPos) {
@@ -269,7 +285,7 @@ public final class CrossingsCounter {
                 continue;
             }
             if ((countBothInAndBetweenLayerCrossings || isInLayer(edge)) && pointsDownward(edge, port)) {
-                crossings += indexTree.indexOf(positionOf(otherEndOf(edge, port)));
+                crossings += indexTree.sumBefore(positionOf(otherEndOf(edge, port)));
             }
         }
         return crossings;
@@ -365,106 +381,6 @@ public final class CrossingsCounter {
     public static CrossingsCounter createAssumingPortOrderFixed(
             final int[] portPositions) {
         return new CrossingsCounter(portPositions, true, false);
-    }
-
-    /**
-     * Sorted list of integers storing values from 0 up to the maxNumber passed on creation. Adding,
-     * removing and indexOf (and addAndIndexOf) is in O(log maxNumber).
-     * <p/>
-     * Implemented as a binary tree where each leaf stores the number of integers at the leaf index
-     * and each node stores the number of values in the left branch of the node.
-     *
-     * @author alan
-     *
-     */
-    private static class SortedIntList {
-        private final int[] t;
-        private int size;
-        private int totalTreeCapacity;
-
-        /**
-         * Sorted list of integers storing values in range 0 to the maxNumber passed on creation.
-         *
-         * @param maxNumber
-         *            the maximum value which can be stored in this list.
-         */
-        SortedIntList(final int maxNumber) {
-            totalTreeCapacity = 1;
-            while (totalTreeCapacity < maxNumber) {
-                totalTreeCapacity *= 2;
-            }
-            t = new int[2 * totalTreeCapacity - 1];
-            size = 0;
-        }
-
-        public void add(final int e) {
-            t[leafIndex(e)]++;
-            size++;
-            traverseNodes(e, i -> t[i]++);
-        }
-
-        public void removeAll(final int e) {
-            int elemIndex = leafIndex(e);
-            int numInstances = t[elemIndex];
-            if (numInstances == 0) {
-                return;
-            }
-            t[elemIndex] = 0;
-            size -= numInstances;
-            traverseNodes(e, i -> t[i] -= numInstances);
-        }
-
-        public int indexOf(final int e) {
-            // i-> {} == NOOP
-            return traverseNodes(e, i -> {
-            });
-        }
-
-        public int size() {
-            return size;
-        }
-
-        private int traverseNodes(final int e, final Consumer<Integer> changeNodeValue) {
-            int elem = e;
-            int i = 0;
-            int boundary = totalTreeCapacity / 2;
-            int indexOfElem = 0;
-            while (i < t.length / 2) {
-                if (elem < boundary) {
-                    // take left branch
-                    changeNodeValue.accept(i);
-                    i = 2 * i + 1;
-                } else {
-                    // take right branch
-                    // each node contains the number of elements in the left tree, so we add node
-                    // value when taking the right branch.
-                    indexOfElem += t[i];
-                    i = 2 * i + 2;
-                    elem -= boundary;
-                }
-                boundary /= 2;
-            }
-            return indexOfElem;
-        }
-
-        private int leafIndex(final int id) {
-            return totalTreeCapacity - 1 + id;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("[");
-            int halfList = t.length / 2;
-            for (int j = halfList; j < t.length; j++) {
-                int i = t[j];
-                if (i != 0) {
-                    sb.append(i + " x " + (j - halfList) + ", ");
-                }
-            }
-            sb.append("]");
-            return sb.toString();
-        }
     }
 
 }
