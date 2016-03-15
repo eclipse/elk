@@ -20,35 +20,54 @@ import org.junit.Test;
 public class FenwickTreeTest {
     @Test
     public void sumBefore() throws Exception {
-        FenwickTree list = new FenwickTree(5);
-        list.add(1);
-        list.add(2);
-        list.add(1);
-        assertThat(list.sumBefore(1), is(0));
-        assertThat(list.sumBefore(2), is(2));
+        FenwickTree ft = new FenwickTree(5);
+        ft.add(1);
+        ft.add(2);
+        ft.add(1);
+
+        assertThat(ft.sumBefore(1), is(0));
+        assertThat(ft.sumBefore(2), is(2));
     }
 
     @Test
     public void size() throws Exception {
-        FenwickTree list = new FenwickTree(5);
-        list.add(2);
-        list.add(1);
-        list.add(1);
-        assertThat(list.size(), is(3));
+        FenwickTree ft = new FenwickTree(5);
+        ft.add(2);
+        ft.add(1);
+        ft.add(1);
+
+        assertThat(ft.size(), is(3));
     }
 
     @Test
     public void removeAll() throws Exception {
-        FenwickTree list = new FenwickTree(5);
-        list.add(0);
-        list.add(2);
-        list.add(1);
-        list.add(1);
-        list.removeAll(1);
-        assertThat(list.size(), is(2));
-        assertThat(list.sumBefore(2), is(1));
-        list.removeAll(1);
-        assertThat(list.size(), is(2));
-        assertThat(list.sumBefore(2), is(1));
+        FenwickTree ft = new FenwickTree(5);
+        ft.add(0);
+        ft.add(2);
+        ft.add(1);
+        ft.add(1);
+
+        ft.removeAll(1);
+
+        assertThat(ft.size(), is(2));
+        assertThat(ft.sumBefore(2), is(1));
+
+        ft.removeAll(1);
+
+        assertThat(ft.size(), is(2));
+        assertThat(ft.sumBefore(2), is(1));
+    }
+
+    @Test
+    public void sumBetween() throws Exception {
+        FenwickTree ft = new FenwickTree(5);
+        ft.add(0);
+        ft.add(2);
+        ft.add(1);
+        ft.add(1);
+        ft.add(3);
+
+        assertThat(ft.sumBetween(0, 3), is(3));
+
     }
 }

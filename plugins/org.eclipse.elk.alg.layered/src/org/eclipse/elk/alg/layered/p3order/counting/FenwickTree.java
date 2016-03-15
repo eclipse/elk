@@ -46,7 +46,6 @@ public class FenwickTree {
         size++;
         numsPerIndex[index]++;
         int i = index + 1;
-        // for (; i < (int)tree.size(); i |= i + 1)
         while (i < binarySums.length) {
             binarySums[i]++;
             i += i & -i;
@@ -96,4 +95,16 @@ public class FenwickTree {
         }
     }
 
+    /**
+     * Sum all between the given indices (excluding boundaries).
+     * 
+     * @param from
+     *            Sum from this index
+     * @param to
+     *            to this index
+     * @return sum
+     */
+    public int sumBetween(final int from, final int to) {
+        return sumBefore(to) - sumBefore(from + 1);
+    }
 }
