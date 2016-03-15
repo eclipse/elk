@@ -380,13 +380,31 @@ public interface MetaDataPackage extends EPackage
   int MD_PROPERTY__DEFAULT_VALUE = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 9;
 
   /**
+   * The feature id for the '<em><b>Lower Bound</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_PROPERTY__LOWER_BOUND = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 10;
+
+  /**
+   * The feature id for the '<em><b>Upper Bound</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_PROPERTY__UPPER_BOUND = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 11;
+
+  /**
    * The feature id for the '<em><b>Targets</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__TARGETS = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 10;
+  int MD_PROPERTY__TARGETS = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 12;
 
   /**
    * The feature id for the '<em><b>Legacy Ids</b></em>' attribute list.
@@ -395,7 +413,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__LEGACY_IDS = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 11;
+  int MD_PROPERTY__LEGACY_IDS = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 13;
 
   /**
    * The feature id for the '<em><b>Dependencies</b></em>' containment reference list.
@@ -404,7 +422,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY__DEPENDENCIES = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 12;
+  int MD_PROPERTY__DEPENDENCIES = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 14;
 
   /**
    * The number of structural features of the '<em>Md Property</em>' class.
@@ -413,7 +431,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_PROPERTY_FEATURE_COUNT = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 13;
+  int MD_PROPERTY_FEATURE_COUNT = MD_GROUP_OR_PROPERTY_FEATURE_COUNT + 15;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyDependencyImpl <em>Md Property Dependency</em>}' class.
@@ -991,6 +1009,28 @@ public interface MetaDataPackage extends EPackage
   EReference getMdProperty_DefaultValue();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLowerBound <em>Lower Bound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Lower Bound</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdProperty#getLowerBound()
+   * @see #getMdProperty()
+   * @generated
+   */
+  EReference getMdProperty_LowerBound();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getUpperBound <em>Upper Bound</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Upper Bound</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdProperty#getUpperBound()
+   * @see #getMdProperty()
+   * @generated
+   */
+  EReference getMdProperty_UpperBound();
+
+  /**
    * Returns the meta object for the attribute list '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getTargets <em>Targets</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1545,6 +1585,22 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EReference MD_PROPERTY__DEFAULT_VALUE = eINSTANCE.getMdProperty_DefaultValue();
+
+    /**
+     * The meta object literal for the '<em><b>Lower Bound</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MD_PROPERTY__LOWER_BOUND = eINSTANCE.getMdProperty_LowerBound();
+
+    /**
+     * The meta object literal for the '<em><b>Upper Bound</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MD_PROPERTY__UPPER_BOUND = eINSTANCE.getMdProperty_UpperBound();
 
     /**
      * The meta object literal for the '<em><b>Targets</b></em>' attribute list feature.

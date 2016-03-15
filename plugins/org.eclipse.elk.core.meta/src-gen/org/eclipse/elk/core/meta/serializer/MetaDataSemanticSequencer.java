@@ -468,7 +468,14 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *         name=ID 
 	 *         type=JvmTypeReference? 
 	 *         (
-	 *             (label=STRING | description=STRING | documentation=STRING | defaultValue=XExpression)? 
+	 *             (
+	 *                 label=STRING | 
+	 *                 description=STRING | 
+	 *                 documentation=STRING | 
+	 *                 defaultValue=XExpression | 
+	 *                 lowerBound=XExpression | 
+	 *                 upperBound=XExpression
+	 *             )? 
 	 *             (targets+=MdPropertyTargetType targets+=MdPropertyTargetType*)? 
 	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)?
 	 *         )+ 

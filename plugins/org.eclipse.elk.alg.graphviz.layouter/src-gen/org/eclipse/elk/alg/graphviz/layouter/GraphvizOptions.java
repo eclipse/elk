@@ -36,7 +36,9 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
             "org.eclipse.elk.graphviz.adaptPortPositions",
-            ADAPT_PORT_POSITIONS_DEFAULT);
+            ADAPT_PORT_POSITIONS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CONCENTRATE}.
@@ -49,7 +51,9 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> CONCENTRATE = new Property<Boolean>(
             "org.eclipse.elk.graphviz.concentrate",
-            CONCENTRATE_DEFAULT);
+            CONCENTRATE_DEFAULT,
+            null,
+            null);
   
   /**
    * Terminating condition. If the length squared of all energy gradients are less than
@@ -75,7 +79,9 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> LABEL_ANGLE = new Property<Float>(
             "org.eclipse.elk.graphviz.labelAngle",
-            LABEL_ANGLE_DEFAULT);
+            LABEL_ANGLE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LABEL_DISTANCE}.
@@ -87,7 +93,9 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> LABEL_DISTANCE = new Property<Float>(
             "org.eclipse.elk.graphviz.labelDistance",
-            LABEL_DISTANCE_DEFAULT);
+            LABEL_DISTANCE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYER_SPACING_FACTOR}.
@@ -99,7 +107,9 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> LAYER_SPACING_FACTOR = new Property<Float>(
             "org.eclipse.elk.graphviz.layerSpacingFactor",
-            LAYER_SPACING_FACTOR_DEFAULT);
+            LAYER_SPACING_FACTOR_DEFAULT,
+            null,
+            null);
   
   /**
    * The maximum number of iterations.
@@ -117,7 +127,9 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<NeatoModel> NEATO_MODEL = new Property<NeatoModel>(
             "org.eclipse.elk.graphviz.neatoModel",
-            NEATO_MODEL_DEFAULT);
+            NEATO_MODEL_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #OVERLAP_MODE}.
@@ -129,7 +141,9 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<OverlapMode> OVERLAP_MODE = new Property<OverlapMode>(
             "org.eclipse.elk.graphviz.overlapMode",
-            OVERLAP_MODE_DEFAULT);
+            OVERLAP_MODE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #DIRECTION} with algorithm "Dot".
@@ -258,6 +272,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "Adapt Port Positions",
         "Whether ports should be moved to the point where edges cross the node\'s bounds.",
         ADAPT_PORT_POSITIONS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -269,6 +285,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "Concentrate Edges",
         "Merges multiedges into a single edge and causes partially parallel edges to share part of their paths.",
         CONCENTRATE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -279,6 +297,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "",
         "Epsilon",
         "Terminating condition. If the length squared of all energy gradients are less than epsilon, the algorithm stops.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.FLOAT,
         float.class,
@@ -291,6 +311,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "Iterations Factor",
         "Multiplicative scale factor for the maximal number of iterations used during crossing minimization, node ranking, and node positioning.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -302,6 +324,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "Label Angle",
         "Angle between head / tail positioned edge labels and the corresponding edge.",
         LABEL_ANGLE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
@@ -313,6 +337,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "Label Distance",
         "Distance of head / tail positioned edge labels to the source or target node.",
         LABEL_DISTANCE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
@@ -324,6 +350,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "Layer Spacing Factor",
         "Factor for the spacing of different layers (ranks).",
         LAYER_SPACING_FACTOR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -334,6 +362,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "",
         "Max. Iterations",
         "The maximum number of iterations.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.INT,
         int.class,
@@ -346,6 +376,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "Distance Model",
         "Specifies how the distance matrix is computed for the input graph.",
         NEATO_MODEL_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         NeatoModel.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -357,6 +389,8 @@ public class GraphvizOptions implements ILayoutMetaDataProvider {
         "Overlap Removal",
         "Determines if and how node overlaps should be removed.",
         OVERLAP_MODE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         OverlapMode.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),

@@ -465,9 +465,29 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getMdProperty_LowerBound()
+  {
+    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMdProperty_UpperBound()
+  {
+    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getMdProperty_Targets()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -477,7 +497,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    */
   public EAttribute getMdProperty_LegacyIds()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -487,7 +507,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    */
   public EReference getMdProperty_Dependencies()
   {
-    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(12);
+    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -811,6 +831,8 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     createEAttribute(mdPropertyEClass, MD_PROPERTY__DESCRIPTION);
     createEAttribute(mdPropertyEClass, MD_PROPERTY__DOCUMENTATION);
     createEReference(mdPropertyEClass, MD_PROPERTY__DEFAULT_VALUE);
+    createEReference(mdPropertyEClass, MD_PROPERTY__LOWER_BOUND);
+    createEReference(mdPropertyEClass, MD_PROPERTY__UPPER_BOUND);
     createEAttribute(mdPropertyEClass, MD_PROPERTY__TARGETS);
     createEAttribute(mdPropertyEClass, MD_PROPERTY__LEGACY_IDS);
     createEReference(mdPropertyEClass, MD_PROPERTY__DEPENDENCIES);
@@ -920,6 +942,8 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     initEAttribute(getMdProperty_Description(), ecorePackage.getEString(), "description", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdProperty_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMdProperty_DefaultValue(), theXbasePackage.getXExpression(), null, "defaultValue", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdProperty_LowerBound(), theXbasePackage.getXExpression(), null, "lowerBound", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdProperty_UpperBound(), theXbasePackage.getXExpression(), null, "upperBound", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdProperty_Targets(), this.getMdPropertyTargetType(), "targets", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdProperty_LegacyIds(), ecorePackage.getEString(), "legacyIds", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMdProperty_Dependencies(), this.getMdPropertyDependency(), null, "dependencies", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -37,7 +37,9 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<ForceModelStrategy> MODEL = new Property<ForceModelStrategy>(
             "org.eclipse.elk.force.model",
-            MODEL_DEFAULT);
+            MODEL_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ITERATIONS}.
@@ -49,7 +51,9 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> ITERATIONS = new Property<Integer>(
             "org.eclipse.elk.force.iterations",
-            ITERATIONS_DEFAULT);
+            ITERATIONS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #REPULSIVE_POWER}.
@@ -62,7 +66,9 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> REPULSIVE_POWER = new Property<Integer>(
             "org.eclipse.elk.force.repulsivePower",
-            REPULSIVE_POWER_DEFAULT);
+            REPULSIVE_POWER_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #TEMPERATURE}.
@@ -74,7 +80,9 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> TEMPERATURE = new Property<Float>(
             "org.eclipse.elk.force.temperature",
-            TEMPERATURE_DEFAULT);
+            TEMPERATURE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #REPULSION}.
@@ -86,7 +94,9 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> REPULSION = new Property<Float>(
             "org.eclipse.elk.force.repulsion",
-            REPULSION_DEFAULT);
+            REPULSION_DEFAULT,
+            null,
+            null);
   
   /**
    * Required value for dependency between {@link #TEMPERATURE} and {@link #MODEL}.
@@ -175,6 +185,8 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         "Force Model",
         "Determines the model for force calculation.",
         MODEL_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         ForceModelStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -186,6 +198,8 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         "Iterations",
         "The number of iterations on the force model.",
         ITERATIONS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -197,6 +211,8 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         "Repulsive Power",
         "Determines how many bend points are added to the edge; such bend points are regarded as repelling particles in the force model",
         REPULSIVE_POWER_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
@@ -208,6 +224,8 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         "FR Temperature",
         "The temperature is used as a scaling factor for particle displacements.",
         TEMPERATURE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -224,6 +242,8 @@ public class ForceOptions implements ILayoutMetaDataProvider {
         "Eades Repulsion",
         "Factor for repulsive forces in Eades\' model.",
         REPULSION_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
