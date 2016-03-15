@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -103,15 +104,24 @@ public class TestGraphCreator {
      * Set layer id globally, node id per layer and port id globally.
      */
     protected void setUpIds() {
-        int lId = 0;
-        int pId = 0;
-        for (Layer l : graph) {
-            l.id = lId++;
-            int i = 0;
-            for (LNode n : l) {
-                n.id = i++;
-                for (LPort p : n.getPorts()) {
-                    p.id = pId++;
+        Deque<LGraph> graphs = Lists.newLinkedList();
+        graphs.add(graph);
+        while (!graphs.isEmpty()) {
+            int lId = 0;
+            int pId = 0;
+            LGraph g = graphs.pop();
+            for (Layer l : g) {
+                l.id = lId++;
+                int i = 0;
+                for (LNode n : l) {
+                    LGraph nestedGraph = n.getProperty(InternalProperties.NESTED_LGRAPH);
+                    if (nestedGraph != null) {
+                        graphs.add(nestedGraph);
+                    }
+                    n.id = i++;
+                    for (LPort p : n.getPorts()) {
+                        p.id = pId++;
+                    }
                 }
             }
         }

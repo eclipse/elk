@@ -491,6 +491,27 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
 
     /**
      * <pre>
+     * ___
+     * | |--*
+     * |_|--*
+     * </pre>
+     *
+     */
+    @Test
+    public void countCrossingsBetweenNodesOnSide_GivenNoCross_CountsCrossingWhenSwitched() throws Exception {
+        LNode[] leftNodes = addNodesToLayer(1, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+
+        counter = CrossingsCounter.createAssumingPortOrderFixed(new int[getNumPorts(order())]);
+        counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.WEST);
+
+        assertThat(counter.countCrossingsBetweenNodesOnSide(rightNodes[1], rightNodes[0], PortSide.WEST), is(1));
+    }
+
+    /**
+     * <pre>
      * *   *<- Into same port
      *  \//
      *  //\

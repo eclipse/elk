@@ -148,7 +148,6 @@ public final class CrossingsCounter {
             final PortSide sideToCountOn) {
         countBothInAndBetweenLayerCrossings = true;
 
-
         Iterable<LPort> ports = sideToCountOn == PortSide.EAST
                 ? counterClockWisePorts(leftLayerNodes, rightLayerNodes)
                 : clockWisePorts(leftLayerNodes, rightLayerNodes);
@@ -195,7 +194,7 @@ public final class CrossingsCounter {
 
     /**
      * Count crossings only between two nodes.
-     * 
+     *
      * @param upperNode
      * @param lowerNode
      * @param side
@@ -204,6 +203,7 @@ public final class CrossingsCounter {
     public int countCrossingsBetweenNodesOnSide(final LNode upperNode, final LNode lowerNode, final PortSide side) {
         Iterable<LPort> ports = Iterables.concat(PortIterable.inCounterClockwiseOrder(upperNode, side),
                 PortIterable.inCounterClockwiseOrder(lowerNode, side));
+        indexTree = new FenwickTree(numPorts);
         return countWithFixedPortOrder(ports);
     }
 
