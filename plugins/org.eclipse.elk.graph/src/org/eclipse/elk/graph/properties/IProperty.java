@@ -36,5 +36,21 @@ public interface IProperty<T> {
      * @return an identifier
      */
     String getId();
+    
+    /**
+     * Returns the lower bound of this property. If there is no lower bound, a
+     * comparable is returned that is smaller than everything else.
+     * 
+     * @return the lower bound
+     */
+    Comparable<? super T> getLowerBound();
+    
+    /**
+     * Returns the upper bound of this property. If there is no upper bound, a
+     * comparable is returned that is greater than everything else.
+     * 
+     * @return the upper bound
+     */
+    Comparable<? super T> getUpperBound();
 
 }
