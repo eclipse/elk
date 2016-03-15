@@ -469,6 +469,125 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
                 is(1));
     }
 
+    /**
+     * <pre>
+     * ___
+     * | |\/*
+     * |_|/\*
+     * </pre>
+     */
+    @Test
+    public void countCrossingsBetweenNodesOnSide_GivenSimpleCross() throws Exception {
+        LNode[] leftNodes = addNodesToLayer(1, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
+
+        counter = CrossingsCounter.createAssumingPortOrderFixed(new int[getNumPorts(order())]);
+        counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.WEST);
+
+        assertThat(counter.countCrossingsBetweenNodesOnSide(rightNodes[0], rightNodes[1], PortSide.WEST), is(1));
+    }
+
+    /**
+     * <pre>
+     * *   *<- Into same port
+     *  \//
+     *  //\
+     * *   *
+     * </pre>
+     */
+    @Test
+    public void countCrossingsBetweenNodesOnSide_twoEdgesIntoSamePort() {
+        Layer leftLayer = makeLayer();
+        Layer rightLayer = makeLayer();
+
+        LNode topLeft = addNodeToLayer(leftLayer);
+        LNode bottomLeft = addNodeToLayer(leftLayer);
+        LNode topRight = addNodeToLayer(rightLayer);
+        LNode bottomRight = addNodeToLayer(rightLayer);
+
+        eastWestEdgeFromTo(topLeft, bottomRight);
+        LPort bottomLeftSecondPort = addPortOnSide(bottomLeft, PortSide.EAST);
+        LPort bottomLeftFirstPort = addPortOnSide(bottomLeft, PortSide.EAST);
+        LPort topRightFirstPort = addPortOnSide(topRight, PortSide.WEST);
+        LPort topRightSecondPort = addPortOnSide(topRight, PortSide.WEST);
+
+        addEdgeBetweenPorts(bottomLeftFirstPort, topRightFirstPort);
+        addEdgeBetweenPorts(bottomLeftSecondPort, topRightSecondPort);
+        setUpIds();
+
+        counter = CrossingsCounter.createAssumingPortOrderFixed(new int[getNumPorts(order())]);
+        counter.initForCountingBetweenOnSide(order()[0], order()[1], PortSide.WEST);
+
+        assertThat(counter.countCrossingsBetweenNodesOnSide(topRight, bottomRight, PortSide.WEST), is(2));
+    }
+
+    /**
+     * <pre>
+     * *   *
+     *  \ /
+     * *-+-*
+     *  / \
+     * *   *
+     * </pre>
+     */
+    @Test
+    public void countCrossingsBetweenNodesOnSide_crossWithExtraEdgeInBetween() {
+        LNode[] leftNodes = addNodesToLayer(3, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer());
+
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[2]);
+        eastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
+        eastWestEdgeFromTo(leftNodes[2], rightNodes[0]);
+        setUpIds();
+
+        counter = CrossingsCounter.createAssumingPortOrderFixed(new int[getNumPorts(order())]);
+        counter.initForCountingBetweenOnSide(order()[0], order()[1], PortSide.WEST);
+
+        assertThat(counter.countCrossingsBetweenNodesOnSide(rightNodes[0], rightNodes[1], PortSide.WEST), is(1));
+
+        counter.initForCountingBetweenOnSide(order()[0], order()[1], PortSide.EAST);
+        assertThat(counter.countCrossingsBetweenNodesOnSide(leftNodes[0], leftNodes[1], PortSide.EAST), is(1));
+    }
+
+    // @Test
+    // public void benchmark() {
+    // makeTwoLayerRandomGraphWithNodesPerLayer(6000, 6);
+    //
+    // counter = CrossingsCounter.createAssumingPortOrderFixed(new int[getNumPorts(order())]);
+    // System.out.println("Starting");
+    // int length = 1000;
+    // long[] times = new long[length];
+    // for (int i = 0; i < length; i++) {
+    // long tick = new Date().getTime();
+    // counter.countCrossingsBetweenLayers(order()[0], order()[1]);
+    // times[i] = new Date().getTime() - tick;
+    // }
+    // System.out.println(Arrays.stream(times).min());
+    // }
+
+    // private void makeTwoLayerRandomGraphWithNodesPerLayer(final int numNodes, final int edgesPerNode) {
+    // LNode[] leftNodes = addNodesToLayer(numNodes, makeLayer());
+    // LNode[] rightNodes = addNodesToLayer(numNodes, makeLayer());
+    // Random random = new Random(0);
+    // for (int i = 0; i < edgesPerNode * numNodes; i++) {
+    // if (random.nextBoolean()) {
+    // LNode left = leftNodes[random.nextInt(numNodes)];
+    // LNode right = rightNodes[random.nextInt(numNodes)];
+    // eastWestEdgeFromTo(left, right);
+    // } else {
+    // addInLayerEdge(leftNodes[random.nextInt(numNodes)], leftNodes[random.nextInt(numNodes)], PortSide.EAST);
+    // }
+    // }
+    // for (LNode node : rightNodes) {
+    // node.cachePortSides();
+    // }
+    // for (LNode node : leftNodes) {
+    // node.cachePortSides();
+    // }
+    // }
+
     private int getNumPorts(final LNode[][] currentOrder) {
         int numPorts = 0;
         for (LNode[] lNodes : currentOrder) {
