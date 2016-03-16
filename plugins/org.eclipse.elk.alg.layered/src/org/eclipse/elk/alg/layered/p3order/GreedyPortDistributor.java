@@ -28,9 +28,14 @@ import com.google.common.collect.Lists;
  * @author alan
  *
  */
-public class GreedyPortDistributor {
+public class GreedyPortDistributor implements SweepPortDistributor{
 
     private CrossingsCounter crossingsCounter;
+    private int[] portPos;
+
+    public GreedyPortDistributor(final int[] portPos) {
+        this.portPos = portPos;
+    }
 
     /**
      * Distribute ports greedily on a single node.
@@ -49,6 +54,18 @@ public class GreedyPortDistributor {
                 }
             }
         } while (continueSwitching);
+    }
+
+    @Override
+    public void distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
+            final boolean isForwardSweep) {
+        int leftIndex = isForwardSweep ? currentIndex - 1 : currentIndex;
+        int rightIndex = isForwardSweep ? currentIndex : currentIndex + 1;
+        PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
+        initForLayers(nodeOrder[leftIndex], nodeOrder[rightIndex], side, portPos);
+        for (LNode node : nodeOrder[currentIndex]) {
+            distributePorts(node, side);
+        }
     }
 
     /**
@@ -156,4 +173,5 @@ public class GreedyPortDistributor {
             return ps;
         }
     }
+
 }

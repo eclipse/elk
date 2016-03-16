@@ -38,7 +38,7 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
 
     @Before
     public void setUp() {
-        portDist = new GreedyPortDistributor();
+        portDist = new GreedyPortDistributor(new int[100]);
     }
     /**
      * <pre>
@@ -182,6 +182,40 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         PortSide side = PortSide.EAST;
         portDist.initForLayers(getGraph().toNodeArray()[0], rightNodes, side, new int[5]);
         portDist.distributePorts(leftOuterNode, side);
+
+        assertThat(leftOuterNode.getPorts(), is(expectedPortOrderLeftNode));
+    }
+
+    /**
+     * <pre>
+     * ___
+     * | |\/*
+     * |_|/\*
+     * ___
+     * | |\/*
+     * |_|/\*
+     * </pre>
+     */
+    @Test
+    public void distributePortsWhileSweeping_givenTwoHierarchicalNodesInOneLayer() throws Exception {
+        Layer leftLayer = makeLayer(getGraph());
+        Layer rightLayer = makeLayer(getGraph());
+
+        for (int i = 0; i < 2; i++) {
+            LNode[] leftNodes = addNodesToLayer(1, leftLayer);
+            LNode[] rightNodes = addNodesToLayer(2, rightLayer);
+            eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+            eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
+        }
+
+        // Order stays the same.
+        LNode leftOuterNode = leftLayer.getNodes().get(0);
+        List<LPort> expectedPortOrderLeftNode = portsOrderedAs(leftOuterNode, 1, 0);
+
+        PortSide side = PortSide.EAST;
+        LNode[][] nodeOrder = getGraph().toNodeArray();
+        portDist.initForLayers(nodeOrder[0], getGraph().toNodeArray()[1], side, new int[10]);
+        portDist.distributePortsWhileSweeping(nodeOrder, 0, false);
 
         assertThat(leftOuterNode.getPorts(), is(expectedPortOrderLeftNode));
     }
