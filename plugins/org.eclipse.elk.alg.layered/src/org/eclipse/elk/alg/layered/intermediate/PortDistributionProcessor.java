@@ -19,7 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p3order.AbstractPortDistributor;
+import org.eclipse.elk.alg.layered.p3order.AbstractBarycenterPortDistributor;
 import org.eclipse.elk.alg.layered.p3order.LayerTotalPortDistributor;
 import org.eclipse.elk.alg.layered.p3order.NodeRelativePortDistributor;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
@@ -93,7 +93,7 @@ public class PortDistributionProcessor implements ILayoutProcessor {
         
         // Randomly determine which port distributor implementation to use
         Random random = layeredGraph.getProperty(InternalProperties.RANDOM);
-        AbstractPortDistributor portDistributor = random.nextBoolean()
+        AbstractBarycenterPortDistributor portDistributor = random.nextBoolean()
                 ? NodeRelativePortDistributor.create(new float[portCount])
                 : LayerTotalPortDistributor.create(new float[portCount]);
         portDistributor.distributePorts(graphArray);

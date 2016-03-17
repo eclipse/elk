@@ -29,7 +29,7 @@ import org.eclipse.elk.core.options.PortSide;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public final class NodeRelativePortDistributor extends AbstractPortDistributor {
+public final class NodeRelativePortDistributor extends AbstractBarycenterPortDistributor {
     
     private final boolean assumePortOrderFixed;
 

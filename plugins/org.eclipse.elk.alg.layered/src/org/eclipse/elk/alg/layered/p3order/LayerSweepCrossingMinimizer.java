@@ -312,7 +312,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
             = NodeRelativePortDistributor.create(portRanks);
         LayerTotalPortDistributor layerTotalPortDistributor =
                 LayerTotalPortDistributor.create(portRanks);
-        AbstractPortDistributor portDistributor;
+        AbstractBarycenterPortDistributor portDistributor;
 
         // Perform the requested number of runs, each consisting of several sweeps
         for (int run = 0; run < runCount && bestSweepCrossings > 0; run++) {

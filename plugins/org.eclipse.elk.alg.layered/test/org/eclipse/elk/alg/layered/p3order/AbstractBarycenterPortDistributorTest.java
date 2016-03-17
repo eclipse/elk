@@ -30,7 +30,7 @@ import com.google.common.collect.Lists;
  * @author alan
  *
  */
-public class AbstractPortDistributorTest extends TestGraphCreator {
+public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
     // CHECKSTYLEOFF javadoc
     // CHECKSTYLEOFF MagicNumber
     // CHECKSTYLEOFF MethodName
@@ -84,7 +84,7 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
     }
 
     private void distributePortsInCompleteGraph(final int numberOfPorts) {
-        AbstractPortDistributor portDist =
+        AbstractBarycenterPortDistributor portDist =
                 LayerTotalPortDistributor.create(new float[numberOfPorts]);
 
 
@@ -179,7 +179,7 @@ public class AbstractPortDistributorTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftNode, rightNode);
         List<LPort> expectedPortRightNode = copyPortsInIndexOrder(rightNode, 1, 0);
         setUpIds();
-        AbstractPortDistributor portDist = LayerTotalPortDistributor
+        SweepPortDistributor portDist = LayerTotalPortDistributor
                 .createPortOrderFixedInOtherLayers(new float[4], new int[2][1]);
         portDist.distributePortsWhileSweeping(getGraph().toNodeArray(), 1, true);
 

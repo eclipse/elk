@@ -25,7 +25,7 @@ import org.eclipse.elk.core.options.PortSide;
  *
  * @author msp
  */
-public final class LayerTotalPortDistributor extends AbstractPortDistributor {
+public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistributor {
 
     private final boolean assumePortOrderFixed;
     /**

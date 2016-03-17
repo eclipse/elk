@@ -33,14 +33,14 @@ import com.google.common.collect.Lists;
  * class for distributing the ports of nodes where the order of ports is not fixed,
  * which has to be done as the last step of each crossing minimization processor.
  * There are different ways to determine port ranks, therefore that is done in concrete subclasses.
- * 
+ *
  * @author cds
  * @author ima
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public abstract class AbstractPortDistributor {
+public abstract class AbstractBarycenterPortDistributor implements SweepPortDistributor {
 
     /** port ranks array in which the results of ranks calculation are stored. */
     private final float[] portRanks;
@@ -56,11 +56,11 @@ public abstract class AbstractPortDistributor {
     /**
      * Constructs a port distributor for the given array of port ranks.
      * All ports are required to be assigned ids in the range of the given array.
-     * 
+     *
      * @param portRanks
      *            The array of port ranks
      */
-    public AbstractPortDistributor(final float[] portRanks) {
+    public AbstractBarycenterPortDistributor(final float[] portRanks) {
         this.portRanks = portRanks;
         inLayerPorts = Lists.newLinkedList();
         portBarycenter = new float[portRanks.length];
@@ -71,27 +71,27 @@ public abstract class AbstractPortDistributor {
     /**
      * Constructs a port distributor for the given array of port ranks. All ports are required to be
      * assigned ids in the range of the given array.
-     * 
+     *
      * @param portRanks
      *            The array of port ranks
      * @param nodePos
      *            array of node positions.
      */
-    public AbstractPortDistributor(final float[] portRanks, final int[][] nodePos) {
+    public AbstractBarycenterPortDistributor(final float[] portRanks, final int[][] nodePos) {
         this(portRanks);
         nodePositions = nodePos;
     }
 
     /**
      * Returns the array of port ranks.
-     * 
+     *
      * @return the array of port ranks
      */
     public float[] getPortRanks() {
         return portRanks;
     }
 
-    
+
     // /////////////////////////////////////////////////////////////////////////////
     // Port Rank Assignment
 
@@ -100,7 +100,7 @@ public abstract class AbstractPortDistributor {
      * constraints imply a fixed order, the ports are assumed to be pre-ordered in the usual way,
      * i.e. in clockwise order north - east - south - west.
      * The ranks are written to the {@link #getPortRanks()} array.
-     * 
+     *
      * @param node
      *            a node
      * @param rankSum
@@ -117,7 +117,7 @@ public abstract class AbstractPortDistributor {
     /**
      * Determine ranks for all ports of specific type in the given layer.
      * The ranks are written to the {@link #getPortRanks()} array.
-     * 
+     *
      * @param layer
      *            a layer as node array
      * @param portType
@@ -129,13 +129,13 @@ public abstract class AbstractPortDistributor {
             consumedRank += calculatePortRanks(layer[nodeIx], consumedRank, portType);
         }
     }
-    
+
     // /////////////////////////////////////////////////////////////////////////////
     // Port Distribution
 
     /**
      * Distribute the ports of each node in the layered graph depending on the port constraints.
-     * 
+     *
      * @param layeredGraph
      *            a layered graph as node array
      */
@@ -174,7 +174,7 @@ public abstract class AbstractPortDistributor {
     /**
      * Distribute the ports of the given node by their sides, connected ports, and input or output
      * type.
-     * 
+     *
      * @param node
      *            node whose ports shall be sorted
      */
@@ -359,16 +359,10 @@ public abstract class AbstractPortDistributor {
         return node.getIndex();
     }
 
-    /**
-     * Distribute ports in one layer. To be used in the context of layer sweep.
-     * 
-     * @param nodeOrder
-     *            the current order of the nodes
-     * @param currentIndex
-     *            the index of the layer the node is in
-     * @param isForwardSweep
-     *            whether we are sweeping forward or not.
+    /* (non-Javadoc)
+     * @see org.eclipse.elk.alg.layered.p3order.dist#distributePortsWhileSweeping(org.eclipse.elk.alg.layered.graph.LNode[][], int, boolean)
      */
+    @Override
     public void distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
             final boolean isForwardSweep) {
         updateNodePositions(nodeOrder, currentIndex);
@@ -417,7 +411,7 @@ public abstract class AbstractPortDistributor {
     /**
      * Sort the ports of a node using the given relative position values. These values are
      * interpreted as a hint for the clockwise order of ports.
-     * 
+     *
      * @param node
      *            a node
      */

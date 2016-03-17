@@ -138,7 +138,7 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
         }
 
         // Distribute the ports of all nodes with free port constraints
-        AbstractPortDistributor portDistributor = NodeRelativePortDistributor.create(new float[portCount]);
+        AbstractBarycenterPortDistributor portDistributor = NodeRelativePortDistributor.create(new float[portCount]);
         portDistributor.distributePorts(layeredGraph.toNodeArray());
         
         monitor.done();

@@ -46,7 +46,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     private final IConstraintResolver constraintResolver;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
     private final BarycenterState[][] barycenterState;
-    private AbstractPortDistributor portDistributor;
+    private AbstractBarycenterPortDistributor portDistributor;
 
     /**
      * Constructs a Barycenter heuristic for crossing minimization between two layers.
@@ -84,7 +84,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
      */
     public BarycenterHeuristic(final BarycenterState[][] barycenterState, 
             final IConstraintResolver constraintResolver, final Random random,
-            final AbstractPortDistributor portDistributor) {
+            final AbstractBarycenterPortDistributor portDistributor) {
         this(barycenterState, constraintResolver, random, portDistributor.getPortRanks());
         this.portDistributor = portDistributor;
     }

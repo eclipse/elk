@@ -48,7 +48,7 @@ class GraphData {
     private SweepCopy bestNodeNPortOrder;
 
     private ICrossingMinimizationHeuristic crossMinimizer;
-    private final AbstractPortDistributor portDistributor;
+    private final SweepPortDistributor portDistributor;
 
     private final boolean processRecursively;
     private final LNode parent;
@@ -170,8 +170,7 @@ class GraphData {
             IConstraintResolver constraintResolver =
                     new ForsterConstraintResolver(barycenterStates, layoutUnits);
             crossMinimizer = new BarycenterHeuristic(barycenterStates, constraintResolver,
-                    random, portDistributor);
-
+                    random, (AbstractBarycenterPortDistributor) portDistributor);
             break;
         case GREEDY_SWITCH:
             crossMinimizer = 
@@ -321,7 +320,7 @@ class GraphData {
     /**
      * @return the portDistributor
      */
-    public AbstractPortDistributor portDistributor() {
+    public SweepPortDistributor portDistributor() {
         return portDistributor;
     }
 
