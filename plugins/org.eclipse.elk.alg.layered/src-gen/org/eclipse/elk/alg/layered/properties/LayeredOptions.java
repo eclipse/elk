@@ -80,7 +80,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EnumSet<ContentAlignment>> CONTENT_ALIGNMENT = new Property<EnumSet<ContentAlignment>>(
             "org.eclipse.elk.layered.contentAlignment",
-            CONTENT_ALIGNMENT_DEFAULT);
+            CONTENT_ALIGNMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_CENTER_LABEL_PLACEMENT_STRATEGY}.
@@ -92,7 +94,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EdgeLabelPlacementStrategy> EDGE_CENTER_LABEL_PLACEMENT_STRATEGY = new Property<EdgeLabelPlacementStrategy>(
             "org.eclipse.elk.layered.edgeCenterLabelPlacementStrategy",
-            EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT);
+            EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_LABEL_SIDE_SELECTION}.
@@ -104,7 +108,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE_SELECTION = new Property<EdgeLabelSideSelection>(
             "org.eclipse.elk.layered.edgeLabelSideSelection",
-            EDGE_LABEL_SIDE_SELECTION_DEFAULT);
+            EDGE_LABEL_SIDE_SELECTION_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #FEEDBACK_EDGES}.
@@ -116,7 +122,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "org.eclipse.elk.layered.feedbackEdges",
-            FEEDBACK_EDGES_DEFAULT);
+            FEEDBACK_EDGES_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #INTERACTIVE_REFERENCE_POINT}.
@@ -128,7 +136,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT = new Property<InteractiveReferencePoint>(
             "org.eclipse.elk.layered.interactiveReferencePoint",
-            INTERACTIVE_REFERENCE_POINT_DEFAULT);
+            INTERACTIVE_REFERENCE_POINT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MERGE_EDGES}.
@@ -143,7 +153,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> MERGE_EDGES = new Property<Boolean>(
             "org.eclipse.elk.layered.mergeEdges",
-            MERGE_EDGES_DEFAULT);
+            MERGE_EDGES_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MERGE_HIERARCHY_EDGES}.
@@ -159,7 +171,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> MERGE_HIERARCHY_EDGES = new Property<Boolean>(
             "org.eclipse.elk.layered.mergeHierarchyEdges",
-            MERGE_HIERARCHY_EDGES_DEFAULT);
+            MERGE_HIERARCHY_EDGES_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SAUSAGE_FOLDING}.
@@ -171,7 +185,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> SAUSAGE_FOLDING = new Property<Boolean>(
             "org.eclipse.elk.layered.sausageFolding",
-            SAUSAGE_FOLDING_DEFAULT);
+            SAUSAGE_FOLDING_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #THOROUGHNESS}.
@@ -183,7 +199,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> THOROUGHNESS = new Property<Integer>(
             "org.eclipse.elk.layered.thoroughness",
-            THOROUGHNESS_DEFAULT);
+            THOROUGHNESS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #UNNECESSARY_BENDPOINTS}.
@@ -198,7 +216,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> UNNECESSARY_BENDPOINTS = new Property<Boolean>(
             "org.eclipse.elk.layered.unnecessaryBendpoints",
-            UNNECESSARY_BENDPOINTS_DEFAULT);
+            UNNECESSARY_BENDPOINTS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NORTH_OR_SOUTH_PORT}.
@@ -211,7 +231,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> NORTH_OR_SOUTH_PORT = new Property<Boolean>(
             "org.eclipse.elk.layered.northOrSouthPort",
-            NORTH_OR_SOUTH_PORT_DEFAULT);
+            NORTH_OR_SOUTH_PORT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CYCLE_BREAKING_STRATEGY}.
@@ -226,7 +248,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<CycleBreakingStrategy> CYCLE_BREAKING_STRATEGY = new Property<CycleBreakingStrategy>(
             "org.eclipse.elk.layered.cycleBreaking.strategy",
-            CYCLE_BREAKING_STRATEGY_DEFAULT);
+            CYCLE_BREAKING_STRATEGY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYERING_STRATEGY}.
@@ -238,7 +262,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<LayeringStrategy> LAYERING_STRATEGY = new Property<LayeringStrategy>(
             "org.eclipse.elk.layered.layering.strategy",
-            LAYERING_STRATEGY_DEFAULT);
+            LAYERING_STRATEGY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYERING_LAYER_CONSTRAINT}.
@@ -250,7 +276,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<LayerConstraint> LAYERING_LAYER_CONSTRAINT = new Property<LayerConstraint>(
             "org.eclipse.elk.layered.layering.layerConstraint",
-            LAYERING_LAYER_CONSTRAINT_DEFAULT);
+            LAYERING_LAYER_CONSTRAINT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYERING_DISTRIBUTE_NODES}.
@@ -262,7 +290,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> LAYERING_DISTRIBUTE_NODES = new Property<Boolean>(
             "org.eclipse.elk.layered.layering.distributeNodes",
-            LAYERING_DISTRIBUTE_NODES_DEFAULT);
+            LAYERING_DISTRIBUTE_NODES_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS}.
@@ -274,7 +304,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<WideNodesStrategy> LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS = new Property<WideNodesStrategy>(
             "org.eclipse.elk.layered.layering.wideNodesOnMultipleLayers",
-            LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS_DEFAULT);
+            LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH}.
@@ -286,7 +318,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH = new Property<Integer>(
             "org.eclipse.elk.layered.layering.minWidth.upperBoundOnWidth",
-            LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT);
+            LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR}.
@@ -298,7 +332,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR = new Property<Integer>(
             "org.eclipse.elk.layered.layering.minWidth.upperLayerEstimationScalingFactor",
-            LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT);
+            LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYERING_NODE_PROMOTION_STRATEGY}.
@@ -310,7 +346,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<NodePromotionStrategy> LAYERING_NODE_PROMOTION_STRATEGY = new Property<NodePromotionStrategy>(
             "org.eclipse.elk.layered.layering.nodePromotion.strategy",
-            LAYERING_NODE_PROMOTION_STRATEGY_DEFAULT);
+            LAYERING_NODE_PROMOTION_STRATEGY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYERING_NODE_PROMOTION_MAX_ITERATIONS}.
@@ -322,7 +360,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> LAYERING_NODE_PROMOTION_MAX_ITERATIONS = new Property<Integer>(
             "org.eclipse.elk.layered.layering.nodePromotion.maxIterations",
-            LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT);
+            LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CROSSING_MINIMIZATION_STRATEGY}.
@@ -334,7 +374,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<CrossingMinimizationStrategy> CROSSING_MINIMIZATION_STRATEGY = new Property<CrossingMinimizationStrategy>(
             "org.eclipse.elk.layered.crossingMinimization.strategy",
-            CROSSING_MINIMIZATION_STRATEGY_DEFAULT);
+            CROSSING_MINIMIZATION_STRATEGY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CROSSING_MINIMIZATION_GREEDY_SWITCH}.
@@ -346,7 +388,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<GreedySwitchType> CROSSING_MINIMIZATION_GREEDY_SWITCH = new Property<GreedySwitchType>(
             "org.eclipse.elk.layered.crossingMinimization.greedySwitch",
-            CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT);
+            CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_PLACEMENT_STRATEGY}.
@@ -358,7 +402,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<NodePlacementStrategy> NODE_PLACEMENT_STRATEGY = new Property<NodePlacementStrategy>(
             "org.eclipse.elk.layered.nodePlacement.strategy",
-            NODE_PLACEMENT_STRATEGY_DEFAULT);
+            NODE_PLACEMENT_STRATEGY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_PLACEMENT_BK_EDGE_STRAIGHTENING}.
@@ -371,7 +417,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EdgeStraighteningStrategy> NODE_PLACEMENT_BK_EDGE_STRAIGHTENING = new Property<EdgeStraighteningStrategy>(
             "org.eclipse.elk.layered.nodePlacement.bk.edgeStraightening",
-            NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEFAULT);
+            NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_PLACEMENT_BK_FIXED_ALIGNMENT}.
@@ -383,7 +431,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<FixedAlignment> NODE_PLACEMENT_BK_FIXED_ALIGNMENT = new Property<FixedAlignment>(
             "org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment",
-            NODE_PLACEMENT_BK_FIXED_ALIGNMENT_DEFAULT);
+            NODE_PLACEMENT_BK_FIXED_ALIGNMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING}.
@@ -395,7 +445,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING = new Property<Float>(
             "org.eclipse.elk.layered.nodePlacement.linearSegments.deflectionDampening",
-            NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT);
+            NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_ROUTING_SELF_LOOP_PLACEMENT}.
@@ -404,7 +456,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
   
   public final static IProperty<SelfLoopPlacement> EDGE_ROUTING_SELF_LOOP_PLACEMENT = new Property<SelfLoopPlacement>(
             "org.eclipse.elk.layered.edgeRouting.selfLoopPlacement",
-            EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEFAULT);
+            EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPACING_EDGE_NODE_SPACING_FACTOR}.
@@ -417,7 +471,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SPACING_EDGE_NODE_SPACING_FACTOR = new Property<Float>(
             "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",
-            SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT);
+            SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPACING_EDGE_SPACING_FACTOR}.
@@ -430,7 +486,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SPACING_EDGE_SPACING_FACTOR = new Property<Float>(
             "org.eclipse.elk.layered.spacing.edgeSpacingFactor",
-            SPACING_EDGE_SPACING_FACTOR_DEFAULT);
+            SPACING_EDGE_SPACING_FACTOR_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPACING_IN_LAYER_SPACING_FACTOR}.
@@ -443,7 +501,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SPACING_IN_LAYER_SPACING_FACTOR = new Property<Float>(
             "org.eclipse.elk.layered.spacing.inLayerSpacingFactor",
-            SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT);
+            SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #COMPACTION_CONNECTED_COMPONENTS}.
@@ -455,7 +515,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> COMPACTION_CONNECTED_COMPONENTS = new Property<Boolean>(
             "org.eclipse.elk.layered.compaction.connectedComponents",
-            COMPACTION_CONNECTED_COMPONENTS_DEFAULT);
+            COMPACTION_CONNECTED_COMPONENTS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #COMPACTION_POST_COMPACTION_STRATEGY}.
@@ -467,7 +529,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<GraphCompactionStrategy> COMPACTION_POST_COMPACTION_STRATEGY = new Property<GraphCompactionStrategy>(
             "org.eclipse.elk.layered.compaction.postCompaction.strategy",
-            COMPACTION_POST_COMPACTION_STRATEGY_DEFAULT);
+            COMPACTION_POST_COMPACTION_STRATEGY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #COMPACTION_POST_COMPACTION_CONSTRAINTS}.
@@ -479,7 +543,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<ConstraintCalculationStrategy> COMPACTION_POST_COMPACTION_CONSTRAINTS = new Property<ConstraintCalculationStrategy>(
             "org.eclipse.elk.layered.compaction.postCompaction.constraints",
-            COMPACTION_POST_COMPACTION_CONSTRAINTS_DEFAULT);
+            COMPACTION_POST_COMPACTION_CONSTRAINTS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #HIGH_DEGREE_NODES_TREATMENT}.
@@ -491,7 +557,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> HIGH_DEGREE_NODES_TREATMENT = new Property<Boolean>(
             "org.eclipse.elk.layered.highDegreeNodes.treatment",
-            HIGH_DEGREE_NODES_TREATMENT_DEFAULT);
+            HIGH_DEGREE_NODES_TREATMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #HIGH_DEGREE_NODES_THRESHOLD}.
@@ -503,7 +571,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> HIGH_DEGREE_NODES_THRESHOLD = new Property<Integer>(
             "org.eclipse.elk.layered.highDegreeNodes.threshold",
-            HIGH_DEGREE_NODES_THRESHOLD_DEFAULT);
+            HIGH_DEGREE_NODES_THRESHOLD_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #HIGH_DEGREE_NODES_TREE_HEIGHT}.
@@ -515,7 +585,9 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> HIGH_DEGREE_NODES_TREE_HEIGHT = new Property<Integer>(
             "org.eclipse.elk.layered.highDegreeNodes.treeHeight",
-            HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT);
+            HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT,
+            null,
+            null);
   
   /**
    * Required value for dependency between {@link #EDGE_LABEL_SIDE_SELECTION} and {@link #EDGE_ROUTING}.
@@ -712,6 +784,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Content Alignment",
         "Specifies how the content of compound nodes is to be aligned, e.g. top-left.",
         CONTENT_ALIGNMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUMSET,
         ContentAlignment.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -724,6 +798,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Edge Label Placement Strategy",
         "Determines in which layer center labels of long edges should be placed.",
         EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         EdgeLabelPlacementStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -736,6 +812,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Edge Label Side Selection",
         "Method to decide on edge label sides.",
         EDGE_LABEL_SIDE_SELECTION_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         EdgeLabelSideSelection.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -753,6 +831,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Feedback Edges",
         "Whether feedback edges should be highlighted by routing around the nodes.",
         FEEDBACK_EDGES_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -765,6 +845,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Interactive Reference Point",
         "Determines which point of a node is considered by interactive layout phases.",
         INTERACTIVE_REFERENCE_POINT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         InteractiveReferencePoint.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -787,6 +869,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Merge Edges",
         "Edges that have no ports are merged so they touch the connected nodes at the same points. When this option is disabled, one port is created for each edge directly connected to a node. When it is enabled, all such incoming edges share an input port, and all outgoing edges share an output port.",
         MERGE_EDGES_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -799,6 +883,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Merge Hierarchy-Crossing Edges",
         "If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports as possible. They are broken by the algorithm, with hierarchical ports inserted as required. Usually, one such port is created for each edge at each hierarchy crossing point. With this option set to true, we try to create as few hierarchical ports as possible in the process. In particular, all edges that form a hyperedge can share a port.",
         MERGE_HIERARCHY_EDGES_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -811,6 +897,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Sausage Folding",
         "Whether long sausages should be folded up nice and tight.",
         SAUSAGE_FOLDING_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -828,6 +916,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Thoroughness",
         "How much effort should be spent to produce a nice layout.",
         THOROUGHNESS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -840,6 +930,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Add Unnecessary Bendpoints",
         "Adds bend points even if an edge does not change direction. If true, each long edge dummy will contribute a bend point to its edges and hierarchy-crossing edges will always get a bend point where they cross hierarchy boundaries. By default, bend points are only added where an edge changes direction.",
         UNNECESSARY_BENDPOINTS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -852,6 +944,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "North or South Port",
         "Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)",
         NORTH_OR_SOUTH_PORT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
@@ -864,6 +958,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Cycle Breaking Strategy",
         "Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right).",
         CYCLE_BREAKING_STRATEGY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         CycleBreakingStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -876,6 +972,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Node Layering Strategy",
         "Strategy for node layering.",
         LAYERING_STRATEGY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         LayeringStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -888,6 +986,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Layer Constraint",
         "Determines a constraint on the placement of the node regarding the layering.",
         LAYERING_LAYER_CONSTRAINT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         LayerConstraint.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -900,6 +1000,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Distribute Nodes (Deprecated)",
         "Whether wide nodes should be distributed to several layers.",
         LAYERING_DISTRIBUTE_NODES_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -912,6 +1014,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Wide Nodes on Multiple Layers",
         "Strategy to distribute wide nodes over multiple layers.",
         LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         WideNodesStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -924,6 +1028,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Upper Bound On Width [MinWidth Layerer]",
         "Defines a loose upper bound on the width of the MinWidth layerer.",
         LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -941,6 +1047,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Upper Layer Estimation Scaling Factor [MinWidth Layerer]",
         "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.",
         LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -958,6 +1066,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Node Promotion Strategy",
         "Reduces number of dummy nodes after layering phase (if possible).",
         LAYERING_NODE_PROMOTION_STRATEGY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         NodePromotionStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -970,6 +1080,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Max Node Promotion Iterations",
         "Limits the number of iterations for node promotion.",
         LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -987,6 +1099,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Crossing Minimization Strategy",
         "Strategy for crossing minimization.",
         CROSSING_MINIMIZATION_STRATEGY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         CrossingMinimizationStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -999,6 +1113,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Greedy Switch Crossing Minimization",
         "Greedy Switch strategy for crossing minimization.",
         CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         GreedySwitchType.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1011,6 +1127,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Node Placement Strategy",
         "Strategy for node placement.",
         NODE_PLACEMENT_STRATEGY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         NodePlacementStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1023,6 +1141,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Edge Straightening",
         "Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges at the expense of diagram size.",
         NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         EdgeStraighteningStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1040,6 +1160,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Fixed Alignment",
         "Tells the BK node placer to use a certain alignment instead of taking the optimal result.",
         NODE_PLACEMENT_BK_FIXED_ALIGNMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         FixedAlignment.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1057,6 +1179,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Linear Segments Deflection Dampening",
         "Dampens the movement of nodes to keep the diagram from getting too large.",
         NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1074,6 +1198,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Spline Self-Loop Placement",
         null,
         EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         SelfLoopPlacement.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1091,6 +1217,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Edge Node Spacing Factor",
         "Factor by which the object spacing is multiplied to arrive at the minimal spacing between an edge and a node.",
         SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1103,6 +1231,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Edge Spacing Factor",
         "Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges.",
         SPACING_EDGE_SPACING_FACTOR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1115,6 +1245,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "In-layer Spacing Factor",
         "Factor by which the usual spacing is multiplied to determine the in-layer spacing between objects.",
         SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1127,6 +1259,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Connected Components Compaction",
         "Tries to further compact components (disconnected sub-graphs).",
         COMPACTION_CONNECTED_COMPONENTS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1144,6 +1278,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Post Compaction Strategy",
         "Specifies whether and how post-process compaction is applied.",
         COMPACTION_POST_COMPACTION_STRATEGY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         GraphCompactionStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1156,6 +1292,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "Post Compaction Constraint Calculation",
         "Specifies whether and how post-process compaction is applied.",
         COMPACTION_POST_COMPACTION_CONSTRAINTS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         ConstraintCalculationStrategy.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1168,6 +1306,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "High Degree Node Treatment",
         "Makes room around high degree nodes to place leafs and trees.",
         HIGH_DEGREE_NODES_TREATMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1180,6 +1320,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "High Degree Node Threshold",
         "Whether a node is considered to have a high degree.",
         HIGH_DEGREE_NODES_THRESHOLD_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1197,6 +1339,8 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "High Degree Node Maximum Tree Height",
         "Maximum height of a subtree connected to a high degree node to be moved to separate layers.",
         HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),

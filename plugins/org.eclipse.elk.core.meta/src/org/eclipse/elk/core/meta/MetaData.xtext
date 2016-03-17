@@ -53,6 +53,8 @@ MdProperty:
             & ('description' description=STRING)?
             & ('documentation' documentation=STRING)?   // "@docu/priority.md"
             & ('default' '=' defaultValue=XExpression)?
+            & ('lowerBound' '=' lowerBound=XExpression)?
+            & ('upperBound' '=' upperBound=XExpression)?
             & ('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
             & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
         )

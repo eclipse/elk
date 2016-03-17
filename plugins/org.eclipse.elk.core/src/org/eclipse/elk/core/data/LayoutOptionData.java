@@ -18,6 +18,7 @@ import java.util.Set;
 import org.eclipse.elk.core.util.IDataObject;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 
 import com.google.common.collect.Lists;
 
@@ -99,6 +100,11 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     private String[] choices;
     /** visibility in the UI. */
     private final Visibility visibility;
+    /** the lower bound for option values. */
+    private Object lowerBound;
+    /** the upper bound for option values. */
+    private Object upperBound;
+    
     
     /**
      * Create a layout option data entry.
@@ -109,6 +115,8 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
             final String aname, 
             final String adescription, 
             final Object adefaultValue,
+            final Object alowerBound,
+            final Object anupperBound,
             final Type atype,
             final Class<?> atypeClass, 
             final Set<Target> atargets, 
@@ -119,6 +127,8 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         this.name = aname;
         this.description = adescription;
         this.defaultValue = adefaultValue;
+        this.lowerBound = alowerBound;
+        this.upperBound = anupperBound;
         this.type = atype;
         this.clazz = atypeClass;
         if (atargets == null) {
@@ -493,6 +503,46 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public Comparable<? super Object> getLowerBound() {
+        if (lowerBound instanceof Comparable<?>) {
+            return (Comparable<Object>) lowerBound;
+        }
+        return (Comparable<Object>) Property.NEGATIVE_INFINITY;
+    }
+
+    /**
+     * Sets the lower bound for layout option values.
+     * 
+     * @param lowerBound the lowerBound to set
+     */
+    public void setLowerBound(final Object lowerBound) {
+        this.lowerBound = lowerBound;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public Comparable<? super Object> getUpperBound() {
+        if (upperBound instanceof Comparable<?>) {
+            return (Comparable<Object>) upperBound;
+        }
+        return (Comparable<Object>) Property.POSITIVE_INFINITY;
+    }
+
+    /**
+     * Sets the upper bound for layout option values.
+     * 
+     * @param upperBound the upperBound to set
+     */
+    public void setUpperBound(final Object upperBound) {
+        this.upperBound = upperBound;
+    }
+    
     /**
      * Returns the option type class.
      * 

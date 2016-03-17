@@ -61,7 +61,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Alignment> ALIGNMENT = new Property<Alignment>(
             "org.eclipse.elk.alignment",
-            ALIGNMENT_DEFAULT);
+            ALIGNMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * The desired aspect ratio of the drawing, that is the quotient of width by height.
@@ -87,7 +89,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> DEBUG_MODE = new Property<Boolean>(
             "org.eclipse.elk.debugMode",
-            DEBUG_MODE_DEFAULT);
+            DEBUG_MODE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #DIRECTION}.
@@ -100,7 +104,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Direction> DIRECTION = new Property<Direction>(
             "org.eclipse.elk.direction",
-            DIRECTION_DEFAULT);
+            DIRECTION_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_ROUTING}.
@@ -115,7 +121,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
             "org.eclipse.elk.edgeRouting",
-            EDGE_ROUTING_DEFAULT);
+            EDGE_ROUTING_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EXPAND_NODES}.
@@ -127,7 +135,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> EXPAND_NODES = new Property<Boolean>(
             "org.eclipse.elk.expandNodes",
-            EXPAND_NODES_DEFAULT);
+            EXPAND_NODES_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #HIERARCHY_HANDLING}.
@@ -141,7 +151,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<HierarchyHandling> HIERARCHY_HANDLING = new Property<HierarchyHandling>(
             "org.eclipse.elk.hierarchyHandling",
-            HIERARCHY_HANDLING_DEFAULT);
+            HIERARCHY_HANDLING_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #INTERACTIVE}.
@@ -156,7 +168,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> INTERACTIVE = new Property<Boolean>(
             "org.eclipse.elk.interactive",
-            INTERACTIVE_DEFAULT);
+            INTERACTIVE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYOUT_HIERARCHY}.
@@ -171,7 +185,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             "org.eclipse.elk.layoutHierarchy",
-            LAYOUT_HIERARCHY_DEFAULT);
+            LAYOUT_HIERARCHY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PORT_CONSTRAINTS}.
@@ -183,7 +199,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<PortConstraints> PORT_CONSTRAINTS = new Property<PortConstraints>(
             "org.eclipse.elk.portConstraints",
-            PORT_CONSTRAINTS_DEFAULT);
+            PORT_CONSTRAINTS_DEFAULT,
+            null,
+            null);
   
   /**
    * The position of a node, port, or label. This is used by the 'Fixed Layout' algorithm to
@@ -234,7 +252,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> COMMENT_BOX = new Property<Boolean>(
             "org.eclipse.elk.commentBox",
-            COMMENT_BOX_DEFAULT);
+            COMMENT_BOX_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #HYPERNODE}.
@@ -246,7 +266,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> HYPERNODE = new Property<Boolean>(
             "org.eclipse.elk.hypernode",
-            HYPERNODE_DEFAULT);
+            HYPERNODE_DEFAULT,
+            null,
+            null);
   
   /**
    * Label managers can shorten labels upon a layout algorithm's request.
@@ -267,7 +289,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Spacing.Margins> MARGINS = new Property<Spacing.Margins>(
             "org.eclipse.elk.margins",
-            MARGINS_DEFAULT);
+            MARGINS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NO_LAYOUT}.
@@ -283,7 +307,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> NO_LAYOUT = new Property<Boolean>(
             "org.eclipse.elk.noLayout",
-            NO_LAYOUT_DEFAULT);
+            NO_LAYOUT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SCALE_FACTOR}.
@@ -300,7 +326,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SCALE_FACTOR = new Property<Float>(
             "org.eclipse.elk.scaleFactor",
-            SCALE_FACTOR_DEFAULT);
+            SCALE_FACTOR_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ANIMATE}.
@@ -312,7 +340,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> ANIMATE = new Property<Boolean>(
             "org.eclipse.elk.animate",
-            ANIMATE_DEFAULT);
+            ANIMATE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ANIM_TIME_FACTOR}.
@@ -326,7 +356,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> ANIM_TIME_FACTOR = new Property<Integer>(
             "org.eclipse.elk.animTimeFactor",
-            ANIM_TIME_FACTOR_DEFAULT);
+            ANIM_TIME_FACTOR_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LAYOUT_ANCESTORS}.
@@ -339,7 +371,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> LAYOUT_ANCESTORS = new Property<Boolean>(
             "org.eclipse.elk.layoutAncestors",
-            LAYOUT_ANCESTORS_DEFAULT);
+            LAYOUT_ANCESTORS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MAX_ANIM_TIME}.
@@ -351,7 +385,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> MAX_ANIM_TIME = new Property<Integer>(
             "org.eclipse.elk.maxAnimTime",
-            MAX_ANIM_TIME_DEFAULT);
+            MAX_ANIM_TIME_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MIN_ANIM_TIME}.
@@ -363,7 +399,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> MIN_ANIM_TIME = new Property<Integer>(
             "org.eclipse.elk.minAnimTime",
-            MIN_ANIM_TIME_DEFAULT);
+            MIN_ANIM_TIME_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PROGRESS_BAR}.
@@ -375,7 +413,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> PROGRESS_BAR = new Property<Boolean>(
             "org.eclipse.elk.progressBar",
-            PROGRESS_BAR_DEFAULT);
+            PROGRESS_BAR_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ZOOM_TO_FIT}.
@@ -387,7 +427,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> ZOOM_TO_FIT = new Property<Boolean>(
             "org.eclipse.elk.zoomToFit",
-            ZOOM_TO_FIT_DEFAULT);
+            ZOOM_TO_FIT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPACING_BORDER}.
@@ -400,7 +442,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
             "org.eclipse.elk.spacing.border",
-            SPACING_BORDER_DEFAULT);
+            SPACING_BORDER_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPACING_LABEL}.
@@ -412,7 +456,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SPACING_LABEL = new Property<Float>(
             "org.eclipse.elk.spacing.label",
-            SPACING_LABEL_DEFAULT);
+            SPACING_LABEL_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPACING_NODE}.
@@ -425,7 +471,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SPACING_NODE = new Property<Float>(
             "org.eclipse.elk.spacing.node",
-            SPACING_NODE_DEFAULT);
+            SPACING_NODE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPACING_PORT}.
@@ -437,7 +485,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SPACING_PORT = new Property<Float>(
             "org.eclipse.elk.spacing.port",
-            SPACING_PORT_DEFAULT);
+            SPACING_PORT_DEFAULT,
+            null,
+            null);
   
   /**
    * Additional space around the sets of ports on each node side. For each side of a node,
@@ -465,7 +515,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> PARTITIONING_ACTIVATE = new Property<Boolean>(
             "org.eclipse.elk.partitioning.activate",
-            PARTITIONING_ACTIVATE_DEFAULT);
+            PARTITIONING_ACTIVATE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_LABELS_INSETS}.
@@ -477,7 +529,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Spacing.Insets> NODE_LABELS_INSETS = new Property<Spacing.Insets>(
             "org.eclipse.elk.nodeLabels.insets",
-            NODE_LABELS_INSETS_DEFAULT);
+            NODE_LABELS_INSETS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_LABELS_PLACEMENT}.
@@ -490,7 +544,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EnumSet<NodeLabelPlacement>> NODE_LABELS_PLACEMENT = new Property<EnumSet<NodeLabelPlacement>>(
             "org.eclipse.elk.nodeLabels.placement",
-            NODE_LABELS_PLACEMENT_DEFAULT);
+            NODE_LABELS_PLACEMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PORT_ALIGNMENT_BASIC}.
@@ -502,7 +558,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<PortAlignment> PORT_ALIGNMENT_BASIC = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.basic",
-            PORT_ALIGNMENT_BASIC_DEFAULT);
+            PORT_ALIGNMENT_BASIC_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PORT_ALIGNMENT_NORTH}.
@@ -514,7 +572,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<PortAlignment> PORT_ALIGNMENT_NORTH = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.north",
-            PORT_ALIGNMENT_NORTH_DEFAULT);
+            PORT_ALIGNMENT_NORTH_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PORT_ALIGNMENT_SOUTH}.
@@ -526,7 +586,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<PortAlignment> PORT_ALIGNMENT_SOUTH = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.south",
-            PORT_ALIGNMENT_SOUTH_DEFAULT);
+            PORT_ALIGNMENT_SOUTH_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PORT_ALIGNMENT_WEST}.
@@ -538,7 +600,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<PortAlignment> PORT_ALIGNMENT_WEST = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.west",
-            PORT_ALIGNMENT_WEST_DEFAULT);
+            PORT_ALIGNMENT_WEST_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PORT_ALIGNMENT_EAST}.
@@ -550,7 +614,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<PortAlignment> PORT_ALIGNMENT_EAST = new Property<PortAlignment>(
             "org.eclipse.elk.portAlignment.east",
-            PORT_ALIGNMENT_EAST_DEFAULT);
+            PORT_ALIGNMENT_EAST_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_SIZE_CONSTRAINTS}.
@@ -564,7 +630,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EnumSet<SizeConstraint>> NODE_SIZE_CONSTRAINTS = new Property<EnumSet<SizeConstraint>>(
             "org.eclipse.elk.nodeSize.constraints",
-            NODE_SIZE_CONSTRAINTS_DEFAULT);
+            NODE_SIZE_CONSTRAINTS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_SIZE_OPTIONS}.
@@ -578,7 +646,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EnumSet<SizeOptions>> NODE_SIZE_OPTIONS = new Property<EnumSet<SizeOptions>>(
             "org.eclipse.elk.nodeSize.options",
-            NODE_SIZE_OPTIONS_DEFAULT);
+            NODE_SIZE_OPTIONS_DEFAULT,
+            null,
+            null);
   
   /**
    * The minimal size to which a node can be reduced.
@@ -593,7 +663,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   
   public final static IProperty<Float> NODE_SIZE_MIN_WIDTH = new Property<Float>(
             "org.eclipse.elk.nodeSize.minWidth",
-            NODE_SIZE_MIN_WIDTH_DEFAULT);
+            NODE_SIZE_MIN_WIDTH_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NODE_SIZE_MIN_HEIGHT}.
@@ -602,7 +674,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   
   public final static IProperty<Float> NODE_SIZE_MIN_HEIGHT = new Property<Float>(
             "org.eclipse.elk.nodeSize.minHeight",
-            NODE_SIZE_MIN_HEIGHT_DEFAULT);
+            NODE_SIZE_MIN_HEIGHT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_LABELS_PLACEMENT}.
@@ -614,7 +688,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EdgeLabelPlacement> EDGE_LABELS_PLACEMENT = new Property<EdgeLabelPlacement>(
             "org.eclipse.elk.edgeLabels.placement",
-            EDGE_LABELS_PLACEMENT_DEFAULT);
+            EDGE_LABELS_PLACEMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * Font name used for a label.
@@ -655,7 +731,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<PortSide> PORT_SIDE = new Property<PortSide>(
             "org.eclipse.elk.port.side",
-            PORT_SIDE_DEFAULT);
+            PORT_SIDE_DEFAULT,
+            null,
+            null);
   
   /**
    * The offset of ports on the node border. With a positive offset the port is moved outside
@@ -679,7 +757,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<PortLabelPlacement> PORT_LABELS_PLACEMENT = new Property<PortLabelPlacement>(
             "org.eclipse.elk.portLabels.placement",
-            PORT_LABELS_PLACEMENT_DEFAULT);
+            PORT_LABELS_PLACEMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #INSIDE_SELF_LOOPS_ACTIVATE}.
@@ -693,7 +773,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> INSIDE_SELF_LOOPS_ACTIVATE = new Property<Boolean>(
             "org.eclipse.elk.insideSelfLoops.activate",
-            INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT);
+            INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #INSIDE_SELF_LOOPS_YO}.
@@ -705,7 +787,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> INSIDE_SELF_LOOPS_YO = new Property<Boolean>(
             "org.eclipse.elk.insideSelfLoops.yo",
-            INSIDE_SELF_LOOPS_YO_DEFAULT);
+            INSIDE_SELF_LOOPS_YO_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_THICKNESS}.
@@ -718,7 +802,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> EDGE_THICKNESS = new Property<Float>(
             "org.eclipse.elk.edge.thickness",
-            EDGE_THICKNESS_DEFAULT);
+            EDGE_THICKNESS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_TYPE}.
@@ -731,7 +817,9 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EdgeType> EDGE_TYPE = new Property<EdgeType>(
             "org.eclipse.elk.edge.type",
-            EDGE_TYPE_DEFAULT);
+            EDGE_TYPE_DEFAULT,
+            null,
+            null);
   
   /**
    * Required value for dependency between {@link #SCALE_FACTOR} and {@link #LAYOUT_HIERARCHY}.
@@ -790,6 +878,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Layout Algorithm",
         "Select a specific layout algorithm.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.STRING,
         String.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -801,6 +891,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Alignment",
         "Alignment of the selected node relative to other nodes, the exact meaning depends on the used algorithm.",
         ALIGNMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         Alignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -812,6 +904,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "",
         "Aspect Ratio",
         "The desired aspect ratio of the drawing, that is the quotient of width by height.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.FLOAT,
         float.class,
@@ -825,6 +919,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Bend Points",
         "A fixed list of bend points for the edge. This is used by the \'Fixed Layout\' algorithm to specify a pre-defined routing for an edge. The vector chain must include the source point, any bend points, and the target point, so it must have at least two points.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.OBJECT,
         KVectorChain.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
@@ -837,6 +933,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Debug Mode",
         "Whether additional debug information shall be generated.",
         DEBUG_MODE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -849,6 +947,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Direction",
         "Overall direction of edges: horizontal (right / left) or vertical (down / up).",
         DIRECTION_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         Direction.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -861,6 +961,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Edge Routing",
         "What kind of edge routing style should be applied for the content of a parent node. Algorithms may also set this option to single edges in order to mark them as splines. The bend point list of edges with this option set to SPLINES must be interpreted as control points for a piecewise cubic spline.",
         EDGE_ROUTING_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         EdgeRouting.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -873,6 +975,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Expand Nodes",
         "If active, nodes are expanded to fill the area of their parent.",
         EXPAND_NODES_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -885,6 +989,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Hierarchy Handling",
         "Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the option is assumed as SEPARATE_CHILDREN.",
         HIERARCHY_HANDLING_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         HierarchyHandling.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
@@ -897,6 +1003,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Interactive",
         "Whether the algorithm should be run in interactive mode for the content of a parent node. What this means exactly depends on how the specific algorithm interprets this option. Usually in the interactive mode algorithms try to modify the current layout as little as possible.",
         INTERACTIVE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -908,6 +1016,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Layout Hierarchy",
         "Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy level of the graph is processed independently, possibly by different layout algorithms, beginning with the lowest level. If it is set, the algorithm is responsible to process all hierarchy levels that are contained in the associated parent node.",
         LAYOUT_HIERARCHY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -920,6 +1030,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Constraints",
         "Defines constraints of the position of the ports of a node.",
         PORT_CONSTRAINTS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         PortConstraints.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -931,6 +1043,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "",
         "Position",
         "The position of a node, port, or label. This is used by the \'Fixed Layout\' algorithm to specify a pre-defined position.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.OBJECT,
         KVector.class,
@@ -944,6 +1058,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Priority",
         "Defines the priority of an object; its meaning depends on the specific layout algorithm and the context where it is used.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES),
@@ -955,6 +1071,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "",
         "Randomization Seed",
         "Seed used for pseudo-random number generators to control the layout algorithm. If the value is 0, the seed shall be determined pseudo-randomly (e.g. from the system time).",
+        null,
+        null,
         null,
         LayoutOptionData.Type.INT,
         int.class,
@@ -968,6 +1086,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Separate Connected Components",
         "Whether each connected component should be processed separately.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -979,6 +1099,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "",
         "Junction Points",
         "This option is not used as option, but as output of the layout algorithms. It is attached to edges and determines the points where junction symbols should be drawn in order to represent hyperedges with orthogonal routing. Whether such points are computed depends on the chosen layout algorithm and edge routing style. The points are put into the vector chain with no specific order.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.OBJECT,
         KVectorChain.class,
@@ -992,6 +1114,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Comment Box",
         "Whether the node should be regarded as a comment box instead of a regular node. In that case its placement should be similar to how labels are handled. Any edges incident to a comment box specify to which graph elements the comment is related.",
         COMMENT_BOX_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1004,6 +1128,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Hypernode",
         "Whether the node should be handled as a hypernode.",
         HYPERNODE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1016,6 +1142,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Label Manager",
         "Label managers can shorten labels upon a layout algorithm\'s request.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.UNDEFINED,
         ILabelManager.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.LABELS),
@@ -1027,6 +1155,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Margins",
         "Margins define additional space around the actual bounds of a graph element. For instance, ports or labels being placed on the outside of a node\'s border might introduce such a margin. The margin is used to guarantee non-overlap of other graph elements with those ports or labels.",
         MARGINS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.OBJECT,
         Spacing.Margins.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1039,6 +1169,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "No Layout",
         "No layout is done for the associated element. This is used to mark parts of a diagram to avoid their inclusion in the layout graph, or to mark parts of the layout graph to prevent layout engines from processing them. If you wish to exclude the contents of a compound node from automatic layout, while the node itself is still considered on its own layer, use the \'Fixed Layout\' algorithm for that node.",
         NO_LAYOUT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
@@ -1050,6 +1182,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Scale Factor",
         "The scaling factor to be applied to the corresponding node in recursive layout. It causes the corresponding node\'s size to be adjusted, and its ports and labels to be sized and placed accordingly after the layout of that node has been determined (and before the node itself and its siblings are arranged). The scaling is not reverted afterwards, so the resulting layout graph contains the adjusted size and position data. This option is currently not supported if \'Layout Hierarchy\' is set.",
         SCALE_FACTOR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1067,6 +1201,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Animate",
         "Whether the shift from the old layout to the new computed layout shall be animated.",
         ANIMATE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1079,6 +1215,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Animation Time Factor",
         "Factor for computation of animation time. The higher the value, the longer the animation time. If the value is 0, the resulting time is always equal to the minimum defined by \'Minimal Animation Time\'.",
         ANIM_TIME_FACTOR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1091,6 +1229,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Layout Ancestors",
         "Whether the hierarchy levels on the path from the selected element to the root of the diagram shall be included in the layout process.",
         LAYOUT_ANCESTORS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1103,6 +1243,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Maximal Animation Time",
         "The maximal time for animations, in milliseconds.",
         MAX_ANIM_TIME_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1115,6 +1257,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Minimal Animation Time",
         "The minimal time for animations, in milliseconds.",
         MIN_ANIM_TIME_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1127,6 +1271,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Progress Bar",
         "Whether a progress bar shall be displayed during layout computations.",
         PROGRESS_BAR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1139,6 +1285,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Zoom to Fit",
         "Whether the zoom level shall be set to view the whole diagram after layout.",
         ZOOM_TO_FIT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1151,6 +1299,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Border Spacing",
         "Spacing of the content of a parent node to its inner border. The inner border is the node border, which is given by width and height, with subtracted insets.",
         SPACING_BORDER_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1163,6 +1313,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Label Spacing",
         "Determines the amount of space to be left around labels.",
         SPACING_LABEL_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES, LayoutOptionData.Target.NODES),
@@ -1175,6 +1327,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Node Spacing",
         "Overall spacing between elements. This is mostly interpreted as the minimal distance between each two nodes and may also influence the spacing between edges.",
         SPACING_NODE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1187,6 +1341,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Spacing",
         "Spacing between ports of a given node.",
         SPACING_PORT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1199,6 +1355,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Additional Port Space",
         "Additional space around the sets of ports on each node side. For each side of a node, this option can reserve additional space before and after the ports on each side. For example, a top spacing of 20 makes sure that the first port on the western and eastern side is 20 units away from the northern border.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.OBJECT,
         Spacing.Margins.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1209,6 +1367,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "partitioning",
         "Layout Partition",
         "Partition to which the node belongs to. If \'layoutPartitions\' is true, all nodes are expected to have a partition.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.INT,
         Integer.class,
@@ -1222,6 +1382,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Layout Partitioning",
         "Whether to activate partitioned layout.",
         PARTITIONING_ACTIVATE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1234,6 +1396,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Node Label Insets",
         "Define insets for node labels that are placed inside of a node.",
         NODE_LABELS_INSETS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.OBJECT,
         Spacing.Insets.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1246,6 +1410,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Node Label Placement",
         "Hints for where node labels are to be placed; if empty, the node label\'s position is not modified.",
         NODE_LABELS_PLACEMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUMSET,
         NodeLabelPlacement.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.LABELS),
@@ -1258,6 +1424,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Alignment",
         "Defines the default port distribution for a node. May be overridden for each side individually.",
         PORT_ALIGNMENT_BASIC_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1270,6 +1438,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Alignment (North)",
         "Defines how ports on the northern side are placed, overriding the node\'s general port alignment.",
         PORT_ALIGNMENT_NORTH_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1282,6 +1452,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Alignment (South)",
         "Defines how ports on the southern side are placed, overriding the node\'s general port alignment.",
         PORT_ALIGNMENT_SOUTH_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1294,6 +1466,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Alignment (West)",
         "Defines how ports on the western side are placed, overriding the node\'s general port alignment.",
         PORT_ALIGNMENT_WEST_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1306,6 +1480,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Alignment (East)",
         "Defines how ports on the eastern side are placed, overriding the node\'s general port alignment.",
         PORT_ALIGNMENT_EAST_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         PortAlignment.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1318,6 +1494,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Node Size Constraints",
         "Constraints for determining node sizes. Each member of the set specifies something that should be taken into account when calculating node sizes. The empty set corresponds to node sizes being fixed.",
         NODE_SIZE_CONSTRAINTS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUMSET,
         SizeConstraint.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1329,6 +1507,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Node Size Options",
         "Options modifying the behavior of the size constraints set on a node. Each member of the set specifies something that should be taken into account when calculating node sizes. The empty set corresponds to no further modifications.",
         NODE_SIZE_OPTIONS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUMSET,
         SizeOptions.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1339,6 +1519,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "nodeSize",
         "Node Size Minimum",
         "The minimal size to which a node can be reduced.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.OBJECT,
         KVector.class,
@@ -1351,6 +1533,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Minimum Width",
         null,
         NODE_SIZE_MIN_WIDTH_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1362,6 +1546,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Minimum Height",
         null,
         NODE_SIZE_MIN_HEIGHT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1373,6 +1559,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Edge Label Placement",
         "Gives a hint on where to put edge labels.",
         EDGE_LABELS_PLACEMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         EdgeLabelPlacement.class,
         EnumSet.of(LayoutOptionData.Target.LABELS),
@@ -1384,6 +1572,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "font",
         "Font Name",
         "Font name used for a label.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.STRING,
         String.class,
@@ -1397,6 +1587,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Font Size",
         "Font size used for a label.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.LABELS),
@@ -1408,6 +1600,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "port",
         "Port Anchor Offset",
         "The offset to the port position where connections shall be attached.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.OBJECT,
         KVector.class,
@@ -1421,6 +1615,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Index",
         "The index of a port in the fixed order around a node. The order is assumed as clockwise, starting with the leftmost port on the top side. This option must be set if \'Port Constraints\' is set to FIXED_ORDER and no specific positions are given for the ports. Additionally, the option \'Port Side\' must be defined in this case.",
         null,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
@@ -1433,6 +1629,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Side",
         "The side of a node on which a port is situated. This option must be set if \'Port Constraints\' is set to FIXED_SIDE or FIXED_ORDER and no specific positions are given for the ports.",
         PORT_SIDE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         PortSide.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
@@ -1444,6 +1642,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "port",
         "Port Border Offset",
         "The offset of ports on the node border. With a positive offset the port is moved outside of the node, while with a negative offset the port is moved towards the inside. An offset of 0 means that the port is placed directly on the node border, i.e. if the port side is north, the port\'s south border touches the nodes\'s north border; if the port side is east, the port\'s west border touches the nodes\'s east border; if the port side is south, the port\'s north border touches the node\'s south border; if the port side is west, the port\'s east border touches the node\'s west border.",
+        null,
+        null,
         null,
         LayoutOptionData.Type.FLOAT,
         float.class,
@@ -1457,6 +1657,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Label Placement",
         "Decides on a placement method for port labels.",
         PORT_LABELS_PLACEMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         PortLabelPlacement.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1469,6 +1671,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Activate Inside Self Loops",
         "Whether this node allows to route self loops inside of it instead of around it. If set to true, this will make the node a compound node if it isn\'t already, and will require the layout algorithm to support compound nodes with hierarchical ports.",
         INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
@@ -1481,6 +1685,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Inside Self Loop",
         "Whether a self loop should be routed inside a node instead of around that node.",
         INSIDE_SELF_LOOPS_YO_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
@@ -1493,6 +1699,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Edge Thickness",
         "The thickness of an edge. This is a hint on the line width used to draw an edge, possibly requiring more space to be reserved for it.",
         EDGE_THICKNESS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
@@ -1505,6 +1713,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Edge Type",
         "The type of an edge. This is usually used for UML class diagrams, where associations must be handled differently from generalizations.",
         EDGE_TYPE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         EdgeType.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),

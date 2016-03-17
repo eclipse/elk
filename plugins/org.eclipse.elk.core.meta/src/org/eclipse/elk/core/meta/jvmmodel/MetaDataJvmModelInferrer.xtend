@@ -95,6 +95,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 val constant = property.toPropertyConstant
                 if (property.defaultValue !== null)
                     members += property.toPropertyDefault
+                if (property.lowerBound !== null)
+                    members += property.toPropertyLowerBound
+                if (property.upperBound !== null) 
+                    members += property.toPropertyUpperBound
                 members += constant
             }
             // 2. Private constants for required values of option dependencies
@@ -150,10 +154,16 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             deprecated = property.deprecated
             initializer = '''
                 new «Property»<«property.type.asWrapperTypeIfPrimitive ?: typeRef(Object)»>(
-                        «property.qualifiedName.toCodeString»«IF property.defaultValue !== null»,
-                        «property.defaultConstantName»«ENDIF»)«»'''
+                        «property.qualifiedName.toCodeString»«IF property.hasDefaultOrBounds»,
+                        «IF property.defaultValue !== null»«property.defaultConstantName»«ELSE»null«ENDIF»,
+                        «IF property.lowerBound !== null»«property.lowerBoundConstantName»«ELSE»null«ENDIF»,
+                        «IF property.upperBound !== null»«property.upperBoundConstantName»«ELSE»null«ENDIF»«ENDIF»)'''
             documentation = property.description.trimLines
         ]
+    }
+    
+    private def hasDefaultOrBounds(MdProperty property) {
+        return property.defaultValue !== null || property.lowerBound !== null || property.upperBound !== null
     }
     
     private def toPropertyDefault(MdProperty property) {
@@ -164,6 +174,28 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             final = true
             initializer = property.defaultValue
             documentation = '''Default value for {@link #«property.constantName»}.'''
+        ]
+    }
+    
+    private def toPropertyLowerBound(MdProperty property) {
+        val propertyType = property.type.cloneWithProxies ?: typeRef(Object)
+        return property.toField(property.lowerBoundConstantName, propertyType) [
+            visibility = JvmVisibility.PRIVATE
+            static = true
+            final = true
+            initializer = property.lowerBound
+            documentation = '''Lower bound value for {@link #«property.constantName»}.'''
+        ]
+    }
+    
+    private def toPropertyUpperBound(MdProperty property) {
+        val propertyType = property.type.cloneWithProxies ?: typeRef(Object)
+        return property.toField(property.upperBoundConstantName, propertyType) [
+            visibility = JvmVisibility.PRIVATE
+            static = true
+            final = true
+            initializer = property.upperBound
+            documentation = '''Upper bound value for {@link #«property.constantName»}.'''
         ]
     }
     
@@ -215,11 +247,9 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 «property.groups.map[name].join('.').toCodeString»,
                 «(property.label ?: property.name).shrinkWhiteSpace.toCodeString»,
                 «property.description.shrinkWhiteSpace.toCodeString»,
-                «IF property.defaultValue === null»
-                    null,
-                «ELSE»
-                    «property.defaultConstantName»,
-                «ENDIF»
+                «IF property.defaultValue === null»null,«ELSE»«property.defaultConstantName»,«ENDIF»
+                «IF property.lowerBound === null»null,«ELSE»«property.lowerBoundConstantName»,«ENDIF»
+                «IF property.upperBound === null»null,«ELSE»«property.upperBoundConstantName»,«ENDIF»
                 «LayoutOptionData».Type.«property.optionType»,
                 «property.optionTypeClass».class,
                 «IF property.targets.empty»
@@ -403,6 +433,14 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     
     private def getDefaultConstantName(MdProperty property) {
         property.constantName + '_DEFAULT'
+    }
+    
+    private def getLowerBoundConstantName(MdProperty property) {
+        property.constantName + '_LOWER_BOUND'
+    }
+    
+    private def getUpperBoundConstantName(MdProperty property) {
+        property.constantName + '_UPPER_BOUND'
     }
     
     private def getDependencyConstantName(MdPropertyDependency dependency) {

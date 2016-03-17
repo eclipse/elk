@@ -316,21 +316,31 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cDefaultValueAssignment_6_3_2 = (Assignment)cGroup_6_3.eContents().get(2);
 		private final RuleCall cDefaultValueXExpressionParserRuleCall_6_3_2_0 = (RuleCall)cDefaultValueAssignment_6_3_2.eContents().get(0);
 		private final Group cGroup_6_4 = (Group)cUnorderedGroup_6.eContents().get(4);
-		private final Keyword cTargetsKeyword_6_4_0 = (Keyword)cGroup_6_4.eContents().get(0);
-		private final Assignment cTargetsAssignment_6_4_1 = (Assignment)cGroup_6_4.eContents().get(1);
-		private final RuleCall cTargetsMdPropertyTargetTypeEnumRuleCall_6_4_1_0 = (RuleCall)cTargetsAssignment_6_4_1.eContents().get(0);
-		private final Group cGroup_6_4_2 = (Group)cGroup_6_4.eContents().get(2);
-		private final Keyword cCommaKeyword_6_4_2_0 = (Keyword)cGroup_6_4_2.eContents().get(0);
-		private final Assignment cTargetsAssignment_6_4_2_1 = (Assignment)cGroup_6_4_2.eContents().get(1);
-		private final RuleCall cTargetsMdPropertyTargetTypeEnumRuleCall_6_4_2_1_0 = (RuleCall)cTargetsAssignment_6_4_2_1.eContents().get(0);
+		private final Keyword cLowerBoundKeyword_6_4_0 = (Keyword)cGroup_6_4.eContents().get(0);
+		private final Keyword cEqualsSignKeyword_6_4_1 = (Keyword)cGroup_6_4.eContents().get(1);
+		private final Assignment cLowerBoundAssignment_6_4_2 = (Assignment)cGroup_6_4.eContents().get(2);
+		private final RuleCall cLowerBoundXExpressionParserRuleCall_6_4_2_0 = (RuleCall)cLowerBoundAssignment_6_4_2.eContents().get(0);
 		private final Group cGroup_6_5 = (Group)cUnorderedGroup_6.eContents().get(5);
-		private final Keyword cLegacyIdsKeyword_6_5_0 = (Keyword)cGroup_6_5.eContents().get(0);
-		private final Assignment cLegacyIdsAssignment_6_5_1 = (Assignment)cGroup_6_5.eContents().get(1);
-		private final RuleCall cLegacyIdsQualifiedNameParserRuleCall_6_5_1_0 = (RuleCall)cLegacyIdsAssignment_6_5_1.eContents().get(0);
-		private final Group cGroup_6_5_2 = (Group)cGroup_6_5.eContents().get(2);
-		private final Keyword cCommaKeyword_6_5_2_0 = (Keyword)cGroup_6_5_2.eContents().get(0);
-		private final Assignment cLegacyIdsAssignment_6_5_2_1 = (Assignment)cGroup_6_5_2.eContents().get(1);
-		private final RuleCall cLegacyIdsQualifiedNameParserRuleCall_6_5_2_1_0 = (RuleCall)cLegacyIdsAssignment_6_5_2_1.eContents().get(0);
+		private final Keyword cUpperBoundKeyword_6_5_0 = (Keyword)cGroup_6_5.eContents().get(0);
+		private final Keyword cEqualsSignKeyword_6_5_1 = (Keyword)cGroup_6_5.eContents().get(1);
+		private final Assignment cUpperBoundAssignment_6_5_2 = (Assignment)cGroup_6_5.eContents().get(2);
+		private final RuleCall cUpperBoundXExpressionParserRuleCall_6_5_2_0 = (RuleCall)cUpperBoundAssignment_6_5_2.eContents().get(0);
+		private final Group cGroup_6_6 = (Group)cUnorderedGroup_6.eContents().get(6);
+		private final Keyword cTargetsKeyword_6_6_0 = (Keyword)cGroup_6_6.eContents().get(0);
+		private final Assignment cTargetsAssignment_6_6_1 = (Assignment)cGroup_6_6.eContents().get(1);
+		private final RuleCall cTargetsMdPropertyTargetTypeEnumRuleCall_6_6_1_0 = (RuleCall)cTargetsAssignment_6_6_1.eContents().get(0);
+		private final Group cGroup_6_6_2 = (Group)cGroup_6_6.eContents().get(2);
+		private final Keyword cCommaKeyword_6_6_2_0 = (Keyword)cGroup_6_6_2.eContents().get(0);
+		private final Assignment cTargetsAssignment_6_6_2_1 = (Assignment)cGroup_6_6_2.eContents().get(1);
+		private final RuleCall cTargetsMdPropertyTargetTypeEnumRuleCall_6_6_2_1_0 = (RuleCall)cTargetsAssignment_6_6_2_1.eContents().get(0);
+		private final Group cGroup_6_7 = (Group)cUnorderedGroup_6.eContents().get(7);
+		private final Keyword cLegacyIdsKeyword_6_7_0 = (Keyword)cGroup_6_7.eContents().get(0);
+		private final Assignment cLegacyIdsAssignment_6_7_1 = (Assignment)cGroup_6_7.eContents().get(1);
+		private final RuleCall cLegacyIdsQualifiedNameParserRuleCall_6_7_1_0 = (RuleCall)cLegacyIdsAssignment_6_7_1.eContents().get(0);
+		private final Group cGroup_6_7_2 = (Group)cGroup_6_7.eContents().get(2);
+		private final Keyword cCommaKeyword_6_7_2_0 = (Keyword)cGroup_6_7_2.eContents().get(0);
+		private final Assignment cLegacyIdsAssignment_6_7_2_1 = (Assignment)cGroup_6_7_2.eContents().get(1);
+		private final RuleCall cLegacyIdsQualifiedNameParserRuleCall_6_7_2_1_0 = (RuleCall)cLegacyIdsAssignment_6_7_2_1.eContents().get(0);
 		private final Assignment cDependenciesAssignment_7 = (Assignment)cGroup.eContents().get(7);
 		private final RuleCall cDependenciesMdPropertyDependencyParserRuleCall_7_0 = (RuleCall)cDependenciesAssignment_7.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_8 = (Keyword)cGroup.eContents().get(8);
@@ -342,6 +352,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//	& ('description' description=STRING)?
 		//	& ('documentation' documentation=STRING)? // "@docu/priority.md"
 		//	& ('default' '=' defaultValue=XExpression)?
+		//	& ('lowerBound' '=' lowerBound=XExpression)?
+		//	& ('upperBound' '=' upperBound=XExpression)?
 		//	& ('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
 		//	& ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?) dependencies+=MdPropertyDependency*
 		//	'}';
@@ -350,9 +362,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//deprecated?='deprecated'? (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
 		//'option' name=ID (':' type=JvmTypeReference)? '{' (('label' label=STRING)? & ('description' description=STRING)? &
 		//('documentation' documentation=STRING)? // "@docu/priority.md"
-		//& ('default' '=' defaultValue=XExpression)? & ('targets' targets+=MdPropertyTargetType (','
-		//targets+=MdPropertyTargetType)*)? & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?)
-		//dependencies+=MdPropertyDependency* '}'
+		//& ('default' '=' defaultValue=XExpression)? & ('lowerBound' '=' lowerBound=XExpression)? & ('upperBound' '='
+		//upperBound=XExpression)? & ('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)? &
+		//('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?) dependencies+=MdPropertyDependency* '}'
 		public Group getGroup() { return cGroup; }
 		
 		//deprecated?='deprecated'?
@@ -413,8 +425,9 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getLeftCurlyBracketKeyword_5() { return cLeftCurlyBracketKeyword_5; }
 		
 		//(('label' label=STRING)? & ('description' description=STRING)? & ('documentation' documentation=STRING)? // "@docu/priority.md"
-		//& ('default' '=' defaultValue=XExpression)? & ('targets' targets+=MdPropertyTargetType (','
-		//targets+=MdPropertyTargetType)*)? & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?)
+		//& ('default' '=' defaultValue=XExpression)? & ('lowerBound' '=' lowerBound=XExpression)? & ('upperBound' '='
+		//upperBound=XExpression)? & ('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)? &
+		//('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?)
 		public UnorderedGroup getUnorderedGroup_6() { return cUnorderedGroup_6; }
 		
 		//('label' label=STRING)?
@@ -468,53 +481,83 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 		//XExpression
 		public RuleCall getDefaultValueXExpressionParserRuleCall_6_3_2_0() { return cDefaultValueXExpressionParserRuleCall_6_3_2_0; }
 		
-		//('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
+		//('lowerBound' '=' lowerBound=XExpression)?
 		public Group getGroup_6_4() { return cGroup_6_4; }
 		
-		//'targets'
-		public Keyword getTargetsKeyword_6_4_0() { return cTargetsKeyword_6_4_0; }
+		//'lowerBound'
+		public Keyword getLowerBoundKeyword_6_4_0() { return cLowerBoundKeyword_6_4_0; }
 		
-		//targets+=MdPropertyTargetType
-		public Assignment getTargetsAssignment_6_4_1() { return cTargetsAssignment_6_4_1; }
+		//'='
+		public Keyword getEqualsSignKeyword_6_4_1() { return cEqualsSignKeyword_6_4_1; }
 		
-		//MdPropertyTargetType
-		public RuleCall getTargetsMdPropertyTargetTypeEnumRuleCall_6_4_1_0() { return cTargetsMdPropertyTargetTypeEnumRuleCall_6_4_1_0; }
+		//lowerBound=XExpression
+		public Assignment getLowerBoundAssignment_6_4_2() { return cLowerBoundAssignment_6_4_2; }
 		
-		//(',' targets+=MdPropertyTargetType)*
-		public Group getGroup_6_4_2() { return cGroup_6_4_2; }
+		//XExpression
+		public RuleCall getLowerBoundXExpressionParserRuleCall_6_4_2_0() { return cLowerBoundXExpressionParserRuleCall_6_4_2_0; }
 		
-		//','
-		public Keyword getCommaKeyword_6_4_2_0() { return cCommaKeyword_6_4_2_0; }
-		
-		//targets+=MdPropertyTargetType
-		public Assignment getTargetsAssignment_6_4_2_1() { return cTargetsAssignment_6_4_2_1; }
-		
-		//MdPropertyTargetType
-		public RuleCall getTargetsMdPropertyTargetTypeEnumRuleCall_6_4_2_1_0() { return cTargetsMdPropertyTargetTypeEnumRuleCall_6_4_2_1_0; }
-		
-		//('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
+		//('upperBound' '=' upperBound=XExpression)?
 		public Group getGroup_6_5() { return cGroup_6_5; }
 		
-		//'legacyIds'
-		public Keyword getLegacyIdsKeyword_6_5_0() { return cLegacyIdsKeyword_6_5_0; }
+		//'upperBound'
+		public Keyword getUpperBoundKeyword_6_5_0() { return cUpperBoundKeyword_6_5_0; }
 		
-		//legacyIds+=QualifiedName
-		public Assignment getLegacyIdsAssignment_6_5_1() { return cLegacyIdsAssignment_6_5_1; }
+		//'='
+		public Keyword getEqualsSignKeyword_6_5_1() { return cEqualsSignKeyword_6_5_1; }
 		
-		//QualifiedName
-		public RuleCall getLegacyIdsQualifiedNameParserRuleCall_6_5_1_0() { return cLegacyIdsQualifiedNameParserRuleCall_6_5_1_0; }
+		//upperBound=XExpression
+		public Assignment getUpperBoundAssignment_6_5_2() { return cUpperBoundAssignment_6_5_2; }
 		
-		//(',' legacyIds+=QualifiedName)*
-		public Group getGroup_6_5_2() { return cGroup_6_5_2; }
+		//XExpression
+		public RuleCall getUpperBoundXExpressionParserRuleCall_6_5_2_0() { return cUpperBoundXExpressionParserRuleCall_6_5_2_0; }
+		
+		//('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
+		public Group getGroup_6_6() { return cGroup_6_6; }
+		
+		//'targets'
+		public Keyword getTargetsKeyword_6_6_0() { return cTargetsKeyword_6_6_0; }
+		
+		//targets+=MdPropertyTargetType
+		public Assignment getTargetsAssignment_6_6_1() { return cTargetsAssignment_6_6_1; }
+		
+		//MdPropertyTargetType
+		public RuleCall getTargetsMdPropertyTargetTypeEnumRuleCall_6_6_1_0() { return cTargetsMdPropertyTargetTypeEnumRuleCall_6_6_1_0; }
+		
+		//(',' targets+=MdPropertyTargetType)*
+		public Group getGroup_6_6_2() { return cGroup_6_6_2; }
 		
 		//','
-		public Keyword getCommaKeyword_6_5_2_0() { return cCommaKeyword_6_5_2_0; }
+		public Keyword getCommaKeyword_6_6_2_0() { return cCommaKeyword_6_6_2_0; }
+		
+		//targets+=MdPropertyTargetType
+		public Assignment getTargetsAssignment_6_6_2_1() { return cTargetsAssignment_6_6_2_1; }
+		
+		//MdPropertyTargetType
+		public RuleCall getTargetsMdPropertyTargetTypeEnumRuleCall_6_6_2_1_0() { return cTargetsMdPropertyTargetTypeEnumRuleCall_6_6_2_1_0; }
+		
+		//('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
+		public Group getGroup_6_7() { return cGroup_6_7; }
+		
+		//'legacyIds'
+		public Keyword getLegacyIdsKeyword_6_7_0() { return cLegacyIdsKeyword_6_7_0; }
 		
 		//legacyIds+=QualifiedName
-		public Assignment getLegacyIdsAssignment_6_5_2_1() { return cLegacyIdsAssignment_6_5_2_1; }
+		public Assignment getLegacyIdsAssignment_6_7_1() { return cLegacyIdsAssignment_6_7_1; }
 		
 		//QualifiedName
-		public RuleCall getLegacyIdsQualifiedNameParserRuleCall_6_5_2_1_0() { return cLegacyIdsQualifiedNameParserRuleCall_6_5_2_1_0; }
+		public RuleCall getLegacyIdsQualifiedNameParserRuleCall_6_7_1_0() { return cLegacyIdsQualifiedNameParserRuleCall_6_7_1_0; }
+		
+		//(',' legacyIds+=QualifiedName)*
+		public Group getGroup_6_7_2() { return cGroup_6_7_2; }
+		
+		//','
+		public Keyword getCommaKeyword_6_7_2_0() { return cCommaKeyword_6_7_2_0; }
+		
+		//legacyIds+=QualifiedName
+		public Assignment getLegacyIdsAssignment_6_7_2_1() { return cLegacyIdsAssignment_6_7_2_1; }
+		
+		//QualifiedName
+		public RuleCall getLegacyIdsQualifiedNameParserRuleCall_6_7_2_1_0() { return cLegacyIdsQualifiedNameParserRuleCall_6_7_2_1_0; }
 		
 		//dependencies+=MdPropertyDependency*
 		public Assignment getDependenciesAssignment_7() { return cDependenciesAssignment_7; }
@@ -1248,6 +1291,8 @@ public class MetaDataGrammarAccess extends AbstractGrammarElementFinder {
 	//	& ('description' description=STRING)?
 	//	& ('documentation' documentation=STRING)? // "@docu/priority.md"
 	//	& ('default' '=' defaultValue=XExpression)?
+	//	& ('lowerBound' '=' lowerBound=XExpression)?
+	//	& ('upperBound' '=' upperBound=XExpression)?
 	//	& ('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
 	//	& ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?) dependencies+=MdPropertyDependency*
 	//	'}';

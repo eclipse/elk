@@ -37,6 +37,8 @@ import org.eclipse.xtext.xbase.XExpression;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDefaultValue <em>Default Value</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLowerBound <em>Lower Bound</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getUpperBound <em>Upper Bound</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLegacyIds <em>Legacy Ids</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDependencies <em>Dependencies</em>}</li>
@@ -307,6 +309,58 @@ public interface MdProperty extends MdGroupOrProperty
    * @generated
    */
   void setDefaultValue(XExpression value);
+
+  /**
+   * Returns the value of the '<em><b>Lower Bound</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Lower Bound</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Lower Bound</em>' containment reference.
+   * @see #setLowerBound(XExpression)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_LowerBound()
+   * @model containment="true"
+   * @generated
+   */
+  XExpression getLowerBound();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLowerBound <em>Lower Bound</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Lower Bound</em>' containment reference.
+   * @see #getLowerBound()
+   * @generated
+   */
+  void setLowerBound(XExpression value);
+
+  /**
+   * Returns the value of the '<em><b>Upper Bound</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Upper Bound</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Upper Bound</em>' containment reference.
+   * @see #setUpperBound(XExpression)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_UpperBound()
+   * @model containment="true"
+   * @generated
+   */
+  XExpression getUpperBound();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getUpperBound <em>Upper Bound</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Upper Bound</em>' containment reference.
+   * @see #getUpperBound()
+   * @generated
+   */
+  void setUpperBound(XExpression value);
 
   /**
    * Returns the value of the '<em><b>Targets</b></em>' attribute list.

@@ -55,6 +55,8 @@ import org.eclipse.xtext.xbase.XExpression;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDefaultValue <em>Default Value</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getLowerBound <em>Lower Bound</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getUpperBound <em>Upper Bound</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getLegacyIds <em>Legacy Ids</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDependencies <em>Dependencies</em>}</li>
@@ -243,6 +245,26 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
    * @ordered
    */
   protected XExpression defaultValue;
+
+  /**
+   * The cached value of the '{@link #getLowerBound() <em>Lower Bound</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLowerBound()
+   * @generated
+   * @ordered
+   */
+  protected XExpression lowerBound;
+
+  /**
+   * The cached value of the '{@link #getUpperBound() <em>Upper Bound</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUpperBound()
+   * @generated
+   * @ordered
+   */
+  protected XExpression upperBound;
 
   /**
    * The cached value of the '{@link #getTargets() <em>Targets</em>}' attribute list.
@@ -580,6 +602,102 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
    * <!-- end-user-doc -->
    * @generated
    */
+  public XExpression getLowerBound()
+  {
+    return lowerBound;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetLowerBound(XExpression newLowerBound, NotificationChain msgs)
+  {
+    XExpression oldLowerBound = lowerBound;
+    lowerBound = newLowerBound;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__LOWER_BOUND, oldLowerBound, newLowerBound);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLowerBound(XExpression newLowerBound)
+  {
+    if (newLowerBound != lowerBound)
+    {
+      NotificationChain msgs = null;
+      if (lowerBound != null)
+        msgs = ((InternalEObject)lowerBound).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__LOWER_BOUND, null, msgs);
+      if (newLowerBound != null)
+        msgs = ((InternalEObject)newLowerBound).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__LOWER_BOUND, null, msgs);
+      msgs = basicSetLowerBound(newLowerBound, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__LOWER_BOUND, newLowerBound, newLowerBound));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public XExpression getUpperBound()
+  {
+    return upperBound;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetUpperBound(XExpression newUpperBound, NotificationChain msgs)
+  {
+    XExpression oldUpperBound = upperBound;
+    upperBound = newUpperBound;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__UPPER_BOUND, oldUpperBound, newUpperBound);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setUpperBound(XExpression newUpperBound)
+  {
+    if (newUpperBound != upperBound)
+    {
+      NotificationChain msgs = null;
+      if (upperBound != null)
+        msgs = ((InternalEObject)upperBound).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__UPPER_BOUND, null, msgs);
+      if (newUpperBound != null)
+        msgs = ((InternalEObject)newUpperBound).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__UPPER_BOUND, null, msgs);
+      msgs = basicSetUpperBound(newUpperBound, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__UPPER_BOUND, newUpperBound, newUpperBound));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<MdPropertyTargetType> getTargets()
   {
     if (targets == null)
@@ -631,6 +749,10 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
         return basicSetType(null, msgs);
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         return basicSetDefaultValue(null, msgs);
+      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+        return basicSetLowerBound(null, msgs);
+      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+        return basicSetUpperBound(null, msgs);
       case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
         return ((InternalEList<?>)getDependencies()).basicRemove(otherEnd, msgs);
     }
@@ -667,6 +789,10 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
         return getDocumentation();
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         return getDefaultValue();
+      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+        return getLowerBound();
+      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+        return getUpperBound();
       case MetaDataPackage.MD_PROPERTY__TARGETS:
         return getTargets();
       case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
@@ -717,6 +843,12 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
         return;
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         setDefaultValue((XExpression)newValue);
+        return;
+      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+        setLowerBound((XExpression)newValue);
+        return;
+      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+        setUpperBound((XExpression)newValue);
         return;
       case MetaDataPackage.MD_PROPERTY__TARGETS:
         getTargets().clear();
@@ -774,6 +906,12 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         setDefaultValue((XExpression)null);
         return;
+      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+        setLowerBound((XExpression)null);
+        return;
+      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+        setUpperBound((XExpression)null);
+        return;
       case MetaDataPackage.MD_PROPERTY__TARGETS:
         getTargets().clear();
         return;
@@ -817,6 +955,10 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
         return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
       case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
         return defaultValue != null;
+      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+        return lowerBound != null;
+      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+        return upperBound != null;
       case MetaDataPackage.MD_PROPERTY__TARGETS:
         return targets != null && !targets.isEmpty();
       case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:

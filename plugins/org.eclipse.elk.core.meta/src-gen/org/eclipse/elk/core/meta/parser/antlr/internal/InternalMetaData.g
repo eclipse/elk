@@ -796,16 +796,92 @@ ruleMdProperty returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 4);
 					}
-								({true}?=>(otherlv_20='targets'
+								({true}?=>(otherlv_20='lowerBound'
 								{
-									newLeafNode(otherlv_20, grammarAccess.getMdPropertyAccess().getTargetsKeyword_6_4_0());
+									newLeafNode(otherlv_20, grammarAccess.getMdPropertyAccess().getLowerBoundKeyword_6_4_0());
+								}
+								otherlv_21='='
+								{
+									newLeafNode(otherlv_21, grammarAccess.getMdPropertyAccess().getEqualsSignKeyword_6_4_1());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getMdPropertyAccess().getTargetsMdPropertyTargetTypeEnumRuleCall_6_4_1_0());
+											newCompositeNode(grammarAccess.getMdPropertyAccess().getLowerBoundXExpressionParserRuleCall_6_4_2_0());
 										}
-										lv_targets_21_0=ruleMdPropertyTargetType
+										lv_lowerBound_22_0=ruleXExpression
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getMdPropertyRule());
+											}
+											set(
+												$current,
+												"lowerBound",
+												lv_lowerBound_22_0,
+												"org.eclipse.xtext.xbase.Xbase.XExpression");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 5)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 5);
+					}
+								({true}?=>(otherlv_23='upperBound'
+								{
+									newLeafNode(otherlv_23, grammarAccess.getMdPropertyAccess().getUpperBoundKeyword_6_5_0());
+								}
+								otherlv_24='='
+								{
+									newLeafNode(otherlv_24, grammarAccess.getMdPropertyAccess().getEqualsSignKeyword_6_5_1());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getMdPropertyAccess().getUpperBoundXExpressionParserRuleCall_6_5_2_0());
+										}
+										lv_upperBound_25_0=ruleXExpression
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getMdPropertyRule());
+											}
+											set(
+												$current,
+												"upperBound",
+												lv_upperBound_25_0,
+												"org.eclipse.xtext.xbase.Xbase.XExpression");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 6)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 6);
+					}
+								({true}?=>(otherlv_26='targets'
+								{
+									newLeafNode(otherlv_26, grammarAccess.getMdPropertyAccess().getTargetsKeyword_6_6_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getMdPropertyAccess().getTargetsMdPropertyTargetTypeEnumRuleCall_6_6_1_0());
+										}
+										lv_targets_27_0=ruleMdPropertyTargetType
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getMdPropertyRule());
@@ -813,23 +889,23 @@ ruleMdProperty returns [EObject current=null]
 											add(
 												$current,
 												"targets",
-												lv_targets_21_0,
+												lv_targets_27_0,
 												"org.eclipse.elk.core.meta.MetaData.MdPropertyTargetType");
 											afterParserOrEnumRuleCall();
 										}
 									)
 								)
 								(
-									otherlv_22=','
+									otherlv_28=','
 									{
-										newLeafNode(otherlv_22, grammarAccess.getMdPropertyAccess().getCommaKeyword_6_4_2_0());
+										newLeafNode(otherlv_28, grammarAccess.getMdPropertyAccess().getCommaKeyword_6_6_2_0());
 									}
 									(
 										(
 											{
-												newCompositeNode(grammarAccess.getMdPropertyAccess().getTargetsMdPropertyTargetTypeEnumRuleCall_6_4_2_1_0());
+												newCompositeNode(grammarAccess.getMdPropertyAccess().getTargetsMdPropertyTargetTypeEnumRuleCall_6_6_2_1_0());
 											}
-											lv_targets_23_0=ruleMdPropertyTargetType
+											lv_targets_29_0=ruleMdPropertyTargetType
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getMdPropertyRule());
@@ -837,7 +913,7 @@ ruleMdProperty returns [EObject current=null]
 												add(
 													$current,
 													"targets",
-													lv_targets_23_0,
+													lv_targets_29_0,
 													"org.eclipse.elk.core.meta.MetaData.MdPropertyTargetType");
 												afterParserOrEnumRuleCall();
 											}
@@ -851,20 +927,20 @@ ruleMdProperty returns [EObject current=null]
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 5)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 7)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 5);
+						getUnorderedGroupHelper().select(grammarAccess.getMdPropertyAccess().getUnorderedGroup_6(), 7);
 					}
-								({true}?=>(otherlv_24='legacyIds'
+								({true}?=>(otherlv_30='legacyIds'
 								{
-									newLeafNode(otherlv_24, grammarAccess.getMdPropertyAccess().getLegacyIdsKeyword_6_5_0());
+									newLeafNode(otherlv_30, grammarAccess.getMdPropertyAccess().getLegacyIdsKeyword_6_7_0());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getMdPropertyAccess().getLegacyIdsQualifiedNameParserRuleCall_6_5_1_0());
+											newCompositeNode(grammarAccess.getMdPropertyAccess().getLegacyIdsQualifiedNameParserRuleCall_6_7_1_0());
 										}
-										lv_legacyIds_25_0=ruleQualifiedName
+										lv_legacyIds_31_0=ruleQualifiedName
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getMdPropertyRule());
@@ -872,23 +948,23 @@ ruleMdProperty returns [EObject current=null]
 											add(
 												$current,
 												"legacyIds",
-												lv_legacyIds_25_0,
+												lv_legacyIds_31_0,
 												"org.eclipse.xtext.xbase.Xbase.QualifiedName");
 											afterParserOrEnumRuleCall();
 										}
 									)
 								)
 								(
-									otherlv_26=','
+									otherlv_32=','
 									{
-										newLeafNode(otherlv_26, grammarAccess.getMdPropertyAccess().getCommaKeyword_6_5_2_0());
+										newLeafNode(otherlv_32, grammarAccess.getMdPropertyAccess().getCommaKeyword_6_7_2_0());
 									}
 									(
 										(
 											{
-												newCompositeNode(grammarAccess.getMdPropertyAccess().getLegacyIdsQualifiedNameParserRuleCall_6_5_2_1_0());
+												newCompositeNode(grammarAccess.getMdPropertyAccess().getLegacyIdsQualifiedNameParserRuleCall_6_7_2_1_0());
 											}
-											lv_legacyIds_27_0=ruleQualifiedName
+											lv_legacyIds_33_0=ruleQualifiedName
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getMdPropertyRule());
@@ -896,7 +972,7 @@ ruleMdProperty returns [EObject current=null]
 												add(
 													$current,
 													"legacyIds",
-													lv_legacyIds_27_0,
+													lv_legacyIds_33_0,
 													"org.eclipse.xtext.xbase.Xbase.QualifiedName");
 												afterParserOrEnumRuleCall();
 											}
@@ -921,7 +997,7 @@ ruleMdProperty returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getMdPropertyAccess().getDependenciesMdPropertyDependencyParserRuleCall_7_0());
 				}
-				lv_dependencies_28_0=ruleMdPropertyDependency
+				lv_dependencies_34_0=ruleMdPropertyDependency
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMdPropertyRule());
@@ -929,15 +1005,15 @@ ruleMdProperty returns [EObject current=null]
 					add(
 						$current,
 						"dependencies",
-						lv_dependencies_28_0,
+						lv_dependencies_34_0,
 						"org.eclipse.elk.core.meta.MetaData.MdPropertyDependency");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)*
-		otherlv_29='}'
+		otherlv_35='}'
 		{
-			newLeafNode(otherlv_29, grammarAccess.getMdPropertyAccess().getRightCurlyBracketKeyword_8());
+			newLeafNode(otherlv_35, grammarAccess.getMdPropertyAccess().getRightCurlyBracketKeyword_8());
 		}
 	)
 ;

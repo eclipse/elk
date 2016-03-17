@@ -39,7 +39,9 @@ public class MrTreeOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<OrderWeighting> WEIGHTING = new Property<OrderWeighting>(
             "org.eclipse.elk.mrtree.weighting",
-            WEIGHTING_DEFAULT);
+            WEIGHTING_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SEARCH_ORDER}.
@@ -51,7 +53,9 @@ public class MrTreeOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<TreeifyingOrder> SEARCH_ORDER = new Property<TreeifyingOrder>(
             "org.eclipse.elk.mrtree.searchOrder",
-            SEARCH_ORDER_DEFAULT);
+            SEARCH_ORDER_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPACING_NODE} with algorithm "ELK Mr. Tree".
@@ -118,6 +122,8 @@ public class MrTreeOptions implements ILayoutMetaDataProvider {
         "Weighting of Nodes",
         "Which weighting to use when computing a node order.",
         WEIGHTING_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         OrderWeighting.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -129,6 +135,8 @@ public class MrTreeOptions implements ILayoutMetaDataProvider {
         "Search Order",
         "Which search order to use when computing a spanning tree.",
         SEARCH_ORDER_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         TreeifyingOrder.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
