@@ -31,9 +31,9 @@ import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
  * the number of crossings to this neighboring layer. To prevent increasing the number of crosses,
  * after each forward and backward sweep the number of crossings in the graph are recounted. If
  * isOneSided is not false, it sets a layer as free and counts crossings to both neighboring layers.
- * 
+ *
  * </ul>
- * 
+ *
  * @author alan
  *
  */
@@ -45,32 +45,32 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
 
     /**
      * Create GreedySwitchHeuristic.
-     * 
+     *
      * @param greedyType
      *            The greedy switch type.
      */
     public GreedySwitchHeuristic(final GreedySwitchType greedyType) {
         greedySwitchType = greedyType;
-    } 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void minimizeCrossings(final LNode[][] order, final int freeLayerIndex,
-            final boolean forwardSweep, final boolean isFirstSweep) {
-        setUp(order, freeLayerIndex, forwardSweep);
-        continueSwitchingUntilNoImprovementInLayer(freeLayerIndex);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setFirstLayerOrder(final LNode[][] currentOrder, final boolean isForwardSweep) {
+    public boolean minimizeCrossings(final LNode[][] order, final int freeLayerIndex,
+            final boolean forwardSweep, final boolean isFirstSweep) {
+        setUp(order, freeLayerIndex, forwardSweep);
+        return continueSwitchingUntilNoImprovementInLayer(freeLayerIndex);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean setFirstLayerOrder(final LNode[][] currentOrder, final boolean isForwardSweep) {
         int startIndex = startIndex(isForwardSweep, currentOrder.length);
         setUp(currentOrder, startIndex, isForwardSweep);
-        sweepDownwardInLayer(startIndex);
+        return sweepDownwardInLayer(startIndex);
     }
 
     private void setUp(final LNode[][] order, final int freeLayerIndex,
@@ -133,7 +133,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
     private int startIndex(final boolean isForwardSweep, final int length) {
         return isForwardSweep ? 0 : length - 1;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -142,6 +142,11 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
             final boolean forward) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public boolean alwaysImproves() {
+        return !greedySwitchType.isOneSided();
     }
 
 }

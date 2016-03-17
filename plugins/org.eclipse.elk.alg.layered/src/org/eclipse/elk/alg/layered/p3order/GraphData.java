@@ -36,7 +36,7 @@ import com.google.common.collect.Multimap;
 
 /**
  * Collects data needed for cross minimization for each of the contained graphs.
- * 
+ *
  * @author alan
  *
  */
@@ -60,10 +60,10 @@ class GraphData {
     private final List<LGraph> childGraphs;
     private final boolean externalPorts;
     private final CrossMinType crossMinType;
-    
+
     /**
      * Create object collecting info about compound graph.
-     * 
+     *
      * @param graph
      *            The graph
      * @param crossMinType
@@ -143,11 +143,13 @@ class GraphData {
 
         float[] portRanks = new float[portId];
         Random random = graph.getProperty(InternalProperties.RANDOM);
-        portDistributor = random.nextBoolean()
-                ? NodeRelativePortDistributor.createPortOrderFixedInOtherLayers(portRanks,
-                        nodePositions)
-                : LayerTotalPortDistributor.createPortOrderFixedInOtherLayers(portRanks,
-                        nodePositions);
+        if (crossMinType.alwaysImproves()) {
+            portDistributor = new GreedyPortDistributor(portPos);
+        } else if (random.nextBoolean()) {
+            portDistributor = NodeRelativePortDistributor.createPortOrderFixedInOtherLayers(portRanks, nodePositions);
+        } else {
+            portDistributor = LayerTotalPortDistributor.createPortOrderFixedInOtherLayers(portRanks, nodePositions);
+        }
 
         // Initialize the compound graph layer crossing minimizer
         switch (crossMinType) {
@@ -172,8 +174,9 @@ class GraphData {
             crossMinimizer = new BarycenterHeuristic(barycenterStates, constraintResolver,
                     random, (AbstractBarycenterPortDistributor) portDistributor);
             break;
-        case GREEDY_SWITCH:
-            crossMinimizer = 
+        case ONE_SIDED_GREEDY_SWITCH:
+        case TWO_SIDED_GREEDY_SWITCH:
+            crossMinimizer =
                     new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH));
             break;
         default:
@@ -230,12 +233,12 @@ class GraphData {
 
     private boolean[] getHyperedges(final LNode[][] nodeOrder) {
         boolean[] hasHyperedges = new boolean[nodeOrder.length];
-        for (int layerIndex = 0; layerIndex < nodeOrder.length - 1; layerIndex++) {
-            LNode[] leftLayer = nodeOrder[layerIndex];
-            hasHyperedges[layerIndex] |= checkForHyperedges(leftLayer, PortSide.EAST);
-            LNode[] rightLayer = nodeOrder[layerIndex + 1];
-            hasHyperedges[layerIndex] |= checkForHyperedges(rightLayer, PortSide.WEST);
-        }
+        // for (int layerIndex = 0; layerIndex < nodeOrder.length - 1; layerIndex++) {
+        // LNode[] leftLayer = nodeOrder[layerIndex];
+        // hasHyperedges[layerIndex] |= checkForHyperedges(leftLayer, PortSide.EAST);
+        // LNode[] rightLayer = nodeOrder[layerIndex + 1];
+        // hasHyperedges[layerIndex] |= checkForHyperedges(rightLayer, PortSide.WEST);
+        // }
         return hasHyperedges;
     }
 

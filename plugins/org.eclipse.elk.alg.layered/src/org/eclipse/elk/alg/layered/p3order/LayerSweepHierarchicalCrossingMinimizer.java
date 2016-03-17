@@ -25,7 +25,6 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
 import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
@@ -42,7 +41,7 @@ import com.google.common.collect.Sets;
  * This class minimizes crossings by sweeping through the complete hierarchy, i.e. sweeping through
  * nested graphs in nodes. Thereby it is a <i>hierarchical</i> processor and must have access to the
  * root graph.
- * 
+ *
  * @author alan
  *
  */
@@ -55,7 +54,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
 
     /**
      * Creates LayerSweepHierarchicalCrossingMinimizer using barycenter minimizer type.
-     * 
+     *
      */
     public LayerSweepHierarchicalCrossingMinimizer() {
         crossMinType = CrossMinType.BARYCENTER;
@@ -63,7 +62,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
 
     /**
      * Creates LayerSweepHierarchicalCrossingMinimizer using given minimizer type.
-     * 
+     *
      * @param cT
      *            the crossing minimizer type
      */
@@ -92,17 +91,19 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
                 initialize(processAllGraphsRecursively, layeredGraph);
 
         if (crossMinType.isDeterministic()) {
+            Consumer<GraphData> minimizingMethod = crossMinType.alwaysImproves()
+                    ? gData -> minimizeCrossingsNoCounter(gData)
+                    : gData -> minimizeCrossingsWithCounter(gData);
             if (processAllGraphsRecursively) {
-                iterateAndMinimize(graphsToSweepOn, gData -> minimizeCrossingsWithCounter(gData));
+                iterateAndMinimize(graphsToSweepOn, minimizingMethod);
             } else {
-                minimizeCrossingsWithCounter(graphData.get(layeredGraph.id));
+                minimizingMethod.accept(graphData.get(layeredGraph.id));
             }
         } else {
             iterateAndMinimize(graphsToSweepOn, gData -> compareDifferentRandomizedLayouts(gData));
         }
 
         setGraphs();
-
 
         progressMonitor.done();
     }
@@ -154,8 +155,8 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
         boolean isForwardSweep = random.nextBoolean();
 
         gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
-        int crossingsInGraph = sweepReducingCrossings(gData, isForwardSweep, true);
-
+        sweepReducingCrossings(gData, isForwardSweep, true);
+        int crossingsInGraph = countCurrentNumberOfCrossings();
         int oldNumberOfCrossings;
         do {
             setCurrentlyBestNodeOrders();
@@ -166,46 +167,81 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
 
             isForwardSweep = !isForwardSweep;
             oldNumberOfCrossings = crossingsInGraph;
-            crossingsInGraph = sweepReducingCrossings(gData, isForwardSweep, false);
+            sweepReducingCrossings(gData, isForwardSweep, false);
+            crossingsInGraph = countCurrentNumberOfCrossings();
         } while (oldNumberOfCrossings > crossingsInGraph);
 
         return oldNumberOfCrossings;
     }
 
-    private int sweepReducingCrossings(final GraphData graph, final boolean forward,
-            final boolean firstSweep) {
-        AllCrossingsCounter crossCounter = graph.crossCounter();
+    private int countCurrentNumberOfCrossings() {
+        int totalCrossings = 0;
+        for (GraphData gD : graphData) {
+            totalCrossings +=
+                    gD.crossCounter().countAllCrossings(gD.currentNodeOrder());
+        }
+
+        return totalCrossings;
+    }
+
+    private void minimizeCrossingsNoCounter(final GraphData gData) {
+        boolean isForwardSweep = random.nextBoolean();
+        boolean improved = gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
+        do {
+            improved = sweepReducingCrossingsWithNoCounting(gData, isForwardSweep);
+            isForwardSweep = !isForwardSweep;
+        } while (improved);
+        setCurrentlyBestNodeOrders();
+    }
+
+    private boolean sweepReducingCrossingsWithNoCounting(final GraphData graph, final boolean forward) {
         LNode[][] nodes = graph.currentNodeOrder();
         int length = nodes.length;
 
-        int crossings = crossCounter.countCrossingsInFirstLayer(forward, nodes);
         LNode[] firstLayer = nodes[firstIndex(forward, length)];
-        crossings += layoutHierarchicalNodes(firstLayer, forward, firstSweep);
+        layoutHierarchicalNodes(firstLayer, forward, false);
 
+        boolean improved = false;
         for (int i = firstFree(forward, length); isNotEnd(length, i, forward); i += next(forward)) {
-            graph.crossMinimizer().minimizeCrossings(nodes, i, forward, firstSweep);
+            improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward, false);
             graph.portDistributor().distributePortsWhileSweeping(nodes, i, forward);
-            crossings += crossCounter.countCrossingsOnNeighboringLayers(forward, i, nodes);
-            crossings += layoutHierarchicalNodes(nodes[i], forward, firstSweep);
+            layoutHierarchicalNodes(nodes[i], forward, false);
         }
 
         graphsWhoseNodeOrderChanged.add(graph);
 
-        return crossings;
+        return improved;
     }
 
-    private int layoutHierarchicalNodes(final LNode[] layer, final boolean isForwardSweep,
+    private boolean sweepReducingCrossings(final GraphData graph, final boolean forward,
+            final boolean firstSweep) {
+        LNode[][] nodes = graph.currentNodeOrder();
+        int length = nodes.length;
+        LNode[] firstLayer = nodes[firstIndex(forward, length)];
+        boolean improved = layoutHierarchicalNodes(firstLayer, forward, firstSweep);
+
+        for (int i = firstFree(forward, length); isNotEnd(length, i, forward); i += next(forward)) {
+            improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward, firstSweep);
+            graph.portDistributor().distributePortsWhileSweeping(nodes, i, forward);
+            improved |= layoutHierarchicalNodes(nodes[i], forward, firstSweep);
+        }
+
+        graphsWhoseNodeOrderChanged.add(graph);
+        return improved;
+    }
+
+    private boolean layoutHierarchicalNodes(final LNode[] layer, final boolean isForwardSweep,
             final boolean isFirstSweep) {
-        int crossings = 0;
+        boolean improved = false;
         for (LNode node : layer) {
             if (hasNestedGraph(node) && !graphData.get(nestedGraphOf(node).id).processRecursively()) {
-                crossings += layoutHierarchicalNode(isForwardSweep, node, isFirstSweep);
+                improved |= layoutHierarchicalNode(isForwardSweep, node, isFirstSweep);
             }
         }
-        return crossings;
+        return improved;
     }
 
-    private int layoutHierarchicalNode(final boolean isForwardSweep, final LNode node,
+    private boolean layoutHierarchicalNode(final boolean isForwardSweep, final LNode node,
             final boolean isFirstSweep) {
         LGraph nestedLGraph = nestedGraphOf(node);
         GraphData nestedGraph = graphData.get(nestedLGraph.id);
@@ -220,11 +256,11 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
             nestedGraph.crossMinimizer().setFirstLayerOrder(nestedGraphNodeOrder, isForwardSweep);
         }
 
-        int crossings = sweepReducingCrossings(nestedGraph, isForwardSweep, isFirstSweep);
+        boolean improved = sweepReducingCrossings(nestedGraph, isForwardSweep, isFirstSweep);
         sortPortsByDummyPositionsInLastLayer(nestedGraph.currentNodeOrder(), nestedGraph.parent(),
                 isForwardSweep);
 
-        return crossings;
+        return improved;
     }
 
     private void sortPortsByDummyPositionsInLastLayer(final LNode[][] nodeOrder, final LNode parent,
@@ -349,7 +385,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
         Deque<GraphData> graphsToSweepOn = Lists.newLinkedList();
         random = rootGraph.getProperty(InternalProperties.RANDOM);
         randomSeed = random.nextLong();
-        List<LGraph> graphs = Lists.<LGraph>newArrayList(rootGraph);
+        List<LGraph> graphs = Lists.<LGraph> newArrayList(rootGraph);
         int i = 0;
         while (i < graphs.size()) {
             LGraph graph = graphs.get(i);
@@ -391,7 +427,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
                     .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
                     .addBeforePhase4(IntermediateProcessorStrategy.HIERARCHICAL_GREEDY_SWITCH)
                     .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
-                    .addAll(Slot.AFTER_PHASE_5, 
+                    .addAll(Slot.AFTER_PHASE_5,
                             Lists.newArrayList(IntermediateProcessorStrategy.LONG_EDGE_JOINER,
                                     IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER));
 }

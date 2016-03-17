@@ -222,9 +222,9 @@ public final class CrossingsCounter {
     }
 
 
-    private int setPortPositions(final PortSide side, final Iterable<LNode> leftLayer, final int startPos) {
+    private int setPortPositions(final PortSide side, final Iterable<LNode> layer, final int startPos) {
         int currentPortPos = startPos;
-        for (LNode node : leftLayer) {
+        for (LNode node : layer) {
 
             boolean hasPorts = false;
 

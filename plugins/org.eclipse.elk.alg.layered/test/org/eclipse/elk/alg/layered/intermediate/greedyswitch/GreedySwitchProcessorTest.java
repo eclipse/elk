@@ -54,7 +54,12 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
      */
     public GreedySwitchProcessorTest(final GreedySwitchType gT) {
         greedyType = gT;
-        greedySwitcher = new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.GREEDY_SWITCH);
+        if (gT == GreedySwitchType.ONE_SIDED) {
+            greedySwitcher = new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
+        } else {
+            greedySwitcher = new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
+        }
+
         monitor = new BasicProgressMonitor();
     }
 

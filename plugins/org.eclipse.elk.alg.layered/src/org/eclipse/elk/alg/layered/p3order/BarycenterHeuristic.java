@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
  * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
  * order. The barycenter heuristic is used here.
- * 
+ *
  * @author msp
  * @author cds
  * @author ima
@@ -50,7 +50,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
 
     /**
      * Constructs a Barycenter heuristic for crossing minimization between two layers.
-     * 
+     *
      * @param barycenterState
      *            the barycenter values of every node in the graph, indexed by layer.id and node.id.
      * @param constraintResolver
@@ -72,7 +72,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     /**
      * Constructs a Barycenter heuristic for crossing minimization between two layers handing over
      * dependency of the portDistributor.
-     * 
+     *
      * @param constraintResolver
      *            the constraint resolver
      * @param random
@@ -82,7 +82,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
      * @param barycenterState
      *            the barycenters accessed by layer.id and node.id
      */
-    public BarycenterHeuristic(final BarycenterState[][] barycenterState, 
+    public BarycenterHeuristic(final BarycenterState[][] barycenterState,
             final IConstraintResolver constraintResolver, final Random random,
             final AbstractBarycenterPortDistributor portDistributor) {
         this(barycenterState, constraintResolver, random, portDistributor.getPortRanks());
@@ -116,7 +116,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
 
     /**
      * Randomize the order of nodes for the given layer.
-     * 
+     *
      * @param nodes
      *            a layer
      */
@@ -131,7 +131,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
 
     /**
      * Try to find appropriate barycenter values for node groups whose barycenter is undefined.
-     * 
+     *
      * @param nodes
      *            the nodeGroups to fill in barycenters for.
      * @param preOrdered
@@ -193,7 +193,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
 
     /**
      * Calculate the barycenters of the given node groups.
-     * 
+     *
      * @param nodes
      *            the nodes
      * @param forward
@@ -218,7 +218,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
      * Calculate the barycenter of the given single-node node group. This method is able to handle
      * in-layer edges, but it may give incorrect results if the in-layer edges form a cycle.
      * However, such cases do not occur in the present implementation.
-     * 
+     *
      * @param node
      *            a node group consisting of a single node
      * @param forward
@@ -325,7 +325,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     /**
      * Compares two {@link LNode}s based on their barycenter values.
      */
-    private final Comparator<LNode> barycenterStateComparator = 
+    private final Comparator<LNode> barycenterStateComparator =
         (n1, n2) -> {
         BarycenterState s1 = stateOf(n1);
         BarycenterState s2 = stateOf(n2);
@@ -340,7 +340,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     };
 
     @Override
-    public void minimizeCrossings(final LNode[][] order, final int freeLayerIndex,
+    public boolean minimizeCrossings(final LNode[][] order, final int freeLayerIndex,
             final boolean forwardSweep, final boolean isFirstSweep) {
         if (!isFirstLayer(order, freeLayerIndex, forwardSweep)) {
             LNode[] fixedLayer = order[freeLayerIndex - changeIndex(forwardSweep)];
@@ -357,10 +357,12 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         for (LNode nodeGroup : nodes) {
                 order[freeLayerIndex][index++] = nodeGroup;
         }
+
+        return false; // Does not always improve.
     }
 
     @Override
-    public void setFirstLayerOrder(final LNode[][] order, final boolean isForwardSweep) {
+    public boolean setFirstLayerOrder(final LNode[][] order, final boolean isForwardSweep) {
         int startIndex = startIndex(isForwardSweep, order.length);
         List<LNode> nodes = Lists.newArrayList(
                 order[startIndex]);
@@ -369,6 +371,8 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         for (LNode nodeGroup : nodes) {
                 order[startIndex][index++] = nodeGroup;
         }
+
+        return false; // Does not always improve
     }
 
     private boolean isExternalPortDummy(final LNode firstNode) {
@@ -390,5 +394,10 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     private boolean isFirstLayer(final LNode[][] nodeOrder, final int currentIndex,
             final boolean forwardSweep) {
         return currentIndex == startIndex(forwardSweep, nodeOrder.length);
+    }
+
+    @Override
+    public boolean alwaysImproves() {
+        return false;
     }
 }

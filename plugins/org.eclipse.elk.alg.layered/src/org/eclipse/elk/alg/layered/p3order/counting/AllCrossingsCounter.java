@@ -24,9 +24,9 @@ import org.eclipse.elk.core.options.PortSide;
  * the actual port order constraints. <br/>
  * When it does not assume all port orders fixed: Should the following port sorting phase be able to
  * remove crossings, these crossings are not counted.
- * 
+ *
  * TODO-alan this class should be removed some day.
- * 
+ *
  * @author alan
  */
 public final class AllCrossingsCounter {
@@ -48,7 +48,7 @@ public final class AllCrossingsCounter {
 
     /**
      * Constructs and initializes a cross counter.
-     * 
+     *
      * @param layeredGraph
      *            The layered graph
      */
@@ -101,9 +101,18 @@ public final class AllCrossingsCounter {
                         PortSide.WEST)
                 : inLayerEdgeCrossingsCounter.countInLayerCrossingsOnBothSides(currentOrder[0]);
         for (int layerIndex = 0; layerIndex < currentOrder.length; layerIndex++) {
-            totalCrossings += countCrossingsAt(layerIndex, currentOrder, portPositions);
+            totalCrossings += countCrossingsAt(layerIndex, currentOrder);
         }
         return totalCrossings;
+    }
+
+    public int countAllCrossings(final LNode[][] currentOrder) {
+        int crossings = crossingCounter.countInLayerCrossingsOnSide(currentOrder[0], PortSide.WEST);
+        crossings += crossingCounter.countInLayerCrossingsOnSide(currentOrder[currentOrder.length - 1], PortSide.EAST);
+        for (int layerIndex = 0; layerIndex < currentOrder.length; layerIndex++) {
+            crossings += countCrossingsAt(layerIndex, currentOrder);
+        }
+        return crossings;
     }
 
     private AllCrossingsCounter(final boolean fixedOrder, final int[] inLayerEdgeCount,
@@ -120,7 +129,7 @@ public final class AllCrossingsCounter {
     /**
      * Count in layer crossings not between any layers and north south port crossings in first
      * layer.
-     * 
+     *
      * @param forward
      *            Whether we are sweeping forward or not (= backward).
      * @param nodes
@@ -147,7 +156,7 @@ public final class AllCrossingsCounter {
 
     /**
      * Counts in-layer and between layer crossings between the free and fixed layer of a sweep.
-     * 
+     *
      * @param forward
      *            Whether we are sweeping forward or not.
      * @param freeLayerIndex
@@ -196,7 +205,7 @@ public final class AllCrossingsCounter {
 
     /**
      * Getting hyperedges.
-     * 
+     *
      * @param nodeOrder
      *            the order of nodes in the complete graph.
      * @param side
@@ -229,30 +238,21 @@ public final class AllCrossingsCounter {
         return easternLayer.length == 0 || westernLayer.length == 0;
     }
 
-    private int countCrossingsAt(final int layerIndex, final LNode[][] currentOrder,
-            final int[] portPositions) {
+    private int countCrossingsAt(final int layerIndex, final LNode[][] currentOrder) {
         int totalCrossings = 0;
         LNode[] leftLayer = currentOrder[layerIndex];
         if (layerIndex < currentOrder.length - 1) {
             LNode[] rightLayer = currentOrder[layerIndex + 1];
-            boolean useHyperEdgeCounter =
-                    alwaysUseHyperedgeCounter || hasHyperedgesInLayer[layerIndex];
-            totalCrossings += useNewCounter
-                    ? betweenAndInLayerCounter.countCrossingsBetweenLayers(leftLayer, rightLayer)
-                    : countBetweenLayerCrossingsInOrder(leftLayer, rightLayer, currentOrder,
-                    useHyperEdgeCounter);
+            totalCrossings = crossingCounter.countCrossingsBetweenLayers(leftLayer, rightLayer);
         }
         final LNode[] layer = leftLayer;
-        totalCrossings += northSouthPortCrossingCounter.countCrossings(layer);
-        if (!useNewCounter) {
-            totalCrossings += inLayerEdgeCrossingsCounter.countInLayerCrossingsOnBothSides(leftLayer);
-        }
+        totalCrossings += northSouthEdgeCrossingCounter.countCrossings(layer);
         return totalCrossings;
     }
 
     /**
      * Create Counter for counting all crossings in a given node order.
-     * 
+     *
      * @return new AllCrossingsCounter object.
      */
     public static AllCrossingsCounter create() {
@@ -262,7 +262,7 @@ public final class AllCrossingsCounter {
     /**
      * Create Counter for counting all crossings in a given node order assuming all port order
      * constraints to be fixed independent of the orders actually set.
-     * 
+     *
      * @return new AllCrossingsCounter object.
      */
     public static AllCrossingsCounter createAssumingFixedPortOrder() {
@@ -274,7 +274,7 @@ public final class AllCrossingsCounter {
      * Create Counter for counting all crossings in a given node order assuming all port order
      * constraints to be fixed independent of the constraints actually set. Use this method to pass
      * information from outside saving initialization.
-     * 
+     *
      * @param inLayerEdgeCount
      *            Number of in layer edges.
      * @param hasNorthSouthPorts

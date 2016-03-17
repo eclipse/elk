@@ -12,22 +12,29 @@ package org.eclipse.elk.alg.layered.p3order;
 
 /**
  * The type of the crossing minimizer.
- * 
+ *
  * @author alan
  *
  */
 public enum CrossMinType {
     /** Use BarycenterHeuristic. */
-    BARYCENTER, /** Use one-sided GreedySwitchHeuristic. */
-    GREEDY_SWITCH;
+    BARYCENTER,
+    /** Use one-sided GreedySwitchHeuristic. */
+    ONE_SIDED_GREEDY_SWITCH,
+    /** Use two-sided GreedySwitchHeuristic. */
+    TWO_SIDED_GREEDY_SWITCH;
 
     /**
-     * Determines whether the given heuristic is deterministic, if it is, it for example does
-     * not need to use the thoroughness value.
-     * 
+     * Determines whether the given heuristic is deterministic, if it is, it for example does not need to use the
+     * thoroughness value.
+     *
      * @return whether or not the heuristic is deterministic.
      */
     public boolean isDeterministic() {
-        return this == GREEDY_SWITCH;
+        return this == ONE_SIDED_GREEDY_SWITCH || this == TWO_SIDED_GREEDY_SWITCH;
+    }
+
+    public boolean alwaysImproves() {
+        return this == TWO_SIDED_GREEDY_SWITCH;
     }
 }

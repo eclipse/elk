@@ -64,7 +64,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
         return Arrays.asList(
-                new Object[][] { { CrossMinType.BARYCENTER }, { CrossMinType.GREEDY_SWITCH } });
+                new Object[][] { { CrossMinType.BARYCENTER }, { CrossMinType.ONE_SIDED_GREEDY_SWITCH } });
     }
 
     @Before
@@ -1253,7 +1253,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         LNode leftNode = addNodeToLayer(makeLayer());
         LNode[] rightNodes = addNodesToLayer(2, makeLayer());
         LPort lowerRightNodePort = addPortOnSide(rightNodes[1], PortSide.WEST);
-        LPort leftNodePort = addPortOnSide(rightNodes[0], PortSide.EAST);
+        LPort leftNodePort = addPortOnSide(leftNode, PortSide.EAST);
 
         addEdgeBetweenPorts(lowerRightNodePort, leftNodePort);
         addEdgeBetweenPorts(lowerRightNodePort, leftNodePort);
