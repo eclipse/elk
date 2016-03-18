@@ -177,12 +177,21 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
             // Ignore FindBugs warning
             return -1;
         }
+        
+        public String toString() {
+            return "-\u221e";
+        };
     };
+    
     /** the default upper bound, which is greater than everything else. */
     public static final Comparable<Object> POSITIVE_INFINITY = new Comparable<Object>() {
         public int compareTo(final Object other) {
             // Ignore FindBugs warning
             return 1;
         }
+        
+        public String toString() {
+            return "+\u221e";
+        };
     };
 }
