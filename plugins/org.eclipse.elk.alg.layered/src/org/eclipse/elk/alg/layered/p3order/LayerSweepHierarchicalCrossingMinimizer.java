@@ -390,7 +390,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
         while (i < graphs.size()) {
             LGraph graph = graphs.get(i);
             graph.id = i++;
-            GraphData gData = new GraphData(graph, crossMinType, processAllGraphsRecursively);
+            GraphData gData = new GraphData(graph, crossMinType, processAllGraphsRecursively, graphData);
             graphs.addAll(gData.childGraphs());
             graphData.add(gData);
             if (gData.processRecursively()) {

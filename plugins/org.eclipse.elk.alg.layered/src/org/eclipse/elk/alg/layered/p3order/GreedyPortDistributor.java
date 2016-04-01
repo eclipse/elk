@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -31,10 +32,12 @@ import com.google.common.collect.Lists;
 public class GreedyPortDistributor implements SweepPortDistributor{
 
     private CrossingsCounter crossingsCounter;
-    private int[] portPos;
+    private final int[] portPos;
+    private final Map<Integer, Integer> childNumPorts;
 
-    public GreedyPortDistributor(final int[] portPos) {
+    public GreedyPortDistributor(final int[] portPos, final Map<Integer, Integer> childNumPorts) {
         this.portPos = portPos;
+        this.childNumPorts = childNumPorts;
     }
 
     /**
@@ -90,7 +93,8 @@ public class GreedyPortDistributor implements SweepPortDistributor{
         int upperLowerCrossings = crossingsCounter.countCrossingsBetweenPorts(upperPort, lowerPort);
         int lowerUpperCrossings = crossingsCounter.countCrossingsBetweenPorts(lowerPort, upperPort);
         if (isHierarchical(upperPort) && isHierarchical(lowerPort)) {
-            CrossingsCounter innerCounter = CrossingsCounter.createAssumingPortOrderFixed(new int[4]);
+            CrossingsCounter innerCounter =
+                    CrossingsCounter.createAssumingPortOrderFixed(new int[childNumPorts.get(nestedGraphOf(node).id)]);
             PortSide innerSide = upperPort.getSide().opposed();
             initHierarchicalCounter(node, innerCounter, upperPort.getSide(), innerSide);
             LNode upperDummy = dummyNodeFor(upperPort);

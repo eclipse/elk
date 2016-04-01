@@ -11,7 +11,9 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -60,6 +62,7 @@ class GraphData {
     private final List<LGraph> childGraphs;
     private final boolean externalPorts;
     private final CrossMinType crossMinType;
+    private final Map<Integer, Integer> childNumPorts;
 
     /**
      * Create object collecting info about compound graph.
@@ -72,10 +75,10 @@ class GraphData {
      *            forces all graphs to be layouted recursively.
      */
     GraphData(final LGraph graph, final CrossMinType crossMinType,
-            final boolean processAllGraphsRecursively) {
+            final boolean processAllGraphsRecursively, final List<GraphData> graphs) {
         lGraph = graph;
         this.crossMinType = crossMinType;
-
+        childNumPorts = new HashMap<>();
         childGraphs = Lists.newArrayList();
 
         currentNodeOrder = graph.toNodeArray();
@@ -105,7 +108,8 @@ class GraphData {
                 nodePositions[node.getLayer().id][node.id] = nodeIndex;
 
                 if (hasNestedGraph(node)) {
-                    childGraphs.add(nestedGraphOf(node));
+                    LGraph nestedGraph = nestedGraphOf(node);
+                    childGraphs.add(nestedGraph);
                 }
 
                 if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
@@ -132,6 +136,9 @@ class GraphData {
         canSweepIntoThisGraph = true;
         parent = lGraph.getProperty(InternalProperties.PARENT_LNODE);
         hasParent = parent != null;
+        if (hasParent && crossMinType == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
+            graphs.get(parent.getGraph().id).childNumPorts(lGraph.id, portId);
+        }
         // When processing a deterministic cross minimizer, we mostly want to sweep into the
         // graph except when explicitly set not to do so.
         processRecursively = processAllGraphsRecursively
@@ -144,7 +151,7 @@ class GraphData {
         float[] portRanks = new float[portId];
         Random random = graph.getProperty(InternalProperties.RANDOM);
         if (crossMinType.alwaysImproves()) {
-            portDistributor = new GreedyPortDistributor(portPos);
+            portDistributor = new GreedyPortDistributor(portPos, childNumPorts);
         } else if (random.nextBoolean()) {
             portDistributor = NodeRelativePortDistributor.createPortOrderFixedInOtherLayers(portRanks, nodePositions);
         } else {
@@ -182,6 +189,11 @@ class GraphData {
         default:
             throw new UnsupportedOperationException("This heuristic is not implemented yet.");
         }
+    }
+
+    private void childNumPorts(final int id, final int portId) {
+        childNumPorts.put(id, portId);
+
     }
 
     private boolean assessWhetherToProcessRecursively() {

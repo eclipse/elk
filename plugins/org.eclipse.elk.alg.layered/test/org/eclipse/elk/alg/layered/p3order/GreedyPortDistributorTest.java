@@ -22,8 +22,9 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.core.options.PortSide;
-import org.junit.Before;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author alan
@@ -36,9 +37,19 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
     // CHECKSTYLEOFF MagicNumber
     // CHECKSTYLEOFF MethodName
 
-    @Before
-    public void setUp() {
-        portDist = new GreedyPortDistributor(new int[100]);
+    private void setUpDistributor() {
+        List<GraphData> graphData = Lists.newArrayList();
+        List<LGraph> graphs = Lists.newArrayList(getGraph());
+        int i = 0;
+        while (i < graphs.size()) {
+            LGraph graph = graphs.get(i);
+            graph.id = i++;
+            GraphData gData = new GraphData(graph, CrossMinType.TWO_SIDED_GREEDY_SWITCH, false, graphData);
+            graphs.addAll(gData.childGraphs());
+            graphData.add(gData);
+        }
+
+        portDist = (GreedyPortDistributor) graphData.get(0).portDistributor();
     }
     /**
      * <pre>
@@ -59,6 +70,7 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         List<LPort> expectedPortOrderRightNode = portsOrderedAs(rightNode, 1, 0);
 
         PortSide side = PortSide.WEST;
+        setUpDistributor();
         portDist.initForLayers(leftNodes, getGraph().toNodeArray()[1], side, new int[4]);
         portDist.distributePorts(rightNode, side);
 
@@ -92,6 +104,7 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         List<LPort> expectedPortOrderRightNode = portsOrderedAs(rightNode, 1, 2, 0);
 
         PortSide side = PortSide.WEST;
+        setUpDistributor();
         portDist.initForLayers(leftNodes, getGraph().toNodeArray()[1], side, new int[6]);
         portDist.distributePorts(rightNode, side);
 
@@ -115,6 +128,7 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         List<LPort> expectedPortOrderLeftNode = portsOrderedAs(leftNodes[0], 1, 0);
 
         PortSide side = PortSide.EAST;
+        setUpDistributor();
         portDist.initForLayers(leftNodes, rightNodes, side, new int[4]);
         portDist.distributePorts(leftNodes[0], side);
 
@@ -148,6 +162,7 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         List<LPort> expectedPortOrderLeftNode = portsOrderedAs(leftOuterNode, 1, 0);
 
         PortSide side = PortSide.EAST;
+        setUpDistributor();
         portDist.initForLayers(getGraph().toNodeArray()[0], rightNodes, side, new int[5]);
         portDist.distributePorts(leftOuterNode, side);
 
@@ -180,7 +195,84 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         List<LPort> expectedPortOrderLeftNode = portsOrderedAs(leftOuterNode, 0, 1);
 
         PortSide side = PortSide.EAST;
+        setUpDistributor();
         portDist.initForLayers(getGraph().toNodeArray()[0], rightNodes, side, new int[5]);
+        portDist.distributePorts(leftOuterNode, side);
+
+        assertThat(leftOuterNode.getPorts(), is(expectedPortOrderLeftNode));
+    }
+
+    /**
+     * <pre>
+     * ____
+     * |*-+  *
+     * |  |\/
+     * |*-+/\
+     * |  |  *
+     * |*-+--*
+     * |--|
+     * </pre>
+     */
+    @Test
+    public void givenMoreHierarchicalNodes_DoesNotSwitchPorts() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer(getGraph()));
+        LPort[] leftOuterPorts = addPortsOnSide(3, leftOuterNode, PortSide.EAST);
+        eastWestEdgeFromTo(leftOuterPorts[0], rightNodes[1]);
+        eastWestEdgeFromTo(leftOuterPorts[1], rightNodes[0]);
+        eastWestEdgeFromTo(leftOuterPorts[2], rightNodes[2]);
+        LGraph leftInnerGraph = nestedGraph(leftOuterNode);
+        LNode[] leftInnerNodes = addNodesToLayer(3, makeLayer(leftInnerGraph));
+        LNode[] leftInnerDummyNodes = addExternalPortDummiesToLayer(makeLayer(leftInnerGraph), leftOuterPorts);
+        eastWestEdgeFromTo(leftInnerNodes[0], leftInnerDummyNodes[0]);
+        eastWestEdgeFromTo(leftInnerNodes[1], leftInnerDummyNodes[1]);
+        eastWestEdgeFromTo(leftInnerNodes[2], leftInnerDummyNodes[2]);
+
+        // Order stays the same.
+        List<LPort> expectedPortOrderLeftNode = portsOrderedAs(leftOuterNode, 0, 1, 2);
+
+        PortSide side = PortSide.EAST;
+        setUpDistributor();
+        portDist.initForLayers(getGraph().toNodeArray()[0], rightNodes, side, new int[6]);
+        portDist.distributePorts(leftOuterNode, side);
+
+        assertThat(leftOuterNode.getPorts(), is(expectedPortOrderLeftNode));
+    }
+
+    /**
+     * <pre>
+     * _______
+     * |   *-+  *
+     * |     |\/
+     * |   *-+/\
+     * |     |  *
+     * |*--*-+--*
+     * |-----|
+     * </pre>
+     */
+    @Test
+    public void givenMoreHierarchicalNodes2_DoesNotSwitchPorts() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer(getGraph()));
+        LPort[] leftOuterPorts = addPortsOnSide(3, leftOuterNode, PortSide.EAST);
+        eastWestEdgeFromTo(leftOuterPorts[0], rightNodes[1]);
+        eastWestEdgeFromTo(leftOuterPorts[1], rightNodes[0]);
+        eastWestEdgeFromTo(leftOuterPorts[2], rightNodes[2]);
+        LGraph leftInnerGraph = nestedGraph(leftOuterNode);
+        LNode leftInnerNode = addNodeToLayer(makeLayer(leftInnerGraph));
+        LNode[] rightInnerNodes = addNodesToLayer(3, makeLayer(leftInnerGraph));
+        LNode[] dummyNodes = addExternalPortDummiesToLayer(makeLayer(leftInnerGraph), leftOuterPorts);
+        eastWestEdgeFromTo(leftInnerNode, rightInnerNodes[2]);
+        eastWestEdgeFromTo(rightInnerNodes[0], dummyNodes[0]);
+        eastWestEdgeFromTo(rightInnerNodes[1], dummyNodes[1]);
+        eastWestEdgeFromTo(rightInnerNodes[2], dummyNodes[2]);
+
+        // Order stays the same.
+        List<LPort> expectedPortOrderLeftNode = portsOrderedAs(leftOuterNode, 0, 1, 2);
+
+        PortSide side = PortSide.EAST;
+        setUpDistributor();
+        portDist.initForLayers(getGraph().toNodeArray()[0], rightNodes, side, new int[6]);
         portDist.distributePorts(leftOuterNode, side);
 
         assertThat(leftOuterNode.getPorts(), is(expectedPortOrderLeftNode));
@@ -214,6 +306,7 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
 
         PortSide side = PortSide.EAST;
         LNode[][] nodeOrder = getGraph().toNodeArray();
+        setUpDistributor();
         portDist.initForLayers(nodeOrder[0], getGraph().toNodeArray()[1], side, new int[10]);
         portDist.distributePortsWhileSweeping(nodeOrder, 0, false);
 
