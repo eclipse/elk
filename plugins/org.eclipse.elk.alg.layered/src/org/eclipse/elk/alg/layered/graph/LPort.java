@@ -106,9 +106,9 @@ public final class LPort extends LShape {
         if (this.owner != null) {
             this.owner.getPorts().remove(this);
         }
-
+        
         this.owner = node;
-
+        
         if (this.owner != null) {
             this.owner.getPorts().add(this);
         }
@@ -134,7 +134,7 @@ public final class LPort extends LShape {
         }
         this.side = theside;
     }
-
+    
     /**
      * Returns the anchor position of the port. This is the point where edges should be attached,
      * relative to the port's position. Should only be modified when the port position is changed.
@@ -144,7 +144,7 @@ public final class LPort extends LShape {
     public KVector getAnchor() {
         return anchor;
     }
-
+    
     /**
      * Returns the absolute anchor position of the port. This is the point where edges should be
      * attached, relative to the containing graph. This method creates a new vector, so modifying
@@ -155,7 +155,7 @@ public final class LPort extends LShape {
     public KVector getAbsoluteAnchor() {
         return KVector.sum(owner.getPosition(), this.getPosition(), anchor);
     }
-
+    
     /**
      * Returns the margin around this port. The margin is typically used to reserve space for the
      * port's labels.
@@ -165,7 +165,7 @@ public final class LPort extends LShape {
     public LInsets getMargin() {
         return margin;
     }
-
+    
     /**
      * Returns this port's labels.
      * 
@@ -174,7 +174,7 @@ public final class LPort extends LShape {
     public List<LLabel> getLabels() {
         return labels;
     }
-
+    
     /**
      * Returns the name of the port. The name is derived from the text of the first label, if any.
      * 
@@ -186,7 +186,7 @@ public final class LPort extends LShape {
         }
         return null;
     }
-
+    
     /**
      * Returns this port's degree, that is, the number of edges connected to it.
      * 
@@ -195,7 +195,7 @@ public final class LPort extends LShape {
     public int getDegree() {
         return incomingEdges.size() + outgoingEdges.size();
     }
-
+    
     /**
      * Returns the number of incoming edges minus the number of outgoing edges. This
      * is the net flow of the port.
@@ -223,7 +223,7 @@ public final class LPort extends LShape {
     public List<LEdge> getOutgoingEdges() {
         return outgoingEdges;
     }
-
+    
     /**
      * Returns an iterable over all connected edges, both incoming and outgoing.
      * 
@@ -303,7 +303,7 @@ public final class LPort extends LShape {
     public Iterable<LPort> getConnectedPorts() {
         return Iterables.concat(getPredecessorPorts(), getSuccessorPorts());
     }
-
+    
     /**
      * Returns the index of the port in the containing node's list of ports. Note
      * that this method has linear running time in the number of ports, so use

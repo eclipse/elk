@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
  * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
  * order. The barycenter heuristic is used here.
- *
+ * 
  * @author msp
  * @author cds
  * @author ima
@@ -50,7 +50,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
 
     /**
      * Constructs a Barycenter heuristic for crossing minimization between two layers.
-     *
+     * 
      * @param barycenterState
      *            the barycenter values of every node in the graph, indexed by layer.id and node.id.
      * @param constraintResolver
@@ -116,7 +116,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
 
     /**
      * Randomize the order of nodes for the given layer.
-     *
+     * 
      * @param nodes
      *            a layer
      */
@@ -131,7 +131,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
 
     /**
      * Try to find appropriate barycenter values for node groups whose barycenter is undefined.
-     *
+     * 
      * @param nodes
      *            the nodeGroups to fill in barycenters for.
      * @param preOrdered
@@ -190,10 +190,10 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
             }
         }
     }
-
+    
     /**
      * Calculate the barycenters of the given node groups.
-     *
+     * 
      * @param nodes
      *            the nodes
      * @param forward
@@ -218,7 +218,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
      * Calculate the barycenter of the given single-node node group. This method is able to handle
      * in-layer edges, but it may give incorrect results if the in-layer edges form a cycle.
      * However, such cases do not occur in the present implementation.
-     *
+     * 
      * @param node
      *            a node group consisting of a single node
      * @param forward
@@ -293,7 +293,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     private BarycenterState stateOf(final LNode node) {
         return barycenterState[node.getLayer().id][node.id];
     }
-
+    
     /**
      * Represents the current barycenter state of a node.
      */
@@ -321,7 +321,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         }
 
     }
-
+    
     /**
      * Compares two {@link LNode}s based on their barycenter values.
      */

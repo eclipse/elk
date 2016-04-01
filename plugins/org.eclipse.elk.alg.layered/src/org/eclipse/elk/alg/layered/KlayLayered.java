@@ -111,7 +111,7 @@ public final class KlayLayered {
     private CompoundGraphPreprocessor compoundGraphPreprocessor = new CompoundGraphPreprocessor();
     /** compound graph postprocessor. */
     private CompoundGraphPostprocessor compoundGraphPostprocessor = new CompoundGraphPostprocessor();
-
+    
 
     ////////////////////////////////////////////////////////////////////////////////
     // Regular Layout
@@ -150,13 +150,13 @@ public final class KlayLayered {
             }
         }
         componentsProcessor.combine(components, lgraph);
-
+        
         // Resize the resulting graph, according to minimal size constraints and such
         resizeGraph(lgraph);
 
         theMonitor.done();
     }
-
+    
 
     ////////////////////////////////////////////////////////////////////////////////
     // Compound Graph Layout
@@ -301,7 +301,7 @@ public final class KlayLayered {
      */
     private void recursiveLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Recursive layout", 2);
-
+        
         if (!lgraph.getLayerlessNodes().isEmpty()) {
             // Process all contained nested graphs recursively
             float workPerSubgraph = 1.0f / lgraph.getLayerlessNodes().size();
@@ -313,23 +313,23 @@ public final class KlayLayered {
                     graphLayoutToNode(node, nestedGraph);
                 }
             }
-
+            
             // Update the modules depending on user options
             graphConfigurator.prepareGraphForLayout(lgraph);
-
+    
             // Perform the layout algorithm
             layout(lgraph, monitor);
         }
-
+        
         // Resize the resulting graph, according to minimal size constraints and such
         resizeGraph(lgraph);
 
         monitor.done();
     }
-
+    
     ////////////////////////////////////////////////////////////////////////////////
     // Layout Testing
-
+    
     /**
      * The state of a test execution is held in an instance of this class.
      */
@@ -338,7 +338,7 @@ public final class KlayLayered {
         private List<LGraph> graphs;
         /** index of the processor that is to be executed next during a layout test. */
         private int step;
-
+        
         /**
          * Return the list of graphs that are currently being laid out.
          * 
@@ -347,7 +347,7 @@ public final class KlayLayered {
         public List<LGraph> getGraphs() {
             return graphs;
         }
-
+        
         /**
          * Return the index of the processor that is to be executed next during a layout test.
          * 
@@ -367,7 +367,7 @@ public final class KlayLayered {
      */
     public TestExecutionState prepareLayoutTest(final LGraph lgraph) {
         TestExecutionState state = new TestExecutionState();
-
+        
         // update the modules depending on user options
         graphConfigurator.prepareGraphForLayout(lgraph);
 
@@ -376,7 +376,7 @@ public final class KlayLayered {
             componentsProcessor = new ComponentsProcessor();
         }
         state.graphs = componentsProcessor.split(lgraph);
-
+        
         return state;
     }
 
@@ -409,7 +409,7 @@ public final class KlayLayered {
      */
     public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
             final boolean inclusive, final TestExecutionState state) {
-
+        
         List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
                 InternalProperties.PROCESSORS);
 
@@ -417,11 +417,11 @@ public final class KlayLayered {
         boolean phaseExists = false;
         ListIterator<ILayoutProcessor> algorithmIterator = algorithm.listIterator(state.step);
         int phaseIndex = state.step;
-
+        
         while (algorithmIterator.hasNext() && !phaseExists) {
             if (algorithmIterator.next().getClass().equals(phase)) {
                 phaseExists = true;
-
+                
                 if (inclusive) {
                     phaseIndex++;
                 }
@@ -432,10 +432,10 @@ public final class KlayLayered {
 
         if (!phaseExists) {
             // FIXME actually, we want to know when a processor is not
-            // part of the algorithm's configuration because this might be
-            // wrong behavior.
+            //  part of the algorithm's configuration because this might be
+            //  wrong behavior.
             // However, in the current test framework there is no way
-            // to differentiate between 'it's ok' and 'it's not'.
+            //  to differentiate between 'it's ok' and 'it's not'.
             // throw new IllegalArgumentException(
             // "Given processor not part of the remaining algorithm.");
             System.err
@@ -459,7 +459,7 @@ public final class KlayLayered {
      */
     public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
             final TestExecutionState state) {
-
+        
         runLayoutTestUntil(phase, true, state);
     }
 
@@ -492,7 +492,7 @@ public final class KlayLayered {
     public List<ILayoutProcessor> getLayoutTestConfiguration(final TestExecutionState state) {
         return state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
     }
-
+    
 
     ////////////////////////////////////////////////////////////////////////////////
     // Actual Layout
@@ -546,7 +546,7 @@ public final class KlayLayered {
                 processor.process(lgraph, monitor.subTask(monitorProgress));
             }
         }
-
+        
         // Move all nodes away from the layers (we need to remove nodes from their current layer in a
         // second loop to avoid ConcurrentModificationExceptions)
         for (Layer layer : lgraph) {
@@ -576,11 +576,11 @@ public final class KlayLayered {
             processor.process(graph, new BasicProgressMonitor());
         }
     }
-
+    
 
     ////////////////////////////////////////////////////////////////////////////////
     // Graph Postprocessing (Size and External Ports)
-
+    
     /**
      * Sets the size of the given graph such that size constraints are adhered to.
      * Furthermore, the border spacing is added to the graph size and the graph offset.
@@ -598,20 +598,20 @@ public final class KlayLayered {
         Set<SizeConstraint> sizeConstraint = lgraph.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
         Set<SizeOptions> sizeOptions = lgraph.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
         float borderSpacing = lgraph.getProperty(LayeredOptions.SPACING_BORDER);
-
+        
         // add the border spacing to the graph size and graph offset
         lgraph.getOffset().x += borderSpacing;
         lgraph.getOffset().y += borderSpacing;
         lgraph.getSize().x += 2 * borderSpacing;
         lgraph.getSize().y += 2 * borderSpacing;
-
+        
         // the graph size now contains the border spacing, so clear it in order to keep
         // graph.getActualSize() working properly
         lgraph.setProperty(LayeredOptions.SPACING_BORDER, 0f);
-
+        
         KVector calculatedSize = lgraph.getActualSize();
         KVector adjustedSize = new KVector(calculatedSize);
-
+        
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             KVector minSize = lgraph.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
@@ -623,23 +623,23 @@ public final class KlayLayered {
                 minWidth = (float) minSize.x;
                 minHeight = (float) minSize.y;
             }
-
+            
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minWidth <= 0) {
                     minWidth = ElkUtil.DEFAULT_MIN_WIDTH;
                 }
-
+                
                 if (minHeight <= 0) {
                     minHeight = ElkUtil.DEFAULT_MIN_HEIGHT;
                 }
             }
-
+            
             // apply new size including border spacing
             adjustedSize.x = Math.max(calculatedSize.x, minWidth);
             adjustedSize.y = Math.max(calculatedSize.y, minHeight);
         }
-
+        
         resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);
     }
 
@@ -658,11 +658,11 @@ public final class KlayLayered {
      */
     private void resizeGraphNoReallyIMeanIt(final LGraph lgraph, final KVector oldSize,
             final KVector newSize) {
-
+        
         // obey to specified alignment constraints
         Set<ContentAlignment> contentAlignment =
                 lgraph.getProperty(LayeredOptions.CONTENT_ALIGNMENT);
-
+        
         // horizontal alignment
         if (newSize.x > oldSize.x) {
             if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
@@ -671,7 +671,7 @@ public final class KlayLayered {
                 lgraph.getOffset().x += newSize.x - oldSize.x;
             }
         }
-
+        
         // vertical alignment
         if (newSize.y > oldSize.y) {
             if (contentAlignment.contains(ContentAlignment.V_CENTER)) {
@@ -680,12 +680,12 @@ public final class KlayLayered {
                 lgraph.getOffset().y += newSize.y - oldSize.y;
             }
         }
-
+        
         // correct the position of eastern and southern hierarchical ports, if necessary
         if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)
                 && (newSize.x > oldSize.x || newSize.y > oldSize.y)) {
-
+            
             // iterate over the graph's nodes, looking for eastern / southern external ports
             // (at this point, the graph's nodes are not divided into layers anymore)
             for (LNode node : lgraph.getLayerlessNodes()) {
@@ -701,13 +701,13 @@ public final class KlayLayered {
                 }
             }
         }
-
+        
         // Actually apply the new size
         LInsets insets = lgraph.getInsets();
         lgraph.getSize().x = newSize.x - insets.left - insets.right;
         lgraph.getSize().y = newSize.y - insets.top - insets.bottom;
     }
-
+    
     /**
      * Transfer the layout of the given graph to the given associated node.
      * 
@@ -727,7 +727,7 @@ public final class KlayLayered {
                 port.setSide(childNode.getProperty(InternalProperties.EXT_PORT_SIDE));
             }
         }
-
+        
         // Setup the parent node
         KVector actualGraphSize = lgraph.getActualSize();
         if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(

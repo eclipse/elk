@@ -33,7 +33,7 @@ public interface ICrossingMinimizationHeuristic {
     /**
      * Minimize the number of crossings for the edges between the given layer and either its
      * predecessor or its successor. Resolve violated constraints.
-     *
+     * 
      * @param layer
      *            the free layer whose nodes are reordered.
      * @param preOrdered

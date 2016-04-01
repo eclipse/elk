@@ -51,7 +51,7 @@ public enum IntermediateProcessorStrategy {
     INTERACTIVE_EXTERNAL_PORT_POSITIONER,
     /** Add constraint edges to respect partitioning of nodes. */
     PARTITION_PREPROCESSOR,
-
+    
     // Before Phase 2
 
     /** Splits big nodes into multiple layers to distribute them better and reduce whitespace. */
@@ -60,7 +60,7 @@ public enum IntermediateProcessorStrategy {
     LABEL_DUMMY_INSERTER,
 
     // Before Phase 3
-
+    
     /** Moves trees of high degree nodes to separate layers. */
     HIGH_DEGREE_NODE_LAYER_PROCESSOR,
     /** Remove partition constraint edges. */
@@ -157,10 +157,9 @@ public enum IntermediateProcessorStrategy {
     /** Place end labels on edges. */
     END_LABEL_PROCESSOR;
 
-
     /**
      * Creates an instance of the layout processor described by this instance.
-     *
+     * 
      * @return the layout processor.
      */
     // SUPPRESS CHECKSTYLE NEXT MethodLength
@@ -230,7 +229,7 @@ public enum IntermediateProcessorStrategy {
 
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
-
+            
         case INTERACTIVE_EXTERNAL_PORT_POSITIONER:
             return new InteractiveExternalPortPositioner();
 
@@ -245,10 +244,10 @@ public enum IntermediateProcessorStrategy {
 
         case LABEL_DUMMY_SWITCHER:
             return new LabelDummySwitcher();
-
+            
         case LABEL_MANAGEMENT_PROCESSOR:
             return new LabelManagementProcessor();
-
+            
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
 
@@ -270,7 +269,7 @@ public enum IntermediateProcessorStrategy {
 
         case NODE_MARGIN_CALCULATOR:
             return new NodeMarginCalculator();
-
+            
         case NODE_PROMOTION:
             return new NodePromotion();
 
@@ -306,16 +305,16 @@ public enum IntermediateProcessorStrategy {
 
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
-
+            
         case SPLINE_SELF_LOOP_POSITIONER:
             return new SplineSelfLoopPositioner();
-
+            
         case SPLINE_SELF_LOOP_PREPROCESSOR:
             return new SplineSelfLoopPreProcessor();
-
+            
         case SPLINE_SELF_LOOP_ROUTER:
             return new SplineSelfLoopRouter();
-
+            
         case UP_DIR_POSTPROCESSOR:
         case UP_DIR_PREPROCESSOR:
             return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
