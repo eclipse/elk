@@ -137,7 +137,7 @@ class GraphData {
         parent = lGraph.getProperty(InternalProperties.PARENT_LNODE);
         hasParent = parent != null;
         if (hasParent && crossMinType == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
-            graphs.get(parent.getGraph().id).childNumPorts(lGraph.id, portId);
+            graphs.get(parent.getGraph().id).childNumPorts.put(lGraph.id, portId);
         }
         // When processing a deterministic cross minimizer, we mostly want to sweep into the
         // graph except when explicitly set not to do so.
@@ -150,7 +150,7 @@ class GraphData {
 
         float[] portRanks = new float[portId];
         Random random = graph.getProperty(InternalProperties.RANDOM);
-        if (crossMinType.alwaysImproves()) {
+        if (crossMinType.alwaysImproves() && !childGraphs.isEmpty()) {
             portDistributor = new GreedyPortDistributor(portPos, childNumPorts);
         } else if (random.nextBoolean()) {
             portDistributor = NodeRelativePortDistributor.createPortOrderFixedInOtherLayers(portRanks, nodePositions);
@@ -189,11 +189,6 @@ class GraphData {
         default:
             throw new UnsupportedOperationException("This heuristic is not implemented yet.");
         }
-    }
-
-    private void childNumPorts(final int id, final int portId) {
-        childNumPorts.put(id, portId);
-
     }
 
     private boolean assessWhetherToProcessRecursively() {
@@ -375,7 +370,7 @@ class GraphData {
         this.canSweepIntoThisGraph = canSweepIntoThisGraph;
     }
 
-    public Collection<? extends LGraph> childGraphs() {
+    public Collection<LGraph> childGraphs() {
         return childGraphs;
     }
 

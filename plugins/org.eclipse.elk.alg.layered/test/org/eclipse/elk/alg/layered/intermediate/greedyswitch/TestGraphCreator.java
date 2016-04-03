@@ -47,7 +47,7 @@ public class TestGraphCreator {
     private int portId = 0;
     private int nodeId = 0;
     /** the graph. */
-    private LGraph graph;
+    protected LGraph graph;
 
     /**
      * TODO-alan remove.
@@ -71,10 +71,11 @@ public class TestGraphCreator {
         setUpGraph(graph);
     }
 
-    private void setUpGraph(final LGraph g) {
+    protected LGraph setUpGraph(final LGraph g) {
         setUpIds();
         g.setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
         g.setProperty(InternalProperties.RANDOM, random);
+        return g;
     }
 
     /**

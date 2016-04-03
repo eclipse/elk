@@ -14,13 +14,16 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
+import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
 
@@ -38,18 +41,26 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
     // CHECKSTYLEOFF MethodName
 
     private void setUpDistributor() {
-        List<GraphData> graphData = Lists.newArrayList();
-        List<LGraph> graphs = Lists.newArrayList(getGraph());
+        int nPorts = 0;
+        List<LGraph> graphs = Lists.newArrayList(graph);
+        Map<Integer,Integer> childNumPorts = new HashMap<>();
+        int gId = 0;
         int i = 0;
-        while (i < graphs.size()) {
-            LGraph graph = graphs.get(i);
-            graph.id = i++;
-            GraphData gData = new GraphData(graph, CrossMinType.TWO_SIDED_GREEDY_SWITCH, false, graphData);
-            graphs.addAll(gData.childGraphs());
-            graphData.add(gData);
+        while(i < graphs.size()) {
+            LGraph g = graphs.get(i++);
+            g.id = gId++;
+            for (Layer l : g) {
+                for (LNode n : l) {
+                    nPorts += n.getPorts().size();
+                    LGraph nestedGraph = n.getProperty(InternalProperties.NESTED_LGRAPH);
+                    if (nestedGraph != null) {
+                        graphs.add(nestedGraph);
+                    }
+                }
+            }
+            childNumPorts.put(g.id, nPorts);
         }
-
-        portDist = (GreedyPortDistributor) graphData.get(0).portDistributor();
+        portDist = new GreedyPortDistributor(new int[nPorts], childNumPorts);
     }
     /**
      * <pre>
