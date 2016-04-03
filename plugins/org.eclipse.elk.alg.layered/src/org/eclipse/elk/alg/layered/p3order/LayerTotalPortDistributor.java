@@ -26,8 +26,7 @@ import org.eclipse.elk.core.options.PortSide;
  * @author msp
  */
 public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistributor {
-
-    private final boolean assumePortOrderFixed;
+    
     /**
      * Constructs a layer-total port distributor with the given array of ranks.
      * All ports are required to be assigned ids in the range of the given array.
@@ -38,8 +37,7 @@ public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistr
      */
     private LayerTotalPortDistributor(final float[] portRanks, final boolean assumePortOrderFixed,
             final int[][] nodePositions) {
-        super(portRanks, nodePositions);
-        this.assumePortOrderFixed = assumePortOrderFixed;
+        super(portRanks, nodePositions, assumePortOrderFixed);
     }
     
     /**
@@ -48,8 +46,7 @@ public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistr
      *            The array of port ranks
      */
     private LayerTotalPortDistributor(final float[] portRanks, final boolean assumePortOrderFixed) {
-        super(portRanks);
-        this.assumePortOrderFixed = assumePortOrderFixed;
+        super(portRanks, assumePortOrderFixed);
     }
 
     /**
@@ -203,7 +200,7 @@ public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistr
      *            An array showing the current node positions.
      * @return new port distributor.
      */
-    public static LayerTotalPortDistributor createPortOrderFixedInOtherLayers(
+    public static AbstractBarycenterPortDistributor createPortOrderFixedInOtherLayers(
             final float[] portRanks, final int[][] nodePositions) {
         return new LayerTotalPortDistributor(portRanks, true, nodePositions);
     }

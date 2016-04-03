@@ -13,9 +13,7 @@ package org.eclipse.elk.alg.layered.graph;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.eclipse.elk.alg.layered.intermediate.PortListSorter;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
@@ -274,7 +272,7 @@ public final class LNode extends LShape {
      * @return an iterable for the ports of given type
      */
     public Iterable<LPort> getPorts(final PortType portType) {
-        return ports.stream().filter(LPort.getInOutputPredicate(portType))::iterator;
+        return Iterables.filter(ports, LPort.getInOutputPredicate(portType));
     }
     
     /**
@@ -293,7 +291,7 @@ public final class LNode extends LShape {
                 return subList;
             }
         } else {
-            return ports.stream().filter(LPort.sidePredicate(side)).collect(Collectors.toList());
+            return Lists.newArrayList(Iterables.filter(ports, LPort.sidePredicate(side)));
         }
     }
     
@@ -306,7 +304,7 @@ public final class LNode extends LShape {
      */
     public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {
         // TODO Consider changing to list and caching when ready.
-        return getPorts(side).stream().filter(LPort.getInOutputPredicate(portType))::iterator;
+        return Iterables.filter(getPorts(side), LPort.getInOutputPredicate(portType));
     }
     
     /**
@@ -457,8 +455,8 @@ public final class LNode extends LShape {
     }
 
     /**
-     * After port sides are fixed (after running the {@link PortListSorter} the index region of
-     * ports for each side will stay constant. These are cached from the port list sorter using this
+     * After port sides are fixed (after running the {@link org.eclipse.elk.alg.layered.intermediate.PortListSorter} the
+     * index region of ports for each side will stay constant. These are cached from the port list sorter using this
      * method and a sublist view created.
      */
     public void cachePortSides() {

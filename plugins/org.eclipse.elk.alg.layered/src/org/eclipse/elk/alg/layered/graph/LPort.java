@@ -15,13 +15,13 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -59,6 +59,8 @@ public final class LPort extends LShape {
     private final List<LEdge> incomingEdges = new NoteChangeList<>(4);
     /** the edges going out of the port. */
     private final List<LEdge> outgoingEdges = new NoteChangeList<>(4);
+    /** All connected edges in one list. */
+    private List<LEdge> connectedEdges;
 
     /**
      * Returns the node that owns this port.
@@ -75,7 +77,7 @@ public final class LPort extends LShape {
      * @param portType
      * @return predicate
      */
-    public static Predicate<LPort> getInOutputPredicate(PortType portType) {
+    public static Predicate<LPort> getInOutputPredicate(final PortType portType) {
         if (portType == PortType.OUTPUT) {
             return port -> !port.getOutgoingEdges().isEmpty();
         } else if (portType == PortType.INPUT) {
@@ -90,7 +92,7 @@ public final class LPort extends LShape {
      * @param side
      * @return predicate
      */
-    public static Predicate<? super LPort> sidePredicate(PortSide side) {
+    public static Predicate<LPort> sidePredicate(final PortSide side) {
         return port -> port.getSide() == side;
     }
 
@@ -238,8 +240,6 @@ public final class LPort extends LShape {
         }
         return connectedEdges;
     }
-
-    private List<LEdge> connectedEdges;
 
     /**
      * Returns an iterable over all the port's predecessor ports. Predecessor ports are source

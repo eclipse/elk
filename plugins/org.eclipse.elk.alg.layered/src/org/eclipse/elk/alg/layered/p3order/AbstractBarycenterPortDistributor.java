@@ -52,6 +52,8 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
     private final int[] preSortedPortPositions;
     private final List<LPort> inLayerPorts;
     private final boolean[] isPreSorted;
+    /** Whether to assume port order to be fixed. */
+    protected final boolean assumePortOrderFixed;
 
     /**
      * Constructs a port distributor for the given array of port ranks.
@@ -60,8 +62,10 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      * @param portRanks
      *            The array of port ranks
      */
-    public AbstractBarycenterPortDistributor(final float[] portRanks) {
+    public AbstractBarycenterPortDistributor(final float[] portRanks, final boolean
+            assumePortOrderFixed) {
         this.portRanks = portRanks;
+        this.assumePortOrderFixed = assumePortOrderFixed;
         inLayerPorts = Lists.newLinkedList();
         portBarycenter = new float[portRanks.length];
         preSortedPortPositions = new int[portRanks.length];
@@ -77,8 +81,9 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      * @param nodePos
      *            array of node positions.
      */
-    public AbstractBarycenterPortDistributor(final float[] portRanks, final int[][] nodePos) {
-        this(portRanks);
+    public AbstractBarycenterPortDistributor(final float[] portRanks, final int[][] nodePos, final boolean
+            assumePortOrderFixed) {
+        this(portRanks, assumePortOrderFixed);
         nodePositions = nodePos;
     }
 
@@ -109,7 +114,7 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      *            the port type to consider
      * @return the rank consumed by the given node; the following node's ranks start at
      *         {@code rankSum + consumedRank}
-     * @see de.cau.cs.kieler.klay.layered.intermediate.PortListSorter
+     * @see {@link org.eclipse.alg.layered.intermediate.PortListSorter} 
      */
     protected abstract float calculatePortRanks(final LNode node, final float rankSum,
             final PortType type);
@@ -185,7 +190,7 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
             iteratePortsAndCollectInLayerPorts(node, ports);
 
             if (!inLayerPorts.isEmpty()) {
-                calculateInLayerPortsBaryCenterValues(node);
+                calculateInLayerPortsBarycenterValues(node);
             }
 
             // sort the ports by considering the side, type, and barycenter values
@@ -194,7 +199,6 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
     }
 
     private void iteratePortsAndCollectInLayerPorts(final LNode node, final Iterable<LPort> ports) {
-
         minBarycenter = 0.0f;
         maxBarycenter = 0.0f;
 
@@ -248,30 +252,27 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
             }
 
             if (port.getDegree() > 0) {
-                setPortBarycenter(port, sum / port.getDegree());
+                portBarycenter[port.id] = sum / port.getDegree();
                 minBarycenter = Math.min(minBarycenter, portBarycenter[port.id]);
                 maxBarycenter = Math.max(maxBarycenter, portBarycenter[port.id]);
             } else if (northSouthPort) {
                 // For northern and southern ports, the sum directly corresponds to the
                 // barycenter value to be used.
-                setPortBarycenter(port, sum);
+                final float barycenter = sum;
+                portBarycenter[port.id] = barycenter;
             }
         }
     }
 
-    private Boolean isPortOrderPartiallyFixed(final LNode node) {
+    private boolean isPortOrderPartiallyFixed(final LNode node) {
         return node.getProperty(InternalProperties.HAS_HIERARCHICAL_AND_NORMAL_PORTS);
     }
 
-    private Boolean hasInsideConnections(final LPort port) {
+    private boolean hasInsideConnections(final LPort port) {
         return port.getProperty(InternalProperties.INSIDE_CONNECTIONS);
     }
 
-    private void setPortBarycenter(final LPort port, final float barycenter) {
-        portBarycenter[port.id] = barycenter;
-    }
-
-    private void calculateInLayerPortsBaryCenterValues(final LNode node) {
+    private void calculateInLayerPortsBarycenterValues(final LNode node) {
         // go through the list of in-layer ports and calculate their barycenter values
         int nodeIndexInLayer = positionOf(node) + 1;
         int layerSize = node.getLayer().getNodes().size() + 1;
@@ -298,18 +299,18 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
             if (portSide == PortSide.EAST) {
                 if (barycenter < nodeIndexInLayer) {
                     // take a low value in order to have the port above
-                    setPortBarycenter(inLayerPort, minBarycenter - barycenter);
+                    portBarycenter[inLayerPort.id] = minBarycenter - barycenter;
                 } else {
                     // take a high value in order to have the port below
-                    setPortBarycenter(inLayerPort, maxBarycenter + (layerSize - barycenter));
+                    portBarycenter[inLayerPort.id] = maxBarycenter + (layerSize - barycenter);
                 }
             } else if (portSide == PortSide.WEST) {
                 if (barycenter < nodeIndexInLayer) {
                     // take a high value in order to have the port above
-                    setPortBarycenter(inLayerPort, maxBarycenter + barycenter);
+                    portBarycenter[inLayerPort.id] = maxBarycenter + barycenter;
                 } else {
                     // take a low value in order to have the port below
-                    setPortBarycenter(inLayerPort, minBarycenter - (layerSize - barycenter));
+                    portBarycenter[inLayerPort.id] = minBarycenter - (layerSize - barycenter);
                 }
             }
         }
@@ -359,14 +360,12 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
         return node.getIndex();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.alg.layered.p3order.dist#distributePortsWhileSweeping(org.eclipse.elk.alg.layered.graph.LNode[][], int, boolean)
-     */
     @Override
     public void distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
             final boolean isForwardSweep) {
         updateNodePositions(nodeOrder, currentIndex);
         if (isNotFirstLayer(nodeOrder.length, currentIndex, isForwardSweep)) {
+            // TODO-alan this seems luke a f*** hack.
             useNodeArrayForNodePositions = true;
 
             LNode[] fixedLayer = nodeOrder[isForwardSweep ? currentIndex - 1 : currentIndex + 1];

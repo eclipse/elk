@@ -193,6 +193,7 @@ public final class KlayLayered {
         theMonitor.done();
     }
     
+    /**TODO-alan abstract documentation. */
     private void hierarchicalLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Recursive Hierarchical layout", 2); // SUPPRESS CHECKSTYLE MagicNumber
 

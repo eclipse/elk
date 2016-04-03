@@ -14,7 +14,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
@@ -64,7 +63,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
      * Creates LayerSweepHierarchicalCrossingMinimizer using given minimizer type.
      *
      * @param cT
-     *            the crossing minimizer type
+     *            the crossing minimizer 'type'
      */
     public LayerSweepHierarchicalCrossingMinimizer(final CrossMinType cT) {
         crossMinType = cT;
@@ -385,7 +384,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
         Deque<GraphData> graphsToSweepOn = Lists.newLinkedList();
         random = rootGraph.getProperty(InternalProperties.RANDOM);
         randomSeed = random.nextLong();
-        List<LGraph> graphs = Lists.<LGraph> newArrayList(rootGraph);
+        List<LGraph> graphs = Lists.<LGraph>newArrayList(rootGraph);
         int i = 0;
         while (i < graphs.size()) {
             LGraph graph = graphs.get(i);
@@ -412,11 +411,8 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
         IntermediateProcessingConfiguration configuration = IntermediateProcessingConfiguration
                 .fromExisting(INTERMEDIATE_PROCESSING_CONFIGURATION);
 
-        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES)
-                .contains(GraphProperties.NON_FREE_PORTS)) {
 
             configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_LIST_SORTER);
-        }
 
         return configuration;
     }
@@ -430,4 +426,10 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
                     .addAll(Slot.AFTER_PHASE_5,
                             Lists.newArrayList(IntermediateProcessorStrategy.LONG_EDGE_JOINER,
                                     IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER));
+    
+    /** TODO Java 8 api not supported yet. 
+     * @param <T>*/
+    private interface Consumer<T> { 
+        void accept(T input);
+    }
 }

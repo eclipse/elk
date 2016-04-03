@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
  * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
  * order. Given constraints are to be respected, possibly by the use of an
- * {@link de.cau.cs.kieler.klay.layered.p3order.constraints.IConstraintResolver IConstraintResolver}.
+ * {@link org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver}.
  *
  * @author cds
  * @author ima
@@ -28,6 +28,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
  */
 public interface ICrossingMinimizationHeuristic {
 
+    /** Determines whether the heuristic always improves. */
     boolean alwaysImproves();
 
     /**
@@ -59,7 +60,7 @@ public interface ICrossingMinimizationHeuristic {
     boolean setFirstLayerOrder(LNode[][] currentNodeOrder, boolean isForwardSweep);
 
     /**
-     *
+     * TODO-alan comment.
      * @param order
      *            the current order of the nodes.
      * @param freeLayerIndex

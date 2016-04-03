@@ -67,7 +67,8 @@ public final class InternalProperties {
      */
     public static final IProperty<List<ILayoutProcessor>> PROCESSORS =
             new Property<List<ILayoutProcessor>>("processors");
-
+    
+    /** TODO-alan consider this and it's usage.*/
     public static final IProperty<Boolean> HAS_HIERARCHICAL_AND_NORMAL_PORTS =
             new Property<Boolean>("partiallFixedPortOrder", false);
     

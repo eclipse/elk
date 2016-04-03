@@ -24,7 +24,6 @@ import com.google.common.collect.Lists;
  * Stores node and port order for a sweep.
  * 
  * @author alan
- *
  */
 class SweepCopy {
     /** Do not change after setting! */

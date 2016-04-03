@@ -32,6 +32,13 @@ public interface ILayoutProcessor {
      */
     void process(LGraph layeredGraph, IElkProgressMonitor progressMonitor);
     
+    /**
+     * Overwrite this default method in the rare case when a processor accesses the complete hierarchy. 
+     * In this case, all the processing will be will be executed recursively
+     * for all processors preceding this one and this processor will have access to the root graph.
+     * 
+     * @return whether this processor is hierarchical.
+     */
     default boolean operatesOnFullHierarchy() {
         return false;
     }

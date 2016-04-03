@@ -31,8 +31,6 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public final class NodeRelativePortDistributor extends AbstractBarycenterPortDistributor {
     
-    private final boolean assumePortOrderFixed;
-
     /**
      * Constructs a node-relative port distributor with the given array of ranks.
      * All ports are required to be assigned ids in the range of the given array.
@@ -42,8 +40,7 @@ public final class NodeRelativePortDistributor extends AbstractBarycenterPortDis
      */
     private NodeRelativePortDistributor(final float[] portRanks, final boolean assumePortOrderFixed,
             final int[][] nodePositions) {
-        super(portRanks, nodePositions);
-        this.assumePortOrderFixed = assumePortOrderFixed;
+        super(portRanks, nodePositions, assumePortOrderFixed);
     }
 
     /**
@@ -56,8 +53,7 @@ public final class NodeRelativePortDistributor extends AbstractBarycenterPortDis
      */
     private NodeRelativePortDistributor(final float[] portRanks,
             final boolean assumePortOrderFixed) {
-        super(portRanks);
-        this.assumePortOrderFixed = assumePortOrderFixed;
+        super(portRanks, assumePortOrderFixed);
     }
 
     /**

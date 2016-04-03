@@ -46,6 +46,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     private final IConstraintResolver constraintResolver;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
     private final BarycenterState[][] barycenterState;
+    /** The Barycenter PortDistributor is used to ask for the port ranks.*/
     private AbstractBarycenterPortDistributor portDistributor;
 
     /**
