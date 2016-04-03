@@ -87,11 +87,8 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         IntermediateProcessingConfiguration configuration =
                 IntermediateProcessingConfiguration.fromExisting(INTERMEDIATE_PROCESSING_CONFIGURATION);
         
-        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
-                GraphProperties.NON_FREE_PORTS)) {
             
             configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_LIST_SORTER);
-        }
         
         return configuration;
     }

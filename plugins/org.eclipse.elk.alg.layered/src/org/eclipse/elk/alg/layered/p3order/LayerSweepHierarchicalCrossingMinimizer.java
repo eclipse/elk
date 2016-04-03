@@ -410,9 +410,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
             final LGraph graph) {
         IntermediateProcessingConfiguration configuration = IntermediateProcessingConfiguration
                 .fromExisting(INTERMEDIATE_PROCESSING_CONFIGURATION);
-
-
-            configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_LIST_SORTER);
+        configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_LIST_SORTER);
 
         return configuration;
     }
