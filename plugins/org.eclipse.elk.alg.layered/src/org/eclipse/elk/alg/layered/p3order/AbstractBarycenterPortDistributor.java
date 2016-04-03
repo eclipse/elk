@@ -258,8 +258,7 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
             } else if (northSouthPort) {
                 // For northern and southern ports, the sum directly corresponds to the
                 // barycenter value to be used.
-                final float barycenter = sum;
-                portBarycenter[port.id] = barycenter;
+                portBarycenter[port.id] = sum;
             }
         }
     }

@@ -62,7 +62,6 @@ public final class PortSideProcessor implements ILayoutProcessor {
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 process(node);
-                node.cachePortSides();
             }
         }
         
