@@ -29,8 +29,8 @@ import org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy
  * Declarations for the ELK Layered layout algorithm.
  */
 bundle {
-    class properties.LayeredOptions  
-    idPrefix org.eclipse.elk.layered  
+    class properties.LayeredOptions
+    idPrefix org.eclipse.elk.layered
 }
 
 algorithm layered(LayeredLayoutProvider) {
@@ -218,7 +218,7 @@ group crossingMinimization {
     option strategy: CrossingMinimizationStrategy {
         label "Crossing Minimization Strategy"
         description "Strategy for crossing minimization."
-        default = CrossingMinimizationStrategy.LAYER_SWEEP
+        default = CrossingMinimizationStrategy.HIERARCHICAL_LAYER_SWEEP
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.crossMin
     }
@@ -424,15 +424,13 @@ advanced option crossMinRecursive: boolean {
 	description "Process all hierarchical graphs recursively."
 	default = false
 	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.crossMinRec
 }
 
 advanced option recursiveBoundary: float {
 	label "Recursive sweep"
 	description "Process all hierarchical graphs recursively."
-	default = 0.2f
+	default = 0f
 	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.recursiveBoundary
 }
 
 advanced option contentAlignment: EnumSet<ContentAlignment> {

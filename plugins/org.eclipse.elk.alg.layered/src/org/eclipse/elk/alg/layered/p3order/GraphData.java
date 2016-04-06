@@ -156,6 +156,7 @@ class GraphData {
         // graph except when explicitly set not to do so.
         processRecursively = processAllGraphsRecursively || crossMinType.alwaysImproves()
                 || assessWhetherToProcessRecursively();
+        // System.out.println(processRecursively ? "Recursive" : "Hierarchical");
 
         int[] portPos = new int[portId];
         crossCounter = AllCrossingsCounter.createAssumingFixedPortOrder(inLayerEdgeCount,
@@ -205,12 +206,8 @@ class GraphData {
     }
     
     // TODO-alan integrate and reduce sweep number
-    // TODO-alan heuristic not done recursively??
-    // TODO-alan different hierarchy levels.
     // TODO-alan comment
-    // TODO-alan integrate heuristic
-    // TODO-alan ignore nodes with only one outgoing?
-    // TODO-alan remove recursive boundary.
+    // TODO-alan rename recursive boundary.
     // TODO-alan think about thouroughness
     private boolean assessWhetherToProcessRecursively() {
         int pathsToRandom = 0;
@@ -252,7 +249,9 @@ class GraphData {
             }
         }
         float boundary = lGraph.getProperty(LayeredOptions.RECURSIVE_BOUNDARY);
-        return !hasParent || considerHierarchical && pathsToRandom * boundary > pathsToHierarchical;
+        double allPaths = pathsToRandom + pathsToHierarchical;
+        double normalized = allPaths == 0 ? Double.MAX_VALUE : (pathsToRandom - pathsToHierarchical) / allPaths;
+        return !hasParent || considerHierarchical && normalized > boundary;
     }
 
     private boolean isEasternExternalPortDummy(final LNode node) {
