@@ -1,5 +1,5 @@
-/*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+/***************************e******************ta******1*********ata******************ata
+ * Copyright (c) 2011, 2015 Kftiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -23,6 +24,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
+import org.eclipse.elk.alg.layered.p3order.GraphData.NodeInfo;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
@@ -30,6 +32,7 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.graph.properties.IProperty;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,6 +40,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MagicNumber
@@ -438,8 +442,8 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
      */
     @Test
     public void givenCrossWithNoExternalPortDummiesOnOneNestedGraph_ShouldRemoveCrossing() {
-        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
-        LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode leftOuterNode = addNodeToLayer(makeLayer());
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
         LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
         LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
         addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[0]);
@@ -878,11 +882,11 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         List<LPort> expectedPortOrderRight = Lists.newArrayList(rightOuterNode.getPorts().get(1),
                 rightOuterNode.getPorts().get(0));
 
+        setOnAllGraphs(LayeredOptions.RECURSIVE_BOUNDARY, -1f, graph);
+
         setUpAndMinimizeCrossings();
-        if (crossMinType.isDeterministic()) {
-            assertThat(getGraph().getLayers().get(1).getNodes().get(0).getPorts(),
+        assertThat(getGraph().getLayers().get(1).getNodes().get(0).getPorts(),
                     is(expectedPortOrderRight));
-        }
     }
 
     /**
@@ -897,7 +901,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
     @Test
     public void givenGraphWhichMustTransportSwitchedPortOrderThroughHierarchy_ShouldContainNoCrossing() {
         LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
-        // setFixedOrderConstraint(leftNode);
+         setFixedOrderConstraint(leftNode);
         LNode middleOuterNode = addNodeToLayer(makeLayer(getGraph()));
         LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
 
@@ -945,7 +949,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
         LNode middleOuterNode = addNodeToLayer(makeLayer(getGraph()));
         LNode rightNode = addNodeToLayer(makeLayer(getGraph()));
-        // setFixedOrderConstraint(rightNode);
+         setFixedOrderConstraint(rightNode);
 
         LPort[] leftPortsRightNode = addPortsOnSide(2, rightNode, PortSide.WEST);
         LPort[] middleOuterRightPorts = addPortsOnSide(2, middleOuterNode, PortSide.EAST);
@@ -1348,6 +1352,316 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
     }
 
     // TODO-alan change design to be able to test thouroughness value with dummy heuristic.
+
+    /**
+     * <pre>
+     * _______  _____
+     * |   *-+--+-* |
+     * |   *-+--+-* |
+     * |_____|  |___|
+     * </pre>
+     */
+    @Test
+    public void needsHierarchical_checkWhetherMarked() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer());
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
+        LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
+        addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[1]);
+        addEdgeBetweenPorts(leftOuterPorts[1], rightOuterPorts[0]);
+        makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
+        makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
+        
+        setUpAndMinimizeCrossings();
+        
+        List<GraphData> graphData = crossMin.getGraphData();
+        for (GraphData data : graphData) {
+            if (data.hasParent()) {
+                assertFalse(data.processRecursively());
+            }
+        }
+    }
+    /**
+     * <pre>
+     * _______   _____
+     * |   *-+-*-+-* |
+     * |   *-+-*-+-* |
+     * |_____|   |___|
+     *         ^
+     *   fixed port order
+     * </pre>
+     */
+    @Test
+    public void fixedOrderMustTransfer_checkWhetherMarked() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(2, makeLayer());
+        setFixedOrderConstraint(middleNodes[0]);
+        setFixedOrderConstraint(middleNodes[1]);
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
+        LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
+        eastWestEdgeFromTo(leftOuterPorts[0], middleNodes[0]);
+        eastWestEdgeFromTo(leftOuterPorts[1], middleNodes[1]);
+        eastWestEdgeFromTo(middleNodes[0], rightOuterPorts[0]);
+        eastWestEdgeFromTo(middleNodes[1], rightOuterPorts[1]);
+        makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
+        makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
+
+        setUpAndMinimizeCrossings();
+
+        List<GraphData> graphData = crossMin.getGraphData();
+        for (GraphData data : graphData) {
+            if (data.hasParent()) {
+                assertFalse(data.processRecursively());
+            }
+        }
+    }
+
+    /**
+     * <pre>
+     * _______ ___ _____
+     * |   *-+-|*|-+-* |
+     * |     | |_| |   |
+     * |     | ___ |   |
+     * |   *-+-|*|-+-* |
+     * |     | |_| |   |
+     * |_____|     |___|
+     * </pre>
+     */
+    @Test
+    public void hierarchicalMustTransfer_checkWhetherMarked() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(2, makeLayer());
+        addNodeToLayer(makeLayer(nestedGraph(middleNodes[0])));
+        addNodeToLayer(makeLayer(nestedGraph(middleNodes[1])));
+
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
+        LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
+        eastWestEdgeFromTo(leftOuterPorts[0], middleNodes[0]);
+        eastWestEdgeFromTo(leftOuterPorts[1], middleNodes[1]);
+        eastWestEdgeFromTo(middleNodes[0], rightOuterPorts[0]);
+        eastWestEdgeFromTo(middleNodes[1], rightOuterPorts[1]);
+        makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
+        makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
+        
+        setUpAndMinimizeCrossings();
+        
+        setOnAllGraphs(LayeredOptions.RECURSIVE_BOUNDARY, -1f, graph);
+        List<GraphData> graphData = crossMin.getGraphData();
+        assertFalse(graphData.get(leftOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).processRecursively());
+        assertFalse(
+                graphData.get(rightOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).processRecursively());
+    }
+
+    
+    /**
+     * <pre>
+     * _______  _____
+     * |   *-+--+   |
+     * |   *-+--+   |
+     * |_____|  |___|
+     *            ^
+     *      fixed port order
+     * </pre>
+     */
+    @Test
+    public void needsHierarchicalBecauseOfFixedOrder_checkWhetherMarked() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer());
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
+        setFixedOrderConstraint(rightOuterNode);
+        LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
+        addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[1]);
+        addEdgeBetweenPorts(leftOuterPorts[1], rightOuterPorts[0]);
+        makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
+        
+        setUpAndMinimizeCrossings();
+        
+        List<GraphData> graphData = crossMin.getGraphData();
+        for (GraphData data : graphData) {
+            if (data.hasParent()) {
+                assertFalse(data.processRecursively());
+            }
+        }
+    }
+    /**
+     * <pre>
+     * _______  _____
+     * |     +--+-* |
+     * |     +--+-* |
+     * |_____|  |___|
+     *    ^
+     * fixed port order
+     * </pre>
+     */
+    @Test
+    public void needsHierarchicalBecauseOfFixedOrder2_checkWhetherMarked() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer());
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
+        setFixedOrderConstraint(leftOuterNode);
+        LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
+        addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[1]);
+        addEdgeBetweenPorts(leftOuterPorts[1], rightOuterPorts[0]);
+        makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
+        
+        setUpAndMinimizeCrossings();
+        
+        List<GraphData> graphData = crossMin.getGraphData();
+        for (GraphData data : graphData) {
+            if (data.hasParent()) {
+                assertFalse(data.processRecursively());
+            }
+        }
+    }
+
+    /**
+     * <pre>
+     *    _____
+     * *--+-* |
+     * *--+-* |
+     * ^  |___|
+     * |
+     * fixed port order
+     * </pre>
+     */
+    @Test
+    public void fixedOrderOnlyOneOutgoing_shouldNotBeMarked() {
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
+        setFixedOrderConstraint(leftNodes);
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
+        eastWestEdgeFromTo(leftNodes[0], rightOuterPorts[1]);
+        eastWestEdgeFromTo(leftNodes[1], rightOuterPorts[0]);
+        makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
+
+        setUpAndMinimizeCrossings();
+        List<GraphData> graphData = crossMin.getGraphData();
+        for (GraphData data : graphData) {
+            if (data.hasParent()) {
+                NodeInfo nodeInfo = data.parentGraphData().getNodeInfo()[data.parent().getLayer().id][data.parent().id];
+                assertFalse(nodeInfo.markedEast() || nodeInfo.markedWest());
+            }
+        }
+    }
+
+    /**
+     * <pre>
+     * _______  _____
+     * |   * +--+ * |
+     * |   * +--+ * |
+     * |_____|  |___|
+     * </pre>
+     */
+    @Test
+    public void needsCrossHierarchy_checkWhetherMarked() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer());
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
+        setFixedOrderConstraint(rightOuterNode);
+        LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
+        addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[1]);
+        addEdgeBetweenPorts(leftOuterPorts[1], rightOuterPorts[0]);
+
+        LGraph leftNestedGraph = nestedGraph(leftOuterNode);
+        addNodesToLayer(2, makeLayer(leftNestedGraph));
+        addExternalPortDummiesToLayer(makeLayer(leftNestedGraph), leftOuterPorts);
+        LGraph rightNestedGraph = nestedGraph(rightOuterNode);
+        addNodesToLayer(2, makeLayer(rightNestedGraph));
+        addExternalPortDummiesToLayer(makeLayer(rightNestedGraph), rightOuterPorts);
+
+        setUpAndMinimizeCrossings();
+        List<GraphData> graphData = crossMin.getGraphData();
+        for (GraphData data : graphData) {
+            if (data.hasParent()) {
+                assertFalse(data.processRecursively());
+            }
+        }
+    }
+
+    /**
+     * <pre>
+     *    _____
+     * *--+-* |
+     *    p-* |
+     *    |___|
+     * </pre>
+     * 
+     * p is unconnected port.
+     */
+    @Test
+    public void singleCrossHierarchEdge_needsNoCrossHierarchy() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode rightOuterNode = addNodeToLayer(makeLayer());
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
+        eastWestEdgeFromTo(leftNode, rightOuterPorts[1]);
+        
+        makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
+        
+        setUpAndMinimizeCrossings();
+        List<GraphData> graphData = crossMin.getGraphData();
+        for (GraphData data : graphData) {
+            if (data.hasParent()) {
+                assertFalse(data.processRecursively());
+            }
+        }
+    }
+
+    /**
+     * <pre>
+     *_____   _______
+     *| *-+---p *\  |
+     *|   |   | *-* |
+     *|   |   |  x  |
+     *|   |   | * | |
+     *| *-+---+-*-*-+-*
+     *|   |   |     |‚
+     *|___|   |_____|
+     * </pre>
+     * 
+     * p is unconnected port.
+     */
+    @Test
+    public void moreRandomThanHierarchicalPaths_ShouldNotCrossHierarchy() {
+        LNode leftOuterNode = addNodeToLayer(makeLayer());
+        LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
+        makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
+        LNode middleOuterNode = addNodeToLayer(makeLayer());
+        LNode rightNode = addNodeToLayer(makeLayer());
+        LPort[] rightOuterPorts = addPortsOnSide(1, middleOuterNode, PortSide.EAST);
+        LPort[] middleNodeLeftOuterPorts = addPortsOnSide(2, middleOuterNode, PortSide.WEST);
+        addEdgeBetweenPorts(leftOuterPorts[0], middleNodeLeftOuterPorts[1]);
+        addEdgeBetweenPorts(leftOuterPorts[1], middleNodeLeftOuterPorts[0]);
+        eastWestEdgeFromTo(rightOuterPorts[0], rightNode);
+
+        LGraph nestedGraph = nestedGraph(middleOuterNode);
+        LNode[] leftDummies = addExternalPortDummiesToLayer(makeLayer(nestedGraph), middleNodeLeftOuterPorts);
+        LNode[] leftInnerNodes = addNodesToLayer(4, makeLayer(nestedGraph));
+        LNode[] rightInnerNodes = addNodesToLayer(2, makeLayer(nestedGraph));
+        LNode[] rightDummies = addExternalPortDummiesToLayer(makeLayer(nestedGraph), rightOuterPorts);
+        eastWestEdgeFromTo(leftDummies[0], leftInnerNodes[3]);
+        eastWestEdgeFromTo(leftInnerNodes[0], rightInnerNodes[0]);
+        eastWestEdgeFromTo(leftInnerNodes[1], rightInnerNodes[0]);
+        eastWestEdgeFromTo(leftInnerNodes[1], rightInnerNodes[1]);
+        eastWestEdgeFromTo(leftInnerNodes[2], rightInnerNodes[0]);
+        eastWestEdgeFromTo(leftInnerNodes[3], rightInnerNodes[1]);
+        eastWestEdgeFromTo(rightInnerNodes[1], rightDummies[0]);
+
+        setUpAndMinimizeCrossings();
+        List<GraphData> graphData = crossMin.getGraphData();
+        assertTrue(graphData.get(nestedGraph.id).processRecursively());
+    }
+
+    private <T> void setOnAllGraphs(final IProperty<T> prop, final T val, final LGraph graph) {
+        graph.setProperty(prop, val);
+        for (LNode node : Iterables.concat(graph)) {
+            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            if (nestedGraph != null) {
+                setOnAllGraphs(prop, val, nestedGraph);
+            }
+        }
+    }
 
     private LPort[] reverse(final LPort[] rightOuterPorts) {
         LPort[] res = new LPort[rightOuterPorts.length];

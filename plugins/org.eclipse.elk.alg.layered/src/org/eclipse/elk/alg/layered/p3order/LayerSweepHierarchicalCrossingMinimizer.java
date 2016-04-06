@@ -92,11 +92,11 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
             Consumer<GraphData> minimizingMethod = crossMinType.alwaysImproves()
                     ? gData -> minimizeCrossingsNoCounter(gData)
                     : gData -> minimizeCrossingsWithCounter(gData);
-            if (processAllGraphsRecursively) {
+//            if (processAllGraphsRecursively) {
                 iterateAndMinimize(graphsToSweepOn, minimizingMethod);
-            } else {
-                minimizingMethod.accept(graphData.get(layeredGraph.id));
-            }
+//            } else {
+//                minimizingMethod.accept(graphData.get(layeredGraph.id));
+//            }
         } else {
             iterateAndMinimize(graphsToSweepOn, gData -> compareDifferentRandomizedLayouts(gData));
         }
@@ -380,9 +380,9 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
     private Iterable<GraphData> initialize(final boolean processAllGraphsRecursively,
             final LGraph rootGraph) {
         graphData = Lists.newArrayList();
-        Deque<GraphData> graphsToSweepOn = Lists.newLinkedList();
         random = rootGraph.getProperty(InternalProperties.RANDOM);
         randomSeed = random.nextLong();
+        Deque<GraphData> graphsToSweepOn = Lists.newLinkedList();
         List<LGraph> graphs = Lists.<LGraph>newArrayList(rootGraph);
         int i = 0;
         while (i < graphs.size()) {
@@ -412,6 +412,13 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
         configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_LIST_SORTER);
 
         return configuration;
+    }
+
+    /**
+     * @return the graphData
+     */
+    public List<GraphData> getGraphData() {
+        return graphData;
     }
 
     /** intermediate processing configuration. */

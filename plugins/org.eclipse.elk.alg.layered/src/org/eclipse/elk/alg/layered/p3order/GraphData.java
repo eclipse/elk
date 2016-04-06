@@ -12,9 +12,11 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -30,8 +32,10 @@ import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -46,6 +50,7 @@ class GraphData {
     private final LGraph lGraph;
     private final LNode[][] currentNodeOrder;
     private final int[][] nodePositions;
+    private final NodeInfo[][] nodeInfo;
     private SweepCopy currentlyBestNodeAndPortOrder;
     private SweepCopy bestNodeNPortOrder;
 
@@ -63,6 +68,7 @@ class GraphData {
     private final boolean externalPorts;
     private final CrossMinType crossMinType;
     private final Map<Integer, Integer> childNumPorts;
+    private GraphData parentGraphData;
 
     /**
      * Create object collecting info about compound graph.
@@ -89,6 +95,7 @@ class GraphData {
         int graphSize = graph.getLayers().size();
         Double[][] barycenters = new Double[graphSize][];
         nodePositions = new int[graphSize][];
+        nodeInfo = new NodeInfo[graphSize][];
         boolean[] hasNorthSouthPorts = new boolean[graphSize];
         int[] inLayerEdgeCount = new int[graphSize];
         Multimap<LNode, LNode> layoutUnits = LinkedHashMultimap.create();
@@ -100,12 +107,15 @@ class GraphData {
             layer.id = layerId++;
             List<LNode> nodes = layer.getNodes();
             nodePositions[layerIndex] = new int[nodes.size()];
+            nodeInfo[layerIndex] = new NodeInfo[nodes.size()];
             barycenters[layerIndex] = new Double[nodes.size()];
             int nodeId = 0;
             for (int nodeIndex = 0; nodeIndex < nodes.size(); nodeIndex++) {
                 LNode node = nodes.get(nodeIndex);
                 node.id = nodeId++;
                 nodePositions[node.getLayer().id][node.id] = nodeIndex;
+                nodeInfo[node.getLayer().id][node.id] = new NodeInfo();
+                // Consider mergin with position
 
                 if (hasNestedGraph(node)) {
                     LGraph nestedGraph = nestedGraphOf(node);
@@ -136,13 +146,16 @@ class GraphData {
         canSweepIntoThisGraph = true;
         parent = lGraph.getProperty(InternalProperties.PARENT_LNODE);
         hasParent = parent != null;
-        if (hasParent && crossMinType == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
-            graphs.get(parent.getGraph().id).childNumPorts.put(lGraph.id, portId);
+        if (hasParent) {
+            parentGraphData = graphs.get(parent.getGraph().id);
+            if (crossMinType == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
+                parentGraphData.childNumPorts.put(lGraph.id, portId);
+            }
         }
-        // When processing a deterministic cross minimizer, we mostly want to sweep into the
+        // When processing a cross minimizer which always improves, we mostly want to sweep into the
         // graph except when explicitly set not to do so.
-        processRecursively = processAllGraphsRecursively
-                || !crossMinType.isDeterministic() && assessWhetherToProcessRecursively();
+        processRecursively = processAllGraphsRecursively || crossMinType.alwaysImproves()
+                || assessWhetherToProcessRecursively();
 
         int[] portPos = new int[portId];
         crossCounter = AllCrossingsCounter.createAssumingFixedPortOrder(inLayerEdgeCount,
@@ -190,35 +203,146 @@ class GraphData {
             throw new UnsupportedOperationException("This heuristic is not implemented yet.");
         }
     }
-
+    
+    // TODO-alan integrate and reduce sweep number
+    // TODO-alan heuristic not done recursively??
+    // TODO-alan different hierarchy levels.
+    // TODO-alan comment
+    // TODO-alan integrate heuristic
+    // TODO-alan ignore nodes with only one outgoing?
+    // TODO-alan remove recursive boundary.
+    // TODO-alan think about thouroughness
     private boolean assessWhetherToProcessRecursively() {
-        float recursiveBoundary = lGraph.getProperty(LayeredOptions.RECURSIVE_BOUNDARY);
-        double val =
-                (calculateConnectivity(PortSide.WEST) + calculateConnectivity(PortSide.EAST)) / 2;
-        return val < recursiveBoundary;
-    }
+        int pathsToRandom = 0;
+        int pathsToHierarchical = 0;
+        boolean considerHierarchical =
+                hasParent && (parentGraphData.nodeInfo[parent.getLayer().id][parent.id].considerEastern
+                        || parentGraphData.nodeInfo[parent.getLayer().id][parent.id].considerWestern);
 
-    private double calculateConnectivity(final PortSide side) {
-        int numOutsideEdges = 0;
-        int numUnconnectedEdges = 0;
-        for (LNode[] layer : currentNodeOrder) {
-            boolean isHierarchicalDummyLayer = isExternalPortDummy(layer[0]);
-            for (LNode node : layer) {
-                if (isHierarchicalDummyLayer) {
-                    if (hasPortsOnSide(node, side.opposed())) {
-                        numOutsideEdges++;
+        for (LNode node : Iterables.concat(lGraph)) {
+            NodeInfo currentNode = nodeInfoFor(node);
+            if (hasParent && considerHierarchical) {
+                if (node.getType() == NodeType.EXTERNAL_PORT) {
+                    currentNode.hierarchicalInfluence = 1;
+                    if (isEasternExternalPortDummy(node)) {
+                        pathsToHierarchical += currentNode.connectedEdges;
                     }
-                } else if (!hasPortsOnSide(node, side)) {
-                    numUnconnectedEdges++;
+                } else {
+                    if (node.getPorts(PortSide.WEST).isEmpty()) {
+                        currentNode.randomInfluence = 1;
+                    }
+                    if (node.getPorts(PortSide.EAST).isEmpty()) {
+                        pathsToRandom += currentNode.connectedEdges;
+                    }
                 }
             }
+            if (node.getPorts().size() > 1 && (hasNestedGraph(node) || isPortOrderFixed(node))) {
+                markNodesConnectedByOutgoing(node);
+                if (currentNode.marked()) {
+                    considerNodesOnConnectedPath(currentNode);
+                }
+            }
+            for (LEdge edge : node.getOutgoingEdges()) {
+                LNode target = edge.getTarget().getNode();
+                NodeInfo targetNodeInfo = nodeInfoFor(target);
+                pathsToRandom += currentNode.randomInfluence;
+                pathsToHierarchical += currentNode.hierarchicalInfluence;
+                targetNodeInfo.transfer(currentNode);
+                targetNodeInfo.connectedEdges++;
+            }
         }
-        if (numOutsideEdges < 2) {
-            return 0;
-        } else if (numUnconnectedEdges == 0) {
-            return 1;
-        } else {
-            return (double) numOutsideEdges / (double) numUnconnectedEdges;
+        float boundary = lGraph.getProperty(LayeredOptions.RECURSIVE_BOUNDARY);
+        return !hasParent || considerHierarchical && pathsToRandom * boundary > pathsToHierarchical;
+    }
+
+    private boolean isEasternExternalPortDummy(final LNode node) {
+        return originPort(node).getSide() == PortSide.EAST;
+    }
+
+    private LPort originPort(final LNode node) {
+        return (LPort) node.getProperty(InternalProperties.ORIGIN);
+    }
+
+    /**
+     * @return the processRecursively
+     */
+    public boolean processRecursively() {
+        return processRecursively;
+    }
+
+    private void markNodesConnectedByOutgoing(final LNode node) {
+        for (LEdge edge : node.getOutgoingEdges()) {
+            LNode target = edge.getTarget().getNode();
+            nodeInfoFor(target).mark(node);
+        }
+    }
+
+    private void considerNodesOnConnectedPath(final NodeInfo nInfo) {
+        nInfo.considerWestern();
+        for (LNode n : nInfo.connectedHierarchicalNodes()) {
+            nodeInfoFor(n).considerEastern();
+        }
+    }
+
+    private boolean isPortOrderFixed(final LNode node) {
+        return node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+    }
+
+    private NodeInfo nodeInfoFor(final LNode n) {
+        return nodeInfo[n.getLayer().id][n.id];
+    }
+
+    /**
+     * Collect info to determine whether we can process recursively without problems.
+     * @author alan
+     *
+     */
+    static class NodeInfo {
+        // TODO-alan maybe Integer set?
+        public int connectedEdges = 0;
+        private boolean marked;
+        private boolean considerEastern;
+        private boolean considerWestern;
+        private final Set<LNode> connectedHierarchicalNodes = new HashSet<>();
+        private int hierarchicalInfluence;
+        private int randomInfluence;
+    
+        public void transfer(final NodeInfo nodeInfo) { // TODO-alan test necessity
+            considerEastern |= nodeInfo.considerEastern;
+            marked |= nodeInfo.marked;
+            hierarchicalInfluence += nodeInfo.hierarchicalInfluence;
+            randomInfluence += nodeInfo.randomInfluence;
+            connectedHierarchicalNodes.addAll(nodeInfo.connectedHierarchicalNodes);
+            connectedEdges += nodeInfo.connectedEdges;
+        }
+
+        public void mark(final LNode hierarchicalNode) {
+            marked = true;
+            connectedHierarchicalNodes.add(hierarchicalNode);
+        }
+    
+        public void considerEastern() {
+            considerEastern = true;
+        }
+    
+        public Set<LNode> connectedHierarchicalNodes() {
+            return connectedHierarchicalNodes;
+        }
+    
+        public boolean marked() {
+            return marked;
+        }
+    
+        public boolean markedEast() {
+            return considerEastern;
+        }
+
+        public boolean markedWest() {
+            return considerWestern;
+        }
+    
+        public void considerWestern() {
+            considerWestern = true;
         }
     }
 
@@ -238,6 +362,7 @@ class GraphData {
         return nestedGraphOf(node) != null;
     }
 
+    //TODO-alan missing, might explain difference to old?
     private boolean[] getHyperedges(final LNode[][] nodeOrder) {
         boolean[] hasHyperedges = new boolean[nodeOrder.length];
         // for (int layerIndex = 0; layerIndex < nodeOrder.length - 1; layerIndex++) {
@@ -335,13 +460,6 @@ class GraphData {
     }
 
     /**
-     * @return the processRecursively
-     */
-    public boolean processRecursively() {
-        return processRecursively;
-    }
-
-    /**
      * @return the parent
      */
     public LNode parent() {
@@ -387,4 +505,19 @@ class GraphData {
         return crossMinType.isDeterministic() ? currentlyBestNodeAndPortOrder()
                 : bestNodeNPortOrder();
     }
+
+    /**
+     * @return the nodeInfo
+     */
+    public NodeInfo[][] getNodeInfo() {
+        return nodeInfo;
+    }
+
+    /**
+     * @return the parentGraphData
+     */
+    public GraphData parentGraphData() {
+        return parentGraphData;
+    }
+
 }
