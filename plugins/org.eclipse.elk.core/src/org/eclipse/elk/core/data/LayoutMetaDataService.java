@@ -66,16 +66,29 @@ public class LayoutMetaDataService {
         }
     }
 
-    /** mapping of layout provider identifiers to their data instances. */
+    /**
+     * Mapping of layout provider identifiers to their data instances.
+     */
     private final Map<String, LayoutAlgorithmData> layoutAlgorithmMap = Maps.newLinkedHashMap();
-    /** mapping of layout option identifiers to their data instances. */
+    /**
+     * Mapping of layout option identifiers to their data instances.
+     */
     private final Map<String, LayoutOptionData> layoutOptionMap = Maps.newLinkedHashMap();
-    /** mapping of layout category identifiers to their data instances. */
+    /**
+     * Mapping of legacy layout option identifiers to their data instances. Note that the actual layout option data
+     * contain the new identifiers. 
+     */
+    private final Map<String, LayoutOptionData> legacyLayoutOptionMap = Maps.newLinkedHashMap();
+    /**
+     * Mapping of layout category identifiers to their data instances.
+     */
     private final Map<String, LayoutCategoryData> layoutCategoryMap = Maps.newLinkedHashMap();
-    /** additional map of layout algorithm suffixes to data instances. */
+    /**
+     * Additional map of layout algorithm suffixes to data instances.
+     */
     private final Map<String, LayoutAlgorithmData> algorithmSuffixMap = Maps.newHashMap();
     /**
-     * additional map of layout option suffixes to data instances. For layout options this include the layout option's
+     * Additional map of layout option suffixes to data instances. For layout options this include the layout option's
      * group.
      */
     private final Map<String, LayoutOptionData> optionSuffixMap = Maps.newHashMap();
@@ -176,14 +189,15 @@ public class LayoutMetaDataService {
     }
 
     /**
-     * Returns the layout option data associated with the given identifier.
+     * Returns the layout option data associated with the given identifier. The identifier may be a legacy identifier.
      * 
      * @param id
      *            layout option identifier
      * @return the corresponding layout option data, or {@code null} if there is no option with the given identifier
      */
     public final LayoutOptionData getOptionData(final String id) {
-        return layoutOptionMap.get(id);
+        LayoutOptionData data = layoutOptionMap.get(id);
+        return data != null ? data : legacyLayoutOptionMap.get(id);
     }
 
     /**
@@ -203,7 +217,6 @@ public class LayoutMetaDataService {
      * @return the first layout option data that has the given suffix, or {@code null} if no option has that suffix
      */
     public final LayoutOptionData getOptionDataBySuffix(final String suffix) {
-
         if (suffix == null || suffix.trim().isEmpty()) {
             return null;
         }
@@ -231,6 +244,7 @@ public class LayoutMetaDataService {
      */
     public final List<LayoutOptionData> getOptionData(final LayoutAlgorithmData algorithmData,
             final LayoutOptionData.Target targetType) {
+        
         List<LayoutOptionData> optionDataList = new LinkedList<LayoutOptionData>();
         for (LayoutOptionData optionData : layoutOptionMap.values()) {
             if (algorithmData.knowsOption(optionData) || CoreOptions.ALGORITHM.equals(optionData)) {
@@ -288,7 +302,6 @@ public class LayoutMetaDataService {
 
         @Override
         public void register(final LayoutOptionData optionData) {
-            
             // #1 register fully qualified id
             String id = optionData.getId();
             layoutOptionMap.put(id, optionData);
@@ -322,7 +335,7 @@ public class LayoutMetaDataService {
             // #3 register legacy options
             if (optionData.getLegacyIds() != null) {
                 for (String legacyId : optionData.getLegacyIds()) {
-                    layoutOptionMap.put(legacyId, optionData);
+                    legacyLayoutOptionMap.put(legacyId, optionData);
                     String legacySuffix =
                             legacyId.substring(legacyId.lastIndexOf('.') + 1, legacyId.length());
                     // legacy ids are only considered as valid suffix if they are unique

@@ -19,7 +19,10 @@ import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KLabeledGraphElement;
 import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
@@ -105,6 +108,10 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     /**
      * Add and return a property holder for the given element class. If such a property holder is
      * already present, the previous instance is returned.
+     * 
+     * It is possible to configure options for every graph element by using {@code KGraphElement.class}
+     * as argument. Such options are overridden if a more specific type is configured as well,
+     * for instance {@code KNode.class}.
      */
     public IPropertyHolder configure(final Class<? extends KGraphElement> elementClass) {
         MapPropertyHolder result = classOptionMap.get(elementClass);
@@ -130,7 +137,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
         if (clearLayout) {
             layout.getProperties().clear();
         }
-        MapPropertyHolder classProperties = classOptionMap.get(element.getClass());
+        MapPropertyHolder classProperties = findClassOptions(element);
         MapPropertyHolder elementProperties = elementOptionMap.get(element);
         if (optionFilter != null) {
             if (classProperties != null) {
@@ -155,6 +162,48 @@ public class LayoutConfigurator implements IGraphElementVisitor {
                 layout.copyProperties(elementProperties);
             }
         }
+    }
+    
+    /**
+     * To allow the configuration of layout options using interfaces and super-interfaces, we have to manually check the
+     * type hierarchy when visiting a graph element. Since KGraph's type hierarchy is quite small, we do this case by
+     * case. The order of the cases is important, since configurations for more specific types should override the
+     * general case.
+     * 
+     * @return the most specific {@link MapPropertyHolder} fitting the passed {@code element}'s type.
+     */
+    private MapPropertyHolder findClassOptions(final KGraphElement element) {
+        MapPropertyHolder needle = null;
+
+        // most general
+        needle = getPropertyHolderOrDefault(element, KGraphElement.class, needle);
+        
+        needle = getPropertyHolderOrDefault(element, KLabel.class, needle);
+        
+        // labeled elements
+        needle = getPropertyHolderOrDefault(element, KLabeledGraphElement.class, needle);
+
+        // most specific
+        needle = getPropertyHolderOrDefault(element, KNode.class, needle);
+        needle = getPropertyHolderOrDefault(element, KPort.class, needle);
+        needle = getPropertyHolderOrDefault(element, KEdge.class, needle);
+        
+        return needle;
+    }
+    
+    /**
+     * Checks if the {@link #classOptionMap} contains an entry for the passed {@code clazz} 
+     * and returns it. If not, it returns the {@code old} value.
+     */
+    private MapPropertyHolder getPropertyHolderOrDefault(final KGraphElement element, final Class<?> clazz,
+            final MapPropertyHolder old) {
+        if (clazz.isAssignableFrom(element.getClass())) {
+            MapPropertyHolder holder = classOptionMap.get(clazz);
+            if (holder != null) {
+                return holder;
+            }
+        }
+        return old;
     }
     
     /**

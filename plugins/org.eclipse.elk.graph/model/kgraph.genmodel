@@ -4,10 +4,9 @@
     modelDirectory="/org.eclipse.elk.graph/src" editDirectory="/org.eclipse.elk.graph.edit/src"
     editorDirectory="/org.eclipse.elk.graph.editor/src" modelPluginID="org.eclipse.elk.graph"
     modelName="KGraph" editPluginClass="org.eclipse.elk.graph.provider.KGraphEditPlugin"
-    editorPluginClass="org.eclipse.elk.graph.presentation.KGraphEditorPlugin"
-    testSuiteClass="org.eclipse.elk.graph.tests.KGraphAllTests" importerID="org.eclipse.emf.importer.ecore"
-    complianceLevel="5.0" copyrightFields="false" editPluginID="org.eclipse.elk.graph.edit"
-    language="">
+    editorPluginClass="org.eclipse.elk.graph.presentation.KGraphEditorPlugin" testSuiteClass="org.eclipse.elk.graph.tests.KGraphAllTests"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    editPluginID="org.eclipse.elk.graph.edit" language="">
   <foreignModel>kgraph.ecore</foreignModel>
   <genPackages prefix="KGraph" basePackage="org.eclipse.elk" disposableProviderFactory="true"
       fileExtensions="kgraph,kgx" ecorePackage="kgraph.ecore#/">
@@ -52,12 +51,6 @@
           propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/sourcePort"/>
       <genFeatures notify="false" createChild="false" propertyDescription="The target port, which may be null for graphs without ports"
           propertySortChoices="true" ecoreFeature="ecore:EReference kgraph.ecore#//KEdge/targetPort"/>
-      <genOperations ecoreOperation="kgraph.ecore#//KEdge/connectSourcePort">
-        <genParameters ecoreParameter="kgraph.ecore#//KEdge/connectSourcePort/port"/>
-      </genOperations>
-      <genOperations ecoreOperation="kgraph.ecore#//KEdge/connectTargetPort">
-        <genParameters ecoreParameter="kgraph.ecore#//KEdge/connectTargetPort/port"/>
-      </genOperations>
     </genClasses>
     <genClasses ecoreClass="kgraph.ecore#//KPort">
       <genFeatures property="None" notify="false" createChild="false" propertyDescription="The node that contains this port"
@@ -84,6 +77,7 @@
       <genOperations ecoreOperation="kgraph.ecore#//IPropertyHolder/setProperty">
         <genParameters ecoreParameter="kgraph.ecore#//IPropertyHolder/setProperty/property"/>
         <genParameters ecoreParameter="kgraph.ecore#//IPropertyHolder/setProperty/value"/>
+        <genTypeParameters ecoreTypeParameter="kgraph.ecore#//IPropertyHolder/setProperty/T"/>
       </genOperations>
       <genOperations ecoreOperation="kgraph.ecore#//IPropertyHolder/getProperty">
         <genParameters ecoreParameter="kgraph.ecore#//IPropertyHolder/getProperty/property"/>

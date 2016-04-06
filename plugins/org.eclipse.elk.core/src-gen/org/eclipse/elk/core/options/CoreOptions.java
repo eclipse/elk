@@ -418,6 +418,22 @@ public class CoreOptions implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #VALIDATE_OPTIONS}.
+   */
+  private final static boolean VALIDATE_OPTIONS_DEFAULT = true;
+  
+  /**
+   * Whether layout options shall be validated before any layout algorithm is applied. If this
+   * option is enabled and at least one error is found, the layout process is aborted and a message
+   * is shown to the user.
+   */
+  public final static IProperty<Boolean> VALIDATE_OPTIONS = new Property<Boolean>(
+            "org.eclipse.elk.validateOptions",
+            VALIDATE_OPTIONS_DEFAULT,
+            null,
+            null);
+  
+  /**
    * Default value for {@link #ZOOM_TO_FIT}.
    */
   private final static boolean ZOOM_TO_FIT_DEFAULT = false;
@@ -1278,6 +1294,19 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.progressBar"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.validateOptions",
+        "",
+        "Validate Options",
+        "Whether layout options shall be validated before any layout algorithm is applied. If this option is enabled and at least one error is found, the layout process is aborted and a message is shown to the user.",
+        VALIDATE_OPTIONS_DEFAULT,
+        null,
+        null,
+        LayoutOptionData.Type.BOOLEAN,
+        boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.HIDDEN
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.zoomToFit",

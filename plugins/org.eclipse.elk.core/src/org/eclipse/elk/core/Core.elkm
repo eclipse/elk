@@ -725,6 +725,16 @@ global option progressBar: boolean {
 	legacyIds de.cau.cs.kieler.progressBar
 }
 
+global option validateOptions: boolean {
+    label "Validate Options"
+    description
+        "Whether layout options shall be validated before any layout algorithm is applied. If this
+        option is enabled and at least one error is found, the layout process is aborted and a message
+        is shown to the user."
+    default = true
+    targets parents
+}
+
 global option zoomToFit: boolean {
 	label "Zoom to Fit"
 	description "Whether the zoom level shall be set to view the whole diagram after layout."

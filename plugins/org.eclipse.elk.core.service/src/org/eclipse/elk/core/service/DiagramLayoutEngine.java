@@ -12,7 +12,10 @@ package org.eclipse.elk.core.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -21,8 +24,11 @@ import java.util.concurrent.ExecutorService;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.GraphIssue;
+import org.eclipse.elk.core.GraphValidationException;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
@@ -35,6 +41,7 @@ import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkCancelIndicator;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.IGraphElementVisitor;
+import org.eclipse.elk.core.util.IValidatingGraphElementVisitor;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.KEdge;
@@ -54,10 +61,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
@@ -320,6 +329,12 @@ public class DiagramLayoutEngine {
      */
     @Inject
     private IGraphLayoutEngine graphLayoutEngine;
+    
+    /**
+     * Provider for validators of layout options.
+     */
+    @Inject
+    private Provider<LayoutOptionValidator> layoutOptionValidatorProvider;
     
     /**
      * Perform layout on the given workbench part and diagram part. The layout operation is wrapped in a
@@ -591,25 +606,37 @@ public class DiagramLayoutEngine {
             }
         }
         
+        // Set up graph validators
+        LinkedList<IGraphElementVisitor> visitors = new LinkedList<IGraphElementVisitor>();
+        if (params.getGlobalSettings().getProperty(CoreOptions.VALIDATE_OPTIONS)) {
+            visitors.add(layoutOptionValidatorProvider.get());
+        }
+        
         // Notify listeners of the to-be-executed layout
         LayoutConnectorsService.getInstance().fireLayoutAboutToStart(mapping);
         
         IStatus status = null;
         if (params.configurators.isEmpty()) {
             // Perform layout without any extra configuration
-            status = layout(mapping, progressMonitor);
+            IGraphElementVisitor[] visitorsArray = visitors.toArray(new IGraphElementVisitor[visitors.size()]);
+            status = layout(mapping, progressMonitor, visitorsArray);
         } else if (params.configurators.size() == 1) {
             // Perform layout once with an extra configuration
-            status = layout(mapping, progressMonitor, params.configurators.get(0));
+            visitors.addFirst(params.configurators.get(0));
+            IGraphElementVisitor[] visitorsArray = visitors.toArray(new IGraphElementVisitor[visitors.size()]);
+            status = layout(mapping, progressMonitor, visitorsArray);
         } else {
             // Perform layout multiple times with different configurations
             progressMonitor.begin("Diagram layout engine", params.configurators.size());
             ListIterator<LayoutConfigurator> configIter = params.configurators.listIterator();
             while (configIter.hasNext()) {
-                status = layout(mapping, progressMonitor, configIter.next());
+                visitors.addFirst(configIter.next());
+                IGraphElementVisitor[] visitorsArray = visitors.toArray(new IGraphElementVisitor[visitors.size()]);
+                status = layout(mapping, progressMonitor, visitorsArray);
                 if (!status.isOK()) {
                     break;
                 }
+                visitors.removeFirst();
                 
                 // If an additional layout configurator is attached to the graph, consider it in the future
                 LayoutConfigurator addConfig = mapping.getLayoutGraph().getData(KShapeLayout.class).getProperty(
@@ -655,7 +682,7 @@ public class DiagramLayoutEngine {
         try {
             // Configure the layout graph by applying the given visitors
             if (visitors.length > 0) {
-                ElkUtil.applyVisitors(mapping.getLayoutGraph(), visitors);
+                applyVisitors(mapping.getLayoutGraph(), visitors);
             }
             
             // Export the layout graph for debugging
@@ -679,6 +706,55 @@ public class DiagramLayoutEngine {
         } catch (Throwable exception) {
             return new Status(IStatus.ERROR, ElkServicePlugin.PLUGIN_ID,
                     "Failed to perform diagram layout.", exception);
+        }
+    }
+    
+    /**
+     * Apply the given graph element visitors to the content of the given graph. If validators are involved
+     * and at least one error is found, a {@link GraphValidationException} is thrown.
+     * 
+     * @throws GraphValidationException if an error is found while validating the graph
+     */
+    protected void applyVisitors(final KNode graph, final IGraphElementVisitor... visitors)
+                throws GraphValidationException {
+        for (int i = 0; i < visitors.length; i++) {
+            visitors[i].visit(graph);
+        }
+        Iterator<KGraphElement> allElements = Iterators.filter(graph.eAllContents(), KGraphElement.class);
+        while (allElements.hasNext()) {
+            KGraphElement element = allElements.next();
+            for (int i = 0; i < visitors.length; i++) {
+                visitors[i].visit(element);
+            }
+        }
+        
+        // Gather validator results and generate an error message
+        List<GraphIssue> allIssues = null;
+        for (int i = 0; i < visitors.length; i++) {
+            if (visitors[i] instanceof IValidatingGraphElementVisitor) {
+                Collection<GraphIssue> issues = ((IValidatingGraphElementVisitor) visitors[i]).getIssues();
+                if (!issues.isEmpty()) {
+                    if (allIssues == null) {
+                        allIssues = new ArrayList<GraphIssue>(issues);
+                    } else {
+                        allIssues.addAll(issues);
+                    }
+                }
+            }
+        }
+        if (allIssues != null) {
+            StringBuilder message = new StringBuilder();
+            for (GraphIssue issue : allIssues) {
+                if (message.length() > 0) {
+                    message.append("\n");
+                }
+                message.append(issue.getSeverity())
+                    .append(": ")
+                    .append(issue.getMessage())
+                    .append("\n\tat ");
+                ElkUtil.printElementPath(issue.getElement(), message);
+            }
+            throw new GraphValidationException(message.toString(), allIssues);
         }
     }
     

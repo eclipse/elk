@@ -25,9 +25,9 @@ import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -1059,17 +1059,34 @@ public final class ElkUtil {
     }
     
     /**
-     * Apply the given graph element visitors to the content of the given graph.
+     * Print information on the given graph element to the given string builder.
      */
-    public static void applyVisitors(final KNode graph, final IGraphElementVisitor... visitors) {
-        for (int i = 0; i < visitors.length; i++) {
-            visitors[i].visit(graph);
+    public static void printElementPath(final KGraphElement element, final StringBuilder builder) {
+        if (element.eContainer() instanceof KGraphElement) {
+            printElementPath((KGraphElement) element.eContainer(), builder);
+            builder.append(" > ");
+        } else {
+            builder.append("Root ");
         }
-        Iterator<KGraphElement> allElements = Iterators.filter(graph.eAllContents(), KGraphElement.class);
-        while (allElements.hasNext()) {
-            KGraphElement element = allElements.next();
-            for (int i = 0; i < visitors.length; i++) {
-                visitors[i].visit(element);
+        String className = element.eClass().getName();
+        if (className.startsWith("K")) {
+            builder.append(className.substring(1));
+        } else {
+            builder.append(className);
+        }
+        if (element instanceof KLabeledGraphElement) {
+            KLabeledGraphElement labeledElement = (KLabeledGraphElement) element;
+            if (!labeledElement.getLabels().isEmpty()) {
+                KLabel firstLabel = labeledElement.getLabels().get(0);
+                String text = firstLabel.getText();
+                if (text != null && !text.isEmpty()) {
+                    builder.append(' ').append(text);
+                }
+            }
+        } else if (element instanceof KLabel) {
+            String text = ((KLabel) element).getText();
+            if (text != null && !text.isEmpty()) {
+                builder.append(' ').append(text);
             }
         }
     }
