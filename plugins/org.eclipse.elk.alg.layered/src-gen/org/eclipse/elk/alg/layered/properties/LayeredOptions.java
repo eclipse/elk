@@ -47,28 +47,32 @@ import org.eclipse.elk.graph.properties.Property;
 @SuppressWarnings("all")
 public class LayeredOptions implements ILayoutMetaDataProvider {
   /**
-   * Default value for {@link #CROSS_MIN_RECURSIVE}.
+   * Default value for {@link #BOTTOM_UP_CROSSING_MINIMIZATION}.
    */
-  private final static boolean CROSS_MIN_RECURSIVE_DEFAULT = false;
+  private final static boolean BOTTOM_UP_CROSSING_MINIMIZATION_DEFAULT = false;
   
   /**
    * Process all hierarchical graphs recursively.
    */
-  public final static IProperty<Boolean> CROSS_MIN_RECURSIVE = new Property<Boolean>(
-            "org.eclipse.elk.layered.crossMinRecursive",
-            CROSS_MIN_RECURSIVE_DEFAULT);
+  public final static IProperty<Boolean> BOTTOM_UP_CROSSING_MINIMIZATION = new Property<Boolean>(
+            "org.eclipse.elk.layered.bottomUpCrossingMinimization",
+            BOTTOM_UP_CROSSING_MINIMIZATION_DEFAULT,
+            null,
+            null);
   
   /**
-   * Default value for {@link #RECURSIVE_BOUNDARY}.
+   * Default value for {@link #HIERARCHICAL_SWEEPINESS}.
    */
-  private final static float RECURSIVE_BOUNDARY_DEFAULT = 0.2f;
+  private final static float HIERARCHICAL_SWEEPINESS_DEFAULT = 0f;
   
   /**
-   * Process all hierarchical graphs recursively.
+   * Value between -1 (always bottom-up) and +1 (always hierarchical) sets boundary used by heuristic.
    */
-  public final static IProperty<Float> RECURSIVE_BOUNDARY = new Property<Float>(
-            "org.eclipse.elk.layered.recursiveBoundary",
-            RECURSIVE_BOUNDARY_DEFAULT);
+  public final static IProperty<Float> HIERARCHICAL_SWEEPINESS = new Property<Float>(
+            "org.eclipse.elk.layered.hierarchicalSweepiness",
+            HIERARCHICAL_SWEEPINESS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CONTENT_ALIGNMENT}.
@@ -367,7 +371,7 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #CROSSING_MINIMIZATION_STRATEGY}.
    */
-  private final static CrossingMinimizationStrategy CROSSING_MINIMIZATION_STRATEGY_DEFAULT = CrossingMinimizationStrategy.LAYER_SWEEP;
+  private final static CrossingMinimizationStrategy CROSSING_MINIMIZATION_STRATEGY_DEFAULT = CrossingMinimizationStrategy.HIERARCHICAL_LAYER_SWEEP;
   
   /**
    * Strategy for crossing minimization.
@@ -755,28 +759,30 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.crossMinRecursive",
+        "org.eclipse.elk.layered.bottomUpCrossingMinimization",
         "",
-        "Recursive sweep",
+        "Force bottom-up sweep",
         "Process all hierarchical graphs recursively.",
-        CROSS_MIN_RECURSIVE_DEFAULT,
+        BOTTOM_UP_CROSSING_MINIMIZATION_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.crossMinRec"
     ));
     registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.recursiveBoundary",
+        "org.eclipse.elk.layered.hierarchicalSweepiness",
         "",
-        "Recursive sweep",
-        "Process all hierarchical graphs recursively.",
-        RECURSIVE_BOUNDARY_DEFAULT,
+        "Hierarchical Sweepiness",
+        "Value between -1 (always bottom-up) and +1 (always hierarchical) sets boundary used by heuristic.",
+        HIERARCHICAL_SWEEPINESS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.recursiveBoundary"
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layered.contentAlignment",

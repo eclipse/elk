@@ -419,16 +419,16 @@ group highDegreeNodes {
  *    miscellaneous
  * ------------------------*/
  
-advanced option crossMinRecursive: boolean {
-	label "Recursive sweep"
+advanced option bottomUpCrossingMinimization: boolean {
+	label "Force bottom-up sweep"
 	description "Process all hierarchical graphs recursively."
 	default = false
 	targets parents
 }
 
-advanced option recursiveBoundary: float {
-	label "Recursive sweep"
-	description "Process all hierarchical graphs recursively."
+advanced option hierarchicalSweepiness: float {
+	label "Hierarchical Sweepiness"
+	description "Value between -1 (always bottom-up) and +1 (always hierarchical) sets boundary used by heuristic."
 	default = 0f
 	targets parents
 }

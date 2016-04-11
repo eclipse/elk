@@ -692,7 +692,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         eastWestEdgeFromTo(rightInnerDummyNodes[0], rightInnerNodes[0]);
         eastWestEdgeFromTo(rightInnerDummyNodes[1], rightInnerNodes[1]);
 
-        getGraph().setProperty(LayeredOptions.CROSS_MIN_RECURSIVE, true);
+        getGraph().setProperty(LayeredOptions.BOTTOM_UP_CROSSING_MINIMIZATION, true);
 
         List<LNode> expectedNormalNodeOrderRight = Lists.newArrayList(rightInnerNodes);
 
@@ -882,7 +882,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         List<LPort> expectedPortOrderRight = Lists.newArrayList(rightOuterNode.getPorts().get(1),
                 rightOuterNode.getPorts().get(0));
 
-        setOnAllGraphs(LayeredOptions.RECURSIVE_BOUNDARY, -1f, graph);
+        setOnAllGraphs(LayeredOptions.HIERARCHICAL_SWEEPINESS, -1f, graph);
 
         setUpAndMinimizeCrossings();
         assertThat(getGraph().getLayers().get(1).getNodes().get(0).getPorts(),
@@ -1100,7 +1100,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
                 eastWestEdgeFromTo(leftNodes[i], rightNodes[i]);
             }
 
-            getGraph().setProperty(LayeredOptions.RECURSIVE_BOUNDARY, 0.2f);
+            getGraph().setProperty(LayeredOptions.HIERARCHICAL_SWEEPINESS, 0.2f);
 
             List<LNode> expectedExternalDummyOrderRight =
                     Lists.newArrayList(rightInnerGraph.getLayers().get(0));
@@ -1343,7 +1343,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         eastWestEdgeFromTo(leftInnerNodesRight[1], leftInnerDummyNodes[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[0], leftInnerNodesRight[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[1], leftInnerNodesRight[0]);
-        getGraph().setProperty(LayeredOptions.CROSS_MIN_RECURSIVE, true);
+        getGraph().setProperty(LayeredOptions.BOTTOM_UP_CROSSING_MINIMIZATION, true);
         List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
@@ -1447,7 +1447,7 @@ public class LayerSweepHierarchicalCrossingMinimizerTest extends TestGraphCreato
         
         setUpAndMinimizeCrossings();
         
-        setOnAllGraphs(LayeredOptions.RECURSIVE_BOUNDARY, -1f, graph);
+        setOnAllGraphs(LayeredOptions.HIERARCHICAL_SWEEPINESS, -1f, graph);
         List<GraphData> graphData = crossMin.getGraphData();
         assertFalse(graphData.get(leftOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).processRecursively());
         assertFalse(
