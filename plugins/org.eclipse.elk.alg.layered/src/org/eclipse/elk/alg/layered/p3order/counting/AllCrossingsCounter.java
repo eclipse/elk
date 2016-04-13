@@ -244,7 +244,12 @@ public final class AllCrossingsCounter {
         LNode[] leftLayer = currentOrder[layerIndex];
         if (layerIndex < currentOrder.length - 1) {
             LNode[] rightLayer = currentOrder[layerIndex + 1];
-            totalCrossings = crossingCounter.countCrossingsBetweenLayers(leftLayer, rightLayer);
+            if (hasHyperEdgesEastOfIndex[layerIndex]) {
+                totalCrossings = hyperedgeCrossingsCounter.countCrossings(leftLayer, rightLayer);
+            } else {
+                totalCrossings = crossingCounter.countCrossingsBetweenLayers(leftLayer, rightLayer);
+            }
+
         }
         final LNode[] layer = leftLayer;
         totalCrossings += northSouthEdgeCrossingCounter.countCrossings(layer);

@@ -312,15 +312,14 @@ class GraphData {
         return nestedGraphOf(node) != null;
     }
 
-    //TODO-alan missing, might explain difference to old?
     private boolean[] getHyperedges(final LNode[][] nodeOrder) {
         boolean[] hasHyperedges = new boolean[nodeOrder.length];
-        // for (int layerIndex = 0; layerIndex < nodeOrder.length - 1; layerIndex++) {
-        // LNode[] leftLayer = nodeOrder[layerIndex];
-        // hasHyperedges[layerIndex] |= checkForHyperedges(leftLayer, PortSide.EAST);
-        // LNode[] rightLayer = nodeOrder[layerIndex + 1];
-        // hasHyperedges[layerIndex] |= checkForHyperedges(rightLayer, PortSide.WEST);
-        // }
+        for (int layerIndex = 0; layerIndex < nodeOrder.length - 1; layerIndex++) {
+            LNode[] leftLayer = nodeOrder[layerIndex];
+            hasHyperedges[layerIndex] |= checkForHyperedges(leftLayer, PortSide.EAST);
+            LNode[] rightLayer = nodeOrder[layerIndex + 1];
+            hasHyperedges[layerIndex] |= checkForHyperedges(rightLayer, PortSide.WEST);
+        }
         return hasHyperedges;
     }
 
