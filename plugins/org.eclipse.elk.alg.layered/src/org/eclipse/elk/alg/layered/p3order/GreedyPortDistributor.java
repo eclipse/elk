@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -165,7 +166,11 @@ public class GreedyPortDistributor implements SweepPortDistributor{
                 firstIndexForCurrentSide = currentIndex;
             }
         }
-        return reverseSublist(side, firstIndexForCurrentSide, currentIndex, ports);
+        if (currentSide == side) {
+            return reverseSublist(side, firstIndexForCurrentSide, currentIndex, ports);
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     private List<LPort> reverseSublist(final PortSide side, final int firstIndexForCurrentSide, final int currentIndex,

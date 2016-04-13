@@ -76,7 +76,6 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         LNode rightNode = addNodeToLayer(makeLayer(getGraph()));
         eastWestEdgeFromTo(leftNodes[0], rightNode);
         eastWestEdgeFromTo(leftNodes[1], rightNode);
-        cachePortSides();
 
         List<LPort> expectedPortOrderRightNode = portsOrderedAs(rightNode, 1, 0);
 
@@ -87,12 +86,31 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
 
         assertThat(rightNode.getPorts(), is(expectedPortOrderRightNode));
     }
-    private void cachePortSides() {
-        for (Layer l : getGraph()) {
-            for (LNode node : l) {
-                node.cachePortSides();
-            }
-        }
+
+    /**
+     * <pre>
+     * *  ___
+     *  \/| | *
+     *  /\| | *
+     * *  |_|
+     * </pre>
+     */
+    @Test
+    public void distributePorts_GivenNoPortsOnRightSide_NothingHappens() {
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode middleNode = addNodeToLayer(makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        eastWestEdgeFromTo(leftNodes[0], middleNode);
+        eastWestEdgeFromTo(leftNodes[1], middleNode);
+        
+        List<LPort> expectedPortOrderRightNode = portsOrderedAs(middleNode, 0, 1);
+        
+        PortSide side = PortSide.EAST;
+        setUpDistributor();
+        portDist.initForLayers(getGraph().toNodeArray()[1],rightNodes,  side, new int[4]);
+        portDist.distributePorts(middleNode, side);
+        
+        assertThat(middleNode.getPorts(), is(expectedPortOrderRightNode));
     }
 
     /**
@@ -145,6 +163,7 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
 
         assertThat(leftNodes[0].getPorts(), is(expectedPortOrderLeftNode));
     }
+
 
     /**
      * <pre>

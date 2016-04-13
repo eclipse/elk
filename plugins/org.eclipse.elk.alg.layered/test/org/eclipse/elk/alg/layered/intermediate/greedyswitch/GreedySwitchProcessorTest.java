@@ -238,7 +238,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
      */
     @Test
     public void northSouthPortCrossing() {
-        setGraph(new NorthSouthEdgeTestGraphCreator().getNorthSouthDownwardCrossingGraph());
+        graph = new NorthSouthEdgeTestGraphCreator().getNorthSouthDownwardCrossingGraph();
 
         int layerIndex = 0;
         List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(getNodesInLayer(layerIndex));
