@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -112,9 +113,10 @@ class GraphData {
                 node.id = nodeId++;
                 nodePositions[node.getLayer().id][node.id] = nodeIndex;
                 nodeInfo[node.getLayer().id][node.id] = new NodeInfo();
-                // Consider mergin with position
+                // TODO-alan Consider merging with position
 
-                if (hasNestedGraph(node)) {
+                boolean hasNestedGraph = hasNestedGraph(node);
+                if (hasNestedGraph) {
                     LGraph nestedGraph = nestedGraphOf(node);
                     childGraphs.add(nestedGraph);
                 }
@@ -122,7 +124,6 @@ class GraphData {
                 if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
                     hasNorthSouthPorts[layerIndex] = true;
                 }
-
                 for (LPort port : node.getPorts()) {
                     port.id = portId++;
                     for (LEdge edge : port.getOutgoingEdges()) {
@@ -151,9 +152,8 @@ class GraphData {
         }
         // When processing a cross minimizer which always improves, we mostly want to sweep into the
         // graph except when explicitly set not to do so.
-        processRecursively = processAllGraphsRecursively || crossMinType.isDeterministic()
-                || assessWhetherToProcessRecursively();
-        // System.out.println(processRecursively ? "Recursive" : "Hierarchical");
+        processRecursively = processAllGraphsRecursively || !hasParent || !crossMinType.isDeterministic()
+                && assessWhetherToProcessRecursively();
 
         int[] portPos = new int[portId];
         crossCounter = AllCrossingsCounter.createAssumingFixedPortOrder(inLayerEdgeCount,
@@ -207,12 +207,17 @@ class GraphData {
     private boolean assessWhetherToProcessRecursively() {
         // No need for hierarchical if this is root node or there is none or only one edge per side.
         if (!hasParent || parent.getPorts(PortSide.EAST).size() < 2 && parent.getPorts(PortSide.WEST).size() < 2) {
-            return false;
+            return true;
         }
 
+        List<LNode> nsPortDummies = new ArrayList<>();
         int pathsToRandom = 0;
         int pathsToHierarchical = 0;
         for (LNode node : Iterables.concat(lGraph)) {
+            if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
+                nsPortDummies.add(node);
+                continue;
+            }
             NodeInfo currentNode = nodeInfoFor(node);
             if (node.getType() == NodeType.EXTERNAL_PORT) {
                 currentNode.hierarchicalInfluence = 1;
@@ -228,21 +233,38 @@ class GraphData {
                 }
             }
             for (LEdge edge : node.getOutgoingEdges()) {
-                LNode target = edge.getTarget().getNode();
-                NodeInfo targetNodeInfo = nodeInfoFor(target);
                 pathsToRandom += currentNode.randomInfluence;
                 pathsToHierarchical += currentNode.hierarchicalInfluence;
-                targetNodeInfo.transfer(currentNode);
-                targetNodeInfo.connectedEdges++;
+                updateTarget(currentNode, edge.getTarget().getNode());
+            }
+            for (LPort port : node.getPorts(PortSide.NORTH)) {
+                LNode nsDummy = port.getProperty(InternalProperties.PORT_DUMMY);
+                if (nsDummy != null) {
+                    pathsToRandom += currentNode.randomInfluence;
+                    pathsToHierarchical += currentNode.hierarchicalInfluence;
+                    updateTarget(currentNode, nsDummy);
+                }
+            }
+        }
+        for (LNode node : nsPortDummies) {
+            NodeInfo currentNode = nodeInfoFor(node);
+            for (LEdge edge : node.getOutgoingEdges()) {
+                pathsToRandom += currentNode.randomInfluence;
+                pathsToHierarchical += currentNode.hierarchicalInfluence;
+                updateTarget(currentNode, edge.getTarget().getNode());
             }
         }
 
         float boundary = lGraph.getProperty(LayeredOptions.HIERARCHICAL_SWEEPINESS);
         double allPaths = pathsToRandom + pathsToHierarchical;
         double normalized = allPaths == 0 ? Double.MAX_VALUE : (pathsToRandom - pathsToHierarchical) / allPaths;
-        return !hasParent
-                || hasParent && (parent.getPorts(PortSide.EAST).size() > 1 || parent.getPorts(PortSide.WEST).size() > 1)
-                        && normalized > boundary;
+        return normalized > boundary;
+    }
+
+    private void updateTarget(final NodeInfo currentNode, final LNode target) {
+        NodeInfo targetNodeInfo = nodeInfoFor(target);
+        targetNodeInfo.transfer(currentNode);
+        targetNodeInfo.connectedEdges++;
     }
 
     private boolean isEasternExternalPortDummy(final LNode node) {
@@ -286,7 +308,7 @@ class GraphData {
         return node.getProperty(InternalProperties.NESTED_LGRAPH);
     }
 
-    private Boolean hasNestedGraph(final LNode node) {
+    private boolean hasNestedGraph(final LNode node) {
         return nestedGraphOf(node) != null;
     }
 
