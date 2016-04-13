@@ -60,7 +60,7 @@ public class TestGraphCreator {
     }
 
     private int edgeId = 0;
-    private MockRandom random;
+    protected MockRandom random;
 
     /**
      * Makes a fancy test graph creator.
@@ -1048,6 +1048,12 @@ public class TestGraphCreator {
         return node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
     }
 
+    public void setFixedOrderConstraint(final LNode[] nodes) {
+        for (LNode n : nodes) {
+            setFixedOrderConstraint(n);
+        }
+    }
+
     public void addInLayerEdge(final LNode nodeOne, final LNode nodeTwo, final PortSide portSide) {
         LPort portOne = addPortOnSide(nodeOne, portSide);
         LPort portTwo = addPortOnSide(nodeTwo, portSide);
@@ -1315,10 +1321,6 @@ public class TestGraphCreator {
 
     protected void eastWestEdgeFromTo(final LNode left, final LPort right) {
         addEdgeBetweenPorts(addPortOnSide(left, PortSide.EAST), right);
-    }
-
-    public void setGraph(final LGraph g) {
-        this.graph = g;
     }
 
     public MockRandom getRandom() {

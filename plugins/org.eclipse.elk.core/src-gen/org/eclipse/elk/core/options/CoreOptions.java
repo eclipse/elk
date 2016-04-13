@@ -175,7 +175,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #LAYOUT_HIERARCHY}.
    */
-  private final static boolean LAYOUT_HIERARCHY_DEFAULT = false;
+  private final static boolean LAYOUT_HIERARCHY_DEFAULT = true;
   
   /**
    * Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy
@@ -231,6 +231,11 @@ public class CoreOptions implements ILayoutMetaDataProvider {
             "org.eclipse.elk.separateConnectedComponents");
   
   /**
+   * Default value for {@link #JUNCTION_POINTS}.
+   */
+  private final static KVectorChain JUNCTION_POINTS_DEFAULT = new KVectorChain();
+  
+  /**
    * This option is not used as option, but as output of the layout algorithms. It is
    * attached to edges and determines the points where junction symbols should be drawn in
    * order to represent hyperedges with orthogonal routing. Whether such points are computed
@@ -238,7 +243,10 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    * the vector chain with no specific order.
    */
   public final static IProperty<KVectorChain> JUNCTION_POINTS = new Property<KVectorChain>(
-            "org.eclipse.elk.junctionPoints");
+            "org.eclipse.elk.junctionPoints",
+            JUNCTION_POINTS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #COMMENT_BOX}.
@@ -1115,7 +1123,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "",
         "Junction Points",
         "This option is not used as option, but as output of the layout algorithms. It is attached to edges and determines the points where junction symbols should be drawn in order to represent hyperedges with orthogonal routing. Whether such points are computed depends on the chosen layout algorithm and edge routing style. The points are put into the vector chain with no specific order.",
-        null,
+        JUNCTION_POINTS_DEFAULT,
         null,
         null,
         LayoutOptionData.Type.OBJECT,

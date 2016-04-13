@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order.counting;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -109,7 +110,16 @@ public final class PortIterable implements Iterable<LPort> {
      * @return Iterable for ports on given node and side in given order.
      */
     public static Iterable<LPort> inNorthSouthEastWestOrder(final LNode node, final PortSide side) {
-        return new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+        // TODO-alan think about this whole class.
+        switch (side) {
+        case EAST:
+        case NORTH:
+            return node.getPorts(side);
+        case SOUTH:
+        case WEST:
+            return Lists.reverse(node.getPorts(side));// new PortIterable(node, side, PortOrder.NORTHSOUTH_EASTWEST);
+        }
+        return Collections.emptyList();
     }
 
     /**

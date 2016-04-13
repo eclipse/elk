@@ -18,6 +18,7 @@ import org.eclipse.elk.core.^labels.ILabelManager
 import org.eclipse.elk.core.util.nodespacing.Spacing
 import org.eclipse.elk.core.util.BoxLayoutProvider
 import org.eclipse.elk.core.util.RandomLayoutProvider
+import java.util.ArrayList
 
 // Sort based on normal - advanced - programmatic - global - output and within the groups alphabetically
 // If different types are within a group, move the group to the first category 
@@ -272,7 +273,7 @@ deprecated option layoutHierarchy: boolean {
 		level of the graph is processed independently, possibly by different layout algorithms,
 		beginning with the lowest level. If it is set, the algorithm is responsible to process
 		all hierarchy levels that are contained in the associated parent node."
-	default = false
+	default = true
 	targets parents
 	legacyIds de.cau.cs.kieler.layoutHierarchy
 }
@@ -463,6 +464,7 @@ output option junctionPoints: KVectorChain {
 		depends on the chosen layout algorithm and edge routing style. The points are put into
 		the vector chain with no specific order."
 	targets edges
+	default = new KVectorChain()
 	legacyIds de.cau.cs.kieler.junctionPoints
 }
 

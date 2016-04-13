@@ -175,6 +175,7 @@ final class GraphConfigurator {
     }
     
     /**
+     * TODO Comments have lies.
      * Returns the cycle breaker to use for the given graph depending on the property settings.
      * 
      * <p>If an instance of the requested implementation is already in the phase cache, that instance is

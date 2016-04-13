@@ -168,7 +168,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
             sweepReducingCrossings(gData, isForwardSweep, false);
             crossingsInGraph = countCurrentNumberOfCrossings();
         } while (oldNumberOfCrossings > crossingsInGraph);
-
+        // TODO-alan consider sweeping backwards sorting ports.
         return oldNumberOfCrossings;
     }
 
@@ -211,6 +211,7 @@ public class LayerSweepHierarchicalCrossingMinimizer implements ILayoutPhase {
         return improved;
     }
 
+    // TODO-alan duplicate
     private boolean sweepReducingCrossings(final GraphData graph, final boolean forward,
             final boolean firstSweep) {
         LNode[][] nodes = graph.currentNodeOrder();

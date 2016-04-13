@@ -198,7 +198,8 @@ public enum IntermediateProcessorStrategy {
             return new GreedySwitchProcessor();
 
         case HIERARCHICAL_GREEDY_SWITCH:
-            return new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
+            //TODO-alan this is bullshit.
+            return new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
 
         case HIERARCHICAL_NODE_RESIZER:
             return new HierarchicalNodeResizingProcessor();

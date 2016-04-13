@@ -25,7 +25,7 @@ import org.eclipse.elk.core.options.PortSide;
  * When it does not assume all port orders fixed: Should the following port sorting phase be able to
  * remove crossings, these crossings are not counted.
  *
- * TODO-alan this class should be removed some day.
+ * TODO-alan this class should be removed some day. AND ITS A MESS!
  *
  * @author alan
  */
@@ -84,9 +84,10 @@ public final class AllCrossingsCounter {
         int[] portPositions = new int[numPorts];
         northSouthPortCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPositions);
         if (useNewCounter) {
-            betweenAndInLayerCounter = assumeFixedPortOrder
+            crossingCounter = assumeFixedPortOrder
                     ? CrossingsCounter.createAssumingPortOrderFixed(portPositions)
                     : CrossingsCounter.create(portPositions);
+                    northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPositions);
         } else {
             inbetweenLayerStraightEdgeCounter = assumeFixedPortOrder
                     ? BetweenLayerStraightEdgeAllCrossingsCounter
@@ -97,7 +98,7 @@ public final class AllCrossingsCounter {
                         : CrossingsCounter.create(portPositions);
         }
         int totalCrossings = useNewCounter
-                ? betweenAndInLayerCounter.countInLayerCrossingsOnSide(currentOrder[0],
+                ? crossingCounter.countInLayerCrossingsOnSide(currentOrder[0],
                         PortSide.WEST)
                 : inLayerEdgeCrossingsCounter.countInLayerCrossingsOnBothSides(currentOrder[0]);
         for (int layerIndex = 0; layerIndex < currentOrder.length; layerIndex++) {
