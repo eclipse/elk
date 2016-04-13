@@ -49,9 +49,7 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
     private float maxBarycenter;
     private int[][] nodePositions;
     private final float[] portBarycenter;
-    private final int[] preSortedPortPositions;
     private final List<LPort> inLayerPorts;
-    private final boolean[] isPreSorted;
     /** Whether to assume port order to be fixed. */
     protected final boolean assumePortOrderFixed;
 
@@ -68,8 +66,6 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
         this.assumePortOrderFixed = assumePortOrderFixed;
         inLayerPorts = Lists.newLinkedList();
         portBarycenter = new float[portRanks.length];
-        preSortedPortPositions = new int[portRanks.length];
-        isPreSorted = new boolean[portRanks.length];
     }
 
     /**
@@ -184,8 +180,7 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      *            node whose ports shall be sorted
      */
     private void distributePorts(final LNode node, final Iterable<LPort> ports) {
-        if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()
-                || isPortOrderPartiallyFixed(node)) {
+        if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             inLayerPorts.clear();
             iteratePortsAndCollectInLayerPorts(node, ports);
 
@@ -202,17 +197,10 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
         minBarycenter = 0.0f;
         maxBarycenter = 0.0f;
 
-        int portPos = 0;
-        boolean partiallyFixedPortOrder = isPortOrderPartiallyFixed(node);
-
         // a float value large enough to ensure that barycenters of south ports work fine
         final float absurdlyLargeFloat = 2 * node.getLayer().getNodes().size() + 1;
         // calculate barycenter values for the ports of the node
         PortIteration: for (LPort port : ports) {
-            if (partiallyFixedPortOrder && hasInsideConnections(port)) {
-                preSortedPortPositions[port.id] = portPos++;
-                isPreSorted[port.id] = true;
-            }
             boolean northSouthPort =
                     port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH;
             float sum = 0;
@@ -261,14 +249,6 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
                 portBarycenter[port.id] = sum;
             }
         }
-    }
-
-    private boolean isPortOrderPartiallyFixed(final LNode node) {
-        return node.getProperty(InternalProperties.HAS_HIERARCHICAL_AND_NORMAL_PORTS);
-    }
-
-    private boolean hasInsideConnections(final LPort port) {
-        return port.getProperty(InternalProperties.INSIDE_CONNECTIONS);
     }
 
     private void calculateInLayerPortsBarycenterValues(final LNode node) {
@@ -422,20 +402,17 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
                 // sort according to the node side
                 return side1.ordinal() - side2.ordinal();
             } else {
-                float pos1 = portBarycenter[port1.id];
-                float pos2 = portBarycenter[port2.id];
-                if (isPreSorted[port1.id] && isPreSorted[port2.id]) {
-                    return Integer.compare(preSortedPortPositions[port1.id],
-                            preSortedPortPositions[port2.id]);
-                } else if (portBarycenter[port1.id] == 0 && portBarycenter[port2.id] == 0) {
+                float port1Bary = portBarycenter[port1.id];
+                float port2Bary = portBarycenter[port2.id];
+                if (port1Bary == 0 && port2Bary == 0) {
                     return 0;
-                } else if (portBarycenter[port1.id] == 0) {
+                } else if (port1Bary == 0) {
                     return -1;
-                } else if (portBarycenter[port2.id] == 0) {
+                } else if (port2Bary == 0) {
                     return 1;
                 } else {
                     // sort according to the position value
-                    return Float.compare(pos1, pos2);
+                    return Float.compare(port1Bary, port2Bary);
                 }
             }
         });
