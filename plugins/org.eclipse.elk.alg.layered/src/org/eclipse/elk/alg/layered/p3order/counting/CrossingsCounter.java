@@ -17,8 +17,6 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Iterables;
@@ -33,15 +31,10 @@ import com.google.common.collect.Lists;
 public final class CrossingsCounter {
     private final int[] portPositions;
     private FenwickTree indexTree;
-    private final boolean assumeFixedPortOrder;
-    private final boolean assumeCompoundNodePortOrderFixed;
     private boolean countBothInAndBetweenLayerCrossings;
     private int numPorts;
 
-    private CrossingsCounter(final int[] portPositions,
-            final boolean assumeFixedPortOrder, final boolean assumeCompoundNodePortOrderFixed) {
-        this.assumeFixedPortOrder = assumeFixedPortOrder;
-        this.assumeCompoundNodePortOrderFixed = assumeCompoundNodePortOrderFixed;
+    public CrossingsCounter(final int[] portPositions) {
         this.portPositions = portPositions;
 
     }
@@ -225,23 +218,10 @@ public final class CrossingsCounter {
     private int setPortPositions(final PortSide side, final Iterable<LNode> layer, final int startPos) {
         int currentPortPos = startPos;
         for (LNode node : layer) {
-
-            boolean hasPorts = false;
-
             Iterable<LPort> ports = countBothInAndBetweenLayerCrossings ? node.getPorts(side)
                     : PortIterable.inNorthSouthEastWestOrder(node, side);
-
             for (LPort port : ports) {
-                hasPorts = true;
-                portPositions[port.id] = currentPortPos;
-                // Ports whose order on the node is not set have the same id.
-                if (portOrderIsFixedFor(node)) {
-                    currentPortPos++;
-                }
-            }
-
-            if (!portOrderIsFixedFor(node) && hasPorts) {
-                currentPortPos++;
+                portPositions[port.id] = currentPortPos++;
             }
         }
         return currentPortPos;
@@ -254,44 +234,8 @@ public final class CrossingsCounter {
             Iterable<LPort> ports =
                     countBothInAndBetweenLayerCrossings ? PortIterable.inClockwiseOrder(node, side)
                     : PortIterable.inNorthSouthEastWestOrder(node, side);
-
-            if (portOrderIsFixedFor(node)) {
-                crossings += countWithFixedPortOrder(ports);
-            } else {
-                crossings += countWithFreePortOrder(ports);
-            }
+            crossings += countWithFixedPortOrder(ports);
         }
-        return crossings;
-    }
-
-    /**
-     * Assumes that crossings caused by port order on nodes with free port order can always be
-     * removed by port sorting and therefore don't need to be counted. Note that this is not always
-     * true!
-     *
-     * @param ports
-     *            the ports
-     * @return crossings
-     */
-    private int countWithFreePortOrder(final Iterable<LPort> ports) {
-        int crossings = 0;
-        // First get all crossings
-        // TODO-alan explain why in two steps.
-        for (LPort port : ports) {
-            indexTree.removeAll(positionOf(port));
-            crossings += getCrossingsOfEdges(port);
-        }
-
-        // Must get this before adding edges
-        int size = indexTree.size();
-
-        // Then add edges
-        int numBetweenLayerEdges = 0;
-        for (LPort port : ports) {
-            numBetweenLayerEdges += addTargetsCountingBetweenLayerEdges(port);
-        }
-
-        crossings += numBetweenLayerEdges * size;
         return crossings;
     }
 
@@ -362,15 +306,6 @@ public final class CrossingsCounter {
         return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
-    private boolean portOrderIsFixedFor(final LNode node) {
-        return assumeFixedPortOrder || assumeCompoundNodePortOrderFixed && hasNestedGraph(node)
-                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
-    }
-
-    private boolean hasNestedGraph(final LNode node) {
-        return node.getProperty(InternalProperties.NESTED_LGRAPH) != null;
-    }
-
     private Iterator<LNode> descendingIterator(final LNode[] rightLayerOrd) {
         return new Iterator<LNode>() {
             private final LNode[] ord = rightLayerOrd;
@@ -387,32 +322,4 @@ public final class CrossingsCounter {
             }
         };
     }
-
-    /**
-     * Does not assume fixed port order. Crossings between edges connected to node with free port
-     * order are assumed to be non-existent. Note that this is not always true.
-     *
-     * @param portPositions
-     *            array the length of the number of ports in the graph.
-     *
-     * @return the counter
-     */
-    public static CrossingsCounter create(final int[] portPositions) {
-        return new CrossingsCounter(portPositions, false, false);
-
-    }
-
-    /**
-     * Assumes fixed port order.
-     *
-     * @param portPositions
-     *            array the length of the number of ports in the graph.
-     *
-     * @return the counter
-     */
-    public static CrossingsCounter createAssumingPortOrderFixed(
-            final int[] portPositions) {
-        return new CrossingsCounter(portPositions, true, false);
-    }
-
 }

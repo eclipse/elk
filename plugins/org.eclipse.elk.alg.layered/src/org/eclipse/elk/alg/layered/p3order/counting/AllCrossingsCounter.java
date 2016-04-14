@@ -53,7 +53,7 @@ public final class AllCrossingsCounter {
         hyperedgeCrossingsCounter = HyperedgeCrossingsCounter
                 .createAssumingPortOrderFixed(inLayerEdgeCount, hasNorthSouthPorts, portPos);
         northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPos);
-        crossingCounter = CrossingsCounter.createAssumingPortOrderFixed(portPos);
+        crossingCounter = new CrossingsCounter(portPos);
     }
 
     /**

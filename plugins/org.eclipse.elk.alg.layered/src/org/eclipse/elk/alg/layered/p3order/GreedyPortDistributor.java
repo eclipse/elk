@@ -86,7 +86,7 @@ public class GreedyPortDistributor implements SweepPortDistributor{
      */
     public void initForLayers(final LNode[] leftLayer, final LNode[] rightLayer, final PortSide sideToCountOn,
             final int[] portPositions) {
-        crossingsCounter = CrossingsCounter.createAssumingPortOrderFixed(portPositions);
+        crossingsCounter = new CrossingsCounter(portPositions);
         crossingsCounter.initForCountingBetweenOnSide(leftLayer, rightLayer, sideToCountOn);
     }
 
@@ -95,7 +95,7 @@ public class GreedyPortDistributor implements SweepPortDistributor{
         int lowerUpperCrossings = crossingsCounter.countCrossingsBetweenPorts(lowerPort, upperPort);
         if (isHierarchical(upperPort) && isHierarchical(lowerPort)) {
             CrossingsCounter innerCounter =
-                    CrossingsCounter.createAssumingPortOrderFixed(new int[childNumPorts.get(nestedGraphOf(node).id)]);
+                    new CrossingsCounter(new int[childNumPorts.get(nestedGraphOf(node).id)]);
             PortSide innerSide = upperPort.getSide().opposed();
             initHierarchicalCounter(node, innerCounter, upperPort.getSide(), innerSide);
             LNode upperDummy = dummyNodeFor(upperPort);
