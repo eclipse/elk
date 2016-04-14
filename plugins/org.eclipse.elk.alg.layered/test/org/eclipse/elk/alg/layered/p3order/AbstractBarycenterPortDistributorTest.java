@@ -85,7 +85,7 @@ public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
 
     private void distributePortsInCompleteGraph(final int numberOfPorts) {
         AbstractBarycenterPortDistributor portDist =
-                LayerTotalPortDistributor.create(new float[numberOfPorts]);
+                new LayerTotalPortDistributor(new float[numberOfPorts]);
 
 
         portDist.distributePorts(getGraph().toNodeArray());
@@ -179,8 +179,7 @@ public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftNode, rightNode);
         List<LPort> expectedPortRightNode = copyPortsInIndexOrder(rightNode, 1, 0);
         setUpIds();
-        SweepPortDistributor portDist = LayerTotalPortDistributor
-                .createPortOrderFixedInOtherLayers(new float[4], new int[2][1]);
+        SweepPortDistributor portDist = new LayerTotalPortDistributor(new float[4], new int[2][1]);
         portDist.distributePortsWhileSweeping(getGraph().toNodeArray(), 1, true);
 
         assertThat(rightNode.getPorts(), is(expectedPortRightNode));

@@ -8,20 +8,22 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
+package org.eclipse.elk.alg.layered.p3order.counting;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.InLayerEdgeTestGraphCreator;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
+import org.eclipse.elk.alg.layered.p3order.CrossMinType;
+import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.core.options.PortSide;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -32,65 +34,58 @@ import org.junit.Test;
  */
 public class AllCrossingsCounterTest extends TestGraphCreator {
 
-    private LGraph graph;
-    private AllCrossingsCounter counter;
-
     // CHECKSTYLEOFF Javadoc
     // CHECKSTYLEOFF MagicNumber
-    @Before
-    public void setUp() {
-        graph = new LGraph();
-    }
 
     @Test
     public void countOneCrossing() {
         graph = getCrossFormedGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void countInLayerCrossing() {
         graph = getInLayerEdgesGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void countInLayerCrossingAndSwitch() {
         graph = getInLayerEdgesGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void countNorthSouthCrossing() {
         graph = new NorthSouthEdgeTestGraphCreator().getNorthSouthDownwardCrossingGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void countNorthernNorthSouthCrossing() {
         graph = new NorthSouthEdgeTestGraphCreator().getNorthSouthUpwardCrossingGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void northSouthDummyEdgeCrossing() {
         graph = new NorthSouthEdgeTestGraphCreator().getSouthernNorthSouthDummyEdgeCrossingGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void switchAndCountTwice() {
         graph = getCrossFormedGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
         switchNodesInLayer(0, 1, 1);
-        amountOfCrossings = whenCountingAllCrossings();
+        amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(0));
     }
 
@@ -109,49 +104,89 @@ public class AllCrossingsCounterTest extends TestGraphCreator {
     @Test
     public void tooManyInLayerCrossingsWithTheOldMethod() {
         graph = new InLayerEdgeTestGraphCreator().getInLayerOneLayerNoCrossings();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(0));
     }
 
+    /**
+     * <pre>
+     * *    *
+     *  \\//
+     *  //\\
+     * *    *
+     * </pre>
+     */
     @Test
     public void countCrossingsWithMultipleEdgesBetweenSameNodes() {
-        graph = getMultipleEdgesBetweenSameNodesGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
-        assertThat(amountOfCrossings, is(4));
+        LNode[] left = addNodesToLayer(2, makeLayer());
+        LNode[] right = addNodesToLayer(2, makeLayer());
+        
+        LPort[] rightLowerPorts = addPortsOnSide(2, right[1], PortSide.WEST);
+        eastWestEdgeFromTo(left[0], rightLowerPorts[1]);
+        eastWestEdgeFromTo(left[0], rightLowerPorts[0]);
+        LPort[] rightUpperPorts = addPortsOnSide(2, right[0], PortSide.WEST);
+        eastWestEdgeFromTo(left[1], rightUpperPorts[1]);
+        eastWestEdgeFromTo(left[1], rightUpperPorts[0]);
+        
+        assertThat(allCrossings(), is(4));
     }
 
     @Test
     public void countCrossingsInEmptyGraph() {
         graph = getEmptyGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
-        assertThat(amountOfCrossings, is(0));
-    }
-
-    @Test
-    public void ignoresCrossingsWithoutFixedPortOrder() {
-        graph = getGraphNoCrossingsDueToPortOrderNotFixed();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(0));
     }
 
     @Test
     public void oneNodeIsLongEdgeDummy() {
         graph = new NorthSouthEdgeTestGraphCreator().getSouthernNorthSouthDummyEdgeCrossingGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
     @Test
     public void oneNodeIsLongEdgeDummyNorthern() {
         graph = new NorthSouthEdgeTestGraphCreator().getNorthernNorthSouthDummyEdgeCrossingGraph();
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
+    /**
+     * <pre>
+     *   ----*
+     *   |---*
+     *   ||
+     * *-++--*
+     *   ||
+     *  ----
+     *  |__|
+     *   ||
+     * *-++--*
+     *   ||--*
+     *   |---*
+     * </pre>
+     */
     @Test
     public void multipleNorthSouthAndLongEdgeDummiesOnBothSides() {
-        graph = new NorthSouthEdgeTestGraphCreator().getMultipleNorthSouthAndLongEdgeDummiesOnBothSides();
-        int amountOfCrossings = whenCountingAllCrossings();
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer());
+        LNode[] middleNodes = addNodesToLayer(7, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(6, makeLayer());
+        
+        eastWestEdgeFromTo(leftNodes[0], middleNodes[2]);
+        eastWestEdgeFromTo(middleNodes[2], rightNodes[2]);
+        eastWestEdgeFromTo(leftNodes[1], middleNodes[4]);
+        eastWestEdgeFromTo(middleNodes[4], rightNodes[3]);
+        
+        setAsLongEdgeDummy(middleNodes[2]);
+        setAsLongEdgeDummy(middleNodes[4]);
+        
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[3], middleNodes[0], rightNodes[0], false);
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[3], middleNodes[1], rightNodes[1], false);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[3], middleNodes[5], rightNodes[4], false);
+        addNorthSouthEdge(PortSide.SOUTH, middleNodes[3], middleNodes[6], rightNodes[5], false);
+
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(4));
     }
 
@@ -177,12 +212,11 @@ public class AllCrossingsCounterTest extends TestGraphCreator {
         addInLayerEdge(nodes[0], nodes[1], PortSide.WEST);
         addInLayerEdge(nodes[1], nodes[2], PortSide.WEST);
 
-        int amountOfCrossings = whenCountingAllCrossings();
+        int amountOfCrossings = allCrossings();
         assertThat(amountOfCrossings, is(1));
     }
 
-    private int whenCountingAllCrossings() {
-        counter = AllCrossingsCounter.create();
+    private int allCrossings() {
         LNode[][] nodeArray = graph.toNodeArray();
         int portId = 0;
         for (LNode[] lNodes : nodeArray) {
@@ -193,7 +227,8 @@ public class AllCrossingsCounterTest extends TestGraphCreator {
                 }
             }
         }
-        boolean[] useHyperEdgeCounterInLayer = AllCrossingsCounter.getHyperedges(nodeArray, PortSide.EAST);
-        return counter.countAllCrossingsInGraphWithOrder(nodeArray, useHyperEdgeCounterInLayer, portId); // TODO-alan
+        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, false, null);
+
+        return gd.crossCounter().countAllCrossings(nodeArray); // TODO-alan
     }
 }

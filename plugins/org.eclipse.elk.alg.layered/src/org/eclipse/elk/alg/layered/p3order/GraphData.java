@@ -44,7 +44,7 @@ import com.google.common.collect.Multimap;
  * @author alan
  *
  */
-class GraphData {
+public class GraphData {
     private final LGraph lGraph;
     private final LNode[][] currentNodeOrder;
     private final int[][] nodePositions;
@@ -79,7 +79,7 @@ class GraphData {
      * @param processAllGraphsRecursively
      *            forces all graphs to be layouted recursively.
      */
-    GraphData(final LGraph graph, final CrossMinType crossMinType,
+    public GraphData(final LGraph graph, final CrossMinType crossMinType,
             final boolean processAllGraphsRecursively, final List<GraphData> graphs) {
         lGraph = graph;
         this.crossMinType = crossMinType;
@@ -157,7 +157,7 @@ class GraphData {
                 && assessWhetherToProcessRecursively();
 
         int[] portPos = new int[portId];
-        crossCounter = AllCrossingsCounter.createAssumingFixedPortOrder(inLayerEdgeCount,
+        crossCounter = new AllCrossingsCounter(inLayerEdgeCount,
                 hasNorthSouthPorts, portPos, getHyperedges(currentNodeOrder));
 
         float[] portRanks = new float[portId];

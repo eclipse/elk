@@ -91,8 +91,6 @@ public enum IntermediateProcessorStrategy {
 
     // Before Phase 4
     /** Hierachical greedy switch crossing reduction. */
-    HIERARCHICAL_GREEDY_SWITCH,
-    /** Greedy switch crossing reduction. */
     GREEDY_SWITCH,
     /** Unhide self loops after phase 3. */
     SPLINE_SELF_LOOP_POSITIONER,
@@ -191,7 +189,7 @@ public enum IntermediateProcessorStrategy {
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
 
-        case HIERARCHICAL_GREEDY_SWITCH:
+        case GREEDY_SWITCH:
             //TODO-alan this is bullshit.
             return new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
 

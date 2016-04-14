@@ -34,16 +34,10 @@ public final class AllCrossingsCounter {
     private boolean[] hasHyperEdgesEastOfIndex;
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
 
-    /**
-     * Constructs and initializes a cross counter.
-     *
-     * @param layeredGraph
-     *            The layered graph
-     */
-    private AllCrossingsCounter(final boolean assumeFixedPortOrder) {
-    }
-
     public int countAllCrossings(final LNode[][] currentOrder) {
+        if (currentOrder.length == 0) {
+            return 0;
+        }
         int crossings = crossingCounter.countInLayerCrossingsOnSide(currentOrder[0], PortSide.WEST);
         crossings += crossingCounter.countInLayerCrossingsOnSide(currentOrder[currentOrder.length - 1], PortSide.EAST);
         for (int layerIndex = 0; layerIndex < currentOrder.length; layerIndex++) {
@@ -52,7 +46,7 @@ public final class AllCrossingsCounter {
         return crossings;
     }
 
-    private AllCrossingsCounter(final boolean fixedOrder, final int[] inLayerEdgeCount,
+    public AllCrossingsCounter(final int[] inLayerEdgeCount,
             final boolean[] hasNorthSouthPorts, final int[] portPos,
             final boolean[] hasHyperEdgesEastOfIndex) {
         this.hasHyperEdgesEastOfIndex = hasHyperEdgesEastOfIndex;
@@ -106,48 +100,6 @@ public final class AllCrossingsCounter {
         final LNode[] layer = leftLayer;
         totalCrossings += northSouthEdgeCrossingCounter.countCrossings(layer);
         return totalCrossings;
-    }
-
-    /**
-     * Create Counter for counting all crossings in a given node order.
-     *
-     * @return new AllCrossingsCounter object.
-     */
-    public static AllCrossingsCounter create() {
-        return new AllCrossingsCounter(false);
-    }
-
-    /**
-     * Create Counter for counting all crossings in a given node order assuming all port order
-     * constraints to be fixed independent of the orders actually set.
-     *
-     * @return new AllCrossingsCounter object.
-     */
-    public static AllCrossingsCounter createAssumingFixedPortOrder() {
-        return new AllCrossingsCounter(true);
-    }
-
-
-    /**
-     * Create Counter for counting all crossings in a given node order assuming all port order
-     * constraints to be fixed independent of the constraints actually set. Use this method to pass
-     * information from outside saving initialization.
-     *
-     * @param inLayerEdgeCount
-     *            Number of in layer edges.
-     * @param hasNorthSouthPorts
-     *            Number of north south ports
-     * @param portPos
-     *            An array the length of the number of ports in the graph.
-     * @param hasHyperEdgesEastOfIndex
-     *            whether a layer east of the given index has hyperedges.
-     * @return the counter.
-     */
-    public static AllCrossingsCounter createAssumingFixedPortOrder(final int[] inLayerEdgeCount,
-            final boolean[] hasNorthSouthPorts, final int[] portPos,
-            final boolean[] hasHyperEdgesEastOfIndex) {
-        return new AllCrossingsCounter(true, inLayerEdgeCount, hasNorthSouthPorts, portPos,
-                hasHyperEdgesEastOfIndex);
     }
 
 }
