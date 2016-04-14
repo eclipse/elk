@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
-import java.util.List;
-
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import org.eclipse.elk.alg.layered.p3order.ICrossingMinimizationHeuristic;
@@ -132,16 +130,6 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
 
     private int startIndex(final boolean isForwardSweep, final int length) {
         return isForwardSweep ? 0 : length - 1;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void minimizeCrossings(final List<LNode> layer, final boolean preOrdered, final boolean randomize,
-            final boolean forward) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override

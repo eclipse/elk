@@ -20,20 +20,16 @@ import org.eclipse.elk.alg.layered.components.ComponentsProcessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPostprocessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPreprocessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LInsets;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.properties.ContentAlignment;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -178,14 +174,7 @@ public final class KlayLayered {
         // Preprocess the compound graph by splitting cross-hierarchy edges
         compoundGraphPreprocessor.process(lgraph, theMonitor.subTask(1));
 
-        if (lgraph.getProperty(
-                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) == CrossingMinimizationStrategy.
-                HIERARCHICAL_LAYER_SWEEP) {
-            hierarchicalLayout(lgraph, theMonitor.subTask(1));
-        } else {
-            // Apply the layout algorithm recursively
-            recursiveLayout(lgraph, theMonitor.subTask(1));
-        }
+        hierarchicalLayout(lgraph, theMonitor.subTask(1));
 
         // Postprocess the compound graph by combining split cross-hierarchy edges
         compoundGraphPostprocessor.process(lgraph, theMonitor.subTask(1));
@@ -294,40 +283,6 @@ public final class KlayLayered {
         return nestedGraphOf(node) != null;
     }
 
-    /**
-     * Do a recursive compound graph layout.
-     * 
-     * @param lgraph the graph
-     * @param monitor a progress monitor to show progress information
-     */
-    private void recursiveLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
-        monitor.begin("Recursive layout", 2);
-        
-        if (!lgraph.getLayerlessNodes().isEmpty()) {
-            // Process all contained nested graphs recursively
-            float workPerSubgraph = 1.0f / lgraph.getLayerlessNodes().size();
-            for (LNode node : lgraph.getLayerlessNodes()) {
-                LGraph nestedGraph = nestedGraphOf(node);
-
-                if (nestedGraph != null) {
-                    recursiveLayout(nestedGraph, monitor.subTask(workPerSubgraph));
-                    graphLayoutToNode(node, nestedGraph);
-                }
-            }
-            
-            // Update the modules depending on user options
-            graphConfigurator.prepareGraphForLayout(lgraph);
-    
-            // Perform the layout algorithm
-            layout(lgraph, monitor);
-        }
-        
-        // Resize the resulting graph, according to minimal size constraints and such
-        resizeGraph(lgraph);
-
-        monitor.done();
-    }
-    
     ////////////////////////////////////////////////////////////////////////////////
     // Layout Testing
     
@@ -709,39 +664,4 @@ public final class KlayLayered {
         lgraph.getSize().y = newSize.y - insets.top - insets.bottom;
     }
     
-    /**
-     * Transfer the layout of the given graph to the given associated node.
-     * 
-     * @param node a compound node
-     * @param lgraph the graph nested in the compound node
-     */
-    private void graphLayoutToNode(final LNode node, final LGraph lgraph) {
-        // Process external ports
-        for (LNode childNode : lgraph.getLayerlessNodes()) {
-            Object origin = childNode.getProperty(InternalProperties.ORIGIN);
-            if (origin instanceof LPort) {
-                LPort port = (LPort) origin;
-                KVector portPosition = LGraphUtil.getExternalPortPosition(lgraph, childNode,
-                        port.getSize().x, port.getSize().y);
-                port.getPosition().x = portPosition.x;
-                port.getPosition().y = portPosition.y;
-                port.setSide(childNode.getProperty(InternalProperties.EXT_PORT_SIDE));
-            }
-        }
-        
-        // Setup the parent node
-        KVector actualGraphSize = lgraph.getActualSize();
-        if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
-                GraphProperties.EXTERNAL_PORTS)) {
-            // Ports have positions assigned
-            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
-                    .add(GraphProperties.NON_FREE_PORTS);
-            LGraphUtil.resizeNode(node, actualGraphSize, false, true);
-        } else {
-            // Ports have not been positioned yet - leave this for next layouter
-            LGraphUtil.resizeNode(node, actualGraphSize, true, true);
-        }
-    }
-
 }

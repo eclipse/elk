@@ -56,7 +56,8 @@ public class InLayerEdgeAllCrossingsCounter {
      * @param assumeFixedPortOrder
      *            assume all port orders to be fixed.
      * @param assumeCompoundNodePortOrderFixed
-     *            Whether to assume that the order of ports on compound nodes is fixed or not.
+     *            Whether to assume that the order of ports on compound nodes is fixed or not. TODO-alan replace by
+     *            Fenwick or at least merge with greedy switch in layer counter.
      */
     public InLayerEdgeAllCrossingsCounter(final LNode[] nodeOrder,
             final boolean assumeFixedPortOrder, final boolean assumeCompoundNodePortOrderFixed) {

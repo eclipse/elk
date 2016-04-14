@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
-import java.util.List;
-
 import org.eclipse.elk.alg.layered.graph.LNode;
 
 /**
@@ -30,23 +28,6 @@ public interface ICrossingMinimizationHeuristic {
 
     /** Determines whether the heuristic always improves. */
     boolean alwaysImproves();
-
-    /**
-     * Minimize the number of crossings for the edges between the given layer and either its
-     * predecessor or its successor. Resolve violated constraints.
-     * 
-     * @param layer
-     *            the free layer whose nodes are reordered.
-     * @param preOrdered
-     *            whether the nodes have been ordered in a previous run.
-     * @param randomize
-     *            {@code true} if this layer's node order should just be randomized. In that case,
-     *            {@code preOrdered} is assumed to be {@code false} and the return value is
-     *            {@code 0}.
-     * @param forward
-     *            whether the free layer is after the fixed layer.
-     */
-    void minimizeCrossings(List<LNode> layer, boolean preOrdered, boolean randomize, boolean forward);
 
     /**
      * Set the order in the first layer (with regard to the sweep direction) according to how the

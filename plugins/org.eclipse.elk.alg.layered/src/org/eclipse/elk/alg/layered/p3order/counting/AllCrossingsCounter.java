@@ -11,8 +11,6 @@
 package org.eclipse.elk.alg.layered.p3order.counting;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.intermediate.greedyswitch.BetweenLayerHyperedgeAllCrossingsCounter;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -31,16 +29,6 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public final class AllCrossingsCounter {
 
-    private boolean alwaysUseHyperedgeCounter;
-    private CrossingsCounter inLayerEdgeCrossingsCounter;
-    private BetweenLayerStraightEdgeAllCrossingsCounter inbetweenLayerStraightEdgeCounter;
-    private BetweenLayerHyperedgeAllCrossingsCounter inBetweenLayerHyperedgeAllCrossingsCounter;
-    private NorthSouthEdgeAllCrossingsCounter northSouthPortCrossingCounter;
-    private final boolean assumeFixedPortOrder;
-    private boolean[] hasHyperedgesInLayer;
-    private CrossingsCounter betweenAndInLayerCounter;
-    private final boolean useNewCounter = true;
-
     private CrossingsCounter crossingCounter;
     private NorthSouthEdgeAllCrossingsCounter northSouthEdgeCrossingCounter;
     private boolean[] hasHyperEdgesEastOfIndex;
@@ -53,58 +41,6 @@ public final class AllCrossingsCounter {
      *            The layered graph
      */
     private AllCrossingsCounter(final boolean assumeFixedPortOrder) {
-        this.assumeFixedPortOrder = assumeFixedPortOrder;
-        alwaysUseHyperedgeCounter = false;
-    }
-
-    /**
-     * Counts all crossings in a graph in the currentOrder. When multiple edges leave or enter a
-     * port, it is assumed, that this is drawn as a hyperedge and the hyperedge crossings counter is
-     * used. This counter can only approximate the resulting crossings.
-     *
-     * @param currentOrder
-     *            The current order of the nodes.
-     * @param hasHyperEdgesInLayer
-     *            array showing which layer has hyperedges. TODO-alan this makes no sense but this
-     *            class will die some day anyway.
-     * @param numPorts
-     *            the number of ports in the complete graph.
-     * @return the number of crossings
-     */
-    public int countAllCrossingsInGraphWithOrder(final LNode[][] currentOrder,
-            final boolean[] hasHyperEdgesInLayer, final int numPorts) {
-        if (currentOrder.length == 0) {
-            return 0;
-        }
-        hasHyperedgesInLayer = hasHyperEdgesInLayer;
-        inBetweenLayerHyperedgeAllCrossingsCounter = assumeFixedPortOrder
-                ? BetweenLayerHyperedgeAllCrossingsCounter.createAssumingPortOrderFixed(numPorts)
-                : BetweenLayerHyperedgeAllCrossingsCounter.create(numPorts);
-
-        int[] portPositions = new int[numPorts];
-        northSouthPortCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPositions);
-        if (useNewCounter) {
-            crossingCounter = assumeFixedPortOrder
-                    ? CrossingsCounter.createAssumingPortOrderFixed(portPositions)
-                    : CrossingsCounter.create(portPositions);
-                    northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPositions);
-        } else {
-            inbetweenLayerStraightEdgeCounter = assumeFixedPortOrder
-                    ? BetweenLayerStraightEdgeAllCrossingsCounter
-                            .createAssumingPortOrderFixed(numPorts)
-                    : BetweenLayerStraightEdgeAllCrossingsCounter.create(numPorts);
-            inLayerEdgeCrossingsCounter =
-                assumeFixedPortOrder ? CrossingsCounter.createAssumingPortOrderFixed(portPositions)
-                        : CrossingsCounter.create(portPositions);
-        }
-        int totalCrossings = useNewCounter
-                ? crossingCounter.countInLayerCrossingsOnSide(currentOrder[0],
-                        PortSide.WEST)
-                : inLayerEdgeCrossingsCounter.countInLayerCrossingsOnBothSides(currentOrder[0]);
-        for (int layerIndex = 0; layerIndex < currentOrder.length; layerIndex++) {
-            totalCrossings += countCrossingsAt(layerIndex, currentOrder);
-        }
-        return totalCrossings;
     }
 
     public int countAllCrossings(final LNode[][] currentOrder) {
@@ -119,7 +55,6 @@ public final class AllCrossingsCounter {
     private AllCrossingsCounter(final boolean fixedOrder, final int[] inLayerEdgeCount,
             final boolean[] hasNorthSouthPorts, final int[] portPos,
             final boolean[] hasHyperEdgesEastOfIndex) {
-        assumeFixedPortOrder = fixedOrder;
         this.hasHyperEdgesEastOfIndex = hasHyperEdgesEastOfIndex;
         hyperedgeCrossingsCounter = HyperedgeCrossingsCounter
                 .createAssumingPortOrderFixed(inLayerEdgeCount, hasNorthSouthPorts, portPos);
@@ -155,89 +90,6 @@ public final class AllCrossingsCounter {
         return isForwardSweep ? 0 : length - 1;
     }
 
-    /**
-     * Counts in-layer and between layer crossings between the free and fixed layer of a sweep.
-     *
-     * @param forward
-     *            Whether we are sweeping forward or not.
-     * @param freeLayerIndex
-     *            The current free layer.
-     * @param nodeOrder
-     *            The current order of the nodes.
-     * @return number of crossings between free and fixed layer.
-     */
-    public int countCrossingsOnNeighboringLayers(final boolean forward, final int freeLayerIndex,
-            final LNode[][] nodeOrder) {
-        int leftLayerIndex = forward ? freeLayerIndex - 1 : freeLayerIndex;
-        int rightLayerIndex = forward ? freeLayerIndex : freeLayerIndex + 1;
-        LNode[] leftLayer = nodeOrder[leftLayerIndex];
-        LNode[] rightLayer = nodeOrder[rightLayerIndex];
-        int crossings = 0;
-
-        if (hasHyperEdgesEastOfIndex[leftLayerIndex]) {
-            crossings +=
-                    crossingCounter.countInLayerCrossingsOnBothSides(nodeOrder[freeLayerIndex]);
-            crossings += hyperedgeCrossingsCounter.countCrossings(leftLayer, rightLayer);
-        } else {
-            crossings += crossingCounter.countCrossingsBetweenLayers(leftLayer, rightLayer);
-        }
-        crossings += northSouthEdgeCrossingCounter.countCrossings(nodeOrder[freeLayerIndex]);
-
-        return crossings;
-    }
-
-    /**
-     * Between-layer edges are all counted using the hyperedge crossing approximization algorithm.
-     */
-    public void alwaysUseHyperedgeCounter() {
-        alwaysUseHyperedgeCounter = true;
-    }
-
-    private int countBetweenLayerCrossingsInOrder(final LNode[] easternLayer,
-            final LNode[] westernLayer, final LNode[][] nodeOrder,
-            final boolean useHyperEdgeCounter) {
-        if (isALayerEmpty(easternLayer, westernLayer)) {
-            return 0;
-        }
-
-        return (useHyperEdgeCounter ? inBetweenLayerHyperedgeAllCrossingsCounter
-                : inbetweenLayerStraightEdgeCounter).countCrossings(easternLayer, westernLayer);
-    }
-
-    /**
-     * Getting hyperedges.
-     *
-     * @param nodeOrder
-     *            the order of nodes in the complete graph.
-     * @param side
-     *            the side.
-     * @return returns where the graph has hyperedges
-     */
-    public static boolean[] getHyperedges(final LNode[][] nodeOrder, final PortSide side) {
-        boolean[] hasHyperedges = new boolean[nodeOrder.length];
-        for (int layerIndex = 0; layerIndex < nodeOrder.length; layerIndex++) {
-            LNode[] easternLayer = nodeOrder[layerIndex];
-            hasHyperedges[layerIndex] |= checkForHyperedges(easternLayer, side);
-        }
-        return hasHyperedges;
-    }
-
-    private static boolean checkForHyperedges(final LNode[] layer, final PortSide side) {
-        for (LNode node : layer) {
-            for (LPort port : node.getPorts()) {
-                if (port.getSide() == side) {
-                    if (port.getOutgoingEdges().size() + port.getIncomingEdges().size() > 1) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean isALayerEmpty(final LNode[] easternLayer, final LNode[] westernLayer) {
-        return easternLayer.length == 0 || westernLayer.length == 0;
-    }
 
     private int countCrossingsAt(final int layerIndex, final LNode[][] currentOrder) {
         int totalCrossings = 0;

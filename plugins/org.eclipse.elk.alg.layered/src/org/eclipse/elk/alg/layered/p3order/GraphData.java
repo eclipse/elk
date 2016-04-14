@@ -69,8 +69,9 @@ class GraphData {
     private GraphData parentGraphData;
 
     /**
-     * Create object collecting info about compound graph.
-     *
+     * Create object collecting info about compound graph. TODO-alan this is pretty damn ugly. Can you make this
+     * prettier?
+     * 
      * @param graph
      *            The graph
      * @param crossMinType
@@ -164,9 +165,9 @@ class GraphData {
         if (crossMinType.alwaysImproves() && !childGraphs.isEmpty()) {
             portDistributor = new GreedyPortDistributor(portPos, childNumPorts);
         } else if (random.nextBoolean()) {
-            portDistributor = NodeRelativePortDistributor.createPortOrderFixedInOtherLayers(portRanks, nodePositions);
+            portDistributor = new NodeRelativePortDistributor(portRanks, nodePositions);
         } else {
-            portDistributor = LayerTotalPortDistributor.createPortOrderFixedInOtherLayers(portRanks, nodePositions);
+            portDistributor = new LayerTotalPortDistributor(portRanks, nodePositions);
         }
 
         // Initialize the compound graph layer crossing minimizer

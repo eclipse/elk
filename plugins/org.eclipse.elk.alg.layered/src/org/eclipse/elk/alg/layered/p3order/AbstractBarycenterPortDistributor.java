@@ -51,7 +51,6 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
     private final float[] portBarycenter;
     private final List<LPort> inLayerPorts;
     /** Whether to assume port order to be fixed. */
-    protected final boolean assumePortOrderFixed;
 
     /**
      * Constructs a port distributor for the given array of port ranks.
@@ -60,10 +59,8 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      * @param portRanks
      *            The array of port ranks
      */
-    public AbstractBarycenterPortDistributor(final float[] portRanks, final boolean
-            assumePortOrderFixed) {
+    public AbstractBarycenterPortDistributor(final float[] portRanks) {
         this.portRanks = portRanks;
-        this.assumePortOrderFixed = assumePortOrderFixed;
         inLayerPorts = Lists.newLinkedList();
         portBarycenter = new float[portRanks.length];
     }
@@ -77,9 +74,8 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      * @param nodePos
      *            array of node positions.
      */
-    public AbstractBarycenterPortDistributor(final float[] portRanks, final int[][] nodePos, final boolean
-            assumePortOrderFixed) {
-        this(portRanks, assumePortOrderFixed);
+    public AbstractBarycenterPortDistributor(final float[] portRanks, final int[][] nodePos) {
+        this(portRanks);
         nodePositions = nodePos;
     }
 

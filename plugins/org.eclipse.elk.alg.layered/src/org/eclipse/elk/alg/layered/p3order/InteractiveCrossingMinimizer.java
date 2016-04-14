@@ -20,9 +20,9 @@ import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
@@ -138,7 +138,7 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
         }
 
         // Distribute the ports of all nodes with free port constraints
-        AbstractBarycenterPortDistributor portDistributor = NodeRelativePortDistributor.create(new float[portCount]);
+        AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
         portDistributor.distributePorts(layeredGraph.toNodeArray());
         
         monitor.done();

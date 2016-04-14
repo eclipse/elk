@@ -147,8 +147,8 @@ public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCre
     }
 
     private void setUpAndMinimizeCrossings() {
-        LayerSweepHierarchicalCrossingMinimizer crossMin =
-                new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
+        LayerSweepCrossingMinimizer crossMin =
+                new LayerSweepCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
         setAllGraphsToGreedySwitchType(getGraph(), GreedySwitchType.TWO_SIDED);
         crossMin.process(getGraph(), new BasicProgressMonitor());
     }

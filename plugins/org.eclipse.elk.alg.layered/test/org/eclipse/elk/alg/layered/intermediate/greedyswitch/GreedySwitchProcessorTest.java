@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.LayerSweepHierarchicalCrossingMinimizer;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public class GreedySwitchProcessorTest extends TestGraphCreator {
-    private final LayerSweepHierarchicalCrossingMinimizer greedySwitcher;
+    private final LayerSweepCrossingMinimizer greedySwitcher;
     private final IElkProgressMonitor monitor;
     private final GreedySwitchType greedyType;
 
@@ -55,9 +55,9 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
     public GreedySwitchProcessorTest(final GreedySwitchType gT) {
         greedyType = gT;
         if (gT == GreedySwitchType.ONE_SIDED) {
-            greedySwitcher = new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
+            greedySwitcher = new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
         } else {
-            greedySwitcher = new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
+            greedySwitcher = new LayerSweepCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
         }
 
         monitor = new BasicProgressMonitor();

@@ -12,9 +12,8 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
-import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchProcessor;
 import org.eclipse.elk.alg.layered.p3order.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.LayerSweepHierarchicalCrossingMinimizer;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter. This enumeration also serves as a
@@ -95,8 +94,6 @@ public enum IntermediateProcessorStrategy {
     HIERARCHICAL_GREEDY_SWITCH,
     /** Greedy switch crossing reduction. */
     GREEDY_SWITCH,
-    /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
-    PORT_DISTRIBUTER,
     /** Unhide self loops after phase 3. */
     SPLINE_SELF_LOOP_POSITIONER,
     /** Compacts looong sausages. This is a hidden feature. */
@@ -194,12 +191,9 @@ public enum IntermediateProcessorStrategy {
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
 
-        case GREEDY_SWITCH:
-            return new GreedySwitchProcessor();
-
         case HIERARCHICAL_GREEDY_SWITCH:
             //TODO-alan this is bullshit.
-            return new LayerSweepHierarchicalCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
+            return new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
 
         case HIERARCHICAL_NODE_RESIZER:
             return new HierarchicalNodeResizingProcessor();
@@ -288,9 +282,6 @@ public enum IntermediateProcessorStrategy {
 
         case PARTITION_PREPROCESSOR:
             return new PartitionPreprocessor();
-
-        case PORT_DISTRIBUTER:
-            return new PortDistributionProcessor();
 
         case PORT_LIST_SORTER:
             return new PortListSorter();

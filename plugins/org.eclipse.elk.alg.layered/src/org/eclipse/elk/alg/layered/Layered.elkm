@@ -218,7 +218,7 @@ group crossingMinimization {
     option strategy: CrossingMinimizationStrategy {
         label "Crossing Minimization Strategy"
         description "Strategy for crossing minimization."
-        default = CrossingMinimizationStrategy.HIERARCHICAL_LAYER_SWEEP
+        default = CrossingMinimizationStrategy.LAYER_SWEEP
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.crossMin
     }

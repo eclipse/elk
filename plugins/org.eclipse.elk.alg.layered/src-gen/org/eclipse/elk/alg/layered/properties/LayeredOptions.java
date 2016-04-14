@@ -371,7 +371,7 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #CROSSING_MINIMIZATION_STRATEGY}.
    */
-  private final static CrossingMinimizationStrategy CROSSING_MINIMIZATION_STRATEGY_DEFAULT = CrossingMinimizationStrategy.HIERARCHICAL_LAYER_SWEEP;
+  private final static CrossingMinimizationStrategy CROSSING_MINIMIZATION_STRATEGY_DEFAULT = CrossingMinimizationStrategy.LAYER_SWEEP;
   
   /**
    * Strategy for crossing minimization.
