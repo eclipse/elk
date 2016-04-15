@@ -369,6 +369,23 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #CROSSING_MINIMIZATION_SEMI_INTERACTIVE}.
+   */
+  private final static boolean CROSSING_MINIMIZATION_SEMI_INTERACTIVE_DEFAULT = false;
+  
+  /**
+   * Preserves the order of nodes within a layer but still minimizes
+   * crossings between edges connecting long edge dummies.
+   * Requires a crossing minimization strategy that is able to
+   * process 'in-layer' constraints.
+   */
+  public final static IProperty<Boolean> CROSSING_MINIMIZATION_SEMI_INTERACTIVE = new Property<Boolean>(
+            "org.eclipse.elk.layered.crossingMinimization.semiInteractive",
+            CROSSING_MINIMIZATION_SEMI_INTERACTIVE_DEFAULT,
+            null,
+            null);
+  
+  /**
    * Default value for {@link #NODE_PLACEMENT_STRATEGY}.
    */
   private final static NodePlacementStrategy NODE_PLACEMENT_STRATEGY_DEFAULT = NodePlacementStrategy.BRANDES_KOEPF;
@@ -1074,6 +1091,19 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         , "de.cau.cs.kieler.klay.layered.greedySwitch"
     ));
     registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layered.crossingMinimization.semiInteractive",
+        "crossingMinimization",
+        "Semi-Interactive Crossing Minimization",
+        "Preserves the order of nodes within a layer but still minimizes crossings between edges connecting long edge dummies. Requires a crossing minimization strategy that is able to process \'in-layer\' constraints.",
+        CROSSING_MINIMIZATION_SEMI_INTERACTIVE_DEFAULT,
+        null,
+        null,
+        LayoutOptionData.Type.BOOLEAN,
+        boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.register(new LayoutOptionData(
         "org.eclipse.elk.layered.nodePlacement.strategy",
         "nodePlacement",
         "Node Placement Strategy",
@@ -1502,6 +1532,11 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.crossingMinimization.greedySwitch",
+        null
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.crossingMinimization.semiInteractive",
         null
     );
     registry.addOptionSupport(

@@ -71,6 +71,8 @@ public enum IntermediateProcessorStrategy {
     HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR,
     /** Process layered big nodes, such that they are not interrupted by long edge nodes. */
     BIG_NODES_INTERMEDIATEPROCESSOR,
+    /** Adds successor constraints between regular nodes before crossing minimization. */
+    SEMI_INTERACTIVE_CROSSMIN_PROCESSOR,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -294,7 +296,10 @@ public enum IntermediateProcessorStrategy {
 
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
-            
+
+        case SEMI_INTERACTIVE_CROSSMIN_PROCESSOR:
+            return new SemiInteractiveCrossMinProcessor();
+
         case SPLINE_SELF_LOOP_POSITIONER:
             return new SplineSelfLoopPositioner();
             

@@ -84,6 +84,7 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
 	supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
 	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch
+	supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
 	supports mergeEdges
 	supports mergeHierarchyEdges
 	supports interactiveReferencePoint
@@ -229,6 +230,17 @@ group crossingMinimization {
         default = GreedySwitchType.TWO_SIDED
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.greedySwitch
+    }
+    
+    advanced option semiInteractive: boolean {
+    	label "Semi-Interactive Crossing Minimization"
+    	description 
+    		"Preserves the order of nodes within a layer but still minimizes 
+			 crossings between edges connecting long edge dummies. 
+			 Requires a crossing minimization strategy that is able to 
+			 process 'in-layer' constraints."
+		default = false
+		targets parents
     }
     
 }
