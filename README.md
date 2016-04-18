@@ -9,8 +9,10 @@ to editors and viewers.
 The layout algorithms are plain Java
 and can thus also be used outside of Eclipse.
 
-If you want to know more,
-let us refer you [to the ELK homepage](http://www.eclipse.org/elk).
+## More Info
+
+* [The ELK homepage](http://www.eclipse.org/elk)
+* [Our documentation](https://github.com/eclipse/elk/wiki)
 
 
 ## Repository Structure
@@ -19,10 +21,14 @@ The repository's structure is pretty straightforward. We only have a few folders
 
 * `build`:
   Contains all the files necessary to build ELK in all its different forms.
+* `config`:
+  Contains configuration files, such as our Checkstyle configuration.
 * `features`:
   Contains all the Eclipse features ELK consists of.
 * `plugins`:
   Contains all the plugins ELK consists of.
+* `setups`:
+  Contains our Oomph setup files.
 
 
 ## Building ELK
