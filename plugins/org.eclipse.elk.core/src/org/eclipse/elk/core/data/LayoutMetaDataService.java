@@ -373,6 +373,7 @@ public class LayoutMetaDataService {
          * Apply all dependencies that have been delivered by layout meta data providers.
          */
         private void applyDependencies() {
+            // Go through all registered algorithms and make sure they are
             for (LayoutAlgorithmData algorithm : layoutAlgorithmMap.values()) {
                 String categoryId = algorithm.getCategoryId();
                 if (categoryId == null) {
@@ -381,15 +382,16 @@ public class LayoutMetaDataService {
 
                 LayoutCategoryData category = getCategoryData(categoryId);
                 if (category == null && categoryId.isEmpty()) {
-                    category = new LayoutCategoryData("", "Other", null);
-                    layoutCategoryMap.put("", category);
+                    category = retrieveBackupCategory();
                 }
 
-                if (category != null) {
+                if (category != null && !category.getLayouters().contains(algorithm)) {
                     category.getLayouters().add(algorithm);
                 }
             }
-
+            
+            // Apply layout option dependencies registered with this registry (contrary to the code above, this code
+            // requires that layout options we depend on have already been registered)
             for (Triple dep : optionDependencies) {
                 LayoutOptionData source = getOptionData(dep.firstId);
                 LayoutOptionData target = getOptionData(dep.secondId);
@@ -397,8 +399,10 @@ public class LayoutMetaDataService {
                     source.getDependencies().add(Pair.of(target, dep.value));
                 }
             }
-
             optionDependencies.clear();
+            
+            // Apply support information for supported layout options (contrary to the code above the code above, this
+            // code requires that layout options we want to support have already been registered)
             for (Triple sup : optionSupport) {
                 LayoutAlgorithmData algorithm = getAlgorithmData(sup.firstId);
                 LayoutOptionData option = getOptionData(sup.secondId);
@@ -407,6 +411,21 @@ public class LayoutMetaDataService {
                 }
             }
             optionSupport.clear();
+        }
+        
+        /**
+         * Returns the "Other" category. If there is none yet, creates one.
+         * 
+         * @return the "Other" category.
+         */
+        private LayoutCategoryData retrieveBackupCategory() {
+            LayoutCategoryData otherCategory = layoutCategoryMap.get("");
+            if (otherCategory == null) {
+                otherCategory = new LayoutCategoryData("", "Other", null);
+                layoutCategoryMap.put("", otherCategory);
+            }
+            
+            return otherCategory;
         }
 
     }
