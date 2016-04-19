@@ -42,6 +42,9 @@ public class LayoutMetaDataService {
     public static synchronized LayoutMetaDataService getInstance() {
         if (instance == null) {
             instance = new LayoutMetaDataService();
+            
+            // We always load our core options
+            instance.registerLayoutMetaDataProvider(new CoreOptions());
 
             // Try to make the ELK service plug-in load the extension point data
             try {

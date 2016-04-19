@@ -12,12 +12,5 @@
    </extension>
    
    <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
-  
-   <extension
-         point="org.eclipse.elk.core.layoutProviders">
-      <provider
-            class="org.eclipse.elk.core.options.CoreOptions">
-      </provider>
-   </extension>
 
 </plugin>
