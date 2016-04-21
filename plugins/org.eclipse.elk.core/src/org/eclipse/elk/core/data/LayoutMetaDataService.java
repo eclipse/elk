@@ -213,7 +213,8 @@ public class LayoutMetaDataService {
     }
 
     /**
-     * Returns a layout option data that has the given suffix in its identifier.
+     * Returns a layout option data that has the given suffix in its identifier. The identifier may be a legacy
+     * identifier.
      * 
      * @param suffix
      *            a layout option identifier suffix
@@ -223,14 +224,21 @@ public class LayoutMetaDataService {
         if (suffix == null || suffix.trim().isEmpty()) {
             return null;
         }
-
+        
         // try the full id
         LayoutOptionData data = layoutOptionMap.get(suffix);
-
-        // nothing found? try suffix map
-        if (data == null) {
-            data = optionSuffixMap.get(suffix);
+        if (data != null) {
+            return data;
         }
+        
+        // try the legacy id
+        data = legacyLayoutOptionMap.get(suffix);
+        if (data != null) {
+            return data;
+        }
+        
+        // nothing found? try suffix map
+        data = optionSuffixMap.get(suffix);
 
         return data;
     }
