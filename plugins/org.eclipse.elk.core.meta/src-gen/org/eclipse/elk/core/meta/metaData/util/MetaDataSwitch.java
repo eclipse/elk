@@ -103,11 +103,11 @@ public class MetaDataSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case MetaDataPackage.MD_GROUP_OR_PROPERTY:
+      case MetaDataPackage.MD_GROUP_OR_OPTION:
       {
-        MdGroupOrProperty mdGroupOrProperty = (MdGroupOrProperty)theEObject;
-        T result = caseMdGroupOrProperty(mdGroupOrProperty);
-        if (result == null) result = caseMdBundleMember(mdGroupOrProperty);
+        MdGroupOrOption mdGroupOrOption = (MdGroupOrOption)theEObject;
+        T result = caseMdGroupOrOption(mdGroupOrOption);
+        if (result == null) result = caseMdBundleMember(mdGroupOrOption);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -115,24 +115,24 @@ public class MetaDataSwitch<T> extends Switch<T>
       {
         MdGroup mdGroup = (MdGroup)theEObject;
         T result = caseMdGroup(mdGroup);
-        if (result == null) result = caseMdGroupOrProperty(mdGroup);
+        if (result == null) result = caseMdGroupOrOption(mdGroup);
         if (result == null) result = caseMdBundleMember(mdGroup);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case MetaDataPackage.MD_PROPERTY:
+      case MetaDataPackage.MD_OPTION:
       {
-        MdProperty mdProperty = (MdProperty)theEObject;
-        T result = caseMdProperty(mdProperty);
-        if (result == null) result = caseMdGroupOrProperty(mdProperty);
-        if (result == null) result = caseMdBundleMember(mdProperty);
+        MdOption mdOption = (MdOption)theEObject;
+        T result = caseMdOption(mdOption);
+        if (result == null) result = caseMdGroupOrOption(mdOption);
+        if (result == null) result = caseMdBundleMember(mdOption);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY:
+      case MetaDataPackage.MD_OPTION_DEPENDENCY:
       {
-        MdPropertyDependency mdPropertyDependency = (MdPropertyDependency)theEObject;
-        T result = caseMdPropertyDependency(mdPropertyDependency);
+        MdOptionDependency mdOptionDependency = (MdOptionDependency)theEObject;
+        T result = caseMdOptionDependency(mdOptionDependency);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -152,10 +152,10 @@ public class MetaDataSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case MetaDataPackage.MD_PROPERTY_SUPPORT:
+      case MetaDataPackage.MD_OPTION_SUPPORT:
       {
-        MdPropertySupport mdPropertySupport = (MdPropertySupport)theEObject;
-        T result = caseMdPropertySupport(mdPropertySupport);
+        MdOptionSupport mdOptionSupport = (MdOptionSupport)theEObject;
+        T result = caseMdOptionSupport(mdOptionSupport);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -212,17 +212,17 @@ public class MetaDataSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Md Group Or Property</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Md Group Or Option</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Md Group Or Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Md Group Or Option</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseMdGroupOrProperty(MdGroupOrProperty object)
+  public T caseMdGroupOrOption(MdGroupOrOption object)
   {
     return null;
   }
@@ -244,33 +244,33 @@ public class MetaDataSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Md Property</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Md Option</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Md Property</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Md Option</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseMdProperty(MdProperty object)
+  public T caseMdOption(MdOption object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Md Property Dependency</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Md Option Dependency</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Md Property Dependency</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Md Option Dependency</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseMdPropertyDependency(MdPropertyDependency object)
+  public T caseMdOptionDependency(MdOptionDependency object)
   {
     return null;
   }
@@ -308,17 +308,17 @@ public class MetaDataSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Md Property Support</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Md Option Support</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Md Property Support</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Md Option Support</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseMdPropertySupport(MdPropertySupport object)
+  public T caseMdOptionSupport(MdOptionSupport object)
   {
     return null;
   }

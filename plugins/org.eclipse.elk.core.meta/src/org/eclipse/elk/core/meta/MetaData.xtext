@@ -25,7 +25,7 @@ MdBundle:
         'bundle' '{'
             (
                 ('label' label=STRING)?
-                & ('class' targetClass=QualifiedName)?
+                & ('metadataClass' targetClass=QualifiedName)?
                 & ('documentationFolder' documentationFolder=Path)?
                 & ('idPrefix' idPrefix=QualifiedName)?
             )
@@ -34,17 +34,17 @@ MdBundle:
     members+=MdBundleMember*;
 
 MdBundleMember:
-    MdGroupOrProperty | MdAlgorithm | MdCategory;
+    MdGroupOrOption | MdAlgorithm | MdCategory;
 
-MdGroupOrProperty:
-    MdGroup | MdProperty;
+MdGroupOrOption:
+    MdGroup | MdOption;
 
 MdGroup:
     'group' name=ID '{'
-        children+=MdGroupOrProperty*
+        children+=MdGroupOrOption*
     '}';
 
-MdProperty:
+MdOption:
     deprecated?='deprecated'?
     (advanced?='advanced' | programmatic?='programmatic' | output?='output' | global?='global')?
     'option' name=ID (':' type=JvmTypeReference)? '{'
@@ -55,27 +55,28 @@ MdProperty:
             & ('default' '=' defaultValue=XExpression)?
             & ('lowerBound' '=' lowerBound=XExpression)?
             & ('upperBound' '=' upperBound=XExpression)?
-            & ('targets' targets+=MdPropertyTargetType (',' targets+=MdPropertyTargetType)*)?
+            & ('targets' targets+=MdOptionTargetType (',' targets+=MdOptionTargetType)*)?
             & ('legacyIds' legacyIds+=QualifiedName (',' legacyIds+=QualifiedName)*)?
         )
-        (dependencies+=MdPropertyDependency)*
+        (dependencies+=MdOptionDependency)*
     '}';
 
-MdPropertyDependency:
-    'requires' target=[MdProperty|QualifiedName] ('==' value=XExpression)?;
+MdOptionDependency:
+    'requires' target=[MdOption|QualifiedName] ('==' value=XExpression)?;
 
 MdAlgorithm:
     deprecated?='deprecated'?
     'algorithm' name=ID '(' provider=JvmTypeReference ('#' parameter=ID)? ')' '{'
         (
             ('label' label=STRING)?
+            & ('metadataClass' targetClass=QualifiedName)?
             & ('description' description=STRING)?
             & ('documentation' documentation=STRING)?
             & ('category' category=[MdCategory|QualifiedName])?
             & ('preview' previewImage=Path)?
             & ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
         )
-        (supportedOptions+=MdPropertySupport)*
+        (supportedOptions+=MdOptionSupport)*
     '}';
 
 MdCategory:
@@ -88,15 +89,15 @@ MdCategory:
         )
     '}';
 
-MdPropertySupport:
-    'supports' property=[MdProperty|QualifiedName] ('=' value=XExpression duplicated?='duplicated'?)?
+MdOptionSupport:
+    'supports' option=[MdOption|QualifiedName] ('=' value=XExpression)?
     ('documentation' documentation=STRING)?
     ;
 
 Path:
     QualifiedName (('/' | '-') QualifiedName)*;
 
-enum MdPropertyTargetType:
+enum MdOptionTargetType:
     parents | nodes | edges | ports | labels;
 
 enum MdGraphFeature:

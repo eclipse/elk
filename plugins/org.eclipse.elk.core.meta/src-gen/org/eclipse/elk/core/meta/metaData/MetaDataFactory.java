@@ -60,13 +60,13 @@ public interface MetaDataFactory extends EFactory
   MdBundleMember createMdBundleMember();
 
   /**
-   * Returns a new object of class '<em>Md Group Or Property</em>'.
+   * Returns a new object of class '<em>Md Group Or Option</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Md Group Or Property</em>'.
+   * @return a new object of class '<em>Md Group Or Option</em>'.
    * @generated
    */
-  MdGroupOrProperty createMdGroupOrProperty();
+  MdGroupOrOption createMdGroupOrOption();
 
   /**
    * Returns a new object of class '<em>Md Group</em>'.
@@ -78,22 +78,22 @@ public interface MetaDataFactory extends EFactory
   MdGroup createMdGroup();
 
   /**
-   * Returns a new object of class '<em>Md Property</em>'.
+   * Returns a new object of class '<em>Md Option</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Md Property</em>'.
+   * @return a new object of class '<em>Md Option</em>'.
    * @generated
    */
-  MdProperty createMdProperty();
+  MdOption createMdOption();
 
   /**
-   * Returns a new object of class '<em>Md Property Dependency</em>'.
+   * Returns a new object of class '<em>Md Option Dependency</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Md Property Dependency</em>'.
+   * @return a new object of class '<em>Md Option Dependency</em>'.
    * @generated
    */
-  MdPropertyDependency createMdPropertyDependency();
+  MdOptionDependency createMdOptionDependency();
 
   /**
    * Returns a new object of class '<em>Md Algorithm</em>'.
@@ -114,13 +114,13 @@ public interface MetaDataFactory extends EFactory
   MdCategory createMdCategory();
 
   /**
-   * Returns a new object of class '<em>Md Property Support</em>'.
+   * Returns a new object of class '<em>Md Option Support</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Md Property Support</em>'.
+   * @return a new object of class '<em>Md Option Support</em>'.
    * @generated
    */
-  MdPropertySupport createMdPropertySupport();
+  MdOptionSupport createMdOptionSupport();
 
   /**
    * Returns the package supported by this factory.

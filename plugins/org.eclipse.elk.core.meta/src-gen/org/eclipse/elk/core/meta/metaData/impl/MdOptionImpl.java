@@ -14,9 +14,9 @@ package org.eclipse.elk.core.meta.metaData.impl;
 
 import java.util.Collection;
 
-import org.eclipse.elk.core.meta.metaData.MdProperty;
-import org.eclipse.elk.core.meta.metaData.MdPropertyDependency;
-import org.eclipse.elk.core.meta.metaData.MdPropertyTargetType;
+import org.eclipse.elk.core.meta.metaData.MdOption;
+import org.eclipse.elk.core.meta.metaData.MdOptionDependency;
+import org.eclipse.elk.core.meta.metaData.MdOptionTargetType;
 import org.eclipse.elk.core.meta.metaData.MetaDataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -39,32 +39,32 @@ import org.eclipse.xtext.xbase.XExpression;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Md Property</b></em>'.
+ * An implementation of the model object '<em><b>Md Option</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isDeprecated <em>Deprecated</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isAdvanced <em>Advanced</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isProgrammatic <em>Programmatic</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isOutput <em>Output</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#isGlobal <em>Global</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getType <em>Type</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getLabel <em>Label</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDescription <em>Description</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDocumentation <em>Documentation</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDefaultValue <em>Default Value</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getLowerBound <em>Lower Bound</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getUpperBound <em>Upper Bound</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getTargets <em>Targets</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getLegacyIds <em>Legacy Ids</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyImpl#getDependencies <em>Dependencies</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#isDeprecated <em>Deprecated</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#isAdvanced <em>Advanced</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#isProgrammatic <em>Programmatic</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#isOutput <em>Output</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#isGlobal <em>Global</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getType <em>Type</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getDocumentation <em>Documentation</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getDefaultValue <em>Default Value</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getLowerBound <em>Lower Bound</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getUpperBound <em>Upper Bound</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getTargets <em>Targets</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getLegacyIds <em>Legacy Ids</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getDependencies <em>Dependencies</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
+public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
 {
   /**
    * The default value of the '{@link #isDeprecated() <em>Deprecated</em>}' attribute.
@@ -274,7 +274,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
    * @generated
    * @ordered
    */
-  protected EList<MdPropertyTargetType> targets;
+  protected EList<MdOptionTargetType> targets;
 
   /**
    * The cached value of the '{@link #getLegacyIds() <em>Legacy Ids</em>}' attribute list.
@@ -294,14 +294,14 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
    * @generated
    * @ordered
    */
-  protected EList<MdPropertyDependency> dependencies;
+  protected EList<MdOptionDependency> dependencies;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected MdPropertyImpl()
+  protected MdOptionImpl()
   {
     super();
   }
@@ -314,7 +314,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
   @Override
   protected EClass eStaticClass()
   {
-    return MetaDataPackage.Literals.MD_PROPERTY;
+    return MetaDataPackage.Literals.MD_OPTION;
   }
 
   /**
@@ -337,7 +337,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     boolean oldDeprecated = deprecated;
     deprecated = newDeprecated;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__DEPRECATED, oldDeprecated, deprecated));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__DEPRECATED, oldDeprecated, deprecated));
   }
 
   /**
@@ -360,7 +360,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     boolean oldAdvanced = advanced;
     advanced = newAdvanced;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__ADVANCED, oldAdvanced, advanced));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__ADVANCED, oldAdvanced, advanced));
   }
 
   /**
@@ -383,7 +383,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     boolean oldProgrammatic = programmatic;
     programmatic = newProgrammatic;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__PROGRAMMATIC, oldProgrammatic, programmatic));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__PROGRAMMATIC, oldProgrammatic, programmatic));
   }
 
   /**
@@ -406,7 +406,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     boolean oldOutput = output;
     output = newOutput;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__OUTPUT, oldOutput, output));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__OUTPUT, oldOutput, output));
   }
 
   /**
@@ -429,7 +429,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     boolean oldGlobal = global;
     global = newGlobal;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__GLOBAL, oldGlobal, global));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__GLOBAL, oldGlobal, global));
   }
 
   /**
@@ -453,7 +453,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     type = newType;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__TYPE, oldType, newType);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__TYPE, oldType, newType);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -470,14 +470,14 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     {
       NotificationChain msgs = null;
       if (type != null)
-        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__TYPE, null, msgs);
+        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION__TYPE, null, msgs);
       if (newType != null)
-        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__TYPE, null, msgs);
+        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION__TYPE, null, msgs);
       msgs = basicSetType(newType, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__TYPE, newType, newType));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__TYPE, newType, newType));
   }
 
   /**
@@ -500,7 +500,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     String oldLabel = label;
     label = newLabel;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__LABEL, oldLabel, label));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__LABEL, oldLabel, label));
   }
 
   /**
@@ -523,7 +523,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     String oldDescription = description;
     description = newDescription;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__DESCRIPTION, oldDescription, description));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__DESCRIPTION, oldDescription, description));
   }
 
   /**
@@ -546,7 +546,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     String oldDocumentation = documentation;
     documentation = newDocumentation;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__DOCUMENTATION, oldDocumentation, documentation));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__DOCUMENTATION, oldDocumentation, documentation));
   }
 
   /**
@@ -570,7 +570,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     defaultValue = newDefaultValue;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE, oldDefaultValue, newDefaultValue);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__DEFAULT_VALUE, oldDefaultValue, newDefaultValue);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -587,14 +587,14 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     {
       NotificationChain msgs = null;
       if (defaultValue != null)
-        msgs = ((InternalEObject)defaultValue).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE, null, msgs);
+        msgs = ((InternalEObject)defaultValue).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION__DEFAULT_VALUE, null, msgs);
       if (newDefaultValue != null)
-        msgs = ((InternalEObject)newDefaultValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE, null, msgs);
+        msgs = ((InternalEObject)newDefaultValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION__DEFAULT_VALUE, null, msgs);
       msgs = basicSetDefaultValue(newDefaultValue, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE, newDefaultValue, newDefaultValue));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__DEFAULT_VALUE, newDefaultValue, newDefaultValue));
   }
 
   /**
@@ -618,7 +618,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     lowerBound = newLowerBound;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__LOWER_BOUND, oldLowerBound, newLowerBound);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__LOWER_BOUND, oldLowerBound, newLowerBound);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -635,14 +635,14 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     {
       NotificationChain msgs = null;
       if (lowerBound != null)
-        msgs = ((InternalEObject)lowerBound).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__LOWER_BOUND, null, msgs);
+        msgs = ((InternalEObject)lowerBound).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION__LOWER_BOUND, null, msgs);
       if (newLowerBound != null)
-        msgs = ((InternalEObject)newLowerBound).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__LOWER_BOUND, null, msgs);
+        msgs = ((InternalEObject)newLowerBound).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION__LOWER_BOUND, null, msgs);
       msgs = basicSetLowerBound(newLowerBound, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__LOWER_BOUND, newLowerBound, newLowerBound));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__LOWER_BOUND, newLowerBound, newLowerBound));
   }
 
   /**
@@ -666,7 +666,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     upperBound = newUpperBound;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__UPPER_BOUND, oldUpperBound, newUpperBound);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__UPPER_BOUND, oldUpperBound, newUpperBound);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -683,14 +683,14 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     {
       NotificationChain msgs = null;
       if (upperBound != null)
-        msgs = ((InternalEObject)upperBound).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__UPPER_BOUND, null, msgs);
+        msgs = ((InternalEObject)upperBound).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION__UPPER_BOUND, null, msgs);
       if (newUpperBound != null)
-        msgs = ((InternalEObject)newUpperBound).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY__UPPER_BOUND, null, msgs);
+        msgs = ((InternalEObject)newUpperBound).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION__UPPER_BOUND, null, msgs);
       msgs = basicSetUpperBound(newUpperBound, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY__UPPER_BOUND, newUpperBound, newUpperBound));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__UPPER_BOUND, newUpperBound, newUpperBound));
   }
 
   /**
@@ -698,11 +698,11 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<MdPropertyTargetType> getTargets()
+  public EList<MdOptionTargetType> getTargets()
   {
     if (targets == null)
     {
-      targets = new EDataTypeEList<MdPropertyTargetType>(MdPropertyTargetType.class, this, MetaDataPackage.MD_PROPERTY__TARGETS);
+      targets = new EDataTypeEList<MdOptionTargetType>(MdOptionTargetType.class, this, MetaDataPackage.MD_OPTION__TARGETS);
     }
     return targets;
   }
@@ -716,7 +716,7 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
   {
     if (legacyIds == null)
     {
-      legacyIds = new EDataTypeEList<String>(String.class, this, MetaDataPackage.MD_PROPERTY__LEGACY_IDS);
+      legacyIds = new EDataTypeEList<String>(String.class, this, MetaDataPackage.MD_OPTION__LEGACY_IDS);
     }
     return legacyIds;
   }
@@ -726,11 +726,11 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<MdPropertyDependency> getDependencies()
+  public EList<MdOptionDependency> getDependencies()
   {
     if (dependencies == null)
     {
-      dependencies = new EObjectContainmentEList<MdPropertyDependency>(MdPropertyDependency.class, this, MetaDataPackage.MD_PROPERTY__DEPENDENCIES);
+      dependencies = new EObjectContainmentEList<MdOptionDependency>(MdOptionDependency.class, this, MetaDataPackage.MD_OPTION__DEPENDENCIES);
     }
     return dependencies;
   }
@@ -745,15 +745,15 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY__TYPE:
+      case MetaDataPackage.MD_OPTION__TYPE:
         return basicSetType(null, msgs);
-      case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
+      case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         return basicSetDefaultValue(null, msgs);
-      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+      case MetaDataPackage.MD_OPTION__LOWER_BOUND:
         return basicSetLowerBound(null, msgs);
-      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+      case MetaDataPackage.MD_OPTION__UPPER_BOUND:
         return basicSetUpperBound(null, msgs);
-      case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
+      case MetaDataPackage.MD_OPTION__DEPENDENCIES:
         return ((InternalEList<?>)getDependencies()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -769,35 +769,35 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY__DEPRECATED:
+      case MetaDataPackage.MD_OPTION__DEPRECATED:
         return isDeprecated();
-      case MetaDataPackage.MD_PROPERTY__ADVANCED:
+      case MetaDataPackage.MD_OPTION__ADVANCED:
         return isAdvanced();
-      case MetaDataPackage.MD_PROPERTY__PROGRAMMATIC:
+      case MetaDataPackage.MD_OPTION__PROGRAMMATIC:
         return isProgrammatic();
-      case MetaDataPackage.MD_PROPERTY__OUTPUT:
+      case MetaDataPackage.MD_OPTION__OUTPUT:
         return isOutput();
-      case MetaDataPackage.MD_PROPERTY__GLOBAL:
+      case MetaDataPackage.MD_OPTION__GLOBAL:
         return isGlobal();
-      case MetaDataPackage.MD_PROPERTY__TYPE:
+      case MetaDataPackage.MD_OPTION__TYPE:
         return getType();
-      case MetaDataPackage.MD_PROPERTY__LABEL:
+      case MetaDataPackage.MD_OPTION__LABEL:
         return getLabel();
-      case MetaDataPackage.MD_PROPERTY__DESCRIPTION:
+      case MetaDataPackage.MD_OPTION__DESCRIPTION:
         return getDescription();
-      case MetaDataPackage.MD_PROPERTY__DOCUMENTATION:
+      case MetaDataPackage.MD_OPTION__DOCUMENTATION:
         return getDocumentation();
-      case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
+      case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         return getDefaultValue();
-      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+      case MetaDataPackage.MD_OPTION__LOWER_BOUND:
         return getLowerBound();
-      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+      case MetaDataPackage.MD_OPTION__UPPER_BOUND:
         return getUpperBound();
-      case MetaDataPackage.MD_PROPERTY__TARGETS:
+      case MetaDataPackage.MD_OPTION__TARGETS:
         return getTargets();
-      case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
+      case MetaDataPackage.MD_OPTION__LEGACY_IDS:
         return getLegacyIds();
-      case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
+      case MetaDataPackage.MD_OPTION__DEPENDENCIES:
         return getDependencies();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -814,53 +814,53 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY__DEPRECATED:
+      case MetaDataPackage.MD_OPTION__DEPRECATED:
         setDeprecated((Boolean)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__ADVANCED:
+      case MetaDataPackage.MD_OPTION__ADVANCED:
         setAdvanced((Boolean)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__PROGRAMMATIC:
+      case MetaDataPackage.MD_OPTION__PROGRAMMATIC:
         setProgrammatic((Boolean)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__OUTPUT:
+      case MetaDataPackage.MD_OPTION__OUTPUT:
         setOutput((Boolean)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__GLOBAL:
+      case MetaDataPackage.MD_OPTION__GLOBAL:
         setGlobal((Boolean)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__TYPE:
+      case MetaDataPackage.MD_OPTION__TYPE:
         setType((JvmTypeReference)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__LABEL:
+      case MetaDataPackage.MD_OPTION__LABEL:
         setLabel((String)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__DESCRIPTION:
+      case MetaDataPackage.MD_OPTION__DESCRIPTION:
         setDescription((String)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__DOCUMENTATION:
+      case MetaDataPackage.MD_OPTION__DOCUMENTATION:
         setDocumentation((String)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
+      case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         setDefaultValue((XExpression)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+      case MetaDataPackage.MD_OPTION__LOWER_BOUND:
         setLowerBound((XExpression)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+      case MetaDataPackage.MD_OPTION__UPPER_BOUND:
         setUpperBound((XExpression)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__TARGETS:
+      case MetaDataPackage.MD_OPTION__TARGETS:
         getTargets().clear();
-        getTargets().addAll((Collection<? extends MdPropertyTargetType>)newValue);
+        getTargets().addAll((Collection<? extends MdOptionTargetType>)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
+      case MetaDataPackage.MD_OPTION__LEGACY_IDS:
         getLegacyIds().clear();
         getLegacyIds().addAll((Collection<? extends String>)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
+      case MetaDataPackage.MD_OPTION__DEPENDENCIES:
         getDependencies().clear();
-        getDependencies().addAll((Collection<? extends MdPropertyDependency>)newValue);
+        getDependencies().addAll((Collection<? extends MdOptionDependency>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -876,49 +876,49 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY__DEPRECATED:
+      case MetaDataPackage.MD_OPTION__DEPRECATED:
         setDeprecated(DEPRECATED_EDEFAULT);
         return;
-      case MetaDataPackage.MD_PROPERTY__ADVANCED:
+      case MetaDataPackage.MD_OPTION__ADVANCED:
         setAdvanced(ADVANCED_EDEFAULT);
         return;
-      case MetaDataPackage.MD_PROPERTY__PROGRAMMATIC:
+      case MetaDataPackage.MD_OPTION__PROGRAMMATIC:
         setProgrammatic(PROGRAMMATIC_EDEFAULT);
         return;
-      case MetaDataPackage.MD_PROPERTY__OUTPUT:
+      case MetaDataPackage.MD_OPTION__OUTPUT:
         setOutput(OUTPUT_EDEFAULT);
         return;
-      case MetaDataPackage.MD_PROPERTY__GLOBAL:
+      case MetaDataPackage.MD_OPTION__GLOBAL:
         setGlobal(GLOBAL_EDEFAULT);
         return;
-      case MetaDataPackage.MD_PROPERTY__TYPE:
+      case MetaDataPackage.MD_OPTION__TYPE:
         setType((JvmTypeReference)null);
         return;
-      case MetaDataPackage.MD_PROPERTY__LABEL:
+      case MetaDataPackage.MD_OPTION__LABEL:
         setLabel(LABEL_EDEFAULT);
         return;
-      case MetaDataPackage.MD_PROPERTY__DESCRIPTION:
+      case MetaDataPackage.MD_OPTION__DESCRIPTION:
         setDescription(DESCRIPTION_EDEFAULT);
         return;
-      case MetaDataPackage.MD_PROPERTY__DOCUMENTATION:
+      case MetaDataPackage.MD_OPTION__DOCUMENTATION:
         setDocumentation(DOCUMENTATION_EDEFAULT);
         return;
-      case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
+      case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         setDefaultValue((XExpression)null);
         return;
-      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+      case MetaDataPackage.MD_OPTION__LOWER_BOUND:
         setLowerBound((XExpression)null);
         return;
-      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+      case MetaDataPackage.MD_OPTION__UPPER_BOUND:
         setUpperBound((XExpression)null);
         return;
-      case MetaDataPackage.MD_PROPERTY__TARGETS:
+      case MetaDataPackage.MD_OPTION__TARGETS:
         getTargets().clear();
         return;
-      case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
+      case MetaDataPackage.MD_OPTION__LEGACY_IDS:
         getLegacyIds().clear();
         return;
-      case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
+      case MetaDataPackage.MD_OPTION__DEPENDENCIES:
         getDependencies().clear();
         return;
     }
@@ -935,35 +935,35 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY__DEPRECATED:
+      case MetaDataPackage.MD_OPTION__DEPRECATED:
         return deprecated != DEPRECATED_EDEFAULT;
-      case MetaDataPackage.MD_PROPERTY__ADVANCED:
+      case MetaDataPackage.MD_OPTION__ADVANCED:
         return advanced != ADVANCED_EDEFAULT;
-      case MetaDataPackage.MD_PROPERTY__PROGRAMMATIC:
+      case MetaDataPackage.MD_OPTION__PROGRAMMATIC:
         return programmatic != PROGRAMMATIC_EDEFAULT;
-      case MetaDataPackage.MD_PROPERTY__OUTPUT:
+      case MetaDataPackage.MD_OPTION__OUTPUT:
         return output != OUTPUT_EDEFAULT;
-      case MetaDataPackage.MD_PROPERTY__GLOBAL:
+      case MetaDataPackage.MD_OPTION__GLOBAL:
         return global != GLOBAL_EDEFAULT;
-      case MetaDataPackage.MD_PROPERTY__TYPE:
+      case MetaDataPackage.MD_OPTION__TYPE:
         return type != null;
-      case MetaDataPackage.MD_PROPERTY__LABEL:
+      case MetaDataPackage.MD_OPTION__LABEL:
         return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
-      case MetaDataPackage.MD_PROPERTY__DESCRIPTION:
+      case MetaDataPackage.MD_OPTION__DESCRIPTION:
         return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
-      case MetaDataPackage.MD_PROPERTY__DOCUMENTATION:
+      case MetaDataPackage.MD_OPTION__DOCUMENTATION:
         return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
-      case MetaDataPackage.MD_PROPERTY__DEFAULT_VALUE:
+      case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         return defaultValue != null;
-      case MetaDataPackage.MD_PROPERTY__LOWER_BOUND:
+      case MetaDataPackage.MD_OPTION__LOWER_BOUND:
         return lowerBound != null;
-      case MetaDataPackage.MD_PROPERTY__UPPER_BOUND:
+      case MetaDataPackage.MD_OPTION__UPPER_BOUND:
         return upperBound != null;
-      case MetaDataPackage.MD_PROPERTY__TARGETS:
+      case MetaDataPackage.MD_OPTION__TARGETS:
         return targets != null && !targets.isEmpty();
-      case MetaDataPackage.MD_PROPERTY__LEGACY_IDS:
+      case MetaDataPackage.MD_OPTION__LEGACY_IDS:
         return legacyIds != null && !legacyIds.isEmpty();
-      case MetaDataPackage.MD_PROPERTY__DEPENDENCIES:
+      case MetaDataPackage.MD_OPTION__DEPENDENCIES:
         return dependencies != null && !dependencies.isEmpty();
     }
     return super.eIsSet(featureID);
@@ -1004,4 +1004,4 @@ public class MdPropertyImpl extends MdGroupOrPropertyImpl implements MdProperty
     return result.toString();
   }
 
-} //MdPropertyImpl
+} //MdOptionImpl

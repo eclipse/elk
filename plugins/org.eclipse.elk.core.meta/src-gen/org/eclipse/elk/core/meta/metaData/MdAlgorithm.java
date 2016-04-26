@@ -29,6 +29,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getProvider <em>Provider</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getParameter <em>Parameter</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getCategory <em>Category</em>}</li>
@@ -146,6 +147,32 @@ public interface MdAlgorithm extends MdBundleMember
    * @generated
    */
   void setLabel(String value);
+
+  /**
+   * Returns the value of the '<em><b>Target Class</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Target Class</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Target Class</em>' attribute.
+   * @see #setTargetClass(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdAlgorithm_TargetClass()
+   * @model
+   * @generated
+   */
+  String getTargetClass();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getTargetClass <em>Target Class</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Target Class</em>' attribute.
+   * @see #getTargetClass()
+   * @generated
+   */
+  void setTargetClass(String value);
 
   /**
    * Returns the value of the '<em><b>Description</b></em>' attribute.
@@ -271,7 +298,7 @@ public interface MdAlgorithm extends MdBundleMember
 
   /**
    * Returns the value of the '<em><b>Supported Options</b></em>' containment reference list.
-   * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdPropertySupport}.
+   * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdOptionSupport}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Supported Options</em>' containment reference list isn't clear,
@@ -283,6 +310,6 @@ public interface MdAlgorithm extends MdBundleMember
    * @model containment="true"
    * @generated
    */
-  EList<MdPropertySupport> getSupportedOptions();
+  EList<MdOptionSupport> getSupportedOptions();
 
 } // MdAlgorithm

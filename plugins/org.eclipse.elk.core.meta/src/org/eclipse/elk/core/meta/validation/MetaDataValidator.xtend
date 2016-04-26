@@ -14,13 +14,12 @@ import java.util.Map
 import org.eclipse.elk.core.meta.metaData.MdAlgorithm
 import org.eclipse.elk.core.meta.metaData.MdBundle
 import org.eclipse.elk.core.meta.metaData.MdBundleMember
+import org.eclipse.elk.core.meta.metaData.MdCategory
 import org.eclipse.elk.core.meta.metaData.MdGroup
-import org.eclipse.elk.core.meta.metaData.MdProperty
-import org.eclipse.elk.core.meta.metaData.MdPropertySupport
+import org.eclipse.elk.core.meta.metaData.MdOption
 import org.eclipse.xtext.validation.Check
 
 import static org.eclipse.elk.core.meta.metaData.MetaDataPackage.Literals.*
-import org.eclipse.elk.core.meta.metaData.MdCategory
 
 /**
  * This class contains custom validation rules. 
@@ -37,7 +36,7 @@ class MetaDataValidator extends AbstractMetaDataValidator {
     def void checkDuplicatePropertyIds(Iterable<? extends MdBundleMember> elements) {
         val Map<String, MdAlgorithm> algorithmIds = newHashMap
         val Map<String, MdCategory> categoryIds = newHashMap
-        val Map<String, MdProperty> propertyIds = newHashMap
+        val Map<String, MdOption> propertyIds = newHashMap
         val Map<String, MdGroup> groupIds = newHashMap
         for (element : elements) {
             switch element {
@@ -47,7 +46,7 @@ class MetaDataValidator extends AbstractMetaDataValidator {
                     groupIds.checkExistsAndRemember(element)
                     element.children.checkDuplicatePropertyIds
                 }
-                MdProperty: propertyIds.checkExistsAndRemember(element)
+                MdOption: propertyIds.checkExistsAndRemember(element)
             }
         }
     }
@@ -68,15 +67,6 @@ class MetaDataValidator extends AbstractMetaDataValidator {
     
     def void duplicateName(MdBundleMember member) {
         error("The id '" + member.name + "' is already used.", member, MD_BUNDLE_MEMBER__NAME)
-    }
-    
-    @Check
-    def void checkDuplicateOption(MdPropertySupport support) {
-        if (support.property !== null && support.duplicated) {
-            val algorithm = support.eContainer as MdAlgorithm
-            if (algorithm.eContainer == support.property.eContainer)
-                error("A property defined in the same bundle cannot be duplicated.", MD_PROPERTY_SUPPORT__DUPLICATED)
-        }
     }
 	
 }

@@ -17,7 +17,7 @@ import java.util.Collection;
 import org.eclipse.elk.core.meta.metaData.MdAlgorithm;
 import org.eclipse.elk.core.meta.metaData.MdCategory;
 import org.eclipse.elk.core.meta.metaData.MdGraphFeature;
-import org.eclipse.elk.core.meta.metaData.MdPropertySupport;
+import org.eclipse.elk.core.meta.metaData.MdOptionSupport;
 import org.eclipse.elk.core.meta.metaData.MetaDataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -48,6 +48,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getProvider <em>Provider</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getParameter <em>Parameter</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getCategory <em>Category</em>}</li>
@@ -129,6 +130,26 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * @ordered
    */
   protected String label = LABEL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getTargetClass() <em>Target Class</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTargetClass()
+   * @generated
+   * @ordered
+   */
+  protected static final String TARGET_CLASS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTargetClass() <em>Target Class</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTargetClass()
+   * @generated
+   * @ordered
+   */
+  protected String targetClass = TARGET_CLASS_EDEFAULT;
 
   /**
    * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
@@ -218,7 +239,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * @generated
    * @ordered
    */
-  protected EList<MdPropertySupport> supportedOptions;
+  protected EList<MdOptionSupport> supportedOptions;
 
   /**
    * <!-- begin-user-doc -->
@@ -363,6 +384,29 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getTargetClass()
+  {
+    return targetClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTargetClass(String newTargetClass)
+  {
+    String oldTargetClass = targetClass;
+    targetClass = newTargetClass;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_ALGORITHM__TARGET_CLASS, oldTargetClass, targetClass));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getDescription()
   {
     return description;
@@ -489,11 +533,11 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<MdPropertySupport> getSupportedOptions()
+  public EList<MdOptionSupport> getSupportedOptions()
   {
     if (supportedOptions == null)
     {
-      supportedOptions = new EObjectContainmentEList<MdPropertySupport>(MdPropertySupport.class, this, MetaDataPackage.MD_ALGORITHM__SUPPORTED_OPTIONS);
+      supportedOptions = new EObjectContainmentEList<MdOptionSupport>(MdOptionSupport.class, this, MetaDataPackage.MD_ALGORITHM__SUPPORTED_OPTIONS);
     }
     return supportedOptions;
   }
@@ -534,6 +578,8 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return getParameter();
       case MetaDataPackage.MD_ALGORITHM__LABEL:
         return getLabel();
+      case MetaDataPackage.MD_ALGORITHM__TARGET_CLASS:
+        return getTargetClass();
       case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
         return getDescription();
       case MetaDataPackage.MD_ALGORITHM__DOCUMENTATION:
@@ -574,6 +620,9 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
       case MetaDataPackage.MD_ALGORITHM__LABEL:
         setLabel((String)newValue);
         return;
+      case MetaDataPackage.MD_ALGORITHM__TARGET_CLASS:
+        setTargetClass((String)newValue);
+        return;
       case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
         setDescription((String)newValue);
         return;
@@ -592,7 +641,7 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return;
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_OPTIONS:
         getSupportedOptions().clear();
-        getSupportedOptions().addAll((Collection<? extends MdPropertySupport>)newValue);
+        getSupportedOptions().addAll((Collection<? extends MdOptionSupport>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -619,6 +668,9 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return;
       case MetaDataPackage.MD_ALGORITHM__LABEL:
         setLabel(LABEL_EDEFAULT);
+        return;
+      case MetaDataPackage.MD_ALGORITHM__TARGET_CLASS:
+        setTargetClass(TARGET_CLASS_EDEFAULT);
         return;
       case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
         setDescription(DESCRIPTION_EDEFAULT);
@@ -660,6 +712,8 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return PARAMETER_EDEFAULT == null ? parameter != null : !PARAMETER_EDEFAULT.equals(parameter);
       case MetaDataPackage.MD_ALGORITHM__LABEL:
         return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+      case MetaDataPackage.MD_ALGORITHM__TARGET_CLASS:
+        return TARGET_CLASS_EDEFAULT == null ? targetClass != null : !TARGET_CLASS_EDEFAULT.equals(targetClass);
       case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
         return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
       case MetaDataPackage.MD_ALGORITHM__DOCUMENTATION:
@@ -693,6 +747,8 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
     result.append(parameter);
     result.append(", label: ");
     result.append(label);
+    result.append(", targetClass: ");
+    result.append(targetClass);
     result.append(", description: ");
     result.append(description);
     result.append(", documentation: ");

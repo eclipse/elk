@@ -12,8 +12,8 @@
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
-import org.eclipse.elk.core.meta.metaData.MdProperty;
-import org.eclipse.elk.core.meta.metaData.MdPropertyDependency;
+import org.eclipse.elk.core.meta.metaData.MdOption;
+import org.eclipse.elk.core.meta.metaData.MdOptionDependency;
 import org.eclipse.elk.core.meta.metaData.MetaDataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -29,19 +29,19 @@ import org.eclipse.xtext.xbase.XExpression;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Md Property Dependency</b></em>'.
+ * An implementation of the model object '<em><b>Md Option Dependency</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyDependencyImpl#getTarget <em>Target</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertyDependencyImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionDependencyImpl#getTarget <em>Target</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionDependencyImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container implements MdPropertyDependency
+public class MdOptionDependencyImpl extends MinimalEObjectImpl.Container implements MdOptionDependency
 {
   /**
    * The cached value of the '{@link #getTarget() <em>Target</em>}' reference.
@@ -51,7 +51,7 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    * @ordered
    */
-  protected MdProperty target;
+  protected MdOption target;
 
   /**
    * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
@@ -68,7 +68,7 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  protected MdPropertyDependencyImpl()
+  protected MdOptionDependencyImpl()
   {
     super();
   }
@@ -81,7 +81,7 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
   @Override
   protected EClass eStaticClass()
   {
-    return MetaDataPackage.Literals.MD_PROPERTY_DEPENDENCY;
+    return MetaDataPackage.Literals.MD_OPTION_DEPENDENCY;
   }
 
   /**
@@ -89,16 +89,16 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdProperty getTarget()
+  public MdOption getTarget()
   {
     if (target != null && target.eIsProxy())
     {
       InternalEObject oldTarget = (InternalEObject)target;
-      target = (MdProperty)eResolveProxy(oldTarget);
+      target = (MdOption)eResolveProxy(oldTarget);
       if (target != oldTarget)
       {
         if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE, MetaDataPackage.MD_PROPERTY_DEPENDENCY__TARGET, oldTarget, target));
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, MetaDataPackage.MD_OPTION_DEPENDENCY__TARGET, oldTarget, target));
       }
     }
     return target;
@@ -109,7 +109,7 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdProperty basicGetTarget()
+  public MdOption basicGetTarget()
   {
     return target;
   }
@@ -119,12 +119,12 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTarget(MdProperty newTarget)
+  public void setTarget(MdOption newTarget)
   {
-    MdProperty oldTarget = target;
+    MdOption oldTarget = target;
     target = newTarget;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_DEPENDENCY__TARGET, oldTarget, target));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION_DEPENDENCY__TARGET, oldTarget, target));
   }
 
   /**
@@ -148,7 +148,7 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
     value = newValue;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE, oldValue, newValue);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE, oldValue, newValue);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -165,14 +165,14 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
     {
       NotificationChain msgs = null;
       if (value != null)
-        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE, null, msgs);
+        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE, null, msgs);
       if (newValue != null)
-        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE, null, msgs);
+        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE, null, msgs);
       msgs = basicSetValue(newValue, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE, newValue, newValue));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE, newValue, newValue));
   }
 
   /**
@@ -185,7 +185,7 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE:
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE:
         return basicSetValue(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -201,10 +201,10 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__TARGET:
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__TARGET:
         if (resolve) return getTarget();
         return basicGetTarget();
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE:
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE:
         return getValue();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -220,10 +220,10 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__TARGET:
-        setTarget((MdProperty)newValue);
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__TARGET:
+        setTarget((MdOption)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE:
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE:
         setValue((XExpression)newValue);
         return;
     }
@@ -240,10 +240,10 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__TARGET:
-        setTarget((MdProperty)null);
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__TARGET:
+        setTarget((MdOption)null);
         return;
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE:
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE:
         setValue((XExpression)null);
         return;
     }
@@ -260,12 +260,12 @@ public class MdPropertyDependencyImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__TARGET:
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__TARGET:
         return target != null;
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY__VALUE:
+      case MetaDataPackage.MD_OPTION_DEPENDENCY__VALUE:
         return value != null;
     }
     return super.eIsSet(featureID);
   }
 
-} //MdPropertyDependencyImpl
+} //MdOptionDependencyImpl
