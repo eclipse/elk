@@ -24,7 +24,6 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -169,13 +168,13 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
 
                 // We only care about non-dummy nodes with fixed port sides
                 if (!(node.getType() == NodeType.NORMAL
-                        && node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed())) {
+                        && node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed())) {
 
                     continue;
                 }
 
                 // Sort the port list if we have control over the port order
-                if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                     sortPortList(node);
                 }
 
@@ -529,7 +528,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
 
         LNode dummy = new LNode(layeredGraph);
         dummy.setType(NodeType.NORTH_SOUTH_PORT);
-        dummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
 
         int crossingHint = 0;
 
@@ -607,7 +606,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
 
         LNode dummy = new LNode(layeredGraph);
         dummy.setType(NodeType.NORTH_SOUTH_PORT);
-        dummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         dummy.setProperty(InternalProperties.ORIGIN, selfLoop);
 
         // Input port
@@ -659,7 +658,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         // North dummy
         LNode northDummy = new LNode(layeredGraph);
         northDummy.setType(NodeType.NORTH_SOUTH_PORT);
-        northDummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        northDummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         northDummy.setProperty(InternalProperties.ORIGIN, selfLoop.getSource().getNode());
 
         LPort northDummyOutputPort = new LPort();
@@ -672,7 +671,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         // South dummy
         LNode southDummy = new LNode(layeredGraph);
         southDummy.setType(NodeType.NORTH_SOUTH_PORT);
-        southDummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        southDummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         southDummy.setProperty(InternalProperties.ORIGIN, selfLoop.getTarget().getNode());
 
         LPort southDummyInputPort = new LPort();

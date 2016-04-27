@@ -14,11 +14,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Maps;
@@ -55,7 +55,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
         northCardinalities = Maps.newHashMap();
         southCardinalities = Maps.newHashMap();
         usesOrthogonalCounter =
-                layer[0].getGraph().getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
+                layer[0].getGraph().getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
         initPositionsAndCardinalities();
     }
 
@@ -222,7 +222,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
     }
 
     private boolean fixedPortOrderOn(final LNode node) {
-        return node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+        return node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private boolean hasPortOnSide(final LNode node, final PortSide side) {

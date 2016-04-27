@@ -1,12 +1,5 @@
 /**
- * Copyright (c) 2015 Kiel University and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *    spoenemann - initial API and implementation
+ * Declarations for the ELK Layered layout algorithm.
  */
 package org.eclipse.elk.alg.layered.properties;
 
@@ -26,1314 +19,506 @@ import org.eclipse.elk.alg.layered.properties.FixedAlignment;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InteractiveReferencePoint;
 import org.eclipse.elk.alg.layered.properties.LayerConstraint;
+import org.eclipse.elk.alg.layered.properties.LayeredMetaDataProvider;
 import org.eclipse.elk.alg.layered.properties.SelfLoopPlacement;
 import org.eclipse.elk.alg.layered.properties.WideNodesStrategy;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.GraphFeature;
+import org.eclipse.elk.core.options.HierarchyHandling;
+import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortAlignment;
+import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.options.PortLabelPlacement;
+import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.options.SizeConstraint;
+import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.AlgorithmFactory;
+import org.eclipse.elk.core.util.nodespacing.Spacing;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
-/**
- * Declarations for the ELK Layered layout algorithm.
- */
 @SuppressWarnings("all")
 public class LayeredOptions implements ILayoutMetaDataProvider {
   /**
-   * Default value for {@link #CONTENT_ALIGNMENT}.
-   */
-  private final static EnumSet<ContentAlignment> CONTENT_ALIGNMENT_DEFAULT = EnumSet.<ContentAlignment>noneOf(ContentAlignment.class);
-  
-  /**
-   * Specifies how the content of compound nodes is to be aligned, e.g. top-left.
-   */
-  public final static IProperty<EnumSet<ContentAlignment>> CONTENT_ALIGNMENT = new Property<EnumSet<ContentAlignment>>(
-            "org.eclipse.elk.layered.contentAlignment",
-            CONTENT_ALIGNMENT_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #EDGE_CENTER_LABEL_PLACEMENT_STRATEGY}.
-   */
-  private final static EdgeLabelPlacementStrategy EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT = EdgeLabelPlacementStrategy.CENTER;
-  
-  /**
-   * Determines in which layer center labels of long edges should be placed.
-   */
-  public final static IProperty<EdgeLabelPlacementStrategy> EDGE_CENTER_LABEL_PLACEMENT_STRATEGY = new Property<EdgeLabelPlacementStrategy>(
-            "org.eclipse.elk.layered.edgeCenterLabelPlacementStrategy",
-            EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #EDGE_LABEL_SIDE_SELECTION}.
-   */
-  private final static EdgeLabelSideSelection EDGE_LABEL_SIDE_SELECTION_DEFAULT = EdgeLabelSideSelection.ALWAYS_DOWN;
-  
-  /**
-   * Method to decide on edge label sides.
-   */
-  public final static IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE_SELECTION = new Property<EdgeLabelSideSelection>(
-            "org.eclipse.elk.layered.edgeLabelSideSelection",
-            EDGE_LABEL_SIDE_SELECTION_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #FEEDBACK_EDGES}.
-   */
-  private final static boolean FEEDBACK_EDGES_DEFAULT = false;
-  
-  /**
-   * Whether feedback edges should be highlighted by routing around the nodes.
-   */
-  public final static IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
-            "org.eclipse.elk.layered.feedbackEdges",
-            FEEDBACK_EDGES_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #INTERACTIVE_REFERENCE_POINT}.
-   */
-  private final static InteractiveReferencePoint INTERACTIVE_REFERENCE_POINT_DEFAULT = InteractiveReferencePoint.CENTER;
-  
-  /**
-   * Determines which point of a node is considered by interactive layout phases.
-   */
-  public final static IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT = new Property<InteractiveReferencePoint>(
-            "org.eclipse.elk.layered.interactiveReferencePoint",
-            INTERACTIVE_REFERENCE_POINT_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #MERGE_EDGES}.
-   */
-  private final static boolean MERGE_EDGES_DEFAULT = false;
-  
-  /**
-   * Edges that have no ports are merged so they touch the connected nodes at the same points.
-   * When this option is disabled, one port is created for each edge directly connected to a
-   * node. When it is enabled, all such incoming edges share an input port, and all outgoing
-   * edges share an output port.
-   */
-  public final static IProperty<Boolean> MERGE_EDGES = new Property<Boolean>(
-            "org.eclipse.elk.layered.mergeEdges",
-            MERGE_EDGES_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #MERGE_HIERARCHY_EDGES}.
-   */
-  private final static boolean MERGE_HIERARCHY_EDGES_DEFAULT = true;
-  
-  /**
-   * If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports
-   * as possible. They are broken by the algorithm, with hierarchical ports inserted as
-   * required. Usually, one such port is created for each edge at each hierarchy crossing point.
-   * With this option set to true, we try to create as few hierarchical ports as possible in
-   * the process. In particular, all edges that form a hyperedge can share a port.
-   */
-  public final static IProperty<Boolean> MERGE_HIERARCHY_EDGES = new Property<Boolean>(
-            "org.eclipse.elk.layered.mergeHierarchyEdges",
-            MERGE_HIERARCHY_EDGES_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #SAUSAGE_FOLDING}.
-   */
-  private final static boolean SAUSAGE_FOLDING_DEFAULT = false;
-  
-  /**
-   * Whether long sausages should be folded up nice and tight.
-   */
-  public final static IProperty<Boolean> SAUSAGE_FOLDING = new Property<Boolean>(
-            "org.eclipse.elk.layered.sausageFolding",
-            SAUSAGE_FOLDING_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #THOROUGHNESS}.
-   */
-  private final static int THOROUGHNESS_DEFAULT = 7;
-  
-  /**
-   * How much effort should be spent to produce a nice layout.
-   */
-  public final static IProperty<Integer> THOROUGHNESS = new Property<Integer>(
-            "org.eclipse.elk.layered.thoroughness",
-            THOROUGHNESS_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #UNNECESSARY_BENDPOINTS}.
-   */
-  private final static boolean UNNECESSARY_BENDPOINTS_DEFAULT = false;
-  
-  /**
-   * Adds bend points even if an edge does not change direction. If true, each long edge dummy
-   * will contribute a bend point to its edges and hierarchy-crossing edges will always get a
-   * bend point where they cross hierarchy boundaries. By default, bend points are only added
-   * where an edge changes direction.
-   */
-  public final static IProperty<Boolean> UNNECESSARY_BENDPOINTS = new Property<Boolean>(
-            "org.eclipse.elk.layered.unnecessaryBendpoints",
-            UNNECESSARY_BENDPOINTS_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #NORTH_OR_SOUTH_PORT}.
-   */
-  private final static boolean NORTH_OR_SOUTH_PORT_DEFAULT = false;
-  
-  /**
-   * Specifies that this port can either be placed on the north side of a node or on the south
-   * side (if port constraints permit)
-   */
-  public final static IProperty<Boolean> NORTH_OR_SOUTH_PORT = new Property<Boolean>(
-            "org.eclipse.elk.layered.northOrSouthPort",
-            NORTH_OR_SOUTH_PORT_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #CYCLE_BREAKING_STRATEGY}.
-   */
-  private final static CycleBreakingStrategy CYCLE_BREAKING_STRATEGY_DEFAULT = CycleBreakingStrategy.GREEDY;
-  
-  /**
-   * Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines
-   * which edges to reverse to break the cycles. Reversed edges will end up pointing to the
-   * opposite direction of regular edges (that is, reversed edges will point left if edges
-   * usually point right).
-   */
-  public final static IProperty<CycleBreakingStrategy> CYCLE_BREAKING_STRATEGY = new Property<CycleBreakingStrategy>(
-            "org.eclipse.elk.layered.cycleBreaking.strategy",
-            CYCLE_BREAKING_STRATEGY_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #LAYERING_STRATEGY}.
-   */
-  private final static LayeringStrategy LAYERING_STRATEGY_DEFAULT = LayeringStrategy.NETWORK_SIMPLEX;
-  
-  /**
-   * Strategy for node layering.
-   */
-  public final static IProperty<LayeringStrategy> LAYERING_STRATEGY = new Property<LayeringStrategy>(
-            "org.eclipse.elk.layered.layering.strategy",
-            LAYERING_STRATEGY_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #LAYERING_LAYER_CONSTRAINT}.
-   */
-  private final static LayerConstraint LAYERING_LAYER_CONSTRAINT_DEFAULT = LayerConstraint.NONE;
-  
-  /**
-   * Determines a constraint on the placement of the node regarding the layering.
-   */
-  public final static IProperty<LayerConstraint> LAYERING_LAYER_CONSTRAINT = new Property<LayerConstraint>(
-            "org.eclipse.elk.layered.layering.layerConstraint",
-            LAYERING_LAYER_CONSTRAINT_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #LAYERING_DISTRIBUTE_NODES}.
-   */
-  private final static boolean LAYERING_DISTRIBUTE_NODES_DEFAULT = false;
-  
-  /**
-   * Whether wide nodes should be distributed to several layers.
-   */
-  public final static IProperty<Boolean> LAYERING_DISTRIBUTE_NODES = new Property<Boolean>(
-            "org.eclipse.elk.layered.layering.distributeNodes",
-            LAYERING_DISTRIBUTE_NODES_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS}.
-   */
-  private final static WideNodesStrategy LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS_DEFAULT = WideNodesStrategy.OFF;
-  
-  /**
-   * Strategy to distribute wide nodes over multiple layers.
-   */
-  public final static IProperty<WideNodesStrategy> LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS = new Property<WideNodesStrategy>(
-            "org.eclipse.elk.layered.layering.wideNodesOnMultipleLayers",
-            LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH}.
-   */
-  private final static int LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT = 4;
-  
-  /**
-   * Defines a loose upper bound on the width of the MinWidth layerer.
-   */
-  public final static IProperty<Integer> LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH = new Property<Integer>(
-            "org.eclipse.elk.layered.layering.minWidth.upperBoundOnWidth",
-            LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR}.
-   */
-  private final static int LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT = 2;
-  
-  /**
-   * Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.
-   */
-  public final static IProperty<Integer> LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR = new Property<Integer>(
-            "org.eclipse.elk.layered.layering.minWidth.upperLayerEstimationScalingFactor",
-            LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #LAYERING_NODE_PROMOTION_STRATEGY}.
-   */
-  private final static NodePromotionStrategy LAYERING_NODE_PROMOTION_STRATEGY_DEFAULT = NodePromotionStrategy.NONE;
-  
-  /**
-   * Reduces number of dummy nodes after layering phase (if possible).
-   */
-  public final static IProperty<NodePromotionStrategy> LAYERING_NODE_PROMOTION_STRATEGY = new Property<NodePromotionStrategy>(
-            "org.eclipse.elk.layered.layering.nodePromotion.strategy",
-            LAYERING_NODE_PROMOTION_STRATEGY_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #LAYERING_NODE_PROMOTION_MAX_ITERATIONS}.
-   */
-  private final static int LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT = 0;
-  
-  /**
-   * Limits the number of iterations for node promotion.
-   */
-  public final static IProperty<Integer> LAYERING_NODE_PROMOTION_MAX_ITERATIONS = new Property<Integer>(
-            "org.eclipse.elk.layered.layering.nodePromotion.maxIterations",
-            LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #CROSSING_MINIMIZATION_STRATEGY}.
-   */
-  private final static CrossingMinimizationStrategy CROSSING_MINIMIZATION_STRATEGY_DEFAULT = CrossingMinimizationStrategy.LAYER_SWEEP;
-  
-  /**
-   * Strategy for crossing minimization.
-   */
-  public final static IProperty<CrossingMinimizationStrategy> CROSSING_MINIMIZATION_STRATEGY = new Property<CrossingMinimizationStrategy>(
-            "org.eclipse.elk.layered.crossingMinimization.strategy",
-            CROSSING_MINIMIZATION_STRATEGY_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #CROSSING_MINIMIZATION_GREEDY_SWITCH}.
-   */
-  private final static GreedySwitchType CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT = GreedySwitchType.TWO_SIDED;
-  
-  /**
-   * Greedy Switch strategy for crossing minimization.
-   */
-  public final static IProperty<GreedySwitchType> CROSSING_MINIMIZATION_GREEDY_SWITCH = new Property<GreedySwitchType>(
-            "org.eclipse.elk.layered.crossingMinimization.greedySwitch",
-            CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #CROSSING_MINIMIZATION_SEMI_INTERACTIVE}.
-   */
-  private final static boolean CROSSING_MINIMIZATION_SEMI_INTERACTIVE_DEFAULT = false;
-  
-  /**
-   * Preserves the order of nodes within a layer but still minimizes
-   * crossings between edges connecting long edge dummies.
-   * Requires a crossing minimization strategy that is able to
-   * process 'in-layer' constraints.
-   */
-  public final static IProperty<Boolean> CROSSING_MINIMIZATION_SEMI_INTERACTIVE = new Property<Boolean>(
-            "org.eclipse.elk.layered.crossingMinimization.semiInteractive",
-            CROSSING_MINIMIZATION_SEMI_INTERACTIVE_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #NODE_PLACEMENT_STRATEGY}.
-   */
-  private final static NodePlacementStrategy NODE_PLACEMENT_STRATEGY_DEFAULT = NodePlacementStrategy.BRANDES_KOEPF;
-  
-  /**
-   * Strategy for node placement.
-   */
-  public final static IProperty<NodePlacementStrategy> NODE_PLACEMENT_STRATEGY = new Property<NodePlacementStrategy>(
-            "org.eclipse.elk.layered.nodePlacement.strategy",
-            NODE_PLACEMENT_STRATEGY_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #NODE_PLACEMENT_BK_EDGE_STRAIGHTENING}.
-   */
-  private final static EdgeStraighteningStrategy NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEFAULT = EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS;
-  
-  /**
-   * Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges
-   * at the expense of diagram size.
-   */
-  public final static IProperty<EdgeStraighteningStrategy> NODE_PLACEMENT_BK_EDGE_STRAIGHTENING = new Property<EdgeStraighteningStrategy>(
-            "org.eclipse.elk.layered.nodePlacement.bk.edgeStraightening",
-            NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #NODE_PLACEMENT_BK_FIXED_ALIGNMENT}.
-   */
-  private final static FixedAlignment NODE_PLACEMENT_BK_FIXED_ALIGNMENT_DEFAULT = FixedAlignment.NONE;
-  
-  /**
-   * Tells the BK node placer to use a certain alignment instead of taking the optimal result.
-   */
-  public final static IProperty<FixedAlignment> NODE_PLACEMENT_BK_FIXED_ALIGNMENT = new Property<FixedAlignment>(
-            "org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment",
-            NODE_PLACEMENT_BK_FIXED_ALIGNMENT_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING}.
-   */
-  private final static float NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT = 0.3f;
-  
-  /**
-   * Dampens the movement of nodes to keep the diagram from getting too large.
-   */
-  public final static IProperty<Float> NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING = new Property<Float>(
-            "org.eclipse.elk.layered.nodePlacement.linearSegments.deflectionDampening",
-            NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #EDGE_ROUTING_SELF_LOOP_PLACEMENT}.
-   */
-  private final static SelfLoopPlacement EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEFAULT = SelfLoopPlacement.NORTH_STACKED;
-  
-  public final static IProperty<SelfLoopPlacement> EDGE_ROUTING_SELF_LOOP_PLACEMENT = new Property<SelfLoopPlacement>(
-            "org.eclipse.elk.layered.edgeRouting.selfLoopPlacement",
-            EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #SPACING_EDGE_NODE_SPACING_FACTOR}.
-   */
-  private final static float SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT = 0.5f;
-  
-  /**
-   * Factor by which the object spacing is multiplied to arrive at the minimal spacing between
-   * an edge and a node.
-   */
-  public final static IProperty<Float> SPACING_EDGE_NODE_SPACING_FACTOR = new Property<Float>(
-            "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",
-            SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #SPACING_EDGE_SPACING_FACTOR}.
-   */
-  private final static float SPACING_EDGE_SPACING_FACTOR_DEFAULT = 0.5f;
-  
-  /**
-   * Factor by which the object spacing is multiplied to arrive at the minimal spacing between
-   * edges.
-   */
-  public final static IProperty<Float> SPACING_EDGE_SPACING_FACTOR = new Property<Float>(
-            "org.eclipse.elk.layered.spacing.edgeSpacingFactor",
-            SPACING_EDGE_SPACING_FACTOR_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #SPACING_IN_LAYER_SPACING_FACTOR}.
-   */
-  private final static float SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT = 1;
-  
-  /**
-   * Factor by which the usual spacing is multiplied to determine the in-layer spacing between
-   * objects.
-   */
-  public final static IProperty<Float> SPACING_IN_LAYER_SPACING_FACTOR = new Property<Float>(
-            "org.eclipse.elk.layered.spacing.inLayerSpacingFactor",
-            SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #COMPACTION_CONNECTED_COMPONENTS}.
-   */
-  private final static boolean COMPACTION_CONNECTED_COMPONENTS_DEFAULT = false;
-  
-  /**
-   * Tries to further compact components (disconnected sub-graphs).
-   */
-  public final static IProperty<Boolean> COMPACTION_CONNECTED_COMPONENTS = new Property<Boolean>(
-            "org.eclipse.elk.layered.compaction.connectedComponents",
-            COMPACTION_CONNECTED_COMPONENTS_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #COMPACTION_POST_COMPACTION_STRATEGY}.
-   */
-  private final static GraphCompactionStrategy COMPACTION_POST_COMPACTION_STRATEGY_DEFAULT = GraphCompactionStrategy.NONE;
-  
-  /**
-   * Specifies whether and how post-process compaction is applied.
-   */
-  public final static IProperty<GraphCompactionStrategy> COMPACTION_POST_COMPACTION_STRATEGY = new Property<GraphCompactionStrategy>(
-            "org.eclipse.elk.layered.compaction.postCompaction.strategy",
-            COMPACTION_POST_COMPACTION_STRATEGY_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #COMPACTION_POST_COMPACTION_CONSTRAINTS}.
-   */
-  private final static ConstraintCalculationStrategy COMPACTION_POST_COMPACTION_CONSTRAINTS_DEFAULT = ConstraintCalculationStrategy.SCANLINE;
-  
-  /**
-   * Specifies whether and how post-process compaction is applied.
-   */
-  public final static IProperty<ConstraintCalculationStrategy> COMPACTION_POST_COMPACTION_CONSTRAINTS = new Property<ConstraintCalculationStrategy>(
-            "org.eclipse.elk.layered.compaction.postCompaction.constraints",
-            COMPACTION_POST_COMPACTION_CONSTRAINTS_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #HIGH_DEGREE_NODES_TREATMENT}.
-   */
-  private final static boolean HIGH_DEGREE_NODES_TREATMENT_DEFAULT = false;
-  
-  /**
-   * Makes room around high degree nodes to place leafs and trees.
-   */
-  public final static IProperty<Boolean> HIGH_DEGREE_NODES_TREATMENT = new Property<Boolean>(
-            "org.eclipse.elk.layered.highDegreeNodes.treatment",
-            HIGH_DEGREE_NODES_TREATMENT_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #HIGH_DEGREE_NODES_THRESHOLD}.
-   */
-  private final static int HIGH_DEGREE_NODES_THRESHOLD_DEFAULT = 16;
-  
-  /**
-   * Whether a node is considered to have a high degree.
-   */
-  public final static IProperty<Integer> HIGH_DEGREE_NODES_THRESHOLD = new Property<Integer>(
-            "org.eclipse.elk.layered.highDegreeNodes.threshold",
-            HIGH_DEGREE_NODES_THRESHOLD_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #HIGH_DEGREE_NODES_TREE_HEIGHT}.
-   */
-  private final static int HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT = 5;
-  
-  /**
-   * Maximum height of a subtree connected to a high degree node to be moved to separate layers.
-   */
-  public final static IProperty<Integer> HIGH_DEGREE_NODES_TREE_HEIGHT = new Property<Integer>(
-            "org.eclipse.elk.layered.highDegreeNodes.treeHeight",
-            HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Required value for dependency between {@link #EDGE_LABEL_SIDE_SELECTION} and {@link #EDGE_ROUTING}.
-   */
-  private final static EdgeRouting EDGE_LABEL_SIDE_SELECTION_DEP_EDGE_ROUTING = EdgeRouting.ORTHOGONAL;
-  
-  /**
-   * Required value for dependency between {@link #INTERACTIVE_REFERENCE_POINT} and {@link #CYCLE_BREAKING_STRATEGY}.
-   */
-  private final static CycleBreakingStrategy INTERACTIVE_REFERENCE_POINT_DEP_CYCLE_BREAKING_STRATEGY = CycleBreakingStrategy.INTERACTIVE;
-  
-  /**
-   * Required value for dependency between {@link #INTERACTIVE_REFERENCE_POINT} and {@link #CROSSING_MINIMIZATION_STRATEGY}.
-   */
-  private final static CrossingMinimizationStrategy INTERACTIVE_REFERENCE_POINT_DEP_CROSSING_MINIMIZATION_STRATEGY = CrossingMinimizationStrategy.INTERACTIVE;
-  
-  /**
-   * Required value for dependency between {@link #SAUSAGE_FOLDING} and {@link #LAYERING_STRATEGY}.
-   */
-  private final static LayeringStrategy SAUSAGE_FOLDING_DEP_LAYERING_STRATEGY = LayeringStrategy.LONGEST_PATH;
-  
-  /**
-   * Required value for dependency between {@link #LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH} and {@link #LAYERING_STRATEGY}.
-   */
-  private final static LayeringStrategy LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEP_LAYERING_STRATEGY = LayeringStrategy.EXP_MIN_WIDTH;
-  
-  /**
-   * Required value for dependency between {@link #LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR} and {@link #LAYERING_STRATEGY}.
-   */
-  private final static LayeringStrategy LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEP_LAYERING_STRATEGY = LayeringStrategy.EXP_MIN_WIDTH;
-  
-  /**
-   * Required value for dependency between {@link #NODE_PLACEMENT_BK_EDGE_STRAIGHTENING} and {@link #NODE_PLACEMENT_STRATEGY}.
-   */
-  private final static NodePlacementStrategy NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEP_NODE_PLACEMENT_STRATEGY = NodePlacementStrategy.BRANDES_KOEPF;
-  
-  /**
-   * Required value for dependency between {@link #NODE_PLACEMENT_BK_FIXED_ALIGNMENT} and {@link #NODE_PLACEMENT_STRATEGY}.
-   */
-  private final static NodePlacementStrategy NODE_PLACEMENT_BK_FIXED_ALIGNMENT_DEP_NODE_PLACEMENT_STRATEGY = NodePlacementStrategy.BRANDES_KOEPF;
-  
-  /**
-   * Required value for dependency between {@link #NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING} and {@link #NODE_PLACEMENT_STRATEGY}.
-   */
-  private final static NodePlacementStrategy NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEP_NODE_PLACEMENT_STRATEGY = NodePlacementStrategy.LINEAR_SEGMENTS;
-  
-  /**
-   * Required value for dependency between {@link #EDGE_ROUTING_SELF_LOOP_PLACEMENT} and {@link #EDGE_ROUTING}.
-   */
-  private final static EdgeRouting EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
-  
-  /**
-   * Required value for dependency between {@link #COMPACTION_CONNECTED_COMPONENTS} and {@link #SEPARATE_CONNECTED_COMPONENTS}.
-   */
-  private final static boolean COMPACTION_CONNECTED_COMPONENTS_DEP_SEPARATE_CONNECTED_COMPONENTS = true;
-  
-  /**
-   * Required value for dependency between {@link #HIGH_DEGREE_NODES_THRESHOLD} and {@link #HIGH_DEGREE_NODES_TREATMENT}.
-   */
-  private final static boolean HIGH_DEGREE_NODES_THRESHOLD_DEP_HIGH_DEGREE_NODES_TREATMENT = true;
-  
-  /**
-   * Required value for dependency between {@link #HIGH_DEGREE_NODES_TREE_HEIGHT} and {@link #HIGH_DEGREE_NODES_TREATMENT}.
-   */
-  private final static boolean HIGH_DEGREE_NODES_TREE_HEIGHT_DEP_HIGH_DEGREE_NODES_TREATMENT = true;
-  
-  /**
    * Default value for {@link #SPACING_NODE} with algorithm "ELK Layered".
    */
-  private final static float LAYERED_SUP_SPACING_NODE = 20;
+  private final static float SPACING_NODE_DEFAULT = 20;
   
   /**
-   * Overridden value for Node Spacing.
+   * Property constant to access Node Spacing from within the layout algorithm code.
    */
   public final static IProperty<Float> SPACING_NODE = new Property<Float>(
-            CoreOptions.SPACING_NODE,
-            LAYERED_SUP_SPACING_NODE);
+                                CoreOptions.SPACING_NODE,
+                                SPACING_NODE_DEFAULT);
   
   /**
    * Default value for {@link #SPACING_BORDER} with algorithm "ELK Layered".
    */
-  private final static float LAYERED_SUP_SPACING_BORDER = 12;
+  private final static float SPACING_BORDER_DEFAULT = 12;
   
   /**
-   * Overridden value for Border Spacing.
+   * Property constant to access Border Spacing from within the layout algorithm code.
    */
   public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
-            CoreOptions.SPACING_BORDER,
-            LAYERED_SUP_SPACING_BORDER);
+                                CoreOptions.SPACING_BORDER,
+                                SPACING_BORDER_DEFAULT);
+  
+  /**
+   * Property constant to access Port Spacing from within the layout algorithm code.
+   */
+  public final static IProperty<Float> SPACING_PORT = CoreOptions.SPACING_PORT;
+  
+  /**
+   * Property constant to access Label Spacing from within the layout algorithm code.
+   */
+  public final static IProperty<Float> SPACING_LABEL = CoreOptions.SPACING_LABEL;
   
   /**
    * Default value for {@link #PRIORITY} with algorithm "ELK Layered".
    */
-  private final static int LAYERED_SUP_PRIORITY = 0;
+  private final static int PRIORITY_DEFAULT = 0;
   
   /**
-   * Overridden value for Priority.
+   * Property constant to access Priority from within the layout algorithm code.
    */
   public final static IProperty<Integer> PRIORITY = new Property<Integer>(
-            CoreOptions.PRIORITY,
-            LAYERED_SUP_PRIORITY);
+                                CoreOptions.PRIORITY,
+                                PRIORITY_DEFAULT);
   
   /**
    * Default value for {@link #EDGE_ROUTING} with algorithm "ELK Layered".
    */
-  private final static EdgeRouting LAYERED_SUP_EDGE_ROUTING = EdgeRouting.ORTHOGONAL;
+  private final static EdgeRouting EDGE_ROUTING_DEFAULT = EdgeRouting.ORTHOGONAL;
   
   /**
-   * Overridden value for Edge Routing.
+   * Property constant to access Edge Routing from within the layout algorithm code.
    */
   public final static IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
-            CoreOptions.EDGE_ROUTING,
-            LAYERED_SUP_EDGE_ROUTING);
+                                CoreOptions.EDGE_ROUTING,
+                                EDGE_ROUTING_DEFAULT);
   
   /**
    * Default value for {@link #PORT_BORDER_OFFSET} with algorithm "ELK Layered".
    */
-  private final static float LAYERED_SUP_PORT_BORDER_OFFSET = 0;
+  private final static float PORT_BORDER_OFFSET_DEFAULT = 0;
   
   /**
-   * Overridden value for Port Border Offset.
+   * Property constant to access Port Border Offset from within the layout algorithm code.
    */
   public final static IProperty<Float> PORT_BORDER_OFFSET = new Property<Float>(
-            CoreOptions.PORT_BORDER_OFFSET,
-            LAYERED_SUP_PORT_BORDER_OFFSET);
+                                CoreOptions.PORT_BORDER_OFFSET,
+                                PORT_BORDER_OFFSET_DEFAULT);
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "ELK Layered".
    */
-  private final static int LAYERED_SUP_RANDOM_SEED = 1;
+  private final static int RANDOM_SEED_DEFAULT = 1;
   
   /**
-   * Overridden value for Randomization Seed.
+   * Property constant to access Randomization Seed from within the layout algorithm code.
    */
   public final static IProperty<Integer> RANDOM_SEED = new Property<Integer>(
-            CoreOptions.RANDOM_SEED,
-            LAYERED_SUP_RANDOM_SEED);
+                                CoreOptions.RANDOM_SEED,
+                                RANDOM_SEED_DEFAULT);
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "ELK Layered".
    */
-  private final static float LAYERED_SUP_ASPECT_RATIO = 1.6f;
+  private final static float ASPECT_RATIO_DEFAULT = 1.6f;
   
   /**
-   * Overridden value for Aspect Ratio.
+   * Property constant to access Aspect Ratio from within the layout algorithm code.
    */
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            CoreOptions.ASPECT_RATIO,
-            LAYERED_SUP_ASPECT_RATIO);
+                                CoreOptions.ASPECT_RATIO,
+                                ASPECT_RATIO_DEFAULT);
+  
+  /**
+   * Property constant to access No Layout from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> NO_LAYOUT = CoreOptions.NO_LAYOUT;
+  
+  /**
+   * Property constant to access Port Constraints from within the layout algorithm code.
+   */
+  public final static IProperty<PortConstraints> PORT_CONSTRAINTS = CoreOptions.PORT_CONSTRAINTS;
+  
+  /**
+   * Property constant to access Port Side from within the layout algorithm code.
+   */
+  public final static IProperty<PortSide> PORT_SIDE = CoreOptions.PORT_SIDE;
+  
+  /**
+   * Property constant to access Debug Mode from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> DEBUG_MODE = CoreOptions.DEBUG_MODE;
+  
+  /**
+   * Property constant to access Alignment from within the layout algorithm code.
+   */
+  public final static IProperty<Alignment> ALIGNMENT = CoreOptions.ALIGNMENT;
+  
+  /**
+   * Property constant to access Layout Hierarchy from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> LAYOUT_HIERARCHY = CoreOptions.LAYOUT_HIERARCHY;
+  
+  /**
+   * Property constant to access Hierarchy Handling from within the layout algorithm code.
+   */
+  public final static IProperty<HierarchyHandling> HIERARCHY_HANDLING = CoreOptions.HIERARCHY_HANDLING;
   
   /**
    * Default value for {@link #SEPARATE_CONNECTED_COMPONENTS} with algorithm "ELK Layered".
    */
-  private final static boolean LAYERED_SUP_SEPARATE_CONNECTED_COMPONENTS = true;
+  private final static boolean SEPARATE_CONNECTED_COMPONENTS_DEFAULT = true;
+  
+  /**
+   * Property constant to access Separate Connected Components from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> SEPARATE_CONNECTED_COMPONENTS = new Property<Boolean>(
+                                CoreOptions.SEPARATE_CONNECTED_COMPONENTS,
+                                SEPARATE_CONNECTED_COMPONENTS_DEFAULT);
+  
+  /**
+   * Property constant to access Activate Inside Self Loops from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> INSIDE_SELF_LOOPS_ACTIVATE = CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE;
+  
+  /**
+   * Property constant to access Inside Self Loop from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> INSIDE_SELF_LOOPS_YO = CoreOptions.INSIDE_SELF_LOOPS_YO;
+  
+  /**
+   * Property constant to access Node Size Constraints from within the layout algorithm code.
+   */
+  public final static IProperty<EnumSet<SizeConstraint>> NODE_SIZE_CONSTRAINTS = CoreOptions.NODE_SIZE_CONSTRAINTS;
+  
+  /**
+   * Property constant to access Node Size Options from within the layout algorithm code.
+   */
+  public final static IProperty<EnumSet<SizeOptions>> NODE_SIZE_OPTIONS = CoreOptions.NODE_SIZE_OPTIONS;
   
   /**
    * Default value for {@link #DIRECTION} with algorithm "ELK Layered".
    */
-  private final static Direction LAYERED_SUP_DIRECTION = Direction.RIGHT;
+  private final static Direction DIRECTION_DEFAULT = Direction.RIGHT;
+  
+  /**
+   * Property constant to access Direction from within the layout algorithm code.
+   */
+  public final static IProperty<Direction> DIRECTION = new Property<Direction>(
+                                CoreOptions.DIRECTION,
+                                DIRECTION_DEFAULT);
+  
+  /**
+   * Property constant to access Node Label Placement from within the layout algorithm code.
+   */
+  public final static IProperty<EnumSet<NodeLabelPlacement>> NODE_LABELS_PLACEMENT = CoreOptions.NODE_LABELS_PLACEMENT;
+  
+  /**
+   * Property constant to access Port Label Placement from within the layout algorithm code.
+   */
+  public final static IProperty<PortLabelPlacement> PORT_LABELS_PLACEMENT = CoreOptions.PORT_LABELS_PLACEMENT;
   
   /**
    * Default value for {@link #PORT_ALIGNMENT_BASIC} with algorithm "ELK Layered".
    */
-  private final static PortAlignment LAYERED_SUP_PORT_ALIGNMENT_BASIC = PortAlignment.JUSTIFIED;
+  private final static PortAlignment PORT_ALIGNMENT_BASIC_DEFAULT = PortAlignment.JUSTIFIED;
+  
+  /**
+   * Property constant to access Port Alignment from within the layout algorithm code.
+   */
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_BASIC = new Property<PortAlignment>(
+                                CoreOptions.PORT_ALIGNMENT_BASIC,
+                                PORT_ALIGNMENT_BASIC_DEFAULT);
+  
+  /**
+   * Property constant to access Port Alignment (North) from within the layout algorithm code.
+   */
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_NORTH = CoreOptions.PORT_ALIGNMENT_NORTH;
+  
+  /**
+   * Property constant to access Port Alignment (South) from within the layout algorithm code.
+   */
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_SOUTH = CoreOptions.PORT_ALIGNMENT_SOUTH;
+  
+  /**
+   * Property constant to access Port Alignment (West) from within the layout algorithm code.
+   */
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_WEST = CoreOptions.PORT_ALIGNMENT_WEST;
+  
+  /**
+   * Property constant to access Port Alignment (East) from within the layout algorithm code.
+   */
+  public final static IProperty<PortAlignment> PORT_ALIGNMENT_EAST = CoreOptions.PORT_ALIGNMENT_EAST;
+  
+  /**
+   * Property constant to access Edge Node Spacing Factor from within the layout algorithm code.
+   */
+  public final static IProperty<Float> SPACING_EDGE_NODE_SPACING_FACTOR = LayeredMetaDataProvider.SPACING_EDGE_NODE_SPACING_FACTOR;
+  
+  /**
+   * Property constant to access Edge Spacing Factor from within the layout algorithm code.
+   */
+  public final static IProperty<Float> SPACING_EDGE_SPACING_FACTOR = LayeredMetaDataProvider.SPACING_EDGE_SPACING_FACTOR;
+  
+  /**
+   * Property constant to access Add Unnecessary Bendpoints from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> UNNECESSARY_BENDPOINTS = LayeredMetaDataProvider.UNNECESSARY_BENDPOINTS;
+  
+  /**
+   * Property constant to access Node Layering Strategy from within the layout algorithm code.
+   */
+  public final static IProperty<LayeringStrategy> LAYERING_STRATEGY = LayeredMetaDataProvider.LAYERING_STRATEGY;
+  
+  /**
+   * Property constant to access Node Promotion Strategy from within the layout algorithm code.
+   */
+  public final static IProperty<NodePromotionStrategy> LAYERING_NODE_PROMOTION_STRATEGY = LayeredMetaDataProvider.LAYERING_NODE_PROMOTION_STRATEGY;
+  
+  /**
+   * Property constant to access Thoroughness from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> THOROUGHNESS = LayeredMetaDataProvider.THOROUGHNESS;
+  
+  /**
+   * Property constant to access Layer Constraint from within the layout algorithm code.
+   */
+  public final static IProperty<LayerConstraint> LAYERING_LAYER_CONSTRAINT = LayeredMetaDataProvider.LAYERING_LAYER_CONSTRAINT;
+  
+  /**
+   * Property constant to access Cycle Breaking Strategy from within the layout algorithm code.
+   */
+  public final static IProperty<CycleBreakingStrategy> CYCLE_BREAKING_STRATEGY = LayeredMetaDataProvider.CYCLE_BREAKING_STRATEGY;
+  
+  /**
+   * Property constant to access Crossing Minimization Strategy from within the layout algorithm code.
+   */
+  public final static IProperty<CrossingMinimizationStrategy> CROSSING_MINIMIZATION_STRATEGY = LayeredMetaDataProvider.CROSSING_MINIMIZATION_STRATEGY;
+  
+  /**
+   * Property constant to access Greedy Switch Crossing Minimization from within the layout algorithm code.
+   */
+  public final static IProperty<GreedySwitchType> CROSSING_MINIMIZATION_GREEDY_SWITCH = LayeredMetaDataProvider.CROSSING_MINIMIZATION_GREEDY_SWITCH;
+  
+  /**
+   * Property constant to access Semi-Interactive Crossing Minimization from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> CROSSING_MINIMIZATION_SEMI_INTERACTIVE = LayeredMetaDataProvider.CROSSING_MINIMIZATION_SEMI_INTERACTIVE;
+  
+  /**
+   * Property constant to access Merge Edges from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> MERGE_EDGES = LayeredMetaDataProvider.MERGE_EDGES;
+  
+  /**
+   * Property constant to access Merge Hierarchy-Crossing Edges from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> MERGE_HIERARCHY_EDGES = LayeredMetaDataProvider.MERGE_HIERARCHY_EDGES;
+  
+  /**
+   * Property constant to access Interactive Reference Point from within the layout algorithm code.
+   */
+  public final static IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT = LayeredMetaDataProvider.INTERACTIVE_REFERENCE_POINT;
+  
+  /**
+   * Property constant to access Node Placement Strategy from within the layout algorithm code.
+   */
+  public final static IProperty<NodePlacementStrategy> NODE_PLACEMENT_STRATEGY = LayeredMetaDataProvider.NODE_PLACEMENT_STRATEGY;
+  
+  /**
+   * Property constant to access Fixed Alignment from within the layout algorithm code.
+   */
+  public final static IProperty<FixedAlignment> NODE_PLACEMENT_BK_FIXED_ALIGNMENT = LayeredMetaDataProvider.NODE_PLACEMENT_BK_FIXED_ALIGNMENT;
+  
+  /**
+   * Property constant to access Edge Label Side Selection from within the layout algorithm code.
+   */
+  public final static IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE_SELECTION = LayeredMetaDataProvider.EDGE_LABEL_SIDE_SELECTION;
+  
+  /**
+   * Property constant to access Feedback Edges from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> FEEDBACK_EDGES = LayeredMetaDataProvider.FEEDBACK_EDGES;
+  
+  /**
+   * Property constant to access In-layer Spacing Factor from within the layout algorithm code.
+   */
+  public final static IProperty<Float> SPACING_IN_LAYER_SPACING_FACTOR = LayeredMetaDataProvider.SPACING_IN_LAYER_SPACING_FACTOR;
+  
+  /**
+   * Property constant to access Wide Nodes on Multiple Layers from within the layout algorithm code.
+   */
+  public final static IProperty<WideNodesStrategy> LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS = LayeredMetaDataProvider.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS;
+  
+  /**
+   * Property constant to access Linear Segments Deflection Dampening from within the layout algorithm code.
+   */
+  public final static IProperty<Float> NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING = LayeredMetaDataProvider.NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING;
+  
+  /**
+   * Property constant to access Spline Self-Loop Placement from within the layout algorithm code.
+   */
+  public final static IProperty<SelfLoopPlacement> EDGE_ROUTING_SELF_LOOP_PLACEMENT = LayeredMetaDataProvider.EDGE_ROUTING_SELF_LOOP_PLACEMENT;
+  
+  /**
+   * Property constant to access Content Alignment from within the layout algorithm code.
+   */
+  public final static IProperty<EnumSet<ContentAlignment>> CONTENT_ALIGNMENT = LayeredMetaDataProvider.CONTENT_ALIGNMENT;
+  
+  /**
+   * Property constant to access Edge Straightening from within the layout algorithm code.
+   */
+  public final static IProperty<EdgeStraighteningStrategy> NODE_PLACEMENT_BK_EDGE_STRAIGHTENING = LayeredMetaDataProvider.NODE_PLACEMENT_BK_EDGE_STRAIGHTENING;
+  
+  /**
+   * Property constant to access Post Compaction Strategy from within the layout algorithm code.
+   */
+  public final static IProperty<GraphCompactionStrategy> COMPACTION_POST_COMPACTION_STRATEGY = LayeredMetaDataProvider.COMPACTION_POST_COMPACTION_STRATEGY;
+  
+  /**
+   * Property constant to access Post Compaction Constraint Calculation from within the layout algorithm code.
+   */
+  public final static IProperty<ConstraintCalculationStrategy> COMPACTION_POST_COMPACTION_CONSTRAINTS = LayeredMetaDataProvider.COMPACTION_POST_COMPACTION_CONSTRAINTS;
+  
+  /**
+   * Property constant to access Connected Components Compaction from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> COMPACTION_CONNECTED_COMPONENTS = LayeredMetaDataProvider.COMPACTION_CONNECTED_COMPONENTS;
+  
+  /**
+   * Property constant to access High Degree Node Treatment from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> HIGH_DEGREE_NODES_TREATMENT = LayeredMetaDataProvider.HIGH_DEGREE_NODES_TREATMENT;
+  
+  /**
+   * Property constant to access High Degree Node Threshold from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> HIGH_DEGREE_NODES_THRESHOLD = LayeredMetaDataProvider.HIGH_DEGREE_NODES_THRESHOLD;
+  
+  /**
+   * Property constant to access High Degree Node Maximum Tree Height from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> HIGH_DEGREE_NODES_TREE_HEIGHT = LayeredMetaDataProvider.HIGH_DEGREE_NODES_TREE_HEIGHT;
+  
+  /**
+   * Property constant to access Node Size Minimum from within the layout algorithm code.
+   */
+  public final static IProperty<KVector> NODE_SIZE_MINIMUM = CoreOptions.NODE_SIZE_MINIMUM;
+  
+  /**
+   * Property constant to access Minimum Width from within the layout algorithm code.
+   */
+  public final static IProperty<Float> NODE_SIZE_MIN_WIDTH = CoreOptions.NODE_SIZE_MIN_WIDTH;
+  
+  /**
+   * Property constant to access Minimum Height from within the layout algorithm code.
+   */
+  public final static IProperty<Float> NODE_SIZE_MIN_HEIGHT = CoreOptions.NODE_SIZE_MIN_HEIGHT;
+  
+  /**
+   * Property constant to access Junction Points from within the layout algorithm code.
+   */
+  public final static IProperty<KVectorChain> JUNCTION_POINTS = CoreOptions.JUNCTION_POINTS;
+  
+  /**
+   * Property constant to access Edge Thickness from within the layout algorithm code.
+   */
+  public final static IProperty<Float> EDGE_THICKNESS = CoreOptions.EDGE_THICKNESS;
+  
+  /**
+   * Property constant to access Edge Label Placement from within the layout algorithm code.
+   */
+  public final static IProperty<EdgeLabelPlacement> EDGE_LABELS_PLACEMENT = CoreOptions.EDGE_LABELS_PLACEMENT;
+  
+  /**
+   * Property constant to access Port Index from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> PORT_INDEX = CoreOptions.PORT_INDEX;
+  
+  /**
+   * Property constant to access Comment Box from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> COMMENT_BOX = CoreOptions.COMMENT_BOX;
+  
+  /**
+   * Property constant to access Hypernode from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> HYPERNODE = CoreOptions.HYPERNODE;
+  
+  /**
+   * Property constant to access Port Anchor Offset from within the layout algorithm code.
+   */
+  public final static IProperty<KVector> PORT_ANCHOR = CoreOptions.PORT_ANCHOR;
+  
+  /**
+   * Property constant to access Layout Partitioning from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> PARTITIONING_ACTIVATE = CoreOptions.PARTITIONING_ACTIVATE;
+  
+  /**
+   * Property constant to access Layout Partition from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> PARTITIONING_PARTITION = CoreOptions.PARTITIONING_PARTITION;
+  
+  /**
+   * Property constant to access Distribute Nodes (Deprecated) from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> LAYERING_DISTRIBUTE_NODES = LayeredMetaDataProvider.LAYERING_DISTRIBUTE_NODES;
+  
+  /**
+   * Property constant to access Upper Bound On Width [MinWidth Layerer] from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH = LayeredMetaDataProvider.LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH;
+  
+  /**
+   * Property constant to access Upper Layer Estimation Scaling Factor [MinWidth Layerer] from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR = LayeredMetaDataProvider.LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR;
+  
+  /**
+   * Property constant to access Sausage Folding from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> SAUSAGE_FOLDING = LayeredMetaDataProvider.SAUSAGE_FOLDING;
+  
+  /**
+   * Property constant to access Position from within the layout algorithm code.
+   */
+  public final static IProperty<KVector> POSITION = CoreOptions.POSITION;
+  
+  /**
+   * Property constant to access North or South Port from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> NORTH_OR_SOUTH_PORT = LayeredMetaDataProvider.NORTH_OR_SOUTH_PORT;
+  
+  /**
+   * Property constant to access Max Node Promotion Iterations from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> LAYERING_NODE_PROMOTION_MAX_ITERATIONS = LayeredMetaDataProvider.LAYERING_NODE_PROMOTION_MAX_ITERATIONS;
+  
+  /**
+   * Property constant to access Edge Label Placement Strategy from within the layout algorithm code.
+   */
+  public final static IProperty<EdgeLabelPlacementStrategy> EDGE_CENTER_LABEL_PLACEMENT_STRATEGY = LayeredMetaDataProvider.EDGE_CENTER_LABEL_PLACEMENT_STRATEGY;
+  
+  /**
+   * Property constant to access Margins from within the layout algorithm code.
+   */
+  public final static IProperty<Spacing.Margins> MARGINS = CoreOptions.MARGINS;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.contentAlignment",
-        "",
-        "Content Alignment",
-        "Specifies how the content of compound nodes is to be aligned, e.g. top-left.",
-        CONTENT_ALIGNMENT_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUMSET,
-        ContentAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.contentAlignment"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.edgeCenterLabelPlacementStrategy",
-        "",
-        "Edge Label Placement Strategy",
-        "Determines in which layer center labels of long edges should be placed.",
-        EDGE_CENTER_LABEL_PLACEMENT_STRATEGY_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        EdgeLabelPlacementStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.edgeLabelPlacementStrategy"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.edgeLabelSideSelection",
-        "",
-        "Edge Label Side Selection",
-        "Method to decide on edge label sides.",
-        EDGE_LABEL_SIDE_SELECTION_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        EdgeLabelSideSelection.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-        , "de.cau.cs.kieler.klay.layered.edgeLabelSideSelection"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.edgeLabelSideSelection",
-        "org.eclipse.elk.edgeRouting",
-        EDGE_LABEL_SIDE_SELECTION_DEP_EDGE_ROUTING
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.feedbackEdges",
-        "",
-        "Feedback Edges",
-        "Whether feedback edges should be highlighted by routing around the nodes.",
-        FEEDBACK_EDGES_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.feedBackEdges"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.interactiveReferencePoint",
-        "",
-        "Interactive Reference Point",
-        "Determines which point of a node is considered by interactive layout phases.",
-        INTERACTIVE_REFERENCE_POINT_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        InteractiveReferencePoint.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.interactiveReferencePoint"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.interactiveReferencePoint",
-        "org.eclipse.elk.layered.cycleBreaking.strategy",
-        INTERACTIVE_REFERENCE_POINT_DEP_CYCLE_BREAKING_STRATEGY
-    );
-    registry.addDependency(
-        "org.eclipse.elk.layered.interactiveReferencePoint",
-        "org.eclipse.elk.layered.crossingMinimization.strategy",
-        INTERACTIVE_REFERENCE_POINT_DEP_CROSSING_MINIMIZATION_STRATEGY
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.mergeEdges",
-        "",
-        "Merge Edges",
-        "Edges that have no ports are merged so they touch the connected nodes at the same points. When this option is disabled, one port is created for each edge directly connected to a node. When it is enabled, all such incoming edges share an input port, and all outgoing edges share an output port.",
-        MERGE_EDGES_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.mergeEdges"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.mergeHierarchyEdges",
-        "",
-        "Merge Hierarchy-Crossing Edges",
-        "If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports as possible. They are broken by the algorithm, with hierarchical ports inserted as required. Usually, one such port is created for each edge at each hierarchy crossing point. With this option set to true, we try to create as few hierarchical ports as possible in the process. In particular, all edges that form a hyperedge can share a port.",
-        MERGE_HIERARCHY_EDGES_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.mergeHierarchyEdges"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.sausageFolding",
-        "",
-        "Sausage Folding",
-        "Whether long sausages should be folded up nice and tight.",
-        SAUSAGE_FOLDING_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.sausageFolding"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.sausageFolding",
-        "org.eclipse.elk.layered.layering.strategy",
-        SAUSAGE_FOLDING_DEP_LAYERING_STRATEGY
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.thoroughness",
-        "",
-        "Thoroughness",
-        "How much effort should be spent to produce a nice layout.",
-        THOROUGHNESS_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.thoroughness"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.unnecessaryBendpoints",
-        "",
-        "Add Unnecessary Bendpoints",
-        "Adds bend points even if an edge does not change direction. If true, each long edge dummy will contribute a bend point to its edges and hierarchy-crossing edges will always get a bend point where they cross hierarchy boundaries. By default, bend points are only added where an edge changes direction.",
-        UNNECESSARY_BENDPOINTS_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.unnecessaryBendpoints"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.northOrSouthPort",
-        "",
-        "North or South Port",
-        "Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)",
-        NORTH_OR_SOUTH_PORT_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.northOrSouthPort"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.cycleBreaking.strategy",
-        "cycleBreaking",
-        "Cycle Breaking Strategy",
-        "Strategy for cycle breaking. Cycle breaking looks for cycles in the graph and determines which edges to reverse to break the cycles. Reversed edges will end up pointing to the opposite direction of regular edges (that is, reversed edges will point left if edges usually point right).",
-        CYCLE_BREAKING_STRATEGY_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        CycleBreakingStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-        , "de.cau.cs.kieler.klay.layered.cycleBreaking"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.layering.strategy",
-        "layering",
-        "Node Layering Strategy",
-        "Strategy for node layering.",
-        LAYERING_STRATEGY_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        LayeringStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-        , "de.cau.cs.kieler.klay.layered.nodeLayering"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.layering.layerConstraint",
-        "layering",
-        "Layer Constraint",
-        "Determines a constraint on the placement of the node regarding the layering.",
-        LAYERING_LAYER_CONSTRAINT_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        LayerConstraint.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.layerConstraint"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.layering.distributeNodes",
-        "layering",
-        "Distribute Nodes (Deprecated)",
-        "Whether wide nodes should be distributed to several layers.",
-        LAYERING_DISTRIBUTE_NODES_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.distributeNodes"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.layering.wideNodesOnMultipleLayers",
-        "layering",
-        "Wide Nodes on Multiple Layers",
-        "Strategy to distribute wide nodes over multiple layers.",
-        LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        WideNodesStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.layering.minWidth.upperBoundOnWidth",
-        "layering.minWidth",
-        "Upper Bound On Width [MinWidth Layerer]",
-        "Defines a loose upper bound on the width of the MinWidth layerer.",
-        LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.layering.minWidth.upperBoundOnWidth",
-        "org.eclipse.elk.layered.layering.strategy",
-        LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEP_LAYERING_STRATEGY
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.layering.minWidth.upperLayerEstimationScalingFactor",
-        "layering.minWidth",
-        "Upper Layer Estimation Scaling Factor [MinWidth Layerer]",
-        "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.",
-        LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.layering.minWidth.upperLayerEstimationScalingFactor",
-        "org.eclipse.elk.layered.layering.strategy",
-        LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEP_LAYERING_STRATEGY
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.layering.nodePromotion.strategy",
-        "layering.nodePromotion",
-        "Node Promotion Strategy",
-        "Reduces number of dummy nodes after layering phase (if possible).",
-        LAYERING_NODE_PROMOTION_STRATEGY_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        NodePromotionStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.nodePromotion"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.layering.nodePromotion.maxIterations",
-        "layering.nodePromotion",
-        "Max Node Promotion Iterations",
-        "Limits the number of iterations for node promotion.",
-        LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.nodePromotionBoundary"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.layering.nodePromotion.maxIterations",
-        "org.eclipse.elk.layered.layering.nodePromotion.strategy",
-        null
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.crossingMinimization.strategy",
-        "crossingMinimization",
-        "Crossing Minimization Strategy",
-        "Strategy for crossing minimization.",
-        CROSSING_MINIMIZATION_STRATEGY_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        CrossingMinimizationStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-        , "de.cau.cs.kieler.klay.layered.crossMin"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.crossingMinimization.greedySwitch",
-        "crossingMinimization",
-        "Greedy Switch Crossing Minimization",
-        "Greedy Switch strategy for crossing minimization.",
-        CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        GreedySwitchType.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.greedySwitch"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.crossingMinimization.semiInteractive",
-        "crossingMinimization",
-        "Semi-Interactive Crossing Minimization",
-        "Preserves the order of nodes within a layer but still minimizes crossings between edges connecting long edge dummies. Requires a crossing minimization strategy that is able to process \'in-layer\' constraints.",
-        CROSSING_MINIMIZATION_SEMI_INTERACTIVE_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.nodePlacement.strategy",
-        "nodePlacement",
-        "Node Placement Strategy",
-        "Strategy for node placement.",
-        NODE_PLACEMENT_STRATEGY_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        NodePlacementStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-        , "de.cau.cs.kieler.klay.layered.nodePlacement"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.nodePlacement.bk.edgeStraightening",
-        "nodePlacement.bk",
-        "Edge Straightening",
-        "Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges at the expense of diagram size.",
-        NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        EdgeStraighteningStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.nodePlacement.bk.edgeStraightening",
-        "org.eclipse.elk.layered.nodePlacement.strategy",
-        NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEP_NODE_PLACEMENT_STRATEGY
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment",
-        "nodePlacement.bk",
-        "Fixed Alignment",
-        "Tells the BK node placer to use a certain alignment instead of taking the optimal result.",
-        NODE_PLACEMENT_BK_FIXED_ALIGNMENT_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        FixedAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.fixedAlignment"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment",
-        "org.eclipse.elk.layered.nodePlacement.strategy",
-        NODE_PLACEMENT_BK_FIXED_ALIGNMENT_DEP_NODE_PLACEMENT_STRATEGY
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.nodePlacement.linearSegments.deflectionDampening",
-        "nodePlacement.linearSegments",
-        "Linear Segments Deflection Dampening",
-        "Dampens the movement of nodes to keep the diagram from getting too large.",
-        NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.nodePlacement.linearSegments.deflectionDampening",
-        "org.eclipse.elk.layered.nodePlacement.strategy",
-        NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEP_NODE_PLACEMENT_STRATEGY
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.edgeRouting.selfLoopPlacement",
-        "edgeRouting",
-        "Spline Self-Loop Placement",
-        null,
-        EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        SelfLoopPlacement.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-        , "de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.edgeRouting.selfLoopPlacement",
-        "org.eclipse.elk.edgeRouting",
-        EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEP_EDGE_ROUTING
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",
-        "spacing",
-        "Edge Node Spacing Factor",
-        "Factor by which the object spacing is multiplied to arrive at the minimal spacing between an edge and a node.",
-        SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.spacing.edgeSpacingFactor",
-        "spacing",
-        "Edge Spacing Factor",
-        "Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges.",
-        SPACING_EDGE_SPACING_FACTOR_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.edgeSpacingFactor"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.spacing.inLayerSpacingFactor",
-        "spacing",
-        "In-layer Spacing Factor",
-        "Factor by which the usual spacing is multiplied to determine the in-layer spacing between objects.",
-        SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.inLayerSpacingFactor"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.compaction.connectedComponents",
-        "compaction",
-        "Connected Components Compaction",
-        "Tries to further compact components (disconnected sub-graphs).",
-        COMPACTION_CONNECTED_COMPONENTS_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.components.compact"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.compaction.connectedComponents",
-        "org.eclipse.elk.separateConnectedComponents",
-        COMPACTION_CONNECTED_COMPONENTS_DEP_SEPARATE_CONNECTED_COMPONENTS
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.compaction.postCompaction.strategy",
-        "compaction.postCompaction",
-        "Post Compaction Strategy",
-        "Specifies whether and how post-process compaction is applied.",
-        COMPACTION_POST_COMPACTION_STRATEGY_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        GraphCompactionStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.postCompaction"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.compaction.postCompaction.constraints",
-        "compaction.postCompaction",
-        "Post Compaction Constraint Calculation",
-        "Specifies whether and how post-process compaction is applied.",
-        COMPACTION_POST_COMPACTION_CONSTRAINTS_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        ConstraintCalculationStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.postCompaction.constraints"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.highDegreeNodes.treatment",
-        "highDegreeNodes",
-        "High Degree Node Treatment",
-        "Makes room around high degree nodes to place leafs and trees.",
-        HIGH_DEGREE_NODES_TREATMENT_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.highDegreeNodes.threshold",
-        "highDegreeNodes",
-        "High Degree Node Threshold",
-        "Whether a node is considered to have a high degree.",
-        HIGH_DEGREE_NODES_THRESHOLD_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.highDegreeNode.threshold"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.highDegreeNodes.threshold",
-        "org.eclipse.elk.layered.highDegreeNodes.treatment",
-        HIGH_DEGREE_NODES_THRESHOLD_DEP_HIGH_DEGREE_NODES_TREATMENT
-    );
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.layered.highDegreeNodes.treeHeight",
-        "highDegreeNodes",
-        "High Degree Node Maximum Tree Height",
-        "Maximum height of a subtree connected to a high degree node to be moved to separate layers.",
-        HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
-        , "de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight"
-    ));
-    registry.addDependency(
-        "org.eclipse.elk.layered.highDegreeNodes.treeHeight",
-        "org.eclipse.elk.layered.highDegreeNodes.treatment",
-        HIGH_DEGREE_NODES_TREE_HEIGHT_DEP_HIGH_DEGREE_NODES_TREATMENT
-    );
     registry.register(new LayoutAlgorithmData(
         "org.eclipse.elk.layered",
         "ELK Layered",
@@ -1347,292 +532,402 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.spacing.node",
-        LAYERED_SUP_SPACING_NODE
+        SPACING_NODE_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.spacing.border",
-        LAYERED_SUP_SPACING_BORDER
+        SPACING_BORDER_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.spacing.port",
-        null
+        SPACING_PORT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.spacing.label",
-        null
+        SPACING_LABEL.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.priority",
-        LAYERED_SUP_PRIORITY
+        PRIORITY_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.edgeRouting",
-        LAYERED_SUP_EDGE_ROUTING
+        EDGE_ROUTING_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.port.borderOffset",
-        LAYERED_SUP_PORT_BORDER_OFFSET
+        PORT_BORDER_OFFSET_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.randomSeed",
-        LAYERED_SUP_RANDOM_SEED
+        RANDOM_SEED_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.aspectRatio",
-        LAYERED_SUP_ASPECT_RATIO
+        ASPECT_RATIO_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.noLayout",
-        null
+        NO_LAYOUT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.portConstraints",
-        null
+        PORT_CONSTRAINTS.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.port.side",
-        null
+        PORT_SIDE.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.debugMode",
-        null
+        DEBUG_MODE.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.alignment",
-        null
+        ALIGNMENT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layoutHierarchy",
-        null
+        LAYOUT_HIERARCHY.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.hierarchyHandling",
-        null
+        HIERARCHY_HANDLING.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.separateConnectedComponents",
-        LAYERED_SUP_SEPARATE_CONNECTED_COMPONENTS
+        SEPARATE_CONNECTED_COMPONENTS_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.insideSelfLoops.activate",
-        null
+        INSIDE_SELF_LOOPS_ACTIVATE.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.insideSelfLoops.yo",
-        null
+        INSIDE_SELF_LOOPS_YO.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.nodeSize.constraints",
-        null
+        NODE_SIZE_CONSTRAINTS.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.nodeSize.options",
-        null
+        NODE_SIZE_OPTIONS.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.direction",
-        LAYERED_SUP_DIRECTION
+        DIRECTION_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.nodeLabels.placement",
-        null
+        NODE_LABELS_PLACEMENT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.portLabels.placement",
-        null
+        PORT_LABELS_PLACEMENT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.portAlignment.basic",
-        LAYERED_SUP_PORT_ALIGNMENT_BASIC
+        PORT_ALIGNMENT_BASIC_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.portAlignment.north",
-        null
+        PORT_ALIGNMENT_NORTH.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.portAlignment.south",
-        null
+        PORT_ALIGNMENT_SOUTH.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.portAlignment.west",
-        null
+        PORT_ALIGNMENT_WEST.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.portAlignment.east",
-        null
+        PORT_ALIGNMENT_EAST.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",
-        null
+        SPACING_EDGE_NODE_SPACING_FACTOR.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
-        "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",
-        null
+        "org.eclipse.elk.layered.spacing.edgeSpacingFactor",
+        SPACING_EDGE_SPACING_FACTOR.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.unnecessaryBendpoints",
-        null
+        UNNECESSARY_BENDPOINTS.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.layering.strategy",
-        null
+        LAYERING_STRATEGY.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.layering.nodePromotion.strategy",
+        LAYERING_NODE_PROMOTION_STRATEGY.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.thoroughness",
-        null
+        THOROUGHNESS.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.layering.layerConstraint",
-        null
+        LAYERING_LAYER_CONSTRAINT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.cycleBreaking.strategy",
-        null
+        CYCLE_BREAKING_STRATEGY.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.crossingMinimization.strategy",
-        null
+        CROSSING_MINIMIZATION_STRATEGY.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.crossingMinimization.greedySwitch",
-        null
+        CROSSING_MINIMIZATION_GREEDY_SWITCH.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.crossingMinimization.semiInteractive",
-        null
+        CROSSING_MINIMIZATION_SEMI_INTERACTIVE.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.mergeEdges",
-        null
+        MERGE_EDGES.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.mergeHierarchyEdges",
-        null
+        MERGE_HIERARCHY_EDGES.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.interactiveReferencePoint",
-        null
+        INTERACTIVE_REFERENCE_POINT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.nodePlacement.strategy",
-        null
+        NODE_PLACEMENT_STRATEGY.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment",
-        null
+        NODE_PLACEMENT_BK_FIXED_ALIGNMENT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.edgeLabelSideSelection",
-        null
+        EDGE_LABEL_SIDE_SELECTION.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.feedbackEdges",
-        null
+        FEEDBACK_EDGES.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.spacing.inLayerSpacingFactor",
-        null
+        SPACING_IN_LAYER_SPACING_FACTOR.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.layering.wideNodesOnMultipleLayers",
-        null
+        LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.nodePlacement.linearSegments.deflectionDampening",
-        null
+        NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.edgeRouting.selfLoopPlacement",
-        null
+        EDGE_ROUTING_SELF_LOOP_PLACEMENT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.contentAlignment",
-        null
+        CONTENT_ALIGNMENT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.nodePlacement.bk.edgeStraightening",
-        null
+        NODE_PLACEMENT_BK_EDGE_STRAIGHTENING.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.compaction.postCompaction.strategy",
-        null
+        COMPACTION_POST_COMPACTION_STRATEGY.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.compaction.postCompaction.constraints",
-        null
+        COMPACTION_POST_COMPACTION_CONSTRAINTS.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.compaction.connectedComponents",
-        null
+        COMPACTION_CONNECTED_COMPONENTS.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.highDegreeNodes.treatment",
-        null
+        HIGH_DEGREE_NODES_TREATMENT.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.highDegreeNodes.threshold",
-        null
+        HIGH_DEGREE_NODES_THRESHOLD.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.highDegreeNodes.treeHeight",
-        null
+        HIGH_DEGREE_NODES_TREE_HEIGHT.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.nodeSize.minimum",
+        NODE_SIZE_MINIMUM.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.nodeSize.minWidth",
+        NODE_SIZE_MIN_WIDTH.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.nodeSize.minHeight",
+        NODE_SIZE_MIN_HEIGHT.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.junctionPoints",
+        JUNCTION_POINTS.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.edge.thickness",
+        EDGE_THICKNESS.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.edgeLabels.placement",
+        EDGE_LABELS_PLACEMENT.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.port.index",
+        PORT_INDEX.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.commentBox",
+        COMMENT_BOX.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.hypernode",
+        HYPERNODE.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.port.anchor",
+        PORT_ANCHOR.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.partitioning.activate",
+        PARTITIONING_ACTIVATE.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.partitioning.partition",
+        PARTITIONING_PARTITION.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.layering.distributeNodes",
+        LAYERING_DISTRIBUTE_NODES.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.layering.minWidth.upperBoundOnWidth",
+        LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.layering.minWidth.upperLayerEstimationScalingFactor",
+        LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.sausageFolding",
+        SAUSAGE_FOLDING.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.position",
+        POSITION.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.northOrSouthPort",
+        NORTH_OR_SOUTH_PORT.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.layering.nodePromotion.maxIterations",
+        LAYERING_NODE_PROMOTION_MAX_ITERATIONS.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.edgeCenterLabelPlacementStrategy",
+        EDGE_CENTER_LABEL_PLACEMENT_STRATEGY.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.margins",
+        MARGINS.getDefault()
     );
   }
 }

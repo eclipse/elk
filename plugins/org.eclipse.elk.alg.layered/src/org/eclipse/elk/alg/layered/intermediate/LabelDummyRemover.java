@@ -21,9 +21,9 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
 
@@ -59,8 +59,8 @@ public final class LabelDummyRemover implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy removal", 1);
         
-        float labelSpacing = layeredGraph.getProperty(CoreOptions.SPACING_LABEL);
-        Direction layoutDirection = layeredGraph.getProperty(CoreOptions.DIRECTION);
+        float labelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_LABEL);
+        Direction layoutDirection = layeredGraph.getProperty(LayeredOptions.DIRECTION);
         
         for (Layer layer : layeredGraph.getLayers()) {
             // An iterator is necessary for traversing nodes, since
@@ -73,7 +73,7 @@ public final class LabelDummyRemover implements ILayoutProcessor {
                 if (node.getType() == NodeType.LABEL) {
                     // First, place labels on position of dummy node 
                     LEdge originEdge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
-                    double thickness = originEdge.getProperty(CoreOptions.EDGE_THICKNESS).doubleValue();
+                    double thickness = originEdge.getProperty(LayeredOptions.EDGE_THICKNESS).doubleValue();
                     
                     KVector currLabelPos = new KVector(node.getPosition());
                     

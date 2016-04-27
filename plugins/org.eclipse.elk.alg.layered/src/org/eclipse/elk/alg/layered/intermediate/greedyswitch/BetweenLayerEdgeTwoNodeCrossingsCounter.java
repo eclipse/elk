@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -92,7 +92,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
     }
 
     private boolean portOrderIsFixed(final LNode neighbourToUpperNode) {
-        return neighbourToUpperNode.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+        return neighbourToUpperNode.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     /**

@@ -20,10 +20,9 @@ import org.eclipse.elk.alg.force.graph.FEdge;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
-import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 
 import com.google.common.collect.Lists;
 
@@ -59,7 +58,7 @@ public final class ComponentsProcessor {
      * @return a list of components that can be processed one by one.
      */
     public List<FGraph> split(final FGraph graph) {
-        Boolean separate = graph.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
+        Boolean separate = graph.getProperty(ForceOptions.SEPARATE_CONNECTED_COMPONENTS);
         if (separate == null || separate.booleanValue()) {
             boolean[] visited = new boolean[graph.getNodes().size()];
             List<FEdge>[] incidence = buildIncidenceLists(graph);

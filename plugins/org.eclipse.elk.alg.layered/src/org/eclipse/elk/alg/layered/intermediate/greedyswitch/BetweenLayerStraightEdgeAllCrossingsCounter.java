@@ -16,7 +16,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -50,7 +50,7 @@ public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdg
         Layer rightLayerRef = rightLayer[0].getLayer();
         for (LNode node : rightLayer) {
             assert node.getLayer() == rightLayerRef;
-            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Determine how many input ports there are on the north side
                 // (note that the standard port order is north - east - south - west)
                 int northInputPorts = 0;
@@ -113,7 +113,7 @@ public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdg
         int i = 0;
         for (LNode node : leftLayer) {
             assert node.getLayer() == leftLayerRef;
-            if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Iterate output ports in their natural order, that is north - east - south - west
                 for (LPort port : node.getPorts()) {
                     int start = i;

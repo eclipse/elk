@@ -77,7 +77,7 @@ public class ComponentsProcessor {
      * @return a list of components that can be processed one by one
      */
     public List<TGraph> split(final TGraph graph) {
-        Boolean separate = graph.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
+        Boolean separate = graph.getProperty(MrTreeOptions.SEPARATE_CONNECTED_COMPONENTS);
         if (separate == null || separate.booleanValue()) {
             initialize(graph);
 

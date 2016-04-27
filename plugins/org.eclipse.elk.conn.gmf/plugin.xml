@@ -28,7 +28,7 @@
  <extension
        point="org.eclipse.elk.core.layoutProviders">
     <provider
-          class="org.eclipse.elk.conn.gmf.layouter.Metadata">
+          class="org.eclipse.elk.conn.gmf.layouter.GmfMetaDataProvider">
     </provider>
     
  </extension>

@@ -12,7 +12,6 @@ package org.eclipse.elk.core.options;
 
 import java.util.EnumSet;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutCategoryData;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.labels.ILabelManager;
@@ -31,10 +30,6 @@ import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
-import org.eclipse.elk.core.util.BoxLayoutProvider;
-import org.eclipse.elk.core.util.FixedLayoutProvider;
-import org.eclipse.elk.core.util.RandomLayoutProvider;
 import org.eclipse.elk.core.util.nodespacing.Spacing;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
@@ -841,51 +836,6 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    * Required value for dependency between {@link #SCALE_FACTOR} and {@link #LAYOUT_HIERARCHY}.
    */
   private final static boolean SCALE_FACTOR_DEP_LAYOUT_HIERARCHY = false;
-  
-  /**
-   * Default value for {@link #SPACING_BORDER} with algorithm "Fixed Layout".
-   */
-  private final static float FIXED_SUP_SPACING_BORDER = 15;
-  
-  /**
-   * Default value for {@link #SPACING_NODE} with algorithm "Box Layout".
-   */
-  private final static float BOX_SUP_SPACING_NODE = 15;
-  
-  /**
-   * Default value for {@link #SPACING_BORDER} with algorithm "Box Layout".
-   */
-  private final static float BOX_SUP_SPACING_BORDER = 15;
-  
-  /**
-   * Default value for {@link #PRIORITY} with algorithm "Box Layout".
-   */
-  private final static int BOX_SUP_PRIORITY = 0;
-  
-  /**
-   * Default value for {@link #ASPECT_RATIO} with algorithm "Box Layout".
-   */
-  private final static float BOX_SUP_ASPECT_RATIO = 1.3f;
-  
-  /**
-   * Default value for {@link #RANDOM_SEED} with algorithm "Randomizer".
-   */
-  private final static int RANDOM_SUP_RANDOM_SEED = 0;
-  
-  /**
-   * Default value for {@link #SPACING_NODE} with algorithm "Randomizer".
-   */
-  private final static float RANDOM_SUP_SPACING_NODE = 15;
-  
-  /**
-   * Default value for {@link #SPACING_BORDER} with algorithm "Randomizer".
-   */
-  private final static float RANDOM_SUP_SPACING_BORDER = 15;
-  
-  /**
-   * Default value for {@link #ASPECT_RATIO} with algorithm "Randomizer".
-   */
-  private final static float RANDOM_SUP_ASPECT_RATIO = 1.6f;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
@@ -1780,110 +1730,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Planar",
         "Algorithms that require a planar or upward planar graph. Most of these algorithms are theoretically interesting, but not practically usable."
     ));
-    registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.fixed",
-        "Fixed Layout",
-        "Keeps the current layout as it is, without any automatic modification. Optional coordinates can be given for nodes and edge bend points.",
-        new AlgorithmFactory(FixedLayoutProvider.class, ""),
-        null,
-        "ELK",
-        null,
-        null
-    ));
-    registry.addOptionSupport(
-        "org.eclipse.elk.fixed",
-        "org.eclipse.elk.position",
-        null
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.fixed",
-        "org.eclipse.elk.bendPoints",
-        null
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.fixed",
-        "org.eclipse.elk.spacing.border",
-        FIXED_SUP_SPACING_BORDER
-    );
-    registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.box",
-        "Box Layout",
-        "Algorithm for packing of unconnected boxes, i.e. graphs without edges.",
-        new AlgorithmFactory(BoxLayoutProvider.class, ""),
-        null,
-        "ELK",
-        "images/box_layout.png",
-        null
-    ));
-    registry.addOptionSupport(
-        "org.eclipse.elk.box",
-        "org.eclipse.elk.spacing.node",
-        BOX_SUP_SPACING_NODE
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.box",
-        "org.eclipse.elk.spacing.border",
-        BOX_SUP_SPACING_BORDER
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.box",
-        "org.eclipse.elk.priority",
-        BOX_SUP_PRIORITY
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.box",
-        "org.eclipse.elk.expandNodes",
-        null
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.box",
-        "org.eclipse.elk.nodeSize.constraints",
-        null
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.box",
-        "org.eclipse.elk.nodeSize.options",
-        null
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.box",
-        "org.eclipse.elk.aspectRatio",
-        BOX_SUP_ASPECT_RATIO
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.box",
-        "org.eclipse.elk.interactive",
-        null
-    );
-    registry.register(new LayoutAlgorithmData(
-        "org.eclipse.elk.random",
-        "Randomizer",
-        "Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be useful to demonstrate the power of \"real\" layout algorithms.",
-        new AlgorithmFactory(RandomLayoutProvider.class, ""),
-        null,
-        "ELK",
-        "images/random.png",
-        null
-    ));
-    registry.addOptionSupport(
-        "org.eclipse.elk.random",
-        "org.eclipse.elk.randomSeed",
-        RANDOM_SUP_RANDOM_SEED
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.random",
-        "org.eclipse.elk.spacing.node",
-        RANDOM_SUP_SPACING_NODE
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.random",
-        "org.eclipse.elk.spacing.border",
-        RANDOM_SUP_SPACING_BORDER
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.random",
-        "org.eclipse.elk.aspectRatio",
-        RANDOM_SUP_ASPECT_RATIO
-    );
+    new org.eclipse.elk.core.options.FixedLayouterOptions().apply(registry);
+    new org.eclipse.elk.core.options.BoxLayouterOptions().apply(registry);
+    new org.eclipse.elk.core.options.RandomLayouterOptions().apply(registry);
   }
 }

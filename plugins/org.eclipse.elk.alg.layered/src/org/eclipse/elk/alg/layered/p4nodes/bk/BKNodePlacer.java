@@ -30,7 +30,6 @@ import org.eclipse.elk.alg.layered.properties.FixedAlignment;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -164,7 +163,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         ni = NeighborhoodInformation.buildFor(layeredGraph);
 
         // Regard possible other layout options.
-        debugMode = layeredGraph.getProperty(CoreOptions.DEBUG_MODE);
+        debugMode = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
         produceBalancedLayout =
                 layeredGraph.getProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT) == FixedAlignment.BALANCED;
 

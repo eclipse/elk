@@ -1,22 +1,15 @@
 /**
- * Copyright (c) 2015 Kiel University and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *    spoenemann - initial API and implementation
+ * Declarations for the ELK Tree layout algorithm.
  */
 package org.eclipse.elk.alg.mrtree.properties;
 
 import java.util.EnumSet;
 import org.eclipse.elk.alg.mrtree.TreeLayoutProvider;
+import org.eclipse.elk.alg.mrtree.properties.MrTreeMetaDataProvider;
 import org.eclipse.elk.alg.mrtree.properties.OrderWeighting;
 import org.eclipse.elk.alg.mrtree.properties.TreeifyingOrder;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.GraphFeature;
@@ -24,124 +17,96 @@ import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
-/**
- * Declarations for the ELK Tree layout algorithm.
- */
 @SuppressWarnings("all")
 public class MrTreeOptions implements ILayoutMetaDataProvider {
   /**
-   * Default value for {@link #WEIGHTING}.
-   */
-  private final static OrderWeighting WEIGHTING_DEFAULT = OrderWeighting.DESCENDANTS;
-  
-  /**
-   * Which weighting to use when computing a node order.
-   */
-  public final static IProperty<OrderWeighting> WEIGHTING = new Property<OrderWeighting>(
-            "org.eclipse.elk.mrtree.weighting",
-            WEIGHTING_DEFAULT,
-            null,
-            null);
-  
-  /**
-   * Default value for {@link #SEARCH_ORDER}.
-   */
-  private final static TreeifyingOrder SEARCH_ORDER_DEFAULT = TreeifyingOrder.DFS;
-  
-  /**
-   * Which search order to use when computing a spanning tree.
-   */
-  public final static IProperty<TreeifyingOrder> SEARCH_ORDER = new Property<TreeifyingOrder>(
-            "org.eclipse.elk.mrtree.searchOrder",
-            SEARCH_ORDER_DEFAULT,
-            null,
-            null);
-  
-  /**
    * Default value for {@link #SPACING_NODE} with algorithm "ELK Mr. Tree".
    */
-  private final static float MR_TREE_SUP_SPACING_NODE = 20;
+  private final static float SPACING_NODE_DEFAULT = 20;
   
   /**
-   * Overridden value for Node Spacing.
+   * Property constant to access Node Spacing from within the layout algorithm code.
    */
   public final static IProperty<Float> SPACING_NODE = new Property<Float>(
-            CoreOptions.SPACING_NODE,
-            MR_TREE_SUP_SPACING_NODE);
+                                CoreOptions.SPACING_NODE,
+                                SPACING_NODE_DEFAULT);
   
   /**
    * Default value for {@link #SPACING_BORDER} with algorithm "ELK Mr. Tree".
    */
-  private final static float MR_TREE_SUP_SPACING_BORDER = 20;
+  private final static float SPACING_BORDER_DEFAULT = 20;
   
   /**
-   * Overridden value for Border Spacing.
+   * Property constant to access Border Spacing from within the layout algorithm code.
    */
   public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
-            CoreOptions.SPACING_BORDER,
-            MR_TREE_SUP_SPACING_BORDER);
+                                CoreOptions.SPACING_BORDER,
+                                SPACING_BORDER_DEFAULT);
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "ELK Mr. Tree".
    */
-  private final static float MR_TREE_SUP_ASPECT_RATIO = 1.6f;
+  private final static float ASPECT_RATIO_DEFAULT = 1.6f;
   
   /**
-   * Overridden value for Aspect Ratio.
+   * Property constant to access Aspect Ratio from within the layout algorithm code.
    */
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            CoreOptions.ASPECT_RATIO,
-            MR_TREE_SUP_ASPECT_RATIO);
+                                CoreOptions.ASPECT_RATIO,
+                                ASPECT_RATIO_DEFAULT);
   
   /**
    * Default value for {@link #PRIORITY} with algorithm "ELK Mr. Tree".
    */
-  private final static int MR_TREE_SUP_PRIORITY = 1;
+  private final static int PRIORITY_DEFAULT = 1;
   
   /**
-   * Overridden value for Priority.
+   * Property constant to access Priority from within the layout algorithm code.
    */
   public final static IProperty<Integer> PRIORITY = new Property<Integer>(
-            CoreOptions.PRIORITY,
-            MR_TREE_SUP_PRIORITY);
+                                CoreOptions.PRIORITY,
+                                PRIORITY_DEFAULT);
   
   /**
    * Default value for {@link #SEPARATE_CONNECTED_COMPONENTS} with algorithm "ELK Mr. Tree".
    */
-  private final static boolean MR_TREE_SUP_SEPARATE_CONNECTED_COMPONENTS = true;
+  private final static boolean SEPARATE_CONNECTED_COMPONENTS_DEFAULT = true;
+  
+  /**
+   * Property constant to access Separate Connected Components from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> SEPARATE_CONNECTED_COMPONENTS = new Property<Boolean>(
+                                CoreOptions.SEPARATE_CONNECTED_COMPONENTS,
+                                SEPARATE_CONNECTED_COMPONENTS_DEFAULT);
   
   /**
    * Default value for {@link #DIRECTION} with algorithm "ELK Mr. Tree".
    */
-  private final static Direction MR_TREE_SUP_DIRECTION = Direction.DOWN;
+  private final static Direction DIRECTION_DEFAULT = Direction.DOWN;
+  
+  /**
+   * Property constant to access Direction from within the layout algorithm code.
+   */
+  public final static IProperty<Direction> DIRECTION = new Property<Direction>(
+                                CoreOptions.DIRECTION,
+                                DIRECTION_DEFAULT);
+  
+  /**
+   * Property constant to access Debug Mode from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> DEBUG_MODE = CoreOptions.DEBUG_MODE;
+  
+  /**
+   * Property constant to access Weighting of Nodes from within the layout algorithm code.
+   */
+  public final static IProperty<OrderWeighting> WEIGHTING = MrTreeMetaDataProvider.WEIGHTING;
+  
+  /**
+   * Property constant to access Search Order from within the layout algorithm code.
+   */
+  public final static IProperty<TreeifyingOrder> SEARCH_ORDER = MrTreeMetaDataProvider.SEARCH_ORDER;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.mrtree.weighting",
-        "",
-        "Weighting of Nodes",
-        "Which weighting to use when computing a node order.",
-        WEIGHTING_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        OrderWeighting.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new LayoutOptionData(
-        "org.eclipse.elk.mrtree.searchOrder",
-        "",
-        "Search Order",
-        "Which search order to use when computing a spanning tree.",
-        SEARCH_ORDER_DEFAULT,
-        null,
-        null,
-        LayoutOptionData.Type.ENUM,
-        TreeifyingOrder.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
-    ));
     registry.register(new LayoutAlgorithmData(
         "org.eclipse.elk.mrtree.mrTree",
         "ELK Mr. Tree",
@@ -155,47 +120,47 @@ public class MrTreeOptions implements ILayoutMetaDataProvider {
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.spacing.node",
-        MR_TREE_SUP_SPACING_NODE
+        SPACING_NODE_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.spacing.border",
-        MR_TREE_SUP_SPACING_BORDER
+        SPACING_BORDER_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.aspectRatio",
-        MR_TREE_SUP_ASPECT_RATIO
+        ASPECT_RATIO_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.priority",
-        MR_TREE_SUP_PRIORITY
+        PRIORITY_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.separateConnectedComponents",
-        MR_TREE_SUP_SEPARATE_CONNECTED_COMPONENTS
+        SEPARATE_CONNECTED_COMPONENTS_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.direction",
-        MR_TREE_SUP_DIRECTION
+        DIRECTION_DEFAULT
     );
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.debugMode",
-        null
+        DEBUG_MODE.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.mrtree.weighting",
-        null
+        WEIGHTING.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",
         "org.eclipse.elk.mrtree.searchOrder",
-        null
+        SEARCH_ORDER.getDefault()
     );
   }
 }

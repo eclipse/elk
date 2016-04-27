@@ -22,7 +22,6 @@ import org.eclipse.elk.alg.layered.properties.InLayerConstraint;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayerConstraint;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 
@@ -73,7 +72,7 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor {
         // find the minimum and maximum x coordinates of the graph 
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             if (node.getType() == NodeType.NORMAL) {
-                Margins margins = node.getProperty(CoreOptions.MARGINS);
+                Margins margins = node.getProperty(LayeredOptions.MARGINS);
                 minX = Math.min(minX, node.getPosition().x - margins.left);
                 maxX = Math.max(maxX, node.getPosition().x + node.getSize().x + margins.right);
                 minY = Math.min(minY, node.getPosition().y - margins.top);
@@ -156,7 +155,7 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor {
             double min = Double.POSITIVE_INFINITY;
             for (LEdge e : port.getOutgoingEdges()) {
                 LNode n = e.getTarget().getNode();
-                Margins margins = n.getProperty(CoreOptions.MARGINS);
+                Margins margins = n.getProperty(LayeredOptions.MARGINS);
                 min = Math.min(min, n.getPosition().x - margins.left);
             }
             return Optional.of(min);
@@ -167,7 +166,7 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor {
             double max = Double.NEGATIVE_INFINITY;
             for (LEdge e : port.getIncomingEdges()) {
                 LNode n = e.getSource().getNode();
-                Margins margins = n.getProperty(CoreOptions.MARGINS);
+                Margins margins = n.getProperty(LayeredOptions.MARGINS);
                 max = Math.max(max, n.getPosition().x + n.getSize().x + margins.right);
             }
             return Optional.of(max);

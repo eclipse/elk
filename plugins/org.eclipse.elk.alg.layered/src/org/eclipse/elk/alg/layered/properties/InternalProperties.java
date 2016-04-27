@@ -28,7 +28,6 @@ import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
@@ -41,7 +40,7 @@ import com.google.common.collect.Multimap;
 /**
  * Container for property definitions for internal use of the algorithm. These properties should
  * not be accessed from outside. Some properties here are redefinitions of layout options in
- * {@link CoreOptions} to change their defaults.
+ * {@link LayeredOptions} to change their defaults.
  *
  * @author msp
  * @author cds

@@ -22,7 +22,6 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -96,7 +95,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
 
         // the object spacing in the drawn graph
         spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
-        direction = layeredGraph.getProperty(CoreOptions.DIRECTION);
+        direction = layeredGraph.getProperty(LayeredOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();
 
@@ -154,8 +153,8 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
      */
     private boolean isProcessorApplicable(final LNode node) {
 
-        if (node.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_RATIO
-                || node.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS) {
+        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_RATIO
+                || node.getProperty(LayeredOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS) {
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH) {
                     return false;
@@ -167,7 +166,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         // if port constraints are at least fixed side
         // Reason: incoming edges on EAST ports introduce dummy nodes within the same layer.
         // This would introduce trouble as the "last part" of a big node is a dummy itself.
-        if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
+        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
             for (LPort p : node.getPorts(PortSide.EAST)) {
                 if (!p.getIncomingEdges().isEmpty()) {
                     return false;
@@ -228,7 +227,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             // if ports are free to be moved on the sides, we have to move all outgoing edges as
             // well as these will be assigned to the east side later
             if (direction == Direction.RIGHT
-                    && !node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                    && !node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
                 for (LEdge e : node.getOutgoingEdges()) {
                     eastPorts.add(e.getSource());
                 }
@@ -282,10 +281,10 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
             dummy.setType(NodeType.BIG_NODE);
             
             // copy some properties
-            dummy.setProperty(CoreOptions.PORT_CONSTRAINTS,
-                    src.getProperty(CoreOptions.PORT_CONSTRAINTS));
-            dummy.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, 
-                    src.getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
+            dummy.setProperty(LayeredOptions.PORT_CONSTRAINTS,
+                    src.getProperty(LayeredOptions.PORT_CONSTRAINTS));
+            dummy.setProperty(LayeredOptions.NODE_LABELS_PLACEMENT, 
+                    src.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT));
             
             dummy.id = dummyID++;
 

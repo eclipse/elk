@@ -28,7 +28,6 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -438,10 +437,10 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
             
             if (addJunctionPoint && !createdJunctionPoints.contains(bendPoint)) {
                 // create a new junction point for the edge at the bend point's position
-                KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+                KVectorChain junctionPoints = edge.getProperty(LayeredOptions.JUNCTION_POINTS);
                 if (junctionPoints == null) {
                     junctionPoints = new KVectorChain();
-                    edge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
+                    edge.setProperty(LayeredOptions.JUNCTION_POINTS, junctionPoints);
                 }
                 
                 KVector jpoint = new KVector(bendPoint);

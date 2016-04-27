@@ -17,7 +17,7 @@ import org.eclipse.elk.core.options.Direction
  * Declarations for the ELK Tree layout algorithm.
  */
 bundle {
-    class properties.MrTreeOptions
+    metadataClass properties.MrTreeMetaDataProvider
     idPrefix org.eclipse.elk.mrtree
 }
 
@@ -27,13 +27,14 @@ algorithm mrTree(TreeLayoutProvider) {
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
         the input graph and arranges all nodes according to the resulting parent-children
         hierarchy. I pity the fool who doesn't use Mr. Tree Layout."
+    metadataClass properties.MrTreeOptions
     category org.eclipse.elk.tree
     features disconnected
     preview images/tree.png
-    supports org.eclipse.elk.spacing.node = 20 duplicated
-    supports org.eclipse.elk.spacing.border = 20 duplicated
-    supports org.eclipse.elk.aspectRatio = 1.6f duplicated
-    supports org.eclipse.elk.priority = 1 duplicated
+    supports org.eclipse.elk.spacing.node = 20
+    supports org.eclipse.elk.spacing.border = 20
+    supports org.eclipse.elk.aspectRatio = 1.6f
+    supports org.eclipse.elk.priority = 1
     supports org.eclipse.elk.separateConnectedComponents = true
     supports org.eclipse.elk.direction = Direction.DOWN
     supports org.eclipse.elk.debugMode

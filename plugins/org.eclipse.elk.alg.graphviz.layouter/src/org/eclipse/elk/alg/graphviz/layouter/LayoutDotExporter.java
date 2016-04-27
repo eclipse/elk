@@ -26,10 +26,10 @@ import org.eclipse.elk.alg.graphviz.dot.transform.NeatoModel;
 import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.HierarchyHandling;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphData;
 import org.eclipse.elk.graph.KLabel;
@@ -56,7 +56,8 @@ public class LayoutDotExporter extends DotExporter {
         transData.setProperty(TRANSFORM_NODE_LAYOUT, parentLayout.getProperty(CoreOptions.INTERACTIVE));
         transData.setProperty(TRANSFORM_EDGE_LAYOUT, false);
         transData.setProperty(TRANSFORM_NODE_LABELS, false);
-        transData.setProperty(ADAPT_PORT_POSITIONS, parentLayout.getProperty(GraphvizOptions.ADAPT_PORT_POSITIONS));
+        transData.setProperty(ADAPT_PORT_POSITIONS, parentLayout.getProperty(
+                GraphvizMetaDataProvider.ADAPT_PORT_POSITIONS));
         transData.setProperty(BORDER_SPACING, parentLayout.getProperty(CoreOptions.SPACING_BORDER));
         super.transform(transData);
     }
@@ -101,7 +102,7 @@ public class LayoutDotExporter extends DotExporter {
         switch (command) {
         case DOT:
             graphAttrs.add(createAttribute(Attributes.NODESEP, spacing / DPI));
-            float rankSepFactor = parentLayout.getProperty(GraphvizOptions.LAYER_SPACING_FACTOR);
+            float rankSepFactor = parentLayout.getProperty(GraphvizMetaDataProvider.LAYER_SPACING_FACTOR);
             graphAttrs.add(createAttribute(Attributes.RANKSEP, rankSepFactor * spacing / DPI));
             // set layout direction
             switch (parentLayout.getProperty(CoreOptions.DIRECTION)) {
@@ -118,7 +119,7 @@ public class LayoutDotExporter extends DotExporter {
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "TB"));
             }
             // set iterations limit
-            Float iterationsFactor = parentLayout.getProperty(GraphvizOptions.ITERATIONS_FACTOR);
+            Float iterationsFactor = parentLayout.getProperty(GraphvizMetaDataProvider.ITERATIONS_FACTOR);
             if (iterationsFactor != null && iterationsFactor > 0) {
                 graphAttrs.add(createAttribute(Attributes.CROSSMIN_LIMIT, iterationsFactor));
                 if (iterationsFactor < 1) {
@@ -153,12 +154,12 @@ public class LayoutDotExporter extends DotExporter {
             }
             graphAttrs.add(createAttribute(Attributes.START, "random" + seed));
             // set epsilon value
-            Float epsilon = parentLayout.getProperty(GraphvizOptions.EPSILON);
+            Float epsilon = parentLayout.getProperty(GraphvizMetaDataProvider.EPSILON);
             if (epsilon != null && epsilon > 0) {
                 graphAttrs.add(createAttribute(Attributes.EPSILON, epsilon));
             }
             // set distance model
-            NeatoModel model = parentLayout.getProperty(GraphvizOptions.NEATO_MODEL);
+            NeatoModel model = parentLayout.getProperty(GraphvizMetaDataProvider.NEATO_MODEL);
             if (model != NeatoModel.SHORTPATH) {
                 graphAttrs.add(createAttribute(Attributes.NEATO_MODEL, model.literal()));
             }
@@ -171,7 +172,7 @@ public class LayoutDotExporter extends DotExporter {
 
         if (command == Command.NEATO || command == Command.FDP) {
             // set maximum number of iterations
-            Integer maxiter = parentLayout.getProperty(GraphvizOptions.MAXITER);
+            Integer maxiter = parentLayout.getProperty(GraphvizMetaDataProvider.MAXITER);
             if (maxiter != null && maxiter > 0) {
                 graphAttrs.add(createAttribute(Attributes.MAXITER, maxiter));
             }
@@ -179,7 +180,7 @@ public class LayoutDotExporter extends DotExporter {
 
         if (command != Command.DOT) {
             // enable or disable node overlap avoidance
-            OverlapMode mode = parentLayout.getProperty(GraphvizOptions.OVERLAP_MODE);
+            OverlapMode mode = parentLayout.getProperty(GraphvizMetaDataProvider.OVERLAP_MODE);
             if (mode != OverlapMode.NONE) {
                 graphAttrs.add(createAttribute(Attributes.OVERLAP, mode.literal()));
                 graphAttrs.add(createAttribute(Attributes.SEP, "\"+" + Math.round(spacing / 2)
@@ -209,7 +210,7 @@ public class LayoutDotExporter extends DotExporter {
         graphAttrs.add(createAttribute(Attributes.SPLINES, splineMode));
 
         // enable edge concentration
-        if (parentLayout.getProperty(GraphvizOptions.CONCENTRATE)) {
+        if (parentLayout.getProperty(GraphvizMetaDataProvider.CONCENTRATE)) {
             graphAttrs.add(createAttribute(Attributes.CONCENTRATE, "true"));
         }
     }
@@ -227,11 +228,11 @@ public class LayoutDotExporter extends DotExporter {
             return elp == EdgeLabelPlacement.HEAD || elp == EdgeLabelPlacement.TAIL;
         })) {
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            float distance = edgeLayout.getProperty(GraphvizOptions.LABEL_DISTANCE);
+            float distance = edgeLayout.getProperty(GraphvizMetaDataProvider.LABEL_DISTANCE);
             if (distance >= 0.0f) {
                 attributes.add(createAttribute(Attributes.LABELDISTANCE, distance));
             }
-            float angle = edgeLayout.getProperty(GraphvizOptions.LABEL_ANGLE);
+            float angle = edgeLayout.getProperty(GraphvizMetaDataProvider.LABEL_ANGLE);
             attributes.add(createAttribute(Attributes.LABELANGLE, angle));
         }
     }

@@ -17,11 +17,11 @@ import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
@@ -85,7 +85,7 @@ public final class ComponentsProcessor {
         graphPlacer = simpleRowGraphPlacer;
         
         // Whether separate components processing is requested
-        Boolean separateProperty = graph.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
+        Boolean separateProperty = graph.getProperty(LayeredOptions.SEPARATE_CONNECTED_COMPONENTS);
         boolean separate = separateProperty == null || separateProperty.booleanValue();
         
         // Whether the graph contains external ports
@@ -93,7 +93,7 @@ public final class ComponentsProcessor {
                 GraphProperties.EXTERNAL_PORTS);
         
         // The graph's external port constraints
-        PortConstraints extPortConstraints = graph.getProperty(CoreOptions.PORT_CONSTRAINTS);
+        PortConstraints extPortConstraints = graph.getProperty(LayeredOptions.PORT_CONSTRAINTS);
         boolean compatiblePortConstraints = !extPortConstraints.isOrderFixed();
         
         // The graph may only be separated 

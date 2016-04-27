@@ -12,8 +12,8 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -45,7 +45,7 @@ public final class LayerTotalPortDistributor extends AbstractPortDistributor {
     protected float calculatePortRanks(final LNode node, final float rankSum, final PortType type) {
         float[] portRanks = getPortRanks();
 
-        if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
 
             switch (type) {
             case INPUT: {

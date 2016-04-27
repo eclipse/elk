@@ -13,10 +13,10 @@ package org.eclipse.elk.alg.layered.graph;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -87,12 +87,12 @@ public final class LEdge extends LGraphElement {
         
         // Switch end labels
         for (LLabel label : labels) {
-            EdgeLabelPlacement labelPlacement = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+            EdgeLabelPlacement labelPlacement = label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT);
             
             if (labelPlacement == EdgeLabelPlacement.TAIL) {
-                label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.HEAD);
+                label.setProperty(LayeredOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.HEAD);
             } else if (labelPlacement == EdgeLabelPlacement.HEAD) {
-                label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.TAIL);
+                label.setProperty(LayeredOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.TAIL);
             }
         }
         

@@ -21,22 +21,21 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LInsets;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.ContentAlignment;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
-import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
  * The main entry point into KLay Layered. KLay Layered is a layout algorithm after the layered
@@ -400,7 +399,7 @@ public final class KlayLayered {
         List<ILayoutProcessor> algorithm = lgraph.getProperty(InternalProperties.PROCESSORS);
         float monitorProgress = 1.0f / algorithm.size();
 
-        if (lgraph.getProperty(CoreOptions.DEBUG_MODE)) {
+        if (lgraph.getProperty(LayeredOptions.DEBUG_MODE)) {
             // Debug Mode!
             // Print the algorithm configuration and output the whole graph to a file
             // before each slot execution
@@ -484,8 +483,8 @@ public final class KlayLayered {
      * @param lgraph the graph to resize.
      */
     private void resizeGraph(final LGraph lgraph) {
-        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
-        Set<SizeOptions> sizeOptions = lgraph.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
+        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
+        Set<SizeOptions> sizeOptions = lgraph.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
         float borderSpacing = lgraph.getProperty(LayeredOptions.SPACING_BORDER);
         
         // add the border spacing to the graph size and graph offset
@@ -503,11 +502,11 @@ public final class KlayLayered {
         
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            KVector minSize = lgraph.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
+            KVector minSize = lgraph.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
             float minWidth, minHeight;
             if (minSize == null) {
-                minWidth = lgraph.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
-                minHeight = lgraph.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
+                minWidth = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH);
+                minHeight = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT);
             } else {
                 minWidth = (float) minSize.x;
                 minHeight = (float) minSize.y;
@@ -622,7 +621,7 @@ public final class KlayLayered {
         if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
             // Ports have positions assigned
-            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+            node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
             node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
                     .add(GraphProperties.NON_FREE_PORTS);
             LGraphUtil.resizeNode(node, actualGraphSize, false, true);

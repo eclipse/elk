@@ -25,7 +25,6 @@ import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -215,7 +214,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         
         // Retrieve some generic values
         Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
-        boolean debug = layeredGraph.getProperty(CoreOptions.DEBUG_MODE);
+        boolean debug = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
