@@ -18,12 +18,12 @@ import org.eclipse.elk.core.meta.metaData.MdBundleMember;
 import org.eclipse.elk.core.meta.metaData.MdCategory;
 import org.eclipse.elk.core.meta.metaData.MdGraphFeature;
 import org.eclipse.elk.core.meta.metaData.MdGroup;
-import org.eclipse.elk.core.meta.metaData.MdGroupOrProperty;
+import org.eclipse.elk.core.meta.metaData.MdGroupOrOption;
 import org.eclipse.elk.core.meta.metaData.MdModel;
-import org.eclipse.elk.core.meta.metaData.MdProperty;
-import org.eclipse.elk.core.meta.metaData.MdPropertyDependency;
-import org.eclipse.elk.core.meta.metaData.MdPropertySupport;
-import org.eclipse.elk.core.meta.metaData.MdPropertyTargetType;
+import org.eclipse.elk.core.meta.metaData.MdOption;
+import org.eclipse.elk.core.meta.metaData.MdOptionDependency;
+import org.eclipse.elk.core.meta.metaData.MdOptionSupport;
+import org.eclipse.elk.core.meta.metaData.MdOptionTargetType;
 import org.eclipse.elk.core.meta.metaData.MetaDataFactory;
 import org.eclipse.elk.core.meta.metaData.MetaDataPackage;
 
@@ -75,7 +75,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass mdGroupOrPropertyEClass = null;
+  private EClass mdGroupOrOptionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -89,14 +89,14 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass mdPropertyEClass = null;
+  private EClass mdOptionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass mdPropertyDependencyEClass = null;
+  private EClass mdOptionDependencyEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -117,14 +117,14 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass mdPropertySupportEClass = null;
+  private EClass mdOptionSupportEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EEnum mdPropertyTargetTypeEEnum = null;
+  private EEnum mdOptionTargetTypeEEnum = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -325,9 +325,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getMdGroupOrProperty()
+  public EClass getMdGroupOrOption()
   {
-    return mdGroupOrPropertyEClass;
+    return mdGroupOrOptionEClass;
   }
 
   /**
@@ -355,9 +355,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getMdProperty()
+  public EClass getMdOption()
   {
-    return mdPropertyEClass;
+    return mdOptionEClass;
   }
 
   /**
@@ -365,9 +365,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Deprecated()
+  public EAttribute getMdOption_Deprecated()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -375,9 +375,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Advanced()
+  public EAttribute getMdOption_Advanced()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -385,9 +385,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Programmatic()
+  public EAttribute getMdOption_Programmatic()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -395,9 +395,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Output()
+  public EAttribute getMdOption_Output()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -405,9 +405,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Global()
+  public EAttribute getMdOption_Global()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(4);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -415,9 +415,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdProperty_Type()
+  public EReference getMdOption_Type()
   {
-    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(5);
+    return (EReference)mdOptionEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -425,9 +425,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Label()
+  public EAttribute getMdOption_Label()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -435,9 +435,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Description()
+  public EAttribute getMdOption_Description()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(7);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -445,9 +445,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Documentation()
+  public EAttribute getMdOption_Documentation()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -455,9 +455,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdProperty_DefaultValue()
+  public EReference getMdOption_DefaultValue()
   {
-    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(9);
+    return (EReference)mdOptionEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -465,9 +465,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdProperty_LowerBound()
+  public EReference getMdOption_LowerBound()
   {
-    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(10);
+    return (EReference)mdOptionEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -475,9 +475,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdProperty_UpperBound()
+  public EReference getMdOption_UpperBound()
   {
-    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(11);
+    return (EReference)mdOptionEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -485,9 +485,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_Targets()
+  public EAttribute getMdOption_Targets()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -495,9 +495,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdProperty_LegacyIds()
+  public EAttribute getMdOption_LegacyIds()
   {
-    return (EAttribute)mdPropertyEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)mdOptionEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -505,9 +505,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdProperty_Dependencies()
+  public EReference getMdOption_Dependencies()
   {
-    return (EReference)mdPropertyEClass.getEStructuralFeatures().get(14);
+    return (EReference)mdOptionEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -515,9 +515,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getMdPropertyDependency()
+  public EClass getMdOptionDependency()
   {
-    return mdPropertyDependencyEClass;
+    return mdOptionDependencyEClass;
   }
 
   /**
@@ -525,9 +525,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdPropertyDependency_Target()
+  public EReference getMdOptionDependency_Target()
   {
-    return (EReference)mdPropertyDependencyEClass.getEStructuralFeatures().get(0);
+    return (EReference)mdOptionDependencyEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -535,9 +535,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdPropertyDependency_Value()
+  public EReference getMdOptionDependency_Value()
   {
-    return (EReference)mdPropertyDependencyEClass.getEStructuralFeatures().get(1);
+    return (EReference)mdOptionDependencyEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -595,7 +595,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdAlgorithm_Description()
+  public EAttribute getMdAlgorithm_TargetClass()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(4);
   }
@@ -605,7 +605,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdAlgorithm_Documentation()
+  public EAttribute getMdAlgorithm_Description()
   {
     return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(5);
   }
@@ -615,9 +615,19 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getMdAlgorithm_Documentation()
+  {
+    return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getMdAlgorithm_Category()
   {
-    return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(6);
+    return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -627,7 +637,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    */
   public EAttribute getMdAlgorithm_PreviewImage()
   {
-    return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(7);
+    return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -637,7 +647,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    */
   public EAttribute getMdAlgorithm_SupportedFeatures()
   {
-    return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)mdAlgorithmEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -647,7 +657,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    */
   public EReference getMdAlgorithm_SupportedOptions()
   {
-    return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(9);
+    return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -705,9 +715,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getMdPropertySupport()
+  public EClass getMdOptionSupport()
   {
-    return mdPropertySupportEClass;
+    return mdOptionSupportEClass;
   }
 
   /**
@@ -715,9 +725,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdPropertySupport_Property()
+  public EReference getMdOptionSupport_Option()
   {
-    return (EReference)mdPropertySupportEClass.getEStructuralFeatures().get(0);
+    return (EReference)mdOptionSupportEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -725,9 +735,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdPropertySupport_Value()
+  public EReference getMdOptionSupport_Value()
   {
-    return (EReference)mdPropertySupportEClass.getEStructuralFeatures().get(1);
+    return (EReference)mdOptionSupportEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -735,9 +745,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdPropertySupport_Duplicated()
+  public EAttribute getMdOptionSupport_Documentation()
   {
-    return (EAttribute)mdPropertySupportEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)mdOptionSupportEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -745,19 +755,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getMdPropertySupport_Documentation()
+  public EEnum getMdOptionTargetType()
   {
-    return (EAttribute)mdPropertySupportEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EEnum getMdPropertyTargetType()
-  {
-    return mdPropertyTargetTypeEEnum;
+    return mdOptionTargetTypeEEnum;
   }
 
   /**
@@ -815,37 +815,38 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     mdBundleMemberEClass = createEClass(MD_BUNDLE_MEMBER);
     createEAttribute(mdBundleMemberEClass, MD_BUNDLE_MEMBER__NAME);
 
-    mdGroupOrPropertyEClass = createEClass(MD_GROUP_OR_PROPERTY);
+    mdGroupOrOptionEClass = createEClass(MD_GROUP_OR_OPTION);
 
     mdGroupEClass = createEClass(MD_GROUP);
     createEReference(mdGroupEClass, MD_GROUP__CHILDREN);
 
-    mdPropertyEClass = createEClass(MD_PROPERTY);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__DEPRECATED);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__ADVANCED);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__PROGRAMMATIC);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__OUTPUT);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__GLOBAL);
-    createEReference(mdPropertyEClass, MD_PROPERTY__TYPE);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__LABEL);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__DESCRIPTION);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__DOCUMENTATION);
-    createEReference(mdPropertyEClass, MD_PROPERTY__DEFAULT_VALUE);
-    createEReference(mdPropertyEClass, MD_PROPERTY__LOWER_BOUND);
-    createEReference(mdPropertyEClass, MD_PROPERTY__UPPER_BOUND);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__TARGETS);
-    createEAttribute(mdPropertyEClass, MD_PROPERTY__LEGACY_IDS);
-    createEReference(mdPropertyEClass, MD_PROPERTY__DEPENDENCIES);
+    mdOptionEClass = createEClass(MD_OPTION);
+    createEAttribute(mdOptionEClass, MD_OPTION__DEPRECATED);
+    createEAttribute(mdOptionEClass, MD_OPTION__ADVANCED);
+    createEAttribute(mdOptionEClass, MD_OPTION__PROGRAMMATIC);
+    createEAttribute(mdOptionEClass, MD_OPTION__OUTPUT);
+    createEAttribute(mdOptionEClass, MD_OPTION__GLOBAL);
+    createEReference(mdOptionEClass, MD_OPTION__TYPE);
+    createEAttribute(mdOptionEClass, MD_OPTION__LABEL);
+    createEAttribute(mdOptionEClass, MD_OPTION__DESCRIPTION);
+    createEAttribute(mdOptionEClass, MD_OPTION__DOCUMENTATION);
+    createEReference(mdOptionEClass, MD_OPTION__DEFAULT_VALUE);
+    createEReference(mdOptionEClass, MD_OPTION__LOWER_BOUND);
+    createEReference(mdOptionEClass, MD_OPTION__UPPER_BOUND);
+    createEAttribute(mdOptionEClass, MD_OPTION__TARGETS);
+    createEAttribute(mdOptionEClass, MD_OPTION__LEGACY_IDS);
+    createEReference(mdOptionEClass, MD_OPTION__DEPENDENCIES);
 
-    mdPropertyDependencyEClass = createEClass(MD_PROPERTY_DEPENDENCY);
-    createEReference(mdPropertyDependencyEClass, MD_PROPERTY_DEPENDENCY__TARGET);
-    createEReference(mdPropertyDependencyEClass, MD_PROPERTY_DEPENDENCY__VALUE);
+    mdOptionDependencyEClass = createEClass(MD_OPTION_DEPENDENCY);
+    createEReference(mdOptionDependencyEClass, MD_OPTION_DEPENDENCY__TARGET);
+    createEReference(mdOptionDependencyEClass, MD_OPTION_DEPENDENCY__VALUE);
 
     mdAlgorithmEClass = createEClass(MD_ALGORITHM);
     createEAttribute(mdAlgorithmEClass, MD_ALGORITHM__DEPRECATED);
     createEReference(mdAlgorithmEClass, MD_ALGORITHM__PROVIDER);
     createEAttribute(mdAlgorithmEClass, MD_ALGORITHM__PARAMETER);
     createEAttribute(mdAlgorithmEClass, MD_ALGORITHM__LABEL);
+    createEAttribute(mdAlgorithmEClass, MD_ALGORITHM__TARGET_CLASS);
     createEAttribute(mdAlgorithmEClass, MD_ALGORITHM__DESCRIPTION);
     createEAttribute(mdAlgorithmEClass, MD_ALGORITHM__DOCUMENTATION);
     createEReference(mdAlgorithmEClass, MD_ALGORITHM__CATEGORY);
@@ -859,14 +860,13 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     createEAttribute(mdCategoryEClass, MD_CATEGORY__DESCRIPTION);
     createEAttribute(mdCategoryEClass, MD_CATEGORY__DOCUMENTATION);
 
-    mdPropertySupportEClass = createEClass(MD_PROPERTY_SUPPORT);
-    createEReference(mdPropertySupportEClass, MD_PROPERTY_SUPPORT__PROPERTY);
-    createEReference(mdPropertySupportEClass, MD_PROPERTY_SUPPORT__VALUE);
-    createEAttribute(mdPropertySupportEClass, MD_PROPERTY_SUPPORT__DUPLICATED);
-    createEAttribute(mdPropertySupportEClass, MD_PROPERTY_SUPPORT__DOCUMENTATION);
+    mdOptionSupportEClass = createEClass(MD_OPTION_SUPPORT);
+    createEReference(mdOptionSupportEClass, MD_OPTION_SUPPORT__OPTION);
+    createEReference(mdOptionSupportEClass, MD_OPTION_SUPPORT__VALUE);
+    createEAttribute(mdOptionSupportEClass, MD_OPTION_SUPPORT__DOCUMENTATION);
 
     // Create enums
-    mdPropertyTargetTypeEEnum = createEEnum(MD_PROPERTY_TARGET_TYPE);
+    mdOptionTargetTypeEEnum = createEEnum(MD_OPTION_TARGET_TYPE);
     mdGraphFeatureEEnum = createEEnum(MD_GRAPH_FEATURE);
   }
 
@@ -904,9 +904,9 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    mdGroupOrPropertyEClass.getESuperTypes().add(this.getMdBundleMember());
-    mdGroupEClass.getESuperTypes().add(this.getMdGroupOrProperty());
-    mdPropertyEClass.getESuperTypes().add(this.getMdGroupOrProperty());
+    mdGroupOrOptionEClass.getESuperTypes().add(this.getMdBundleMember());
+    mdGroupEClass.getESuperTypes().add(this.getMdGroupOrOption());
+    mdOptionEClass.getESuperTypes().add(this.getMdGroupOrOption());
     mdAlgorithmEClass.getESuperTypes().add(this.getMdBundleMember());
     mdCategoryEClass.getESuperTypes().add(this.getMdBundleMember());
 
@@ -926,43 +926,44 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     initEClass(mdBundleMemberEClass, MdBundleMember.class, "MdBundleMember", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMdBundleMember_Name(), ecorePackage.getEString(), "name", null, 0, 1, MdBundleMember.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(mdGroupOrPropertyEClass, MdGroupOrProperty.class, "MdGroupOrProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEClass(mdGroupOrOptionEClass, MdGroupOrOption.class, "MdGroupOrOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(mdGroupEClass, MdGroup.class, "MdGroup", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getMdGroup_Children(), this.getMdGroupOrProperty(), null, "children", null, 0, -1, MdGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdGroup_Children(), this.getMdGroupOrOption(), null, "children", null, 0, -1, MdGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(mdPropertyEClass, MdProperty.class, "MdProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getMdProperty_Deprecated(), ecorePackage.getEBoolean(), "deprecated", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_Advanced(), ecorePackage.getEBoolean(), "advanced", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_Programmatic(), ecorePackage.getEBoolean(), "programmatic", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_Output(), ecorePackage.getEBoolean(), "output", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_Global(), ecorePackage.getEBoolean(), "global", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMdProperty_Type(), theTypesPackage.getJvmTypeReference(), null, "type", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_Label(), ecorePackage.getEString(), "label", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_Description(), ecorePackage.getEString(), "description", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMdProperty_DefaultValue(), theXbasePackage.getXExpression(), null, "defaultValue", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMdProperty_LowerBound(), theXbasePackage.getXExpression(), null, "lowerBound", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMdProperty_UpperBound(), theXbasePackage.getXExpression(), null, "upperBound", null, 0, 1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_Targets(), this.getMdPropertyTargetType(), "targets", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdProperty_LegacyIds(), ecorePackage.getEString(), "legacyIds", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMdProperty_Dependencies(), this.getMdPropertyDependency(), null, "dependencies", null, 0, -1, MdProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(mdOptionEClass, MdOption.class, "MdOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getMdOption_Deprecated(), ecorePackage.getEBoolean(), "deprecated", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_Advanced(), ecorePackage.getEBoolean(), "advanced", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_Programmatic(), ecorePackage.getEBoolean(), "programmatic", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_Output(), ecorePackage.getEBoolean(), "output", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_Global(), ecorePackage.getEBoolean(), "global", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdOption_Type(), theTypesPackage.getJvmTypeReference(), null, "type", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_Label(), ecorePackage.getEString(), "label", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_Description(), ecorePackage.getEString(), "description", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdOption_DefaultValue(), theXbasePackage.getXExpression(), null, "defaultValue", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdOption_LowerBound(), theXbasePackage.getXExpression(), null, "lowerBound", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdOption_UpperBound(), theXbasePackage.getXExpression(), null, "upperBound", null, 0, 1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_Targets(), this.getMdOptionTargetType(), "targets", null, 0, -1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOption_LegacyIds(), ecorePackage.getEString(), "legacyIds", null, 0, -1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdOption_Dependencies(), this.getMdOptionDependency(), null, "dependencies", null, 0, -1, MdOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(mdPropertyDependencyEClass, MdPropertyDependency.class, "MdPropertyDependency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getMdPropertyDependency_Target(), this.getMdProperty(), null, "target", null, 0, 1, MdPropertyDependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMdPropertyDependency_Value(), theXbasePackage.getXExpression(), null, "value", null, 0, 1, MdPropertyDependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(mdOptionDependencyEClass, MdOptionDependency.class, "MdOptionDependency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMdOptionDependency_Target(), this.getMdOption(), null, "target", null, 0, 1, MdOptionDependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdOptionDependency_Value(), theXbasePackage.getXExpression(), null, "value", null, 0, 1, MdOptionDependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(mdAlgorithmEClass, MdAlgorithm.class, "MdAlgorithm", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMdAlgorithm_Deprecated(), ecorePackage.getEBoolean(), "deprecated", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMdAlgorithm_Provider(), theTypesPackage.getJvmTypeReference(), null, "provider", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdAlgorithm_Parameter(), ecorePackage.getEString(), "parameter", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdAlgorithm_Label(), ecorePackage.getEString(), "label", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdAlgorithm_TargetClass(), ecorePackage.getEString(), "targetClass", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdAlgorithm_Description(), ecorePackage.getEString(), "description", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdAlgorithm_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMdAlgorithm_Category(), this.getMdCategory(), null, "category", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdAlgorithm_PreviewImage(), ecorePackage.getEString(), "previewImage", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdAlgorithm_SupportedFeatures(), this.getMdGraphFeature(), "supportedFeatures", null, 0, -1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMdAlgorithm_SupportedOptions(), this.getMdPropertySupport(), null, "supportedOptions", null, 0, -1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdAlgorithm_SupportedOptions(), this.getMdOptionSupport(), null, "supportedOptions", null, 0, -1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(mdCategoryEClass, MdCategory.class, "MdCategory", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMdCategory_Deprecated(), ecorePackage.getEBoolean(), "deprecated", null, 0, 1, MdCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -970,19 +971,18 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     initEAttribute(getMdCategory_Description(), ecorePackage.getEString(), "description", null, 0, 1, MdCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdCategory_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, MdCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(mdPropertySupportEClass, MdPropertySupport.class, "MdPropertySupport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getMdPropertySupport_Property(), this.getMdProperty(), null, "property", null, 0, 1, MdPropertySupport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getMdPropertySupport_Value(), theXbasePackage.getXExpression(), null, "value", null, 0, 1, MdPropertySupport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdPropertySupport_Duplicated(), ecorePackage.getEBoolean(), "duplicated", null, 0, 1, MdPropertySupport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMdPropertySupport_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, MdPropertySupport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(mdOptionSupportEClass, MdOptionSupport.class, "MdOptionSupport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMdOptionSupport_Option(), this.getMdOption(), null, "option", null, 0, 1, MdOptionSupport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdOptionSupport_Value(), theXbasePackage.getXExpression(), null, "value", null, 0, 1, MdOptionSupport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getMdOptionSupport_Documentation(), ecorePackage.getEString(), "documentation", null, 0, 1, MdOptionSupport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
-    initEEnum(mdPropertyTargetTypeEEnum, MdPropertyTargetType.class, "MdPropertyTargetType");
-    addEEnumLiteral(mdPropertyTargetTypeEEnum, MdPropertyTargetType.PARENTS);
-    addEEnumLiteral(mdPropertyTargetTypeEEnum, MdPropertyTargetType.NODES);
-    addEEnumLiteral(mdPropertyTargetTypeEEnum, MdPropertyTargetType.EDGES);
-    addEEnumLiteral(mdPropertyTargetTypeEEnum, MdPropertyTargetType.PORTS);
-    addEEnumLiteral(mdPropertyTargetTypeEEnum, MdPropertyTargetType.LABELS);
+    initEEnum(mdOptionTargetTypeEEnum, MdOptionTargetType.class, "MdOptionTargetType");
+    addEEnumLiteral(mdOptionTargetTypeEEnum, MdOptionTargetType.PARENTS);
+    addEEnumLiteral(mdOptionTargetTypeEEnum, MdOptionTargetType.NODES);
+    addEEnumLiteral(mdOptionTargetTypeEEnum, MdOptionTargetType.EDGES);
+    addEEnumLiteral(mdOptionTargetTypeEEnum, MdOptionTargetType.PORTS);
+    addEEnumLiteral(mdOptionTargetTypeEEnum, MdOptionTargetType.LABELS);
 
     initEEnum(mdGraphFeatureEEnum, MdGraphFeature.class, "MdGraphFeature");
     addEEnumLiteral(mdGraphFeatureEEnum, MdGraphFeature.SELF_LOOPS);

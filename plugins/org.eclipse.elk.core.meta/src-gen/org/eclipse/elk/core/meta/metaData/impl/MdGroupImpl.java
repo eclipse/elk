@@ -15,7 +15,7 @@ package org.eclipse.elk.core.meta.metaData.impl;
 import java.util.Collection;
 
 import org.eclipse.elk.core.meta.metaData.MdGroup;
-import org.eclipse.elk.core.meta.metaData.MdGroupOrProperty;
+import org.eclipse.elk.core.meta.metaData.MdGroupOrOption;
 import org.eclipse.elk.core.meta.metaData.MetaDataPackage;
 
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -41,7 +41,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class MdGroupImpl extends MdGroupOrPropertyImpl implements MdGroup
+public class MdGroupImpl extends MdGroupOrOptionImpl implements MdGroup
 {
   /**
    * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
@@ -51,7 +51,7 @@ public class MdGroupImpl extends MdGroupOrPropertyImpl implements MdGroup
    * @generated
    * @ordered
    */
-  protected EList<MdGroupOrProperty> children;
+  protected EList<MdGroupOrOption> children;
 
   /**
    * <!-- begin-user-doc -->
@@ -79,11 +79,11 @@ public class MdGroupImpl extends MdGroupOrPropertyImpl implements MdGroup
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<MdGroupOrProperty> getChildren()
+  public EList<MdGroupOrOption> getChildren()
   {
     if (children == null)
     {
-      children = new EObjectContainmentEList<MdGroupOrProperty>(MdGroupOrProperty.class, this, MetaDataPackage.MD_GROUP__CHILDREN);
+      children = new EObjectContainmentEList<MdGroupOrOption>(MdGroupOrOption.class, this, MetaDataPackage.MD_GROUP__CHILDREN);
     }
     return children;
   }
@@ -133,7 +133,7 @@ public class MdGroupImpl extends MdGroupOrPropertyImpl implements MdGroup
     {
       case MetaDataPackage.MD_GROUP__CHILDREN:
         getChildren().clear();
-        getChildren().addAll((Collection<? extends MdGroupOrProperty>)newValue);
+        getChildren().addAll((Collection<? extends MdGroupOrOption>)newValue);
         return;
     }
     super.eSet(featureID, newValue);

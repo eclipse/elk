@@ -12,26 +12,26 @@
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
-import org.eclipse.elk.core.meta.metaData.MdGroupOrProperty;
+import org.eclipse.elk.core.meta.metaData.MdGroupOrOption;
 import org.eclipse.elk.core.meta.metaData.MetaDataPackage;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Md Group Or Property</b></em>'.
+ * An implementation of the model object '<em><b>Md Group Or Option</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class MdGroupOrPropertyImpl extends MdBundleMemberImpl implements MdGroupOrProperty
+public class MdGroupOrOptionImpl extends MdBundleMemberImpl implements MdGroupOrOption
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected MdGroupOrPropertyImpl()
+  protected MdGroupOrOptionImpl()
   {
     super();
   }
@@ -44,7 +44,7 @@ public class MdGroupOrPropertyImpl extends MdBundleMemberImpl implements MdGroup
   @Override
   protected EClass eStaticClass()
   {
-    return MetaDataPackage.Literals.MD_GROUP_OR_PROPERTY;
+    return MetaDataPackage.Literals.MD_GROUP_OR_OPTION;
   }
 
-} //MdGroupOrPropertyImpl
+} //MdGroupOrOptionImpl
