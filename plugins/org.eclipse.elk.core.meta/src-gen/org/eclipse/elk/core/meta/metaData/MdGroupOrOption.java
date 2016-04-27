@@ -15,14 +15,14 @@ package org.eclipse.elk.core.meta.metaData;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Md Group Or Property</b></em>'.
+ * A representation of the model object '<em><b>Md Group Or Option</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdGroupOrProperty()
+ * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdGroupOrOption()
  * @model
  * @generated
  */
-public interface MdGroupOrProperty extends MdBundleMember
+public interface MdGroupOrOption extends MdBundleMember
 {
-} // MdGroupOrProperty
+} // MdGroupOrOption

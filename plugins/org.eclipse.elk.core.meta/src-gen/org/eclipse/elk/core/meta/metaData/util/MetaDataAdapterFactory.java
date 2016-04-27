@@ -100,9 +100,9 @@ public class MetaDataAdapterFactory extends AdapterFactoryImpl
         return createMdBundleMemberAdapter();
       }
       @Override
-      public Adapter caseMdGroupOrProperty(MdGroupOrProperty object)
+      public Adapter caseMdGroupOrOption(MdGroupOrOption object)
       {
-        return createMdGroupOrPropertyAdapter();
+        return createMdGroupOrOptionAdapter();
       }
       @Override
       public Adapter caseMdGroup(MdGroup object)
@@ -110,14 +110,14 @@ public class MetaDataAdapterFactory extends AdapterFactoryImpl
         return createMdGroupAdapter();
       }
       @Override
-      public Adapter caseMdProperty(MdProperty object)
+      public Adapter caseMdOption(MdOption object)
       {
-        return createMdPropertyAdapter();
+        return createMdOptionAdapter();
       }
       @Override
-      public Adapter caseMdPropertyDependency(MdPropertyDependency object)
+      public Adapter caseMdOptionDependency(MdOptionDependency object)
       {
-        return createMdPropertyDependencyAdapter();
+        return createMdOptionDependencyAdapter();
       }
       @Override
       public Adapter caseMdAlgorithm(MdAlgorithm object)
@@ -130,9 +130,9 @@ public class MetaDataAdapterFactory extends AdapterFactoryImpl
         return createMdCategoryAdapter();
       }
       @Override
-      public Adapter caseMdPropertySupport(MdPropertySupport object)
+      public Adapter caseMdOptionSupport(MdOptionSupport object)
       {
-        return createMdPropertySupportAdapter();
+        return createMdOptionSupportAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -202,16 +202,16 @@ public class MetaDataAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdGroupOrProperty <em>Md Group Or Property</em>}'.
+   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdGroupOrOption <em>Md Group Or Option</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see org.eclipse.elk.core.meta.metaData.MdGroupOrProperty
+   * @see org.eclipse.elk.core.meta.metaData.MdGroupOrOption
    * @generated
    */
-  public Adapter createMdGroupOrPropertyAdapter()
+  public Adapter createMdGroupOrOptionAdapter()
   {
     return null;
   }
@@ -232,31 +232,31 @@ public class MetaDataAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdProperty <em>Md Property</em>}'.
+   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdOption <em>Md Option</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see org.eclipse.elk.core.meta.metaData.MdProperty
+   * @see org.eclipse.elk.core.meta.metaData.MdOption
    * @generated
    */
-  public Adapter createMdPropertyAdapter()
+  public Adapter createMdOptionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdPropertyDependency <em>Md Property Dependency</em>}'.
+   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdOptionDependency <em>Md Option Dependency</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see org.eclipse.elk.core.meta.metaData.MdPropertyDependency
+   * @see org.eclipse.elk.core.meta.metaData.MdOptionDependency
    * @generated
    */
-  public Adapter createMdPropertyDependencyAdapter()
+  public Adapter createMdOptionDependencyAdapter()
   {
     return null;
   }
@@ -292,16 +292,16 @@ public class MetaDataAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdPropertySupport <em>Md Property Support</em>}'.
+   * Creates a new adapter for an object of class '{@link org.eclipse.elk.core.meta.metaData.MdOptionSupport <em>Md Option Support</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see org.eclipse.elk.core.meta.metaData.MdPropertySupport
+   * @see org.eclipse.elk.core.meta.metaData.MdOptionSupport
    * @generated
    */
-  public Adapter createMdPropertySupportAdapter()
+  public Adapter createMdOptionSupportAdapter()
   {
     return null;
   }

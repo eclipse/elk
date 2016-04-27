@@ -25,7 +25,7 @@
 '/'=16
 '/='=21
 ':'=73
-'::'=120
+'::'=119
 ';'=95
 '<'=29
 '<>'=34
@@ -36,7 +36,7 @@
 '>'=28
 '>='=27
 '?'=112
-'?.'=121
+'?.'=120
 '?:'=35
 '['=93
 ']'=94
@@ -47,7 +47,6 @@
 'case'=99
 'catch'=111
 'category'=87
-'class'=68
 'clusters'=61
 'compound'=60
 'default'=76
@@ -57,7 +56,6 @@
 'do'=102
 'documentation'=75
 'documentationFolder'=69
-'duplicated'=119
 'edge_labels'=59
 'edges'=53
 'else'=97
@@ -78,6 +76,7 @@
 'labels'=55
 'legacyIds'=81
 'lowerBound'=77
+'metadataClass'=68
 'multi_edges'=58
 'new'=103
 'nodes'=52
@@ -99,15 +98,15 @@
 'synchronized'=110
 'targets'=79
 'throw'=106
-'true'=124
+'true'=123
 'try'=108
 'typeof'=105
 'upperBound'=78
 'val'=44
-'var'=123
+'var'=122
 'while'=101
 '{'=65
-'|'=122
+'|'=121
 '||'=14
 '}'=66
 RULE_ANY_OTHER=12
@@ -143,7 +142,6 @@ T__120=120
 T__121=121
 T__122=122
 T__123=123
-T__124=124
 T__13=13
 T__14=14
 T__15=15

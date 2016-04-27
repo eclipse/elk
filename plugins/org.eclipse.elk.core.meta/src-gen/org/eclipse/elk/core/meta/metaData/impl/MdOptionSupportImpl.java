@@ -12,8 +12,8 @@
  */
 package org.eclipse.elk.core.meta.metaData.impl;
 
-import org.eclipse.elk.core.meta.metaData.MdProperty;
-import org.eclipse.elk.core.meta.metaData.MdPropertySupport;
+import org.eclipse.elk.core.meta.metaData.MdOption;
+import org.eclipse.elk.core.meta.metaData.MdOptionSupport;
 import org.eclipse.elk.core.meta.metaData.MetaDataPackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -29,31 +29,30 @@ import org.eclipse.xtext.xbase.XExpression;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Md Property Support</b></em>'.
+ * An implementation of the model object '<em><b>Md Option Support</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl#getProperty <em>Property</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl#getValue <em>Value</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl#isDuplicated <em>Duplicated</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdPropertySupportImpl#getDocumentation <em>Documentation</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionSupportImpl#getOption <em>Option</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionSupportImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionSupportImpl#getDocumentation <em>Documentation</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implements MdPropertySupport
+public class MdOptionSupportImpl extends MinimalEObjectImpl.Container implements MdOptionSupport
 {
   /**
-   * The cached value of the '{@link #getProperty() <em>Property</em>}' reference.
+   * The cached value of the '{@link #getOption() <em>Option</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getProperty()
+   * @see #getOption()
    * @generated
    * @ordered
    */
-  protected MdProperty property;
+  protected MdOption option;
 
   /**
    * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
@@ -64,26 +63,6 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
    * @ordered
    */
   protected XExpression value;
-
-  /**
-   * The default value of the '{@link #isDuplicated() <em>Duplicated</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isDuplicated()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean DUPLICATED_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isDuplicated() <em>Duplicated</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isDuplicated()
-   * @generated
-   * @ordered
-   */
-  protected boolean duplicated = DUPLICATED_EDEFAULT;
 
   /**
    * The default value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
@@ -110,7 +89,7 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  protected MdPropertySupportImpl()
+  protected MdOptionSupportImpl()
   {
     super();
   }
@@ -123,7 +102,7 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
   @Override
   protected EClass eStaticClass()
   {
-    return MetaDataPackage.Literals.MD_PROPERTY_SUPPORT;
+    return MetaDataPackage.Literals.MD_OPTION_SUPPORT;
   }
 
   /**
@@ -131,19 +110,19 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdProperty getProperty()
+  public MdOption getOption()
   {
-    if (property != null && property.eIsProxy())
+    if (option != null && option.eIsProxy())
     {
-      InternalEObject oldProperty = (InternalEObject)property;
-      property = (MdProperty)eResolveProxy(oldProperty);
-      if (property != oldProperty)
+      InternalEObject oldOption = (InternalEObject)option;
+      option = (MdOption)eResolveProxy(oldOption);
+      if (option != oldOption)
       {
         if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE, MetaDataPackage.MD_PROPERTY_SUPPORT__PROPERTY, oldProperty, property));
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, MetaDataPackage.MD_OPTION_SUPPORT__OPTION, oldOption, option));
       }
     }
-    return property;
+    return option;
   }
 
   /**
@@ -151,9 +130,9 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdProperty basicGetProperty()
+  public MdOption basicGetOption()
   {
-    return property;
+    return option;
   }
 
   /**
@@ -161,12 +140,12 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setProperty(MdProperty newProperty)
+  public void setOption(MdOption newOption)
   {
-    MdProperty oldProperty = property;
-    property = newProperty;
+    MdOption oldOption = option;
+    option = newOption;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_SUPPORT__PROPERTY, oldProperty, property));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION_SUPPORT__OPTION, oldOption, option));
   }
 
   /**
@@ -190,7 +169,7 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
     value = newValue;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE, oldValue, newValue);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION_SUPPORT__VALUE, oldValue, newValue);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -207,37 +186,14 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
     {
       NotificationChain msgs = null;
       if (value != null)
-        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE, null, msgs);
+        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION_SUPPORT__VALUE, null, msgs);
       if (newValue != null)
-        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE, null, msgs);
+        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_OPTION_SUPPORT__VALUE, null, msgs);
       msgs = basicSetValue(newValue, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE, newValue, newValue));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public boolean isDuplicated()
-  {
-    return duplicated;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDuplicated(boolean newDuplicated)
-  {
-    boolean oldDuplicated = duplicated;
-    duplicated = newDuplicated;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED, oldDuplicated, duplicated));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION_SUPPORT__VALUE, newValue, newValue));
   }
 
   /**
@@ -260,7 +216,7 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
     String oldDocumentation = documentation;
     documentation = newDocumentation;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION, oldDocumentation, documentation));
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION_SUPPORT__DOCUMENTATION, oldDocumentation, documentation));
   }
 
   /**
@@ -273,7 +229,7 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE:
+      case MetaDataPackage.MD_OPTION_SUPPORT__VALUE:
         return basicSetValue(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -289,14 +245,12 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__PROPERTY:
-        if (resolve) return getProperty();
-        return basicGetProperty();
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE:
+      case MetaDataPackage.MD_OPTION_SUPPORT__OPTION:
+        if (resolve) return getOption();
+        return basicGetOption();
+      case MetaDataPackage.MD_OPTION_SUPPORT__VALUE:
         return getValue();
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED:
-        return isDuplicated();
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION:
+      case MetaDataPackage.MD_OPTION_SUPPORT__DOCUMENTATION:
         return getDocumentation();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -312,16 +266,13 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__PROPERTY:
-        setProperty((MdProperty)newValue);
+      case MetaDataPackage.MD_OPTION_SUPPORT__OPTION:
+        setOption((MdOption)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE:
+      case MetaDataPackage.MD_OPTION_SUPPORT__VALUE:
         setValue((XExpression)newValue);
         return;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED:
-        setDuplicated((Boolean)newValue);
-        return;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION:
+      case MetaDataPackage.MD_OPTION_SUPPORT__DOCUMENTATION:
         setDocumentation((String)newValue);
         return;
     }
@@ -338,16 +289,13 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__PROPERTY:
-        setProperty((MdProperty)null);
+      case MetaDataPackage.MD_OPTION_SUPPORT__OPTION:
+        setOption((MdOption)null);
         return;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE:
+      case MetaDataPackage.MD_OPTION_SUPPORT__VALUE:
         setValue((XExpression)null);
         return;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED:
-        setDuplicated(DUPLICATED_EDEFAULT);
-        return;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION:
+      case MetaDataPackage.MD_OPTION_SUPPORT__DOCUMENTATION:
         setDocumentation(DOCUMENTATION_EDEFAULT);
         return;
     }
@@ -364,13 +312,11 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__PROPERTY:
-        return property != null;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__VALUE:
+      case MetaDataPackage.MD_OPTION_SUPPORT__OPTION:
+        return option != null;
+      case MetaDataPackage.MD_OPTION_SUPPORT__VALUE:
         return value != null;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__DUPLICATED:
-        return duplicated != DUPLICATED_EDEFAULT;
-      case MetaDataPackage.MD_PROPERTY_SUPPORT__DOCUMENTATION:
+      case MetaDataPackage.MD_OPTION_SUPPORT__DOCUMENTATION:
         return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
     }
     return super.eIsSet(featureID);
@@ -387,12 +333,10 @@ public class MdPropertySupportImpl extends MinimalEObjectImpl.Container implemen
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (duplicated: ");
-    result.append(duplicated);
-    result.append(", documentation: ");
+    result.append(" (documentation: ");
     result.append(documentation);
     result.append(')');
     return result.toString();
   }
 
-} //MdPropertySupportImpl
+} //MdOptionSupportImpl
