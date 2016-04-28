@@ -212,7 +212,7 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #DIRECTION} with algorithm "ELK Layered".
    */
-  private final static Direction DIRECTION_DEFAULT = Direction.RIGHT;
+  private final static Direction DIRECTION_DEFAULT = Direction.UNDEFINED;
   
   /**
    * Property constant to access Direction from within the layout algorithm code.

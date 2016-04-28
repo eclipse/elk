@@ -1003,6 +1003,7 @@ public final class LGraphUtil {
         if (direction == Direction.UNDEFINED) {
             float aspectRatio = graph.getProperty(LayeredOptions.ASPECT_RATIO);
             if (aspectRatio >= 1) {
+                // Default due to default value of the ASPECT_RATIO option for the algorithm
                 return Direction.RIGHT;
             } else {
                 return Direction.DOWN;
