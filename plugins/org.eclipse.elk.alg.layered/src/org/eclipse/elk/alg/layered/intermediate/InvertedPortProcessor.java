@@ -18,13 +18,13 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -115,7 +115,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
                 
                 // Skip nodes whose port sides are not fixed (because in that case, the odd
                 // port side problem won't appear)
-                if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     continue;
                 }
                 
@@ -180,7 +180,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         LNode dummy = new LNode(layeredGraph);
         dummy.setType(NodeType.LONG_EDGE);
         dummy.setProperty(InternalProperties.ORIGIN, edge);
-        dummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
         LPort dummyInput = new LPort();
@@ -197,7 +197,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // Connect the dummy with the original port
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
-        dummyEdge.setProperty(CoreOptions.JUNCTION_POINTS, null);
+        dummyEdge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(eastwardPort);
         
@@ -208,7 +208,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         ListIterator<LLabel> labelIterator = edge.getLabels().listIterator();
         while (labelIterator.hasNext()) {
             LLabel label = labelIterator.next();
-            EdgeLabelPlacement labelPlacement = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+            EdgeLabelPlacement labelPlacement = label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT);
             
             if (labelPlacement == EdgeLabelPlacement.HEAD) {
                 labelIterator.remove();
@@ -242,7 +242,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         LNode dummy = new LNode(layeredGraph);
         dummy.setType(NodeType.LONG_EDGE);
         dummy.setProperty(InternalProperties.ORIGIN, edge);
-        dummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
         
         LPort dummyInput = new LPort();
@@ -260,7 +260,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // Connect the dummy with the original port
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
-        dummyEdge.setProperty(CoreOptions.JUNCTION_POINTS, null);
+        dummyEdge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(originalTarget);
         

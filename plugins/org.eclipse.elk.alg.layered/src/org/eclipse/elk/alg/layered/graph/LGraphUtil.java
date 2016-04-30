@@ -19,13 +19,12 @@ import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InLayerConstraint;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayerConstraint;
-import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -66,7 +65,7 @@ public final class LGraphUtil {
         // Update port positions
         if (movePorts) {
             boolean fixedPorts =
-                    node.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
+                    node.getProperty(LayeredOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
             
             for (LPort port : node.getPorts()) {
                 switch (port.getSide()) {
@@ -123,7 +122,7 @@ public final class LGraphUtil {
         node.getSize().y = newSize.y;
         
         // Set fixed size option for the node: now the size is assumed to stay as determined here
-        node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
+        node.setProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
     }
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -163,7 +162,7 @@ public final class LGraphUtil {
             for (LPort port : node.getPorts()) {
                 for (LEdge edge : port.getOutgoingEdges()) {
                     edge.getBendPoints().offset(graphOffset);
-                    KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+                    KVectorChain junctionPoints = edge.getProperty(LayeredOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         junctionPoints.offset(graphOffset);
                     }
@@ -196,7 +195,7 @@ public final class LGraphUtil {
 
         // CHECKSTYLEOFF MagicNumber
         for (LNode node : layer.getNodes()) {
-            Alignment alignment = node.getProperty(CoreOptions.ALIGNMENT);
+            Alignment alignment = node.getProperty(LayeredOptions.ALIGNMENT);
             double ratio;
             switch (alignment) {
             case LEFT:
@@ -279,7 +278,7 @@ public final class LGraphUtil {
     public static double findMaxNonDummyNodeWidth(final Layer layer,
             final boolean respectNodeMargins) {
 
-        if (layer.getGraph().getProperty(CoreOptions.DIRECTION).isVertical()) {
+        if (layer.getGraph().getProperty(LayeredOptions.DIRECTION).isVertical()) {
             return 0.0;
         }
 
@@ -320,19 +319,19 @@ public final class LGraphUtil {
         
         Direction direction = getDirection(layeredGraph);
         for (LNode node : layeredGraph.getLayerlessNodes()) {
-            if (node.getProperty(CoreOptions.COMMENT_BOX)) {
+            if (node.getProperty(LayeredOptions.COMMENT_BOX)) {
                 props.add(GraphProperties.COMMENTS);
-            } else if (node.getProperty(CoreOptions.HYPERNODE)) {
+            } else if (node.getProperty(LayeredOptions.HYPERNODE)) {
                 props.add(GraphProperties.HYPERNODES);
                 props.add(GraphProperties.HYPEREDGES);
             } else if (node.getType() == NodeType.EXTERNAL_PORT) {
                 props.add(GraphProperties.EXTERNAL_PORTS);
             }
             
-            PortConstraints portConstraints = node.getProperty(CoreOptions.PORT_CONSTRAINTS);
+            PortConstraints portConstraints = node.getProperty(LayeredOptions.PORT_CONSTRAINTS);
             if (portConstraints == PortConstraints.UNDEFINED) {
                 // correct the port constraints value
-                node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+                node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             } else if (portConstraints != PortConstraints.FREE) {
                 props.add(GraphProperties.NON_FREE_PORTS);
             }
@@ -362,7 +361,7 @@ public final class LGraphUtil {
                     }
                     
                     for (LLabel label : edge.getLabels()) {
-                        switch (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)) {
+                        switch (label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT)) {
                         case CENTER:
                             props.add(GraphProperties.CENTER_LABELS);
                             break;
@@ -402,8 +401,8 @@ public final class LGraphUtil {
         Direction direction = getDirection(layeredGraph);
         boolean mergePorts = layeredGraph.getProperty(LayeredOptions.MERGE_EDGES);
         
-        if ((mergePorts || node.getProperty(CoreOptions.HYPERNODE))
-                && !node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
+        if ((mergePorts || node.getProperty(LayeredOptions.HYPERNODE))
+                && !node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
             
             // Hypernodes have one output port and one input port
             PortSide defaultSide = PortSide.fromDirection(direction);
@@ -631,9 +630,9 @@ public final class LGraphUtil {
             
             // if port coordinates are (0,0), we default to port offset 0 to make the common case
             // frustration-free
-            if (port.getProperty(CoreOptions.PORT_BORDER_OFFSET) == null && portSide != PortSide.UNDEFINED
+            if (port.getProperty(LayeredOptions.PORT_BORDER_OFFSET) == null && portSide != PortSide.UNDEFINED
                     && (port.getPosition().x != 0 || port.getPosition().y != 0)) {
-                port.setProperty(CoreOptions.PORT_BORDER_OFFSET, calcPortOffset(port, portSide));
+                port.setProperty(LayeredOptions.PORT_BORDER_OFFSET, calcPortOffset(port, portSide));
             }
         }
         
@@ -705,7 +704,7 @@ public final class LGraphUtil {
      * <ul>
      *   <li>Its node type is set to {@link LNode.NodeType#EXTERNAL_PORT}.</li>
      *   <li>Its {@link InternalProperties#ORIGIN} is set to the external port object.</li>
-     *   <li>The {@link CoreOptions#PORT_CONSTRAINTS} are set to
+     *   <li>The {@link LayeredOptions#PORT_CONSTRAINTS} are set to
      *     {@link PortConstraints#FIXED_POS}.</li>
      *   <li>For western and eastern port dummies, the {@link LayeredOptions#LAYER_CONSTRAINT} is set to
      *     {@link LayerConstraint#FIRST_SEPARATE} and {@link LayerConstraint#LAST_SEPARATE},
@@ -765,15 +764,16 @@ public final class LGraphUtil {
         LNode dummy = new LNode(layeredGraph);
         dummy.setType(NodeType.EXTERNAL_PORT);
         dummy.setProperty(InternalProperties.EXT_PORT_SIZE, portSize);
-        dummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        dummy.setProperty(LayeredOptions.PORT_BORDER_OFFSET, propertyHolder.getProperty(CoreOptions.PORT_BORDER_OFFSET));
+        dummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(LayeredOptions.PORT_BORDER_OFFSET,
+                propertyHolder.getProperty(LayeredOptions.PORT_BORDER_OFFSET));
         
         // set the anchor point
-        KVector anchor = propertyHolder.getProperty(CoreOptions.PORT_ANCHOR);
+        KVector anchor = propertyHolder.getProperty(LayeredOptions.PORT_ANCHOR);
         if (anchor == null) {
             anchor = new KVector(portSize.x / 2, portSize.y / 2);
         }
-        dummy.setProperty(CoreOptions.PORT_ANCHOR, anchor);
+        dummy.setProperty(LayeredOptions.PORT_ANCHOR, anchor);
         
         LPort dummyPort = new LPort();
         dummyPort.setNode(dummy);
@@ -788,7 +788,7 @@ public final class LGraphUtil {
             } else {
                 finalExternalPortSide = PortSide.fromDirection(actualDirection).opposed();
             }
-            propertyHolder.setProperty(CoreOptions.PORT_SIDE, finalExternalPortSide);
+            propertyHolder.setProperty(LayeredOptions.PORT_SIDE, finalExternalPortSide);
         }
         
         // With the port side at hand, set the necessary properties and place the dummy's port
@@ -999,10 +999,11 @@ public final class LGraphUtil {
      * @return the layout direction to apply for the graph
      */
     public static Direction getDirection(final LGraph graph) {
-        Direction direction = graph.getProperty(CoreOptions.DIRECTION);
+        Direction direction = graph.getProperty(LayeredOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
             float aspectRatio = graph.getProperty(LayeredOptions.ASPECT_RATIO);
             if (aspectRatio >= 1) {
+                // Default due to default value of the ASPECT_RATIO option for the algorithm
                 return Direction.RIGHT;
             } else {
                 return Direction.DOWN;

@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.force.model.ForceModelStrategy
  * Declarations for the ELK Force layout algorithm.
  */
 bundle {
-    class properties.ForceOptions
+    metadataClass properties.ForceMetaDataProvider
     idPrefix org.eclipse.elk.force
 }
 
@@ -28,17 +28,19 @@ algorithm force(ForceLayoutProvider) {
         follow physical analogies by simulating forces that move the nodes into a balanced
         distribution. Currently the original Eades model and the Fruchterman - Reingold model are
         supported."
+    metadataClass properties.ForceOptions
     category org.eclipse.elk.force
     features multi_edges, edge_labels
     preview images/force.png
-    supports org.eclipse.elk.priority = 1 duplicated
-    supports org.eclipse.elk.spacing.node = 80 duplicated
-    supports org.eclipse.elk.spacing.border = 50 duplicated
-    supports org.eclipse.elk.spacing.^label = 5 duplicated
-    supports org.eclipse.elk.aspectRatio = 1.6f duplicated
+    supports org.eclipse.elk.priority = 1
+    supports org.eclipse.elk.spacing.node = 80
+    supports org.eclipse.elk.spacing.border = 50
+    supports org.eclipse.elk.spacing.^label = 5
+    supports org.eclipse.elk.aspectRatio = 1.6f
     supports org.eclipse.elk.randomSeed = 1
     supports org.eclipse.elk.separateConnectedComponents = true
     supports org.eclipse.elk.interactive
+    supports org.eclipse.elk.portConstraints
     supports model
     supports temperature
     supports iterations

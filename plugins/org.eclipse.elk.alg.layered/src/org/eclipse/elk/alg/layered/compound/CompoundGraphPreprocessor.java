@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -29,7 +28,6 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -90,7 +88,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     /** map of original edges to generated cross-hierarchy edges. */
     private Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap;
     /** map of ports to their assigned dummy nodes in the nested graphs. */
-    private final Map<LPort, LNode> dummyNodeMap = Maps.newLinkedHashMap();
+    private final Map<LPort, LNode> dummyNodeMap = Maps.newHashMap();
 
     
     ////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,9 +106,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         // create new dummy edges at hierarchy bounds and move the labels around accordingly
         transformHierarchyEdges(graph, null);
         moveLabelsAndRemoveOriginalEdges(graph);
-
-        setSidesOfPortsToSidesOfDummyNodes();
-
+        
         // Attach cross hierarchy map to the graph and cleanup
         graph.setProperty(InternalProperties.CROSS_HIERARCHY_MAP, crossHierarchyMap);
         crossHierarchyMap = null;
@@ -119,28 +115,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         monitor.done();
     }
     
-    /** Ensures that for each dummy node the external port and vice versa is set. Since the side of
-    * the dummy node has also already been calculated, we set this fixed here. Therefore the
-    * compound node has a fixed side constraint, with some sides still set to UNDEFINED. This must
-    * be dealt with later. TODO-alan test
-    */
-   private void setSidesOfPortsToSidesOfDummyNodes() {
-       for (Entry<LPort, LNode> e : dummyNodeMap.entrySet()) {
-           LPort externalPort = e.getKey();
-           LNode dummyNode = e.getValue();
-           dummyNode.setProperty(InternalProperties.ORIGIN, externalPort);
-           externalPort.setProperty(InternalProperties.PORT_DUMMY, dummyNode);
-           externalPort.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
-           externalPort.setSide(dummyNode.getProperty(InternalProperties.EXT_PORT_SIDE)); 
-           dummyNode.getProperty(InternalProperties.EXT_PORT_SIDE);
-           externalPort.getNode().setProperty(CoreOptions.PORT_CONSTRAINTS,
-                   PortConstraints.FIXED_SIDE);
-           externalPort.getNode().getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
-                   .add(GraphProperties.NON_FREE_PORTS); 
-       }
-   }
-
-   /**
+    /**
      * Recursively transform cross-hierarchy edges into sequences of dummy ports and dummy edges.
      * 
      * @param graph
@@ -174,7 +149,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                             LNode dummyNode = LGraphUtil.createExternalPortDummy(port,
                                     PortConstraints.FREE, port.getSide(), -port.getNetFlow(),
                                     null, null, port.getSize(),
-                                    nestedGraph.getProperty(CoreOptions.DIRECTION), nestedGraph);
+                                    nestedGraph.getProperty(LayeredOptions.DIRECTION), nestedGraph);
                             dummyNode.setProperty(InternalProperties.ORIGIN, port);
                             dummyNodeMap.put(port, dummyNode);
                             nestedGraph.getLayerlessNodes().add(dummyNode);
@@ -225,7 +200,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                     
                     // find the index of the dummy edge we will move the label to
                     int targetDummyEdgeIndex = -1;
-                    switch (currLabel.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)) {
+                    switch (currLabel.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT)) {
                     case HEAD:
                         targetDummyEdgeIndex = edgeSegments.size() - 1;
                         break;
@@ -575,7 +550,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     private void processInsideSelfLoops(final LGraph nestedGraph, final LNode node) {
         // Check if inside self loops are enabled for the node
-        if (!node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
+        if (!node.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
             return;
         }
         
@@ -588,7 +563,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             for (LEdge outEdge : outEdges) {
                 boolean isSelfLoop = outEdge.getTarget().getNode() == node;
                 boolean isInsideSelfLoop = isSelfLoop
-                        && outEdge.getProperty(CoreOptions.INSIDE_SELF_LOOPS_YO);
+                        && outEdge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
                 
                 if (isInsideSelfLoop) {
                     // Check if the ports have already been transformed into external port dummies
@@ -603,7 +578,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                                 null,
                                 null,
                                 sourcePort.getSize(),
-                                nestedGraph.getProperty(CoreOptions.DIRECTION),
+                                nestedGraph.getProperty(LayeredOptions.DIRECTION),
                                 nestedGraph);
                         sourceExtPortDummy.setProperty(InternalProperties.ORIGIN, sourcePort);
                         dummyNodeMap.put(sourcePort, sourceExtPortDummy);
@@ -621,7 +596,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                                 null,
                                 null,
                                 targetPort.getSize(),
-                                nestedGraph.getProperty(CoreOptions.DIRECTION),
+                                nestedGraph.getProperty(LayeredOptions.DIRECTION),
                                 nestedGraph);
                         targetExtPortDummy.setProperty(InternalProperties.ORIGIN, targetPort);
                         dummyNodeMap.put(targetPort, targetExtPortDummy);
@@ -717,7 +692,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 // We try to infer the port side from the port type if its node has its port constraints
                 // set to at least FIXED_SIDE; this may produce strange effects, so the safest thing is
                 // for people to set compound node port constraints to FREE
-                if (parentNode.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                if (parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     externalPortSide = portType == PortType.INPUT ? PortSide.WEST : PortSide.EAST;
                 }
             }
@@ -750,9 +725,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             externalPort.origEdges.add(origEdge);
             
             // merge the properties of the original edges
-            float thickness = Math.max(externalPort.newEdge.getProperty(CoreOptions.EDGE_THICKNESS),
-                    origEdge.getProperty(CoreOptions.EDGE_THICKNESS));
-            externalPort.newEdge.setProperty(CoreOptions.EDGE_THICKNESS, thickness);
+            float thickness = Math.max(externalPort.newEdge.getProperty(LayeredOptions.EDGE_THICKNESS),
+                    origEdge.getProperty(LayeredOptions.EDGE_THICKNESS));
+            externalPort.newEdge.setProperty(LayeredOptions.EDGE_THICKNESS, thickness);
         }
 
         crossHierarchyMap.put(origEdge,
@@ -774,7 +749,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     private LEdge createDummyEdge(final LGraph graph, final LEdge origEdge) {
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(origEdge);
-        dummyEdge.setProperty(CoreOptions.JUNCTION_POINTS, null);
+        dummyEdge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
         return dummyEdge;
     }
     
@@ -809,7 +784,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             if (dummyNode == null) {
                 dummyNode = LGraphUtil.createExternalPortDummy(
                         outsidePort,
-                        parentNode.getProperty(CoreOptions.PORT_CONSTRAINTS),
+                        parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS),
                         portSide,
                         portType == PortType.INPUT ? -1 : 1,
                         null,
@@ -824,10 +799,10 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         } else {
             // we create a new dummy node in any case, and since there is no port yet we have to
             // create one as well
-            float thickness = edge.getProperty(CoreOptions.EDGE_THICKNESS);
+            float thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
             dummyNode = LGraphUtil.createExternalPortDummy(
                     createExternalPortProperties(graph),
-                    parentNode.getProperty(CoreOptions.PORT_CONSTRAINTS),
+                    parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS),
                     portSide,
                     portType == PortType.INPUT ? -1 : 1,
                     null,
@@ -843,10 +818,10 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         
         // set a few graph properties
         graph.getProperty(InternalProperties.GRAPH_PROPERTIES).add(GraphProperties.EXTERNAL_PORTS);
-        if (graph.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
-            graph.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        if (graph.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            graph.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         } else {
-            graph.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+            graph.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
         }
         
         return dummyNode;

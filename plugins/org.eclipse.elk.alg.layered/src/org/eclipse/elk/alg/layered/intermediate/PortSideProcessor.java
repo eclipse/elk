@@ -15,8 +15,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -74,7 +73,7 @@ public final class PortSideProcessor implements ILayoutProcessor {
      * @param node a node
      */
     private void process(final LNode node) {
-        if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
+        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
             // Check whether there are ports with undefined side
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.UNDEFINED) {
@@ -86,7 +85,7 @@ public final class PortSideProcessor implements ILayoutProcessor {
             for (LPort port : node.getPorts()) {
                 setPortSide(port);
             }
-            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+            node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         }
     }
     
@@ -96,11 +95,7 @@ public final class PortSideProcessor implements ILayoutProcessor {
      * @param port the port to set side and anchor position
      */
     public static void setPortSide(final LPort port) {
-        //TODO-alan test
-        LNode portDummy = port.getProperty(InternalProperties.PORT_DUMMY);
-        if (portDummy != null) {
-            port.setSide(portDummy.getProperty(InternalProperties.EXT_PORT_SIDE));
-        } else if (port.getNetFlow() < 0) {
+        if (port.getNetFlow() < 0) {
             port.setSide(PortSide.EAST);
             // adapt the anchor so outgoing edges are attached right
             port.getAnchor().x = port.getSize().x;

@@ -18,8 +18,8 @@ import static org.eclipse.elk.core.options.PortSide.SIDES_NONE;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_SOUTH;
-import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_WEST;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_SOUTH_WEST;
+import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_EAST_WEST;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_SOUTH;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_SOUTH_WEST;
 import static org.eclipse.elk.core.options.PortSide.SIDES_NORTH_WEST;
@@ -35,7 +35,6 @@ import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.CoreOptions;
 
 import com.google.common.collect.Lists;
 
@@ -115,7 +114,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         // if compaction is desired, do so!cing;
         if (firstComponent.getProperty(LayeredOptions.COMPACTION_CONNECTED_COMPONENTS)
                 // the compaction only supports orthogonally routed edges
-                && firstComponent.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+                && firstComponent.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
 
             // apply graph offsets (which we reset later on)
             // since the compaction works in a common coordinate system

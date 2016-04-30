@@ -17,13 +17,12 @@ import org.eclipse.elk.alg.force.graph.FEdge;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
-import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
@@ -100,7 +99,7 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             elemMap.put(knode, newNode);
             
             // port constraints cannot be undefined
-            PortConstraints portConstraints = nodeLayout.getProperty(CoreOptions.PORT_CONSTRAINTS);
+            PortConstraints portConstraints = nodeLayout.getProperty(ForceOptions.PORT_CONSTRAINTS);
             if (portConstraints == PortConstraints.UNDEFINED) {
                 portConstraints = PortConstraints.FREE;
             }

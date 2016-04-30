@@ -20,8 +20,8 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -61,8 +61,8 @@ public class SemiInteractiveCrossMinProcessor implements ILayoutProcessor {
 
             // #2 sort them with ascending y coordinate
             Collections.sort(nodes, (n1, n2) -> {
-                KVector origPos1 = n1.getProperty(CoreOptions.POSITION);
-                KVector origPos2 = n2.getProperty(CoreOptions.POSITION);
+                KVector origPos1 = n1.getProperty(LayeredOptions.POSITION);
+                KVector origPos2 = n2.getProperty(LayeredOptions.POSITION);
                 if (origPos1 != null && origPos2 != null) {
                     return Double.compare(origPos1.y, origPos2.y);
                 } else {

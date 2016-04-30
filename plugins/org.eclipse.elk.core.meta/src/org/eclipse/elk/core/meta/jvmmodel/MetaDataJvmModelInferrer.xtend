@@ -25,9 +25,9 @@ import org.eclipse.elk.core.meta.metaData.MdBundleMember
 import org.eclipse.elk.core.meta.metaData.MdCategory
 import org.eclipse.elk.core.meta.metaData.MdGroup
 import org.eclipse.elk.core.meta.metaData.MdModel
-import org.eclipse.elk.core.meta.metaData.MdProperty
-import org.eclipse.elk.core.meta.metaData.MdPropertyDependency
-import org.eclipse.elk.core.meta.metaData.MdPropertySupport
+import org.eclipse.elk.core.meta.metaData.MdOption
+import org.eclipse.elk.core.meta.metaData.MdOptionDependency
+import org.eclipse.elk.core.meta.metaData.MdOptionSupport
 import org.eclipse.elk.core.options.GraphFeature
 import org.eclipse.elk.core.util.AlgorithmFactory
 import org.eclipse.elk.core.util.IDataObject
@@ -55,12 +55,14 @@ import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
  */
 class MetaDataJvmModelInferrer extends AbstractModelInferrer {
 
-    /**
-     * Convenience API to build and initialize JVM types and their members.
-     */
+    /** Convenience API to build and initialize JVM types and their members. */
     @Inject extension JvmTypesBuilder
-    
+    /** Convenience API to wrap primitives. */
     @Inject extension Primitives
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // MAIN METADATA PROVIDER CLASS GENERATION
 
     /**
      * The dispatch method {@code infer} is called for each instance of the
@@ -81,43 +83,44 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
      *            <code>true</code>.
      */
     def dispatch void infer(MdModel model, IJvmDeclaredTypeAcceptor acceptor, boolean isPreIndexingPhase) {
+        // If we don't have a model name or the bundle section, don't bother
         if (model.name === null || model.bundle === null) {
             return
         }
         val bundle = model.bundle
+        
+        // Create a class for the general option definitions to be used by clients as well as for the registration
+        // method that instantiates the ILayoutMetaDataProviders
         acceptor.accept(bundle.toClass(bundle.qualifiedTargetClass)) [
             superTypes += typeRef(ILayoutMetaDataProvider)
             fileHeader = model.documentation
             documentation = bundle.documentation
             
-            // 1. Public constants for all declared properties
-            for (property : bundle.members.allPropertyDefinitions) {
-                val constant = property.toPropertyConstant
-                if (property.defaultValue !== null)
-                    members += property.toPropertyDefault
-                if (property.lowerBound !== null)
-                    members += property.toPropertyLowerBound
-                if (property.upperBound !== null) 
-                    members += property.toPropertyUpperBound
+            // 1. Public constants for all declared layout options
+            for (property : bundle.members.allOptionDefinitions) {
+                val constant = property.toOptionConstant
+                if (property.defaultValue !== null) {
+                    members += property.toOptionDefault
+                }
+                if (property.lowerBound !== null) {
+                    members += property.toOptionLowerBound
+                }
+                if (property.upperBound !== null) { 
+                    members += property.toOptionUpperBound
+                }
                 members += constant
             }
+            
             // 2. Private constants for required values of option dependencies
-            for (property : bundle.members.allPropertyDefinitions) {
+            for (property : bundle.members.allOptionDefinitions) {
                 for (dependency : property.dependencies) {
-                    if (dependency.value !== null)
+                    if (dependency.value !== null) {
                         members += dependency.toDependencyValue
+                    }
                 }
             }
-            // 3. Private constants for default option values of algorithms
-            for (algorithm : bundle.members.filter(MdAlgorithm)) {
-                for (support : algorithm.supportedOptions) {
-                    if (support.value !== null)
-                        members += support.toSupportDefault
-                    if (support.duplicated)
-                        members += support.toSupportDuplicatedConstant
-                }
-            }
-            // 4. Implementation of ILayoutMetaDataProvider#apply(Registry)
+            
+            // 3. Implementation of ILayoutMetaDataProvider#apply(Registry)
             members += bundle.toMethod('apply', typeRef(void)) [
                 parameters += bundle.toParameter('registry', typeRef(ILayoutMetaDataProvider.Registry))
                 body = '''
@@ -126,83 +129,78 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                     «registerLayoutAlgorithms(bundle)»
                 '''
             ]
-            
         ]
+        
+        // Infer code for the declared layout algorithms
+        for (algorithm : bundle.members.filter(MdAlgorithm)) {
+            inferAlgorithm(algorithm, acceptor, isPreIndexingPhase)
+        }
     }
     
-    private def Iterable<MdProperty> getAllPropertyDefinitions(Iterable<? extends MdBundleMember> elements) {
-        Iterables.concat(
-            elements.filter(MdProperty),
-            elements.filter(MdGroup)
-                    .map[it.children.getAllPropertyDefinitions].flatten)
-    }
     
-    private def String getQualifiedTargetClass(MdBundle bundle) {
-        val model = bundle.eContainer as MdModel
-        val bundleClass = bundle.targetClass ?: 'Metadata'
-        return model.name + '.' + bundleClass
-    }
+    ////////////////////////////////////////////////////////////////////////////
+    // Option Constants
     
-    private def toPropertyConstant(MdProperty property) {
-        return property.toField(
-            property.constantName,
-            typeRef(IProperty, property.type ?: typeRef(Object))
+    private def toOptionConstant(MdOption option) {
+        return option.toField(
+            option.constantName,
+            typeRef(IProperty, option.type ?: typeRef(Object))
         ) [
             visibility = JvmVisibility.PUBLIC
             static = true
             final = true
-            deprecated = property.deprecated
+            deprecated = option.deprecated
             initializer = '''
-                new «Property»<«property.type.asWrapperTypeIfPrimitive ?: typeRef(Object)»>(
-                        «property.qualifiedName.toCodeString»«IF property.hasDefaultOrBounds»,
-                        «IF property.defaultValue !== null»«property.defaultConstantName»«ELSE»null«ENDIF»,
-                        «IF property.lowerBound !== null»«property.lowerBoundConstantName»«ELSE»null«ENDIF»,
-                        «IF property.upperBound !== null»«property.upperBoundConstantName»«ELSE»null«ENDIF»«ENDIF»)'''
-            documentation = property.description.trimLines
+                new «Property»<«option.type.asWrapperTypeIfPrimitive ?: typeRef(Object)»>(
+                        «option.qualifiedName.toCodeString»«IF option.hasDefaultOrBounds»,
+                        «IF option.defaultValue !== null»«option.defaultConstantName»«ELSE»null«ENDIF»,
+                        «IF option.lowerBound !== null»«option.lowerBoundConstantName»«ELSE»null«ENDIF»,
+                        «IF option.upperBound !== null»«option.upperBoundConstantName»«ELSE»null«ENDIF»«ENDIF»)'''
+            documentation = option.description.trimLines
         ]
     }
     
-    private def hasDefaultOrBounds(MdProperty property) {
-        return property.defaultValue !== null || property.lowerBound !== null || property.upperBound !== null
+    private def hasDefaultOrBounds(MdOption option) {
+        return option.defaultValue !== null || option.lowerBound !== null || option.upperBound !== null
     }
     
-    private def toPropertyDefault(MdProperty property) {
-        val propertyType = property.type.cloneWithProxies ?: typeRef(Object)
-        return property.toField(property.defaultConstantName, propertyType) [
+    private def toOptionDefault(MdOption option) {
+        val optionType = option.type.cloneWithProxies ?: typeRef(Object)
+        return option.toField(option.defaultConstantName, optionType) [
             visibility = JvmVisibility.PRIVATE
             static = true
             final = true
-            initializer = property.defaultValue
-            documentation = '''Default value for {@link #«property.constantName»}.'''
+            initializer = option.defaultValue
+            documentation = '''Default value for {@link #«option.constantName»}.'''
         ]
     }
     
-    private def toPropertyLowerBound(MdProperty property) {
-        val propertyType = property.type.cloneWithProxies ?: typeRef(Object)
-        return property.toField(property.lowerBoundConstantName, propertyType) [
+    private def toOptionLowerBound(MdOption option) {
+        val optionType = option.type.cloneWithProxies ?: typeRef(Object)
+        return option.toField(option.lowerBoundConstantName, optionType) [
             visibility = JvmVisibility.PRIVATE
             static = true
             final = true
-            initializer = property.lowerBound
-            documentation = '''Lower bound value for {@link #«property.constantName»}.'''
+            initializer = option.lowerBound
+            documentation = '''Lower bound value for {@link #«option.constantName»}.'''
         ]
     }
     
-    private def toPropertyUpperBound(MdProperty property) {
-        val propertyType = property.type.cloneWithProxies ?: typeRef(Object)
-        return property.toField(property.upperBoundConstantName, propertyType) [
+    private def toOptionUpperBound(MdOption option) {
+        val optionType = option.type.cloneWithProxies ?: typeRef(Object)
+        return option.toField(option.upperBoundConstantName, optionType) [
             visibility = JvmVisibility.PRIVATE
             static = true
             final = true
-            initializer = property.upperBound
-            documentation = '''Upper bound value for {@link #«property.constantName»}.'''
+            initializer = option.upperBound
+            documentation = '''Upper bound value for {@link #«option.constantName»}.'''
         ]
     }
     
-    private def toDependencyValue(MdPropertyDependency dependency) {
-        val source = dependency.eContainer as MdProperty
-        val propertyType = dependency.target.type.cloneWithProxies ?: typeRef(Object)
-        return dependency.toField(dependency.dependencyConstantName, propertyType) [
+    private def toDependencyValue(MdOptionDependency dependency) {
+        val source = dependency.eContainer as MdOption
+        val optionType = dependency.target.type.cloneWithProxies ?: typeRef(Object)
+        return dependency.toField(dependency.dependencyConstantName, optionType) [
             visibility = JvmVisibility.PRIVATE
             static = true
             final = true
@@ -211,66 +209,41 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         ]
     }
     
-    private def toSupportDefault(MdPropertySupport support) {
-        val algorithm = support.eContainer as MdAlgorithm
-        val propertyType = support.property.type.cloneWithProxies ?: typeRef(Object)
-        return support.toField(support.supportConstantName, propertyType) [
-            visibility = JvmVisibility.PRIVATE
-            static = true
-            final = true
-            initializer = support.value
-            documentation = '''Default value for {@link #«support.property.constantName»} with algorithm "«algorithm.label ?: algorithm.name»".'''
-        ]
-    }
     
-    private def toSupportDuplicatedConstant(MdPropertySupport support) {
-        return support.toField(
-            support.property.constantName,
-            typeRef(IProperty, support.property.type ?: typeRef(Object))
-        ) [
-            visibility = JvmVisibility.PUBLIC
-            static = true
-            final = true
-            deprecated = support.property.deprecated
-            initializer = '''
-                new «Property»<«support.property.type.asWrapperTypeIfPrimitive ?: typeRef(Object)»>(
-                        «typeRef(support.property.bundle.qualifiedTargetClass)».«support.property.constantName»,
-                        «IF support.value === null»null«ELSE»«support.supportConstantName»«ENDIF»)'''
-            documentation = '''Overridden value for «support.property.label ?: support.property.name».'''
-        ]
-    }
+    ////////////////////////////////////////////////////////////////////////////
+    // Registration Code
     
     private def StringConcatenationClient registerLayoutOptions(MdBundle bundle) '''
-        «FOR property : bundle.members.getAllPropertyDefinitions»
+        «FOR option : bundle.members.getAllOptionDefinitions»
             registry.register(new «LayoutOptionData»(
-                «property.qualifiedName.toCodeString»,
-                «property.groups.map[name].join('.').toCodeString»,
-                «(property.label ?: property.name).shrinkWhiteSpace.toCodeString»,
-                «property.description.shrinkWhiteSpace.toCodeString»,
-                «IF property.defaultValue === null»null,«ELSE»«property.defaultConstantName»,«ENDIF»
-                «IF property.lowerBound === null»null,«ELSE»«property.lowerBoundConstantName»,«ENDIF»
-                «IF property.upperBound === null»null,«ELSE»«property.upperBoundConstantName»,«ENDIF»
-                «LayoutOptionData».Type.«property.optionType»,
-                «property.optionTypeClass».class,
-                «IF property.targets.empty»
+                «option.qualifiedName.toCodeString»,
+                «option.groups.map[name].join('.').toCodeString»,
+                «(option.label ?: option.name).shrinkWhiteSpace.toCodeString»,
+                «option.description.shrinkWhiteSpace.toCodeString»,
+                «IF option.defaultValue === null»null,«ELSE»«option.defaultConstantName»,«ENDIF»
+                «IF option.lowerBound === null»null,«ELSE»«option.lowerBoundConstantName»,«ENDIF»
+                «IF option.upperBound === null»null,«ELSE»«option.upperBoundConstantName»,«ENDIF»
+                «LayoutOptionData».Type.«option.optionType»,
+                «option.optionTypeClass».class,
+                «IF option.targets.empty»
                     null,
                 «ELSE»
-                    «EnumSet».of(«FOR t : property.targets SEPARATOR ', '»«LayoutOptionData».Target.«t.toString.toUpperCase»«ENDFOR»),
+                    «EnumSet».of(«FOR t : option.targets SEPARATOR ', '»«LayoutOptionData».Target.«t.toString.toUpperCase»«ENDFOR»),
                 «ENDIF»
-                «IF property.programmatic || property.output || property.global»
+                «IF option.programmatic || option.output || option.global»
                     «LayoutOptionData».Visibility.HIDDEN
-                «ELSEIF property.advanced»
+                «ELSEIF option.advanced»
                     «LayoutOptionData».Visibility.ADVANCED
                 «ELSE»
                     «LayoutOptionData».Visibility.VISIBLE
                 «ENDIF»
-                «IF !property.legacyIds.empty»
-                    «property.legacyIds.map[', "' + it + '"'].join»
+                «IF !option.legacyIds.empty»
+                    «option.legacyIds.map[', "' + it + '"'].join»
                 «ENDIF»
             ));
-            «FOR dependency : property.dependencies»
+            «FOR dependency : option.dependencies»
                 registry.addDependency(
-                    «property.qualifiedName.toCodeString»,
+                    «option.qualifiedName.toCodeString»,
                     «dependency.target.qualifiedName.toCodeString»,
                     «IF dependency.value === null»
                         null
@@ -293,34 +266,157 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     '''
     
     private def StringConcatenationClient registerLayoutAlgorithms(MdBundle bundle) '''
-        «FOR algorithm : bundle.members.filter(MdAlgorithm)»
-            registry.register(new «LayoutAlgorithmData»(
-                «algorithm.qualifiedName.toCodeString»,
-                «(algorithm.label ?: algorithm.name).shrinkWhiteSpace.toCodeString»,
-                «algorithm.description.shrinkWhiteSpace.toCodeString»,
-                new «AlgorithmFactory»(«algorithm.provider».class, "«algorithm.parameter»"),
-                «algorithm.category?.qualifiedName.toCodeString»,
-                «algorithm.bundle?.label.toCodeString»,
-                «algorithm.previewImage.toCodeString»,
-                «IF algorithm.supportedFeatures.empty»
-                    null
-                «ELSE»
-                    «EnumSet».of(«FOR f : algorithm.supportedFeatures SEPARATOR ', '»«GraphFeature».«f.toString.toUpperCase»«ENDFOR»)
-                «ENDIF»
-            ));
-            «FOR support : algorithm.supportedOptions»
-                registry.addOptionSupport(
-                    «algorithm.qualifiedName.toCodeString»,
-                    «support.property.qualifiedName.toCodeString»,
-                    «IF support.value === null»
-                        null
-                    «ELSE»
-                        «support.supportConstantName»
-                    «ENDIF»
-                );
-            «ENDFOR»
+        «FOR MdAlgorithm algorithm : bundle.members.filter(MdAlgorithm)»
+            new «algorithm.qualifiedTargetClass»().apply(registry);
         «ENDFOR»
     '''
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // ALGORITHM METADATA PROVIDER CLASS GENERATION
+
+    /**
+     * Generates code for the given algorithm'm metadata provider class.
+     * 
+     * @param algorithm
+     *            the algorithm to create one or more {@link JvmDeclaredType declared types} from.
+     * @param acceptor
+     *            each created {@link JvmDeclaredType type} without a container should be passed to the acceptor
+     *            in order to get attached to the current resource. The acceptor's
+     *            {@link IJvmDeclaredTypeAcceptor#accept(org.eclipse.xtext.common.types.JvmDeclaredType) accept(..)}
+     *            method takes the constructed empty type for the pre-indexing phase. This one is further
+     *            initialized in the indexing phase using passed closure.
+     * @param isPreIndexingPhase
+     *            whether the method is called in a pre-indexing phase, i.e.
+     *            when the global index is not yet fully updated. You must not
+     *            rely on linking using the index if isPreIndexingPhase is
+     *            <code>true</code>.
+     */
+    private def void inferAlgorithm(MdAlgorithm algorithm, IJvmDeclaredTypeAcceptor acceptor,
+        boolean isPreIndexingPhase) {
+            
+        // If the algorithm doesn't have a name yet, don't bother
+        if (algorithm.name === null) {
+            return
+        }
+        
+        // Create a class for the general option definitions to be used by clients as well as for the registration
+        // method that instantiates the ILayoutMetaDataProviders
+        acceptor.accept(algorithm.toClass(algorithm.qualifiedTargetClass)) [
+            // Implement the ILayoutMetaDataProvider interface and... BE DOCUMENTED!
+            superTypes += typeRef(ILayoutMetaDataProvider)
+            fileHeader = algorithm.bundle.documentation
+            documentation = algorithm.documentation
+            
+            // 1. Public constants for supported layout options
+            for (support : algorithm.supportedOptions) {
+                if (support.value !== null) {
+                    members += support.toSupportedOptionDefault
+                }
+                members += support.toSupportedOptionConstant
+            }
+            
+            // 2. Implementation of ILayoutMetaDataProvider#apply(Registry)
+            members += algorithm.toMethod('apply', typeRef(void)) [
+                parameters += algorithm.toParameter('registry', typeRef(ILayoutMetaDataProvider.Registry))
+                body = '''
+                    «registerLayoutAlgorithm(algorithm)»
+                '''
+            ]
+        ]
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Property Constants
+    
+    private def toSupportedOptionDefault(MdOptionSupport support) {
+        val algorithm = support.eContainer as MdAlgorithm
+        val optionType = support.option.type.cloneWithProxies ?: typeRef(Object)
+        return support.toField(support.option.defaultConstantName, optionType) [
+            visibility = JvmVisibility.PRIVATE
+            static = true
+            final = true
+            initializer = support.value
+            documentation = '''Default value for {@link #«support.option.constantName»} with algorithm "«algorithm.label ?: algorithm.name»".'''
+        ]
+    }
+    
+    private def toSupportedOptionConstant(MdOptionSupport support) {
+        return support.toField(
+            support.option.constantName,
+            typeRef(IProperty, support.option.type ?: typeRef(Object))
+        ) [
+            visibility = JvmVisibility.PUBLIC
+            static = true
+            final = true
+            deprecated = support.option.deprecated
+            initializer = 
+                if (support.value === null) {
+                    '''«typeRef(support.option.bundle.qualifiedTargetClass)».«support.option.constantName»'''
+                } else {
+                    '''new «Property»<«support.option.type.asWrapperTypeIfPrimitive ?: typeRef(Object)»>(
+                            «typeRef(support.option.bundle.qualifiedTargetClass)».«support.option.constantName»,
+                            «support.option.defaultConstantName»)'''
+                }
+            documentation = '''Property constant to access «support.option.label ?: support.option.name» from within the layout algorithm code.'''
+        ]
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Registration Code
+    
+    private def StringConcatenationClient registerLayoutAlgorithm(MdAlgorithm algorithm) '''
+        registry.register(new «LayoutAlgorithmData»(
+            «algorithm.qualifiedName.toCodeString»,
+            «(algorithm.label ?: algorithm.name).shrinkWhiteSpace.toCodeString»,
+            «algorithm.description.shrinkWhiteSpace.toCodeString»,
+            new «AlgorithmFactory»(«algorithm.provider».class, "«algorithm.parameter»"),
+            «algorithm.category?.qualifiedName.toCodeString»,
+            «algorithm.bundle?.label.toCodeString»,
+            «algorithm.previewImage.toCodeString»,
+            «IF algorithm.supportedFeatures.empty»
+                null
+            «ELSE»
+                «EnumSet».of(«FOR f : algorithm.supportedFeatures SEPARATOR ', '»«GraphFeature».«f.toString.toUpperCase»«ENDFOR»)
+            «ENDIF»
+        ));
+        «FOR support : algorithm.supportedOptions»
+            registry.addOptionSupport(
+                «algorithm.qualifiedName.toCodeString»,
+                «support.option.qualifiedName.toCodeString»,
+                «IF support.value === null»
+                    «support.option.constantName».getDefault()
+                «ELSE»
+                    «support.option.defaultConstantName»
+                «ENDIF»
+            );
+        «ENDFOR»
+    '''
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // UTILITY METHODS
+    
+    private def Iterable<MdOption> getAllOptionDefinitions(Iterable<? extends MdBundleMember> elements) {
+        Iterables.concat(
+            elements.filter(MdOption),
+            elements.filter(MdGroup)
+                    .map[it.children.getAllOptionDefinitions].flatten)
+    }
+    
+    private def String getQualifiedTargetClass(MdBundle bundle) {
+        val model = bundle.eContainer as MdModel
+        val bundleClass = bundle.targetClass ?: 'Metadata'
+        return model.name + '.' + bundleClass
+    }
+    
+    private def String getQualifiedTargetClass(MdAlgorithm algorithm) {
+        val model = algorithm.bundle.eContainer as MdModel
+        val algorithmClass = algorithm.targetClass ?: algorithm.name.toFirstUpper + 'Metadata'
+        return model.name + '.' + algorithmClass
+    }
     
     private def Iterable<MdGroup> getGroups(MdBundleMember member) {
         val groups = new LinkedList
@@ -332,8 +428,8 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         groups
     }
     
-    private def Type getOptionType(MdProperty property) {
-        val jvmType = property.type?.type
+    private def Type getOptionType(MdOption option) {
+        val jvmType = option.type?.type
         switch jvmType {
             
             JvmPrimitiveType: switch jvmType.identifier {
@@ -371,7 +467,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         }
     }    
     
-    private def JvmTypeReference getOptionTypeClass(MdProperty property) {
+    private def JvmTypeReference getOptionTypeClass(MdOption property) {
         switch property.type?.type?.identifier {
             case null:
                 typeRef(Void)
@@ -386,6 +482,18 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         }
     }
     
+    private def MdBundle getBundle(MdBundleMember member) {
+        var parent = member.eContainer
+        while (!(parent instanceof MdBundle)) {
+            parent = parent.eContainer
+        }
+        return parent as MdBundle
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // Constant Names
+    
     private def String getQualifiedName(MdBundleMember member) {
         val bundle = member.bundle
         val model = bundle.eContainer as MdModel
@@ -399,14 +507,6 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                + (if (member.groups.empty) '' else '.')
                + member.groups.map[it.name].join('.') 
                + '.' + member.name
-    }
-    
-    private def MdBundle getBundle(MdBundleMember member) {
-        var parent = member.eContainer
-        while (!(parent instanceof MdBundle)) {
-            parent = parent.eContainer
-        }
-        return parent as MdBundle
     }
     
     private def String getConstantName(MdBundleMember member) {
@@ -431,26 +531,21 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         return result.toString
     }
     
-    private def getDefaultConstantName(MdProperty property) {
-        property.constantName + '_DEFAULT'
+    private def getDefaultConstantName(MdOption option) {
+        option.constantName + '_DEFAULT'
     }
     
-    private def getLowerBoundConstantName(MdProperty property) {
-        property.constantName + '_LOWER_BOUND'
+    private def getLowerBoundConstantName(MdOption option) {
+        option.constantName + '_LOWER_BOUND'
     }
     
-    private def getUpperBoundConstantName(MdProperty property) {
-        property.constantName + '_UPPER_BOUND'
+    private def getUpperBoundConstantName(MdOption option) {
+        option.constantName + '_UPPER_BOUND'
     }
     
-    private def getDependencyConstantName(MdPropertyDependency dependency) {
-        val property = dependency.eContainer as MdProperty
-        property.constantName + '_DEP_' + dependency.target.constantName
-    }
-    
-    private def getSupportConstantName(MdPropertySupport support) {
-        val algorithm = support.eContainer as MdAlgorithm
-        algorithm.constantName + '_SUP_' + support.property.constantName
+    private def getDependencyConstantName(MdOptionDependency dependency) {
+        val option = dependency.eContainer as MdOption
+        option.constantName + '_DEP_' + dependency.target.constantName
     }
     
     private def String toCodeString(String s) {

@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -114,7 +114,7 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
             // Now we will hide self-loop ports from the node.
             // We don't hide the ports of nodes with portConstraint "fixedOrder",
             // or if the port has a non-loop edge connected.
-            if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 final Set<LPort> portsToHide = Sets.newHashSet();
                 for (final ConnectedSelfLoopComponent component : allComponents) {
                     portsToHide.addAll(component.getHidablePorts());
@@ -143,7 +143,7 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
      * @param node The node to process.
      */
     private void correctPortSideConstraint(final LNode node) {
-        if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
+        if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
             for (final LPort port : node.getPorts()) {
                 port.setSide(PortSide.UNDEFINED);
             }
@@ -175,7 +175,7 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
             components.add(findAConnectedComponent(
                     portToEdge, 
                     node, 
-                    node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()));
+                    node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()));
         }
         return components;
     }

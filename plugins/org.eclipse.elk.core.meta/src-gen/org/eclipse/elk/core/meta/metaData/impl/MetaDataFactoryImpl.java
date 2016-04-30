@@ -78,13 +78,13 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
       case MetaDataPackage.MD_MODEL: return createMdModel();
       case MetaDataPackage.MD_BUNDLE: return createMdBundle();
       case MetaDataPackage.MD_BUNDLE_MEMBER: return createMdBundleMember();
-      case MetaDataPackage.MD_GROUP_OR_PROPERTY: return createMdGroupOrProperty();
+      case MetaDataPackage.MD_GROUP_OR_OPTION: return createMdGroupOrOption();
       case MetaDataPackage.MD_GROUP: return createMdGroup();
-      case MetaDataPackage.MD_PROPERTY: return createMdProperty();
-      case MetaDataPackage.MD_PROPERTY_DEPENDENCY: return createMdPropertyDependency();
+      case MetaDataPackage.MD_OPTION: return createMdOption();
+      case MetaDataPackage.MD_OPTION_DEPENDENCY: return createMdOptionDependency();
       case MetaDataPackage.MD_ALGORITHM: return createMdAlgorithm();
       case MetaDataPackage.MD_CATEGORY: return createMdCategory();
-      case MetaDataPackage.MD_PROPERTY_SUPPORT: return createMdPropertySupport();
+      case MetaDataPackage.MD_OPTION_SUPPORT: return createMdOptionSupport();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -100,8 +100,8 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
   {
     switch (eDataType.getClassifierID())
     {
-      case MetaDataPackage.MD_PROPERTY_TARGET_TYPE:
-        return createMdPropertyTargetTypeFromString(eDataType, initialValue);
+      case MetaDataPackage.MD_OPTION_TARGET_TYPE:
+        return createMdOptionTargetTypeFromString(eDataType, initialValue);
       case MetaDataPackage.MD_GRAPH_FEATURE:
         return createMdGraphFeatureFromString(eDataType, initialValue);
       default:
@@ -119,8 +119,8 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
   {
     switch (eDataType.getClassifierID())
     {
-      case MetaDataPackage.MD_PROPERTY_TARGET_TYPE:
-        return convertMdPropertyTargetTypeToString(eDataType, instanceValue);
+      case MetaDataPackage.MD_OPTION_TARGET_TYPE:
+        return convertMdOptionTargetTypeToString(eDataType, instanceValue);
       case MetaDataPackage.MD_GRAPH_FEATURE:
         return convertMdGraphFeatureToString(eDataType, instanceValue);
       default:
@@ -166,10 +166,10 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdGroupOrProperty createMdGroupOrProperty()
+  public MdGroupOrOption createMdGroupOrOption()
   {
-    MdGroupOrPropertyImpl mdGroupOrProperty = new MdGroupOrPropertyImpl();
-    return mdGroupOrProperty;
+    MdGroupOrOptionImpl mdGroupOrOption = new MdGroupOrOptionImpl();
+    return mdGroupOrOption;
   }
 
   /**
@@ -188,10 +188,10 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdProperty createMdProperty()
+  public MdOption createMdOption()
   {
-    MdPropertyImpl mdProperty = new MdPropertyImpl();
-    return mdProperty;
+    MdOptionImpl mdOption = new MdOptionImpl();
+    return mdOption;
   }
 
   /**
@@ -199,10 +199,10 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdPropertyDependency createMdPropertyDependency()
+  public MdOptionDependency createMdOptionDependency()
   {
-    MdPropertyDependencyImpl mdPropertyDependency = new MdPropertyDependencyImpl();
-    return mdPropertyDependency;
+    MdOptionDependencyImpl mdOptionDependency = new MdOptionDependencyImpl();
+    return mdOptionDependency;
   }
 
   /**
@@ -232,10 +232,10 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdPropertySupport createMdPropertySupport()
+  public MdOptionSupport createMdOptionSupport()
   {
-    MdPropertySupportImpl mdPropertySupport = new MdPropertySupportImpl();
-    return mdPropertySupport;
+    MdOptionSupportImpl mdOptionSupport = new MdOptionSupportImpl();
+    return mdOptionSupport;
   }
 
   /**
@@ -243,9 +243,9 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public MdPropertyTargetType createMdPropertyTargetTypeFromString(EDataType eDataType, String initialValue)
+  public MdOptionTargetType createMdOptionTargetTypeFromString(EDataType eDataType, String initialValue)
   {
-    MdPropertyTargetType result = MdPropertyTargetType.get(initialValue);
+    MdOptionTargetType result = MdOptionTargetType.get(initialValue);
     if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
     return result;
   }
@@ -255,7 +255,7 @@ public class MetaDataFactoryImpl extends EFactoryImpl implements MetaDataFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertMdPropertyTargetTypeToString(EDataType eDataType, Object instanceValue)
+  public String convertMdOptionTargetTypeToString(EDataType eDataType, Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }

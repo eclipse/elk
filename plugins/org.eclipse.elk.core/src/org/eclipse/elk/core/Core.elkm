@@ -28,7 +28,7 @@ import java.util.ArrayList
  */
 bundle {
 	label "ELK"
-	class core.options.CoreOptions 
+	metadataClass core.options.CoreOptions 
 	idPrefix org.eclipse.elk 
 }
 
@@ -91,6 +91,7 @@ algorithm fixed(FixedLayoutProvider) {
 	description
 		"Keeps the current layout as it is, without any automatic modification. Optional coordinates
 		can be given for nodes and edge bend points."
+    metadataClass core.options.FixedLayouterOptions 
 	supports position
 	supports bendPoints
 	supports org.eclipse.elk.spacing.border = 15
@@ -99,6 +100,7 @@ algorithm fixed(FixedLayoutProvider) {
 algorithm box(BoxLayoutProvider) {
 	label "Box Layout"
 	description "Algorithm for packing of unconnected boxes, i.e. graphs without edges."
+    metadataClass core.options.BoxLayouterOptions 
 	preview images/box_layout.png
 	supports org.eclipse.elk.spacing.node = 15
 	supports org.eclipse.elk.spacing.border = 15
@@ -115,6 +117,7 @@ algorithm random(RandomLayoutProvider) {
 	description
 		"Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be
 		useful to demonstrate the power of \"real\" layout algorithms."
+    metadataClass core.options.RandomLayouterOptions 
 	preview images/random.png
 	supports randomSeed = 0
 	supports org.eclipse.elk.spacing.node = 15

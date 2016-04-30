@@ -30,7 +30,6 @@ import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Alignment;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -148,12 +147,12 @@ public final class GraphTransformer implements ILayoutProcessor {
             mirrorX(node.getPosition(), offset - node.getSize().x);
             mirrorNodeLabelPlacementX(node);
             // mirror the alignment
-            switch (node.getProperty(CoreOptions.ALIGNMENT)) {
+            switch (node.getProperty(LayeredOptions.ALIGNMENT)) {
             case LEFT:
-                node.setProperty(CoreOptions.ALIGNMENT, Alignment.RIGHT);
+                node.setProperty(LayeredOptions.ALIGNMENT, Alignment.RIGHT);
                 break;
             case RIGHT:
-                node.setProperty(CoreOptions.ALIGNMENT, Alignment.LEFT);
+                node.setProperty(LayeredOptions.ALIGNMENT, Alignment.LEFT);
                 break;
             }
             
@@ -170,7 +169,7 @@ public final class GraphTransformer implements ILayoutProcessor {
                     }
                     
                     // Mirror junction points
-                    KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+                    KVectorChain junctionPoints = edge.getProperty(LayeredOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
                             mirrorX(jp, offset);
@@ -218,7 +217,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node the node.
      */
     private void mirrorNodeLabelPlacementX(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -325,12 +324,12 @@ public final class GraphTransformer implements ILayoutProcessor {
             mirrorY(node.getPosition(), offset - node.getSize().y);
             mirrorNodeLabelPlacementY(node);
             // mirror the alignment
-            switch (node.getProperty(CoreOptions.ALIGNMENT)) {
+            switch (node.getProperty(LayeredOptions.ALIGNMENT)) {
             case TOP:
-                node.setProperty(CoreOptions.ALIGNMENT, Alignment.BOTTOM);
+                node.setProperty(LayeredOptions.ALIGNMENT, Alignment.BOTTOM);
                 break;
             case BOTTOM:
-                node.setProperty(CoreOptions.ALIGNMENT, Alignment.TOP);
+                node.setProperty(LayeredOptions.ALIGNMENT, Alignment.TOP);
                 break;
             }
             
@@ -347,7 +346,7 @@ public final class GraphTransformer implements ILayoutProcessor {
                     }
                     
                     // Mirror junction points
-                    KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+                    KVectorChain junctionPoints = edge.getProperty(LayeredOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
                             mirrorY(jp, offset);
@@ -395,7 +394,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node the node.
      */
     private void mirrorNodeLabelPlacementY(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -498,7 +497,7 @@ public final class GraphTransformer implements ILayoutProcessor {
                     }
                     
                     // Transpose junction points
-                    KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+                    KVectorChain junctionPoints = edge.getProperty(LayeredOptions.JUNCTION_POINTS);
                     if (junctionPoints != null) {
                         for (KVector jp : junctionPoints) {
                             transpose(jp);
@@ -550,7 +549,7 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param node the node.
      */
     private void transposeNodeLabelPlacement(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
+        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -589,7 +588,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         }
         
         // Apply new placement
-        node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, newPlacement);
+        node.setProperty(LayeredOptions.NODE_LABELS_PLACEMENT, newPlacement);
     }
     
     /**
@@ -680,34 +679,34 @@ public final class GraphTransformer implements ILayoutProcessor {
      * Checks a node's properties for ones that need to be transposed. Currently, the following
      * properties are transposed:
      * <ul>
-     *   <li>{@link CoreOptions#MIN_HEIGHT} and {@link CoreOptions#MIN_WIDTH}.</li>
+     *   <li>{@link LayeredOptions#MIN_HEIGHT} and {@link LayeredOptions#MIN_WIDTH}.</li>
      * </ul>
      * 
      * @param node the node whose properties are to be transposed.
      */
     private void transposeProperties(final LNode node) {
         // Transpose MIN_HEIGHT and MIN_WIDTH
-        KVector minSize = node.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
+        KVector minSize = node.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
         if (minSize == null) {
             minSize = new KVector(
-                    node.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH).doubleValue(),
-                    node.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT).doubleValue());
+                    node.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH).doubleValue(),
+                    node.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT).doubleValue());
         }
-        node.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(minSize.y, minSize.x));
+        node.setProperty(LayeredOptions.NODE_SIZE_MINIMUM, new KVector(minSize.y, minSize.x));
         
         // Transpose ALIGNMENT
-        switch (node.getProperty(CoreOptions.ALIGNMENT)) {
+        switch (node.getProperty(LayeredOptions.ALIGNMENT)) {
         case LEFT:
-            node.setProperty(CoreOptions.ALIGNMENT, Alignment.TOP);
+            node.setProperty(LayeredOptions.ALIGNMENT, Alignment.TOP);
             break;
         case RIGHT:
-            node.setProperty(CoreOptions.ALIGNMENT, Alignment.BOTTOM);
+            node.setProperty(LayeredOptions.ALIGNMENT, Alignment.BOTTOM);
             break;
         case TOP:
-            node.setProperty(CoreOptions.ALIGNMENT, Alignment.LEFT);
+            node.setProperty(LayeredOptions.ALIGNMENT, Alignment.LEFT);
             break;
         case BOTTOM:
-            node.setProperty(CoreOptions.ALIGNMENT, Alignment.RIGHT);
+            node.setProperty(LayeredOptions.ALIGNMENT, Alignment.RIGHT);
             break;
         }
     }
@@ -718,9 +717,9 @@ public final class GraphTransformer implements ILayoutProcessor {
      * @param port a port
      */
     private void reverseIndex(final LPort port) {
-        Integer index = port.getProperty(CoreOptions.PORT_INDEX);
+        Integer index = port.getProperty(LayeredOptions.PORT_INDEX);
         if (index != null) {
-            port.setProperty(CoreOptions.PORT_INDEX, -index);
+            port.setProperty(LayeredOptions.PORT_INDEX, -index);
         }
     }
 

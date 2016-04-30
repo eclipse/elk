@@ -18,10 +18,9 @@ import org.eclipse.elk.alg.force.model.AbstractForceModel;
 import org.eclipse.elk.alg.force.model.EadesModel;
 import org.eclipse.elk.alg.force.model.ForceModelStrategy;
 import org.eclipse.elk.alg.force.model.FruchtermanReingoldModel;
-import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KNode;
 
@@ -84,7 +83,7 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
      */
     private void setOptions(final FGraph fgraph, final KNode parent) {
         // set the random number generator based on the random seed option
-        Integer randomSeed = fgraph.getProperty(CoreOptions.RANDOM_SEED);
+        Integer randomSeed = fgraph.getProperty(ForceOptions.RANDOM_SEED);
         if (randomSeed != null) {
             int val = randomSeed;
             if (val == 0) {

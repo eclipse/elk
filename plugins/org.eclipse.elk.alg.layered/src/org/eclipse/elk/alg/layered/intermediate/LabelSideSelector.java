@@ -20,13 +20,12 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
@@ -114,7 +113,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 if (lNode.getType() == NodeType.LABEL) {
                     if (lNode.getProperty(InternalProperties.LABEL_SIDE) == LabelSide.ABOVE) {
                         LEdge originEdge = (LEdge) lNode.getProperty(InternalProperties.ORIGIN);
-                        float thickness = originEdge.getProperty(CoreOptions.EDGE_THICKNESS);
+                        float thickness = originEdge.getProperty(LayeredOptions.EDGE_THICKNESS);
                         double portPos = lNode.getSize().y - Math.ceil(thickness / 2);
                         for (LPort port : lNode.getPorts()) {
                             port.getPosition().y = portPos;

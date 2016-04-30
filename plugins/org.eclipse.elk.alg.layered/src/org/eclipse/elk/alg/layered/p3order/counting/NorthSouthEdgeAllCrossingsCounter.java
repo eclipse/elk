@@ -14,7 +14,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -231,7 +231,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
     }
 
     private boolean fixedPortOrderOn(final LNode node) {
-        return node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+        return node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private boolean hasPortOnSide(final LNode node, final PortSide side) {

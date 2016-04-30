@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -47,7 +47,6 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
      * Port position array used for counting the number of edge crossings.
      */
     private final int[] portPos;
-    private boolean assumeFixedPortOrder;
 
     /**
      * Create a hyperedge crossings counter.
@@ -66,12 +65,6 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         this.portPos = portPos;
     }
     
-    private HyperedgeCrossingsCounter(final int[] inLayerEdgeCount,
-            final boolean[] hasNorthSouthPorts, final int[] portPs, final boolean assumeFixed) {
-        this(inLayerEdgeCount, hasNorthSouthPorts, portPs);
-        assumeFixedPortOrder = assumeFixed;
-    }
-
     /**
      * Hyperedge representation.
      */
@@ -165,7 +158,7 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         // Assign index values to the ports of the left layer
         int sourceCount = 0;
         for (LNode node : leftLayer) {
-            if (isPortOrderFixed(node)) {
+            if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Assign index values in the order north - east - south - west
                 for (LPort port : node.getPorts()) {
                     int portEdges = 0;
@@ -199,7 +192,7 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         // Assign index values to the ports of the right layer
         int targetCount = 0;
         for (LNode node : rightLayer) {
-            if (isPortOrderFixed(node)) {
+            if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Determine how many input ports there are on the north side
                 // (note that the standard port order is north - east - south - west)
                 int northInputPorts = 0;
@@ -423,27 +416,4 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         return crossings;
     }
 
-    private boolean isPortOrderFixed(final LNode node) {
-        return assumeFixedPortOrder
-                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
-    }
-
-    /**
-     * Create HyperedgeCrossingsCounter assuming all port orders to be fixed.
-     * 
-     * @param inLayerEdgeCount
-     *            The number of in layer edges in each layer.
-     * @param hasNorthSouthPorts
-     *            whether a layer contains north south ports or not.
-     * @param portPos2
-     *            an array the length of the number of ports
-     * @return the counter.
-     */
-    public static HyperedgeCrossingsCounter createAssumingPortOrderFixed(
-            final int[] inLayerEdgeCount, final boolean[] hasNorthSouthPorts,
-            final int[] portPos2) {
-        return new HyperedgeCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, portPos2, true);
-    }
-
 }
-
