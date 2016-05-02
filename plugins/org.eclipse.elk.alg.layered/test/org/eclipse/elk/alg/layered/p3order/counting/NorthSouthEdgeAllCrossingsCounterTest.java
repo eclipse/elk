@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -127,7 +127,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
     @Test
     public void noFixedOrderConstraint() {
         getNorthSouthDownwardCrossingGraph();
-        getGraph().toNodeArray()[0][0].setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        getGraph().toNodeArray()[0][0].setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         int crossingCount = initCounterForLayerWithIndexAndCountInLayer(0);
         assertThat(crossingCount, is(0));
     }
@@ -217,7 +217,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
         // second edge on middle node
         LPort middleNodePort = middleNodes[1].getPorts().get(0);
         eastWestEdgeFromTo(middleNodePort, rightNodes[1]);
-        getGraph().setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
+        getGraph().setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
 
         int crossingCount = initCounterForLayerWithIndexAndCountInLayer(1);
 

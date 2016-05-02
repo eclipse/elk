@@ -27,7 +27,6 @@ import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -83,7 +82,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         }
 
         boolean processAllGraphsRecursively =
-                layeredGraph.getProperty(LayeredOptions.BOTTOM_UP_CROSSING_MINIMIZATION);
+                layeredGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP);
 
         Iterable<GraphData> graphsToSweepOn =
                 initialize(processAllGraphsRecursively, layeredGraph);
@@ -121,7 +120,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             SweepCopy bestSweep = gData.getBestSweep();
             sortPortsByDummyPositionsInLastLayer(bestSweep.nodes(), gData.parent(), true);
             sortPortsByDummyPositionsInLastLayer(bestSweep.nodes(), gData.parent(), false);
-            gData.parent().setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+            gData.parent().setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         }
         gData.setCanSweepIntoThisGraph(false);
     }

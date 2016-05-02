@@ -29,7 +29,6 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -133,7 +132,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
            externalPort.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
            externalPort.setSide(dummyNode.getProperty(InternalProperties.EXT_PORT_SIDE)); 
            dummyNode.getProperty(InternalProperties.EXT_PORT_SIDE);
-           externalPort.getNode().setProperty(CoreOptions.PORT_CONSTRAINTS,
+           externalPort.getNode().setProperty(LayeredOptions.PORT_CONSTRAINTS,
                    PortConstraints.FIXED_SIDE);
            externalPort.getNode().getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
                    .add(GraphProperties.NON_FREE_PORTS); 

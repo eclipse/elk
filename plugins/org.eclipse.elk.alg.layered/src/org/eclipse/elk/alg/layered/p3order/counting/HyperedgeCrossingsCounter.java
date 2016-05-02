@@ -425,7 +425,7 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
 
     private boolean isPortOrderFixed(final LNode node) {
         return assumeFixedPortOrder
-                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+                || node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     /**

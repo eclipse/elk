@@ -28,7 +28,6 @@ import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -98,7 +97,7 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
         if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
             // Ports have positions assigned
-            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+            node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
             node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
                     .add(GraphProperties.NON_FREE_PORTS);
             LGraphUtil.resizeNode(node, actualGraphSize, false, true);
@@ -132,9 +131,9 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
      *            the graph to resize.
      */
     private void resizeGraph(final LGraph lgraph) {
-        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
-        Set<SizeOptions> sizeOptions = lgraph.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
-        float borderSpacing = lgraph.getProperty(CoreOptions.SPACING_BORDER);
+        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
+        Set<SizeOptions> sizeOptions = lgraph.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
+        float borderSpacing = lgraph.getProperty(LayeredOptions.SPACING_BORDER);
 
         // add the border spacing to the graph size and graph offset
         lgraph.getOffset().x += borderSpacing;
@@ -144,15 +143,15 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
 
         // the graph size now contains the border spacing, so clear it in order to keep
         // graph.getActualSize() working properly
-        lgraph.setProperty(CoreOptions.SPACING_BORDER, 0f);
+        lgraph.setProperty(LayeredOptions.SPACING_BORDER, 0f);
 
         KVector calculatedSize = lgraph.getActualSize();
         KVector adjustedSize = new KVector(calculatedSize);
 
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            float minWidth = lgraph.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
-            float minHeight = lgraph.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
+            float minWidth = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH);
+            float minHeight = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT);
 
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {

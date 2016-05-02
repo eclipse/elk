@@ -26,7 +26,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -73,7 +73,7 @@ public class TestGraphCreator {
 
     protected LGraph setUpGraph(final LGraph g) {
         setUpIds();
-        g.setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+        g.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
         g.setProperty(InternalProperties.RANDOM, random);
         return g;
     }
@@ -465,7 +465,7 @@ public class TestGraphCreator {
         Layer rightLayer = makeLayer(graph);
 
         LNode leftNode = addNodeToLayer(leftLayer);
-        leftNode.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+        leftNode.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
 
         LNode rightTopNode = addNodeToLayer(rightLayer);
         LNode rightBottomNode = addNodeToLayer(rightLayer);
@@ -1028,7 +1028,7 @@ public class TestGraphCreator {
     }
 
     public void setPortOrderFixed(final LNode node) {
-        node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+        node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES).add(GraphProperties.NON_FREE_PORTS);
     }
 
@@ -1045,7 +1045,7 @@ public class TestGraphCreator {
     }
 
     public MapPropertyHolder setFixedOrderConstraint(final LNode node) {
-        return node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+        return node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
     }
 
     public void setFixedOrderConstraint(final LNode[] nodes) {
@@ -1117,8 +1117,8 @@ public class TestGraphCreator {
     public LPort addPortOnSide(final LNode node, final PortSide portSide) {
         LPort port = addPortTo(node);
         port.setSide(portSide);
-        if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
-            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+        if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         }
         return port;
     }

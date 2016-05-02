@@ -14,7 +14,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -131,7 +131,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
         northCardinalities = new int[layer.length];
         southCardinalities = new int[layer.length];
         edgesRoutedOrthogonally = layer[0].getGraph()
-                .getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
+                .getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
         initPositionsAndCardinalities();
     }
 

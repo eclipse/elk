@@ -28,7 +28,6 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
@@ -540,7 +539,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         LNode leftTopNode = addNodeToLayer(leftLayer);
         LNode leftBottomNode = addNodeToLayer(leftLayer);
         LNode rightNode = addNodeToLayer(rightLayer);
-        rightNode.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+        rightNode.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         eastWestEdgeFromTo(leftTopNode, rightNode);
         eastWestEdgeFromTo(leftBottomNode, rightNode);
 
@@ -692,7 +691,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(rightInnerDummyNodes[0], rightInnerNodes[0]);
         eastWestEdgeFromTo(rightInnerDummyNodes[1], rightInnerNodes[1]);
 
-        getGraph().setProperty(LayeredOptions.BOTTOM_UP_CROSSING_MINIMIZATION, true);
+        getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP, true);
 
         List<LNode> expectedNormalNodeOrderRight = Lists.newArrayList(rightInnerNodes);
 
@@ -882,7 +881,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<LPort> expectedPortOrderRight = Lists.newArrayList(rightOuterNode.getPorts().get(1),
                 rightOuterNode.getPorts().get(0));
 
-        setOnAllGraphs(LayeredOptions.HIERARCHICAL_SWEEPINESS, 1f, graph);
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 1f, graph);
 
         setUpAndMinimizeCrossings();
         assertThat(getGraph().getLayers().get(1).getNodes().get(0).getPorts(),
@@ -1100,7 +1099,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
                 eastWestEdgeFromTo(leftNodes[i], rightNodes[i]);
             }
 
-            getGraph().setProperty(LayeredOptions.HIERARCHICAL_SWEEPINESS, 0.2f);
+            getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0.2f);
 
             List<LNode> expectedExternalDummyOrderRight =
                     Lists.newArrayList(rightInnerGraph.getLayers().get(0));
@@ -1342,7 +1341,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftInnerNodesRight[1], leftInnerDummyNodes[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[0], leftInnerNodesRight[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[1], leftInnerNodesRight[0]);
-        getGraph().setProperty(LayeredOptions.BOTTOM_UP_CROSSING_MINIMIZATION, true);
+        getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP, true);
         List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
@@ -1446,7 +1445,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         
         setUpAndMinimizeCrossings();
         
-        setOnAllGraphs(LayeredOptions.HIERARCHICAL_SWEEPINESS, -1f, graph);
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f, graph);
         List<GraphData> graphData = crossMin.getGraphData();
         assertFalse(graphData.get(leftOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).processRecursively());
         assertFalse(
@@ -1707,7 +1706,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
                 Lists.newArrayList(leftNode.getPorts().get(1), leftNode.getPorts().get(0), leftNode.getPorts().get(2));
 
         random.setNextBoolean(false);
-        graph.setProperty(LayeredOptions.BOTTOM_UP_CROSSING_MINIMIZATION, true);
+        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP, true);
         new LayerSweepCrossingMinimizer().process(graph, new BasicProgressMonitor());
 
         assertEquals(leftNode.getPorts(), expectedPortOrder);

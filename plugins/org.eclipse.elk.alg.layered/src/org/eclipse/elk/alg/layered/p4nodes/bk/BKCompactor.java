@@ -17,8 +17,8 @@ import java.util.Queue;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.HDirection;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 import org.eclipse.elk.alg.layered.p4nodes.bk.ThresholdStrategy.NullThresholdStrategy;

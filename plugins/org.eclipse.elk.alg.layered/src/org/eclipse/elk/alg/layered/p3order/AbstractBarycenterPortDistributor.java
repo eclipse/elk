@@ -17,8 +17,8 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -152,8 +152,8 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
         for (LNode node : layer) {
             // reorder the ports of the current node
             distributePorts(node);
-            if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+            if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
             }
             // update the output port ranks after reordering
             consumedRank += calculatePortRanks(node, consumedRank, PortType.OUTPUT);
@@ -176,7 +176,7 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      *            node whose ports shall be sorted
      */
     private void distributePorts(final LNode node, final Iterable<LPort> ports) {
-        if (!node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+        if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             inLayerPorts.clear();
             iteratePortsAndCollectInLayerPorts(node, ports);
 

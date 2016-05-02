@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.counting.InLayerEdgeAllCrossingsCounter;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.junit.Test;
 
@@ -201,7 +201,7 @@ public class InLayerEdgeAllCrossingsCounterTest extends InLayerEdgeTestGraphCrea
         LGraph graph = getMoreComplexInLayerGraph();
         Layer secondLayer = graph.getLayers().get(1);
         for (LNode lNode : secondLayer) {
-            lNode.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+            lNode.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         }
         initCrossingCounterForLayerIndex(1);
 

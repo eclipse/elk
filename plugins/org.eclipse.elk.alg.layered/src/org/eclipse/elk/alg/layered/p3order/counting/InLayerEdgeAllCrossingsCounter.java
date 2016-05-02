@@ -19,7 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.InLayerEdgeTwoNodeCrossingCounter;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.BoundType;
@@ -120,7 +120,7 @@ public class InLayerEdgeAllCrossingsCounter {
      */
     protected boolean portOrderIsFixedFor(final LNode node) {
         return assumeFixedPortOrder || assumeCompoundNodePortOrderFixed && hasNestedGraph(node)
-                || node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+                || node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private boolean hasNestedGraph(final LNode node) {
