@@ -29,256 +29,6 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
     private CrossingsCounter counter;
     private LNode[][] order;
 
-    @Test
-    public void countInLayerCrossingsOnBothSides_ignoresInBetweenLayerEdges() {
-        getCrossFormedGraph();
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(0));
-    }
-
-    /**
-     * <pre>
-     *   --*
-     *   |
-     * *-+-*-*
-     *   |
-     *   --*
-     * .
-     * </pre>
-     *
-     * @return graph of the form above
-     */
-    @Test
-    public void countInLayerCrossingsOnBothSides_countInLayerEdgeWithNormalEdgeCrossing() {
-        LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
-        LNode[] middleNodes = addNodesToLayer(3, makeLayer(getGraph()));
-        LNode rightNode = addNodeToLayer(makeLayer(getGraph()));
-        eastWestEdgeFromTo(middleNodes[1], rightNode);
-        eastWestEdgeFromTo(leftNode, middleNodes[1]);
-        addInLayerEdge(middleNodes[0], middleNodes[2], PortSide.WEST);
-        setUpIds();
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(1));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_crossingsWhenSwitched() {
-        getInLayerEdgesGraphWhichResultsInCrossingsWhenSwitched();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        order = order();
-        assertThat(counter.countInLayerCrossingsOnBothSides(order[1]), is(0));
-
-        switchOrder(1, 2, 1);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order[1]), is(1));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_fixedPortOrderNodeToNode() {
-        getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(1));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_fixedPortOrderNodeToNodeLowerNode() {
-        getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(1));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_fixedPortOrderCrossingsAndNormalEdgeCrossings() {
-        getInLayerEdgesWithFixedPortOrderAndNormalEdgeCrossings();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        order = order();
-        assertThat(counter.countInLayerCrossingsOnBothSides(order[1]), is(2));
-
-        switchOrder(0, 1, 1);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order[1]), is(1));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_ignoresSelfLoops() {
-        getCrossWithManySelfLoopsGraph();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(0));
-    }
-
-    /**
-     * <pre>
-     *      *
-     *    //
-     * *-++--*
-     *   || ____
-     *   || |  |
-     *    \\|  |
-     * *----|__|
-     * </pre>
-     */ // TODO-alan this is annoying.
-    @Test
-    public void countInLayerCrossingsOnBothSides_ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLower() {
-        Layer[] layer = makeLayers(2);
-        LNode[] leftNodes = addNodesToLayer(2, layer[0]);
-        LNode[] rightNodes = addNodesToLayer(3, layer[1]);
-
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[2]);
-        addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
-        addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
-
-        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, true, null);
-        gd.portDistributor().distributePortsWhileSweeping(order(), 1, true);
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(2));
-
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_crossingsOnBothSides() {
-        getInLayerCrossingsOnBothSides();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(2));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_fixedPortOrderInLayerNoCrossings() {
-        getFixedPortOrderInLayerEdgesDontCrossEachOther();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[0]), is(0));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_fixedPortOrderInLayerWithCrossings() {
-        getFixedPortOrderInLayerEdgesWithCrossings();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[0]), is(1));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_oneLayerInLayerSwitchWouldReduceCrossings() {
-        getOneLayerWithInLayerCrossings();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[0]), is(1));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_oneLayerInLayerNowCrossingReduction() {
-        getInLayerOneLayerNoCrossings();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[0]), is(0));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_oneNode() {
-        getOneNodeGraph();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[0]), is(0));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_moreComplex() {
-        getMoreComplexInLayerGraph();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(6));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_downwardInLayerEdgesOnLowerNode() {
-        getInLayerEdgesFixedPortOrderInLayerAndInBetweenLayerCrossing();
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(2));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_moreThanOneEdgeIntoAPort() {
-        getInLayerEdgesMultipleEdgesIntoSinglePort();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(2));
-    }
-
-    /**
-     * <pre>
-     *  --* Two edges in wrong order from the same port
-     *  |/
-     *  ||
-     *  |\
-     *  | *
-     *  \
-     *   *
-     * .
-     * </pre>
-     *
-     * @return Graph of the form above.
-     */
-    @Test
-    public void countInLayerCrossingsOnBothSides_moreThanOneEdgeOutOfAPort() {
-        LNode[] nodes = addNodesToLayer(3, makeLayer(getGraph()));
-
-        LPort port = addPortOnSide(nodes[0], PortSide.WEST);
-
-        addInLayerEdge(port, nodes[1]);
-        addInLayerEdge(port, nodes[2]);
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[0]), is(0));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_givenMultipleInBetweenLayerIntoNodeNoFixedPortOrder_Crossings() {
-        multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(2));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_oneLayerShouldNotCauseCrossings() {
-        getInLayerOneLayerNoCrossings();
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[0]), is(0));
-    }
-
-    @Test
-    public void countInLayerCrossingsOnBothSides_ignoreSelfLoops() {
-        getCrossWithManySelfLoopsGraph();
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
-        assertThat(counter.countInLayerCrossingsOnBothSides(order()[1]), is(0));
-    }
 
     /**
      * <pre>
@@ -293,8 +43,6 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         LNode right = addNodeToLayer(makeLayer(getGraph()));
         eastWestEdgeFromTo(left, right);
         eastWestEdgeFromTo(left, right);
-        setFixedOrderConstraint(right);
-        setFixedOrderConstraint(left);
 
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
 
@@ -315,9 +63,41 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         return getGraph().toNodeArray();
     }
 
+    /**
+     * Constructs a cross formed graph with two edges between the corners
+     *
+     * <pre>
+     * *    *
+     *  \\//
+     *  //\\
+     * *    *
+     * .
+     * </pre>
+     */
     @Test
     public void countCrossingsBetweenLayers_crossFormedMultipleEdgesBetweenSameNodes() {
-        getMultipleEdgesBetweenSameNodesGraph();
+        Layer leftLayer = makeLayer(graph);
+        Layer rightLayer = makeLayer(graph);
+
+        LNode topLeft = addNodeToLayer(leftLayer);
+        LNode bottomLeft = addNodeToLayer(leftLayer);
+        LNode topRight = addNodeToLayer(rightLayer);
+        LNode bottomRight = addNodeToLayer(rightLayer);
+
+        LPort topLeftTopPort = addPortOnSide(topLeft, PortSide.EAST);
+        LPort topLeftBottomPort = addPortOnSide(topLeft, PortSide.EAST);
+        LPort bottomRightBottomPort = addPortOnSide(bottomRight, PortSide.WEST);
+        LPort bottomRightTopPort = addPortOnSide(bottomRight, PortSide.WEST);
+        addEdgeBetweenPorts(topLeftTopPort, bottomRightTopPort);
+        addEdgeBetweenPorts(topLeftBottomPort, bottomRightBottomPort);
+
+        LPort bottomLeftTopPort = addPortOnSide(bottomLeft, PortSide.EAST);
+        LPort bottomLeftBottomPort = addPortOnSide(bottomLeft, PortSide.EAST);
+        LPort topRightBottomPort = addPortOnSide(topRight, PortSide.WEST);
+        LPort topRightTopPort = addPortOnSide(topRight, PortSide.WEST);
+        addEdgeBetweenPorts(bottomLeftTopPort, topRightTopPort);
+        addEdgeBetweenPorts(bottomLeftBottomPort, topRightBottomPort);
+
         GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, true, null);
         gd.portDistributor().distributePortsWhileSweeping(order(), 1, true);
 

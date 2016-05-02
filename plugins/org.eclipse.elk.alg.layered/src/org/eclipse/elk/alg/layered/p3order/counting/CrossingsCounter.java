@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order.counting;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.Iterator;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Iterables;
@@ -31,12 +32,12 @@ import com.google.common.collect.Lists;
 public final class CrossingsCounter {
     private final int[] portPositions;
     private FenwickTree indexTree;
-    private boolean countBothInAndBetweenLayerCrossings;
     private int numPorts;
+    final Deque<Integer> ends;
 
     public CrossingsCounter(final int[] portPositions) {
         this.portPositions = portPositions;
-
+        ends = new ArrayDeque<>();
     }
 
     /*
@@ -65,22 +66,9 @@ public final class CrossingsCounter {
      */
     public int countInLayerCrossingsOnSide(final LNode[] nodes, final PortSide side) {
         Iterable<LNode> nodesIter = () -> Iterators.forArray(nodes);
-        countBothInAndBetweenLayerCrossings = false;
         numPorts = setPortPositions(side, nodesIter, 0);
         indexTree = new FenwickTree(numPorts);
         return addEdgesAndCountCrossingsOn(side, nodesIter);
-    }
-
-    /**
-     * Only count in-layer crossings on both sides of a layer.
-     *
-     * @param nodes
-     *            order of nodes in layer in question.
-     * @return number of crossings.
-     */
-    public int countInLayerCrossingsOnBothSides(final LNode[] nodes) {
-        return countInLayerCrossingsOnSide(nodes, PortSide.EAST)
-                + countInLayerCrossingsOnSide(nodes, PortSide.WEST);
     }
 
     /*
@@ -112,7 +100,6 @@ public final class CrossingsCounter {
      */
     public int countCrossingsBetweenLayers(final LNode[] leftLayerNodes,
             final LNode[] rightLayerNodes) {
-        countBothInAndBetweenLayerCrossings = true;
 
         Iterable<LNode> leftLayerIter = () -> Iterators.forArray(leftLayerNodes);
         Iterable<LNode> rightLayerReverseIter = () -> descendingIterator(rightLayerNodes);
@@ -139,7 +126,6 @@ public final class CrossingsCounter {
      */
     public void initForCountingBetweenOnSide(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes,
             final PortSide sideToCountOn) {
-        countBothInAndBetweenLayerCrossings = true;
 
         Iterable<LPort> ports = sideToCountOn == PortSide.EAST
                 ? counterClockWisePorts(leftLayerNodes, rightLayerNodes)
@@ -182,7 +168,7 @@ public final class CrossingsCounter {
     public int countCrossingsBetweenPorts(final LPort portOne, final LPort portTwo) {
         assert portOne.getSide() == portTwo.getSide();
         indexTree = new FenwickTree(numPorts);
-        return countWithFixedPortOrder(Lists.newArrayList(portOne, portTwo));
+        return countCrossingsOnPorts(Lists.newArrayList(portOne, portTwo));
     }
 
     /**
@@ -197,7 +183,7 @@ public final class CrossingsCounter {
         Iterable<LPort> ports = Iterables.concat(PortIterable.inCounterClockwiseOrder(upperNode, side),
                 PortIterable.inCounterClockwiseOrder(lowerNode, side));
         indexTree = new FenwickTree(numPorts);
-        return countWithFixedPortOrder(ports);
+        return countCrossingsOnPorts(ports);
     }
 
     /**
@@ -218,8 +204,7 @@ public final class CrossingsCounter {
     private int setPortPositions(final PortSide side, final Iterable<LNode> layer, final int startPos) {
         int currentPortPos = startPos;
         for (LNode node : layer) {
-            Iterable<LPort> ports = countBothInAndBetweenLayerCrossings ? node.getPorts(side)
-                    : PortIterable.inNorthSouthEastWestOrder(node, side);
+            Iterable<LPort> ports = node.getPorts(side);
             for (LPort port : ports) {
                 portPositions[port.id] = currentPortPos++;
             }
@@ -227,61 +212,34 @@ public final class CrossingsCounter {
         return currentPortPos;
     }
 
-    private int addEdgesAndCountCrossingsOn(final PortSide side, final Iterable<LNode> layer) {
+    private int addEdgesAndCountCrossingsOn(final PortSide side, final Iterable<LNode> nodes) {
         int crossings = 0;
-
-        for (LNode node : layer) {
-            Iterable<LPort> ports =
-                    countBothInAndBetweenLayerCrossings ? PortIterable.inClockwiseOrder(node, side)
-                    : PortIterable.inNorthSouthEastWestOrder(node, side);
-            crossings += countWithFixedPortOrder(ports);
+        for (LNode node : nodes) {
+            crossings += countCrossingsOnPorts(node.getPorts(side));
         }
         return crossings;
     }
 
-    private int countWithFixedPortOrder(final Iterable<LPort> ports) {
+    private int countCrossingsOnPorts(final Iterable<LPort> ports) {
         int crossings = 0;
         for (LPort port : ports) {
             // First get crossings for all edges
-            indexTree.removeAll(positionOf(port));
-            crossings += getCrossingsOfEdges(port);
-
-            // Then add edges
-            int sizeBeforeHand = indexTree.size();
-            int numBetweenLayerEdges = addTargetsCountingBetweenLayerEdges(port);
-            crossings += numBetweenLayerEdges * sizeBeforeHand;
-        }
-        return crossings;
-    }
-
-    private int getCrossingsOfEdges(final LPort port) {
-        int crossings = 0;
-        for (LEdge edge : port.getConnectedEdges()) {
-            if (isSelfLoop(edge)) {
-                continue;
-            }
-            if ((countBothInAndBetweenLayerCrossings || isInLayer(edge)) && pointsDownward(edge, port)) {
-                crossings += indexTree.sumBefore(positionOf(otherEndOf(edge, port)));
-            }
-        }
-        return crossings;
-    }
-
-    private int addTargetsCountingBetweenLayerEdges(final LPort port) {
-        int numBetweenLayerEdges = 0;
-        for (LEdge edge : port.getConnectedEdges()) {
-            if (isSelfLoop(edge)) {
-                continue;
-            }
-            if (countBothInAndBetweenLayerCrossings || isInLayer(edge)) {
-                if (pointsDownward(edge, port)) {
-                    indexTree.add(positionOf(otherEndOf(edge, port)));
+            for (LEdge edge : port.getConnectedEdges()) {
+                if (isSelfLoop(edge)) {
+                    continue;
                 }
-            } else {
-                numBetweenLayerEdges++;
+                if (pointsDownward(edge, port)) {
+                    int endPosition = positionOf(otherEndOf(edge, port));
+                    crossings += indexTree.sumBefore(endPosition);
+                    ends.push(endPosition);
+                }
+            }
+            // Then add end points.
+            while (!ends.isEmpty()) {
+                indexTree.add(ends.pop());
             }
         }
-        return numBetweenLayerEdges;
+        return crossings;
     }
 
     private boolean pointsDownward(final LEdge edge, final LPort port) {
@@ -294,12 +252,6 @@ public final class CrossingsCounter {
 
     private int positionOf(final LPort port) {
         return portPositions[port.id];
-    }
-
-    private boolean isInLayer(final LEdge edge) {
-        Layer sourceLayer = edge.getSource().getNode().getLayer();
-        Layer targetLayer = edge.getTarget().getNode().getLayer();
-        return sourceLayer == targetLayer;
     }
 
     private LPort otherEndOf(final LEdge edge, final LPort fromPort) {
