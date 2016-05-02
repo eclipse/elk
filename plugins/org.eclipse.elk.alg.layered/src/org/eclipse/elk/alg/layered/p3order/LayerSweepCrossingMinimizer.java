@@ -83,7 +83,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         }
 
         boolean processAllGraphsRecursively =
-                layeredGraph.getProperty(LayeredOptions.BOTTOM_UP_CROSSING_MINIMIZATION);
+                layeredGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP);
 
         Iterable<GraphData> graphsToSweepOn =
                 initialize(processAllGraphsRecursively, layeredGraph);

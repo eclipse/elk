@@ -348,6 +348,34 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS}.
+   */
+  private final static float CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS_DEFAULT = 0f;
+  
+  /**
+   * How likely it is to use cross-hierarchy (1) vs bottom-up (-1).
+   */
+  public final static IProperty<Float> CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS = new Property<Float>(
+            "org.eclipse.elk.layered.crossingMinimization.hierarchicalSweepiness",
+            CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS_DEFAULT,
+            null,
+            null);
+  
+  /**
+   * Default value for {@link #CROSSING_MINIMIZATION_BOTTOM_UP}.
+   */
+  private final static boolean CROSSING_MINIMIZATION_BOTTOM_UP_DEFAULT = false;
+  
+  /**
+   * Enforce bottom up layout
+   */
+  public final static IProperty<Boolean> CROSSING_MINIMIZATION_BOTTOM_UP = new Property<Boolean>(
+            "org.eclipse.elk.layered.crossingMinimization.bottomUp",
+            CROSSING_MINIMIZATION_BOTTOM_UP_DEFAULT,
+            null,
+            null);
+  
+  /**
    * Default value for {@link #CROSSING_MINIMIZATION_GREEDY_SWITCH}.
    */
   private final static GreedySwitchType CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT = GreedySwitchType.TWO_SIDED;
@@ -969,6 +997,32 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.klay.layered.crossMin"
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layered.crossingMinimization.hierarchicalSweepiness",
+        "crossingMinimization",
+        "Hierarchical Sweepiness",
+        "How likely it is to use cross-hierarchy (1) vs bottom-up (-1).",
+        CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS_DEFAULT,
+        null,
+        null,
+        LayoutOptionData.Type.FLOAT,
+        float.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layered.crossingMinimization.bottomUp",
+        "crossingMinimization",
+        "Always bottom up",
+        "Enforce bottom up layout",
+        CROSSING_MINIMIZATION_BOTTOM_UP_DEFAULT,
+        null,
+        null,
+        LayoutOptionData.Type.BOOLEAN,
+        boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layered.crossingMinimization.greedySwitch",

@@ -131,7 +131,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
         northCardinalities = new int[layer.length];
         southCardinalities = new int[layer.length];
         edgesRoutedOrthogonally = layer[0].getGraph()
-                .getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
+                .getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
         initPositionsAndCardinalities();
     }
 

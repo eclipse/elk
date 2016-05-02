@@ -256,7 +256,7 @@ public class GraphData {
             }
         }
 
-        float boundary = lGraph.getProperty(LayeredOptions.HIERARCHICAL_SWEEPINESS);
+        float boundary = lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
         double allPaths = pathsToRandom + pathsToHierarchical;
         double normalized = allPaths == 0 ? Double.MAX_VALUE : (pathsToRandom - pathsToHierarchical) / allPaths;
         return normalized > boundary;
