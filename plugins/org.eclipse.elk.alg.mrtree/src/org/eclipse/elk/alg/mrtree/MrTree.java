@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.mrtree.p1treeify.DFSTreeifyer;
 import org.eclipse.elk.alg.mrtree.p2order.OrderBalance;
 import org.eclipse.elk.alg.mrtree.p3place.NodePlacer;
 import org.eclipse.elk.alg.mrtree.p4route.EdgeRouter;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -259,7 +259,7 @@ public final class MrTree {
         }
         monitor.begin("Layout", algorithm.size());
 
-        if (graph.getProperty(CoreOptions.DEBUG_MODE)) {
+        if (graph.getProperty(MrTreeOptions.DEBUG_MODE)) {
             // Debug Mode!
             // Prints the algorithm configuration and outputs the whole graph to a file
             // before each slot execution

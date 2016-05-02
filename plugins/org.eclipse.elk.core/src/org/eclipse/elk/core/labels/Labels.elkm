@@ -1,0 +1,30 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Christoph Daniel Schulze - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.core.^labels
+
+/**
+ * Label management definitions of the Eclipse Layout Kernel.
+ */
+bundle {
+	label "ELK Label Management"
+	metadataClass LabelManagementOptions
+	idPrefix org.eclipse.elk.^labels
+}
+
+programmatic option labelManager: ILabelManager {
+    label "Label Manager"
+    description
+        "The label manager responsible for a given part of the graph. A label manager can either be
+         attached to a compound node (in which case it is responsible for all labels inside) or to
+         specific labels. The label manager can then be called by layout algorithms to modify labels
+         that are too wide to try and shorten them to a given target width."
+    targets parents, labels
+}

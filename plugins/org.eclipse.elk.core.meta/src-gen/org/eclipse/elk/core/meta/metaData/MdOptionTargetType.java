@@ -20,14 +20,14 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Md Property Target Type</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Md Option Target Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdPropertyTargetType()
+ * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOptionTargetType()
  * @model
  * @generated
  */
-public enum MdPropertyTargetType implements Enumerator
+public enum MdOptionTargetType implements Enumerator
 {
   /**
    * The '<em><b>Parents</b></em>' literal object.
@@ -155,13 +155,13 @@ public enum MdPropertyTargetType implements Enumerator
   public static final int LABELS_VALUE = 4;
 
   /**
-   * An array of all the '<em><b>Md Property Target Type</b></em>' enumerators.
+   * An array of all the '<em><b>Md Option Target Type</b></em>' enumerators.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private static final MdPropertyTargetType[] VALUES_ARRAY =
-    new MdPropertyTargetType[]
+  private static final MdOptionTargetType[] VALUES_ARRAY =
+    new MdOptionTargetType[]
     {
       PARENTS,
       NODES,
@@ -171,26 +171,26 @@ public enum MdPropertyTargetType implements Enumerator
     };
 
   /**
-   * A public read-only list of all the '<em><b>Md Property Target Type</b></em>' enumerators.
+   * A public read-only list of all the '<em><b>Md Option Target Type</b></em>' enumerators.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static final List<MdPropertyTargetType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+  public static final List<MdOptionTargetType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
   /**
-   * Returns the '<em><b>Md Property Target Type</b></em>' literal with the specified literal value.
+   * Returns the '<em><b>Md Option Target Type</b></em>' literal with the specified literal value.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param literal the literal.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-  public static MdPropertyTargetType get(String literal)
+  public static MdOptionTargetType get(String literal)
   {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
-      MdPropertyTargetType result = VALUES_ARRAY[i];
+      MdOptionTargetType result = VALUES_ARRAY[i];
       if (result.toString().equals(literal))
       {
         return result;
@@ -200,18 +200,18 @@ public enum MdPropertyTargetType implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Md Property Target Type</b></em>' literal with the specified name.
+   * Returns the '<em><b>Md Option Target Type</b></em>' literal with the specified name.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param name the name.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-  public static MdPropertyTargetType getByName(String name)
+  public static MdOptionTargetType getByName(String name)
   {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
-      MdPropertyTargetType result = VALUES_ARRAY[i];
+      MdOptionTargetType result = VALUES_ARRAY[i];
       if (result.getName().equals(name))
       {
         return result;
@@ -221,14 +221,14 @@ public enum MdPropertyTargetType implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Md Property Target Type</b></em>' literal with the specified integer value.
+   * Returns the '<em><b>Md Option Target Type</b></em>' literal with the specified integer value.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the integer value.
    * @return the matching enumerator or <code>null</code>.
    * @generated
    */
-  public static MdPropertyTargetType get(int value)
+  public static MdOptionTargetType get(int value)
   {
     switch (value)
     {
@@ -268,7 +268,7 @@ public enum MdPropertyTargetType implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
-  private MdPropertyTargetType(int value, String name, String literal)
+  private MdOptionTargetType(int value, String name, String literal)
   {
     this.value = value;
     this.name = name;
@@ -317,4 +317,4 @@ public enum MdPropertyTargetType implements Enumerator
     return literal;
   }
   
-} //MdPropertyTargetType
+} //MdOptionTargetType

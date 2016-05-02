@@ -21,9 +21,9 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
 
@@ -76,7 +76,7 @@ public final class EndLabelProcessor implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("End label placement", 1);
         
-        float labelSpacing = layeredGraph.getProperty(CoreOptions.SPACING_LABEL);
+        float labelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_LABEL);
         
         // Initialize the offset maps
         northOffset = Maps.newHashMap();
@@ -88,10 +88,10 @@ public final class EndLabelProcessor implements ILayoutProcessor {
                 for (LEdge edge : node.getOutgoingEdges()) {
                     for (LLabel label : edge.getLabels()) {
                         // Only consider end labels
-                        if (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)
+                        if (label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT)
                                 == EdgeLabelPlacement.TAIL
                                 ||
-                            label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)
+                            label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT)
                                 == EdgeLabelPlacement.HEAD) {
                             
                             placeEndLabel(node, edge, label, labelSpacing);
@@ -118,9 +118,9 @@ public final class EndLabelProcessor implements ILayoutProcessor {
         // Get the nearest port (source port for tail labels, target port for head labels)
         LPort port = null;
         
-        if (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.TAIL) {
+        if (label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.TAIL) {
             port = edge.getSource();
-        } else if (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD) {
+        } else if (label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD) {
             port = edge.getTarget();
         }
         

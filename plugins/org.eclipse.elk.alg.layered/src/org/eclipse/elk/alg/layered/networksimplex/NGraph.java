@@ -16,9 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KLabel;
@@ -49,7 +49,7 @@ public class NGraph {
     public void writeDebugGraph(final String filePath) {
         
         KNode root = ElkUtil.createInitializedNode();
-        root.getData(KLayoutData.class).setProperty(CoreOptions.DIRECTION, Direction.DOWN);
+        root.getData(KLayoutData.class).setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
         Map<NNode, KNode> nodeMap = Maps.newHashMap();
         
         for (NNode nNode : nodes) {

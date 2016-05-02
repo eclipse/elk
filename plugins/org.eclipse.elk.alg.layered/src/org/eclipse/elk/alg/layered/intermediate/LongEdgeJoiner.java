@@ -18,12 +18,11 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -158,13 +157,13 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
             
             // Join their junction points
             KVectorChain survivingJunctionPoints = survivingEdge.getProperty(
-                    CoreOptions.JUNCTION_POINTS);
+                    LayeredOptions.JUNCTION_POINTS);
             KVectorChain droppedJunctionsPoints = droppedEdge.getProperty(
-                    CoreOptions.JUNCTION_POINTS);
+                    LayeredOptions.JUNCTION_POINTS);
             if (droppedJunctionsPoints != null) {
                 if (survivingJunctionPoints == null) {
                     survivingJunctionPoints = new KVectorChain();
-                    survivingEdge.setProperty(CoreOptions.JUNCTION_POINTS,
+                    survivingEdge.setProperty(LayeredOptions.JUNCTION_POINTS,
                             survivingJunctionPoints);
                 }
                 for (KVector jp : droppedJunctionsPoints) {

@@ -17,9 +17,9 @@ import org.eclipse.elk.core.meta.metaData.MdBundle;
 import org.eclipse.elk.core.meta.metaData.MdCategory;
 import org.eclipse.elk.core.meta.metaData.MdGroup;
 import org.eclipse.elk.core.meta.metaData.MdModel;
-import org.eclipse.elk.core.meta.metaData.MdProperty;
-import org.eclipse.elk.core.meta.metaData.MdPropertyDependency;
-import org.eclipse.elk.core.meta.metaData.MdPropertySupport;
+import org.eclipse.elk.core.meta.metaData.MdOption;
+import org.eclipse.elk.core.meta.metaData.MdOptionDependency;
+import org.eclipse.elk.core.meta.metaData.MdOptionSupport;
 import org.eclipse.elk.core.meta.metaData.MetaDataPackage;
 import org.eclipse.elk.core.meta.services.MetaDataGrammarAccess;
 import org.eclipse.emf.ecore.EObject;
@@ -104,14 +104,14 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 			case MetaDataPackage.MD_MODEL:
 				sequence_MdModel(context, (MdModel) semanticObject); 
 				return; 
-			case MetaDataPackage.MD_PROPERTY:
-				sequence_MdProperty(context, (MdProperty) semanticObject); 
+			case MetaDataPackage.MD_OPTION:
+				sequence_MdOption(context, (MdOption) semanticObject); 
 				return; 
-			case MetaDataPackage.MD_PROPERTY_DEPENDENCY:
-				sequence_MdPropertyDependency(context, (MdPropertyDependency) semanticObject); 
+			case MetaDataPackage.MD_OPTION_DEPENDENCY:
+				sequence_MdOptionDependency(context, (MdOptionDependency) semanticObject); 
 				return; 
-			case MetaDataPackage.MD_PROPERTY_SUPPORT:
-				sequence_MdPropertySupport(context, (MdPropertySupport) semanticObject); 
+			case MetaDataPackage.MD_OPTION_SUPPORT:
+				sequence_MdOptionSupport(context, (MdOptionSupport) semanticObject); 
 				return; 
 			}
 		else if (epackage == TypesPackage.eINSTANCE)
@@ -369,10 +369,17 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *         provider=JvmTypeReference 
 	 *         parameter=ID? 
 	 *         (
-	 *             (label=STRING | description=STRING | documentation=STRING | category=[MdCategory|QualifiedName] | previewImage=Path)? 
+	 *             (
+	 *                 label=STRING | 
+	 *                 targetClass=QualifiedName | 
+	 *                 description=STRING | 
+	 *                 documentation=STRING | 
+	 *                 category=[MdCategory|QualifiedName] | 
+	 *                 previewImage=Path
+	 *             )? 
 	 *             (supportedFeatures+=MdGraphFeature supportedFeatures+=MdGraphFeature*)?
 	 *         )+ 
-	 *         supportedOptions+=MdPropertySupport*
+	 *         supportedOptions+=MdOptionSupport*
 	 *     )
 	 */
 	protected void sequence_MdAlgorithm(ISerializationContext context, MdAlgorithm semanticObject) {
@@ -408,11 +415,11 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	/**
 	 * Contexts:
 	 *     MdBundleMember returns MdGroup
-	 *     MdGroupOrProperty returns MdGroup
+	 *     MdGroupOrOption returns MdGroup
 	 *     MdGroup returns MdGroup
 	 *
 	 * Constraint:
-	 *     (name=ID children+=MdGroupOrProperty*)
+	 *     (name=ID children+=MdGroupOrOption*)
 	 */
 	protected void sequence_MdGroup(ISerializationContext context, MdGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -433,33 +440,33 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     MdPropertyDependency returns MdPropertyDependency
+	 *     MdOptionDependency returns MdOptionDependency
 	 *
 	 * Constraint:
-	 *     (target=[MdProperty|QualifiedName] value=XExpression?)
+	 *     (target=[MdOption|QualifiedName] value=XExpression?)
 	 */
-	protected void sequence_MdPropertyDependency(ISerializationContext context, MdPropertyDependency semanticObject) {
+	protected void sequence_MdOptionDependency(ISerializationContext context, MdOptionDependency semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Contexts:
-	 *     MdPropertySupport returns MdPropertySupport
+	 *     MdOptionSupport returns MdOptionSupport
 	 *
 	 * Constraint:
-	 *     (property=[MdProperty|QualifiedName] (value=XExpression duplicated?='duplicated'?)? documentation=STRING?)
+	 *     (option=[MdOption|QualifiedName] value=XExpression? documentation=STRING?)
 	 */
-	protected void sequence_MdPropertySupport(ISerializationContext context, MdPropertySupport semanticObject) {
+	protected void sequence_MdOptionSupport(ISerializationContext context, MdOptionSupport semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Contexts:
-	 *     MdBundleMember returns MdProperty
-	 *     MdGroupOrProperty returns MdProperty
-	 *     MdProperty returns MdProperty
+	 *     MdBundleMember returns MdOption
+	 *     MdGroupOrOption returns MdOption
+	 *     MdOption returns MdOption
 	 *
 	 * Constraint:
 	 *     (
@@ -476,13 +483,13 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *                 lowerBound=XExpression | 
 	 *                 upperBound=XExpression
 	 *             )? 
-	 *             (targets+=MdPropertyTargetType targets+=MdPropertyTargetType*)? 
+	 *             (targets+=MdOptionTargetType targets+=MdOptionTargetType*)? 
 	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)?
 	 *         )+ 
-	 *         dependencies+=MdPropertyDependency*
+	 *         dependencies+=MdOptionDependency*
 	 *     )
 	 */
-	protected void sequence_MdProperty(ISerializationContext context, MdProperty semanticObject) {
+	protected void sequence_MdOption(ISerializationContext context, MdOption semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

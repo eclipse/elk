@@ -17,7 +17,7 @@ import org.eclipse.elk.core.options.EdgeRouting
 
 bundle {
 	label "Graphviz"
-	class layouter.GraphvizOptions
+	metadataClass layouter.GraphvizMetaDataProvider
 	idPrefix org.eclipse.elk.graphviz
 }
 
@@ -29,6 +29,7 @@ algorithm dot(GraphvizLayoutProvider#DOT) {
 		length. Edges are routed as spline curves and are thus drawn very smoothly. This algorithm
 		is very suitable for state machine and activity diagrams, where the direction of edges has
 		an important role."
+	metadataClass layouter.DotOptions
 	category org.eclipse.elk.layered
 	features self_loops, multi_edges, edge_labels, compound, clusters
 	preview  images/dot.png
@@ -56,6 +57,7 @@ algorithm neato(GraphvizLayoutProvider#NEATO) {
 		equivalent to statistical multi-dimensional scaling. The solution is achieved using
 		stress majorization, though the older Kamada-Kawai algorithm, using steepest descent, is
 		also available."
+    metadataClass layouter.NeatoOptions
 	category org.eclipse.elk.force
 	features self_loops, multi_edges, edge_labels
 	preview  images/neato.png
@@ -85,6 +87,7 @@ algorithm fdp(GraphvizLayoutProvider#FDP) {
 		"Spring model layouts similar to those of Neato, but does this by reducing forces rather
 		than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a
 		multigrid solver that handles larger graphs and clustered undirected graphs."
+    metadataClass layouter.FdpOptions
 	category org.eclipse.elk.force
 	features self_loops, multi_edges, edge_labels, clusters
 	preview  images/fdp.png
@@ -112,6 +115,7 @@ algorithm twopi(GraphvizLayoutProvider#TWOPI) {
 		"Radial layouts, after Wills '97. The nodes are placed on concentric circles depending on
 		their distance from a given root node. The algorithm is designed to handle not only small
 		graphs, but also very large ones."
+    metadataClass layouter.TwopiOptions
 	category org.eclipse.elk.tree
 	features self_loops, multi_edges, edge_labels
 	preview  images/twopi.png
@@ -136,6 +140,7 @@ algorithm circo(GraphvizLayoutProvider#CIRCO) {
 		biconnected components and arranges each component in a circle, trying to minimize the
 		number of crossings inside the circle. This is suitable for certain diagrams of multiple
 		cyclic structures such as certain telecommunications networks."
+    metadataClass layouter.CircoOptions
 	category org.eclipse.elk.circle
 	features self_loops, multi_edges, edge_labels
 	preview  images/circo.png

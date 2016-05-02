@@ -231,7 +231,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
     }
 
     private boolean fixedPortOrderOn(final LNode node) {
-        return node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+        return node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private boolean hasPortOnSide(final LNode node, final PortSide side) {

@@ -19,11 +19,11 @@ import org.eclipse.elk.alg.layered.p1cycles.CycleBreakingStrategy
 import org.eclipse.elk.alg.layered.p2layers.LayeringStrategy
 import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy
 import org.eclipse.elk.alg.layered.p4nodes.NodePlacementStrategy
+import org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
-import org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -43,18 +43,19 @@ algorithm layered(LayeredLayoutProvider) {
 		diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
 		compound graphs with cross-hierarchy edges is supported when the respective option is
 		activated on the top level."
+	metadataClass properties.LayeredOptions
 	category org.eclipse.elk.layered
 	features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
 	preview images/layered.png
-	supports org.eclipse.elk.spacing.node = 20 duplicated
-	supports org.eclipse.elk.spacing.border = 12 duplicated
+	supports org.eclipse.elk.spacing.node = 20
+	supports org.eclipse.elk.spacing.border = 12
 	supports org.eclipse.elk.spacing.port
 	supports org.eclipse.elk.spacing.^label
-	supports org.eclipse.elk.priority = 0 duplicated
-	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL duplicated
-	supports org.eclipse.elk.port.borderOffset = 0 duplicated
-	supports org.eclipse.elk.randomSeed = 1 duplicated
-	supports org.eclipse.elk.aspectRatio = 1.6f duplicated
+	supports org.eclipse.elk.priority = 0
+	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
+	supports org.eclipse.elk.port.borderOffset = 0
+	supports org.eclipse.elk.randomSeed = 1
+	supports org.eclipse.elk.aspectRatio = 1.6f
 	supports org.eclipse.elk.noLayout
 	supports org.eclipse.elk.portConstraints
 	supports org.eclipse.elk.port.side
@@ -67,7 +68,7 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.insideSelfLoops.yo
 	supports org.eclipse.elk.nodeSize.constraints
 	supports org.eclipse.elk.nodeSize.options
-	supports org.eclipse.elk.direction = Direction.RIGHT
+	supports org.eclipse.elk.direction = Direction.UNDEFINED
 	supports org.eclipse.elk.nodeLabels.placement
 	supports org.eclipse.elk.portLabels.placement
 	supports org.eclipse.elk.portAlignment.basic = PortAlignment.JUSTIFIED
@@ -76,9 +77,10 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.portAlignment.west
 	supports org.eclipse.elk.portAlignment.east
 	supports org.eclipse.elk.alg.layered.spacing.edgeNodeSpacingFactor
-	supports org.eclipse.elk.alg.layered.spacing.edgeNodeSpacingFactor
+    supports org.eclipse.elk.alg.layered.spacing.edgeSpacingFactor
 	supports unnecessaryBendpoints
 	supports org.eclipse.elk.alg.layered.layering.strategy
+	supports org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
 	supports thoroughness
 	supports org.eclipse.elk.alg.layered.layering.layerConstraint
 	supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
@@ -104,6 +106,27 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.alg.layered.highDegreeNodes.treatment
 	supports org.eclipse.elk.alg.layered.highDegreeNodes.threshold
 	supports org.eclipse.elk.alg.layered.highDegreeNodes.treeHeight
+	supports org.eclipse.elk.nodeSize.minimum
+	supports org.eclipse.elk.nodeSize.minWidth
+	supports org.eclipse.elk.nodeSize.minHeight
+	supports org.eclipse.elk.junctionPoints
+	supports org.eclipse.elk.edge.thickness
+	supports org.eclipse.elk.edgeLabels.placement
+    supports org.eclipse.elk.port.index
+    supports org.eclipse.elk.commentBox
+    supports org.eclipse.elk.hypernode
+    supports org.eclipse.elk.port.anchor
+    supports org.eclipse.elk.partitioning.activate
+    supports org.eclipse.elk.partitioning.partition
+    supports org.eclipse.elk.alg.layered.layering.distributeNodes
+    supports org.eclipse.elk.alg.layered.layering.minWidth.upperBoundOnWidth
+    supports org.eclipse.elk.alg.layered.layering.minWidth.upperLayerEstimationScalingFactor
+    supports sausageFolding
+    supports org.eclipse.elk.position
+    supports northOrSouthPort
+    supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
+    supports edgeCenterLabelPlacementStrategy
+    supports org.eclipse.elk.margins
 }
 
 

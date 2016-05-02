@@ -467,7 +467,7 @@ public final class KlayLayered {
         List<ILayoutProcessor> algorithm = lgraph.getProperty(InternalProperties.PROCESSORS);
         float monitorProgress = 1.0f / algorithm.size();
 
-        if (lgraph.getProperty(CoreOptions.DEBUG_MODE)) {
+        if (lgraph.getProperty(LayeredOptions.DEBUG_MODE)) {
             // Debug Mode!
             // Print the algorithm configuration and output the whole graph to a file
             // before each slot execution
@@ -551,8 +551,8 @@ public final class KlayLayered {
      * @param lgraph the graph to resize.
      */
     private void resizeGraph(final LGraph lgraph) {
-        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
-        Set<SizeOptions> sizeOptions = lgraph.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
+        Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
+        Set<SizeOptions> sizeOptions = lgraph.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
         float borderSpacing = lgraph.getProperty(LayeredOptions.SPACING_BORDER);
         
         // add the border spacing to the graph size and graph offset
@@ -570,11 +570,11 @@ public final class KlayLayered {
         
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            KVector minSize = lgraph.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
+            KVector minSize = lgraph.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
             float minWidth, minHeight;
             if (minSize == null) {
-                minWidth = lgraph.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
-                minHeight = lgraph.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
+                minWidth = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH);
+                minHeight = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT);
             } else {
                 minWidth = (float) minSize.x;
                 minHeight = (float) minSize.y;

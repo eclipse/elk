@@ -30,11 +30,11 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface MdGroup extends MdGroupOrProperty
+public interface MdGroup extends MdGroupOrOption
 {
   /**
    * Returns the value of the '<em><b>Children</b></em>' containment reference list.
-   * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdGroupOrProperty}.
+   * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdGroupOrOption}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Children</em>' containment reference list isn't clear,
@@ -46,6 +46,6 @@ public interface MdGroup extends MdGroupOrProperty
    * @model containment="true"
    * @generated
    */
-  EList<MdGroupOrProperty> getChildren();
+  EList<MdGroupOrOption> getChildren();
 
 } // MdGroup

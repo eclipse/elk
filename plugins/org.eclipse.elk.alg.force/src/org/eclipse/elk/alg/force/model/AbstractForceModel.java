@@ -19,10 +19,9 @@ import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.graph.FParticle;
-import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -62,7 +61,7 @@ public abstract class AbstractForceModel {
                 DISP_BOUND_FACTOR * DISP_BOUND_FACTOR);
         
         // if interactive mode is off, randomize the layout
-        if (!fgraph.getProperty(CoreOptions.INTERACTIVE)) {
+        if (!fgraph.getProperty(ForceOptions.INTERACTIVE)) {
             double posScale = graph.getNodes().size();
             for (FNode node : fgraph.getNodes()) {
                 KVector pos = node.getPosition();

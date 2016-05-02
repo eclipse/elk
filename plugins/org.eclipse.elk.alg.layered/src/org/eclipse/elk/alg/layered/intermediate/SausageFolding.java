@@ -23,7 +23,6 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -89,7 +88,7 @@ public class SausageFolding implements ILayoutProcessor {
         //  (Klay internally always assumes left to right, however the
         //  aspect ratio is not adjusted during graph import)
         double desiredAR;
-        final Direction dir = graph.getProperty(CoreOptions.DIRECTION);
+        final Direction dir = graph.getProperty(LayeredOptions.DIRECTION);
         if (dir == Direction.LEFT || dir == Direction.RIGHT || dir == Direction.UNDEFINED) {
             desiredAR = graph.getProperty(LayeredOptions.ASPECT_RATIO).doubleValue();
         } else {
@@ -259,17 +258,17 @@ public class SausageFolding implements ILayoutProcessor {
             dummyNode.setType(NodeType.LONG_EDGE);
             
             dummyNode.setProperty(InternalProperties.ORIGIN, edge);
-            dummyNode.setProperty(CoreOptions.PORT_CONSTRAINTS,
+            dummyNode.setProperty(LayeredOptions.PORT_CONSTRAINTS,
                     PortConstraints.FIXED_POS);
             
             Layer nextLayer = layeredGraph.getLayers().get(i + 1);
             dummyNode.setLayer(nextLayer);
 
             // Set thickness of the edge
-            float thickness = edge.getProperty(CoreOptions.EDGE_THICKNESS);
+            float thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
             if (thickness < 0) {
                 thickness = 0;
-                edge.setProperty(CoreOptions.EDGE_THICKNESS, thickness);
+                edge.setProperty(LayeredOptions.EDGE_THICKNESS, thickness);
             }
             dummyNode.getSize().y = thickness;
             double portPos = Math.floor(thickness / 2);
@@ -290,7 +289,7 @@ public class SausageFolding implements ILayoutProcessor {
             // Create a dummy edge
             LEdge dummyEdge = new LEdge();
             dummyEdge.copyProperties(edge);
-            dummyEdge.setProperty(CoreOptions.JUNCTION_POINTS, null);
+            dummyEdge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
             dummyEdge.setSource(dummyOutput);
             dummyEdge.setTarget(targetPort);
 
@@ -353,7 +352,7 @@ public class SausageFolding implements ILayoutProcessor {
         dummy.setType(NodeType.LONG_EDGE);
         
         dummy.setProperty(InternalProperties.ORIGIN, edge);
-        dummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         
         layerNodeList.add(dummy);
         
@@ -372,7 +371,7 @@ public class SausageFolding implements ILayoutProcessor {
         // Connect the dummy with the original port
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
-        dummyEdge.setProperty(CoreOptions.JUNCTION_POINTS, null);
+        dummyEdge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(originalTarget);
         

@@ -18,9 +18,9 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -51,7 +51,7 @@ public final class HypernodesProcessor implements ILayoutProcessor {
         
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                if (node.getProperty(CoreOptions.HYPERNODE) && node.getPorts().size() <= 2) {
+                if (node.getProperty(LayeredOptions.HYPERNODE) && node.getPorts().size() <= 2) {
                     int topEdges = 0, rightEdges = 0, bottomEdges = 0, leftEdges = 0;
                     for (LPort port : node.getPorts()) {
                         switch (port.getSide()) {
@@ -84,7 +84,7 @@ public final class HypernodesProcessor implements ILayoutProcessor {
      * Move the given hypernode either towards the previous layer or towards the next layer.
      * 
      * @param layeredGraph a layered graph
-     * @param hypernode a node that is marked with {@link CoreOptions.HYPERNODE}
+     * @param hypernode a node that is marked with {@link LayeredOptions.HYPERNODE}
      * @param right if true, the node is moved right (to the next layer), else it
      *     is moved left (to the previous layer)
      */
@@ -173,7 +173,7 @@ public final class HypernodesProcessor implements ILayoutProcessor {
                     }
                 }
                 // remove junction points that collide with the eliminated bend point
-                KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+                KVectorChain junctionPoints = edge.getProperty(LayeredOptions.JUNCTION_POINTS);
                 if (junctionPoints != null) {
                     junctionPoints.remove(first);
                 }

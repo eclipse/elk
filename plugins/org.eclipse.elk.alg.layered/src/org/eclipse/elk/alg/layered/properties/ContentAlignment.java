@@ -17,8 +17,8 @@ import java.util.EnumSet;
  * the bounding box of the content (i.e. child nodes). This might be the case if for a compound node
  * the {@link org.eclipse.elk.core.options.SizeConstraint SizeConstraint} of
  * {@link org.eclipse.elk.core.options.SizeConstraint#MINIMUM_SIZE MINIMUM_SIZE} is set and
- * {@link org.eclipse.elk.core.options.CoreOptions#MIN_WIDTH MIN_WIDTH} and
- * {@link org.eclipse.elk.core.options.CoreOptions#MIN_HEIGHT MIN_HEIGHT} are set large enough.
+ * {@link org.eclipse.elk.core.options.LayeredOptions#MIN_WIDTH MIN_WIDTH} and
+ * {@link org.eclipse.elk.core.options.LayeredOptions#MIN_HEIGHT MIN_HEIGHT} are set large enough.
  * 
  * <p>This property is to be used as an {@link java.util.EnumSet EnumSet}; it should be comprised of
  * exactly one value prefixed with {@code V_} and one prefixed with {@code H_}.</p>

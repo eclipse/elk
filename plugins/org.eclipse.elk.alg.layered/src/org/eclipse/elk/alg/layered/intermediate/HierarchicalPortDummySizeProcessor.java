@@ -21,7 +21,6 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.Alignment;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -114,7 +113,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
         }
         
         for (LNode node : nodes) {
-            node.setProperty(CoreOptions.ALIGNMENT, Alignment.CENTER);
+            node.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
             node.getSize().x = currentWidth;
             
             // Move eastern ports to the node's right border

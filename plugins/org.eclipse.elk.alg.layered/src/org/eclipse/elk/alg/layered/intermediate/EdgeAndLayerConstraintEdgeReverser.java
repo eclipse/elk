@@ -18,9 +18,8 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.EdgeConstraint;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayerConstraint;
-import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -91,7 +90,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                 // Note that this behavior is only desired if none of the connected nodes have 
                 // layer constraints set. Otherwise this processing causes issues with an external 
                 // port dummy with FIRST_SEPARATE and an inverted ports on the target node's EAST side.
-                if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()
+                if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()
                         && !node.getPorts().isEmpty()) {
                     
                     boolean allPortsReversed = true;

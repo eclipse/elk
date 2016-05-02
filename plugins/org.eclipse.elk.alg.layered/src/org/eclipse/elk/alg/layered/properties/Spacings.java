@@ -14,11 +14,10 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.core.options.CoreOptions;
 
 /**
  * Container class for a variety of spacing values that are either specified in the general
- * {@link CoreOptions} class or KLay Layered's dedicated {@link LayeredOptions} class.
+ * {@link LayeredOptions} class or KLay Layered's dedicated {@link LayeredOptions} class.
  * 
  * This class allows to either select the recorded spacing values directly or to query for spacing
  * values using one of the convenience methods. The methods do not provide results for every
@@ -81,9 +80,9 @@ public final class Spacings {
         inLayerSpacingFactor = graph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
         edgeEdgeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
         edgeNodeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.SPACING_EDGE_NODE_SPACING_FACTOR);
-        portSpacing = graph.getProperty(CoreOptions.SPACING_PORT);
-        externalPortSpacing = graph.getProperty(CoreOptions.SPACING_PORT);
-        labelSpacing = graph.getProperty(CoreOptions.SPACING_LABEL);
+        portSpacing = graph.getProperty(LayeredOptions.SPACING_PORT);
+        externalPortSpacing = graph.getProperty(LayeredOptions.SPACING_PORT);
+        labelSpacing = graph.getProperty(LayeredOptions.SPACING_LABEL);
 
         // pre calculate the spacings between pairs of node types
         int n = NodeType.values().length;

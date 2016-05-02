@@ -18,7 +18,6 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
@@ -80,8 +79,7 @@ public final class LGraphAdapters {
     /**
      * Basic base class for adapters that adapt {@link LGraphElement}s.
      */
-    private abstract static class AbstractLShapeAdapter<T extends LShape> implements
-            GraphElementAdapter<T> {
+    private abstract static class AbstractLShapeAdapter<T extends LShape> implements GraphElementAdapter<T> {
 
         // CHECKSTYLEOFF VisibilityModifier
         /** The wrapped element. */
@@ -95,7 +93,7 @@ public final class LGraphAdapters {
          * @param element
          *            the element to be adapted.
          */
-        public AbstractLShapeAdapter(final T element) {
+        AbstractLShapeAdapter(final T element) {
             this.element = element;
         }
         
@@ -136,10 +134,10 @@ public final class LGraphAdapters {
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
             // handle some special cases
-            if (prop.equals(CoreOptions.SPACING_NODE)) {
+            if (prop.equals(LayeredOptions.SPACING_NODE)) {
                 // cast is ok, as both properties are Floats
                 return (P) element.getProperty(LayeredOptions.SPACING_NODE);
-            } else if (prop.equals(CoreOptions.PORT_BORDER_OFFSET)) {
+            } else if (prop.equals(LayeredOptions.PORT_BORDER_OFFSET)) {
                 return (P) element.getProperty(LayeredOptions.PORT_BORDER_OFFSET);
             }
 
@@ -342,7 +340,7 @@ public final class LGraphAdapters {
          */
         @SuppressWarnings("unchecked")
         public void sortPortList(final Comparator<?> comparator) {
-            if (element.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            if (element.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // We need to sort the port list accordingly
                 Collections.sort(element.getPorts(), (Comparator<LPort>) comparator);
             }
@@ -597,8 +595,8 @@ public final class LGraphAdapters {
             }
             
             // In case of equal sides, sort by port index property
-            Integer index1 = port1.getProperty(CoreOptions.PORT_INDEX);
-            Integer index2 = port2.getProperty(CoreOptions.PORT_INDEX);
+            Integer index1 = port1.getProperty(LayeredOptions.PORT_INDEX);
+            Integer index2 = port2.getProperty(LayeredOptions.PORT_INDEX);
             if (index1 != null && index2 != null) {
                 int indexDifference = index1 - index2;
                 if (indexDifference != 0) {

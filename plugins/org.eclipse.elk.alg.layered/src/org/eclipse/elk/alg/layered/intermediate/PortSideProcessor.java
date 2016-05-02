@@ -74,7 +74,7 @@ public final class PortSideProcessor implements ILayoutProcessor {
      * @param node a node
      */
     private void process(final LNode node) {
-        if (node.getProperty(CoreOptions.PORT_CONSTRAINTS).isSideFixed()) {
+        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
             // Check whether there are ports with undefined side
             for (LPort port : node.getPorts()) {
                 if (port.getSide() == PortSide.UNDEFINED) {
@@ -86,7 +86,7 @@ public final class PortSideProcessor implements ILayoutProcessor {
             for (LPort port : node.getPorts()) {
                 setPortSide(port);
             }
-            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+            node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         }
     }
     

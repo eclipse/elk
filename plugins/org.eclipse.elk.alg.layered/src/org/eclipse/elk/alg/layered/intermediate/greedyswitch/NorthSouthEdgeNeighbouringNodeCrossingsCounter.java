@@ -14,12 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -45,7 +44,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
      */
     public NorthSouthEdgeNeighbouringNodeCrossingsCounter(final LNode[] nodes) {
         usesOrthogonalLayout = nodes[0].getGraph()
-                .getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
+                .getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
         layer = nodes;
         portPositions = new HashMap<LPort, Integer>();
         initializePortPositions();
@@ -232,7 +231,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     }
 
     private boolean noFixedPortOrderOn(final LNode node) {
-        return !node.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed();
+        return !node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private boolean isLongEdgeDummy(final LNode node) {

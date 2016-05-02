@@ -23,10 +23,10 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -63,7 +63,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         // set on the graph, but let's be sure anyway
         ILabelManager labelManager = layeredGraph.getProperty(LabelManagementOptions.LABEL_MANAGER);
         if (labelManager != null) {
-            double labelSpacing = layeredGraph.getProperty(CoreOptions.SPACING_LABEL).doubleValue();
+            double labelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_LABEL).doubleValue();
 
             // Iterate over all layers and call our nifty code
             for (Layer layer : layeredGraph) {
@@ -90,7 +90,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
 
         assert labelManager != null : "labelManager is null";
 
-        boolean verticalLayout = layer.getGraph().getProperty(CoreOptions.DIRECTION).isVertical();
+        boolean verticalLayout = layer.getGraph().getProperty(LayeredOptions.DIRECTION).isVertical();
         double maxWidth =
                 Math.max(MIN_WIDTH_EDGE_LABELS, LGraphUtil.findMaxNonDummyNodeWidth(layer, false));
 
@@ -122,7 +122,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
 
             case LABEL:
                 LEdge edge = layerNode.getConnectedEdges().iterator().next();
-                double edgeThickness = edge.getProperty(CoreOptions.EDGE_THICKNESS).doubleValue();
+                double edgeThickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS).doubleValue();
 
                 KVector newDummySize = new KVector(0.0, edgeThickness);
 

@@ -27,7 +27,6 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
 
@@ -99,9 +98,9 @@ final class GraphConfigurator {
             lgraph.setProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
         }
         
-        Direction direction = lgraph.getProperty(CoreOptions.DIRECTION);
+        Direction direction = lgraph.getProperty(LayeredOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
-            lgraph.setProperty(CoreOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
+            lgraph.setProperty(LayeredOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
         }
         
         // set the random number generator based on the random seed option
@@ -260,7 +259,7 @@ final class GraphConfigurator {
         }
 
         // graph transformations for unusual layout directions
-        switch (lgraph.getProperty(CoreOptions.DIRECTION)) {
+        switch (lgraph.getProperty(LayeredOptions.DIRECTION)) {
         case LEFT:
             configuration
                 .addBeforePhase1(IntermediateProcessorStrategy.LEFT_DIR_PREPROCESSOR)

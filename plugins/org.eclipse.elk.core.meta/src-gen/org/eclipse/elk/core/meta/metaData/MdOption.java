@@ -20,35 +20,35 @@ import org.eclipse.xtext.xbase.XExpression;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Md Property</b></em>'.
+ * A representation of the model object '<em><b>Md Option</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isDeprecated <em>Deprecated</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isAdvanced <em>Advanced</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isProgrammatic <em>Programmatic</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isOutput <em>Output</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#isGlobal <em>Global</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getType <em>Type</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLabel <em>Label</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDescription <em>Description</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDocumentation <em>Documentation</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDefaultValue <em>Default Value</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLowerBound <em>Lower Bound</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getUpperBound <em>Upper Bound</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getTargets <em>Targets</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLegacyIds <em>Legacy Ids</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDependencies <em>Dependencies</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#isDeprecated <em>Deprecated</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#isAdvanced <em>Advanced</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#isProgrammatic <em>Programmatic</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#isOutput <em>Output</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#isGlobal <em>Global</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getType <em>Type</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getDocumentation <em>Documentation</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getDefaultValue <em>Default Value</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getLowerBound <em>Lower Bound</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getUpperBound <em>Upper Bound</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getTargets <em>Targets</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getLegacyIds <em>Legacy Ids</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdOption#getDependencies <em>Dependencies</em>}</li>
  * </ul>
  *
- * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty()
+ * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption()
  * @model
  * @generated
  */
-public interface MdProperty extends MdGroupOrProperty
+public interface MdOption extends MdGroupOrOption
 {
   /**
    * Returns the value of the '<em><b>Deprecated</b></em>' attribute.
@@ -60,14 +60,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Deprecated</em>' attribute.
    * @see #setDeprecated(boolean)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Deprecated()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Deprecated()
    * @model
    * @generated
    */
   boolean isDeprecated();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#isDeprecated <em>Deprecated</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#isDeprecated <em>Deprecated</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Deprecated</em>' attribute.
@@ -86,14 +86,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Advanced</em>' attribute.
    * @see #setAdvanced(boolean)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Advanced()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Advanced()
    * @model
    * @generated
    */
   boolean isAdvanced();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#isAdvanced <em>Advanced</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#isAdvanced <em>Advanced</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Advanced</em>' attribute.
@@ -112,14 +112,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Programmatic</em>' attribute.
    * @see #setProgrammatic(boolean)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Programmatic()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Programmatic()
    * @model
    * @generated
    */
   boolean isProgrammatic();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#isProgrammatic <em>Programmatic</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#isProgrammatic <em>Programmatic</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Programmatic</em>' attribute.
@@ -138,14 +138,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Output</em>' attribute.
    * @see #setOutput(boolean)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Output()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Output()
    * @model
    * @generated
    */
   boolean isOutput();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#isOutput <em>Output</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#isOutput <em>Output</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Output</em>' attribute.
@@ -164,14 +164,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Global</em>' attribute.
    * @see #setGlobal(boolean)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Global()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Global()
    * @model
    * @generated
    */
   boolean isGlobal();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#isGlobal <em>Global</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#isGlobal <em>Global</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Global</em>' attribute.
@@ -190,14 +190,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Type</em>' containment reference.
    * @see #setType(JvmTypeReference)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Type()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Type()
    * @model containment="true"
    * @generated
    */
   JvmTypeReference getType();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getType <em>Type</em>}' containment reference.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#getType <em>Type</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Type</em>' containment reference.
@@ -216,14 +216,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Label</em>' attribute.
    * @see #setLabel(String)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Label()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Label()
    * @model
    * @generated
    */
   String getLabel();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLabel <em>Label</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#getLabel <em>Label</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Label</em>' attribute.
@@ -242,14 +242,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Description</em>' attribute.
    * @see #setDescription(String)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Description()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Description()
    * @model
    * @generated
    */
   String getDescription();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDescription <em>Description</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#getDescription <em>Description</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Description</em>' attribute.
@@ -268,14 +268,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Documentation</em>' attribute.
    * @see #setDocumentation(String)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Documentation()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Documentation()
    * @model
    * @generated
    */
   String getDocumentation();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDocumentation <em>Documentation</em>}' attribute.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#getDocumentation <em>Documentation</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Documentation</em>' attribute.
@@ -294,14 +294,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Default Value</em>' containment reference.
    * @see #setDefaultValue(XExpression)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_DefaultValue()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_DefaultValue()
    * @model containment="true"
    * @generated
    */
   XExpression getDefaultValue();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getDefaultValue <em>Default Value</em>}' containment reference.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#getDefaultValue <em>Default Value</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Default Value</em>' containment reference.
@@ -320,14 +320,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Lower Bound</em>' containment reference.
    * @see #setLowerBound(XExpression)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_LowerBound()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_LowerBound()
    * @model containment="true"
    * @generated
    */
   XExpression getLowerBound();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getLowerBound <em>Lower Bound</em>}' containment reference.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#getLowerBound <em>Lower Bound</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Lower Bound</em>' containment reference.
@@ -346,14 +346,14 @@ public interface MdProperty extends MdGroupOrProperty
    * <!-- end-user-doc -->
    * @return the value of the '<em>Upper Bound</em>' containment reference.
    * @see #setUpperBound(XExpression)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_UpperBound()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_UpperBound()
    * @model containment="true"
    * @generated
    */
   XExpression getUpperBound();
 
   /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdProperty#getUpperBound <em>Upper Bound</em>}' containment reference.
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdOption#getUpperBound <em>Upper Bound</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Upper Bound</em>' containment reference.
@@ -364,8 +364,8 @@ public interface MdProperty extends MdGroupOrProperty
 
   /**
    * Returns the value of the '<em><b>Targets</b></em>' attribute list.
-   * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdPropertyTargetType}.
-   * The literals are from the enumeration {@link org.eclipse.elk.core.meta.metaData.MdPropertyTargetType}.
+   * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdOptionTargetType}.
+   * The literals are from the enumeration {@link org.eclipse.elk.core.meta.metaData.MdOptionTargetType}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Targets</em>' attribute list isn't clear,
@@ -373,12 +373,12 @@ public interface MdProperty extends MdGroupOrProperty
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Targets</em>' attribute list.
-   * @see org.eclipse.elk.core.meta.metaData.MdPropertyTargetType
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Targets()
+   * @see org.eclipse.elk.core.meta.metaData.MdOptionTargetType
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Targets()
    * @model unique="false"
    * @generated
    */
-  EList<MdPropertyTargetType> getTargets();
+  EList<MdOptionTargetType> getTargets();
 
   /**
    * Returns the value of the '<em><b>Legacy Ids</b></em>' attribute list.
@@ -390,7 +390,7 @@ public interface MdProperty extends MdGroupOrProperty
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Legacy Ids</em>' attribute list.
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_LegacyIds()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_LegacyIds()
    * @model unique="false"
    * @generated
    */
@@ -398,7 +398,7 @@ public interface MdProperty extends MdGroupOrProperty
 
   /**
    * Returns the value of the '<em><b>Dependencies</b></em>' containment reference list.
-   * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdPropertyDependency}.
+   * The list contents are of type {@link org.eclipse.elk.core.meta.metaData.MdOptionDependency}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Dependencies</em>' containment reference list isn't clear,
@@ -406,10 +406,10 @@ public interface MdProperty extends MdGroupOrProperty
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Dependencies</em>' containment reference list.
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdProperty_Dependencies()
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdOption_Dependencies()
    * @model containment="true"
    * @generated
    */
-  EList<MdPropertyDependency> getDependencies();
+  EList<MdOptionDependency> getDependencies();
 
-} // MdProperty
+} // MdOption

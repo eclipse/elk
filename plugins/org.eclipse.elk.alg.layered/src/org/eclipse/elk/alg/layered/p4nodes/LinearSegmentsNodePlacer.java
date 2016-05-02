@@ -29,7 +29,6 @@ import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -457,7 +456,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         }
 
         // Write debug output graph
-        if (layeredGraph.getProperty(CoreOptions.DEBUG_MODE)) {
+        if (layeredGraph.getProperty(LayeredOptions.DEBUG_MODE)) {
             DebugUtil.writeDebugGraph(layeredGraph, segmentList, outgoingList);
         }
     }

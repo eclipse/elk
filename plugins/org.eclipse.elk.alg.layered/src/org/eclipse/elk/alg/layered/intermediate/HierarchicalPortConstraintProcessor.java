@@ -22,12 +22,12 @@ import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.Alignment;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -141,7 +141,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      */
     private void processEasternAndWesternPortDummies(final LGraph layeredGraph) {
         // If the port constraints are not at least FIXED_ORDER, there's nothing to be done here
-        if (!layeredGraph.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+        if (!layeredGraph.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
             return;
         }
         
@@ -200,7 +200,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      */
     private void processNorthernAndSouthernPortDummies(final LGraph layeredGraph) {
         // If the port constraints are not at least FIXED_SIDE, there's nothing to do here
-        PortConstraints portConstraints = layeredGraph.getProperty(CoreOptions.PORT_CONSTRAINTS);
+        PortConstraints portConstraints = layeredGraph.getProperty(LayeredOptions.PORT_CONSTRAINTS);
         if (!portConstraints.isSideFixed()) {
             return;
         }
@@ -368,8 +368,8 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
         LNode newDummy = new LNode(layeredGraph);
         newDummy.copyProperties(originalDummy);
         newDummy.setProperty(InternalProperties.EXT_PORT_REPLACED_DUMMY, originalDummy);
-        newDummy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-        newDummy.setProperty(CoreOptions.ALIGNMENT, Alignment.CENTER);
+        newDummy.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        newDummy.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
         newDummy.setType(NodeType.EXTERNAL_PORT);
         
         LPort inputPort = new LPort();
