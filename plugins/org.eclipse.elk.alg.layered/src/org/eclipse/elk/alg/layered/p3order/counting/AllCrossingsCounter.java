@@ -50,8 +50,7 @@ public final class AllCrossingsCounter {
             final boolean[] hasNorthSouthPorts, final int[] portPos,
             final boolean[] hasHyperEdgesEastOfIndex) {
         this.hasHyperEdgesEastOfIndex = hasHyperEdgesEastOfIndex;
-        hyperedgeCrossingsCounter = HyperedgeCrossingsCounter
-                .createAssumingPortOrderFixed(inLayerEdgeCount, hasNorthSouthPorts, portPos);
+        hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, portPos);
         northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPos);
         crossingCounter = new CrossingsCounter(portPos);
     }
