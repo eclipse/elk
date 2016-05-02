@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p3order.counting;
+package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.intermediate.greedyswitch.InLayerEdgeTwoNodeCrossingCounter;
+import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -29,9 +29,9 @@ import com.google.common.collect.SortedMultiset;
 import com.google.common.collect.TreeMultiset;
 
 /**
- * In-layer edge crossing counter for all crossings in a layer. The subclass
- * {@link InLayerEdgeTwoNodeCrossingCounter} accesses the {@link #countCrossingsOn(LEdge, LPort)}
- * method with only the nodes and edges relevant to the two nodes in question.
+ * In-layer edge crossing counter for all crossings in a layer. The subclass {@link InLayerEdgeTwoNodeCrossingCounter}
+ * accesses the {@link #countCrossingsOn(LEdge, LPort)} method with only the nodes and edges relevant to the two nodes
+ * in question. TODO-alan remove.
  * 
  * @author alan
  */
