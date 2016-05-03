@@ -13,7 +13,6 @@ package org.eclipse.elk.alg.layered.p3order.counting;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.Iterator;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -21,7 +20,6 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 /**
@@ -31,13 +29,13 @@ import com.google.common.collect.Lists;
  */
 public final class CrossingsCounter {
     private final int[] portPositions;
-    private FenwickTree indexTree;
-    private int numPorts;
-    final Deque<Integer> ends;
+    private final BinaryPrefixTree indexTree;
+    private final Deque<Integer> ends;
 
     public CrossingsCounter(final int[] portPositions) {
         this.portPositions = portPositions;
         ends = new ArrayDeque<>();
+        indexTree = new BinaryPrefixTree(portPositions.length);
     }
 
     /*
@@ -65,10 +63,9 @@ public final class CrossingsCounter {
      * @return number of crossings.
      */
     public int countInLayerCrossingsOnSide(final LNode[] nodes, final PortSide side) {
-        Iterable<LNode> nodesIter = () -> Iterators.forArray(nodes);
-        numPorts = setPortPositions(side, nodesIter, 0);
-        indexTree = new FenwickTree(numPorts);
-        return addEdgesAndCountCrossingsOn(side, nodesIter);
+        Iterable<LNode> ns = Arrays.asList(nodes);
+        setPortPositions(side, ns);
+        return countCrossings(side, ns);
     }
 
     /*
@@ -100,63 +97,12 @@ public final class CrossingsCounter {
      */
     public int countCrossingsBetweenLayers(final LNode[] leftLayerNodes,
             final LNode[] rightLayerNodes) {
+        Iterable<LNode> leftLayer = Arrays.asList(leftLayerNodes);
+        Iterable<LNode> rightLayerReverse = Lists.reverse(Arrays.asList(rightLayerNodes));
 
-        Iterable<LNode> leftLayerIter = () -> Iterators.forArray(leftLayerNodes);
-        Iterable<LNode> rightLayerReverseIter = () -> descendingIterator(rightLayerNodes);
+        setPortPositions(PortSide.EAST, leftLayer, rightLayerReverse);
 
-        numPorts = setPortPositions(PortSide.EAST, leftLayerIter, 0);
-        numPorts = setPortPositions(PortSide.WEST, rightLayerReverseIter, numPorts);
-        indexTree = new FenwickTree(numPorts);
-
-        int crossings = addEdgesAndCountCrossingsOn(PortSide.EAST, leftLayerIter);
-        crossings += addEdgesAndCountCrossingsOn(PortSide.WEST, rightLayerReverseIter);
-
-        return crossings;
-    }
-
-    /**
-     * Initializes the counter for counting crosses on a specific side of two layers.
-     *
-     * @param leftLayerNodes
-     *            Nodes in western layer.
-     * @param rightLayerNodes
-     *            Nodes in eastern layer.
-     * @param sideToCountOn
-     *            Side on which the crossings are counted.
-     */
-    public void initForCountingBetweenOnSide(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes,
-            final PortSide sideToCountOn) {
-
-        Iterable<LPort> ports = sideToCountOn == PortSide.EAST
-                ? counterClockWisePorts(leftLayerNodes, rightLayerNodes)
-                : clockWisePorts(leftLayerNodes, rightLayerNodes);
-
-        numPorts = 0;
-        for (LPort port : ports) {
-            portPositions[port.id] = numPorts++;
-        }
-
-        indexTree = new FenwickTree(numPorts);
-    }
-
-    private Iterable<LPort> clockWisePorts(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
-        Iterable<LPort> rightPorts = joinReversePorts(Arrays.asList(rightLayerNodes), PortSide.WEST);
-        Iterable<LPort> leftPorts = joinReversePorts(Lists.reverse(Arrays.asList(leftLayerNodes)), PortSide.EAST);
-        return Iterables.concat(rightPorts, leftPorts);
-    }
-
-    private Iterable<LPort> joinReversePorts(final Iterable<LNode> nodes, final PortSide side) {
-        return Iterables.concat(Iterables.transform(nodes, n -> Lists.reverse(n.getPorts(side))));
-    }
-
-    private Iterable<LPort> counterClockWisePorts(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
-        Iterable<LPort> leftPorts = joinPorts(Arrays.asList(leftLayerNodes), PortSide.EAST);
-        Iterable<LPort> rightPorts = joinPorts(Lists.reverse(Arrays.asList(rightLayerNodes)), PortSide.WEST);
-        return Iterables.concat(leftPorts, rightPorts);
-    }
-
-    private Iterable<LPort> joinPorts(final Iterable<LNode> nodes, final PortSide side) {
-        return Iterables.concat(Iterables.transform(nodes, n -> n.getPorts(side)));
+        return countCrossings(PortSide.EAST, leftLayer, rightLayerReverse);
     }
 
     /**
@@ -167,23 +113,7 @@ public final class CrossingsCounter {
      */
     public int countCrossingsBetweenPorts(final LPort portOne, final LPort portTwo) {
         assert portOne.getSide() == portTwo.getSide();
-        indexTree = new FenwickTree(numPorts);
         return countCrossingsOnPorts(Lists.newArrayList(portOne, portTwo));
-    }
-
-    /**
-     * Count crossings only between two nodes.
-     *
-     * @param upperNode
-     * @param lowerNode
-     * @param side
-     * @return
-     */
-    public int countCrossingsBetweenNodesOnSide(final LNode upperNode, final LNode lowerNode, final PortSide side) {
-        Iterable<LPort> ports = Iterables.concat(PortIterable.inCounterClockwiseOrder(upperNode, side),
-                PortIterable.inCounterClockwiseOrder(lowerNode, side));
-        indexTree = new FenwickTree(numPorts);
-        return countCrossingsOnPorts(ports);
     }
 
     /**
@@ -200,22 +130,65 @@ public final class CrossingsCounter {
         portPositions[bottomPort.id] = topPortPos;
     }
 
-
-    private int setPortPositions(final PortSide side, final Iterable<LNode> layer, final int startPos) {
-        int currentPortPos = startPos;
-        for (LNode node : layer) {
-            Iterable<LPort> ports = node.getPorts(side);
-            for (LPort port : ports) {
-                portPositions[port.id] = currentPortPos++;
-            }
-        }
-        return currentPortPos;
+    /**
+     * Count crossings only between two nodes.
+     *
+     * @param upperNode
+     * @param lowerNode
+     * @param side
+     * @return
+     */
+    public int countCrossingsBetweenNodesOnSide(final LNode upperNode, final LNode lowerNode, final PortSide side) {
+        Iterable<LPort> ports = Iterables.concat(PortIterable.inCounterClockwiseOrder(upperNode, side),
+                PortIterable.inCounterClockwiseOrder(lowerNode, side));
+        return countCrossingsOnPorts(ports);
     }
 
-    private int addEdgesAndCountCrossingsOn(final PortSide side, final Iterable<LNode> nodes) {
+    /**
+     * Initializes the counter for counting crosses on a specific side of two layers.
+     *
+     * @param leftLayerNodes
+     *            Nodes in western layer.
+     * @param rightLayerNodes
+     *            Nodes in eastern layer.
+     * @param sideToCountOn
+     *            Side on which the crossings are counted.
+     */
+    public void initForCountingBetweenOnSide(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes,
+            final PortSide sideToCountOn) {
+        Iterable<LPort> ports = sideToCountOn == PortSide.EAST
+                ? counterClockWisePorts(leftLayerNodes, rightLayerNodes)
+                : clockWisePorts(leftLayerNodes, rightLayerNodes);
+    
+        int numPorts = 0;
+        for (LPort port : ports) {
+            portPositions[port.id] = numPorts++;
+        }
+    }
+
+    @SafeVarargs
+    private final void setPortPositions(final PortSide side, final Iterable<LNode>... layers) {
+        int currentPortPos = 0;
+        PortSide s = side;
+        for (Iterable<LNode> layer : layers) {
+            for (LNode node : layer) {
+                for (LPort port : node.getPorts(s)) {
+                    portPositions[port.id] = currentPortPos++;
+                }
+            }
+            s = s.opposed();
+        }
+    }
+
+    @SafeVarargs
+    private final int countCrossings(final PortSide firstSide, final Iterable<LNode>... layers) {
         int crossings = 0;
-        for (LNode node : nodes) {
-            crossings += countCrossingsOnPorts(node.getPorts(side));
+        PortSide s = firstSide;
+        for (Iterable<LNode> nodes : layers) {
+            for (LNode node : nodes) {
+                crossings += countCrossingsOnPorts(node.getPorts(s));
+            }
+            s = s.opposed();
         }
         return crossings;
     }
@@ -223,14 +196,15 @@ public final class CrossingsCounter {
     private int countCrossingsOnPorts(final Iterable<LPort> ports) {
         int crossings = 0;
         for (LPort port : ports) {
-            // First get crossings for all edges
+            indexTree.removeAll(positionOf(port));
+            // First get crossings for all edges.
             for (LEdge edge : port.getConnectedEdges()) {
                 if (isSelfLoop(edge)) {
                     continue;
                 }
                 if (pointsDownward(edge, port)) {
                     int endPosition = positionOf(otherEndOf(edge, port));
-                    crossings += indexTree.sumBefore(endPosition);
+                    crossings += indexTree.rank(endPosition);
                     ends.push(endPosition);
                 }
             }
@@ -258,20 +232,24 @@ public final class CrossingsCounter {
         return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
-    private Iterator<LNode> descendingIterator(final LNode[] rightLayerOrd) {
-        return new Iterator<LNode>() {
-            private final LNode[] ord = rightLayerOrd;
-            private int i = ord.length - 1;
-
-            @Override
-            public boolean hasNext() {
-                return i >= 0;
-            }
-
-            @Override
-            public LNode next() {
-                return ord[i--];
-            }
-        };
+    private Iterable<LPort> clockWisePorts(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
+        Iterable<LPort> rightPorts = joinReversePorts(Arrays.asList(rightLayerNodes), PortSide.WEST);
+        Iterable<LPort> leftPorts = joinReversePorts(Lists.reverse(Arrays.asList(leftLayerNodes)), PortSide.EAST);
+        return Iterables.concat(rightPorts, leftPorts);
     }
+
+    private Iterable<LPort> joinReversePorts(final Iterable<LNode> nodes, final PortSide side) {
+        return Iterables.concat(Iterables.transform(nodes, n -> Lists.reverse(n.getPorts(side))));
+    }
+
+    private Iterable<LPort> counterClockWisePorts(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
+        Iterable<LPort> leftPorts = joinPorts(Arrays.asList(leftLayerNodes), PortSide.EAST);
+        Iterable<LPort> rightPorts = joinPorts(Lists.reverse(Arrays.asList(rightLayerNodes)), PortSide.WEST);
+        return Iterables.concat(leftPorts, rightPorts);
+    }
+
+    private Iterable<LPort> joinPorts(final Iterable<LNode> nodes, final PortSide side) {
+        return Iterables.concat(Iterables.transform(nodes, n -> n.getPorts(side)));
+    }
+
 }

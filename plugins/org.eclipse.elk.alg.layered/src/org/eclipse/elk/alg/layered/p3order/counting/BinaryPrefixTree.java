@@ -20,7 +20,7 @@ package org.eclipse.elk.alg.layered.p3order.counting;
  * @author alan
  *
  */
-public class FenwickTree {
+public class BinaryPrefixTree {
     private int[] binarySums;
     private int[] numsPerIndex;
     private int size = 0;
@@ -31,7 +31,7 @@ public class FenwickTree {
      * @param maxNum
      *            maximum number elements.
      */
-    public FenwickTree(final int maxNum) {
+    public BinaryPrefixTree(final int maxNum) {
         binarySums = new int[maxNum + 1];
         numsPerIndex = new int[maxNum];
     }
@@ -59,7 +59,7 @@ public class FenwickTree {
      *            Not included end index.
      * @return sum.
      */
-    public int sumBefore(final int index) {
+    public int rank(final int index) {
         int i = index;
         int sum = 0;
         while (i > 0) {
@@ -86,6 +86,9 @@ public class FenwickTree {
      */
     public void removeAll(final int index) {
         int numEntries = numsPerIndex[index];
+        if (numEntries == 0) {
+            return;
+        }
         numsPerIndex[index] = 0;
         size -= numEntries;
         int i = index + 1;
@@ -105,6 +108,6 @@ public class FenwickTree {
      * @return sum
      */
     public int sumBetween(final int from, final int to) {
-        return sumBefore(to) - sumBefore(from + 1);
+        return rank(to) - rank(from + 1);
     }
 }

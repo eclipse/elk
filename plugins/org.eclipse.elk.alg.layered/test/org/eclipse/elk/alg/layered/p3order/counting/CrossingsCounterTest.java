@@ -13,6 +13,10 @@ package org.eclipse.elk.alg.layered.p3order.counting;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Random;
+
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
@@ -20,6 +24,7 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.InLayerEdgeTestGrap
 import org.eclipse.elk.alg.layered.p3order.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.core.options.PortSide;
+import org.junit.Ignore;
 import org.junit.Test;
 
 // CHECKSTYLEOFF MagicNumber
@@ -47,7 +52,33 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
 
         assertThat(counter.countCrossingsBetweenLayers(order()[0], order()[1]), is(1));
+    }
 
+    /**
+     * <pre>
+     * *
+     *  \
+     *  /
+     * *
+     *  \
+     * *+--
+     *  | |
+     * * /
+     * *
+     * </pre>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void longInLayerCrossings() throws Exception {
+        LNode[] nodes = addNodesToLayer(5, makeLayer());
+        addInLayerEdge(nodes[0], nodes[1], PortSide.EAST);
+        addInLayerEdge(nodes[1], nodes[3], PortSide.EAST);
+        addInLayerEdge(nodes[2], nodes[4], PortSide.EAST);
+
+        counter = new CrossingsCounter(new int[getNumPorts(order())]);
+
+        assertThat(counter.countInLayerCrossingsOnSide(order()[0], PortSide.EAST), is(1));
     }
 
     @Test
@@ -321,42 +352,42 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         assertThat(counter.countCrossingsBetweenNodesOnSide(leftNodes[0], leftNodes[1], PortSide.EAST), is(1));
     }
 
-    // @Test
-    // public void benchmark() {
-    // makeTwoLayerRandomGraphWithNodesPerLayer(6000, 6);
-    //
-    // counter = new CrossingsCounter(new int[getNumPorts(order())]);
-    // System.out.println("Starting");
-    // int length = 1000;
-    // long[] times = new long[length];
-    // for (int i = 0; i < length; i++) {
-    // long tick = new Date().getTime();
-    // counter.countCrossingsBetweenLayers(order()[0], order()[1]);
-    // times[i] = new Date().getTime() - tick;
-    // }
-    // System.out.println(Arrays.stream(times).min());
-    // }
+    @Ignore
+    public void benchmark() {
+        makeTwoLayerRandomGraphWithNodesPerLayer(6000, 6);
 
-    // private void makeTwoLayerRandomGraphWithNodesPerLayer(final int numNodes, final int edgesPerNode) {
-    // LNode[] leftNodes = addNodesToLayer(numNodes, makeLayer());
-    // LNode[] rightNodes = addNodesToLayer(numNodes, makeLayer());
-    // Random random = new Random(0);
-    // for (int i = 0; i < edgesPerNode * numNodes; i++) {
-    // if (random.nextBoolean()) {
-    // LNode left = leftNodes[random.nextInt(numNodes)];
-    // LNode right = rightNodes[random.nextInt(numNodes)];
-    // eastWestEdgeFromTo(left, right);
-    // } else {
-    // addInLayerEdge(leftNodes[random.nextInt(numNodes)], leftNodes[random.nextInt(numNodes)], PortSide.EAST);
-    // }
-    // }
-    // for (LNode node : rightNodes) {
-    // node.cachePortSides();
-    // }
-    // for (LNode node : leftNodes) {
-    // node.cachePortSides();
-    // }
-    // }
+        counter = new CrossingsCounter(new int[getNumPorts(order())]);
+        System.out.println("Starting");
+        int length = 400;
+        long[] times = new long[length];
+        for (int i = 0; i < length; i++) {
+            long tick = new Date().getTime();
+            counter.countCrossingsBetweenLayers(order()[0], order()[1]);
+            times[i] = new Date().getTime() - tick;
+        }
+        System.out.println(Arrays.stream(times).min());
+    }
+
+    private void makeTwoLayerRandomGraphWithNodesPerLayer(final int numNodes, final int edgesPerNode) {
+        LNode[] leftNodes = addNodesToLayer(numNodes, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(numNodes, makeLayer());
+        Random random = new Random(0);
+        for (int i = 0; i < edgesPerNode * numNodes; i++) {
+            if (random.nextBoolean()) {
+                LNode left = leftNodes[random.nextInt(numNodes)];
+                LNode right = rightNodes[random.nextInt(numNodes)];
+                eastWestEdgeFromTo(left, right);
+            } else {
+                addInLayerEdge(leftNodes[random.nextInt(numNodes)], leftNodes[random.nextInt(numNodes)], PortSide.EAST);
+            }
+        }
+        for (LNode node : rightNodes) {
+            node.cachePortSides();
+        }
+        for (LNode node : leftNodes) {
+            node.cachePortSides();
+        }
+    }
 
     private int getNumPorts(final LNode[][] currentOrder) {
         int numPorts = 0;
@@ -368,9 +399,4 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         return numPorts;
     }
 
-    private void switchOrder(final int indexOne, final int indexTwo, final int layerIndex) {
-        LNode one = order[layerIndex][indexOne];
-        order[layerIndex][indexOne] = order[layerIndex][indexTwo];
-        order[layerIndex][indexTwo] = one;
-    }
 }

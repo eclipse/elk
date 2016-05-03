@@ -17,21 +17,21 @@ import org.junit.Test;
 
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF javadoc
-public class FenwickTreeTest {
+public class BinaryPrefixTreeTest {
     @Test
     public void sumBefore() throws Exception {
-        FenwickTree ft = new FenwickTree(5);
+        BinaryPrefixTree ft = new BinaryPrefixTree(5);
         ft.add(1);
         ft.add(2);
         ft.add(1);
 
-        assertThat(ft.sumBefore(1), is(0));
-        assertThat(ft.sumBefore(2), is(2));
+        assertThat(ft.rank(1), is(0));
+        assertThat(ft.rank(2), is(2));
     }
 
     @Test
     public void size() throws Exception {
-        FenwickTree ft = new FenwickTree(5);
+        BinaryPrefixTree ft = new BinaryPrefixTree(5);
         ft.add(2);
         ft.add(1);
         ft.add(1);
@@ -41,7 +41,7 @@ public class FenwickTreeTest {
 
     @Test
     public void removeAll() throws Exception {
-        FenwickTree ft = new FenwickTree(5);
+        BinaryPrefixTree ft = new BinaryPrefixTree(5);
         ft.add(0);
         ft.add(2);
         ft.add(1);
@@ -50,17 +50,17 @@ public class FenwickTreeTest {
         ft.removeAll(1);
 
         assertThat(ft.size(), is(2));
-        assertThat(ft.sumBefore(2), is(1));
+        assertThat(ft.rank(2), is(1));
 
         ft.removeAll(1);
 
         assertThat(ft.size(), is(2));
-        assertThat(ft.sumBefore(2), is(1));
+        assertThat(ft.rank(2), is(1));
     }
 
     @Test
     public void sumBetween() throws Exception {
-        FenwickTree ft = new FenwickTree(5);
+        BinaryPrefixTree ft = new BinaryPrefixTree(5);
         ft.add(0);
         ft.add(2);
         ft.add(1);
