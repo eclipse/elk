@@ -12,5 +12,5 @@ package org.eclipse.elk.core.meta.scoping;
 
 import org.eclipse.xtext.xbase.scoping.batch.XbaseBatchScopeProvider;
 
-public class MetaDataScopeProvider extends XbaseBatchScopeProvider {
+public abstract class AbstractMetaDataScopeProvider extends XbaseBatchScopeProvider {
 }

@@ -49,9 +49,6 @@ Workflow {
 			name = "org.eclipse.elk.core.meta.MetaData"
 			fileExtensions = "elkm"
             
-            scopeProvider = {
-                generateStub = false
-            }
 			serializer = {
 				generateStub = false
 			}
