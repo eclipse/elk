@@ -176,6 +176,7 @@ class KGraphImporter {
     private void importHierarchicalGraph(final KNode kgraph, final LGraph lgraph) {
         final Queue<KNode> knodeQueue = Lists.newLinkedList();
 
+        Direction direction = lgraph.getProperty(LayeredOptions.DIRECTION);
         // Transform the node's children
         knodeQueue.addAll(kgraph.getChildren());
         while (!knodeQueue.isEmpty()) {
@@ -202,6 +203,7 @@ class KGraphImporter {
                             == HierarchyHandling.INCLUDE_CHILDREN;
 
                 if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
+                    knodeLayout.setProperty(LayeredOptions.DIRECTION, direction);
                     LGraph nestedGraph = createLGraph(knode);
                     lnode.setProperty(InternalProperties.NESTED_LGRAPH, nestedGraph);
                     nestedGraph.setProperty(InternalProperties.PARENT_LNODE, lnode);
