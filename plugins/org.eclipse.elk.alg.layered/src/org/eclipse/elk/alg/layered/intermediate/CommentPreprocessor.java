@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -203,7 +204,9 @@ public final class CommentPreprocessor implements ILayoutProcessor {
             edge.setTarget(null);
             if (oppositePort.getDegree() == 0) {
                 oppositePort.setNode(null);
+
             }
+            removeDummyNode(oppositePort);
         } else {
             edge.setSource(null);
             if (oppositePort.getDegree() == 0) {
@@ -211,6 +214,18 @@ public final class CommentPreprocessor implements ILayoutProcessor {
             }
         }
         edge.getBendPoints().clear();
+    }
+
+    // TODO-alan test? Ask?
+    private void removeDummyNode(final LPort oppositePort) {
+        LNode dummy = oppositePort.getProperty(InternalProperties.PORT_DUMMY);
+        if (dummy != null) {
+            Layer layer = dummy.getLayer();
+            layer.getNodes().remove(dummy);
+            if (layer.getNodes().isEmpty()) {
+                dummy.getGraph().getLayers().remove(layer);
+            }
+        }
     }
 
 }
