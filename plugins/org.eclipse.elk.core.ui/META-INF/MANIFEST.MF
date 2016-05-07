@@ -7,6 +7,7 @@ Bundle-Activator: org.eclipse.elk.core.ui.ElkUiPlugin
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-Localization: plugin
 Export-Package: org.eclipse.elk.core.ui,
+ org.eclipse.elk.core.ui.rendering,
  org.eclipse.elk.core.ui.util,
  org.eclipse.elk.core.ui.views
 Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
