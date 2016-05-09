@@ -176,7 +176,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }
     
     private def toOptionLowerBound(MdOption option) {
-        val optionType = option.type.cloneWithProxies ?: typeRef(Object)
+        val optionType = typeRef(Comparable, option.type.asWrapperTypeIfPrimitive?.wildcardSuper ?: wildcard)
         return option.toField(option.lowerBoundConstantName, optionType) [
             visibility = JvmVisibility.PRIVATE
             static = true
@@ -187,7 +187,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }
     
     private def toOptionUpperBound(MdOption option) {
-        val optionType = option.type.cloneWithProxies ?: typeRef(Object)
+        val optionType = typeRef(Comparable, option.type.asWrapperTypeIfPrimitive?.wildcardSuper ?: wildcard)
         return option.toField(option.upperBoundConstantName, optionType) [
             visibility = JvmVisibility.PRIVATE
             static = true
