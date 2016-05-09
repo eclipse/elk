@@ -16,6 +16,7 @@
 
   <!-- all plugins need to be listed as module -->
   <modules>
+    <module>../build/org.eclipse.elk.targetplatform</module>
     <!-- Re-enable tests at some point. -->
     <!--<module>../test</module>-->
     <module>org.eclipse.elk.alg.force</module>
