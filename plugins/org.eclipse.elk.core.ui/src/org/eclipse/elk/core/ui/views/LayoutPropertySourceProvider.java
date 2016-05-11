@@ -13,6 +13,7 @@ package org.eclipse.elk.core.ui.views;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.ILayoutSetup;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
@@ -21,6 +22,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * A property source provider used by the layout view.
@@ -44,6 +46,12 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
      */
     @Inject
     private LayoutConfigurationManager configManager;
+    
+    /**
+     * Provider for validators used to check bounds of layout option values.
+     */
+    @Inject
+    private Provider<LayoutOptionValidator> layoutOptionValidatorProvider;
 
     /**
      * The workbench part containing the current selection.
@@ -105,7 +113,9 @@ public class LayoutPropertySourceProvider implements IPropertySourceProvider {
      * Create a property source for the given configuration store.
      */
     protected IPropertySource createPropertySource(final ILayoutConfigurationStore config) {
-        return new LayoutPropertySource(config, getConfigurationManager());
+        LayoutPropertySource result = new LayoutPropertySource(config, getConfigurationManager());
+        result.setValidator(layoutOptionValidatorProvider.get());
+        return result;
     }
     
 }

@@ -49,9 +49,6 @@ public final class ExclusiveBounds {
             this.exclusiveLowerBound = exclusiveLowerBound;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int compareTo(final Number x) {
             if (exclusiveLowerBound < x.doubleValue()) {
@@ -59,6 +56,25 @@ public final class ExclusiveBounds {
             } else {
                 return 1;
             }
+        }
+        
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof ExclusiveLowerBound) {
+                ExclusiveLowerBound other = (ExclusiveLowerBound) obj;
+                return this.exclusiveLowerBound == other.exclusiveLowerBound;
+            }
+            return false;
+        }
+        
+        @Override
+        public int hashCode() {
+            return Double.hashCode(exclusiveLowerBound);
+        }
+        
+        @Override
+        public String toString() {
+            return exclusiveLowerBound + " (exclusive)";
         }
         
     }
@@ -87,9 +103,6 @@ public final class ExclusiveBounds {
             this.exclusiveUpperBound = exclusiveUpperBound;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public int compareTo(final Number x) {
             if (exclusiveUpperBound > x.doubleValue()) {
@@ -97,6 +110,25 @@ public final class ExclusiveBounds {
             } else {
                 return -1;
             }
+        }
+        
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof ExclusiveUpperBound) {
+                ExclusiveUpperBound other = (ExclusiveUpperBound) obj;
+                return this.exclusiveUpperBound == other.exclusiveUpperBound;
+            }
+            return false;
+        }
+        
+        @Override
+        public int hashCode() {
+            return Double.hashCode(exclusiveUpperBound);
+        }
+        
+        @Override
+        public String toString() {
+            return exclusiveUpperBound + " (exclusive)";
         }
         
     }

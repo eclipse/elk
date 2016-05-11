@@ -12,8 +12,10 @@ package org.eclipse.elk.core.ui.views;
 
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.GraphIssue;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
@@ -42,23 +44,35 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 
+    /** The property source from which this descriptor was created. */
+    private final LayoutPropertySource source;
     /** the layout option data associated with this property descriptor. */
-    private LayoutOptionData optionData;
+    private final LayoutOptionData optionData;
     /** option targets applicable to the currently selected diagram element. */
-    private Set<LayoutOptionData.Target> elementTargets;
+    private final Set<LayoutOptionData.Target> elementTargets;
     /** the label provider for this property descriptor. */
     private LayoutOptionLabelProvider labelProvider;
     
     /**
      * Creates a layout property descriptor based on a specific layout option.
      * 
+     * @param source the property source from which this descriptor was created
      * @param theoptionData the layout option data
      * @param theelementTargets option targets applicable to the currently selected diagram element
      */
-    public LayoutPropertyDescriptor(final LayoutOptionData theoptionData,
+    public LayoutPropertyDescriptor(final LayoutPropertySource source,
+            final LayoutOptionData theoptionData,
             final Set<LayoutOptionData.Target> theelementTargets) {
+        this.source = source;
         this.optionData = theoptionData;
         this.elementTargets = theelementTargets;
+    }
+    
+    /**
+     * @return the layout option data associated with this property descriptor
+     */
+    public LayoutOptionData getOptionData() {
+        return optionData;
     }
     
     /**
@@ -77,7 +91,11 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             intEditor.setValidator(new ICellEditorValidator() {
                 public String isValid(final Object value) {
                     try {
-                        Integer.parseInt((String) value);
+                        int i = Integer.parseInt((String) value);
+                        List<GraphIssue> issues = source.validatePropertyValue(optionData, i);
+                        if (issues != null && !issues.isEmpty()) {
+                            return issues.get(0).getMessage();
+                        }
                         return null;
                     } catch (NumberFormatException exception) {
                         return Messages.getString("kiml.ui.6");
@@ -90,7 +108,11 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             floatEditor.setValidator(new ICellEditorValidator() {
                 public String isValid(final Object value) {
                     try {
-                        Float.parseFloat((String) value);
+                        float f = Float.parseFloat((String) value);
+                        List<GraphIssue> issues = source.validatePropertyValue(optionData, f);
+                        if (issues != null && !issues.isEmpty()) {
+                            return issues.get(0).getMessage();
+                        }
                         return null;
                     } catch (NumberFormatException exception) {
                         return Messages.getString("kiml.ui.7");

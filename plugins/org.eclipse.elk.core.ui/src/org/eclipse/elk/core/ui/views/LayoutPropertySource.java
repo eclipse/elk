@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.eclipse.elk.core.GraphIssue;
+import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
@@ -55,14 +57,32 @@ public class LayoutPropertySource implements IPropertySource {
      * The layout configuration manager used to handle configuration stores.
      */
     private final LayoutConfigurationManager configManager;
+    /**
+     * The validator used to check bounds of layout option values.
+     */
+    private LayoutOptionValidator layoutOptionValidator;
 
     /**
      * Creates a layout property source for the given layout configuration.
      */
-    protected LayoutPropertySource(final ILayoutConfigurationStore config,
+    public LayoutPropertySource(final ILayoutConfigurationStore config,
             final LayoutConfigurationManager manager) {
         this.layoutConfig = config;
         this.configManager = manager;
+    }
+    
+    /**
+     * Set the validator used to check bounds of layout option values.
+     */
+    public void setValidator(final LayoutOptionValidator validator) {
+        this.layoutOptionValidator = validator;
+    }
+    
+    /**
+     * Return the layout configuration for this property source.
+     */
+    protected ILayoutConfigurationStore getLayoutConfig() {
+        return layoutConfig;
     }
     
     /**
@@ -79,11 +99,17 @@ public class LayoutPropertySource implements IPropertySource {
             ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
             while (optionIter.hasNext()) {
                 LayoutOptionData data = optionIter.next();
-                propertyDescriptors[optionIter.previousIndex()] = new LayoutPropertyDescriptor(data,
-                        layoutConfig.getOptionTargets());
+                propertyDescriptors[optionIter.previousIndex()] = createPropertyDescriptor(data);
             }
         }
         return propertyDescriptors;
+    }
+    
+    /**
+     * Create a property descriptor for the given option data.
+     */
+    protected IPropertyDescriptor createPropertyDescriptor(final LayoutOptionData data) {
+        return new LayoutPropertyDescriptor(this, data, layoutConfig.getOptionTargets());
     }
     
     /**
@@ -148,7 +174,7 @@ public class LayoutPropertySource implements IPropertySource {
      * @return a cell editor value
      */
     @SuppressWarnings("rawtypes")
-    protected Object translateToUI(final Object value, final LayoutOptionData optionData) {
+    public Object translateToUI(final Object value, final LayoutOptionData optionData) {
         if (value == null) {
             return "";
         }
@@ -232,7 +258,7 @@ public class LayoutPropertySource implements IPropertySource {
      * @param optionData the corresponding layout option data
      * @return a layout option value
      */
-    protected Object translateFromUI(final Object value, final LayoutOptionData optionData) {
+    public Object translateFromUI(final Object value, final LayoutOptionData optionData) {
         switch (optionData.getType()) {
         case STRING:
             return (String) value;
@@ -252,6 +278,17 @@ public class LayoutPropertySource implements IPropertySource {
         default:
             return optionData.parseValue((String) value);
         }
+    }
+    
+    /**
+     * Validate the given property value and return a list of issues. If the value is ok, the list is empty.
+     * If no validator has been configured for this property source, {@code null} is returned.
+     */
+    public List<GraphIssue> validatePropertyValue(final LayoutOptionData optionData, final Object value) {
+        if (layoutOptionValidator == null) {
+            return null;
+        }
+        return layoutOptionValidator.checkProperty(optionData, value, null);
     }
     
     /**

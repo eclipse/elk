@@ -11,6 +11,8 @@
 package org.eclipse.elk.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -41,34 +43,67 @@ public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
                 ? element.getData(KEdgeLayout.class)
                 : element.getData(KShapeLayout.class);
         for (Map.Entry<IProperty<?>, Object> entry : layoutData.getProperties()) {
-            Object value = entry.getValue();
-            if (value != null) {
-                checkProperty(element, (IProperty<Object>) entry.getKey(), value);
-            }
+            issues.addAll(checkProperty((IProperty<Object>) entry.getKey(), entry.getValue(), element));
         }
     }
     
     /**
      * Check the lower and upper bounds of the given property.
      */
-    protected void checkProperty(final KGraphElement element, final IProperty<Object> property,
-            final Object value) {
-        if (property.getLowerBound().compareTo(value) > 0) {
-            String optionName = property instanceof LayoutOptionData
-                    ? ((LayoutOptionData) property).getName()
-                    : property.getId();
-            String message = "The assigned value " + value.toString()
-                    + " of the option '" + optionName
-                    + "' is less than the lower bound " + property.getLowerBound().toString() + ".";
-            issues.add(new GraphIssue(element, message, GraphIssue.Severity.ERROR));
-        } else if (property.getUpperBound().compareTo(value) < 0) {
-            String optionName = property instanceof LayoutOptionData
-                    ? ((LayoutOptionData) property).getName()
-                    : property.getId();
-            String message = "The assigned value " + value.toString()
-                    + " of the option '" + optionName
-                    + "' is greater than the upper bound " + property.getUpperBound().toString() + ".";
-            issues.add(new GraphIssue(element, message, GraphIssue.Severity.ERROR));
+    public List<GraphIssue> checkProperty(final IProperty<Object> property, final Object value,
+            final KGraphElement element) {
+        String optionName = null;
+        if (property instanceof LayoutOptionData) {
+            LayoutOptionData optionData = (LayoutOptionData) property;
+            optionName = optionData.getName();
+            if (value != null) {
+                if (!isValidType(optionData, value)) {
+                    String message = "The assigned value " + value.toString()
+                            + " of the option '" + optionName
+                            + "' does not match the type " + optionData.getOptionClass().getSimpleName() + ".";
+                    return Collections.singletonList(new GraphIssue(element, message, GraphIssue.Severity.ERROR));
+                }
+            }
+        }
+        if (value != null) {
+            if (property.getLowerBound().compareTo(value) > 0) {
+                if (optionName == null) {
+                    optionName = property.getId();
+                }
+                String message = "The assigned value " + value.toString()
+                        + " of the option '" + optionName
+                        + "' is less than the lower bound " + property.getLowerBound().toString() + ".";
+                return Collections.singletonList(new GraphIssue(element, message, GraphIssue.Severity.ERROR));
+            } else if (property.getUpperBound().compareTo(value) < 0) {
+                if (optionName == null) {
+                    optionName = property.getId();
+                }
+                String message = "The assigned value " + value.toString()
+                        + " of the option '" + optionName
+                        + "' is greater than the upper bound " + property.getUpperBound().toString() + ".";
+                return Collections.singletonList(new GraphIssue(element, message, GraphIssue.Severity.ERROR));
+            }
+        }
+        return Collections.emptyList();
+    }
+    
+    /**
+     * @return whether the given value has the correct type
+     */
+    protected boolean isValidType(final LayoutOptionData optionData, final Object value) {
+        switch (optionData.getType()) {
+            case STRING:
+                return value instanceof String;
+            case BOOLEAN:
+                return value instanceof Boolean;
+            case INT:
+                return value instanceof Integer;
+            case FLOAT:
+                return value instanceof Float;
+            case ENUMSET:
+                return value instanceof EnumSet<?>;
+            default:
+                return optionData.getOptionClass().isInstance(value);
         }
     }
     
