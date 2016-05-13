@@ -43,7 +43,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.properties.IPropertySheetEntry;
-import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 import com.google.inject.ConfigurationException;
@@ -181,7 +180,7 @@ public class LayoutViewPart extends ViewPart {
         
         // Property Sheet Page
         page = new PropertySheetPage();
-        page.setRootEntry(new PropertySheetEntry());
+        page.setRootEntry(new ValidatingPropertySheetEntry());
         page.createControl(content);
         FormData formData = new FormData();
         formData.left = new FormAttachment(FORM_LEFT, 0);

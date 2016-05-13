@@ -22,7 +22,21 @@ public class GraphIssue {
         /** An error means the layout process is aborted and the error is reported to the user. */
         ERROR,
         /** A graph with warnings but no errors can still be processed. */
-        WARNING
+        WARNING;
+        
+        /**
+         * Returns a user-friendly string for this severity.
+         */
+        public String getUserString() {
+            switch (this) {
+                case ERROR:
+                    return "Error";
+                case WARNING:
+                    return "Warning";
+                default:
+                    throw new IllegalStateException("Missing case for " + this);
+            }
+        }
     }
 
     /** The graph element to which the issue applies. */
@@ -38,14 +52,14 @@ public class GraphIssue {
      * Create a graph issue.
      * 
      * @param element
-     *            The graph element to which the issue applies
+     *            The graph element to which the issue applies; may be {@code null}
      * @param message
      *            A message to be shown to users
      * @param severity
      *            The severity of the issue
      */
     public GraphIssue(final KGraphElement element, final String message, final Severity severity) {
-        if (element == null || message == null || severity == null) {
+        if (message == null || severity == null) {
             throw new NullPointerException();
         }
         this.element = element;
@@ -54,7 +68,7 @@ public class GraphIssue {
     }
 
     /**
-     * The graph element to which the issue applies.
+     * The graph element to which the issue applies. May be {@code null}.
      */
     public KGraphElement getElement() {
         return element;

@@ -176,7 +176,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }
     
     private def toOptionLowerBound(MdOption option) {
-        val optionType = option.type.cloneWithProxies ?: typeRef(Object)
+        val optionType = typeRef(Comparable, option.type.asWrapperTypeIfPrimitive?.wildcardSuper ?: wildcard)
         return option.toField(option.lowerBoundConstantName, optionType) [
             visibility = JvmVisibility.PRIVATE
             static = true
@@ -187,7 +187,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }
     
     private def toOptionUpperBound(MdOption option) {
-        val optionType = option.type.cloneWithProxies ?: typeRef(Object)
+        val optionType = typeRef(Comparable, option.type.asWrapperTypeIfPrimitive?.wildcardSuper ?: wildcard)
         return option.toField(option.upperBoundConstantName, optionType) [
             visibility = JvmVisibility.PRIVATE
             static = true
@@ -468,17 +468,21 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }    
     
     private def JvmTypeReference getOptionTypeClass(MdOption property) {
-        switch property.type?.type?.identifier {
+        switch property.type?.type {
             case null:
                 typeRef(Void)
-            case Double.canonicalName:
+            case Double,
+            case double:
                 typeRef(Float)
-            case EnumSet.canonicalName: {
+            case Long,
+            case long:
+                typeRef(Integer)
+            case EnumSet: {
                 val outer = property.type as JvmParameterizedTypeReference
-                typeRef(outer.arguments.head?.type)    
+                outer.arguments.head.cloneWithProxies    
             }
             default:
-                typeRef(property.type?.type)
+                property.type.cloneWithProxies.asWrapperTypeIfPrimitive
         }
     }
     

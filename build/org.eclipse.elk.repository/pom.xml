@@ -35,6 +35,9 @@
             <configuration>
 
               <!-- CHANGE ASSOCIATED UPDATE SITES -->
+              <!-- This is pretty much the only reason we're actually using this plug-in,
+                   apart from placing some of the legal stuff in the siteTemplate folder
+                   which spares us from configuring the Maven resource plug-in. -->
               <associateSites>
                 <!-- Eclipse Mars -->
                 <associateSite>http://download.eclipse.org/releases/mars</associateSite>
@@ -43,6 +46,7 @@
                 <!-- Graphiti -->
                 <associateSite>http://download.eclipse.org/graphiti/updates/0.10.2</associateSite>
               </associateSites>
+
               <siteTemplateFolder>siteTemplate</siteTemplateFolder>
 
               <!-- CHANGE UPDATE SITE INFORMATION -->

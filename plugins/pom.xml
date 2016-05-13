@@ -16,6 +16,7 @@
 
   <!-- all plugins need to be listed as module -->
   <modules>
+    <module>../build/org.eclipse.elk.targetplatform</module>
     <!-- Re-enable tests at some point. -->
     <!--<module>../test</module>-->
     <module>org.eclipse.elk.alg.force</module>
@@ -26,6 +27,7 @@
     <module>org.eclipse.elk.conn.gmf</module>
     <module>org.eclipse.elk.conn.graphiti</module>
     <module>org.eclipse.elk.core</module>
+    <module>org.eclipse.elk.core.debug</module>
     <module>org.eclipse.elk.core.meta</module>
     <module>org.eclipse.elk.core.meta.ui</module>
     <module>org.eclipse.elk.core.service</module>

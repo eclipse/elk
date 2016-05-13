@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.elk.core.service.internal.DefaultModule;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -154,18 +155,18 @@ public class LayoutConnectorsService {
     /**
      * Called by the {@link DiagramLayoutEngine} when automatic layout ist about to start.
      */
-    protected void fireLayoutAboutToStart(final LayoutMapping mapping) {
+    protected void fireLayoutAboutToStart(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
         for (ILayoutListener listener : layoutListeners) {
-            listener.layoutAboutToStart(mapping);
+            listener.layoutAboutToStart(mapping, progressMonitor);
         }
     }
     
     /**
      * Called by the {@link DiagramLayoutEngine} when automatic layout has been done.
      */
-    protected void fireLayoutDone(final LayoutMapping mapping) {
+    protected void fireLayoutDone(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
         for (ILayoutListener listener : layoutListeners) {
-            listener.layoutDone(mapping);
+            listener.layoutDone(mapping, progressMonitor);
         }
     }
 

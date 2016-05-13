@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK Debugging Utilities
+Bundle-SymbolicName: org.eclipse.elk.core.debug;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Activator: org.eclipse.elk.core.debug.ElkDebugPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.elk.graph,
+ org.eclipse.elk.core,
+ org.eclipse.elk.core.ui,
+ org.eclipse.elk.core.service
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: Eclipse Modeling Project

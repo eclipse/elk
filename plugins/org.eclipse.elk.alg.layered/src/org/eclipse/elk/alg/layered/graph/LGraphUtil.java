@@ -749,7 +749,8 @@ public final class LGraphUtil {
      * @param portSize size of the port. Depending on the port's side, the created dummy will
      *                 have the same width or height as the port, with the other dimension set
      *                 to zero.
-     * @param layoutDirection layout direction of the node that owns the port.
+     * @param layoutDirection layout direction of the node that owns the port. Must not be
+     *                        {@link Direction#UNDEFINED}.
      * @param layeredGraph the layered graph
      * @return a dummy node representing the external port.
      */
@@ -781,12 +782,11 @@ public final class LGraphUtil {
         // If the port constraints are free, we need to determine where to put the dummy (and its port)
         if (!portConstraints.isSideFixed()) {
             // we need some layout direction here, use RIGHT as default in case it is undefined
-            Direction actualDirection =
-                    layoutDirection != Direction.UNDEFINED ? layoutDirection : getDirection(layeredGraph);
+            assert layoutDirection != Direction.UNDEFINED;
             if (netFlow > 0) {
-                finalExternalPortSide = PortSide.fromDirection(actualDirection);
+                finalExternalPortSide = PortSide.fromDirection(layoutDirection);
             } else {
-                finalExternalPortSide = PortSide.fromDirection(actualDirection).opposed();
+                finalExternalPortSide = PortSide.fromDirection(layoutDirection).opposed();
             }
             propertyHolder.setProperty(LayeredOptions.PORT_SIDE, finalExternalPortSide);
         }

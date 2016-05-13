@@ -613,7 +613,7 @@ public class DiagramLayoutEngine {
         }
         
         // Notify listeners of the to-be-executed layout
-        LayoutConnectorsService.getInstance().fireLayoutAboutToStart(mapping);
+        LayoutConnectorsService.getInstance().fireLayoutAboutToStart(mapping, progressMonitor);
         
         IStatus status = null;
         if (params.configurators.isEmpty()) {
@@ -654,7 +654,7 @@ public class DiagramLayoutEngine {
 
         mapping.setProperty(MAPPING_STATUS, status);
         // Notify listeners of the executed layout
-        LayoutConnectorsService.getInstance().fireLayoutDone(mapping);
+        LayoutConnectorsService.getInstance().fireLayoutDone(mapping, progressMonitor);
         return status;
     }
     

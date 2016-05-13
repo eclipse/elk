@@ -40,7 +40,6 @@
       </activation>
 
       <modules>
-        <module>org.eclipse.elk.targetplatform</module>
         <module>../plugins</module>
         <module>../features</module>
         <module>org.eclipse.elk.repository</module>
@@ -61,11 +60,6 @@
       <id>jboss-releases</id>
       <name>JBoss Releases Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-<!--
-      <releases>
-        <enabled>true</enabled>
-      </releases>
--->
     </pluginRepository>
   </pluginRepositories>
 
@@ -73,7 +67,7 @@
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
   <build>
     <plugins>
-      <!-- we need tycho plugin to build eclipse plugins -->
+      <!-- We need tycho plugin to build eclipse plugins -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-maven-plugin</artifactId>
@@ -81,6 +75,23 @@
         <extensions>true</extensions>
       </plugin>
 
+      <!-- Setup our target platform definition file. -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho-version}</version>
+        <configuration>
+          <target>
+            <artifact>
+              <groupId>org.eclipse.elk</groupId>
+              <artifactId>org.eclipse.elk.targetplatform</artifactId>
+              <version>0.1.0-SNAPSHOT</version>
+            </artifact>
+          </target>
+        </configuration>
+      </plugin>
+
+      <!-- Build source plugin bundles. -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-source-plugin</artifactId>
@@ -103,22 +114,6 @@
         <version>${tycho-version}</version>
         <configuration>
           <argLine>-ea</argLine>
-        </configuration>
-      </plugin>
-
-      <!-- Setup our target platform definition file. -->
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>target-platform-configuration</artifactId>
-        <version>${tycho-version}</version>
-        <configuration>
-          <target>
-            <artifact>
-              <groupId>org.eclipse.elk</groupId>
-              <artifactId>org.eclipse.elk.targetplatform</artifactId>
-              <version>0.1.0-SNAPSHOT</version>
-            </artifact>
-          </target>
         </configuration>
       </plugin>
     </plugins>
@@ -151,8 +146,6 @@
               <configuration>
                 <sources>
                   <source>src-gen</source>
-                </sources>
-                <sources>
                   <source>${project.build.directory}/xtend-gen</source>
                 </sources>
               </configuration>

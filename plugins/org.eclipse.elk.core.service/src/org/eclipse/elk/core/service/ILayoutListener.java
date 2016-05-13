@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.service;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 /**
  * Listener interface for automatic layout done through {@link DiagramLayoutEngine}. Instances can be
  * registered in {@link LayoutConnectorsService}.
@@ -19,11 +21,11 @@ public interface ILayoutListener {
     /**
      * Called when layout is about to be executed.
      */
-    void layoutAboutToStart(LayoutMapping mapping);
+    void layoutAboutToStart(LayoutMapping mapping, IElkProgressMonitor progressMonitor);
     
     /**
      * Called when layout has been executed.
      */
-    void layoutDone(LayoutMapping mapping);
+    void layoutDone(LayoutMapping mapping, IElkProgressMonitor progressMonitor);
 
 }
