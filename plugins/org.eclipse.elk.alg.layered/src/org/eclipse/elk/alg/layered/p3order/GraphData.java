@@ -76,11 +76,9 @@ public class GraphData {
      *            The graph
      * @param crossMinType
      *            The CrossMinimizer
-     * @param processAllGraphsRecursively
-     *            forces all graphs to be layouted recursively.
      */
-    public GraphData(final LGraph graph, final CrossMinType crossMinType,
-            final boolean processAllGraphsRecursively, final List<GraphData> graphs) {
+    public GraphData(final LGraph graph, final CrossMinType crossMinType, final List<GraphData> graphs) {
+        boolean processAllGraphsRecursively = graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP);
         lGraph = graph;
         this.crossMinType = crossMinType;
         childNumPorts = new HashMap<>();
@@ -154,7 +152,7 @@ public class GraphData {
         // When processing a cross minimizer which always improves, we mostly want to sweep into the
         // graph except when explicitly set not to do so.
         processRecursively = processAllGraphsRecursively || !hasParent || !crossMinType.isDeterministic()
-                && assessWhetherToProcessRecursively();
+                && assessWhetherToProcessBottomUp();
 
         int[] portPos = new int[portId];
         crossCounter = new AllCrossingsCounter(inLayerEdgeCount,
@@ -205,12 +203,16 @@ public class GraphData {
     
     // TODO-alan comment
     // TODO-alan think about thouroughness
-    private boolean assessWhetherToProcessRecursively() {
+    private boolean assessWhetherToProcessBottomUp() {
         // No need for hierarchical if this is root node or there is none or only one edge per side.
         if (!hasParent || parent.getPorts(PortSide.EAST).size() < 2 && parent.getPorts(PortSide.WEST).size() < 2) {
             return true;
         }
 
+        float boundary = lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
+        if (boundary < -1) {
+            return new Random().nextBoolean();
+        }
         List<LNode> nsPortDummies = new ArrayList<>();
         int pathsToRandom = 0;
         int pathsToHierarchical = 0;
@@ -256,10 +258,15 @@ public class GraphData {
             }
         }
 
-        float boundary = lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
+        // float boundary = lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
         double allPaths = pathsToRandom + pathsToHierarchical;
         double normalized = allPaths == 0 ? Double.MAX_VALUE : (pathsToRandom - pathsToHierarchical) / allPaths;
-        return normalized > boundary;
+        assert normalized >= -1 && normalized <= 1;
+        boolean b = normalized >= boundary;
+        if (boundary == -1) {
+            assert b;
+        }
+        return b;
     }
 
     private void updateTarget(final NodeInfo currentNode, final LNode target) {

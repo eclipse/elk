@@ -81,11 +81,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             return;
         }
 
-        boolean processAllGraphsRecursively =
-                layeredGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP);
-
-        Iterable<GraphData> graphsToSweepOn =
-                initialize(processAllGraphsRecursively, layeredGraph);
+        Iterable<GraphData> graphsToSweepOn = initialize(layeredGraph);
 
         if (crossMinType.isDeterministic()) {
             Consumer<GraphData> minimizingMethod = crossMinType.alwaysImproves()
@@ -377,8 +373,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         return isForwardSweep ? port.getSide() == PortSide.EAST : port.getSide() == PortSide.WEST;
     }
 
-    private Iterable<GraphData> initialize(final boolean processAllGraphsRecursively,
-            final LGraph rootGraph) {
+    private Iterable<GraphData> initialize(final LGraph rootGraph) {
         graphData = Lists.newArrayList();
         random = rootGraph.getProperty(InternalProperties.RANDOM);
         randomSeed = random.nextLong();
@@ -388,7 +383,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         while (i < graphs.size()) {
             LGraph graph = graphs.get(i);
             graph.id = i++;
-            GraphData gData = new GraphData(graph, crossMinType, processAllGraphsRecursively, graphData);
+            GraphData gData = new GraphData(graph, crossMinType, graphData);
             graphs.addAll(gData.childGraphs());
             graphData.add(gData);
             if (gData.processRecursively()) {
