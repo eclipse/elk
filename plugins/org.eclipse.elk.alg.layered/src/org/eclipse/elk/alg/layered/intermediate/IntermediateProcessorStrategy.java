@@ -192,7 +192,6 @@ public enum IntermediateProcessorStrategy {
             return new EndLabelProcessor();
 
         case GREEDY_SWITCH:
-            //TODO-alan this is bullshit.
             return new LayerSweepCrossingMinimizer(CrossMinType.GREEDY_SWITCH);
 
         case HIERARCHICAL_NODE_RESIZER:

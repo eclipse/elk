@@ -62,7 +62,6 @@ public final class PortSideProcessor implements ILayoutProcessor {
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 process(node);
-                // TODO-alan remove comment: Don't cache port sides here!!
             }
         }
         
@@ -97,7 +96,6 @@ public final class PortSideProcessor implements ILayoutProcessor {
      * @param port the port to set side and anchor position
      */
     public static void setPortSide(final LPort port) {
-        //TODO-alan test
         LNode portDummy = port.getProperty(InternalProperties.PORT_DUMMY);
         if (portDummy != null) {
             port.setSide(portDummy.getProperty(InternalProperties.EXT_PORT_SIDE));
