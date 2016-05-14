@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
@@ -300,7 +300,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     private LNode[] sortPortDummiesByPortPositions(final LNode parentNode,
             final LNode[] layerCloseToNodeEdge, final PortSide side) {
-        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(parentNode, side);
+        Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(parentNode, side);
 
         LNode[] sortedDummies = new LNode[layerCloseToNodeEdge.length];
 

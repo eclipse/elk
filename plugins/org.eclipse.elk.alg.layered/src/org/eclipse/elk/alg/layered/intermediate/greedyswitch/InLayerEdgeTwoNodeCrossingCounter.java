@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -95,7 +95,7 @@ public final class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCross
     }
 
     private void iterateThroughEdgesAndCollectThem(final LNode node, final PortSide side) {
-        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
+        Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, side);
         for (LPort port : ports) {
             for (LEdge edge : port.getConnectedEdges()) {
                 if (!edge.isSelfLoop()) {

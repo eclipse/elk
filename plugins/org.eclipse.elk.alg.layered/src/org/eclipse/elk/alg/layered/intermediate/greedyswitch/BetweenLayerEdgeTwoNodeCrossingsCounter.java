@@ -17,7 +17,7 @@ import java.util.Map;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -85,7 +85,7 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
     private void setPortPositionsForLayer(final int layerIndex, final PortSide portSide) {
         int portId = 0;
         for (LNode node : currentNodeOrder[layerIndex]) {
-            Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, portSide);
+            Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, portSide);
             for (LPort port : ports) {
                 portPositions.put(port, portId);
                 if (portOrderIsFixed(node)) {
@@ -279,7 +279,7 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
         }
 
         private void iterateTroughEdgesCollectingAdjacencies() {
-            Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
+            Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, side);
             for (LPort port : ports) {
                 List<LEdge> edges = getEdgesConnectedTo(port);
                 for (LEdge edge : edges) {

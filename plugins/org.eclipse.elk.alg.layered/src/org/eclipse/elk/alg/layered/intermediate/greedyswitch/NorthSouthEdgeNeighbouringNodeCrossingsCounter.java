@@ -16,7 +16,7 @@ import java.util.Map;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
@@ -64,7 +64,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     }
 
     private void setPortIdsOn(final LNode node, final PortSide side) {
-        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
+        Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, side);
         int portId = 0;
         for (LPort port : ports) {
             portPositions.put(port, portId++);

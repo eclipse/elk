@@ -63,7 +63,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
 
     private void setPortPositionsAndCardinalitiesFor(final LNode node, final int[] cardinalities,
             final PortSide side) {
-        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
+        Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, side);
         int portId = 0;
         for (LPort port : ports) {
             portPositions[port.id] = portId++;
