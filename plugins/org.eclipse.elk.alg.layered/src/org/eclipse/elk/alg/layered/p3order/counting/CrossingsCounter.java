@@ -25,13 +25,19 @@ import com.google.common.collect.Lists;
 /**
  * Counts in-layer and between layer crossings. Does not count North-South crossings.
  *
- * @author alan TODO-alan generalize init and count by passing iterable.
+ * @author alan
  */
 public final class CrossingsCounter {
     private final int[] portPositions;
     private BinaryPrefixTree indexTree;
     private final Deque<Integer> ends;
 
+    /**
+     * Create crossings counter.
+     * 
+     * @param portPositions
+     *            port position array passed to prevent frequent large array construction.
+     */
     public CrossingsCounter(final int[] portPositions) {
         this.portPositions = portPositions;
         ends = new ArrayDeque<>();
@@ -64,20 +70,16 @@ public final class CrossingsCounter {
     public int countInLayerCrossingsOnSide(final LNode[] nodes, final PortSide side) {
         Iterable<LNode> ns = Arrays.asList(nodes);
         Iterable<LPort> ports = side == PortSide.EAST ? joinPorts(ns, side) : joinReversePorts(ns, side);
-        int numPorts = 0;
-        for (LPort port : ports) {
-            portPositions[port.id] = numPorts++;
-        }
 
-        indexTree = new BinaryPrefixTree(numPorts);
+        initPortPositionsAndPrefixTree(ports);
 
         return countCrossingsOnPorts(ports);
     }
 
     /*
-     * Between-layer crossings become in-layer crossings if we fold the right layer downward and
+     * Between-layer crossings become in-layer crossings if we fold and rotate the right layer downward and
      * pretend that we are in a single layer. For example:
-     * @formatter:off
+     * <pre>
      * 0  3
      *  \/
      *  /\
@@ -89,7 +91,6 @@ public final class CrossingsCounter {
      * 2-- |
      * 3----
      * Ta daaa!
-     * @formatter:on
      * </pre>
     */
     /**
@@ -103,12 +104,9 @@ public final class CrossingsCounter {
      */
     public int countCrossingsBetweenLayers(final LNode[] leftLayerNodes,
             final LNode[] rightLayerNodes) {
-        Iterable<LNode> leftLayer = Arrays.asList(leftLayerNodes);
-        Iterable<LNode> rightLayerReverse = Lists.reverse(Arrays.asList(rightLayerNodes));
-
-        setPortPositions(PortSide.EAST, leftLayer, rightLayerReverse);
-
-        return countCrossings(PortSide.EAST, leftLayer, rightLayerReverse);
+        Iterable<LPort> ports = counterClockWisePorts(leftLayerNodes, rightLayerNodes);
+        initPortPositionsAndPrefixTree(ports);
+        return countCrossingsOnPorts(ports);
     }
 
     /**
@@ -168,39 +166,7 @@ public final class CrossingsCounter {
                 ? counterClockWisePorts(leftLayerNodes, rightLayerNodes)
                 : clockWisePorts(leftLayerNodes, rightLayerNodes);
     
-        int numPorts = 0;
-        for (LPort port : ports) {
-            portPositions[port.id] = numPorts++;
-        }
-        indexTree = new BinaryPrefixTree(numPorts);
-    }
-
-    @SafeVarargs
-    private final void setPortPositions(final PortSide side, final Iterable<LNode>... layers) {
-        int currentPortPos = 0;
-        PortSide s = side;
-        for (Iterable<LNode> layer : layers) {
-            for (LNode node : layer) {
-                for (LPort port : node.getPorts(s)) {
-                    portPositions[port.id] = currentPortPos++;
-                }
-            }
-            s = s.opposed();
-        }
-        indexTree = new BinaryPrefixTree(currentPortPos);
-    }
-
-    @SafeVarargs
-    private final int countCrossings(final PortSide firstSide, final Iterable<LNode>... layers) {
-        int crossings = 0;
-        PortSide s = firstSide;
-        for (Iterable<LNode> nodes : layers) {
-            for (LNode node : nodes) {
-                crossings += countCrossingsOnPorts(node.getPorts(s));
-            }
-            s = s.opposed();
-        }
-        return crossings;
+        initPortPositionsAndPrefixTree(ports);
     }
 
     private int countCrossingsOnPorts(final Iterable<LPort> ports) {
@@ -224,6 +190,15 @@ public final class CrossingsCounter {
             }
         }
         return crossings;
+    }
+
+    private void initPortPositionsAndPrefixTree(final Iterable<LPort> ports) {
+        int numPorts = 0;
+        for (LPort port : ports) {
+            portPositions[port.id] = numPorts++;
+        }
+    
+        indexTree = new BinaryPrefixTree(numPorts);
     }
 
     private boolean pointsDownward(final LEdge edge, final LPort port) {
