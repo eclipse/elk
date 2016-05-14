@@ -145,7 +145,7 @@ public class GraphData {
         hasParent = parent != null;
         if (hasParent) {
             parentGraphData = graphs.get(parent.getGraph().id);
-            if (crossMinType == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
+            if (sweepAlwaysImproves()) {
                 parentGraphData.childNumPorts.put(lGraph.id, portId);
             }
         }
@@ -160,7 +160,7 @@ public class GraphData {
 
         float[] portRanks = new float[portId];
         Random random = graph.getProperty(InternalProperties.RANDOM);
-        if (crossMinType.alwaysImproves() && !childGraphs.isEmpty()) {
+        if (sweepAlwaysImproves() && !childGraphs.isEmpty()) {
             portDistributor = new GreedyPortDistributor(portPos, childNumPorts);
         } else if (random.nextBoolean()) {
             portDistributor = new NodeRelativePortDistributor(portRanks, nodePositions);
@@ -191,8 +191,7 @@ public class GraphData {
             crossMinimizer = new BarycenterHeuristic(barycenterStates, constraintResolver,
                     random, (AbstractBarycenterPortDistributor) portDistributor);
             break;
-        case ONE_SIDED_GREEDY_SWITCH:
-        case TWO_SIDED_GREEDY_SWITCH:
+        case GREEDY_SWITCH:
             crossMinimizer =
                     new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH));
             break;
@@ -261,8 +260,9 @@ public class GraphData {
         // float boundary = lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
         double allPaths = pathsToRandom + pathsToHierarchical;
         double normalized = allPaths == 0 ? Double.MAX_VALUE : (pathsToRandom - pathsToHierarchical) / allPaths;
-        assert normalized >= -1 && normalized <= 1;
-        boolean b = normalized >= boundary;
+        assert normalized >= -1 && normalized <= 1 || normalized == Double.MAX_VALUE : "Normalized value is "
+                + normalized;
+        boolean b = normalized > boundary;
         if (boundary == -1) {
             assert b;
         }
@@ -477,6 +477,21 @@ public class GraphData {
      */
     public GraphData parentGraphData() {
         return parentGraphData;
+    }
+
+    /**
+     * @return
+     */
+    public boolean oneSidedGreedySwitch() {
+        return crossMinType.isDeterministic();
+    }
+
+    /**
+     * @return
+     */
+    public boolean sweepAlwaysImproves() {
+        return crossMinType == CrossMinType.GREEDY_SWITCH
+                && !lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH).isOneSided();
     }
 
 }

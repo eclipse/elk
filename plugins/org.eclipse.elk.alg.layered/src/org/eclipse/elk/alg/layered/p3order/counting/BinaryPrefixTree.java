@@ -110,4 +110,12 @@ public class BinaryPrefixTree {
     public int sumBetween(final int from, final int to) {
         return rank(to) - rank(from + 1);
     }
+
+    /**
+     * 
+     */
+    public void clear() {
+        // TODO Auto-generated method stub
+
+    }
 }

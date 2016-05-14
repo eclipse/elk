@@ -25,17 +25,16 @@ import com.google.common.collect.Lists;
 /**
  * Counts in-layer and between layer crossings. Does not count North-South crossings.
  *
- * @author alan TODO-alan specialize to only fixed and always both in and between layer case.
+ * @author alan TODO-alan generalize init and count by passing iterable.
  */
 public final class CrossingsCounter {
     private final int[] portPositions;
-    private final BinaryPrefixTree indexTree;
+    private BinaryPrefixTree indexTree;
     private final Deque<Integer> ends;
 
     public CrossingsCounter(final int[] portPositions) {
         this.portPositions = portPositions;
         ends = new ArrayDeque<>();
-        indexTree = new BinaryPrefixTree(portPositions.length);
     }
 
     /*
@@ -64,8 +63,15 @@ public final class CrossingsCounter {
      */
     public int countInLayerCrossingsOnSide(final LNode[] nodes, final PortSide side) {
         Iterable<LNode> ns = Arrays.asList(nodes);
-        setPortPositions(side, ns);
-        return countCrossings(side, ns);
+        Iterable<LPort> ports = side == PortSide.EAST ? joinPorts(ns, side) : joinReversePorts(ns, side);
+        int numPorts = 0;
+        for (LPort port : ports) {
+            portPositions[port.id] = numPorts++;
+        }
+
+        indexTree = new BinaryPrefixTree(numPorts);
+
+        return countCrossingsOnPorts(ports);
     }
 
     /*
@@ -139,8 +145,10 @@ public final class CrossingsCounter {
      * @return
      */
     public int countCrossingsBetweenNodesOnSide(final LNode upperNode, final LNode lowerNode, final PortSide side) {
-        Iterable<LPort> ports = Iterables.concat(PortIterable.inCounterClockwiseOrder(upperNode, side),
-                PortIterable.inCounterClockwiseOrder(lowerNode, side));
+        Iterable<LPort> ports =
+                side == PortSide.EAST ? Iterables.concat(upperNode.getPorts(side), lowerNode.getPorts(side))
+                        : Iterables.concat(Lists.reverse(upperNode.getPorts(side)),
+                                Lists.reverse(lowerNode.getPorts(side)));
         return countCrossingsOnPorts(ports);
     }
 
@@ -164,6 +172,7 @@ public final class CrossingsCounter {
         for (LPort port : ports) {
             portPositions[port.id] = numPorts++;
         }
+        indexTree = new BinaryPrefixTree(numPorts);
     }
 
     @SafeVarargs
@@ -178,6 +187,7 @@ public final class CrossingsCounter {
             }
             s = s.opposed();
         }
+        indexTree = new BinaryPrefixTree(currentPortPos);
     }
 
     @SafeVarargs

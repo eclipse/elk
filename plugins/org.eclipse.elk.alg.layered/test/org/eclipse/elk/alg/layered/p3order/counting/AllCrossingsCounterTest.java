@@ -227,8 +227,7 @@ public class AllCrossingsCounterTest extends TestGraphCreator {
                 }
             }
         }
-        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, false, null);
-
+        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, null);
         return gd.crossCounter().countAllCrossings(nodeArray); // TODO-alan
     }
 }

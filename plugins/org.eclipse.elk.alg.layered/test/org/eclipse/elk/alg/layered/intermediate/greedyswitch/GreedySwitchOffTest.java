@@ -46,7 +46,7 @@ public class GreedySwitchOffTest {
         List<LNode> expectedOrderLayerTwo = getNodesInLayer(1, graph);
 
         LayerSweepCrossingMinimizer greedySwitcher =
-                new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
+                new LayerSweepCrossingMinimizer(CrossMinType.GREEDY_SWITCH);
         greedySwitcher.process(graph, new BasicProgressMonitor());
 
         assertThat(getNodesInLayer(0, graph), is(expectedOrderLayerOne));

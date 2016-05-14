@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
-import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -25,6 +24,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.p3order.counting.PortIterable;
+import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortConstraints;
@@ -76,32 +76,54 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Minimize Crossings " + crossMinType, 1);
 
-        if (layeredGraph.getLayers().isEmpty()) {
+        if (layeredGraph.getLayers().isEmpty() || turnedOff(layeredGraph)) {
             progressMonitor.done();
             return;
         }
 
-        Iterable<GraphData> graphsToSweepOn = initialize(layeredGraph);
-
-        if (crossMinType.isDeterministic()) {
-            Consumer<GraphData> minimizingMethod = crossMinType.alwaysImproves()
-                    ? gData -> minimizeCrossingsNoCounter(gData)
-                    : gData -> minimizeCrossingsWithCounter(gData);
-//            if (processAllGraphsRecursively) {
-                iterateAndMinimize(graphsToSweepOn, minimizingMethod);
-//            } else {
-//                minimizingMethod.accept(graphData.get(layeredGraph.id));
-//            }
+        Consumer<GraphData> minimizingMethod;
+        if (nonDeterministic()) {
+            minimizingMethod = gData -> compareDifferentRandomizedLayouts(gData);
+        } else if (alwaysImproves(layeredGraph)) {
+            minimizingMethod = gData -> minimizeCrossingsNoCounter(gData);
         } else {
-            iterateAndMinimize(graphsToSweepOn, gData -> compareDifferentRandomizedLayouts(gData));
+            minimizingMethod = gData -> minimizeCrossingsWithCounter(gData);
         }
+
+        List<GraphData> graphsToSweepOn = initialize(layeredGraph);
+        iterateAndMinimize(graphsToSweepOn, minimizingMethod);
 
         setGraphs();
 
         progressMonitor.done();
     }
 
-    private void iterateAndMinimize(final Iterable<GraphData> graphsToSweepOn,
+    /**
+     * @param g
+     * @return
+     */
+    private boolean alwaysImproves(final LGraph g) {
+        return crossMinType == CrossMinType.GREEDY_SWITCH
+                && !g.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH).isOneSided();
+    }
+
+    /**
+     * @return
+     */
+    private boolean nonDeterministic() {
+        return crossMinType == CrossMinType.BARYCENTER;
+    }
+
+    /**
+     * @param graph
+     * @return
+     */
+    private boolean turnedOff(final LGraph graph) {
+        return crossMinType == CrossMinType.GREEDY_SWITCH
+                && graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) == GreedySwitchType.OFF;
+    }
+
+    private void iterateAndMinimize(final List<GraphData> graphsToSweepOn,
             final Consumer<GraphData> minimizingMethod) {
         for (GraphData gData : graphsToSweepOn) {
             minimizingMethod.accept(gData);
@@ -373,11 +395,11 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         return isForwardSweep ? port.getSide() == PortSide.EAST : port.getSide() == PortSide.WEST;
     }
 
-    private Iterable<GraphData> initialize(final LGraph rootGraph) {
+    private List<GraphData> initialize(final LGraph rootGraph) {
         graphData = Lists.newArrayList();
         random = rootGraph.getProperty(InternalProperties.RANDOM);
         randomSeed = random.nextLong();
-        Deque<GraphData> graphsToSweepOn = Lists.newLinkedList();
+        List<GraphData> graphsToSweepOn = Lists.newLinkedList();
         List<LGraph> graphs = Lists.<LGraph>newArrayList(rootGraph);
         int i = 0;
         while (i < graphs.size()) {
@@ -387,7 +409,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             graphs.addAll(gData.childGraphs());
             graphData.add(gData);
             if (gData.processRecursively()) {
-                graphsToSweepOn.push(gData);
+                graphsToSweepOn.add(0, gData);
             }
         }
 

@@ -67,7 +67,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
         return Arrays.asList(
-                new Object[][] { { CrossMinType.BARYCENTER }, { CrossMinType.ONE_SIDED_GREEDY_SWITCH } });
+                new Object[][] { { CrossMinType.BARYCENTER }, { CrossMinType.GREEDY_SWITCH } });
     }
 
     @Before
@@ -655,49 +655,6 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<LNode> actualExternalDummyOrderRight = rightInnerGraph.getLayers().get(0).getNodes();
         assertThat(actualExternalDummyOrderRight,
                 is((List<LNode>) Lists.newArrayList(rightInnerDummyNodes)));
-
-        assertThat(rightOuterNode.getPorts(), is(expectedOrderOfPortsRight));
-
-        List<LNode> actualNormalOrderRight = rightInnerGraph.getLayers().get(1).getNodes();
-        assertThat(actualNormalOrderRight, is(expectedNormalNodeOrderRight));
-    }
-
-    /**
-     * <pre>
-     * ____  ____
-     * |*-+  +-*|
-     * |  |\/|  |
-     * |*-+/\+-*|
-     * |--|  |--|
-     * </pre>
-     *
-     * With external origins of port dummies on right node wrong way around.
-     */
-    @Test
-    public void allRecursive_nestedGraphWithWronglySortedDummyNodes_crossingStays() {
-        LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
-        LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
-        LPort[] leftOuterPorts = addPortsOnSide(2, leftOuterNode, PortSide.EAST);
-        LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
-        addEdgeBetweenPorts(leftOuterPorts[0], rightOuterPorts[0]);
-        addEdgeBetweenPorts(leftOuterPorts[1], rightOuterPorts[1]);
-
-        makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
-
-        LGraph rightInnerGraph = nestedGraph(rightOuterNode);
-        LNode[] rightInnerDummyNodes =
-                addExternalPortDummiesToLayer(makeLayer(rightInnerGraph), rightOuterPorts);
-        LNode[] rightInnerNodes = addNodesToLayer(2, makeLayer(rightInnerGraph));
-        eastWestEdgeFromTo(rightInnerDummyNodes[0], rightInnerNodes[0]);
-        eastWestEdgeFromTo(rightInnerDummyNodes[1], rightInnerNodes[1]);
-
-        getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP, true);
-
-        List<LNode> expectedNormalNodeOrderRight = Lists.newArrayList(rightInnerNodes);
-
-        List<LPort> expectedOrderOfPortsRight = Lists.newArrayList(rightOuterPorts);
-
-        setUpAndMinimizeCrossings();
 
         assertThat(rightOuterNode.getPorts(), is(expectedOrderOfPortsRight));
 
@@ -1369,6 +1326,8 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         addEdgeBetweenPorts(leftOuterPorts[1], rightOuterPorts[0]);
         makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
         makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
+
+        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0f);
         
         setUpAndMinimizeCrossings();
         

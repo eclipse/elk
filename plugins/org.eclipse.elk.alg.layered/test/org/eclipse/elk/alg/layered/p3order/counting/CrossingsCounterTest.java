@@ -129,7 +129,7 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         addEdgeBetweenPorts(bottomLeftTopPort, topRightTopPort);
         addEdgeBetweenPorts(bottomLeftBottomPort, topRightBottomPort);
 
-        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, true, null);
+        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, null);
         gd.portDistributor().distributePortsWhileSweeping(order(), 1, true);
 
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
@@ -158,10 +158,9 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
     @Test
     public void countCrossingsBetweenLayers_moreComplexThreeLayerGraph() {
         getMoreComplexThreeLayerGraph();
-        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, true, null);
+        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, null);
         gd.portDistributor().distributePortsWhileSweeping(order(), 1, true);
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
-
         assertThat(counter.countCrossingsBetweenLayers(order()[0], order()[1]), is(1));
     }
 
