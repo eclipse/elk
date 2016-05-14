@@ -468,21 +468,36 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }    
     
     private def JvmTypeReference getOptionTypeClass(MdOption property) {
-        switch property.type?.type {
-            case null:
-                typeRef(Void)
-            case Double,
-            case double:
-                typeRef(Float)
-            case Long,
-            case long:
-                typeRef(Integer)
-            case EnumSet: {
-                val outer = property.type as JvmParameterizedTypeReference
-                outer.arguments.head.cloneWithProxies    
+        if (property.type != null) {
+            // There are a few cases we need to catch
+            if (property.type.type instanceof JvmPrimitiveType) {
+                val primitiveType = property.type.type as JvmPrimitiveType;
+                
+                // Double and long need to be mapped to Float and Integer, respectively
+                if (primitiveType.simpleName == "double") {
+                    return typeRef(Float);
+                } else if (primitiveType.simpleName == "long") {
+                    return typeRef(Integer);
+                }
+            } else if (property.type.type instanceof JvmGenericType) {
+                val genericType = property.type.type as JvmGenericType;
+                
+                // Double and FLoat... same as above. Also, with EnumSets we want to have the type of the set's
+                // content as the option type, not the EnumSet type itself
+                if (genericType.identifier == "java.lang.Double") {
+                    return typeRef(Float);
+                } else if (genericType.identifier == "java.lang.Long") {
+                    return typeRef(Integer);
+                } else if (genericType.identifier == "java.util.EnumSet") {
+                    val outer = property.type as JvmParameterizedTypeReference
+                    return outer.arguments.head.cloneWithProxies
+                }
             }
-            default:
-                property.type.cloneWithProxies.asWrapperTypeIfPrimitive
+            
+            // Standard case if we didn't run into the special cases
+            property.type.cloneWithProxies.asWrapperTypeIfPrimitive
+        } else {
+            return typeRef(Void);
         }
     }
     
