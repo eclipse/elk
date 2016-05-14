@@ -118,11 +118,11 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         monitor.done();
     }
     
-    /** Ensures that for each dummy node the external port and vice versa is set. Since the side of
-    * the dummy node has also already been calculated, we set this fixed here. Therefore the
-    * compound node has a fixed side constraint, with some sides still set to UNDEFINED. This must
-    * be dealt with later. TODO-alan test
-    */
+    /**
+     * Ensures that for each dummy node the external port and vice versa is set. Since the side of the dummy node has
+     * also already been calculated, we set this fixed here. Therefore the compound node has a fixed side constraint,
+     * with some sides still set to UNDEFINED. This must be dealt with later.
+     */
    private void setSidesOfPortsToSidesOfDummyNodes() {
        for (Entry<LPort, LNode> e : dummyNodeMap.entrySet()) {
            LPort externalPort = e.getKey();

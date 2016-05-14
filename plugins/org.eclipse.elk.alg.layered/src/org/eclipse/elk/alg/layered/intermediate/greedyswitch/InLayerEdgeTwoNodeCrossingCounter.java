@@ -28,8 +28,6 @@ import com.google.common.collect.Lists;
  * 
  * @author alan
  */
-// * TODO-alan consider replacing using new counter or join two node with allcrossingscounter or
-// rewrite using new idea and IndexTree...
 public final class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
 
     private final List<ComparableEdgeAndPort> relevantEdgesAndPorts;

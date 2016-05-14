@@ -31,7 +31,7 @@ import com.google.common.collect.TreeMultiset;
 /**
  * In-layer edge crossing counter for all crossings in a layer. The subclass {@link InLayerEdgeTwoNodeCrossingCounter}
  * accesses the {@link #countCrossingsOn(LEdge, LPort)} method with only the nodes and edges relevant to the two nodes
- * in question. TODO-alan remove.
+ * in question.
  * 
  * @author alan
  */
@@ -56,8 +56,7 @@ public class InLayerEdgeAllCrossingsCounter {
      * @param assumeFixedPortOrder
      *            assume all port orders to be fixed.
      * @param assumeCompoundNodePortOrderFixed
-     *            Whether to assume that the order of ports on compound nodes is fixed or not. TODO-alan replace by
-     *            Fenwick or at least merge with greedy switch in layer counter.
+     *            Whether to assume that the order of ports on compound nodes is fixed or not.
      */
     public InLayerEdgeAllCrossingsCounter(final LNode[] nodeOrder,
             final boolean assumeFixedPortOrder, final boolean assumeCompoundNodePortOrderFixed) {
