@@ -155,8 +155,8 @@ public class GraphData {
                 && assessWhetherToProcessBottomUp();
 
         int[] portPos = new int[portId];
-        crossCounter = new AllCrossingsCounter(inLayerEdgeCount,
-                hasNorthSouthPorts, portPos, getHyperedges(currentNodeOrder));
+        crossCounter =
+                new AllCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, getHyperedges(currentNodeOrder), portPos);
 
         float[] portRanks = new float[portId];
         Random random = graph.getProperty(InternalProperties.RANDOM);

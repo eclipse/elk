@@ -14,16 +14,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Counts the number of crossings between two given layers or all layers in a graph. <br/>
- * When multiple edges leave or enter a port, it is assumed, that this is drawn as a hyperedge and
- * the hyperedge crossings counter is used. This counter can only approximate the resulting
- * crossings. <br/>
- * The AllCrossingsCounter can be created to assume all port order constraints to be fixed or to see
- * the actual port order constraints. <br/>
- * When it does not assume all port orders fixed: Should the following port sorting phase be able to
- * remove crossings, these crossings are not counted.
- *
- * TODO-alan this class should be removed some day. AND ITS A MESS!
+ * Counts all crossings in a graph. <br/>
  *
  * @author alan
  */
@@ -34,6 +25,32 @@ public final class AllCrossingsCounter {
     private boolean[] hasHyperEdgesEastOfIndex;
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
 
+    /**
+     * Create utility class for counting all different kinds of crossings.
+     * 
+     * @param inLayerEdgeCount
+     *            Number of inlayer edges per layer for {@link HyperedgeCrossingsCounter}.
+     * @param hasNorthSouthPorts
+     *            Whether graph has north south ports in a given layer for {@link HyperedgeCrossingsCounter}.
+     * @param hasHyperEdgesEastOfIndex
+     *            Whether there are hyperedges to the right of each layer index.
+     * @param portPos
+     *            port position array to prevent frequent large array creation.
+     */
+    public AllCrossingsCounter(final int[] inLayerEdgeCount,
+            final boolean[] hasNorthSouthPorts, final boolean[] hasHyperEdgesEastOfIndex, final int[] portPos) {
+        this.hasHyperEdgesEastOfIndex = hasHyperEdgesEastOfIndex;
+        hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, portPos);
+        northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPos);
+        crossingCounter = new CrossingsCounter(portPos);
+    }
+
+    /**
+     * Count all crossings.
+     * 
+     * @param currentOrder
+     * @return
+     */
     public int countAllCrossings(final LNode[][] currentOrder) {
         if (currentOrder.length == 0) {
             return 0;
@@ -46,44 +63,6 @@ public final class AllCrossingsCounter {
         return crossings;
     }
 
-    public AllCrossingsCounter(final int[] inLayerEdgeCount,
-            final boolean[] hasNorthSouthPorts, final int[] portPos,
-            final boolean[] hasHyperEdgesEastOfIndex) {
-        this.hasHyperEdgesEastOfIndex = hasHyperEdgesEastOfIndex;
-        hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, portPos);
-        northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPos);
-        crossingCounter = new CrossingsCounter(portPos);
-    }
-
-    /**
-     * Count in layer crossings not between any layers and north south port crossings in first
-     * layer.
-     *
-     * @param forward
-     *            Whether we are sweeping forward or not (= backward).
-     * @param nodes
-     *            the current order of the nodes.
-     * @return number of crossings.
-     */
-    public int countCrossingsInFirstLayer(final boolean forward, final LNode[][] nodes) {
-        int length = nodes.length;
-        // Count crossings on front side of first layer.
-        LNode[] firstLayer = nodes[firstLayerInd(forward, length)];
-        int crossings = crossingCounter.countInLayerCrossingsOnSide(firstLayer,
-                sideOpposedSweepDirection(forward));
-        crossings += northSouthEdgeCrossingCounter.countCrossings(firstLayer);
-        return crossings;
-    }
-
-    private PortSide sideOpposedSweepDirection(final boolean isForwardSweep) {
-        return isForwardSweep ? PortSide.WEST : PortSide.EAST;
-    }
-
-    private int firstLayerInd(final boolean isForwardSweep, final int length) {
-        return isForwardSweep ? 0 : length - 1;
-    }
-
-
     private int countCrossingsAt(final int layerIndex, final LNode[][] currentOrder) {
         int totalCrossings = 0;
         LNode[] leftLayer = currentOrder[layerIndex];
@@ -94,10 +73,9 @@ public final class AllCrossingsCounter {
             } else {
                 totalCrossings = crossingCounter.countCrossingsBetweenLayers(leftLayer, rightLayer);
             }
-
         }
-        final LNode[] layer = leftLayer;
-        totalCrossings += northSouthEdgeCrossingCounter.countCrossings(layer);
+
+        totalCrossings += northSouthEdgeCrossingCounter.countCrossings(leftLayer);
         return totalCrossings;
     }
 
