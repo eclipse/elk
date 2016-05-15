@@ -19,9 +19,9 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
-import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -44,26 +44,12 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
 
     /** port ranks array in which the results of ranks calculation are stored. */
     private final float[] portRanks;
-    private boolean useNodeArrayForNodePositions;
     private float minBarycenter;
     private float maxBarycenter;
     private int[][] nodePositions;
     private final float[] portBarycenter;
     private final List<LPort> inLayerPorts;
     /** Whether to assume port order to be fixed. */
-
-    /**
-     * Constructs a port distributor for the given array of port ranks.
-     * All ports are required to be assigned ids in the range of the given array.
-     *
-     * @param portRanks
-     *            The array of port ranks
-     */
-    public AbstractBarycenterPortDistributor(final float[] portRanks) {
-        this.portRanks = portRanks;
-        inLayerPorts = Lists.newLinkedList();
-        portBarycenter = new float[portRanks.length];
-    }
 
     /**
      * Constructs a port distributor for the given array of port ranks. All ports are required to be
@@ -75,7 +61,9 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      *            array of node positions.
      */
     public AbstractBarycenterPortDistributor(final float[] portRanks, final int[][] nodePos) {
-        this(portRanks);
+        this.portRanks = portRanks;
+        inLayerPorts = Lists.newLinkedList();
+        portBarycenter = new float[portRanks.length];
         nodePositions = nodePos;
     }
 
@@ -91,6 +79,49 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
 
     // /////////////////////////////////////////////////////////////////////////////
     // Port Rank Assignment
+
+    @Override
+    public void distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
+            final boolean isForwardSweep) {
+        updateNodePositions(nodeOrder, currentIndex);
+        LNode[] freeLayer = nodeOrder[currentIndex];
+        PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
+        if (isNotFirstLayer(nodeOrder.length, currentIndex, isForwardSweep)) {
+    
+            LNode[] fixedLayer = nodeOrder[isForwardSweep ? currentIndex - 1 : currentIndex + 1];
+            calculatePortRanks(fixedLayer, portTypeFor(isForwardSweep));
+            for (LNode node : freeLayer) {
+                distributePorts(node, side);
+            }
+    
+            calculatePortRanks(freeLayer, portTypeFor(!isForwardSweep));
+            for (LNode node : fixedLayer) {
+                if (!hasNestedGraph(node)) {
+                    distributePorts(node, side.opposed());
+                }
+            }
+        } else {
+            for (LNode node : freeLayer) {
+                distributePorts(node, side);
+            }
+        }
+    }
+
+    /**
+     * Determine ranks for all ports of specific type in the given layer.
+     * The ranks are written to the {@link #getPortRanks()} array.
+     *
+     * @param layer
+     *            a layer as node array
+     * @param portType
+     *            the port type to consider
+     */
+    public final void calculatePortRanks(final LNode[] layer, final PortType portType) {
+        float consumedRank = 0;
+        for (int nodeIx = 0; nodeIx < layer.length; nodeIx++) {
+            consumedRank += calculatePortRanks(layer[nodeIx], consumedRank, portType);
+        }
+    }
 
     /**
      * Assign port ranks for the input or output ports of the given node. If the node's port
@@ -111,61 +142,14 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
     protected abstract float calculatePortRanks(final LNode node, final float rankSum,
             final PortType type);
 
-    /**
-     * Determine ranks for all ports of specific type in the given layer.
-     * The ranks are written to the {@link #getPortRanks()} array.
-     *
-     * @param layer
-     *            a layer as node array
-     * @param portType
-     *            the port type to consider
-     */
-    public final void calculatePortRanks(final LNode[] layer, final PortType portType) {
-        float consumedRank = 0;
-        for (int nodeIx = 0; nodeIx < layer.length; nodeIx++) {
-            consumedRank += calculatePortRanks(layer[nodeIx], consumedRank, portType);
-        }
-    }
-
     // /////////////////////////////////////////////////////////////////////////////
     // Port Distribution
 
-    /**
-     * Distribute the ports of each node in the layered graph depending on the port constraints.
-     *
-     * @param layeredGraph
-     *            a layered graph as node array
-     */
-    public final void distributePorts(final LNode[][] layeredGraph) {
-        for (int l = 0; l < layeredGraph.length; l++) {
-            distributePortsInSingleLayer(l, layeredGraph);
-        }
-    }
-
-    private void distributePortsInSingleLayer(final int layerIndex, final LNode[][] layeredGraph) {
-        if (layerIndex + 1 < layeredGraph.length) {
-            // update the input port ranks of the next layer
-            calculatePortRanks(layeredGraph[layerIndex + 1], PortType.INPUT);
-        }
-        LNode[] layer = layeredGraph[layerIndex];
-        float consumedRank = 0;
-        for (LNode node : layer) {
-            // reorder the ports of the current node
-            distributePorts(node);
-            if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
-            }
-            // update the output port ranks after reordering
-            consumedRank += calculatePortRanks(node, consumedRank, PortType.OUTPUT);
-        }
-    }
 
     private void distributePorts(final LNode node, final PortSide side) {
-        distributePorts(node, node.getPorts(side));
-    }
-
-    private void distributePorts(final LNode node) {
-        distributePorts(node, node.getPorts());
+        // distribute ports in sweep direction and on north south side of node.
+        distributePorts(node,
+                Iterables.concat(node.getPorts(side), node.getPorts(PortSide.SOUTH), node.getPorts(PortSide.NORTH)));
     }
 
     /**
@@ -329,36 +313,7 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
     }
 
     private int positionOf(final LNode node) {
-        if (useNodeArrayForNodePositions) {
             return nodePositions[node.getLayer().id][node.id];
-        }
-        return node.getIndex();
-    }
-
-    @Override
-    public void distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
-            final boolean isForwardSweep) {
-        updateNodePositions(nodeOrder, currentIndex);
-        if (isNotFirstLayer(nodeOrder.length, currentIndex, isForwardSweep)) {
-            // TODO-alan this seems luke a f*** hack.
-            useNodeArrayForNodePositions = true;
-
-            LNode[] fixedLayer = nodeOrder[isForwardSweep ? currentIndex - 1 : currentIndex + 1];
-            LNode[] freeLayer = nodeOrder[currentIndex];
-            PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
-            calculatePortRanks(fixedLayer, portTypeFor(isForwardSweep));
-            for (LNode node : freeLayer) {
-                distributePorts(node, side);
-            }
-            calculatePortRanks(freeLayer, portTypeFor(!isForwardSweep));
-            for (LNode node : fixedLayer) {
-                if (!hasNestedGraph(node)) {
-                    distributePorts(node, side.opposed());
-                }
-            }
-
-            useNodeArrayForNodePositions = false;
-        }
     }
 
     private void updateNodePositions(final LNode[][] nodeOrder, final int currentIndex) {

@@ -38,14 +38,6 @@ public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistr
         super(portRanks, nodePositions);
     }
     
-    /**
-     * Constructs a layer-total port distributor with the given array of ranks. All ports are
-     * required to be assigned ids in the range of the given array.
-     *            The array of port ranks
-     */
-    public LayerTotalPortDistributor(final float[] portRanks) {
-        super(portRanks);
-    }
 
     /**
      * {@inheritDoc}

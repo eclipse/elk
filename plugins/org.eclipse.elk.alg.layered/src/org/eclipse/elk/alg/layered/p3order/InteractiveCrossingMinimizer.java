@@ -80,8 +80,9 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Interactive crossing minimization", 1);
-        
+        int[][] nodePositions = initNodePositions(layeredGraph);
         int portCount = 0;
+        int layerIndex = 0;
         for (Layer layer : layeredGraph) {
             // determine a horizontal position for edge bend points comparison
             double horizPos = 0;
@@ -135,15 +136,32 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
                     return compare;
                 }
             });
-        }
 
-        // Distribute the ports of all nodes with free port constraints
-        AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
-        portDistributor.distributePorts(layeredGraph.toNodeArray());
+            // TODO-alan test and ask.
+            AbstractBarycenterPortDistributor portDistributor =
+                    new NodeRelativePortDistributor(new float[portCount], nodePositions);
+            portDistributor.distributePortsWhileSweeping(layeredGraph.toNodeArray(), layerIndex++, true);
+        }
         
         monitor.done();
     }
     
+    private int[][] initNodePositions(final LGraph graph) {
+        int lp = 0;
+        int[][] pos = new int[graph.getLayers().size()][];
+        for (Layer layer : graph) {
+            layer.id = lp++;
+            pos[layer.id] = new int[layer.getNodes().size()];
+            List<LNode> nodes = layer.getNodes();
+            for (int i = 0; i < nodes.size(); i++) {
+                LNode node = nodes.get(i);
+                node.id = i;
+                pos[layer.id][node.id] = i;
+            }
+        }
+        return pos;
+    }
+
     /**
      * Determine a vertical position for the given node.
      * 

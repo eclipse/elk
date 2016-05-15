@@ -43,18 +43,6 @@ public final class NodeRelativePortDistributor extends AbstractBarycenterPortDis
     }
 
     /**
-     * Constructs a node-relative port distributor with the given array of ranks. All ports are
-     * required to be assigned ids in the range of the given array.
-     * 
-     * @param portRanks
-     *            The array of port ranks
-     * @param nodePositions
-     */
-    public NodeRelativePortDistributor(final float[] portRanks) {
-        super(portRanks);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
