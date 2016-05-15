@@ -181,7 +181,17 @@ public final class KlayLayered {
         theMonitor.done();
     }
     
-    /**TODO-alan abstract documentation. */
+    /**
+     * Processors can be marked as operating on the full hierarchy.
+     * 
+     * All graphs are collected using a breadth first search and this list reversed, so that for each graph, all
+     * following graphs are on the same hierarchy level or higher, i.e. closer to the parent graph. Each graph then has
+     * a unique algorithm, which is comprised of a sequence of processors. The processors can vary depending on the
+     * characteristics of each graph. The list of graphs and their algorithms is then traversed. If a processor is not
+     * hierarchical it is simply executed. It it is hierarchical and this graph is not the root graph, this processor is
+     * skipped and the algorithm is paused until the processor has been executed on the root graph. Then the algorithm
+     * is continued, starting with the level lowest in the hierarchy, i.e. furthest away from the root graph.
+     */
     private void hierarchicalLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Recursive Hierarchical layout", 2); // SUPPRESS CHECKSTYLE MagicNumber
 

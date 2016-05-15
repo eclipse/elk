@@ -50,8 +50,6 @@ public class TestGraphCreator {
     protected LGraph graph;
 
     /**
-     * TODO-alan remove.
-     *
      * @return the graph
      */
     public LGraph getGraph() {
@@ -79,7 +77,7 @@ public class TestGraphCreator {
     }
 
     /**
-     * TODO-alan remove Creates empty graph.
+     * Creates empty graph.
      *
      * @return return empty graph.
      */

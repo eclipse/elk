@@ -25,8 +25,8 @@ import org.eclipse.elk.core.options.PortSide;
 import com.google.common.collect.Lists;
 
 /**
- * Distribute ports greedily on a single node.
- *
+ * Distribute ports greedily on a single node. TODO-alan this is currently broken :-(
+ * 
  * @author alan
  *
  */

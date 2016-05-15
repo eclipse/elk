@@ -35,7 +35,6 @@ public class GreedySwitchOffTest {
 
     // CHECKSTYLEOFF javadoc
     // CHECKSTYLEOFF MagicNumber
-    // TODO-alan fix!
     @Test
     public void greedySwitchIsOff() {
         TestGraphCreator creator = new TestGraphCreator();

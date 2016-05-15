@@ -1308,8 +1308,6 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedOrderRight));
     }
 
-    // TODO-alan change design to be able to test thouroughness value with dummy heuristic.
-
     /**
      * <pre>
      * _______  _____
@@ -1484,7 +1482,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
      * |_____|  |___|
      * </pre>
      */
-    @Ignore // TODO-alan
+    @Ignore // TODO case where bottom up has sortable ports.
     public void needsCrossHierarchy_checkWhetherMarked() {
         LNode leftOuterNode = addNodeToLayer(makeLayer());
         LNode rightOuterNode = addNodeToLayer(makeLayer());
