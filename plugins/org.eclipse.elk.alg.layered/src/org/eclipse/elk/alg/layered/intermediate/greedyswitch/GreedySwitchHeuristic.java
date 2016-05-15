@@ -137,4 +137,9 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
         return !greedySwitchType.isOneSided();
     }
 
+    @Override
+    public boolean isDeterministic() {
+        return true;
+    }
+
 }

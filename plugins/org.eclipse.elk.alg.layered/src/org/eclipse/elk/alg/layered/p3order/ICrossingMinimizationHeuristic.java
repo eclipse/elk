@@ -41,7 +41,8 @@ public interface ICrossingMinimizationHeuristic {
     boolean setFirstLayerOrder(LNode[][] currentNodeOrder, boolean isForwardSweep);
 
     /**
-     * TODO-alan comment.
+     * Minimize crossings in the layer as indicated by freeLayerIndex.
+     * 
      * @param order
      *            the current order of the nodes.
      * @param freeLayerIndex
@@ -54,4 +55,6 @@ public interface ICrossingMinimizationHeuristic {
     boolean minimizeCrossings(LNode[][] order, int freeLayerIndex, boolean forwardSweep,
             boolean isFirstSweep);
 
+    /** Determines whether the heuristic is deterministic or has random decisions. */
+    boolean isDeterministic();
 }

@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -84,11 +85,14 @@ public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
     }
 
     private void distributePortsInCompleteGraph(final int numberOfPorts) {
-        AbstractBarycenterPortDistributor portDist =
-                new LayerTotalPortDistributor(new float[numberOfPorts]);
-
-
-        portDist.distributePorts(getGraph().toNodeArray());
+        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, null);
+        LNode[][] nodes = graph.toNodeArray();
+        for (int i = 0; i < nodes.length; i++) {
+            gd.portDistributor().distributePortsWhileSweeping(nodes, i, true);
+        }
+        for (int i = nodes.length - 1; i >= 0; i--) {
+            gd.portDistributor().distributePortsWhileSweeping(nodes, i, false);
+        }
     }
 
     /**
@@ -115,16 +119,17 @@ public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
 
     /**
      * <pre>
-     *   *-----
-     *   *-\  |
-     * ____ | |
-     * |  |-+--
-     * |__|-|
+     *     *-----
+     *     *-\  |
+     *   ____ | |
+     * * |  |-+--
+     *   |__|-|
      * </pre>
      */
     @Test
     public void distributePortsOfGraph_GivenInLayerEdgePortOrderCrossing_ShouldRemoveIt() {
-        LNode[] nodes = addNodesToLayer(3, makeLayer(getGraph()));
+        addNodeToLayer(makeLayer());
+        LNode[] nodes = addNodesToLayer(3, makeLayer());
         addInLayerEdge(nodes[0], nodes[2], PortSide.EAST);
         addInLayerEdge(nodes[1], nodes[2], PortSide.EAST);
 

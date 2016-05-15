@@ -35,9 +35,22 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * This class minimizes crossings by sweeping through the complete hierarchy, i.e. sweeping through
- * nested graphs in nodes. Thereby it is a <i>hierarchical</i> processor and must have access to the
- * root graph.
+ * This class minimizes crossings by sweeping through a graph, holding the order of nodes in one layer fixed and
+ * switching the nodes in the other layer. After each re-sorting step, the ports in the two current layers are sorted.
+ * 
+ * By using a {@link LayerSweepTypeDecider} as called by the {@link GraphData} initializing class, each graph can either
+ * be dealt with <i>bottom-up</i> or <i>hierarchically</i>.
+ * 
+ * <ul>
+ * <li>bottom-up: the nodes of a child graph are sorted, then the order ports of hierarchy border traversing edges are
+ * fixed. Then the parent graph is layouted, viewing the child graph as an atomic node.</li>
+ * <li>hierarchical: When reaching a node with a child graph marked as hierarchical: First the ports are sorted on the
+ * outside of the graph. Then the nodes on the inside are sorted by the order of the ports. Then the child graph is
+ * swept through. Then the ports of the parent node are sorted by the order of the nodes on the last layer of the child
+ * graph. Finally the sweep through the parent graph is continued.</li>
+ * </ul>
+ * 
+ * Therefore this is a <i>hierarchical</i> processor which must have access to the root graph.
  *
  * @author alan
  *
@@ -81,46 +94,23 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             return;
         }
 
+        List<GraphData> graphsToSweepOn = initialize(layeredGraph);
+
+        GraphData parent = graphsToSweepOn.get(0);
         Consumer<GraphData> minimizingMethod;
-        if (nonDeterministic()) {
-            minimizingMethod = gData -> compareDifferentRandomizedLayouts(gData);
-        } else if (alwaysImproves(layeredGraph)) {
-            minimizingMethod = gData -> minimizeCrossingsNoCounter(gData);
+        if (!parent.crossMinDeterministic()) {
+            minimizingMethod = g -> compareDifferentRandomizedLayouts(g);
+        } else if (parent.crossMinAlwaysImproves()) {
+            minimizingMethod = g -> minimizeCrossingsNoCounter(g);
         } else {
-            minimizingMethod = gData -> minimizeCrossingsWithCounter(gData);
+            minimizingMethod = g -> minimizeCrossingsWithCounter(g);
         }
 
-        List<GraphData> graphsToSweepOn = initialize(layeredGraph);
         iterateAndMinimize(graphsToSweepOn, minimizingMethod);
 
         setGraphs();
 
         progressMonitor.done();
-    }
-
-    /**
-     * @param g
-     * @return
-     */
-    private boolean alwaysImproves(final LGraph g) {
-        return crossMinType == CrossMinType.GREEDY_SWITCH
-                && !g.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH).isOneSided();
-    }
-
-    /**
-     * @return
-     */
-    private boolean nonDeterministic() {
-        return crossMinType == CrossMinType.BARYCENTER;
-    }
-
-    /**
-     * @param graph
-     * @return
-     */
-    private boolean turnedOff(final LGraph graph) {
-        return crossMinType == CrossMinType.GREEDY_SWITCH
-                && graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) == GreedySwitchType.OFF;
     }
 
     private void iterateAndMinimize(final List<GraphData> graphsToSweepOn,
@@ -140,7 +130,6 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             sortPortsByDummyPositionsInLastLayer(bestSweep.nodes(), gData.parent(), false);
             gData.parent().setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
         }
-        gData.setCanSweepIntoThisGraph(false);
     }
 
     private void compareDifferentRandomizedLayouts(final GraphData gData) {
@@ -185,7 +174,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             sweepReducingCrossings(gData, isForwardSweep, false);
             crossingsInGraph = countCurrentNumberOfCrossings();
         } while (oldNumberOfCrossings > crossingsInGraph);
-        // TODO-alan consider sweeping backwards sorting ports.
+
         return oldNumberOfCrossings;
     }
 
@@ -203,36 +192,17 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         boolean isForwardSweep = random.nextBoolean();
         boolean improved = gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         do {
-            improved = sweepReducingCrossingsWithNoCounting(gData, isForwardSweep);
+            improved = sweepReducingCrossings(gData, isForwardSweep, false);
             isForwardSweep = !isForwardSweep;
         } while (improved);
         setCurrentlyBestNodeOrders();
     }
 
-    private boolean sweepReducingCrossingsWithNoCounting(final GraphData graph, final boolean forward) {
-        LNode[][] nodes = graph.currentNodeOrder();
-        int length = nodes.length;
-
-        LNode[] firstLayer = nodes[firstIndex(forward, length)];
-        layoutHierarchicalNodes(firstLayer, forward, false);
-
-        boolean improved = false;
-        for (int i = firstFree(forward, length); isNotEnd(length, i, forward); i += next(forward)) {
-            improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward, false);
-            graph.portDistributor().distributePortsWhileSweeping(nodes, i, forward);
-            layoutHierarchicalNodes(nodes[i], forward, false);
-        }
-
-        graphsWhoseNodeOrderChanged.add(graph);
-
-        return improved;
-    }
-
-    // TODO-alan duplicate
     private boolean sweepReducingCrossings(final GraphData graph, final boolean forward,
             final boolean firstSweep) {
         LNode[][] nodes = graph.currentNodeOrder();
         int length = nodes.length;
+
         LNode[] firstLayer = nodes[firstIndex(forward, length)];
         boolean improved = layoutHierarchicalNodes(firstLayer, forward, firstSweep);
 
@@ -316,7 +286,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     private void setGraphs() {
         for (GraphData gD : graphData) {
-            SweepCopy sweep = crossMinType.isDeterministic() ? gD.currentlyBestNodeAndPortOrder()
+            SweepCopy sweep = gD.crossMinimizer().isDeterministic() ? gD.currentlyBestNodeAndPortOrder()
                     : gD.bestNodeNPortOrder();
             sweep.setSavedPortOrdersToNodes();
             List<Layer> layers = gD.lGraph().getLayers();
@@ -418,6 +388,11 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         return graphsToSweepOn;
     }
 
+    private boolean turnedOff(final LGraph graph) {
+        return crossMinType == CrossMinType.GREEDY_SWITCH
+                && graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) == GreedySwitchType.OFF;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -436,6 +411,19 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
      */
     public List<GraphData> getGraphData() {
         return graphData;
+    }
+
+    /**
+     * Type of crossing minimizer.
+     * 
+     * @author alan
+     *
+     */
+    public enum CrossMinType {
+        /** Use BarycenterHeuristic. */
+        BARYCENTER,
+        /** Use one-sided GreedySwitchHeuristic. */
+        GREEDY_SWITCH;
     }
 
     /** intermediate processing configuration. */

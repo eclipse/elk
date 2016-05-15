@@ -25,6 +25,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
@@ -317,6 +318,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         setFixedOrderConstraint(leftNode);
 
         setUpIds();
+
         List<LPort> expectedPortOrderBottomMiddleNode = copyPortsInIndexOrder(middleNodes[2], 1, 0);
 
         setUpAndMinimizeCrossings();
@@ -1036,7 +1038,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
      */
     @Test
     public void givenSimpleHierarchicalNodeWithLowConnectivity_DoesNotUseHierarchySweep() {
-        if (!crossMinType.isDeterministic()) {
+        if (crossMinType == CrossMinType.BARYCENTER) {
 
             LNode leftOuterNode = addNodeToLayer(makeLayer(getGraph()));
             LNode rightOuterNode = addNodeToLayer(makeLayer(getGraph()));
@@ -1132,7 +1134,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(rightGraphLeftNodes[1], rightGraphRightNodes[0]);
         setUpIds();
 
-        if (!crossMinType.isDeterministic()) {
+        if (crossMinType == CrossMinType.BARYCENTER) {
 
             List<LPort> expectedPortOrderBottomMiddleNode =
                     copyPortsInIndexOrder(middleNodes[2], 1, 0);
@@ -1191,7 +1193,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
 
         setUpAndMinimizeCrossings();
 
-        if (!crossMinType.isDeterministic()) {
+        if (crossMinType == CrossMinType.BARYCENTER) {
             assertThat(leftOuterNode.getPorts(), is(expectedPortOrderLeft));
             assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedOrderRight));
         }
@@ -1578,7 +1580,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
 
         setUpAndMinimizeCrossings();
         List<GraphData> graphData = crossMin.getGraphData();
-        if (!crossMinType.isDeterministic()) {
+        if (crossMinType == CrossMinType.BARYCENTER) {
             assertTrue(graphData.get(nestedGraph.id).processRecursively());
         }
     }
@@ -1625,7 +1627,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
 
         setUpAndMinimizeCrossings();
         List<GraphData> graphData = crossMin.getGraphData();
-        if (!crossMinType.isDeterministic()) {
+        if (crossMinType == CrossMinType.BARYCENTER) {
             assertTrue(graphData.get(nestedGraph.id).processRecursively());
         }
     }

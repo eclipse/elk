@@ -18,8 +18,8 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.p3order.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;

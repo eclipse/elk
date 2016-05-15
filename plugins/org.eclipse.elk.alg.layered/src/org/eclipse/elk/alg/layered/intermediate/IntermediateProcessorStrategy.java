@@ -12,8 +12,8 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
-import org.eclipse.elk.alg.layered.p3order.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter. This enumeration also serves as a

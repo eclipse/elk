@@ -62,7 +62,7 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         LNode[][] nodes = getGraph().toNodeArray();
 
         float[] portRanks = new float[4];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks);
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
         BarycenterState[][] barycenters = getBarycenterArr();
         BarycenterHeuristic crossMin =
@@ -160,7 +160,7 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         LNode[] expectedSwitchedOrder = switchOrderInArray(0, 1, nodes[2]);
         LNode[] expectedOrderSecondLayer = Arrays.copyOf(nodes[1], nodes[1].length);
 
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks);
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
         minimizeCrossings(crossMin, nodes[0], false, true, true);
 
@@ -174,6 +174,25 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         assertThat(nodes[2], is(expectedSwitchedOrder));
     }
 
+
+    /**
+     * @return
+     */
+    private int[][] initNodePositions() {
+        int lp = 0;
+        int[][] pos = new int[graph.getLayers().size()][];
+        for (Layer layer : graph) {
+            layer.id = lp++;
+            pos[layer.id] = new int[layer.getNodes().size()];
+            List<LNode> nodes = layer.getNodes();
+            for (int i = 0; i < nodes.size(); i++) {
+                LNode node = nodes.get(i);
+                node.id = i;
+                pos[layer.id][node.id] = i;
+            }
+        }
+        return pos;
+    }
 
     /**
      * <pre>
@@ -206,7 +225,7 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         LNode[][] nodes = getGraph().toNodeArray();
 
         float[] portRanks = new float[4];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks);
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
         BarycenterState[][] barycenters = getBarycenterArr();
         BarycenterHeuristic crossMin =
@@ -246,7 +265,7 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         LNode[][] nodes = getGraph().toNodeArray();
 
         float[] portRanks = new float[4];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks);
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
         portDist.calculatePortRanks(nodes[1], PortType.INPUT);
         BarycenterState[][] barycenters = getBarycenterArr();
         BarycenterHeuristic crossMin =
@@ -288,7 +307,7 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         LNode[][] nodes = getGraph().toNodeArray();
 
         float[] portRanks = new float[5];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks);
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
         portDist.calculatePortRanks(nodes[0], PortType.INPUT);
         BarycenterState[][] barycenters = getBarycenterArr();
         BarycenterHeuristic crossMin =
@@ -337,7 +356,7 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         }
 
         float[] portRanks = new float[5];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks);
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
         portDist.calculatePortRanks(nodes[0], PortType.INPUT);
 
         BarycenterState[][] barycenters = getBarycenterArr();

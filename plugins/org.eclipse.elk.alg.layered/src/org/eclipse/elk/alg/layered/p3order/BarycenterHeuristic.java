@@ -401,4 +401,9 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     public boolean alwaysImproves() {
         return false;
     }
+
+    @Override
+    public boolean isDeterministic() {
+        return false;
+    }
 }

@@ -21,8 +21,8 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.InLayerEdgeTestGraphCreator;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
-import org.eclipse.elk.alg.layered.p3order.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
 
