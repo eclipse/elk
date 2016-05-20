@@ -48,7 +48,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
      *            The greedy switch type.
      */
     public GreedySwitchHeuristic(final GreedySwitchType greedyType) {
-        greedySwitchType = greedyType;
+        greedySwitchType = GreedySwitchType.ONE_SIDED;
     }
 
     /**

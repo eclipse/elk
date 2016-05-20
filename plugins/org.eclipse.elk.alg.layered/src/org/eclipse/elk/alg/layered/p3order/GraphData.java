@@ -157,9 +157,9 @@ public class GraphData {
             final Multimap<LNode, LNode> layoutUnits, final BarycenterState[][] barycenterStates, final int portId,
             final int[] portPos) {
         Random random = graph.getProperty(InternalProperties.RANDOM);
-        if (crossMinAlwaysImproves() && !childGraphs.isEmpty()) {
-            portDistributor = new GreedyPortDistributor(portPos, childNumPorts);
-        } else if (random.nextBoolean()) {
+        // if (crossMinAlwaysImproves() && !childGraphs.isEmpty()) {
+        // portDistributor = new GreedyPortDistributor(portPos, childNumPorts);} else //TODO-alan
+        if (random.nextBoolean()) {
             portDistributor = new NodeRelativePortDistributor(new float[portId], nodePositions);
         } else {
             portDistributor = new LayerTotalPortDistributor(new float[portId], nodePositions);

@@ -266,7 +266,7 @@ group crossingMinimization {
     advanced option greedySwitch: GreedySwitchType {
         label "Greedy Switch Crossing Minimization"
         description "Greedy Switch strategy for crossing minimization."
-        default = GreedySwitchType.TWO_SIDED
+        default = GreedySwitchType.ONE_SIDED
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.greedySwitch
     }

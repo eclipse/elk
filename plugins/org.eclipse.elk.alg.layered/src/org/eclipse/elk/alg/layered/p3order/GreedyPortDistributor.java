@@ -27,8 +27,7 @@ import com.google.common.collect.Lists;
 /**
  * Distribute ports greedily on a single node. TODO-alan this is currently broken :-(
  * 
- * @author alan
- *
+ * @author alan TODO-alan does not work in first layer.
  */
 public class GreedyPortDistributor implements SweepPortDistributor{
 
