@@ -1236,9 +1236,10 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
      * <pre>
      *   --*
      *   |    ____
-     *   //*--|  |
+     *   //*--|-*|
      * //|    |  |
-     *|| --*--|__|
+     *|| --*--|-*|
+     *||      |__|
      * \\
      *  \\
      *   \\
@@ -1249,8 +1250,10 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
     public void inLayerCrossingsInLeftMostLayer() {
         LNode[] nodes = addNodesToLayer(4, makeLayer());
         LNode rightNode = addNodeToLayer(makeLayer());
-        eastWestEdgeFromTo(nodes[2], rightNode);
-        eastWestEdgeFromTo(nodes[1], rightNode);
+        LPort[] rightOuterPorts = addPortsOnSide(2, rightNode, PortSide.WEST);
+        makeNestedTwoNodeGraphWithWesternPorts(rightNode, rightOuterPorts);
+        eastWestEdgeFromTo(nodes[1], rightOuterPorts[1]);
+        eastWestEdgeFromTo(nodes[2], rightOuterPorts[0]);
         addInLayerEdge(nodes[0], nodes[2], PortSide.WEST);
         final PortSide portSide = PortSide.WEST;
         LPort portOne = addPortOnSide(nodes[1], portSide);
@@ -1260,15 +1263,63 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         setFixedOrderConstraint(rightNode);
         List<LNode> actualOrder = getGraph().getLayers().get(0).getNodes();
 
-        List<LNode> expectedOrderBarycenter = getListCopyInIndexOrder(actualOrder, 1, 0, 2, 3);
-        List<LNode> expectedOrderGreedySwitch = getListCopyInIndexOrder(actualOrder, 1, 0, 2, 3);
+        List<LNode> expectedOrder = getListCopyInIndexOrder(actualOrder, 1, 0, 2, 3);
 
         setUpAndMinimizeCrossings();
-        if (crossMinType.equals(CrossMinType.BARYCENTER)) {
-            assertThat(actualOrder, is(expectedOrderBarycenter));
-        } else {
-            assertThat(actualOrder, is(expectedOrderGreedySwitch));
-        }
+        assertThat(actualOrder, is(expectedOrder));
+    }
+
+    /**
+     * <pre>
+     *       *
+     *      || 
+     *   ----*
+     *   |  ____
+     *   /-|-*|
+     * / | |  |
+     *|  --|-*| *
+     *|    |__|
+     * \
+     *  \
+     *   \
+     *     --*
+     *      ||
+     *       *
+     * </pre>
+     */
+    @Test
+    public void inLayerCrossHierarchyCrossingsInLeftMostLayer() {
+        LNode[] nodes = addNodesToLayer(5, makeLayer());
+        addPortsOnSide(2, nodes[0], PortSide.WEST);
+        addNodeToLayer(makeLayer());
+        LPort[] topNodePorts = addPortsOnSide(2, nodes[0], PortSide.WEST);
+        LPort[] secondNodePorts = addPortsOnSide(3, nodes[1], PortSide.WEST);
+        addEdgeBetweenPorts(topNodePorts[0], secondNodePorts[2]);
+        addEdgeBetweenPorts(topNodePorts[1], secondNodePorts[1]);
+
+        LPort[] outerPorts = addPortsOnSide(2, nodes[2], PortSide.WEST);
+        LGraph inner = makeNestedTwoNodeGraphWithWesternPorts(nodes[2], outerPorts);
+
+        LPort[] fifthNodePorts = addPortsOnSide(3, nodes[3], PortSide.WEST);
+        LPort[] sixthNodePorts = addPortsOnSide(2, nodes[4], PortSide.WEST);
+        addEdgeBetweenPorts(fifthNodePorts[0], sixthNodePorts[1]);
+        addEdgeBetweenPorts(fifthNodePorts[1], sixthNodePorts[0]);
+
+        addEdgeBetweenPorts(outerPorts[0], fifthNodePorts[2]);
+
+        List<LPort> actualPortOrder = nodes[2].getPorts();
+        List<LPort> expectedPortOrder = getListCopyInIndexOrder(actualPortOrder, 1, 0);
+        List<LNode> actualNodeOrder = graph.getLayers().get(0).getNodes();
+        List<LNode> expectedNodeOrder = Lists.newArrayList(actualNodeOrder);
+        List<LNode> actualInnerNodeOrder = inner.getLayers().get(1).getNodes();
+        List<LNode> expectedInnerNodeOrder = getListCopyInIndexOrder(actualInnerNodeOrder, 1, 0);
+
+        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 1f);
+        setUpAndMinimizeCrossings();
+        assertThat(actualNodeOrder, is(expectedNodeOrder));
+        assertThat(actualPortOrder, is(expectedPortOrder));
+        assertThat(actualInnerNodeOrder, is(expectedInnerNodeOrder));
+
     }
 
     /**

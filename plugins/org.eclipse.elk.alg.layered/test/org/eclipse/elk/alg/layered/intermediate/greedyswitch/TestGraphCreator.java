@@ -1058,6 +1058,11 @@ public class TestGraphCreator {
         addEdgeBetweenPorts(portOne, portTwo);
     }
 
+    public void addInLayerEdge(final LNode nodeOne, final LPort portTwo, final PortSide portSide) {
+        LPort portOne = addPortOnSide(nodeOne, portSide);
+        addEdgeBetweenPorts(portOne, portTwo);
+    }
+
     public void addInLayerEdge(final LPort portOne, final LNode nodeTwo) {
         PortSide portSide = portOne.getSide();
         LPort portTwo = addPortOnSide(nodeTwo, portSide);

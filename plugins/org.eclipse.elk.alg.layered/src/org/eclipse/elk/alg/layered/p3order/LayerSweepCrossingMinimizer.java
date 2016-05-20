@@ -203,9 +203,9 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         LNode[][] nodes = graph.currentNodeOrder();
         int length = nodes.length;
 
+        graph.portDistributor().distributePortsWhileSweeping(nodes, firstIndex(forward, length), forward);
         LNode[] firstLayer = nodes[firstIndex(forward, length)];
         boolean improved = layoutHierarchicalNodes(firstLayer, forward, firstSweep);
-
         for (int i = firstFree(forward, length); isNotEnd(length, i, forward); i += next(forward)) {
             improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward, firstSweep);
             graph.portDistributor().distributePortsWhileSweeping(nodes, i, forward);
