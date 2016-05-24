@@ -1385,7 +1385,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<GraphData> graphData = crossMin.getGraphData();
         for (GraphData data : graphData) {
             if (data.hasParent()) {
-                assertFalse(data.processRecursively());
+                assertFalse(data.dontSweepInto());
             }
         }
     }
@@ -1420,7 +1420,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<GraphData> graphData = crossMin.getGraphData();
         for (GraphData data : graphData) {
             if (data.hasParent()) {
-                assertFalse(data.processRecursively());
+                assertFalse(data.dontSweepInto());
             }
         }
     }
@@ -1457,9 +1457,9 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         
         setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f, graph);
         List<GraphData> graphData = crossMin.getGraphData();
-        assertFalse(graphData.get(leftOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).processRecursively());
+        assertFalse(graphData.get(leftOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).dontSweepInto());
         assertFalse(
-                graphData.get(rightOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).processRecursively());
+                graphData.get(rightOuterNode.getProperty(InternalProperties.NESTED_LGRAPH).id).dontSweepInto());
     }
 
     
@@ -1489,7 +1489,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<GraphData> graphData = crossMin.getGraphData();
         for (GraphData data : graphData) {
             if (data.hasParent()) {
-                assertFalse(data.processRecursively());
+                assertFalse(data.dontSweepInto());
             }
         }
     }
@@ -1519,7 +1519,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<GraphData> graphData = crossMin.getGraphData();
         for (GraphData data : graphData) {
             if (data.hasParent()) {
-                assertFalse(data.processRecursively());
+                assertFalse(data.dontSweepInto());
             }
         }
     }
@@ -1554,7 +1554,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<GraphData> graphData = crossMin.getGraphData();
         for (GraphData data : graphData) {
             if (data.hasParent()) {
-                assertFalse(data.processRecursively());
+                assertFalse(data.dontSweepInto());
             }
         }
     }
@@ -1582,7 +1582,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<GraphData> graphData = crossMin.getGraphData();
         for (GraphData data : graphData) {
             if (data.hasParent()) {
-                assertFalse(data.processRecursively());
+                assertFalse(data.dontSweepInto());
             }
         }
     }
@@ -1630,7 +1630,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         setUpAndMinimizeCrossings();
         List<GraphData> graphData = crossMin.getGraphData();
         if (crossMinType == CrossMinType.BARYCENTER) {
-            assertTrue(graphData.get(nestedGraph.id).processRecursively());
+            assertTrue(graphData.get(nestedGraph.id).dontSweepInto());
         }
     }
 
@@ -1677,7 +1677,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         setUpAndMinimizeCrossings();
         List<GraphData> graphData = crossMin.getGraphData();
         if (crossMinType == CrossMinType.BARYCENTER) {
-            assertTrue(graphData.get(nestedGraph.id).processRecursively());
+            assertTrue(graphData.get(nestedGraph.id).dontSweepInto());
         }
     }
 

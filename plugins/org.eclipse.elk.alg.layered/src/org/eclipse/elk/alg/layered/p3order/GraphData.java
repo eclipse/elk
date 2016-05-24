@@ -216,7 +216,7 @@ public class GraphData {
     /**
      * @return the processRecursively
      */
-    public boolean processRecursively() {
+    public boolean dontSweepInto() {
         return processRecursively;
     }
 

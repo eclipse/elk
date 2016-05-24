@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -160,7 +162,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
         gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
         sweepReducingCrossings(gData, isForwardSweep, true);
-        int crossingsInGraph = countCurrentNumberOfCrossings();
+        int crossingsInGraph = countCurrentNumberOfCrossings(gData);
         int oldNumberOfCrossings;
         do {
             setCurrentlyBestNodeOrders();
@@ -172,17 +174,30 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             isForwardSweep = !isForwardSweep;
             oldNumberOfCrossings = crossingsInGraph;
             sweepReducingCrossings(gData, isForwardSweep, false);
-            crossingsInGraph = countCurrentNumberOfCrossings();
+            crossingsInGraph = countCurrentNumberOfCrossings(gData);
         } while (oldNumberOfCrossings > crossingsInGraph);
 
         return oldNumberOfCrossings;
     }
 
-    private int countCurrentNumberOfCrossings() {
+    /*
+     * We only need to count crossings below the current graph and also only if they are marked as to be processed
+     * hierarchically
+     */
+    private int countCurrentNumberOfCrossings(final GraphData currentGraph) {
         int totalCrossings = 0;
-        for (GraphData gD : graphData) {
+        Deque<GraphData> countCrossingsIn = new ArrayDeque<>();
+        countCrossingsIn.push(currentGraph);
+        while (!countCrossingsIn.isEmpty()) {
+            GraphData gD = countCrossingsIn.pop();
             totalCrossings +=
                     gD.crossCounter().countAllCrossings(gD.currentNodeOrder());
+            for (LGraph child : gD.childGraphs()) {
+                GraphData childGD = graphData.get(child.id);
+                if (!childGD.dontSweepInto()) {
+                    countCrossingsIn.push(childGD);
+                }
+            }
         }
 
         return totalCrossings;
@@ -220,7 +235,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             final boolean isFirstSweep) {
         boolean improved = false;
         for (LNode node : layer) {
-            if (hasNestedGraph(node) && !graphData.get(nestedGraphOf(node).id).processRecursively()) {
+            if (hasNestedGraph(node) && !graphData.get(nestedGraphOf(node).id).dontSweepInto()) {
                 improved |= layoutHierarchicalNode(isForwardSweep, node, isFirstSweep);
             }
         }
@@ -378,7 +393,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             GraphData gData = new GraphData(graph, crossMinType, graphData);
             graphs.addAll(gData.childGraphs());
             graphData.add(gData);
-            if (gData.processRecursively()) {
+            if (gData.dontSweepInto()) {
                 graphsToSweepOn.add(0, gData);
             }
         }
