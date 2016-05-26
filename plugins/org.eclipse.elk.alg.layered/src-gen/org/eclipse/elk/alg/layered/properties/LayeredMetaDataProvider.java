@@ -447,6 +447,20 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #EDGE_ROUTING_SLOPPY_SPLINE_ROUTING}.
+   */
+  private final static boolean EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEFAULT = true;
+  
+  /**
+   * Use less spline control points at the start and end of an edge. Might lead to crossings edge/node overlap.
+   */
+  public final static IProperty<Boolean> EDGE_ROUTING_SLOPPY_SPLINE_ROUTING = new Property<Boolean>(
+            "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+            EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEFAULT,
+            null,
+            null);
+  
+  /**
    * Default value for {@link #SPACING_EDGE_NODE_SPACING_FACTOR}.
    */
   private final static float SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT = 0.5f;
@@ -624,6 +638,11 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
    * Required value for dependency between {@link #EDGE_ROUTING_SELF_LOOP_PLACEMENT} and {@link #EDGE_ROUTING}.
    */
   private final static EdgeRouting EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
+  
+  /**
+   * Required value for dependency between {@link #EDGE_ROUTING_SLOPPY_SPLINE_ROUTING} and {@link #EDGE_ROUTING}.
+   */
+  private final static EdgeRouting EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
   
   /**
    * Required value for dependency between {@link #COMPACTION_CONNECTED_COMPONENTS} and {@link #SEPARATE_CONNECTED_COMPONENTS}.
@@ -1086,6 +1105,24 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered.edgeRouting.selfLoopPlacement",
         "org.eclipse.elk.edgeRouting",
         EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEP_EDGE_ROUTING
+    );
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+        "edgeRouting",
+        "Sloppy Spline Routing",
+        "Use less spline control points at the start and end of an edge. Might lead to crossings edge/node overlap.",
+        EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEFAULT,
+        null,
+        null,
+        LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+        "org.eclipse.elk.edgeRouting",
+        EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEP_EDGE_ROUTING
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",

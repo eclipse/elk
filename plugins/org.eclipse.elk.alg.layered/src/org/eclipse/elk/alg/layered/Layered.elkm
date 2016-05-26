@@ -127,6 +127,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
     supports edgeCenterLabelPlacementStrategy
     supports org.eclipse.elk.margins
+    supports edgeRouting.sloppySplineRouting
 }
 
 
@@ -337,7 +338,15 @@ group edgeRouting {
         legacyIds de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement
         requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
     }
-    
+
+    option sloppySplineRouting: boolean {
+        label "Sloppy Spline Routing"
+        description 
+            "Use less spline control points at the start and end of an edge. Might lead to crossings edge/node overlap."
+        default = true
+        targets parents
+        requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+    }
 }
 
 
