@@ -716,7 +716,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.feedBackEdges"
@@ -754,7 +754,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.mergeEdges"
@@ -768,7 +768,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.mergeHierarchyEdges"
@@ -782,7 +782,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.sausageFolding"
@@ -801,7 +801,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.thoroughness"
@@ -815,7 +815,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.unnecessaryBendpoints"
@@ -829,7 +829,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.northOrSouthPort"
@@ -885,7 +885,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.distributeNodes"
@@ -913,7 +913,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth"
@@ -932,7 +932,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor"
@@ -965,7 +965,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.nodePromotionBoundary"
@@ -1012,7 +1012,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1077,7 +1077,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening"
@@ -1133,7 +1133,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor"
@@ -1147,7 +1147,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.edgeSpacingFactor"
@@ -1161,7 +1161,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.inLayerSpacingFactor"
@@ -1175,7 +1175,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.components.compact"
@@ -1222,7 +1222,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
@@ -1236,7 +1236,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.highDegreeNode.threshold"
@@ -1255,7 +1255,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight"

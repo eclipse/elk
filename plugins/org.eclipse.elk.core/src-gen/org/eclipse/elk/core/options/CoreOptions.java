@@ -874,7 +874,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.aspectRatio"
@@ -902,7 +902,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.debugMode"
@@ -944,7 +944,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.expandNodes"
@@ -972,7 +972,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -985,7 +985,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.layoutHierarchy"
@@ -1027,7 +1027,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.priority"
@@ -1041,7 +1041,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.randomSeed"
@@ -1055,7 +1055,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.separateConnComp"
@@ -1083,7 +1083,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.commentBox"
@@ -1097,7 +1097,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.hypernode"
@@ -1138,7 +1138,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
     ));
@@ -1151,7 +1151,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.scaleFactor"
@@ -1170,7 +1170,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.animate"
@@ -1184,7 +1184,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.animTimeFactor"
@@ -1198,7 +1198,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.layoutAncestors"
@@ -1212,7 +1212,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.maxAnimTime"
@@ -1226,7 +1226,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.minAnimTime"
@@ -1240,7 +1240,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.progressBar"
@@ -1254,7 +1254,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
     ));
@@ -1267,7 +1267,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.zoomToFit"
@@ -1281,7 +1281,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.borderSpacing"
@@ -1295,7 +1295,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES, LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.labelSpacing"
@@ -1309,7 +1309,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.spacing"
@@ -1323,7 +1323,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.portSpacing"
@@ -1515,7 +1515,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1528,7 +1528,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1569,7 +1569,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.LABELS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.fontSize"
@@ -1597,7 +1597,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.portIndex"
@@ -1625,7 +1625,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PORTS),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.offset"
@@ -1653,7 +1653,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.NODES),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.selfLoopInside"
@@ -1667,7 +1667,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.selfLoopInside"
@@ -1681,7 +1681,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.thickness"

@@ -126,7 +126,7 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -139,7 +139,7 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.EDGES),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -152,7 +152,7 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -170,7 +170,7 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
