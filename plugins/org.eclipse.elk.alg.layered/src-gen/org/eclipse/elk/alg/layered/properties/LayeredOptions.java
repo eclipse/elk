@@ -518,6 +518,11 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Spacing.Margins> MARGINS = CoreOptions.MARGINS;
   
+  /**
+   * Property constant to access Sloppy Spline Routing from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> EDGE_ROUTING_SLOPPY_SPLINE_ROUTING = LayeredMetaDataProvider.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING;
+  
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutAlgorithmData(
         "org.eclipse.elk.layered",
@@ -928,6 +933,11 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered",
         "org.eclipse.elk.margins",
         MARGINS.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+        EDGE_ROUTING_SLOPPY_SPLINE_ROUTING.getDefault()
     );
   }
 }
