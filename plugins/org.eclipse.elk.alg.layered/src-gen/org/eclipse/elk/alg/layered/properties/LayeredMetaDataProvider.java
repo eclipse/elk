@@ -357,6 +357,20 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #LAYERING_COFFMAN_GRAHAM_LAYER_BOUND}.
+   */
+  private final static int LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEFAULT = Integer.MAX_VALUE;
+  
+  /**
+   * The maximum number of nodes allowed per layer.
+   */
+  public final static IProperty<Integer> LAYERING_COFFMAN_GRAHAM_LAYER_BOUND = new Property<Integer>(
+            "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
+            LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEFAULT,
+            null,
+            null);
+  
+  /**
    * Default value for {@link #CROSSING_MINIMIZATION_STRATEGY}.
    */
   private final static CrossingMinimizationStrategy CROSSING_MINIMIZATION_STRATEGY_DEFAULT = CrossingMinimizationStrategy.LAYER_SWEEP;
@@ -671,6 +685,11 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
    * Required value for dependency between {@link #LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR} and {@link #LAYERING_STRATEGY}.
    */
   private final static LayeringStrategy LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEP_LAYERING_STRATEGY = LayeringStrategy.EXP_MIN_WIDTH;
+  
+  /**
+   * Required value for dependency between {@link #LAYERING_COFFMAN_GRAHAM_LAYER_BOUND} and {@link #LAYERING_STRATEGY}.
+   */
+  private final static LayeringStrategy LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEP_LAYERING_STRATEGY = LayeringStrategy.COFFMAN_GRAHAM;
   
   /**
    * Required value for dependency between {@link #NODE_PLACEMENT_BK_EDGE_STRAIGHTENING} and {@link #NODE_PLACEMENT_STRATEGY}.
@@ -1027,6 +1046,24 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered.layering.nodePromotion.maxIterations",
         "org.eclipse.elk.layered.layering.nodePromotion.strategy",
         null
+    );
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
+        "layering.coffmanGraham",
+        "Layer Bound",
+        "The maximum number of nodes allowed per layer.",
+        LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEFAULT,
+        null,
+        null,
+        LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
+        "org.eclipse.elk.layered.layering.strategy",
+        LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEP_LAYERING_STRATEGY
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layered.crossingMinimization.strategy",

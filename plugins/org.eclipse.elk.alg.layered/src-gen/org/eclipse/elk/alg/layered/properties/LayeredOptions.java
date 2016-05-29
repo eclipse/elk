@@ -523,6 +523,11 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> EDGE_ROUTING_SLOPPY_SPLINE_ROUTING = LayeredMetaDataProvider.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING;
   
+  /**
+   * Property constant to access Layer Bound from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> LAYERING_COFFMAN_GRAHAM_LAYER_BOUND = LayeredMetaDataProvider.LAYERING_COFFMAN_GRAHAM_LAYER_BOUND;
+  
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutAlgorithmData(
         "org.eclipse.elk.layered",
@@ -938,6 +943,11 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
         EDGE_ROUTING_SLOPPY_SPLINE_ROUTING.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
+        LAYERING_COFFMAN_GRAHAM_LAYER_BOUND.getDefault()
     );
   }
 }

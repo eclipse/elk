@@ -129,6 +129,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports edgeCenterLabelPlacementStrategy
     supports org.eclipse.elk.margins
     supports edgeRouting.sloppySplineRouting
+    supports layering.coffmanGraham.layerBound
 }
 
 
@@ -239,6 +240,17 @@ group layering {
 
     }
     
+    group coffmanGraham {
+        
+        advanced option layerBound: int {
+            label "Layer Bound"
+            description "The maximum number of nodes allowed per layer."
+            default = Integer.MAX_VALUE
+            targets parents
+            requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.COFFMAN_GRAHAM
+        }
+        
+    }
 }
 
 
