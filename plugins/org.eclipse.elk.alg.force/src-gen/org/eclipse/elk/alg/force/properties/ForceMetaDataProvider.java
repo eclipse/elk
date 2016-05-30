@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import org.eclipse.elk.alg.force.model.ForceModelStrategy;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.util.ExclusiveBounds;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -42,12 +43,17 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
   private final static int ITERATIONS_DEFAULT = 300;
   
   /**
+   * Lower bound value for {@link #ITERATIONS}.
+   */
+  private final static Comparable<? super Integer> ITERATIONS_LOWER_BOUND = Integer.valueOf(1);
+  
+  /**
    * The number of iterations on the force model.
    */
   public final static IProperty<Integer> ITERATIONS = new Property<Integer>(
             "org.eclipse.elk.force.iterations",
             ITERATIONS_DEFAULT,
-            null,
+            ITERATIONS_LOWER_BOUND,
             null);
   
   /**
@@ -56,13 +62,18 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
   private final static int REPULSIVE_POWER_DEFAULT = 0;
   
   /**
+   * Lower bound value for {@link #REPULSIVE_POWER}.
+   */
+  private final static Comparable<? super Integer> REPULSIVE_POWER_LOWER_BOUND = Integer.valueOf(0);
+  
+  /**
    * Determines how many bend points are added to the edge; such bend points are regarded as
    * repelling particles in the force model
    */
   public final static IProperty<Integer> REPULSIVE_POWER = new Property<Integer>(
             "org.eclipse.elk.force.repulsivePower",
             REPULSIVE_POWER_DEFAULT,
-            null,
+            REPULSIVE_POWER_LOWER_BOUND,
             null);
   
   /**
@@ -71,12 +82,17 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
   private final static float TEMPERATURE_DEFAULT = 0.001f;
   
   /**
+   * Lower bound value for {@link #TEMPERATURE}.
+   */
+  private final static Comparable<? super Float> TEMPERATURE_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * The temperature is used as a scaling factor for particle displacements.
    */
   public final static IProperty<Float> TEMPERATURE = new Property<Float>(
             "org.eclipse.elk.force.temperature",
             TEMPERATURE_DEFAULT,
-            null,
+            TEMPERATURE_LOWER_BOUND,
             null);
   
   /**
@@ -85,12 +101,17 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
   private final static float REPULSION_DEFAULT = 5.0f;
   
   /**
+   * Lower bound value for {@link #REPULSION}.
+   */
+  private final static Comparable<? super Float> REPULSION_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * Factor for repulsive forces in Eades' model.
    */
   public final static IProperty<Float> REPULSION = new Property<Float>(
             "org.eclipse.elk.force.repulsion",
             REPULSION_DEFAULT,
-            null,
+            REPULSION_LOWER_BOUND,
             null);
   
   /**
@@ -123,7 +144,7 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         "Iterations",
         "The number of iterations on the force model.",
         ITERATIONS_DEFAULT,
-        null,
+        ITERATIONS_LOWER_BOUND,
         null,
         LayoutOptionData.Type.INT,
         Integer.class,
@@ -136,7 +157,7 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         "Repulsive Power",
         "Determines how many bend points are added to the edge; such bend points are regarded as repelling particles in the force model",
         REPULSIVE_POWER_DEFAULT,
-        null,
+        REPULSIVE_POWER_LOWER_BOUND,
         null,
         LayoutOptionData.Type.INT,
         Integer.class,
@@ -149,7 +170,7 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         "FR Temperature",
         "The temperature is used as a scaling factor for particle displacements.",
         TEMPERATURE_DEFAULT,
-        null,
+        TEMPERATURE_LOWER_BOUND,
         null,
         LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -167,7 +188,7 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         "Eades Repulsion",
         "Factor for repulsive forces in Eades\' model.",
         REPULSION_DEFAULT,
-        null,
+        REPULSION_LOWER_BOUND,
         null,
         LayoutOptionData.Type.FLOAT,
         Float.class,

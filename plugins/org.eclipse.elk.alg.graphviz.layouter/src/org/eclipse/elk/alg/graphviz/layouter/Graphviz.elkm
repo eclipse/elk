@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.graphviz.dot.transform.NeatoModel
 import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
+import org.eclipse.elk.core.util.ExclusiveBounds
 
 bundle {
 	label "Graphviz"
@@ -183,6 +184,7 @@ option epsilon: float {
 	description
 		"Terminating condition. If the length squared of all energy gradients are less than
 		epsilon, the algorithm stops."
+    lowerBound = ExclusiveBounds.greaterThan(0)
 	targets parents
 }
 
@@ -191,6 +193,7 @@ advanced option iterationsFactor: float {
 	description
 		"Multiplicative scale factor for the maximal number of iterations used during crossing
 		minimization, node ranking, and node positioning."
+    lowerBound = ExclusiveBounds.greaterThan(0)
 	targets parents
 }
 
@@ -205,6 +208,7 @@ option labelDistance: float {
 	label "Label Distance"
 	description "Distance of head / tail positioned edge labels to the source or target node."
 	default = 1
+    lowerBound = 0f
 	targets edges
 }
 
@@ -212,12 +216,14 @@ option layerSpacingFactor: float {
 	label "Layer Spacing Factor"
 	description "Factor for the spacing of different layers (ranks)."
 	default = 1
+    lowerBound = ExclusiveBounds.greaterThan(0)
 	targets parents
 }
 
 advanced option maxiter: int {
 	label "Max. Iterations"
 	description "The maximum number of iterations."
+    lowerBound = 1
 	targets parents
 }
 

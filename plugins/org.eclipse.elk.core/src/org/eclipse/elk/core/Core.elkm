@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.elk
 
-import org.eclipse.elk.core.util.FixedLayoutProvider
-import org.eclipse.elk.core.math.KVectorChain
-import org.eclipse.elk.core.math.KVector
 import java.util.EnumSet
 import org.eclipse.elk.core.^labels.ILabelManager
-import org.eclipse.elk.core.util.nodespacing.Spacing
+import org.eclipse.elk.core.math.KVector
+import org.eclipse.elk.core.math.KVectorChain
 import org.eclipse.elk.core.util.BoxLayoutProvider
+import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.util.FixedLayoutProvider
 import org.eclipse.elk.core.util.RandomLayoutProvider
+import org.eclipse.elk.core.util.nodespacing.Spacing
 
 // Sort based on normal - advanced - programmatic - global - output and within the groups alphabetically
 // If different types are within a group, move the group to the first category 
@@ -145,6 +146,7 @@ advanced option alignment: Alignment {
 advanced option aspectRatio: float {
 	label "Aspect Ratio"
 	description "The desired aspect ratio of the drawing, that is the quotient of width by height."
+    lowerBound = ExclusiveBounds.greaterThan(0)
 	targets parents
 	legacyIds de.cau.cs.kieler.aspectRatio
 }
@@ -226,7 +228,8 @@ group spacing {
 		description
 			"Spacing of the content of a parent node to its inner border. The inner border is the node
 			border, which is given by width and height, with subtracted insets."
-		default = 12f
+		default = 12
+        lowerBound = 0f
 		targets parents
 		legacyIds de.cau.cs.kieler.borderSpacing
 	}
@@ -235,6 +238,7 @@ group spacing {
 		label "Label Spacing"
 		description "Determines the amount of space to be left around labels."
 		default = 0
+        lowerBound = 0f
 		targets edges, nodes
 		legacyIds de.cau.cs.kieler.labelSpacing
 	}
@@ -245,6 +249,7 @@ group spacing {
 			"Overall spacing between elements. This is mostly interpreted as the minimal distance
 			between each two nodes and may also influence the spacing between edges."
 		default = 20
+        lowerBound = 0f
 		targets parents
 		legacyIds de.cau.cs.kieler.spacing
 	}
@@ -253,6 +258,7 @@ group spacing {
 		label "Port Spacing"
 		description "Spacing between ports of a given node."
 		default = 10
+        lowerBound = 0f
 		targets nodes
 		legacyIds de.cau.cs.kieler.portSpacing
 	}
@@ -445,12 +451,14 @@ group nodeSize {
 	deprecated advanced option minWidth: float {
 		label "Minimum Width"
 		default = 0
+        lowerBound = 0f
 		targets nodes
 	}
 	
 	deprecated advanced option minHeight: float {
 		label "Minimum Height"
 		default = 0 
+        lowerBound = 0f
 		targets nodes
 	}
 }
@@ -505,6 +513,7 @@ group font {
 	programmatic option size: int {
 		label "Font Size"
 		description "Font size used for a label."
+        lowerBound = 1
 		targets labels
 		legacyIds de.cau.cs.kieler.fontSize
 	}
@@ -566,6 +575,7 @@ group port {
 			starting with the leftmost port on the top side. This option must be set if 'Port
 			Constraints' is set to FIXED_ORDER and no specific positions are given for the ports.
 			Additionally, the option 'Port Side' must be defined in this case."
+        lowerBound = 0
 		targets ports
 		legacyIds de.cau.cs.kieler.portIndex
 	}
@@ -617,6 +627,7 @@ programmatic option scaleFactor: float {
 		itself and its siblings are arranged). The scaling is not reverted afterwards, so the
 		resulting layout graph contains the adjusted size and position data. This option is
 		currently not supported if 'Layout Hierarchy' is set."
+    lowerBound = ExclusiveBounds.greaterThan(0)
 	default = 1
 	targets nodes
 	legacyIds de.cau.cs.kieler.scaleFactor
@@ -690,6 +701,7 @@ global option animTimeFactor: int {
 		time. If the value is 0, the resulting time is always equal to the minimum defined by
 		'Minimal Animation Time'."
 	default = 100
+    lowerBound = 0
 	targets parents
 	legacyIds de.cau.cs.kieler.animTimeFactor
 }
@@ -708,6 +720,7 @@ global option maxAnimTime: int {
 	label "Maximal Animation Time"
 	description "The maximal time for animations, in milliseconds."
 	default = 4000
+    lowerBound = 0
 	targets parents
 	legacyIds de.cau.cs.kieler.maxAnimTime
 }
@@ -716,6 +729,7 @@ global option minAnimTime: int {
 	label "Minimal Animation Time"
 	description "The minimal time for animations, in milliseconds."
 	default = 400
+    lowerBound = 0
 	targets parents
 	legacyIds de.cau.cs.kieler.minAnimTime
 }

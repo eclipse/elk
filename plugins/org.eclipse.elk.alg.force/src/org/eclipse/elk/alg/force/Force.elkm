@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.force
 
 import org.eclipse.elk.alg.force.ForceLayoutProvider
 import org.eclipse.elk.alg.force.model.ForceModelStrategy
+import org.eclipse.elk.core.util.ExclusiveBounds
 
 /**
  * Declarations for the ELK Force layout algorithm.
@@ -59,6 +60,7 @@ option iterations: int {
     label "Iterations"
     description "The number of iterations on the force model."
     default = 300
+    lowerBound = 1
     targets parents
 }
 
@@ -68,6 +70,7 @@ option repulsivePower: int {
         "Determines how many bend points are added to the edge; such bend points are regarded as
         repelling particles in the force model"
     default = 0
+    lowerBound = 0
     targets edges
 }
 
@@ -75,6 +78,7 @@ option temperature: float {
     label "FR Temperature"
     description "The temperature is used as a scaling factor for particle displacements."
     default = 0.001f
+    lowerBound = ExclusiveBounds.greaterThan(0)
     targets parents
     requires model == ForceModelStrategy.FRUCHTERMAN_REINGOLD
 }
@@ -83,6 +87,7 @@ option repulsion: float {
     label "Eades Repulsion"
     description "Factor for repulsive forces in Eades' model."
     default = 5.0f
+    lowerBound = ExclusiveBounds.greaterThan(0)
     targets parents
     requires model == ForceModelStrategy.EADES
 }
