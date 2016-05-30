@@ -26,6 +26,8 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      * All nodes will be layered according to the longest path to any sink.
      */
     LONGEST_PATH,
+    
+    COFFMAN_GRAHAM,
     /**
      * Nodes are put into layers according to their relative position. The actual positions
      * as given in the input diagram are considered here. This means that if the user moves
@@ -54,6 +56,9 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
             
         case LONGEST_PATH:
             return new LongestPathLayerer();
+            
+        case COFFMAN_GRAHAM:
+            return new CoffmanGrahamLayerer();
             
         case INTERACTIVE:
             return new InteractiveLayerer();
