@@ -503,6 +503,20 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING}.
+   */
+  private final static float EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEFAULT = 0.4f;
+  
+  /**
+   * Spacing factor for routing area between layers when using sloppy spline routing.
+   */
+  public final static IProperty<Float> EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING = new Property<Float>(
+            "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+            EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEFAULT,
+            null,
+            null);
+  
+  /**
    * Default value for {@link #SPACING_EDGE_NODE_SPACING_FACTOR}.
    */
   private final static float SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT = 0.5f;
@@ -715,6 +729,16 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
    * Required value for dependency between {@link #EDGE_ROUTING_SLOPPY_SPLINE_ROUTING} and {@link #EDGE_ROUTING}.
    */
   private final static EdgeRouting EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
+  
+  /**
+   * Required value for dependency between {@link #EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING} and {@link #EDGE_ROUTING}.
+   */
+  private final static EdgeRouting EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
+  
+  /**
+   * Required value for dependency between {@link #EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING} and {@link #EDGE_ROUTING_SLOPPY_SPLINE_ROUTING}.
+   */
+  private final static boolean EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEP_EDGE_ROUTING_SLOPPY_SPLINE_ROUTING = true;
   
   /**
    * Required value for dependency between {@link #COMPACTION_CONNECTED_COMPONENTS} and {@link #SEPARATE_CONNECTED_COMPONENTS}.
@@ -1213,6 +1237,29 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
         "org.eclipse.elk.edgeRouting",
         EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEP_EDGE_ROUTING
+    );
+    registry.register(new LayoutOptionData(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+        "edgeRouting",
+        "Sloppy Spline Layer Spacing Factor",
+        "Spacing factor for routing area between layers when using sloppy spline routing.",
+        EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEFAULT,
+        null,
+        null,
+        LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(LayoutOptionData.Target.PARENTS),
+        LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+        "org.eclipse.elk.edgeRouting",
+        EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEP_EDGE_ROUTING
+    );
+    registry.addDependency(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+        EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEP_EDGE_ROUTING_SLOPPY_SPLINE_ROUTING
     );
     registry.register(new LayoutOptionData(
         "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",

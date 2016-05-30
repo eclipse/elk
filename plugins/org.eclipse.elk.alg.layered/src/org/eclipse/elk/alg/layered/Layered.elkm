@@ -129,6 +129,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports edgeCenterLabelPlacementStrategy
     supports org.eclipse.elk.margins
     supports edgeRouting.sloppySplineRouting
+    supports edgeRouting.sloppySplineLayerSpacing
     supports layering.coffmanGraham.layerBound
 }
 
@@ -366,6 +367,15 @@ group edgeRouting {
         default = true
         targets parents
         requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+    }
+    
+    option sloppySplineLayerSpacing: float {
+        label "Sloppy Spline Layer Spacing Factor"
+        description "Spacing factor for routing area between layers when using sloppy spline routing."
+        default = 0.4f
+        targets parents
+        requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+        requires sloppySplineRouting == true
     }
 }
 
