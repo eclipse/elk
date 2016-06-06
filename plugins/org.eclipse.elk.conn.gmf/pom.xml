@@ -21,4 +21,21 @@
   <artifactId>org.eclipse.elk.conn.gmf</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <build>
+    <plugins>
+      <!-- Generate code from .elkm files. -->
+      <plugin>
+        <groupId>org.eclipse.xtext</groupId>
+        <artifactId>xtext-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
