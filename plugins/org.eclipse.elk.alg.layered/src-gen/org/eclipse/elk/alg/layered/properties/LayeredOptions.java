@@ -528,6 +528,11 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> LAYERING_COFFMAN_GRAHAM_LAYER_BOUND = LayeredMetaDataProvider.LAYERING_COFFMAN_GRAHAM_LAYER_BOUND;
   
+  /**
+   * Property constant to access Sloppy Spline Layer Spacing Factor from within the layout algorithm code.
+   */
+  public final static IProperty<Float> EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING = LayeredMetaDataProvider.EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING;
+  
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutAlgorithmData(
         "org.eclipse.elk.layered",
@@ -948,6 +953,11 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
         LAYERING_COFFMAN_GRAHAM_LAYER_BOUND.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+        EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING.getDefault()
     );
   }
 }
