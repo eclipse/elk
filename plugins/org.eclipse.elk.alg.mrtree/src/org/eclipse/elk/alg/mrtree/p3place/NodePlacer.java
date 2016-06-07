@@ -105,7 +105,7 @@ public class NodePlacer implements ILayoutPhase {
         progressMonitor.worked(1);
 
         /** Do the final positioning with a preorder walk. */
-        secondWalk(root, root.getProperty(InternalProperties.LEVELHEIGHT) + yTopAdjustment, xTopAdjustment);
+        secondWalk(root, yTopAdjustment - (root.getProperty(InternalProperties.LEVELHEIGHT) / 2), xTopAdjustment);
         progressMonitor.worked(1);
 
         progressMonitor.done();
@@ -302,7 +302,7 @@ public class NodePlacer implements ILayoutPhase {
             double xTemp = tNode.getProperty(InternalProperties.PRELIM) + modsum;
             // The y-position of the node is the height of the node's ancestors levels and the
             // height nodes's level and the adjust of the root location.
-            double yTemp = yCoor + spacing + tNode.getProperty(InternalProperties.LEVELHEIGHT);
+            double yTemp = yCoor + (tNode.getProperty(InternalProperties.LEVELHEIGHT) / 2);
             // We do not check to see that xTemp and yTemp are of the proper size, because the
             // framework will take care of this.
             tNode.setProperty(InternalProperties.XCOOR, (int) Math.round(xTemp));
@@ -310,7 +310,8 @@ public class NodePlacer implements ILayoutPhase {
             // Apply the modifier value for this node to all its offspring.
             if (!tNode.isLeaf()) {
                 // This node got offsprings so we will step a level down and take care of them.
-                secondWalk(Iterables.getFirst(tNode.getChildren(), null), yTemp,
+                secondWalk(Iterables.getFirst(tNode.getChildren(), null),
+                        yCoor + tNode.getProperty(InternalProperties.LEVELHEIGHT) + spacing,
                         modsum + tNode.getProperty(InternalProperties.MODIFIER));
             }
             // Go ahead with the sibling to the right. This is a dfs so we just layout the current
