@@ -47,7 +47,7 @@
       </modules>
     </profile>
 
-    <!-- The Meta Data Language. -->
+    <!-- The Meta Data Language compiler. -->
     <profile>
       <id>elk-meta</id>
 
@@ -58,6 +58,31 @@
       </modules>
     </profile>
 
+    <!-- Activate to have the generated artifacts signed by Eclipse. -->
+    <!-- Only works if the build is run on the Eclipse infrastructure. -->
+    <profile>
+        <id>sign</id>
+
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.eclipse.cbi.maven.plugins</groupId>
+              <artifactId>eclipse-jarsigner-plugin</artifactId>
+              <version>1.0.5</version>
+              <executions>
+                <execution>
+                  <id>sign</id>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>sign</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+
   </profiles>
 
 
@@ -65,13 +90,21 @@
   <pluginRepositories>
     <pluginRepository>
       <id>xtend</id>
+      <name>Xtend Maven Repository</name>
       <layout>default</layout>
       <url>http://build.eclipse.org/common/xtend/maven</url>
     </pluginRepository>
+
     <pluginRepository>
       <id>jboss-releases</id>
       <name>JBoss Releases Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>eclipse-cbi</id>
+      <name>Eclipse Common Build Infrastructure Maven Repository</name>
+      <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
     </pluginRepository>
   </pluginRepositories>
 
