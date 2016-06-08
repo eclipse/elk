@@ -102,13 +102,6 @@
   <!-- Maven plugin repositories -->
   <pluginRepositories>
     <pluginRepository>
-      <id>xtend</id>
-      <name>Xtend Maven Repository</name>
-      <layout>default</layout>
-      <url>http://build.eclipse.org/common/xtend/maven</url>
-    </pluginRepository>
-
-    <pluginRepository>
       <id>jboss-releases</id>
       <name>JBoss Releases Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
@@ -181,17 +174,6 @@
         </configuration>
       </plugin>
 
-      <!-- Whenever we deploy things, the parent pom doesn't have to be deployed. -->
-      <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-deploy-plugin</artifactId>
-         <version>2.8.2</version>
-         <inherited>false</inherited>
-         <configuration>
-           <skip>true</skip>
-         </configuration>
-       </plugin>
-
     </plugins>
 
     <pluginManagement>
@@ -242,6 +224,13 @@
           <configuration>
             <outputDirectory>${basedir}/xtend-gen</outputDirectory>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <!-- add src-gen and xtend-gen to source-directories -->
@@ -281,6 +270,14 @@
             </filesets>
           </configuration>
         </plugin>
+
+        <!-- child projects may use this to be excempted from inclusion in the Maven repository -->
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-deploy-plugin</artifactId>
+           <version>2.8.2</version>
+       </plugin>
+
       </plugins>
     </pluginManagement>
   </build>
