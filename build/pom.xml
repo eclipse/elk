@@ -56,6 +56,19 @@
         <module>../plugins/org.eclipse.elk.graph</module>
         <module>../plugins/org.eclipse.elk.core.meta</module>
       </modules>
+
+      <!-- The meta data language compiler gets pushed to a Maven repository. -->
+      <distributionManagement>
+        <repository>
+          <id>elk-meta-repository</id>
+          <name>ELK Meta Data Language Compiler Repository</name>
+          <url>${elkMeta.publishUrl}</url>
+          <layout>default</layout>
+          <uniqueVersion>false</uniqueVersion>
+        </repository>
+
+        <downloadUrl>${elkMeta.repositoryUrl}</downloadUrl>
+      </distributionManagement>
     </profile>
 
     <!-- Activate to have the generated artifacts signed by Eclipse. -->
@@ -105,6 +118,12 @@
       <id>eclipse-cbi</id>
       <name>Eclipse Common Build Infrastructure Maven Repository</name>
       <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>eclipse-elk-meta</id>
+      <name>ELK Meta Data Language Compiler Maven Repository</name>
+      <url>${elkMeta.repositoryUrl}</url>
     </pluginRepository>
   </pluginRepositories>
 
