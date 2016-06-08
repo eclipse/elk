@@ -14,4 +14,16 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
+
+  <build>
+    <plugins>
+      <!-- The target platform doesn't have to be deployed. -->
+      <plugin>
+         <artifactId>maven-deploy-plugin</artifactId>
+         <configuration>
+           <skip>true</skip>
+         </configuration>
+       </plugin>
+     </plugins>
+  </build>
 </project>
