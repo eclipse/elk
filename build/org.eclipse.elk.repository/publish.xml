@@ -1,13 +1,14 @@
-<!-- Provides a number of targets that know what to do with built update
-  -- sites. This includes:
-  --
-  --   * copy    - Copies a complete directory ${sourceDir} (which presumably
-  --               contains an update site) to a target directory ${targetDir}.
-  --   * purge   - Purges the target directory ${targetDir}. By removing it.
-  --               Completely.
-  --   * zipIt   - Zips the content of ${sourceDir} into a ZIP file at
-  --               ${targetDir}/${targetZipFileName}.
-  -->
+<!--
+Provides a number of targets that know what to do with built update
+sites. This includes:
+
+  * copy    - Copies a complete directory ${sourceDir} (which presumably
+              contains an update site) to a target directory ${targetDir}.
+  * purge   - Purges the target directory ${targetDir}. By removing it.
+              Completely.
+  * zipIt   - Zips the content of ${sourceDir} into a ZIP file at
+              ${targetDir}/${targetZipFileName}.
+-->
 <project name="Eclipse Layout Kernel" basedir=".">
 
     <!-- ================================================================= -->
