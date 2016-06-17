@@ -3,6 +3,8 @@
   --
   --   * copy    - Copies a complete directory ${sourceDir} (which presumably
   --               contains an update site) to a target directory ${targetDir}.
+  --   * purge   - Purges the target directory ${targetDir}. By removing it.
+  --               Completely.
   --   * zipIt   - Zips the content of ${sourceDir} into a ZIP file at
   --               ${targetDir}/${targetZipFileName}.
   -->
@@ -14,6 +16,16 @@
     <property name="sourceDir" value="target/repository/" />
     <property name="targetZipFileName" value="elk-nightly.zip" />
     <!-- The targetDir property must be set externally. -->
+
+
+    <!-- ================================================================= -->
+    <!-- P U R G E                                                         -->
+    <!-- ================================================================= -->
+    <target name="purge"
+            description="Purges the target directory by removing it.">
+
+        <delete dir="${targetDir}" />
+    </target>
 
 
     <!-- ================================================================= -->
@@ -34,7 +46,7 @@
 
 
     <!-- ================================================================= -->
-    <!-- Z I P  I T                                                        -->
+    <!-- Z I P   I T                                                       -->
     <!-- ================================================================= -->
     <target name="zipIt"
             description="Produces a zip file from the source directory.">
@@ -44,6 +56,5 @@
             <zipfileset dir="${sourceDir}" />
         </zip>
     </target>
-
 
 </project>
