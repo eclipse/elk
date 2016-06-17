@@ -1,10 +1,18 @@
-<project name="Eclipse Layout Kernel" default="publish" basedir=".">
+<!-- Provides a number of targets that know what to do with built update
+  -- sites. This includes:
+  --
+  --   * copy    - Copies a complete directory ${sourceDir} (which presumably
+  --               contains an update site) to a target directory ${targetDir}.
+  --   * zipIt   - Zips the content of ${sourceDir} into a ZIP file at
+  --               ${targetDir}/${targetZipFileName}.
+  -->
+<project name="Eclipse Layout Kernel" basedir=".">
 
     <!-- ================================================================= -->
     <!-- P R O P E R T I E S                                               -->
     <!-- ================================================================= -->
     <property name="sourceDir" value="target/repository/" />
-    <property name="targetZipFile" value="elk-nightly.zip" />
+    <property name="targetZipFileName" value="elk-nightly.zip" />
     <!-- The targetDir property must be set externally. -->
 
 
@@ -12,14 +20,7 @@
     <!-- C O P Y                                                           -->
     <!-- ================================================================= -->
     <target name="copy"
-            description="Copies a built update site to its download location.">
-
-        <!-- Produce a zip archive of the update site -->
-        <zip zipfile="${sourceDir}/${targetZipFile}"
-             update="false">
-
-            <zipfileset dir="${sourceDir}" />
-        </zip>
+            description="Copies a source directory to a target directory.">
 
         <!-- Empty the target directory -->
         <delete dir="${targetDir}" />
@@ -29,7 +30,20 @@
         <copy todir="${targetDir}">
             <fileset dir="${sourceDir}" />
         </copy>
-
     </target>
+
+
+    <!-- ================================================================= -->
+    <!-- Z I P  I T                                                        -->
+    <!-- ================================================================= -->
+    <target name="zipIt"
+            description="Produces a zip file from the source directory.">
+
+        <!-- Produce a zip archive of the update site -->
+        <zip zipfile="${sourceDir}/${targetZipFileName}" update="false">
+            <zipfileset dir="${sourceDir}" />
+        </zip>
+    </target>
+
 
 </project>
