@@ -56,6 +56,11 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
     
     private LGraph layeredGraph;
     
+    /** Minimum degree for a node to be considered 'high degree'. */
+    private int degreeThreshold;
+    /** The maximum height of a tree to be considered. Trees with larger height are neglected. */
+    private int treeHeightThreshold;
+    
     /**
      * {@inheritDoc}
      */
@@ -65,8 +70,12 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
         this.layeredGraph = graph;
         
         // retrieve some properties
-        int degreeThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODES_THRESHOLD);
-        int treeHeightThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODES_TREE_HEIGHT);
+        degreeThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODES_THRESHOLD);
+        treeHeightThreshold = graph.getProperty(LayeredOptions.HIGH_DEGREE_NODES_TREE_HEIGHT);
+        // translate 0 to 'arbitrary height'
+        if (treeHeightThreshold == 0) {
+            treeHeightThreshold = Integer.MAX_VALUE;
+        }
 
         // now iterate through all layer
         final ListIterator<Layer> layerIt = graph.getLayers().listIterator();
@@ -80,8 +89,8 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
             int incMax = -1;
             int outMax = -1;
             for (LNode n : lay.getNodes()) {
-                if (degree(n) >= degreeThreshold) {
-                    HighDegreeNodeInformation hdni = calculateInformation(n, treeHeightThreshold);
+                if (isHighDegreeNode(n)) {
+                    HighDegreeNodeInformation hdni = calculateInformation(n);
                     incMax = Math.max(incMax, hdni.incTreesMaxHeight);
                     outMax = Math.max(outMax, hdni.outTreesMaxHeight);
                     highDegreeNodes.add(Pair.of(n, hdni));
@@ -139,17 +148,17 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
                 layerIt2.remove();
             }
         }
-      
+    }
+    
+    private boolean isHighDegreeNode(final LNode node) {
+        return degree(node) >= degreeThreshold;
     }
     
     /**
-     * @param maxTreeHeight
-     *            the maximum height of a tree to be considered. Trees with larger height are
-     *            neglected.
      * @return the calculated trees for the passed node. That is a list of incoming trees and a list
      *         of outgoing trees and the maximum height of both of them.
      */
-    private HighDegreeNodeInformation calculateInformation(final LNode hdn, final int maxTreeHeight) {
+    private HighDegreeNodeInformation calculateInformation(final LNode hdn) {
         
         HighDegreeNodeInformation hdni = new HighDegreeNodeInformation();
         
@@ -164,7 +173,7 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
             if (hasSingleConnection(src, OUTGOING_EDGES)) {
 
                 int treeHeight =
-                        isTreeRoot(src, OUTGOING_EDGES, INCOMING_EDGES, maxTreeHeight);
+                        isTreeRoot(src, OUTGOING_EDGES, INCOMING_EDGES);
                 if (treeHeight == -1) {
                     continue;
                 }
@@ -192,7 +201,7 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
             if (hasSingleConnection(tgt, INCOMING_EDGES)) {
                 
                 int treeHeight =
-                        isTreeRoot(tgt, INCOMING_EDGES, OUTGOING_EDGES, maxTreeHeight);
+                        isTreeRoot(tgt, INCOMING_EDGES, OUTGOING_EDGES);
 
                 if (treeHeight == -1) {
                     continue;
@@ -299,14 +308,13 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
     }
     
     /**
-     * Checks whether {@code root} is the root node of a subtree. This is the case if: (1) root is
-     * connected to at most one node, i.e. it can be detached from a larger graph by removing
-     * exactly one edge, (2) root is either a leaf, or all of the connected nodes are subtrees
-     * again.
+     * Checks whether {@code root} is the root node of a subtree with height at most {@link #treeHeightThreshold}. 
+     * This is the case if: (1) root is connected to at most one node, i.e. it can be detached from a larger graph
+     * by removing exactly one edge, (2) root is either a leaf, or all of the connected nodes are subtrees again.
      * 
      * Note that the directions of {@code upEdges} and {@code downEdges} are not related to the
      * actual directions in the layered graph. They refer to the conceptual direction when imagining
-     * a graph with its ancestors and descentants.
+     * a graph with its ancestors and descendants.
      * 
      * @param root
      *            the node to be tested
@@ -320,8 +328,13 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
      */
     private int isTreeRoot(final LNode root,
             final Function<LNode, Iterable<LEdge>> ancestorEdges,
-            final Function<LNode, Iterable<LEdge>> descendantEdges,
-            final int maxHeight) {
+            final Function<LNode, Iterable<LEdge>> descendantEdges) {
+        
+        // exclude the high degree nodes themselves from the 'tree moving' process,
+        //  i.e. leave them where they are
+        if (isHighDegreeNode(root)) {
+            return -1;
+        }
         
         // is it a proper (sub-)root, i.e. does the node have exactly 
         // one parent?
@@ -338,7 +351,7 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
         int currentHeight = 0;
         for (LEdge e : descendantEdges.apply(root)) {
             LNode other = other(e, root);
-            int height = isTreeRoot(other, ancestorEdges, descendantEdges, maxHeight);
+            int height = isTreeRoot(other, ancestorEdges, descendantEdges);
             
             // other is not the root of a subtree
             if (height == -1) {
@@ -348,7 +361,7 @@ public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
             currentHeight = Math.max(currentHeight, height);
             
             // if we hit the threshold ... stop
-            if (currentHeight > maxHeight) {
+            if (currentHeight > treeHeightThreshold - 1) {
                 return -1;
             }
         }
