@@ -15,7 +15,7 @@ sites. This includes:
     <!-- P R O P E R T I E S                                               -->
     <!-- ================================================================= -->
     <property name="sourceDir" value="target/repository/" />
-    <property name="targetZipFileName" value="elk-nightly.zip" />
+    <property name="targetZipFileName" value="elk-0.1.0.zip" />
     <!-- The targetDir property must be set externally. -->
 
 
@@ -45,7 +45,7 @@ sites. This includes:
             each pair of attempts (the retrydelay is measured in
             milliseconds). -->
         <retry retrycount="10" retrydelay="1000">
-          <mkdir dir="${targetDir}" />
+            <mkdir dir="${targetDir}" />
         </retry>
 
         <!-- Copy to target directory -->

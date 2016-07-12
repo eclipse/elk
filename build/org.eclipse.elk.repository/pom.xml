@@ -52,8 +52,8 @@
               <!-- CHANGE UPDATE SITE INFORMATION -->
               <symbols>
                 <update.site.name>Eclipse Layout Kernel</update.site.name>
-                <update.site.description>Nightly</update.site.description>
-                <update.site.version>Nightly</update.site.version>
+                <update.site.description>Release</update.site.description>
+                <update.site.version>0.1.0</update.site.version>
                 <target.eclipse.version>4.5 (Mars)</target.eclipse.version>
               </symbols>
             </configuration>
