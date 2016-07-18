@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -104,8 +107,30 @@ public class ExecutionView extends ViewPart {
         // create tree viewer
         viewer = new TreeViewer(parent);
         viewer.setContentProvider(new ExecutionContentProvider());
-        viewer.setLabelProvider(new ExecutionLabelProvider());
         viewer.setInput(executions);
+        
+        // setup tree columns
+        viewer.getTree().setHeaderVisible(true);
+        
+        TreeViewerColumn nameColumn = new TreeViewerColumn(viewer, SWT.NONE);
+        nameColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
+                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.NAME)));
+        nameColumn.getColumn().setText("Name");
+        nameColumn.getColumn().setWidth(500);
+        
+        TreeViewerColumn timeColumn = new TreeViewerColumn(viewer, SWT.NONE);
+        timeColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
+                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.TIME_TOTAL)));
+        timeColumn.getColumn().setAlignment(SWT.RIGHT);
+        timeColumn.getColumn().setText("Time [ms]");
+        timeColumn.getColumn().setWidth(100);
+        
+        TreeViewerColumn localTimeColumn = new TreeViewerColumn(viewer, SWT.NONE);
+        localTimeColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
+                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.TIME_LOCAL)));
+        localTimeColumn.getColumn().setAlignment(SWT.RIGHT);
+        localTimeColumn.getColumn().setText("Local Time [ms]");
+        localTimeColumn.getColumn().setWidth(100);
     }
 
     /**

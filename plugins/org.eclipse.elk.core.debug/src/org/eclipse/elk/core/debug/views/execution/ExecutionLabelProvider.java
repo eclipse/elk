@@ -11,25 +11,37 @@
 package org.eclipse.elk.core.debug.views.execution;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
 /**
  * Label provider for executions.
  */
-final class ExecutionLabelProvider extends LabelProvider {
+final class ExecutionLabelProvider extends LabelProvider implements IStyledLabelProvider {
+    
+    /** What the label provider can display. */
+    public static enum DisplayMode { NAME, TIME_TOTAL, TIME_LOCAL };
+    
 
     /** Path to the image used for elements. */
     private static final String IMAGE_PATH = "/icons/execution.gif";
     /** The image used for each element. */
     private Image elementImage;
+    /** What we should display. */
+    private DisplayMode displayMode;
     
 
     /**
      * Creates an execution label provider.
+     * 
+     * @param displayMode
+     *            What this label provider should display.
      */
-    public ExecutionLabelProvider() {
+    public ExecutionLabelProvider(final DisplayMode displayMode) {
         elementImage = ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, IMAGE_PATH).createImage();
+        this.displayMode = displayMode;
     }
     
     /**
@@ -37,33 +49,33 @@ final class ExecutionLabelProvider extends LabelProvider {
      */
     @Override
     public Image getImage(final Object element) {
-        if (element instanceof Execution) {
+        if (displayMode == DisplayMode.NAME && element instanceof Execution) {
             return elementImage;
         } else {
             return null;
         }
     }
 
-    /**
-     * {@inheritDoc}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
      */
     @Override
-    public String getText(final Object element) {
+    public StyledString getStyledText(Object element) {
         if (element instanceof Execution) {
             Execution execution = (Execution) element;
             
-            StringBuilder result = new StringBuilder(execution.getName())
-                    .append(": ")
-                    .append(timeToString(execution.getExecutionTimeIncludingChildren()));
-            
-            if (!execution.getChildren().isEmpty()) {
-                result
-                    .append(" [")
-                    .append(timeToString(execution.getExecutionTimeLocal()))
-                    .append(" local]");
+            switch (displayMode) {
+            case NAME:
+                return new StyledString(execution.getName());
+            case TIME_TOTAL:
+                return new StyledString(timeToString(execution.getExecutionTimeIncludingChildren()));
+            case TIME_LOCAL:
+                return execution.getChildren().isEmpty()
+                        ? new StyledString("")
+                        : new StyledString(timeToString(execution.getExecutionTimeLocal()));
+            default:
+                return null;
             }
-            
-            return result.toString();
         } else {
             return null;
         }
@@ -76,12 +88,8 @@ final class ExecutionLabelProvider extends LabelProvider {
      * @return a string representation
      */
     private String timeToString(final double time) {
-        if (time >= 1.0) {
-            return String.format("%1$.3fs", time);
-        } else {
-            // SUPPRESS CHECKSTYLE NEXT MagicNumber
-            return String.format("%1$.3fms", time * 1000);
-        }
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        return String.format("%1$.3f", time * 1000);
     }
 
     /**
