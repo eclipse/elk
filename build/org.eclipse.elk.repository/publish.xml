@@ -37,7 +37,15 @@ sites. This includes:
 
         <!-- Empty the target directory -->
         <delete dir="${targetDir}" />
-        <mkdir dir="${targetDir}" />
+
+        <!-- Recreate the target directory. It can happen that this task
+             fails seemingly at random. To be sure, we wrap it in a retry
+             task that repeats the mkdir call up to 10 times, with a pause
+             between each pair of attempts (the retrydelay is measured in
+             milliseconds). -->
+        <retry retrycount="10" retrydelay="1000">
+            <mkdir dir="${targetDir}" />
+        </retry>
 
         <!-- Copy to target directory -->
         <copy todir="${targetDir}">
