@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.views.execution;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -34,7 +34,8 @@ public class ExecutionView extends ViewPart {
     /** the tree viewer used to display content. */
     private TreeViewer viewer;
     /** the list of executions. */
-    private List<IElkProgressMonitor> executions = new LinkedList<IElkProgressMonitor>();
+    private List<Execution> executions = new ArrayList<>();
+    
 
     /**
      * Creates an execution view.
@@ -42,6 +43,7 @@ public class ExecutionView extends ViewPart {
     public ExecutionView() {
         super();
     }
+    
 
     /**
      * Adds an execution and updates the tree viewer of the currently active execution view.
@@ -53,7 +55,7 @@ public class ExecutionView extends ViewPart {
             public void run() {
                 ExecutionView activeView = findView();
                 if (progressMonitor != null && activeView != null) {
-                    activeView.executions.add(progressMonitor);
+                    activeView.executions.add(Execution.fromProgressMonitor(progressMonitor));
                     activeView.viewer.refresh();
                 }
             }

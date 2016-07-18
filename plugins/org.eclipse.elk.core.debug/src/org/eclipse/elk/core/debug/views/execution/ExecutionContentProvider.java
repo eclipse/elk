@@ -12,31 +12,30 @@ package org.eclipse.elk.core.debug.views.execution;
 
 import java.util.List;
 
-import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Content provider for Elk progress monitors.
+ * Content provider for Executions. The viewer input element is expected to be a list of {@link Execution} instances.
  */
-public class ExecutionContentProvider implements ITreeContentProvider {
+final class ExecutionContentProvider implements ITreeContentProvider {
 
     /**
      * {@inheritDoc}
      */
     public Object[] getChildren(final Object parentElement) {
-        if (parentElement instanceof IElkProgressMonitor) {
-            return ((IElkProgressMonitor) parentElement).getSubMonitors().toArray();
+        if (parentElement instanceof Execution) {
+            return ((Execution) parentElement).getChildren().toArray();
         }
-        return new IElkProgressMonitor[0];
+        return new Execution[0];
     }
 
     /**
      * {@inheritDoc}
      */
     public Object getParent(final Object element) {
-        if (element instanceof IElkProgressMonitor) {
-            return ((IElkProgressMonitor) element).getParentMonitor();
+        if (element instanceof Execution) {
+            return ((Execution) element).getParent();
         }
         return null;
     }
@@ -45,8 +44,8 @@ public class ExecutionContentProvider implements ITreeContentProvider {
      * {@inheritDoc}
      */
     public boolean hasChildren(final Object element) {
-        return element instanceof IElkProgressMonitor
-                && !((IElkProgressMonitor) element).getSubMonitors().isEmpty();
+        return element instanceof Execution
+                && !((Execution) element).getChildren().isEmpty();
     }
 
     /**

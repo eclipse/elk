@@ -11,20 +11,19 @@
 package org.eclipse.elk.core.debug.views.execution;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
-import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Label provider for execution times retrieved from ELK progress monitors.
+ * Label provider for executions.
  */
-public class ExecutionLabelProvider extends LabelProvider {
+final class ExecutionLabelProvider extends LabelProvider {
 
-    /** path to the image used for elements. */
+    /** Path to the image used for elements. */
     private static final String IMAGE_PATH = "/icons/execution.gif";
-
-    /** the image used for each element. */
+    /** The image used for each element. */
     private Image elementImage;
+    
 
     /**
      * Creates an execution label provider.
@@ -38,7 +37,7 @@ public class ExecutionLabelProvider extends LabelProvider {
      */
     @Override
     public Image getImage(final Object element) {
-        if (element instanceof IElkProgressMonitor) {
+        if (element instanceof Execution) {
             return elementImage;
         } else {
             return null;
@@ -50,20 +49,21 @@ public class ExecutionLabelProvider extends LabelProvider {
      */
     @Override
     public String getText(final Object element) {
-        if (element instanceof IElkProgressMonitor) {
-            IElkProgressMonitor monitor = (IElkProgressMonitor) element;
-            String baseText = monitor.getTaskName() + ": ";
-            double time = monitor.getExecutionTime();
-            if (monitor.getSubMonitors().isEmpty()) {
-                return baseText + toString(time);
-            } else {
-                double childrenTime = 0;
-                for (IElkProgressMonitor child : monitor.getSubMonitors()) {
-                    childrenTime += child.getExecutionTime();
-                }
-                double localTime = Math.max(time - childrenTime, 0);
-                return baseText + toString(time) + " [" + toString(localTime) + " local]";
+        if (element instanceof Execution) {
+            Execution execution = (Execution) element;
+            
+            StringBuilder result = new StringBuilder(execution.getName())
+                    .append(": ")
+                    .append(timeToString(execution.getExecutionTimeIncludingChildren()));
+            
+            if (!execution.getChildren().isEmpty()) {
+                result
+                    .append(" [")
+                    .append(timeToString(execution.getExecutionTimeLocal()))
+                    .append(" local]");
             }
+            
+            return result.toString();
         } else {
             return null;
         }
@@ -75,12 +75,12 @@ public class ExecutionLabelProvider extends LabelProvider {
      * @param time time in seconds
      * @return a string representation
      */
-    private String toString(final double time) {
+    private String timeToString(final double time) {
         if (time >= 1.0) {
-            return String.format("%1$.3f s", time);
+            return String.format("%1$.3fs", time);
         } else {
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
-            return String.format("%1$.3f ms", time * 1000);
+            return String.format("%1$.3fms", time * 1000);
         }
     }
 
