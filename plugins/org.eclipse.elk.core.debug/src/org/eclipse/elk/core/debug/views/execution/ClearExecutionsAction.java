@@ -34,8 +34,8 @@ public class ClearExecutionsAction extends Action {
     public ClearExecutionsAction(final ExecutionView theview) {
         this.view = theview;
         setId(ACTION_ID);
-        setText("&Clear Executions");
-        setToolTipText("Clears the execution data from this view.");
+        setText("&Clear");
+        setToolTipText("Clears all execution times.");
         setImageDescriptor(ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, ICON_PATH));
     }
 
