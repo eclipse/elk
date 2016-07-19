@@ -32,9 +32,6 @@ import org.eclipse.elk.graph.KNode;
  */
 public class RandomLayoutProvider extends AbstractLayoutProvider {
     
-    /** the layout provider id. */
-    public static final String ID = "org.eclipse.elk.alg.random";
-
     /** default value for aspect ratio. */
     private static final float DEF_ASPECT_RATIO = 1.6f;
     /** default value for object spacing. */

@@ -42,9 +42,6 @@ import org.eclipse.elk.graph.KPort;
  */
 public class FixedLayoutProvider extends AbstractLayoutProvider {
 
-    /** the layout provider id. */
-    public static final String ID = "org.eclipse.elk.alg.fixed";
-    
     /** default value for border spacing. */
     private static final float DEF_BORDER_SPACING = 15.0f;
     
