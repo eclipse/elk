@@ -217,7 +217,7 @@ public class BKCompactor implements ICompactor {
                 if (bal.sink[root.id].equals(root)) {
                     bal.sink[root.id] = bal.sink[neighborRoot.id];
                 }
-                
+
                 // Check if the blocks of the two nodes are members of the same class
                 if (bal.sink[root.id].equals(bal.sink[neighborRoot.id])) {
                     // They are part of the same class
@@ -272,8 +272,8 @@ public class BKCompactor implements ICompactor {
                     // relative two the two class sinks.
                     double spacing = spacings.nodeSpacing;
                     
-                    ClassNode sinkNode = getOrCreateClassNode(bal.sink[root.id]);
-                    ClassNode neighborSink = getOrCreateClassNode(bal.sink[neighborRoot.id]);
+                    ClassNode sinkNode = getOrCreateClassNode(bal.sink[root.id], bal);
+                    ClassNode neighborSink = getOrCreateClassNode(bal.sink[neighborRoot.id], bal);
                         
                     if (bal.vdir == VDirection.UP) {
                         
@@ -290,7 +290,7 @@ public class BKCompactor implements ICompactor {
                                    + bal.innerShift[neighbor.id]
                                    - neighbor.getMargin().top
                                    );
-                        
+
                         // add an edge to the class graph
                         sinkNode.addEdge(neighborSink, requiredSpace);
                         
@@ -347,14 +347,24 @@ public class BKCompactor implements ICompactor {
         // propagate shifts in a longest path layering fashion
         while (!sinks.isEmpty()) {
             ClassNode n = sinks.poll();
+            
+            // position the root of the class node tree
+            if (n.classShift == null) {
+                n.classShift = 0d;
+            } 
+            
             for (ClassEdge e : n.outgoing) {
                 
-                if (bal.vdir == VDirection.DOWN) {
+                // initial position of a target does not depend on previous positions
+                // (we need this as we cannot assume the top-most position to be 0)
+                if (e.target.classShift == null) {
+                    e.target.classShift = n.classShift + e.separation;
+                } else if (bal.vdir == VDirection.DOWN) {
                     e.target.classShift = Math.min(e.target.classShift, n.classShift + e.separation);
                 } else {
                     e.target.classShift = Math.max(e.target.classShift, n.classShift + e.separation);
                 }
-                
+                 
                 e.target.indegree--;
                 
                 if (e.target.indegree == 0) {
@@ -370,7 +380,7 @@ public class BKCompactor implements ICompactor {
         }
     }
     
-    private ClassNode getOrCreateClassNode(final LNode sinkNode) {
+    private ClassNode getOrCreateClassNode(final LNode sinkNode, final BKAlignedLayout bal) {
         ClassNode node = sinkNodes.get(sinkNode);
         if (node == null) {
             node = new ClassNode();
@@ -385,7 +395,7 @@ public class BKCompactor implements ICompactor {
      */
     private static class ClassNode {
         // SUPPRESS CHECKSTYLE NEXT 5 VisibilityModifier
-        double classShift = 0;
+        Double classShift = null;
         LNode node;
         List<ClassEdge> outgoing = Lists.newArrayList();
         int indegree = 0;

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p4nodes.bk;
 
+import java.util.Arrays;
+
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -27,7 +29,7 @@ import org.eclipse.elk.alg.layered.properties.Spacings;
 public final class BKAlignedLayout {
     
     // Allow the fields of this container to be accessed from package siblings.
-    // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 26 VisibilityModifier
     /** The root node of each node in a block. */
     LNode[] root;
     /** The size of a block. */
@@ -46,6 +48,8 @@ public final class BKAlignedLayout {
     VDirection vdir;
     /** The horizontal direction of the current layout. */
     HDirection hdir;
+    /** Flags blocks, represented by their root node, that are part of a straightened edge. */
+    Boolean[] su;
 
     /** The graph to process. */
     LGraph layeredGraph;
@@ -78,6 +82,8 @@ public final class BKAlignedLayout {
         sink = new LNode[nodeCount];
         shift = new Double[nodeCount];
         y = new Double[nodeCount];
+        su = new Boolean[nodeCount];
+        Arrays.fill(su, false);
         this.vdir = vdir;
         this.hdir = hdir;
     }
