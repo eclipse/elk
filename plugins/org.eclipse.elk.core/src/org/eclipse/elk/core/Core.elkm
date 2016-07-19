@@ -94,6 +94,10 @@ algorithm fixed(FixedLayoutProvider) {
     metadataClass core.options.FixedLayouterOptions 
 	supports position
 	supports bendPoints
+	supports nodeSize.constraints
+	supports nodeSize.minimum
+	supports nodeSize.minWidth
+	supports nodeSize.minHeight
 	supports org.eclipse.elk.spacing.border = 15
 }
 
@@ -110,6 +114,9 @@ algorithm box(BoxLayoutProvider) {
 	supports org.eclipse.elk.nodeSize.options
 	supports aspectRatio = 1.3f
 	supports interactive
+    supports nodeSize.minimum
+    supports nodeSize.minWidth
+    supports nodeSize.minHeight
 }
 
 algorithm random(RandomLayoutProvider) {
