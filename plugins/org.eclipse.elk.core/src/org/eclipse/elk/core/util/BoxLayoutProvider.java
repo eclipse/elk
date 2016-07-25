@@ -133,6 +133,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     private void placeBoxes(final List<KNode> sortedBoxes, final KNode parentNode,
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+        
         KInsets insets = parentLayout.getInsets();
         KVector minSize = parentLayout.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
         float minWidth, minHeight;
@@ -185,8 +186,19 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             maxRowWidth = Math.max(maxRowWidth, boxLayout.getWidth());
             totalArea += boxLayout.getWidth() * boxLayout.getHeight();
         }
-        maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea) * aspectRatio)
-                + borderSpacing;
+        
+        // calculate std deviation
+        //  rationale: the greater the diversity of box sizes, the more space will be 'wasted',
+        //  contributing to the total area. We address this by adding x*n*stddev to the area.
+        //  TODO x should be assessed empirically, for the moment set it to 1
+        float mean = totalArea / sortedBoxes.size();
+        float stddev = areaStdDev(sortedBoxes, mean);
+        
+        totalArea += (sortedBoxes.size() * 1 * stddev);
+
+        // calculate the required row width w to achieve the desired aspect ratio,
+        //  i.e.:  w*h=area s.t. w/h=dar  ->  w=sqrt(area * dar) 
+        maxRowWidth = (float) Math.max(maxRowWidth, Math.sqrt(totalArea * aspectRatio)) + borderSpacing;
 
         // place nodes iteratively into rows
         float xpos = borderSpacing;
@@ -256,6 +268,16 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
 
         // return parent size
         return new KVector(broadestRow, totalHeight);
+    }
+
+    private float areaStdDev(final List<KNode> boxes, final float mean) {
+        float variance = 0;
+        for (KNode box : boxes) {
+            KShapeLayout boxLayout = box.getData(KShapeLayout.class);
+            variance += Math.pow(boxLayout.getWidth() * boxLayout.getHeight() - mean, 2);
+        }
+        float stddev = (float) Math.sqrt(variance / (boxes.size() - 1));
+        return stddev;
     }
 
 }
