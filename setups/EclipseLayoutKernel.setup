@@ -92,7 +92,7 @@
         name="org.eclipse.jdt.feature.group"/>
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"
-        versionRange="[2.9.0,2.10.0)"/>
+        versionRange="[2.10.0,2.11.0)"/>
     <requirement
         name="org.eclipse.mylyn.ide_feature.feature.group"/>
     <requirement
@@ -134,7 +134,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="eclipse.target.platform"
-        defaultValue="Mars"
+        defaultValue="Neon"
         storageURI="scope://Workspace"
         label="Target Platform">
       <description>Choose the compatibility level of the target platform</description>
@@ -201,7 +201,7 @@
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.9.0,2.10.0)"/>
+            versionRange="[2.10.0,2.11.0)"/>
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
@@ -214,6 +214,15 @@
             rootFolder="${git.clone.location}"
             locateNestedProjects="true"/>
         <repositoryList
+            name="Luna">
+          <repository
+              url="http://download.eclipse.org/releases/luna"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+        </repositoryList>
+        <repositoryList
             name="Mars">
           <repository
               url="http://download.eclipse.org/releases/mars"/>
@@ -225,13 +234,15 @@
               url="http://download.itemis.com/updates/releases/"/>
         </repositoryList>
         <repositoryList
-            name="Luna">
+            name="Neon">
           <repository
-              url="http://download.eclipse.org/releases/luna"/>
+              url="http://download.eclipse.org/releases/mars"/>
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/"/>
         </repositoryList>
       </targlet>
     </setupTask>
