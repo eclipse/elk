@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test;
 
-import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
@@ -42,7 +41,7 @@ public class PlainLayoutTest {
         // configure every hierarchical node to use ELK Layered (which would also be the default) 
         getAllKNodes(parentNode).forEachRemaining(node -> {
             if (!node.getChildren().isEmpty()) {
-                node.getData(KLayoutData.class).setProperty(CoreOptions.ALGORITHM, LayeredLayoutProvider.ID);
+                node.getData(KLayoutData.class).setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
             }
         });
 

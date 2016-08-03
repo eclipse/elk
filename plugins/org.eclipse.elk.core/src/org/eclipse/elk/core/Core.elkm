@@ -19,6 +19,7 @@ import org.eclipse.elk.core.util.ExclusiveBounds
 import org.eclipse.elk.core.util.FixedLayoutProvider
 import org.eclipse.elk.core.util.RandomLayoutProvider
 import org.eclipse.elk.core.util.nodespacing.Spacing
+import org.eclipse.elk.core.util.BoxLayoutProvider.PackingMode
 
 // Sort based on normal - advanced - programmatic - global - output and within the groups alphabetically
 // If different types are within a group, move the group to the first category 
@@ -94,6 +95,10 @@ algorithm fixed(FixedLayoutProvider) {
     metadataClass core.options.FixedLayouterOptions 
 	supports position
 	supports bendPoints
+	supports nodeSize.constraints
+	supports nodeSize.minimum
+	supports nodeSize.minWidth
+	supports nodeSize.minHeight
 	supports org.eclipse.elk.spacing.border = 15
 }
 
@@ -110,6 +115,23 @@ algorithm box(BoxLayoutProvider) {
 	supports org.eclipse.elk.nodeSize.options
 	supports aspectRatio = 1.3f
 	supports interactive
+    supports nodeSize.minimum
+    supports nodeSize.minWidth
+    supports nodeSize.minHeight
+    supports box.packingMode
+}
+
+group box {
+    option packingMode: PackingMode {
+        label "Box Layout Mode"
+        description 
+            "Configures the packing mode used by the {@link BoxLayoutProvider}.
+             If SIMPLE is not required (neither priorities are used nor the interactive mode),
+             GROUP_DEC can improve the packing and decrease the area. 
+             GROUP_MIXED and GROUP_INC may, in very specific scenarios, work better."
+        default = BoxLayoutProvider$PackingMode.SIMPLE
+        targets parents
+    }
 }
 
 algorithm random(RandomLayoutProvider) {

@@ -268,7 +268,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     // ALGORITHM METADATA PROVIDER CLASS GENERATION
 
     /**
-     * Generates code for the given algorithm'm metadata provider class.
+     * Generates code for the given algorithm's metadata provider class.
      * 
      * @param algorithm
      *            the algorithm to create one or more {@link JvmDeclaredType declared types} from.
@@ -301,6 +301,8 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             documentation = algorithm.documentation
             
             // 1. Public constants for supported layout options
+            members += algorithm.toAlgorithmId
+            
             for (support : algorithm.supportedOptions) {
                 if (support.value !== null) {
                     members += support.toSupportedOptionDefault
@@ -318,6 +320,18 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         ]
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    // Algorithm ID Constant
+    
+    private def toAlgorithmId(MdAlgorithm algorithm) {
+        return algorithm.toField("ALGORITHM_ID", typeRef(String)) [
+            visibility = JvmVisibility.PUBLIC
+            static = true
+            final = true
+            initializer = '''«algorithm.qualifiedName.toCodeString»'''
+            documentation = '''The id of the «algorithm.label» algorithm.'''
+        ]
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     // Property Constants
