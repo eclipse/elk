@@ -198,7 +198,7 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
          * are not constant time.
          */
         private TreeSet<CNode> intervals = Sets.newTreeSet((c1, c2) -> Double.compare(
-                (c1.hitbox.x + c1.hitbox.width) / 2, (c2.hitbox.x + c2.hitbox.width) / 2));
+                c1.hitbox.x + (c1.hitbox.width / 2), c2.hitbox.x + (c2.hitbox.width / 2)));
         /** Candidate array with possible constraints. */
         private CNode[] cand;
         
