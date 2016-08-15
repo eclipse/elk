@@ -281,7 +281,7 @@ group spacing {
 		description "Spacing between ports of a given node."
 		default = 10
         lowerBound = 0f
-		targets nodes
+		targets parents, nodes
 		legacyIds de.cau.cs.kieler.portSpacing
 	}
 	
