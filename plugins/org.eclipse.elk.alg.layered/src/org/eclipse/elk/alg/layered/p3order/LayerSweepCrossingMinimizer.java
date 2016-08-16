@@ -192,12 +192,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             GraphData gD = countCrossingsIn.pop();
             totalCrossings +=
                     gD.crossCounter().countAllCrossings(gD.currentNodeOrder());
-            for (LGraph child : gD.childGraphs()) {
-                GraphData childGD = graphData.get(child.id);
-                if (!childGD.dontSweepInto()) {
-                    countCrossingsIn.push(childGD);
-                }
-            }
+            countCrossingsIn.addAll(gD.childGraphsToSweepInto());
         }
 
         return totalCrossings;
@@ -380,6 +375,9 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         return isForwardSweep ? port.getSide() == PortSide.EAST : port.getSide() == PortSide.WEST;
     }
 
+    /**
+     * Traverses inclusion breadth-first and initializes each Graph.
+     */
     private List<GraphData> initialize(final LGraph rootGraph) {
         graphData = Lists.newArrayList();
         random = rootGraph.getProperty(InternalProperties.RANDOM);

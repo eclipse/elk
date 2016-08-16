@@ -56,6 +56,7 @@ public class GraphData {
     private boolean hasParent;
     private AllCrossingsCounter crossCounter;
     private List<LGraph> childGraphs;
+    private List<GraphData> subGraph;
     private boolean externalPorts;
     private CrossMinType crossMinType;
     private Map<Integer, Integer> childNumPorts;
@@ -75,6 +76,7 @@ public class GraphData {
         crossMinType = cMT;
         childNumPorts = new HashMap<>();
         childGraphs = Lists.newArrayList();
+        subGraph = Lists.newArrayList();
         externalPorts = graph.getProperty(InternalProperties.GRAPH_PROPERTIES)
                 .contains(GraphProperties.EXTERNAL_PORTS);
         int graphSize = graph.getLayers().size();
@@ -150,8 +152,12 @@ public class GraphData {
             if (crossMinAlwaysImproves()) {
                 parentGraphData.childNumPorts.put(lGraph.id, portId);
             }
+            if (processRecursively) {
+                parentGraphData.subGraph.add(this);
+            }
         }
     }
+
 
     private void initNodePortDistributors(final LGraph graph, final CrossMinType cMT, final int[][] nodePositions,
             final Multimap<LNode, LNode> layoutUnits, final BarycenterState[][] barycenterStates, final int portId,
@@ -304,6 +310,13 @@ public class GraphData {
      */
     public Collection<LGraph> childGraphs() {
         return childGraphs;
+    }
+
+    /**
+     * @return child graphs
+     */
+    public Collection<GraphData> childGraphsToSweepInto() {
+        return subGraph;
     }
 
     /**
