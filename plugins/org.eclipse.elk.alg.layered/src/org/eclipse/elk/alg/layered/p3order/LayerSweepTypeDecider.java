@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -70,55 +71,54 @@ public class LayerSweepTypeDecider {
         int pathsToHierarchical = 0;
 
         List<LNode> nsPortDummies = new ArrayList<>();
-        Iterable<LNode> nodes = Iterables.concat(graphData.lGraph());
-        for (LNode node : nodes) {
-            if (isNorthSouthDummy(node)) {
-                nsPortDummies.add(node);
-                continue;
-            }
-            NodeInfo currentNode = nodeInfoFor(node);
-            if (isExternalPortDummy(node)) {
-                currentNode.hierarchicalInfluence = 1;
-                if (isEasternDummy(node)) {
-                    pathsToHierarchical += currentNode.connectedEdges;
+        for (Layer layer : graphData.lGraph()) {
+            nsPortDummies.clear();
+            for (LNode node : layer) {
+                if (isNorthSouthDummy(node)) {
+                    nsPortDummies.add(node);
+                    continue;
                 }
-            } else {
-                if (hasNoWesternPorts(node)) {
-                    currentNode.randomInfluence = 1;
+                NodeInfo currentNode = nodeInfoFor(node);
+                if (isExternalPortDummy(node)) {
+                    currentNode.hierarchicalInfluence = 1;
+                    if (isEasternDummy(node)) {
+                        pathsToHierarchical += currentNode.connectedEdges;
+                    }
+                } else {
+                    if (hasNoWesternPorts(node)) {
+                        currentNode.randomInfluence = 1;
+                    }
+                    if (hasNoEasternPorts(node)) {
+                        pathsToRandom += currentNode.connectedEdges;
+                    }
                 }
-                if (hasNoEasternPorts(node)) {
-                    pathsToRandom += currentNode.connectedEdges;
-                }
-            }
-            for (LEdge edge : node.getOutgoingEdges()) {
-                pathsToRandom += currentNode.randomInfluence;
-                pathsToHierarchical += currentNode.hierarchicalInfluence;
-                transferInfoToTarget(currentNode, edge);
-            }
-            for (LPort port : node.getPorts(PortSide.NORTH)) {
-                LNode nsDummy = port.getProperty(InternalProperties.PORT_DUMMY);
-                if (nsDummy != null) {
+                for (LEdge edge : node.getOutgoingEdges()) {
                     pathsToRandom += currentNode.randomInfluence;
                     pathsToHierarchical += currentNode.hierarchicalInfluence;
-                    transferInfoTo(currentNode, nsDummy);
+                    transferInfoToTarget(currentNode, edge);
+                }
+                for (LPort port : Iterables.concat(node.getPorts(PortSide.NORTH), node.getPorts(PortSide.SOUTH))) {
+                    LNode nsDummy = port.getProperty(InternalProperties.PORT_DUMMY);
+                    if (nsDummy != null) {
+                        pathsToRandom += currentNode.randomInfluence;
+                        pathsToHierarchical += currentNode.hierarchicalInfluence;
+                        transferInfoTo(currentNode, nsDummy);
+                    }
+                }
+            }
+            for (LNode node : nsPortDummies) {
+                NodeInfo currentNode = nodeInfoFor(node);
+                for (LEdge edge : node.getOutgoingEdges()) {
+                    pathsToRandom += currentNode.randomInfluence;
+                    pathsToHierarchical += currentNode.hierarchicalInfluence;
+                    transferInfoToTarget(currentNode, edge);
                 }
             }
         }
 
-        for (LNode node : nsPortDummies) {
-            NodeInfo currentNode = nodeInfoFor(node);
-            for (LEdge edge : node.getOutgoingEdges()) {
-                pathsToRandom += currentNode.randomInfluence;
-                pathsToHierarchical += currentNode.hierarchicalInfluence;
-                transferInfoToTarget(currentNode, edge);
-            }
-        }
-
-        // float boundary = lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
         double allPaths = pathsToRandom + pathsToHierarchical;
         double normalized = allPaths == 0 ? Double.MAX_VALUE : (pathsToRandom - pathsToHierarchical) / allPaths;
-
-        return normalized > boundary;
+        return normalized >= boundary;
     }
 
     private void transferInfoToTarget(final NodeInfo currentNode, final LEdge edge) {
@@ -147,6 +147,12 @@ public class LayerSweepTypeDecider {
             hierarchicalInfluence += nodeInfo.hierarchicalInfluence;
             randomInfluence += nodeInfo.randomInfluence;
             connectedEdges += nodeInfo.connectedEdges;
+        }
+
+        @Override
+        public String toString() {
+            return "NodeInfo [connectedEdges=" + connectedEdges + ", hierarchicalInfluence=" + hierarchicalInfluence
+                    + ", randomInfluence=" + randomInfluence + "]";
         }
     }
 
