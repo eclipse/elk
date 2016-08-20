@@ -549,6 +549,7 @@ programmatic option noLayout: boolean {
 		layer, use the 'Fixed Layout' algorithm for that node."
 	default = false
 	targets nodes, edges, ports, labels
+	legacyIds de.cau.cs.kieler.noLayout
 }
 
 // --- PORT
