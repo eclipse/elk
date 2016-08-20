@@ -349,7 +349,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS}.
    */
-  private final static float CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS_DEFAULT = 0f;
+  private final static float CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS_DEFAULT = 0.1f;
   
   /**
    * How likely it is to use cross-hierarchy (1) vs bottom-up (-1).

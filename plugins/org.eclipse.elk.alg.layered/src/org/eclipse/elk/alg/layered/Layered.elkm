@@ -252,7 +252,7 @@ group crossingMinimization {
     option hierarchicalSweepiness: float {
         label "Hierarchical Sweepiness"
         description "How likely it is to use cross-hierarchy (1) vs bottom-up (-1)."  
-        default = 0f
+        default = 0.1f
         targets parents 
     }
 

@@ -32,7 +32,6 @@ import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
-import org.eclipse.elk.graph.properties.IProperty;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -40,7 +39,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MagicNumber
@@ -183,10 +181,10 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         List<LPort> expectedOrderOfPortsRight =
                 Lists.newArrayList(rightOuterPorts[1], rightOuterPorts[0]);
 
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0.1f, graph);
         setUpAndMinimizeCrossings();
         List<LNode> actualExternalDummyOrderRight = rightInnerGraph.getLayers().get(0).getNodes();
         assertThat(actualExternalDummyOrderRight, is(expectedExternalDummyOrderRight));
-
         assertThat(rightOuterNode.getPorts(), is(expectedOrderOfPortsRight));
 
         List<LNode> actualNormalOrderRight = rightInnerGraph.getLayers().get(1).getNodes();
@@ -1378,7 +1376,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
         makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
 
-        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0f);
+        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0.1f);
         
         setUpAndMinimizeCrossings();
         
@@ -1575,7 +1573,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         LNode rightOuterNode = addNodeToLayer(makeLayer());
         LPort[] rightOuterPorts = addPortsOnSide(2, rightOuterNode, PortSide.WEST);
         eastWestEdgeFromTo(leftNode, rightOuterPorts[1]);
-        
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0.1f, graph);
         makeNestedTwoNodeGraphWithWesternPorts(rightOuterNode, rightOuterPorts);
         
         setUpAndMinimizeCrossings();
@@ -1721,16 +1719,6 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         new LayerSweepCrossingMinimizer().process(graph, new BasicProgressMonitor());
 
         assertEquals(leftNode.getPorts(), expectedPortOrder);
-    }
-
-    private <T> void setOnAllGraphs(final IProperty<T> prop, final T val, final LGraph graph) {
-        graph.setProperty(prop, val);
-        for (LNode node : Iterables.concat(graph)) {
-            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
-            if (nestedGraph != null) {
-                setOnAllGraphs(prop, val, nestedGraph);
-            }
-        }
     }
 
     private LPort[] reverse(final LPort[] rightOuterPorts) {

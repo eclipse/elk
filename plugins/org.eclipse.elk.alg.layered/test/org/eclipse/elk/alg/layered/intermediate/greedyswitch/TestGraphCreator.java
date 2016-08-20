@@ -30,8 +30,10 @@ import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -1372,6 +1374,16 @@ public class TestGraphCreator {
             this.current = current;
         }
 
+    }
+
+    protected <T> void setOnAllGraphs(final IProperty<T> prop, final T val, final LGraph graph) {
+        graph.setProperty(prop, val);
+        for (LNode node : Iterables.concat(graph)) {
+            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            if (nestedGraph != null) {
+                setOnAllGraphs(prop, val, nestedGraph);
+            }
+        }
     }
 
 }
