@@ -17,9 +17,6 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
 /**
  * Stores node and port order for a sweep.
  * 
@@ -38,12 +35,12 @@ class SweepCopy {
      */
     SweepCopy(final LNode[][] nodeOrderIn) {
         nodeOrder = deepCopy(nodeOrderIn);
-        portOrders = Lists.newArrayList();
+        portOrders = new ArrayList<>();
         for (LNode[] lNodes : nodeOrderIn) {
-            List<List<LPort>> layer = Lists.newArrayList();
+            List<List<LPort>> layer = new ArrayList<>();
             portOrders.add(layer);
             for (LNode node : lNodes) {
-                layer.add(ImmutableList.copyOf(node.getPorts()));
+                layer.add(new ArrayList<>(node.getPorts()));
             }
         }
     }
@@ -51,7 +48,7 @@ class SweepCopy {
     SweepCopy(final SweepCopy sc) {
         nodeOrder = deepCopy(sc.nodeOrder);
         lastSweepDirection = sc.lastSweepDirection;
-        portOrders = ImmutableList.copyOf(sc.portOrders);
+        portOrders = new ArrayList<>(sc.portOrders);
     }
 
     public void setSavedPortOrdersToNodes() {
@@ -82,9 +79,5 @@ class SweepCopy {
      */
     public LNode[][] nodes() {
         return nodeOrder;
-    }
-
-    public void savePortOrderForNode(final LNode node) {
-        portOrders.get(node.getLayer().id).set(node.id, new ArrayList<>(node.getPorts()));
     }
 }
