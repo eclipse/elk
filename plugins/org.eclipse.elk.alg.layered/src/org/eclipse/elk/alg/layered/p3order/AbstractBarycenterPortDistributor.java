@@ -21,7 +21,6 @@ import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.options.PortSide;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -62,7 +61,7 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      */
     public AbstractBarycenterPortDistributor(final float[] portRanks, final int[][] nodePos) {
         this.portRanks = portRanks;
-        inLayerPorts = Lists.newLinkedList();
+        inLayerPorts = Lists.newArrayList();
         portBarycenter = new float[portRanks.length];
         nodePositions = nodePos;
     }
@@ -147,9 +146,14 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
 
 
     private void distributePorts(final LNode node, final PortSide side) {
-        // distribute ports in sweep direction and on north south side of node.
-        distributePorts(node,
-                Iterables.concat(node.getPorts(side), node.getPorts(PortSide.SOUTH), node.getPorts(PortSide.NORTH)));
+        if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            // distribute ports in sweep direction and on north south side of node.
+            distributePorts(node, node.getPorts(side));
+            distributePorts(node, node.getPorts(PortSide.SOUTH));
+            distributePorts(node, node.getPorts(PortSide.NORTH));
+            // sort the ports by considering the side, type, and barycenter values
+            sortPorts(node);
+        }
     }
 
     /**
@@ -160,16 +164,11 @@ public abstract class AbstractBarycenterPortDistributor implements SweepPortDist
      *            node whose ports shall be sorted
      */
     private void distributePorts(final LNode node, final Iterable<LPort> ports) {
-        if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-            inLayerPorts.clear();
-            iteratePortsAndCollectInLayerPorts(node, ports);
+        inLayerPorts.clear();
+        iteratePortsAndCollectInLayerPorts(node, ports);
 
-            if (!inLayerPorts.isEmpty()) {
-                calculateInLayerPortsBarycenterValues(node);
-            }
-
-            // sort the ports by considering the side, type, and barycenter values
-            sortPorts(node);
+        if (!inLayerPorts.isEmpty()) {
+            calculateInLayerPortsBarycenterValues(node);
         }
     }
 

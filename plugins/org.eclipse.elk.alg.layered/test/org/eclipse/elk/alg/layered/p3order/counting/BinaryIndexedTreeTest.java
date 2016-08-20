@@ -17,10 +17,10 @@ import org.junit.Test;
 
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF javadoc
-public class BinaryPrefixTreeTest {
+public class BinaryIndexedTreeTest {
     @Test
     public void sumBefore() throws Exception {
-        BinaryPrefixTree ft = new BinaryPrefixTree(5);
+        BinaryIndexedTree ft = new BinaryIndexedTree(5);
         ft.add(1);
         ft.add(2);
         ft.add(1);
@@ -31,7 +31,7 @@ public class BinaryPrefixTreeTest {
 
     @Test
     public void size() throws Exception {
-        BinaryPrefixTree ft = new BinaryPrefixTree(5);
+        BinaryIndexedTree ft = new BinaryIndexedTree(5);
         ft.add(2);
         ft.add(1);
         ft.add(1);
@@ -41,7 +41,7 @@ public class BinaryPrefixTreeTest {
 
     @Test
     public void removeAll() throws Exception {
-        BinaryPrefixTree ft = new BinaryPrefixTree(5);
+        BinaryIndexedTree ft = new BinaryIndexedTree(5);
         ft.add(0);
         ft.add(2);
         ft.add(1);
@@ -60,7 +60,7 @@ public class BinaryPrefixTreeTest {
 
     @Test
     public void sumBetween() throws Exception {
-        BinaryPrefixTree ft = new BinaryPrefixTree(5);
+        BinaryIndexedTree ft = new BinaryIndexedTree(5);
         ft.add(0);
         ft.add(2);
         ft.add(1);

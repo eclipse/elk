@@ -352,6 +352,7 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
     }
 
     @Ignore
+    // @Test
     public void benchmark() {
         makeTwoLayerRandomGraphWithNodesPerLayer(6000, 6);
 

@@ -20,10 +20,10 @@ package org.eclipse.elk.alg.layered.p3order.counting;
  * @author alan
  *
  */
-public class BinaryPrefixTree {
+public class BinaryIndexedTree {
     private int[] binarySums;
     private int[] numsPerIndex;
-    private int size = 0;
+    private int size;
 
     /**
      * Construct tree given maximum number of elements.
@@ -31,9 +31,10 @@ public class BinaryPrefixTree {
      * @param maxNum
      *            maximum number elements.
      */
-    public BinaryPrefixTree(final int maxNum) {
+    public BinaryIndexedTree(final int maxNum) {
         binarySums = new int[maxNum + 1];
         numsPerIndex = new int[maxNum];
+        size = 0;
     }
 
     /**
