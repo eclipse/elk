@@ -5,17 +5,20 @@ package org.eclipse.elk.core.options;
 
 import java.util.EnumSet;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.core.util.BoxLayoutProvider;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class BoxLayouterOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the Box Layout algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.box";
+  
   /**
    * Default value for {@link #SPACING_NODE} with algorithm "Box Layout".
    */
@@ -84,12 +87,12 @@ public class BoxLayouterOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> INTERACTIVE = CoreOptions.INTERACTIVE;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.box",
         "Box Layout",
         "Algorithm for packing of unconnected boxes, i.e. graphs without edges.",
-        new AlgorithmFactory(BoxLayoutProvider.class, ""),
+        new org.eclipse.elk.core.util.AlgorithmFactory(BoxLayoutProvider.class, ""),
         null,
         "ELK",
         "images/box_layout.png",

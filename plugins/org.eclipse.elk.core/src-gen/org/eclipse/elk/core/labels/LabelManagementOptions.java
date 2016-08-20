@@ -12,7 +12,6 @@ package org.eclipse.elk.core.labels;
 
 import java.util.EnumSet;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
@@ -31,8 +30,8 @@ public class LabelManagementOptions implements ILayoutMetaDataProvider {
   public final static IProperty<ILabelManager> LABEL_MANAGER = new Property<ILabelManager>(
             "org.eclipse.elk.labels.labelManager");
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutOptionData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.labels.labelManager",
         "",
         "Label Manager",
@@ -40,10 +39,10 @@ public class LabelManagementOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.UNDEFINED,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         ILabelManager.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS, org.eclipse.elk.core.data.LayoutOptionData.Target.LABELS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
     ));
   }
 }

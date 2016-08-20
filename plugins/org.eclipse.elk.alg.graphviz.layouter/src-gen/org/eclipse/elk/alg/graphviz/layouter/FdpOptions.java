@@ -5,19 +5,21 @@ import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizLayoutProvider;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizMetaDataProvider;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class FdpOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the FDP algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.graphviz.fdp";
+  
   /**
    * Default value for {@link #SPACING_NODE} with algorithm "FDP".
    */
@@ -133,16 +135,16 @@ public class FdpOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> ADAPT_PORT_POSITIONS = GraphvizMetaDataProvider.ADAPT_PORT_POSITIONS;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.graphviz.fdp",
         "FDP",
         "Spring model layouts similar to those of Neato, but does this by reducing forces rather than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a multigrid solver that handles larger graphs and clustered undirected graphs.",
-        new AlgorithmFactory(GraphvizLayoutProvider.class, "FDP"),
+        new org.eclipse.elk.core.util.AlgorithmFactory(GraphvizLayoutProvider.class, "FDP"),
         "org.eclipse.elk.force",
         "Graphviz",
         "images/fdp.png",
-        EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS, GraphFeature.CLUSTERS)
+        EnumSet.of(org.eclipse.elk.core.options.GraphFeature.SELF_LOOPS, org.eclipse.elk.core.options.GraphFeature.MULTI_EDGES, org.eclipse.elk.core.options.GraphFeature.EDGE_LABELS, org.eclipse.elk.core.options.GraphFeature.CLUSTERS)
     ));
     registry.addOptionSupport(
         "org.eclipse.elk.graphviz.fdp",

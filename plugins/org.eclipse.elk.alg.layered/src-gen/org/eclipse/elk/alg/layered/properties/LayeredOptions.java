@@ -23,7 +23,6 @@ import org.eclipse.elk.alg.layered.properties.LayeredMetaDataProvider;
 import org.eclipse.elk.alg.layered.properties.SelfLoopPlacement;
 import org.eclipse.elk.alg.layered.properties.WideNodesStrategy;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Alignment;
@@ -32,7 +31,6 @@ import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortAlignment;
@@ -41,13 +39,17 @@ import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.core.util.nodespacing.Spacing;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class LayeredOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the ELK Layered algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.layered";
+  
   /**
    * Default value for {@link #SPACING_NODE} with algorithm "ELK Layered".
    */
@@ -528,16 +530,16 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Spacing.Margins> MARGINS = CoreOptions.MARGINS;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.layered",
         "ELK Layered",
         "Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as possible into one direction by placing nodes into subsequent layers. This implementation supports different routing styles (straight, orthogonal, splines); if orthogonal routing is selected, arbitrary port constraints are respected, thus enabling the layout of block diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of compound graphs with cross-hierarchy edges is supported when the respective option is activated on the top level.",
-        new AlgorithmFactory(LayeredLayoutProvider.class, ""),
+        new org.eclipse.elk.core.util.AlgorithmFactory(LayeredLayoutProvider.class, ""),
         "org.eclipse.elk.layered",
         null,
         "images/layered.png",
-        EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.INSIDE_SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS, GraphFeature.PORTS, GraphFeature.COMPOUND, GraphFeature.CLUSTERS)
+        EnumSet.of(org.eclipse.elk.core.options.GraphFeature.SELF_LOOPS, org.eclipse.elk.core.options.GraphFeature.INSIDE_SELF_LOOPS, org.eclipse.elk.core.options.GraphFeature.MULTI_EDGES, org.eclipse.elk.core.options.GraphFeature.EDGE_LABELS, org.eclipse.elk.core.options.GraphFeature.PORTS, org.eclipse.elk.core.options.GraphFeature.COMPOUND, org.eclipse.elk.core.options.GraphFeature.CLUSTERS)
     ));
     registry.addOptionSupport(
         "org.eclipse.elk.layered",

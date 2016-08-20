@@ -14,7 +14,6 @@ import java.util.EnumSet;
 import org.eclipse.elk.alg.mrtree.properties.OrderWeighting;
 import org.eclipse.elk.alg.mrtree.properties.TreeifyingOrder;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -51,8 +50,8 @@ public class MrTreeMetaDataProvider implements ILayoutMetaDataProvider {
             null,
             null);
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutOptionData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.mrtree.weighting",
         "",
         "Weighting of Nodes",
@@ -60,12 +59,12 @@ public class MrTreeMetaDataProvider implements ILayoutMetaDataProvider {
         WEIGHTING_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         OrderWeighting.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.mrtree.searchOrder",
         "",
         "Search Order",
@@ -73,10 +72,10 @@ public class MrTreeMetaDataProvider implements ILayoutMetaDataProvider {
         SEARCH_ORDER_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         TreeifyingOrder.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
     new org.eclipse.elk.alg.mrtree.properties.MrTreeOptions().apply(registry);
   }

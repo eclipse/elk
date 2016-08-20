@@ -9,16 +9,18 @@ import org.eclipse.elk.alg.mrtree.properties.MrTreeMetaDataProvider;
 import org.eclipse.elk.alg.mrtree.properties.OrderWeighting;
 import org.eclipse.elk.alg.mrtree.properties.TreeifyingOrder;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.GraphFeature;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class MrTreeOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the ELK Mr. Tree algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.mrtree.mrTree";
+  
   /**
    * Default value for {@link #SPACING_NODE} with algorithm "ELK Mr. Tree".
    */
@@ -106,16 +108,16 @@ public class MrTreeOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<TreeifyingOrder> SEARCH_ORDER = MrTreeMetaDataProvider.SEARCH_ORDER;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.mrtree.mrTree",
         "ELK Mr. Tree",
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of the input graph and arranges all nodes according to the resulting parent-children hierarchy. I pity the fool who doesn\'t use Mr. Tree Layout.",
-        new AlgorithmFactory(TreeLayoutProvider.class, ""),
+        new org.eclipse.elk.core.util.AlgorithmFactory(TreeLayoutProvider.class, ""),
         "org.eclipse.elk.tree",
         null,
         "images/tree.png",
-        EnumSet.of(GraphFeature.DISCONNECTED)
+        EnumSet.of(org.eclipse.elk.core.options.GraphFeature.DISCONNECTED)
     ));
     registry.addOptionSupport(
         "org.eclipse.elk.mrtree.mrTree",

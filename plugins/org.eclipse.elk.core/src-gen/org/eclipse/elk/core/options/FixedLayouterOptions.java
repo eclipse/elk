@@ -4,17 +4,20 @@
 package org.eclipse.elk.core.options;
 
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.core.util.FixedLayoutProvider;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class FixedLayouterOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the Fixed Layout algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.fixed";
+  
   /**
    * Property constant to access Position from within the layout algorithm code.
    */
@@ -37,12 +40,12 @@ public class FixedLayouterOptions implements ILayoutMetaDataProvider {
                                 CoreOptions.SPACING_BORDER,
                                 SPACING_BORDER_DEFAULT);
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.fixed",
         "Fixed Layout",
         "Keeps the current layout as it is, without any automatic modification. Optional coordinates can be given for nodes and edge bend points.",
-        new AlgorithmFactory(FixedLayoutProvider.class, ""),
+        new org.eclipse.elk.core.util.AlgorithmFactory(FixedLayoutProvider.class, ""),
         null,
         "ELK",
         null,

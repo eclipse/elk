@@ -17,7 +17,7 @@ import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
  */
 @SuppressWarnings("all")
 public class GmfMetaDataProvider implements ILayoutMetaDataProvider {
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
     new org.eclipse.elk.conn.gmf.layouter.Draw2DOptions().apply(registry);
   }
 }

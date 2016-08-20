@@ -4,20 +4,22 @@ import java.util.EnumSet;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizLayoutProvider;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizMetaDataProvider;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class DotOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the Dot algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.graphviz.dot";
+  
   /**
    * Default value for {@link #DIRECTION} with algorithm "Dot".
    */
@@ -128,16 +130,16 @@ public class DotOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> ADAPT_PORT_POSITIONS = GraphvizMetaDataProvider.ADAPT_PORT_POSITIONS;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.graphviz.dot",
         "Dot",
         "Layered drawings of directed graphs. The algorithm aims edges in the same direction (top to bottom, or left to right) and then attempts to avoid edge crossings and reduce edge length. Edges are routed as spline curves and are thus drawn very smoothly. This algorithm is very suitable for state machine and activity diagrams, where the direction of edges has an important role.",
-        new AlgorithmFactory(GraphvizLayoutProvider.class, "DOT"),
+        new org.eclipse.elk.core.util.AlgorithmFactory(GraphvizLayoutProvider.class, "DOT"),
         "org.eclipse.elk.layered",
         "Graphviz",
         "images/dot.png",
-        EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS, GraphFeature.COMPOUND, GraphFeature.CLUSTERS)
+        EnumSet.of(org.eclipse.elk.core.options.GraphFeature.SELF_LOOPS, org.eclipse.elk.core.options.GraphFeature.MULTI_EDGES, org.eclipse.elk.core.options.GraphFeature.EDGE_LABELS, org.eclipse.elk.core.options.GraphFeature.COMPOUND, org.eclipse.elk.core.options.GraphFeature.CLUSTERS)
     ));
     registry.addOptionSupport(
         "org.eclipse.elk.graphviz.dot",

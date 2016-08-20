@@ -5,18 +5,20 @@ import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizLayoutProvider;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizMetaDataProvider;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class CircoOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the Circo algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.graphviz.circo";
+  
   /**
    * Default value for {@link #SPACING_NODE} with algorithm "Circo".
    */
@@ -110,16 +112,16 @@ public class CircoOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> ADAPT_PORT_POSITIONS = GraphvizMetaDataProvider.ADAPT_PORT_POSITIONS;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.graphviz.circo",
         "Circo",
         "Circular layout, after Six and Tollis \'99, Kaufmann and Wiese \'02. The algorithm finds biconnected components and arranges each component in a circle, trying to minimize the number of crossings inside the circle. This is suitable for certain diagrams of multiple cyclic structures such as certain telecommunications networks.",
-        new AlgorithmFactory(GraphvizLayoutProvider.class, "CIRCO"),
+        new org.eclipse.elk.core.util.AlgorithmFactory(GraphvizLayoutProvider.class, "CIRCO"),
         "org.eclipse.elk.circle",
         "Graphviz",
         "images/circo.png",
-        EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
+        EnumSet.of(org.eclipse.elk.core.options.GraphFeature.SELF_LOOPS, org.eclipse.elk.core.options.GraphFeature.MULTI_EDGES, org.eclipse.elk.core.options.GraphFeature.EDGE_LABELS)
     ));
     registry.addOptionSupport(
         "org.eclipse.elk.graphviz.circo",

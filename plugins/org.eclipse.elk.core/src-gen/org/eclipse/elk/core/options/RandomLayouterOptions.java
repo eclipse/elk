@@ -4,15 +4,18 @@
 package org.eclipse.elk.core.options;
 
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.core.util.RandomLayoutProvider;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class RandomLayouterOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the Randomizer algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.random";
+  
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "Randomizer".
    */
@@ -61,12 +64,12 @@ public class RandomLayouterOptions implements ILayoutMetaDataProvider {
                                 CoreOptions.ASPECT_RATIO,
                                 ASPECT_RATIO_DEFAULT);
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.random",
         "Randomizer",
         "Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be useful to demonstrate the power of \"real\" layout algorithms.",
-        new AlgorithmFactory(RandomLayoutProvider.class, ""),
+        new org.eclipse.elk.core.util.AlgorithmFactory(RandomLayoutProvider.class, ""),
         null,
         "ELK",
         "images/random.png",

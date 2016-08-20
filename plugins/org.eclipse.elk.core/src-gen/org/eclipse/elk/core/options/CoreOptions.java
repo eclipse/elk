@@ -12,8 +12,6 @@ package org.eclipse.elk.core.options;
 
 import java.util.EnumSet;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutCategoryData;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -845,8 +843,8 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   private final static boolean SCALE_FACTOR_DEP_LAYOUT_HIERARCHY = false;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutOptionData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.algorithm",
         "",
         "Layout Algorithm",
@@ -854,12 +852,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.STRING,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.STRING,
         String.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.alignment",
         "",
         "Alignment",
@@ -867,13 +865,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         ALIGNMENT_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         Alignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.animate"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.aspectRatio",
         "",
         "Aspect Ratio",
@@ -881,13 +879,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.aspectRatio"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.bendPoints",
         "",
         "Bend Points",
@@ -895,13 +893,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.OBJECT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         KVectorChain.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.bendPoints"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.debugMode",
         "",
         "Debug Mode",
@@ -909,13 +907,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         DEBUG_MODE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.debugMode"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.direction",
         "",
         "Direction",
@@ -923,13 +921,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         DIRECTION_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         Direction.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.direction"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.edgeRouting",
         "",
         "Edge Routing",
@@ -937,13 +935,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         EDGE_ROUTING_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         EdgeRouting.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.edgeRouting"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.expandNodes",
         "",
         "Expand Nodes",
@@ -951,13 +949,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         EXPAND_NODES_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.expandNodes"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.hierarchyHandling",
         "",
         "Hierarchy Handling",
@@ -965,13 +963,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         HIERARCHY_HANDLING_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         HierarchyHandling.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS, org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.hierarchyHandling"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.interactive",
         "",
         "Interactive",
@@ -979,12 +977,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         INTERACTIVE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.layoutHierarchy",
         "",
         "Layout Hierarchy",
@@ -992,13 +990,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         LAYOUT_HIERARCHY_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.layoutHierarchy"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.portConstraints",
         "",
         "Port Constraints",
@@ -1006,13 +1004,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PORT_CONSTRAINTS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         PortConstraints.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.portConstraints"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.position",
         "",
         "Position",
@@ -1020,13 +1018,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.OBJECT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         KVector.class,
-        EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES, org.eclipse.elk.core.data.LayoutOptionData.Target.PORTS, org.eclipse.elk.core.data.LayoutOptionData.Target.LABELS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.position"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.priority",
         "",
         "Priority",
@@ -1034,13 +1032,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES, org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.priority"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.randomSeed",
         "",
         "Randomization Seed",
@@ -1048,13 +1046,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.randomSeed"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.separateConnectedComponents",
         "",
         "Separate Connected Components",
@@ -1062,13 +1060,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.separateConnComp"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.junctionPoints",
         "",
         "Junction Points",
@@ -1076,13 +1074,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         JUNCTION_POINTS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.OBJECT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         KVectorChain.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.junctionPoints"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.commentBox",
         "",
         "Comment Box",
@@ -1090,13 +1088,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         COMMENT_BOX_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.commentBox"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.hypernode",
         "",
         "Hypernode",
@@ -1104,13 +1102,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         HYPERNODE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.hypernode"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.labelManager",
         "",
         "Label Manager",
@@ -1118,12 +1116,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.UNDEFINED,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         ILabelManager.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS, org.eclipse.elk.core.data.LayoutOptionData.Target.LABELS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.margins",
         "",
         "Margins",
@@ -1131,13 +1129,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         MARGINS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.OBJECT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         Spacing.Margins.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.margins"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.noLayout",
         "",
         "No Layout",
@@ -1145,12 +1143,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         NO_LAYOUT_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.EDGES, LayoutOptionData.Target.PORTS, LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES, org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES, org.eclipse.elk.core.data.LayoutOptionData.Target.PORTS, org.eclipse.elk.core.data.LayoutOptionData.Target.LABELS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
+        , "de.cau.cs.kieler.noLayout"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.scaleFactor",
         "",
         "Scale Factor",
@@ -1158,10 +1157,10 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         SCALE_FACTOR_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.scaleFactor"
     ));
     registry.addDependency(
@@ -1169,7 +1168,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layoutHierarchy",
         SCALE_FACTOR_DEP_LAYOUT_HIERARCHY
     );
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.animate",
         "",
         "Animate",
@@ -1177,13 +1176,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         ANIMATE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.animate"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.animTimeFactor",
         "",
         "Animation Time Factor",
@@ -1191,13 +1190,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         ANIM_TIME_FACTOR_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.animTimeFactor"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.layoutAncestors",
         "",
         "Layout Ancestors",
@@ -1205,13 +1204,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         LAYOUT_ANCESTORS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.layoutAncestors"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.maxAnimTime",
         "",
         "Maximal Animation Time",
@@ -1219,13 +1218,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         MAX_ANIM_TIME_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.maxAnimTime"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.minAnimTime",
         "",
         "Minimal Animation Time",
@@ -1233,13 +1232,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         MIN_ANIM_TIME_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.minAnimTime"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.progressBar",
         "",
         "Progress Bar",
@@ -1247,13 +1246,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PROGRESS_BAR_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.progressBar"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.validateOptions",
         "",
         "Validate Options",
@@ -1261,12 +1260,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         VALIDATE_OPTIONS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.zoomToFit",
         "",
         "Zoom to Fit",
@@ -1274,13 +1273,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         ZOOM_TO_FIT_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.zoomToFit"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.spacing.border",
         "spacing",
         "Border Spacing",
@@ -1288,13 +1287,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         SPACING_BORDER_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.borderSpacing"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.spacing.label",
         "spacing",
         "Label Spacing",
@@ -1302,13 +1301,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         SPACING_LABEL_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES, LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES, org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.labelSpacing"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.spacing.node",
         "spacing",
         "Node Spacing",
@@ -1316,13 +1315,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         SPACING_NODE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.spacing"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.spacing.port",
         "spacing",
         "Port Spacing",
@@ -1330,13 +1329,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         SPACING_PORT_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.portSpacing"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.spacing.portSurrounding",
         "spacing",
         "Additional Port Space",
@@ -1344,12 +1343,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.OBJECT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         Spacing.Margins.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.partitioning.partition",
         "partitioning",
         "Layout Partition",
@@ -1357,13 +1356,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.INT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS, LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS, org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.partition"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.partitioning.activate",
         "partitioning",
         "Layout Partitioning",
@@ -1371,13 +1370,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PARTITIONING_ACTIVATE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
         Boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.layoutPartitions"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.nodeLabels.insets",
         "nodeLabels",
         "Node Label Insets",
@@ -1385,13 +1384,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         NODE_LABELS_INSETS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.OBJECT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         Spacing.Insets.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.nodeLabelInset"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.nodeLabels.placement",
         "nodeLabels",
         "Node Label Placement",
@@ -1399,13 +1398,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         NODE_LABELS_PLACEMENT_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUMSET,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUMSET,
         NodeLabelPlacement.class,
-        EnumSet.of(LayoutOptionData.Target.NODES, LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES, org.eclipse.elk.core.data.LayoutOptionData.Target.LABELS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.nodeLabelPlacement"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.portAlignment.basic",
         "portAlignment",
         "Port Alignment",
@@ -1413,13 +1412,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PORT_ALIGNMENT_BASIC_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.portAlignment"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.portAlignment.north",
         "portAlignment",
         "Port Alignment (North)",
@@ -1427,13 +1426,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PORT_ALIGNMENT_NORTH_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.portAlignment.north"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.portAlignment.south",
         "portAlignment",
         "Port Alignment (South)",
@@ -1441,13 +1440,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PORT_ALIGNMENT_SOUTH_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.portAlignment.south"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.portAlignment.west",
         "portAlignment",
         "Port Alignment (West)",
@@ -1455,13 +1454,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PORT_ALIGNMENT_WEST_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.portAlignment.west"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.portAlignment.east",
         "portAlignment",
         "Port Alignment (East)",
@@ -1469,13 +1468,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PORT_ALIGNMENT_EAST_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         PortAlignment.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
         , "de.cau.cs.kieler.portAlignment.east"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.nodeSize.constraints",
         "nodeSize",
         "Node Size Constraints",
@@ -1483,12 +1482,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         NODE_SIZE_CONSTRAINTS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUMSET,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUMSET,
         SizeConstraint.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.nodeSize.options",
         "nodeSize",
         "Node Size Options",
@@ -1496,12 +1495,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         NODE_SIZE_OPTIONS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUMSET,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUMSET,
         SizeOptions.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.nodeSize.minimum",
         "nodeSize",
         "Node Size Minimum",
@@ -1509,12 +1508,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.OBJECT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         KVector.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.nodeSize.minWidth",
         "nodeSize",
         "Minimum Width",
@@ -1522,12 +1521,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         NODE_SIZE_MIN_WIDTH_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.nodeSize.minHeight",
         "nodeSize",
         "Minimum Height",
@@ -1535,12 +1534,12 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         NODE_SIZE_MIN_HEIGHT_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.edgeLabels.placement",
         "edgeLabels",
         "Edge Label Placement",
@@ -1548,13 +1547,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         EDGE_LABELS_PLACEMENT_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         EdgeLabelPlacement.class,
-        EnumSet.of(LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.LABELS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.edgeLabelPlacement"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.font.name",
         "font",
         "Font Name",
@@ -1562,13 +1561,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.STRING,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.STRING,
         String.class,
-        EnumSet.of(LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.LABELS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.fontName"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.font.size",
         "font",
         "Font Size",
@@ -1576,13 +1575,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.LABELS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.LABELS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.fontSize"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.port.anchor",
         "port",
         "Port Anchor Offset",
@@ -1590,13 +1589,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.OBJECT,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.OBJECT,
         KVector.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PORTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.portAnchor"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.port.index",
         "port",
         "Port Index",
@@ -1604,13 +1603,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PORTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.portIndex"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.port.side",
         "port",
         "Port Side",
@@ -1618,13 +1617,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PORT_SIDE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         PortSide.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PORTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.portSide"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.port.borderOffset",
         "port",
         "Port Border Offset",
@@ -1632,13 +1631,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PORTS),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PORTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.offset"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.portLabels.placement",
         "portLabels",
         "Port Label Placement",
@@ -1646,13 +1645,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         PORT_LABELS_PLACEMENT_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         PortLabelPlacement.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.portLabelPlacement"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.insideSelfLoops.activate",
         "insideSelfLoops",
         "Activate Inside Self Loops",
@@ -1660,13 +1659,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         INSIDE_SELF_LOOPS_ACTIVATE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.NODES),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.selfLoopInside"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.insideSelfLoops.yo",
         "insideSelfLoops",
         "Inside Self Loop",
@@ -1674,13 +1673,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         INSIDE_SELF_LOOPS_YO_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.selfLoopInside"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.edge.thickness",
         "edge",
         "Edge Thickness",
@@ -1688,13 +1687,13 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         EDGE_THICKNESS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.HIDDEN
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.thickness"
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.edge.type",
         "edge",
         "Edge Type",
@@ -1702,38 +1701,38 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         EDGE_TYPE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         EdgeType.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.HIDDEN
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
         , "de.cau.cs.kieler.edgeType"
     ));
-    registry.register(new LayoutCategoryData(
+    registry.register(new org.eclipse.elk.core.data.LayoutCategoryData(
         "org.eclipse.elk.layered",
         "Layered",
         "The layer-based method was introduced by Sugiyama, Tagawa and Toda in 1981. It emphasizes the direction of edges by pointing as many edges as possible into the same direction. The nodes are arranged in layers, which are sometimes called \"hierarchies\", and then reordered such that the number of edge crossings is minimized. Afterwards, concrete coordinates are computed for the nodes and edge bend points."
     ));
-    registry.register(new LayoutCategoryData(
+    registry.register(new org.eclipse.elk.core.data.LayoutCategoryData(
         "org.eclipse.elk.orthogonal",
         "Orthogonal",
         "Orthogonal methods that follow the \"topology-shape-metrics\" approach by Batini, Nardelli and Tamassia \'86. The first phase determines the topology of the drawing by applying a planarization technique, which results in a planar representation of the graph. The orthogonal shape is computed in the second phase, which aims at minimizing the number of edge bends, and is called orthogonalization. The third phase leads to concrete coordinates for nodes and edge bend points by applying a compaction method, thus defining the metrics."
     ));
-    registry.register(new LayoutCategoryData(
+    registry.register(new org.eclipse.elk.core.data.LayoutCategoryData(
         "org.eclipse.elk.force",
         "Force",
         "Layout algorithms that follow physical analogies by simulating a system of attractive and repulsive forces. The first successful method of this kind was proposed by Eades in 1984."
     ));
-    registry.register(new LayoutCategoryData(
+    registry.register(new org.eclipse.elk.core.data.LayoutCategoryData(
         "org.eclipse.elk.circle",
         "Circle",
         "Circular layout algorithms emphasize cycles or biconnected components of a graph by arranging them in circles. This is useful if a drawing is desired where such components are clearly grouped, or where cycles are shown as prominent OPTIONS of the graph."
     ));
-    registry.register(new LayoutCategoryData(
+    registry.register(new org.eclipse.elk.core.data.LayoutCategoryData(
         "org.eclipse.elk.tree",
         "Tree",
         "Specialized layout methods for trees, i.e. acyclic graphs. The regular structure of graphs that have no undirected cycles can be emphasized using an algorithm of this type."
     ));
-    registry.register(new LayoutCategoryData(
+    registry.register(new org.eclipse.elk.core.data.LayoutCategoryData(
         "org.eclipse.elk.planar",
         "Planar",
         "Algorithms that require a planar or upward planar graph. Most of these algorithms are theoretically interesting, but not practically usable."

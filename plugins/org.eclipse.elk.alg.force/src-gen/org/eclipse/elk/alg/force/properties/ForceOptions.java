@@ -8,16 +8,18 @@ import org.eclipse.elk.alg.force.ForceLayoutProvider;
 import org.eclipse.elk.alg.force.model.ForceModelStrategy;
 import org.eclipse.elk.alg.force.properties.ForceMetaDataProvider;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.PortConstraints;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class ForceOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the ELK Force algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.force";
+  
   /**
    * Default value for {@link #PRIORITY} with algorithm "ELK Force".
    */
@@ -137,16 +139,16 @@ public class ForceOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> REPULSIVE_POWER = ForceMetaDataProvider.REPULSIVE_POWER;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.force",
         "ELK Force",
         "Force-based algorithm provided by the Eclipse Layout Kernel. Implements methods that follow physical analogies by simulating forces that move the nodes into a balanced distribution. Currently the original Eades model and the Fruchterman - Reingold model are supported.",
-        new AlgorithmFactory(ForceLayoutProvider.class, ""),
+        new org.eclipse.elk.core.util.AlgorithmFactory(ForceLayoutProvider.class, ""),
         "org.eclipse.elk.force",
         null,
         "images/force.png",
-        EnumSet.of(GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
+        EnumSet.of(org.eclipse.elk.core.options.GraphFeature.MULTI_EDGES, org.eclipse.elk.core.options.GraphFeature.EDGE_LABELS)
     ));
     registry.addOptionSupport(
         "org.eclipse.elk.force",

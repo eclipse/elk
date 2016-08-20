@@ -5,18 +5,20 @@ import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizLayoutProvider;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizMetaDataProvider;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.AlgorithmFactory;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 @SuppressWarnings("all")
 public class TwopiOptions implements ILayoutMetaDataProvider {
+  /**
+   * The id of the Twopi algorithm.
+   */
+  public final static String ALGORITHM_ID = "org.eclipse.elk.graphviz.twopi";
+  
   /**
    * Default value for {@link #SPACING_NODE} with algorithm "Twopi".
    */
@@ -98,16 +100,16 @@ public class TwopiOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> ADAPT_PORT_POSITIONS = GraphvizMetaDataProvider.ADAPT_PORT_POSITIONS;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutAlgorithmData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.graphviz.twopi",
         "Twopi",
         "Radial layouts, after Wills \'97. The nodes are placed on concentric circles depending on their distance from a given root node. The algorithm is designed to handle not only small graphs, but also very large ones.",
-        new AlgorithmFactory(GraphvizLayoutProvider.class, "TWOPI"),
+        new org.eclipse.elk.core.util.AlgorithmFactory(GraphvizLayoutProvider.class, "TWOPI"),
         "org.eclipse.elk.tree",
         "Graphviz",
         "images/twopi.png",
-        EnumSet.of(GraphFeature.SELF_LOOPS, GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
+        EnumSet.of(org.eclipse.elk.core.options.GraphFeature.SELF_LOOPS, org.eclipse.elk.core.options.GraphFeature.MULTI_EDGES, org.eclipse.elk.core.options.GraphFeature.EDGE_LABELS)
     ));
     registry.addOptionSupport(
         "org.eclipse.elk.graphviz.twopi",

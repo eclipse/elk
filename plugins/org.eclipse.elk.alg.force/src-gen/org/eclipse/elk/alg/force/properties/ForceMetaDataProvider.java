@@ -13,7 +13,6 @@ package org.eclipse.elk.alg.force.properties;
 import java.util.EnumSet;
 import org.eclipse.elk.alg.force.model.ForceModelStrategy;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -103,8 +102,8 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
    */
   private final static ForceModelStrategy REPULSION_DEP_MODEL = ForceModelStrategy.EADES;
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutOptionData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.force.model",
         "",
         "Force Model",
@@ -112,12 +111,12 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         MODEL_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         ForceModelStrategy.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.force.iterations",
         "",
         "Iterations",
@@ -125,12 +124,12 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         ITERATIONS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.force.repulsivePower",
         "",
         "Repulsive Power",
@@ -138,12 +137,12 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         REPULSIVE_POWER_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.force.temperature",
         "",
         "FR Temperature",
@@ -151,17 +150,17 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         TEMPERATURE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
     registry.addDependency(
         "org.eclipse.elk.force.temperature",
         "org.eclipse.elk.force.model",
         TEMPERATURE_DEP_MODEL
     );
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.force.repulsion",
         "",
         "Eades Repulsion",
@@ -169,10 +168,10 @@ public class ForceMetaDataProvider implements ILayoutMetaDataProvider {
         REPULSION_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
     registry.addDependency(
         "org.eclipse.elk.force.repulsion",

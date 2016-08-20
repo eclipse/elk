@@ -14,7 +14,6 @@ import java.util.EnumSet;
 import org.eclipse.elk.alg.graphviz.dot.transform.NeatoModel;
 import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -139,8 +138,8 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
             null,
             null);
   
-  public void apply(final ILayoutMetaDataProvider.Registry registry) {
-    registry.register(new LayoutOptionData(
+  public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.adaptPortPositions",
         "",
         "Adapt Port Positions",
@@ -148,12 +147,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         ADAPT_PORT_POSITIONS_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.concentrate",
         "",
         "Concentrate Edges",
@@ -161,12 +160,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         CONCENTRATE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.epsilon",
         "",
         "Epsilon",
@@ -174,12 +173,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.iterationsFactor",
         "",
         "Iterations Factor",
@@ -187,12 +186,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.labelAngle",
         "",
         "Label Angle",
@@ -200,12 +199,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         LABEL_ANGLE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.labelDistance",
         "",
         "Label Distance",
@@ -213,12 +212,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         LABEL_DISTANCE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.EDGES),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.EDGES),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.layerSpacingFactor",
         "",
         "Layer Spacing Factor",
@@ -226,12 +225,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         LAYER_SPACING_FACTOR_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.FLOAT,
-        float.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.maxiter",
         "",
         "Max. Iterations",
@@ -239,12 +238,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         null,
-        LayoutOptionData.Type.INT,
-        int.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.neatoModel",
         "",
         "Distance Model",
@@ -252,12 +251,12 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         NEATO_MODEL_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         NeatoModel.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.ADVANCED
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutOptionData(
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.graphviz.overlapMode",
         "",
         "Overlap Removal",
@@ -265,10 +264,10 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         OVERLAP_MODE_DEFAULT,
         null,
         null,
-        LayoutOptionData.Type.ENUM,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
         OverlapMode.class,
-        EnumSet.of(LayoutOptionData.Target.PARENTS),
-        LayoutOptionData.Visibility.VISIBLE
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));
     new org.eclipse.elk.alg.graphviz.layouter.DotOptions().apply(registry);
     new org.eclipse.elk.alg.graphviz.layouter.NeatoOptions().apply(registry);
