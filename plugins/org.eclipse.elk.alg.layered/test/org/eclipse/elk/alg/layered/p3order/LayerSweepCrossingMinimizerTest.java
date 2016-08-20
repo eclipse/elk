@@ -1627,6 +1627,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftInnerNodes[3], rightInnerNodes[1]);
         eastWestEdgeFromTo(rightInnerNodes[1], rightDummies[0]);
 
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0f, nestedGraph);
         setUpAndMinimizeCrossings();
         List<GraphData> graphData = crossMin.getGraphData();
         if (crossMinType == CrossMinType.BARYCENTER) {
