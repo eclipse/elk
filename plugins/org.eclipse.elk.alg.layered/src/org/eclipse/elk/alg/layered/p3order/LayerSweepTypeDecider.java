@@ -174,11 +174,13 @@ public class LayerSweepTypeDecider {
     }
 
     private boolean hasNoEasternPorts(final LNode node) {
-        return node.getPorts(PortSide.EAST).isEmpty();
+        List<LPort> eastPorts = node.getPorts(PortSide.EAST);
+        return eastPorts.isEmpty() || !Iterables.any(eastPorts, p -> p.getConnectedEdges().iterator().hasNext());
     }
 
     private boolean hasNoWesternPorts(final LNode node) {
-        return node.getPorts(PortSide.WEST).isEmpty();
+        List<LPort> westPorts = node.getPorts(PortSide.WEST);
+        return westPorts.isEmpty() || !Iterables.any(westPorts, p -> p.getConnectedEdges().iterator().hasNext());
     }
 
     private boolean isExternalPortDummy(final LNode node) {

@@ -105,5 +105,39 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
         assertTrue(td.useBottomUp());
     }
 
+    /**
+     * <pre>
+     * _____  
+     * |p*=|=*
+     * |___|
+     * 
+     * 
+     * </pre>
+     */
+    @Test
+    public void portWithNoEdges_DoesNotCount() throws Exception {
+        LNode middleNode = addNodeToLayer(makeLayer());
+        LNode rightNode = addNodeToLayer(makeLayer());
+        LPort[] middlePortRight = addPortsOnSide(2, middleNode, PortSide.EAST);
+        eastWestEdgeFromTo(middlePortRight[0], rightNode);
+        eastWestEdgeFromTo(middlePortRight[1], rightNode);
+
+        LGraph innerGraph = nestedGraph(middleNode);
+        Layer[] layers = makeLayers(2, innerGraph);
+        LNode node = addNodeToLayer(layers[0]);
+        LNode[] rightInnerDummyNodes = addExternalPortDummiesToLayer(layers[1], middlePortRight);
+        eastWestEdgeFromTo(node, rightInnerDummyNodes[0]);
+        eastWestEdgeFromTo(node, rightInnerDummyNodes[1]);
+        addPortOnSide(node, PortSide.WEST);
+
+        graph.id = 0;
+        innerGraph.id = 1;
+
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -0.1f, graph);
+        GraphData gd = new GraphData(innerGraph, CrossMinType.BARYCENTER,
+                Arrays.asList(new GraphData(graph, CrossMinType.BARYCENTER, null)));
+        assertTrue(gd.dontSweepInto());
+    }
+
 
 }
