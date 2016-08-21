@@ -192,7 +192,9 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             GraphData gD = countCrossingsIn.pop();
             totalCrossings +=
                     gD.crossCounter().countAllCrossings(gD.currentNodeOrder());
-            countCrossingsIn.addAll(gD.childGraphsToSweepInto());
+            for (GraphData child : gD.childGraphsToSweepInto()) {
+                totalCrossings += countCurrentNumberOfCrossings(child);
+            }
         }
 
         return totalCrossings;

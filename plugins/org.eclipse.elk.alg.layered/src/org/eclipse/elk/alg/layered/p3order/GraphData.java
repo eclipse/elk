@@ -134,14 +134,16 @@ public class GraphData {
             }
         }
 
-        initParentInfo(graphs, portId);
-
         int[] portPos = new int[portId];
         crossCounter =
                 new AllCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, getHyperedges(currentNodeOrder), portPos);
         initNodePortDistributors(graph, cMT, nodePositions, layoutUnits, barycenterStates, portId, portPos);
 
+        initParentInfo(graphs, portId);
         processRecursively = new LayerSweepTypeDecider(this).useBottomUp();
+        if (hasParent && !processRecursively) {
+            parentGraphData.subGraph.add(this);
+        }
     }
 
     private void initParentInfo(final List<GraphData> graphs, final int portId) {
@@ -151,9 +153,6 @@ public class GraphData {
             parentGraphData = graphs.get(parent.getGraph().id);
             if (crossMinAlwaysImproves()) {
                 parentGraphData.childNumPorts.put(lGraph.id, portId);
-            }
-            if (processRecursively) {
-                parentGraphData.subGraph.add(this);
             }
         }
     }
