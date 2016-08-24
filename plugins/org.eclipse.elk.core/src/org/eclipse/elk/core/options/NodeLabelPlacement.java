@@ -75,16 +75,31 @@ public enum NodeLabelPlacement {
     
     /**
      * If set, the default behaviour is changed to give the horizontal placement priority over the
-     * vertical one. This option is only relevant for {@link #OUTSIDE} placement.
+     * vertical one.
+     * 
+     * <h2>Inside Placement</h2>
+     * 
+     * <p>The default behaviour is for top / bottom labels to contribute to the top / bottom insets
+     * of a node, thus causing the node's children to be moved down / leave space to the node's bottom.</p>
+     * 
+     * <p>If this option is set, the default behaviour is overridden and the horizontal placement options
+     * are evaluated first. This makes a left top label occupy space on the left side of the node, causing
+     * the node's children to be moved right instead of down.</p>
+     * 
+     * <p><em>Note:</em> Since this changes the placement of a node's children, this option is only
+     * interpreted if set on the node itself, not on the individual labels.
+     * 
+     * 
+     * <h2>Outside Placement</h2>
      * 
      * <p>The default behaviour is to first choose the northern or southern node side for placement of
      * the label, according to the {@link #V_TOP} and {@link #V_BOTTOM} options. The horizontal placement
-     * is then constricted to the width of the node, thus resulting in labels that are placed above or
+     * is then constrained to the width of the node, thus resulting in labels that are placed above or
      * below the node, but never to its left or right side.</p>
      * 
      * <p>If this option is set, the default behaviour is overridden and the horizontal placement options
      * are evaluated first, thus causing the eastern or western node side to be chosen for placement of
-     * the label. The vertical placement options are then constricted to the height of the node, thus
+     * the label. The vertical placement options are then constrained to the height of the node, thus
      * resulting in labels that are placed to the left or right of the node.</p>
      */
     H_PRIORITY;

@@ -620,6 +620,7 @@ public final class KlayLayered {
         KVector actualGraphSize = lgraph.getActualSize();
         if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)) {
+            
             // Ports have positions assigned
             node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
             node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
@@ -629,6 +630,8 @@ public final class KlayLayered {
             // Ports have not been positioned yet - leave this for next layouter
             LGraphUtil.resizeNode(node, actualGraphSize, true, true);
         }
+        
+        node.getInsets().copy(lgraph.getInsets());
     }
 
 }

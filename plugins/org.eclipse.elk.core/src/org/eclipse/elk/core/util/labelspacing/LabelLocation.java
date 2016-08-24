@@ -250,8 +250,9 @@ public enum LabelLocation {
      * @param horizontalAlignment
      *            the horizontal text alignment for this location.
      */
-    private LabelLocation(final List<? extends Set<NodeLabelPlacement>> assignedPlacements,
+    LabelLocation(final List<? extends Set<NodeLabelPlacement>> assignedPlacements,
             final TextAlignment horizontalAlignment) {
+        
         this.assignedPlacements = assignedPlacements;
         this.horizontalAlignment = horizontalAlignment;
     }
@@ -264,8 +265,7 @@ public enum LabelLocation {
      * @return the corresponding location. If no valid combination is given,
      *         {@code LabelLocation.UNDEFINED} is returned.
      */
-    public static LabelLocation fromNodeLabelPlacement(
-            final EnumSet<NodeLabelPlacement> labelPlacement) {
+    public static LabelLocation fromNodeLabelPlacement(final Set<NodeLabelPlacement> labelPlacement) {
         for (final LabelLocation location : LabelLocation.values()) {
             if (location.assignedPlacements.contains(labelPlacement)) {
                 return location;
