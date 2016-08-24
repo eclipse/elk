@@ -29,6 +29,8 @@ The repository's structure is pretty straightforward. We only have a few folders
   Contains all the plugins ELK consists of.
 * `setups`:
   Contains our Oomph setup files.
+* `tests`:
+  Contains unit tests.
 
 
 ## Building ELK
