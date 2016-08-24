@@ -21,6 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.graph.LShape;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.layered.properties.InLayerConstraint;
@@ -194,8 +195,9 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirrorLayerConstraintX(node);
             }
 
-            // Mirror node label positions
+            // Mirror node labels
             for (LLabel label : node.getLabels()) {
+                mirrorNodeLabelPlacementX(label);
                 mirrorX(label.getPosition(), nodeSize.x - label.getSize().x);
             }
         }
@@ -214,10 +216,10 @@ public final class GraphTransformer implements ILayoutProcessor {
     /**
      * Horrizontally mirrors the node label placement options, if any are set.
      * 
-     * @param node the node.
+     * @param shape the node or label whose placement should be transposed.
      */
-    private void mirrorNodeLabelPlacementX(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
+    private void mirrorNodeLabelPlacementX(final LShape shape) {
+        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -371,8 +373,9 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirrorInLayerConstraintY(node);
             }
             
-            // Mirror node label positions
+            // Mirror node labels
             for (LLabel label : node.getLabels()) {
+                mirrorNodeLabelPlacementY(label);
                 mirrorY(label.getPosition(), nodeSize.y - label.getSize().y);
             }
         }
@@ -391,10 +394,10 @@ public final class GraphTransformer implements ILayoutProcessor {
     /**
      * Vertically mirrors the node label placement options, if any are set.
      * 
-     * @param node the node.
+     * @param shape the node or label whose placement should be mirrored.
      */
-    private void mirrorNodeLabelPlacementY(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
+    private void mirrorNodeLabelPlacementY(final LShape shape) {
+        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -524,8 +527,9 @@ public final class GraphTransformer implements ILayoutProcessor {
                 transposeLayerConstraint(node);
             }
 
-            // Transpose node label positions
+            // Transpose node labels
             for (LLabel label : node.getLabels()) {
+                transposeNodeLabelPlacement(label);
                 transpose(label.getSize());
                 transpose(label.getPosition());
             }
@@ -546,10 +550,10 @@ public final class GraphTransformer implements ILayoutProcessor {
     /**
      * Transposes the node label placement options, if any are set.
      * 
-     * @param node the node.
+     * @param shape the node or label whose placement should be transposed.
      */
-    private void transposeNodeLabelPlacement(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
+    private void transposeNodeLabelPlacement(final LShape shape) {
+        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -588,7 +592,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         }
         
         // Apply new placement
-        node.setProperty(LayeredOptions.NODE_LABELS_PLACEMENT, newPlacement);
+        shape.setProperty(LayeredOptions.NODE_LABELS_PLACEMENT, newPlacement);
     }
     
     /**
