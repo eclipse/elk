@@ -43,15 +43,6 @@ import com.google.common.collect.Sets;
 public class HyperedgeCrossingsCounter {
 
     /**
-     * The number of in-layer edges for each layer, including virtual connections to north/south dummies.
-     */
-    private final int[] inLayerEdgeCount;
-    /**
-     * Whether the layers contain north / south port dummies or not.
-     */
-    private final boolean[] hasNorthSouthPorts;
-
-    /**
      * Port position array used for counting the number of edge crossings.
      */
     private final int[] portPos;
@@ -69,8 +60,6 @@ public class HyperedgeCrossingsCounter {
      */
     public HyperedgeCrossingsCounter(final int[] inLayerEdgeCount,
             final boolean[] hasNorthSouthPorts, final int[] portPos) {
-        this.inLayerEdgeCount = inLayerEdgeCount;
-        this.hasNorthSouthPorts = hasNorthSouthPorts;
         this.portPos = portPos;
     }
     

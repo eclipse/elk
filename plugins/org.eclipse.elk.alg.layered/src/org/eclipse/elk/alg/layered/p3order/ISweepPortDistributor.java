@@ -18,19 +18,19 @@ import org.eclipse.elk.alg.layered.graph.LNode;
  * @author alan
  *
  */
-public interface SweepPortDistributor {
+public interface ISweepPortDistributor {
 
     /**
      * Distribute ports in one layer. To be used in the context of layer sweep.
      *
-     * @param nodeOrder
+     * @param order
      *            the current order of the nodes
-     * @param currentIndex
+     * @param freeLayerIndex
      *            the index of the layer the node is in
      * @param isForwardSweep
      *            whether we are sweeping forward or not.
      */
-    void distributePortsWhileSweeping(LNode[][] nodeOrder, int currentIndex,
+    void distributePortsWhileSweeping(LNode[][] order, int freeLayerIndex,
             boolean isForwardSweep);
 
 }

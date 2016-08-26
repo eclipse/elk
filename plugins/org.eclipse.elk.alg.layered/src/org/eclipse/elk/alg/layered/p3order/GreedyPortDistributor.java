@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
  * 
  * @author alan TODO-alan does not work in first layer.
  */
-public class GreedyPortDistributor implements SweepPortDistributor{
+public class GreedyPortDistributor implements ISweepPortDistributor{
 
     private CrossingsCounter crossingsCounter;
     private final int[] portPos;

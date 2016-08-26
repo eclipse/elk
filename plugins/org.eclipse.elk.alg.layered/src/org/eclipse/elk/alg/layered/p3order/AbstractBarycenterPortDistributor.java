@@ -39,7 +39,7 @@ import com.google.common.collect.Lists;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public abstract class AbstractBarycenterPortDistributor implements SweepPortDistributor {
+public abstract class AbstractBarycenterPortDistributor implements ISweepPortDistributor {
 
     /** port ranks array in which the results of ranks calculation are stored. */
     private final float[] portRanks;

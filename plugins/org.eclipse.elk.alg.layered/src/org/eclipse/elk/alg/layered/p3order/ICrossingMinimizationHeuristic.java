@@ -30,15 +30,14 @@ public interface ICrossingMinimizationHeuristic {
     boolean alwaysImproves();
 
     /**
-     * Set the order in the first layer (with regard to the sweep direction) according to how the
-     * heuristic works.
+     * Set the order in the first layer (with regard to the sweep direction) according to how the heuristic works.
      *
-     * @param currentNodeOrder
+     * @param order
      *            the current order of the nodes.
      * @param isForwardSweep
      *            whether we are sweeping forward or not.
      */
-    boolean setFirstLayerOrder(LNode[][] currentNodeOrder, boolean isForwardSweep);
+    boolean setFirstLayerOrder(LNode[][] order, boolean isForwardSweep);
 
     /**
      * Minimize crossings in the layer as indicated by freeLayerIndex.
