@@ -36,7 +36,7 @@ import com.google.common.collect.Lists;
  *
  * @author alan
  */
-public final class InLayerEdgeTwoNodeCrossingsCounter {
+public final class InLayerEdgeTwoNodeCrossingCounter {
     private final List<Integer> portPositions;
     private final BinaryIndexedTree indexes;
     private final Deque<Integer> ends;
@@ -52,7 +52,7 @@ public final class InLayerEdgeTwoNodeCrossingsCounter {
      * @param portPositions
      *            port position array passed to prevent frequent large array construction.
      */
-    public InLayerEdgeTwoNodeCrossingsCounter(final int freeLayerIndex, final LNode[][] order, final PortSide side) {
+    public InLayerEdgeTwoNodeCrossingCounter(final int freeLayerIndex, final LNode[][] order, final PortSide side) {
         this.side = side;
         this.portPositions = new ArrayList<>();
         ends = new ArrayDeque<>();
@@ -219,6 +219,103 @@ public final class InLayerEdgeTwoNodeCrossingsCounter {
      */
     public int getLowerUpperCrossings() {
         return lowerUpperCrossings;
+    }
+
+    /**
+     * Binary Indexed/Fenwick Tree for adding, deleting and finding prefix sums (here: indices) in log n.
+     * 
+     * @author alan
+     *
+     */
+    private static class BinaryIndexedTree {
+        private int[] binarySums;
+        private int[] numsPerIndex;
+        private int size;
+        private int maxNum;
+
+        /**
+         * Construct tree given maximum number of elements.
+         *
+         * @param maxNum
+         *            maximum number elements.
+         */
+        BinaryIndexedTree(final int maxNum) {
+            this.maxNum = maxNum;
+            binarySums = new int[maxNum + 1];
+            numsPerIndex = new int[maxNum];
+            size = 0;
+        }
+
+        /**
+         * Increment given index.
+         *
+         * @param index
+         *            The index to increment.
+         */
+        public void add(final int index) {
+            size++;
+            numsPerIndex[index]++;
+            int i = index + 1;
+            while (i < binarySums.length) {
+                binarySums[i]++;
+                i += i & -i;
+            }
+        }
+
+        /**
+         * Sum all entries before given index, i.e. index - 1.
+         *
+         * @param index
+         *            Not included end index.
+         * @return sum.
+         */
+        public int rank(final int index) {
+            int i = index;
+            int sum = 0;
+            while (i > 0) {
+                sum += binarySums[i];
+                i -= i & -i;
+            }
+            return sum;
+        }
+
+        /**
+         * Return size of tree.
+         *
+         * @return size
+         */
+        public int size() {
+            return size;
+        }
+
+        /**
+         * Remove all entries for one index.
+         *
+         * @param index
+         *            the index
+         */
+        public void removeAll(final int index) {
+            int numEntries = numsPerIndex[index];
+            if (numEntries == 0) {
+                return;
+            }
+            numsPerIndex[index] = 0;
+            size -= numEntries;
+            int i = index + 1;
+            while (i < binarySums.length) {
+                binarySums[i] -= numEntries;
+                i += i & -i;
+            }
+        }
+
+        /**
+         * 
+         */
+        public void clear() {
+            binarySums = new int[maxNum + 1];
+            numsPerIndex = new int[maxNum];
+            size = 0;
+        }
     }
 
 }

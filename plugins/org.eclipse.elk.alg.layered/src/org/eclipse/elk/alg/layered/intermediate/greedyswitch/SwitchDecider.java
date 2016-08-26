@@ -31,8 +31,8 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public class SwitchDecider {
     private final LNode[] freeLayer;
-    private final InLayerEdgeTwoNodeCrossingsCounter inLayerCounterLeft;
-    private final InLayerEdgeTwoNodeCrossingsCounter inLayerCounterRight;
+    private final InLayerEdgeTwoNodeCrossingCounter inLayerCounterLeft;
+    private final InLayerEdgeTwoNodeCrossingCounter inLayerCounterRight;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final CrossingMatrixFiller crossingMatrixFiller;
 
@@ -56,8 +56,8 @@ public class SwitchDecider {
         }
         freeLayer = graph[freeLayerIndex];
 
-        inLayerCounterLeft = new InLayerEdgeTwoNodeCrossingsCounter(freeLayerIndex, graph, PortSide.WEST);
-        inLayerCounterRight = new InLayerEdgeTwoNodeCrossingsCounter(freeLayerIndex, graph, PortSide.EAST);
+        inLayerCounterLeft = new InLayerEdgeTwoNodeCrossingCounter(freeLayerIndex, graph, PortSide.WEST);
+        inLayerCounterRight = new InLayerEdgeTwoNodeCrossingCounter(freeLayerIndex, graph, PortSide.EAST);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
     }
 
