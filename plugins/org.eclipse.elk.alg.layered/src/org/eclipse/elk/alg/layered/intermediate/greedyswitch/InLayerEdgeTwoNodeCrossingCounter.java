@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,178 +10,215 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
 
 /**
- * Counts crossings between in-layer edges incident to two nodes.
- * 
+ * Counts in-layer and between layer crossings. Does not count North-South crossings.
+ *
  * @author alan
  */
-public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
-
-    private final List<ComparableEdgeAndPort> relevantEdgesAndPorts;
+public final class InLayerEdgeTwoNodeCrossingsCounter {
+    private final List<Integer> portPositions;
+    private final BinaryIndexedTree indexes;
+    private final Deque<Integer> ends;
+    private final PortSide side;
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
-    private LNode upperNode;
-    private LNode lowerNode;
+    private final Map<LNode, Integer> nodeCardinalities;
+    /**
+     * Create crossings counter.
+     * 
+     * @param side
+     * 
+     * @param portPositions
+     *            port position array passed to prevent frequent large array construction.
+     */
+    public InLayerEdgeTwoNodeCrossingsCounter(final int freeLayerIndex, final LNode[][] order, final PortSide side) {
+        this.side = side;
+        this.portPositions = new ArrayList<>();
+        ends = new ArrayDeque<>();
+        nodeCardinalities = new HashMap<>();
+        List<LPort> ports = new ArrayList<>();
+        int pos = 0;
+        int id = 0;
+        for (LNode node : order[freeLayerIndex]) {
+            int cardinality = 0;
+            boolean hasPorts = false;
+            for (LPort port : PortIterable.inNorthSouthEastWestOrder(node, side)) {
+                hasPorts = true;
+                port.id = id++;
+                portPositions.add(pos);
+                ports.add(port);
+                if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                    cardinality++;
+                    pos++;
+                }
+            }
+            if (hasPorts && !node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                cardinality++;
+                pos++;
+            }
+            nodeCardinalities.put(node, cardinality);
+        }
+        indexes = new BinaryIndexedTree(ports.size());
+    }
 
     /**
-     * Counts crossings between in-layer edges incident to two nodes.
-     * 
-     * @param nodeOrder
-     *            the current order of the layer to be counted in.
+     * Count crossings only between two nodes.
+     *
+     * @param upperNode
+     * @param lowerNode
+     * @param side
+     * @return
      */
-    public InLayerEdgeTwoNodeCrossingCounter(final LNode[] nodeOrder) {
-        super(nodeOrder);
-        relevantEdgesAndPorts = Lists.newArrayList();
+    public void countCrossingsBetweenNodes(final LNode upperNode, final LNode lowerNode) {
+        List<LPort> ports = addEdgesAndPortsConnectedToNodesAndSort(upperNode, lowerNode);
+        upperLowerCrossings = count(ports.iterator());
+        
+        notifyOfSwitch(upperNode, lowerNode);
+        Collections.sort(ports, (a, b) -> Integer.compare(positionOf(a), positionOf(b)));
+        lowerUpperCrossings = count(ports.iterator());
+        notifyOfSwitch(lowerNode, upperNode);
     }
 
     /**
-     * Counts crossings between in-layer edges incident to the given nodes. Use
-     * {@link #getUpperLowerCrossings()} and {@link #getLowerUpperCrossings()} to access the
-     * calculated values.
+     * This method should be used as soon as neighboring nodes have been switched. Use the first parameter to pass which
+     * node was the upper node before a switch and the second to pass the former lower node. We assume a left-right
+     * layout.
      * 
-     * @param upper
-     *            the upper node
-     * @param lower
-     *            the lower node
+     * @param wasUpperNode
+     *            The node which was the upper node before switching.
+     * @param wasLowerNode
+     *            The node which was the lower node before switching.
      */
-    public void countCrossingsBetweenNodes(final LNode upper, final LNode lower) {
-        upperNode = upper;
-        lowerNode = lower;
-
-        upperLowerCrossings = countCrossingsOnSide(PortSide.EAST);
-        upperLowerCrossings += countCrossingsOnSide(PortSide.WEST);
-
-        notifyOfSwitch(upper, lower);
-
-        lowerUpperCrossings = countCrossingsOnSide(PortSide.EAST);
-        lowerUpperCrossings += countCrossingsOnSide(PortSide.WEST);
-
-        notifyOfSwitch(lower, upper);
-    }
-
-    /**
-     * This class simply collects all edges and ports connected to the two nodes in questions, sorts
-     * them by port position and uses the superclass method countCrossingsOn(LEdge edge, LPort
-     * port).
-     * 
-     */
-    private int countCrossingsOnSide(final PortSide side) {
-        relevantEdgesAndPorts.clear();
-
-        addEdgesAndPortsConnectedToNodesAndSort(side);
-
-        return iterateThroughRelevantEdgesAndPortsAndCountCrossings();
-    }
-
-    private void addEdgesAndPortsConnectedToNodesAndSort(final PortSide side) {
-        iterateThroughEdgesAndCollectThem(upperNode, side);
-        iterateThroughEdgesAndCollectThem(lowerNode, side);
-        Collections.sort(relevantEdgesAndPorts);
-    }
-
-    private void iterateThroughEdgesAndCollectThem(final LNode node, final PortSide side) {
-        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
+    public void notifyOfSwitch(final LNode wasUpperNode, final LNode wasLowerNode) {
+        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(wasUpperNode, side);
         for (LPort port : ports) {
-            for (LEdge edge : port.getConnectedEdges()) {
-                if (!edge.isSelfLoop()) {
-                    addThisEndOrBothEndsOfEdge(node, port, edge);
+            portPositions.set(port.id, positionOf(port) + nodeCardinalities.get(wasLowerNode));
+        }
+        
+        ports = PortIterable.inNorthSouthEastWestOrder(wasLowerNode, side);
+        for (LPort port : ports) {
+            portPositions.set(port.id, positionOf(port) - nodeCardinalities.get(wasUpperNode));
+        }
+    }
+
+    private List<LPort> addEdgesAndPortsConnectedToNodesAndSort(final LNode upperNode, final LNode lowerNode) {
+        Set<LPort> ports = new HashSet<>();
+        for (LNode node : Arrays.asList(upperNode, lowerNode)) {
+            for (LPort port : PortIterable.inNorthSouthEastWestOrder(node, side)) {
+                for (LEdge edge : port.getConnectedEdges()) {
+                    if (!edge.isSelfLoop()) {
+                        ports.add(port);
+                        if (isInLayer(edge)) {
+                            ports.add(otherEndOf(edge, port));
+                        }
+                    }
                 }
             }
         }
+        List<LPort> relevantPorts = Lists.newArrayList(ports);
+        Collections.sort(relevantPorts, (a, b) -> Integer.compare(positionOf(a), positionOf(b)));
+        return relevantPorts;
     }
-
-    private int iterateThroughRelevantEdgesAndPortsAndCountCrossings() {
-        int crossings = 0;
-        for (ComparableEdgeAndPort eP : relevantEdgesAndPorts) {
-            crossings += super.countCrossingsOn(eP.edge, eP.port);
+    
+    /*
+     * The aim was to count in-layer edges in O(n log n). We step through each edge and add the
+     * position of the end of the edge to a sorted list. Each time we meet the same edge again,
+     * we delete it from the list again. Each time we add an edge end position, the number of crossings
+     * is the index of the this position in the sorted list. The implementation of this list
+     * guarantees that adding, deleting and finding indices is log n.
+     * @formatter:off
+     *           List
+     * 0--       [2]
+     * 1-+-|     [2,3]
+     *   | |
+     * 2-- |     [3]
+     * 3----     []
+     * @formatter:on
+     */
+    private int count(final Iterator<LPort> ports) {
+        if (!ports.hasNext()) {
+            return 0;
         }
+        indexes.clear();
+        int crossings = 0;
+        for (LPort port = ports.next(); ports.hasNext();) {
+            indexes.removeAll(positionOf(port));
+            int currPos = positionOf(port);
+            int numBetweenLayerEdges = 0;
+            int size = indexes.size();
+            // First get crossings for all edges with same source port position.
+            do {
+                for (LEdge edge : port.getConnectedEdges()) {
+                    if (isInLayer(edge)) {
+                        int endPosition = positionOf(otherEndOf(edge, port));
+                        if (endPosition > positionOf(port)) {
+                            crossings += indexes.rank(endPosition);
+                            ends.push(endPosition);
+                        }
+                    } else {
+                        numBetweenLayerEdges++;
+                    }
+                }
+                if (ports.hasNext()) {
+                    port = ports.next();
+                }
+            } while (ports.hasNext() && positionOf(port) == currPos);
+            crossings += size * numBetweenLayerEdges;
+            // Then add end points to bit.
+            while (!ends.isEmpty()) {
+                indexes.add(ends.pop());
+            }
+        }  
         return crossings;
     }
 
-    private void addThisEndOrBothEndsOfEdge(final LNode node, final LPort port, final LEdge edge) {
-        relevantEdgesAndPorts.add(new ComparableEdgeAndPort(port, edge, positionOf(port)));
-
-        if (isInLayer(edge) && notConnectedToOtherNode(edge, node)) {
-            LPort otherEnd = otherEndOf(edge, port);
-            relevantEdgesAndPorts.add(new ComparableEdgeAndPort(otherEnd, edge,
-                    positionOf(otherEnd)));
-        }
+    private int positionOf(final LPort port) {
+        return portPositions.get(port.id);
     }
 
-    private boolean notConnectedToOtherNode(final LEdge edge, final LNode node) {
-        if (node.equals(upperNode)) {
-            return !edge.getTarget().getNode().equals(lowerNode)
-                    && !edge.getSource().getNode().equals(lowerNode);
-        } else {
-            return !edge.getTarget().getNode().equals(upperNode)
-                    && !edge.getSource().getNode().equals(upperNode);
-        }
+    private boolean isInLayer(final LEdge edge) {
+        Layer sourceLayer = edge.getSource().getNode().getLayer();
+        Layer targetLayer = edge.getTarget().getNode().getLayer();
+        return sourceLayer == targetLayer;
+    }
+
+    private LPort otherEndOf(final LEdge edge, final LPort fromPort) {
+        return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
     /**
-     * This private class collects a port and a connected edge and can be sorted by portPosition.
-     * 
-     * @author alan
-     *
-     */
-    private class ComparableEdgeAndPort implements Comparable<ComparableEdgeAndPort> {
-        /** The port. */
-        private final LPort port;
-        /** The edge connected to it. */
-        private final LEdge edge;
-        /** The position of the port. */
-        private final int portPosition;
-
-        public ComparableEdgeAndPort(final LPort port, final LEdge edge, final int portPosition) {
-            this.port = port;
-            this.edge = edge;
-            this.portPosition = portPosition;
-        }
-
-        @Override
-        public int compareTo(final ComparableEdgeAndPort o) {
-            return portPosition < o.portPosition || portPosition == o.portPosition
-                    && isInLayer(edge) && isInLayer(o.edge)
-                    && positionOf(otherEndOf(edge, port)) > positionOf(otherEndOf(o.edge, o.port)) ? -1
-                    : portPosition == o.portPosition
-                            && otherEndOf(edge, port) == otherEndOf(edge, port) ? 0 : 1;
-        }
-
-        @Override
-        public String toString() {
-            return "ComparableEdgeAndPort [port=" + port + ", edge=" + edge + ", portPosition="
-                    + portPosition + "]";
-        }
-
-    }
-
-    /**
-     * @return number of upper lower crossings.
+     * @return
      */
     public int getUpperLowerCrossings() {
         return upperLowerCrossings;
     }
 
     /**
-     * 
-     * @return number of lower upper crossings.
+     * @return
      */
     public int getLowerUpperCrossings() {
         return lowerUpperCrossings;
-    }
-
-    private LPort otherEndOf(final LEdge edge, final LPort fromPort) {
-        return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
 }
