@@ -530,6 +530,21 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Spacing.Margins> MARGINS = CoreOptions.MARGINS;
   
+  /**
+   * Property constant to access Sloppy Spline Routing from within the layout algorithm code.
+   */
+  public final static IProperty<Boolean> EDGE_ROUTING_SLOPPY_SPLINE_ROUTING = LayeredMetaDataProvider.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING;
+  
+  /**
+   * Property constant to access Sloppy Spline Layer Spacing Factor from within the layout algorithm code.
+   */
+  public final static IProperty<Float> EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING = LayeredMetaDataProvider.EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING;
+  
+  /**
+   * Property constant to access Layer Bound from within the layout algorithm code.
+   */
+  public final static IProperty<Integer> LAYERING_COFFMAN_GRAHAM_LAYER_BOUND = LayeredMetaDataProvider.LAYERING_COFFMAN_GRAHAM_LAYER_BOUND;
+  
   public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
     registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.layered",
@@ -950,6 +965,21 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered",
         "org.eclipse.elk.margins",
         MARGINS.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+        EDGE_ROUTING_SLOPPY_SPLINE_ROUTING.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+        EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.layered",
+        "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
+        LAYERING_COFFMAN_GRAHAM_LAYER_BOUND.getDefault()
     );
   }
 }

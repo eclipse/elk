@@ -206,7 +206,10 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
         // --------------------------------
         // #2 execute the network simplex
         // --------------------------------
-        int iterLimit = layeredGraph.getProperty(LayeredOptions.THOROUGHNESS) * (int) Math.sqrt(nodeCnt);
+        // compared to {@link NetworkSimplexLayerer} a significantly larger iteration limit 
+        // is selected here because the node placement uses an auxiliary graph  
+        // larger node and edge count
+        int iterLimit = layeredGraph.getProperty(LayeredOptions.THOROUGHNESS) * nodeCnt;
         
         NetworkSimplex.forGraph(graph)
             .withIterationLimit(iterLimit)

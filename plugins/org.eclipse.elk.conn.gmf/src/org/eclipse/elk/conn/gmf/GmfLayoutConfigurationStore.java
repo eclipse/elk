@@ -289,7 +289,7 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
             if (sourcePart instanceof AbstractBorderItemEditPart) {
                 // The source element is a port
                 return sourcePart.getParent().getParent();
-            } else {
+            } else if (sourcePart != null) {
                 // The source element is a node
                 return sourcePart.getParent();
             }
@@ -301,7 +301,7 @@ public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
                 EditPart sourcePart = ((ConnectionEditPart) containerEditPart).getSource();
                 if (sourcePart instanceof AbstractBorderItemEditPart) {
                     return (IGraphicalEditPart) sourcePart.getParent().getParent();
-                } else {
+                } else if (sourcePart != null) {
                     return (IGraphicalEditPart) sourcePart.getParent();
                 }
             } else if (containerEditPart instanceof AbstractBorderItemEditPart) {

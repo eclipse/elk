@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import org.eclipse.elk.alg.graphviz.dot.transform.NeatoModel;
 import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
+import org.eclipse.elk.core.util.ExclusiveBounds;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -49,18 +50,34 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Lower bound value for {@link #EPSILON}.
+   */
+  private final static Comparable<? super Float> EPSILON_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * Terminating condition. If the length squared of all energy gradients are less than
    * epsilon, the algorithm stops.
    */
   public final static IProperty<Float> EPSILON = new Property<Float>(
-            "org.eclipse.elk.graphviz.epsilon");
+            "org.eclipse.elk.graphviz.epsilon",
+            null,
+            EPSILON_LOWER_BOUND,
+            null);
+  
+  /**
+   * Lower bound value for {@link #ITERATIONS_FACTOR}.
+   */
+  private final static Comparable<? super Float> ITERATIONS_FACTOR_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
   
   /**
    * Multiplicative scale factor for the maximal number of iterations used during crossing
    * minimization, node ranking, and node positioning.
    */
   public final static IProperty<Float> ITERATIONS_FACTOR = new Property<Float>(
-            "org.eclipse.elk.graphviz.iterationsFactor");
+            "org.eclipse.elk.graphviz.iterationsFactor",
+            null,
+            ITERATIONS_FACTOR_LOWER_BOUND,
+            null);
   
   /**
    * Default value for {@link #LABEL_ANGLE}.
@@ -82,12 +99,17 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
   private final static float LABEL_DISTANCE_DEFAULT = 1;
   
   /**
+   * Lower bound value for {@link #LABEL_DISTANCE}.
+   */
+  private final static Comparable<? super Float> LABEL_DISTANCE_LOWER_BOUND = Float.valueOf(0f);
+  
+  /**
    * Distance of head / tail positioned edge labels to the source or target node.
    */
   public final static IProperty<Float> LABEL_DISTANCE = new Property<Float>(
             "org.eclipse.elk.graphviz.labelDistance",
             LABEL_DISTANCE_DEFAULT,
-            null,
+            LABEL_DISTANCE_LOWER_BOUND,
             null);
   
   /**
@@ -96,19 +118,32 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
   private final static float LAYER_SPACING_FACTOR_DEFAULT = 1;
   
   /**
+   * Lower bound value for {@link #LAYER_SPACING_FACTOR}.
+   */
+  private final static Comparable<? super Float> LAYER_SPACING_FACTOR_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * Factor for the spacing of different layers (ranks).
    */
   public final static IProperty<Float> LAYER_SPACING_FACTOR = new Property<Float>(
             "org.eclipse.elk.graphviz.layerSpacingFactor",
             LAYER_SPACING_FACTOR_DEFAULT,
-            null,
+            LAYER_SPACING_FACTOR_LOWER_BOUND,
             null);
+  
+  /**
+   * Lower bound value for {@link #MAXITER}.
+   */
+  private final static Comparable<? super Integer> MAXITER_LOWER_BOUND = Integer.valueOf(1);
   
   /**
    * The maximum number of iterations.
    */
   public final static IProperty<Integer> MAXITER = new Property<Integer>(
-            "org.eclipse.elk.graphviz.maxiter");
+            "org.eclipse.elk.graphviz.maxiter",
+            null,
+            MAXITER_LOWER_BOUND,
+            null);
   
   /**
    * Default value for {@link #NEATO_MODEL}.
@@ -171,7 +206,7 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         "Epsilon",
         "Terminating condition. If the length squared of all energy gradients are less than epsilon, the algorithm stops.",
         null,
-        null,
+        EPSILON_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -184,7 +219,7 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         "Iterations Factor",
         "Multiplicative scale factor for the maximal number of iterations used during crossing minimization, node ranking, and node positioning.",
         null,
-        null,
+        ITERATIONS_FACTOR_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -210,7 +245,7 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         "Label Distance",
         "Distance of head / tail positioned edge labels to the source or target node.",
         LABEL_DISTANCE_DEFAULT,
-        null,
+        LABEL_DISTANCE_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -223,7 +258,7 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         "Layer Spacing Factor",
         "Factor for the spacing of different layers (ranks).",
         LAYER_SPACING_FACTOR_DEFAULT,
-        null,
+        LAYER_SPACING_FACTOR_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -236,7 +271,7 @@ public class GraphvizMetaDataProvider implements ILayoutMetaDataProvider {
         "Max. Iterations",
         "The maximum number of iterations.",
         null,
-        null,
+        MAXITER_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,

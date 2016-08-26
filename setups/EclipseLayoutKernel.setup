@@ -5,6 +5,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
     xmlns:jdt="http://www.eclipse.org/oomph/setup/jdt/1.0"
+    xmlns:pde="http://www.eclipse.org/oomph/setup/pde/1.0"
     xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
     xmlns:projects="http://www.eclipse.org/oomph/setup/projects/1.0"
     xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
@@ -12,7 +13,7 @@
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
     xmlns:workingsets="http://www.eclipse.org/oomph/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore http://www.eclipse.org/oomph/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/WorkingSets.ecore"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/pde/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/PDE.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore http://www.eclipse.org/oomph/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/WorkingSets.ecore"
     name="elk"
     label="Eclipse Layout Kernel">
   <setupTask
@@ -92,7 +93,7 @@
         name="org.eclipse.jdt.feature.group"/>
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"
-        versionRange="[2.9.0,2.10.0)"/>
+        versionRange="[2.10.0,2.11.0)"/>
     <requirement
         name="org.eclipse.mylyn.ide_feature.feature.group"/>
     <requirement
@@ -134,7 +135,7 @@
     <setupTask
         xsi:type="setup:VariableTask"
         name="eclipse.target.platform"
-        defaultValue="Mars"
+        defaultValue="Neon"
         storageURI="scope://Workspace"
         label="Target Platform">
       <description>Choose the compatibility level of the target platform</description>
@@ -201,7 +202,7 @@
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.9.0,2.10.0)"/>
+            versionRange="[2.10.0,2.11.0)"/>
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
@@ -220,21 +221,64 @@
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
-          <repository
               url="http://download.itemis.com/updates/releases/"/>
         </repositoryList>
         <repositoryList
-            name="Luna">
+            name="Neon">
           <repository
-              url="http://download.eclipse.org/releases/luna"/>
+              url="http://download.eclipse.org/releases/neon"/>
           <repository
-              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository/"/>
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
           <repository
-              url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+              url="http://download.itemis.com/updates/releases/"/>
         </repositoryList>
       </targlet>
     </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask"
+        targetName="API Baseline"
+        activateTarget="false">
+      <targlet
+          name="${scope.project.label}"
+          activeRepositoryList="${eclipse.target.platform}">
+        <requirement
+            name="org.eclipse.elk.feature.feature.group"
+            versionRange="0.1.0"/>
+        <requirement
+            name="org.eclipse.elk.gmf.feature.feature.group"
+            versionRange="0.1.0"/>
+        <requirement
+            name="org.eclipse.elk.graphiti.feature.feature.group"
+            versionRange="0.1.0"/>
+        <requirement
+            name="org.eclipse.elk.graphviz.feature.feature.group"
+            versionRange="0.1.0"/>
+        <requirement
+            name="org.eclipse.elk.sdk.feature.feature.group"
+            versionRange="0.1.0"/>
+        <requirement
+            name="org.eclipse.elk.ui.feature.feature.group"
+            versionRange="0.1.0"/>
+        <repositoryList
+            name="Mars">
+          <repository
+              url="http://download.eclipse.org/releases/mars"/>
+          <repository
+              url="http://download.eclipse.org/elk/updates/releases/0.1.0/"/>
+        </repositoryList>
+        <repositoryList
+            name="Neon">
+          <repository
+              url="http://download.eclipse.org/releases/neon"/>
+          <repository
+              url="http://download.eclipse.org/elk/updates/releases/0.1.0/"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
+    <setupTask
+        xsi:type="pde:APIBaselineFromTargetTask"
+        name="ELK"
+        targetName="API Baseline"/>
     <setupTask
         xsi:type="projects:ProjectsImportTask">
       <sourceLocator
@@ -291,7 +335,7 @@
               pattern="org\.eclipse\.elk\..*"/>
           <operand
               xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.2 //@streams[name='master']/@setupTasks.5/@workingSets.0 //@streams[name='master']/@setupTasks.5/@workingSets.3 //@streams[name='master']/@setupTasks.5/@workingSets.1"/>
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.2 //@streams[name='master']/@setupTasks.7/@workingSets.0 //@streams[name='master']/@setupTasks.7/@workingSets.3 //@streams[name='master']/@setupTasks.7/@workingSets.1"/>
         </predicate>
       </workingSet>
       <description>The dynamic working sets for ${scope.project.label}</description>

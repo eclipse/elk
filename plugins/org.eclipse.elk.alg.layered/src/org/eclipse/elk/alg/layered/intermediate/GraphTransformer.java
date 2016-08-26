@@ -17,10 +17,12 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LInsets;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.graph.LShape;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.layered.properties.InLayerConstraint;
@@ -86,20 +88,27 @@ public final class GraphTransformer implements ILayoutProcessor {
         switch (mode) {
         case MIRROR_X:
             mirrorX(nodes, layeredGraph);
+            mirrorX(layeredGraph.getInsets());
             break;
+            
         case TRANSPOSE:
             transpose(nodes);
             transposeEdgeLabelPlacement(layeredGraph);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
+            transpose(layeredGraph.getInsets());
             break;
+            
         case MIRROR_AND_TRANSPOSE:
             mirrorX(nodes, layeredGraph);
             mirrorY(nodes, layeredGraph);
+            mirrorX(layeredGraph.getInsets());
+            mirrorY(layeredGraph.getInsets());
             transpose(nodes);
             transposeEdgeLabelPlacement(layeredGraph);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
+            transpose(layeredGraph.getInsets());
             break;
         }
         monitor.done();
@@ -145,7 +154,9 @@ public final class GraphTransformer implements ILayoutProcessor {
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
             mirrorX(node.getPosition(), offset - node.getSize().x);
+            mirrorX(node.getInsets());
             mirrorNodeLabelPlacementX(node);
+            
             // mirror the alignment
             switch (node.getProperty(LayeredOptions.ALIGNMENT)) {
             case LEFT:
@@ -162,6 +173,7 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirrorX(port.getAnchor(), port.getSize().x);
                 mirrorPortSideX(port);
                 reverseIndex(port);
+                
                 for (LEdge edge : port.getOutgoingEdges()) {
                     // Mirror bend points
                     for (KVector bendPoint : edge.getBendPoints()) {
@@ -194,8 +206,9 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirrorLayerConstraintX(node);
             }
 
-            // Mirror node label positions
+            // Mirror node labels
             for (LLabel label : node.getLabels()) {
+                mirrorNodeLabelPlacementX(label);
                 mirrorX(label.getPosition(), nodeSize.x - label.getSize().x);
             }
         }
@@ -212,12 +225,25 @@ public final class GraphTransformer implements ILayoutProcessor {
     }
     
     /**
+     * Mirrors the given insets in X direction.
+     * 
+     * @param insets the insets to mirror.
+     */
+    private void mirrorX(final LInsets insets) {
+        double oldLeft = insets.left;
+        double oldRight = insets.right;
+        
+        insets.left = oldRight;
+        insets.right = oldLeft;
+    }
+    
+    /**
      * Horrizontally mirrors the node label placement options, if any are set.
      * 
-     * @param node the node.
+     * @param shape the node or label whose placement should be transposed.
      */
-    private void mirrorNodeLabelPlacementX(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
+    private void mirrorNodeLabelPlacementX(final LShape shape) {
+        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -322,7 +348,9 @@ public final class GraphTransformer implements ILayoutProcessor {
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
             mirrorY(node.getPosition(), offset - node.getSize().y);
+            mirrorY(node.getInsets());
             mirrorNodeLabelPlacementY(node);
+            
             // mirror the alignment
             switch (node.getProperty(LayeredOptions.ALIGNMENT)) {
             case TOP:
@@ -339,6 +367,7 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirrorY(port.getAnchor(), port.getSize().y);
                 mirrorPortSideY(port);
                 reverseIndex(port);
+                
                 for (LEdge edge : port.getOutgoingEdges()) {
                     // Mirror bend points
                     for (KVector bendPoint : edge.getBendPoints()) {
@@ -371,8 +400,9 @@ public final class GraphTransformer implements ILayoutProcessor {
                 mirrorInLayerConstraintY(node);
             }
             
-            // Mirror node label positions
+            // Mirror node labels
             for (LLabel label : node.getLabels()) {
+                mirrorNodeLabelPlacementY(label);
                 mirrorY(label.getPosition(), nodeSize.y - label.getSize().y);
             }
         }
@@ -389,12 +419,25 @@ public final class GraphTransformer implements ILayoutProcessor {
     }
     
     /**
+     * Mirrors the given insets in Y direction.
+     * 
+     * @param insets the insets to mirror.
+     */
+    private void mirrorY(final LInsets insets) {
+        double oldTop = insets.top;
+        double oldBottom = insets.bottom;
+        
+        insets.top = oldBottom;
+        insets.bottom = oldTop;
+    }
+    
+    /**
      * Vertically mirrors the node label placement options, if any are set.
      * 
-     * @param node the node.
+     * @param shape the node or label whose placement should be mirrored.
      */
-    private void mirrorNodeLabelPlacementY(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
+    private void mirrorNodeLabelPlacementY(final LShape shape) {
+        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -478,6 +521,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         for (LNode node : nodes) {
             transpose(node.getPosition());
             transpose(node.getSize());
+            transpose(node.getInsets());
             transposeNodeLabelPlacement(node);
             transposeProperties(node);
             
@@ -524,8 +568,9 @@ public final class GraphTransformer implements ILayoutProcessor {
                 transposeLayerConstraint(node);
             }
 
-            // Transpose node label positions
+            // Transpose node labels
             for (LLabel label : node.getLabels()) {
+                transposeNodeLabelPlacement(label);
                 transpose(label.getSize());
                 transpose(label.getPosition());
             }
@@ -544,12 +589,29 @@ public final class GraphTransformer implements ILayoutProcessor {
     }
     
     /**
+     * Transposes the given insets.
+     * 
+     * @param insets the insets to transpose, I guess...
+     */
+    private void transpose(final LInsets insets) {
+        double oldTop = insets.top;
+        double oldBottom = insets.bottom;
+        double oldLeft = insets.left;
+        double oldRight = insets.right;
+        
+        insets.top = oldLeft;
+        insets.bottom = oldRight;
+        insets.left = oldTop;
+        insets.right = oldBottom;
+    }
+    
+    /**
      * Transposes the node label placement options, if any are set.
      * 
-     * @param node the node.
+     * @param shape the node or label whose placement should be transposed.
      */
-    private void transposeNodeLabelPlacement(final LNode node) {
-        Set<NodeLabelPlacement> oldPlacement = node.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
+    private void transposeNodeLabelPlacement(final LShape shape) {
+        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
         }
@@ -588,7 +650,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         }
         
         // Apply new placement
-        node.setProperty(LayeredOptions.NODE_LABELS_PLACEMENT, newPlacement);
+        shape.setProperty(LayeredOptions.NODE_LABELS_PLACEMENT, newPlacement);
     }
     
     /**

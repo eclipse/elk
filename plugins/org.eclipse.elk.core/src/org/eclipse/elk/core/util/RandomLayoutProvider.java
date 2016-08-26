@@ -18,7 +18,7 @@ import org.eclipse.elk.core.klayoutdata.KInsets;
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.RandomLayouterOptions;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
 
@@ -32,9 +32,6 @@ import org.eclipse.elk.graph.KNode;
  */
 public class RandomLayoutProvider extends AbstractLayoutProvider {
     
-    /** the layout provider id. */
-    public static final String ID = "org.eclipse.elk.alg.random";
-
     /** default value for aspect ratio. */
     private static final float DEF_ASPECT_RATIO = 1.6f;
     /** default value for object spacing. */
@@ -54,7 +51,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         
         // initialize random seed
         Random random;
-        Integer randomSeed = parentLayout.getProperty(CoreOptions.RANDOM_SEED);
+        Integer randomSeed = parentLayout.getProperty(RandomLayouterOptions.RANDOM_SEED);
         if (randomSeed != null && randomSeed != 0) {
             random = new Random(randomSeed);
         } else {
@@ -62,17 +59,17 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         }
         
         // get aspect ratio
-        Float aspectRatio = parentLayout.getProperty(CoreOptions.ASPECT_RATIO);
+        Float aspectRatio = parentLayout.getProperty(RandomLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }
         
         // get spacing values
-        Float spacing = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+        Float spacing = parentLayout.getProperty(RandomLayouterOptions.SPACING_NODE);
         if (spacing == null || spacing < 0) {
             spacing = DEF_SPACING;
         }
-        Float offset = parentLayout.getProperty(CoreOptions.SPACING_BORDER);
+        Float offset = parentLayout.getProperty(RandomLayouterOptions.SPACING_BORDER);
         if (offset == null || offset < 0) {
             offset = DEF_SPACING;
         }

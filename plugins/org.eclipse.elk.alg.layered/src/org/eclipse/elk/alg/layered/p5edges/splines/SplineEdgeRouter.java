@@ -137,6 +137,12 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         // Retrieve some generic values
         final float nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE);
         edgeSpacing = nodeSpacing * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
+        
+        // Find out if splines should be routed thoroughly or sloppy
+        final boolean sloppyRouting = layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING);
+        final float sloppyLayerSpacingFactor =
+                layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING);
+
         double xpos = 0.0;
 
         final Iterator<Layer> layerIterator = layeredGraph.iterator();
@@ -208,32 +214,66 @@ public final class SplineEdgeRouter implements ILayoutPhase {
 
             ////////////////////////////////////
             // Place right layers's nodes. This needs to be done before calculating the bendPoints.
-            double rightLayersPosition = xpos + NODE_TO_VERTICAL_SEGMENT_GAP;
+            double rightLayersPosition = xpos;
             if (rightLayer != null) {
-                externalRightLayer = rightLayer == null || Iterables.all(rightLayer.getNodes(),
-                        PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
+                externalRightLayer =
+                        Iterables.all(rightLayer.getNodes(), PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
 
-                int maxRank = -1;
-                for (final SplineHyperEdge edge : hyperEdges) {
-                    maxRank = Math.max(maxRank, edge.rank);
-                }
-                maxRank++;
-                
-                if (maxRank > 0) {
-                    // The space between each pair of edge segments, and between nodes and edges
-                    double increment = (maxRank + 1) * edgeSpacing;
+                if (sloppyRouting) {
+                    // For sloppy routing we limit the angle of vertical segments similar to the polyline
+                    // edge router.
+                    // While routing edges, we remember the maximum vertical span of any edge between this and
+                    // the next layer to insert enough space between the layers to keep the edge slopes from
+                    // becoming too steep
+                    double maxVertDiff = 0.0;
 
-                    // If we are between two layers, make sure their minimal spacing is preserved
-                    if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
-                        increment = nodeSpacing;
+                    // Iterate over the layer's nodes
+                    for (LNode node : rightLayer) {
+                        // Calculate the maximal vertical span of output edges.
+                        double maxCurrInputYDiff = 0.0;
+                        for (LEdge incomingEdge : node.getIncomingEdges()) {
+                            double sourcePos = incomingEdge.getSource().getAbsoluteAnchor().y;
+                            double targetPos = incomingEdge.getTarget().getAbsoluteAnchor().y;
+
+                            maxCurrInputYDiff = Math.max(maxCurrInputYDiff, Math.abs(targetPos - sourcePos));
+                        }
+                        maxVertDiff = Math.max(maxVertDiff, maxCurrInputYDiff);
                     }
-                    rightLayersPosition += increment;
-                } else if (!(externalLeftLayer || externalRightLayer 
-                            || layerOnlyContainsDummies(leftLayer)
+
+                    // Determine where next layer should start based on the maximal vertical span of edges
+                    // between the two layers
+                    double layerSpacing = sloppyLayerSpacingFactor * (edgeSpacing / nodeSpacing) * maxVertDiff;
+
+                    // At least have minimal node spacing if all edges are straight
+                    if (layerSpacing < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
+                        layerSpacing = nodeSpacing;
+                    }
+
+                    rightLayersPosition += layerSpacing;
+                } else {
+                    // For thorough edge routing we reserve horizontal space similar to orthogonal routing.
+                    rightLayersPosition += NODE_TO_VERTICAL_SEGMENT_GAP;
+                    int maxRank = -1;
+                    for (final SplineHyperEdge edge : hyperEdges) {
+                        maxRank = Math.max(maxRank, edge.rank);
+                    }
+                    maxRank++;
+
+                    if (maxRank > 0) {
+                        // The space between each pair of edge segments, and between nodes and edges
+                        double increment = (maxRank + 1) * edgeSpacing;
+
+                        // If we are between two layers, make sure their minimal spacing is preserved
+                        if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
+                            increment = nodeSpacing;
+                        }
+                        rightLayersPosition += increment;
+                    } else if (!(externalLeftLayer || externalRightLayer || layerOnlyContainsDummies(leftLayer)
                             || layerOnlyContainsDummies(rightLayer))) {
-                    // If all edges are straight, use the usual spacing 
-                    //   (except when we are between two layers where both only contains dummy nodes)
-                    rightLayersPosition += nodeSpacing;
+                        // If all edges are straight, use the usual spacing
+                        // (except when we are between two layers where both only contains dummy nodes)
+                        rightLayersPosition += nodeSpacing;
+                    }
                 }
                 
                 LGraphUtil.placeNodesHorizontally(rightLayer, rightLayersPosition);
@@ -259,14 +299,17 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                 if (edge.isStraight) {
                     calculateNUBSBendPointStraight(edge, xpos);
                 } else {
-                    calculateNUBSBendPoints(edge, xpos, rightLayersPosition);
+                    calculateNUBSBendPoints(edge, xpos, rightLayersPosition, sloppyRouting);
                 }
             }
 
             ////////////////////////////////////
             // proceed to next layer
             if (rightLayer != null) {
-                xpos = rightLayersPosition + rightLayer.getSize().x + NODE_TO_VERTICAL_SEGMENT_GAP;
+                xpos = rightLayersPosition + rightLayer.getSize().x;
+                if (!sloppyRouting) {
+                    xpos += NODE_TO_VERTICAL_SEGMENT_GAP;
+                }
             } else {
                 // When handling the last layer
                 // add spacing for the last routing area after the node
@@ -287,7 +330,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         ////////////////////////////////////
         // all layers are processed, now we can calculate the bezier bend-points for all edges
         for (final LEdge edge : startEdges) {
-            calculateBezierBendPoints(edge, successingEdge);
+            calculateBezierBendPoints(edge, successingEdge, sloppyRouting);
         }
         
         layeredGraph.getSize().x = xpos;
@@ -384,9 +427,11 @@ public final class SplineEdgeRouter implements ILayoutPhase {
 
                         // Check if edge is a startingEdge
                         final NodeType sourceNodeType = edge.getSource().getNode().getType();
-                        if (sourceNodeType == NodeType.NORMAL
-                                || sourceNodeType == NodeType.NORTH_SOUTH_PORT) {
-                            
+                        if (sourceNodeType == NodeType.NORMAL 
+                                || sourceNodeType == NodeType.NORTH_SOUTH_PORT
+                                || sourceNodeType == NodeType.EXTERNAL_PORT
+                                || sourceNodeType == NodeType.BIG_NODE) {
+
                             startingEdges.add(edge);
                         }
                         
@@ -434,9 +479,11 @@ public final class SplineEdgeRouter implements ILayoutPhase {
 
                         // Check if edge is a startingEdge
                         final NodeType sourceNodeType = edge.getSource().getNode().getType();
-                        if (sourceNodeType == NodeType.NORMAL
-                                || sourceNodeType == NodeType.NORTH_SOUTH_PORT) {
-                            
+                        if (sourceNodeType == NodeType.NORMAL 
+                                || sourceNodeType == NodeType.NORTH_SOUTH_PORT
+                                || sourceNodeType == NodeType.EXTERNAL_PORT
+                                || sourceNodeType == NodeType.BIG_NODE) {
+
                             startingEdges.add(edge);
                         }
                         
@@ -470,7 +517,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         final LNode targetNode = edge.getTarget().getNode();
         
         // if target node is a normal node there is no successor
-        if (targetNode.getType() == NodeType.NORMAL) {
+        if (targetNode.getType() == NodeType.NORMAL
+                || targetNode.getType() == NodeType.BIG_NODE) {
             return;
         }
         
@@ -900,7 +948,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * @param edge The last edge of the chain of edges we want the bezier CPs to be calculated for. 
      * @param succeedingEdge A mapping pointing from an edge to it's successor.
      */
-    private void calculateBezierBendPoints(final LEdge edge, final Map<LEdge, LEdge> succeedingEdge) {
+    private void calculateBezierBendPoints(final LEdge edge, final Map<LEdge, LEdge> succeedingEdge,
+            final boolean sloppyRouting) {
         // in this chain we will put all NURBS control points.
         final KVectorChain allCP = new KVectorChain();
         // We will temporarily store north- or south-bendpoints here.
@@ -912,9 +961,12 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         final NodeType sourceNodeType = sourcePort.getNode().getType();
         
         // edge must be the first edge of a chain of edges
-        if (sourceNodeType != NodeType.NORMAL && sourceNodeType != NodeType.NORTH_SOUTH_PORT) {
-            throw new IllegalArgumentException("The target node of the edge must be a normal node "
-                    + "or a northSouthPort.");
+        if (sourceNodeType != NodeType.NORMAL 
+                && sourceNodeType != NodeType.NORTH_SOUTH_PORT
+                && sourceNodeType != NodeType.EXTERNAL_PORT
+                && sourceNodeType != NodeType.BIG_NODE) {
+            throw new IllegalArgumentException(
+                    "The target node of the edge must be a normal node " + "or a northSouthPort.");
         }
         
         // Calculate the NubSpline bend-point for a north or south port and reroute the edge.
@@ -928,17 +980,21 @@ public final class SplineEdgeRouter implements ILayoutPhase {
 
         // add the source as the very first CP.
         allCP.addLast(sourcePort.getAbsoluteAnchor());
-        
-        // Add a control-point for a straight segment at the very start of an edge-chain to prevent
-        // the edge from colliding with self-loops or the like inside the margin of the node. This also
-        // ensures the correct initial direction of the edge.
-        double gap = Math.max(NODE_TO_STRAIGHTENING_CP_GAP, 
-                SplinesMath.getMarginOnPortSide(sourcePort.getNode(), sourcePort.getSide()));
-        KVector offsetOfStraightening = 
-                new KVector(SplinesMath.portSideToDirection(sourcePort.getSide()));
-        offsetOfStraightening.scale(gap);
-        allCP.add(offsetOfStraightening.add(sourcePort.getAbsoluteAnchor()));
-        
+
+        double gap;
+        KVector offsetOfStraightening;
+        if (!sloppyRouting) {
+            // Add a control-point for a straight segment at the very start of an edge-chain to prevent
+            // the edge from colliding with self-loops or the like inside the margin of the node. This also
+            // ensures the correct initial direction of the edge.
+            // This is only performed if the splines should be thoroughly routed.
+            gap = Math.max(NODE_TO_STRAIGHTENING_CP_GAP, 
+                    SplinesMath.getMarginOnPortSide(sourcePort.getNode(), sourcePort.getSide()));
+            offsetOfStraightening = 
+                    new KVector(SplinesMath.portSideToDirection(sourcePort.getSide()));
+            offsetOfStraightening.scale(gap);
+            allCP.add(offsetOfStraightening.add(sourcePort.getAbsoluteAnchor()));
+        }
         // Add the calculated north/south port bend-point, if there is one.
         if (northSouthBendPoint != null) {
             allCP.addLast(northSouthBendPoint);
@@ -986,16 +1042,19 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                     targetPort.getAbsoluteAnchor().y));
             targetPort = originPort;
         }
-
-        // Add a control-point for a straight segment at the very start of an edge-chain to prevent
-        // the edge from colliding with self-loops or the like inside the margin of the node. This also
-        // ensures the correct final direction of the edge.
-        gap = Math.max(NODE_TO_STRAIGHTENING_CP_GAP,
-                SplinesMath.getMarginOnPortSide(targetPort.getNode(), targetPort.getSide()));
-        offsetOfStraightening = new KVector(SplinesMath.portSideToDirection(targetPort.getSide()));
-        offsetOfStraightening.scale(gap);
-        allCP.add(offsetOfStraightening.add(targetPort.getAbsoluteAnchor()));
-
+        
+        if (!sloppyRouting) {
+            // Add a control-point for a straight segment at the very start of an edge-chain to prevent
+            // the edge from colliding with self-loops or the like inside the margin of the node. This also
+            // ensures the correct final direction of the edge.
+            // This is only performed if the splines should be thoroughly routed.
+            gap = Math.max(NODE_TO_STRAIGHTENING_CP_GAP,
+                    SplinesMath.getMarginOnPortSide(targetPort.getNode(), targetPort.getSide()));
+            offsetOfStraightening = new KVector(SplinesMath.portSideToDirection(targetPort.getSide()));
+            offsetOfStraightening.scale(gap);
+            allCP.add(offsetOfStraightening.add(targetPort.getAbsoluteAnchor()));
+        }
+        
         // Add the targetPort as a NubSpline bend-point.
         allCP.addLast(targetPort.getAbsoluteAnchor());
 
@@ -1041,12 +1100,11 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      *            The end x position of current between layer gap.
      */
     private void calculateNUBSBendPoints(final SplineHyperEdge hyperEdge, final double startXPos,
-            final double endXPos) {
-        // the center position is the same for all edges
-        final double centerXPos = startXPos + (hyperEdge.rank + 1) * edgeSpacing;
-        final double centerYPos = hyperEdge.centerYPos;
-        final KVector center = new KVector(centerXPos, centerYPos);
-        
+            final double endXPos, final boolean sloppyRouting) {
+        // the center position is the same for all edges but depends on sloppiness of the routing
+        final double centerXPos = sloppyRouting ? (startXPos + endXPos) / 2
+                : startXPos + (hyperEdge.rank + 1) * edgeSpacing;
+       
         for (final LEdge edge : hyperEdge.edges) {
             final KVector targetAnchor = edge.getTarget().getAbsoluteAnchor();
             final KVector sourceAnchor = edge.getSource().getAbsoluteAnchor();
@@ -1062,26 +1120,67 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                     new KVector(startXPos - NODE_TO_VERTICAL_SEGMENT_GAP, sourceAnchor.y);
             final KVector targetStraightCP = new KVector(endXPos, targetAnchor.y);
 
+            boolean invertedSource = false;
+            boolean invertedTarget = false;
             // Modify straight CPs to handle inverted edges.
             if (targetAnchor.x >= endXPos && sourceAnchor.x >= endXPos) {
                 // Inner layer connection on the right layer
+                invertedSource = true;
                 sourceStraightCP.x = endXPos;
             }
             if (targetAnchor.x <= startXPos && sourceAnchor.x <= startXPos) {
                 // Inner layer connection on the right layer
+                invertedTarget = true;
                 targetStraightCP.x = startXPos - NODE_TO_VERTICAL_SEGMENT_GAP;
             }
 
-            // add the NubSpline control points to the edge, but in revered order!
-            if (hyperEdge.edges.size() == 1) {
-                // Special handling of single edges. They don't need a center CP.
-                edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP, targetVerticalCP, 
-                        targetStraightCP);
+            // If using sloppy routing, only some bendpoints are needed at the start and end
+            // First determine if this part of an edge is connected to a normal node
+            final boolean normalSource = edge.getSource().getNode().getType() == NodeType.NORMAL 
+                    || edge.getSource().getNode().getType() == NodeType.BIG_NODE;
+            final boolean normalTarget = edge.getTarget().getNode().getType() == NodeType.NORMAL
+                    || edge.getTarget().getNode().getType() == NodeType.BIG_NODE;
+            
+            if (!sloppyRouting || !(normalSource || normalTarget) || invertedTarget || invertedSource) {
+                // add the NubSpline control points to the edge, but in revered order!
+                if (hyperEdge.edges.size() == 1) {
+                    // Special handling of single edges. They don't need a center CP.
+                    edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP, targetVerticalCP, 
+                            targetStraightCP);
+                } else {
+                    final KVector center = new KVector(centerXPos, hyperEdge.centerYPos);                    
+                    edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP, center, 
+                            targetVerticalCP, targetStraightCP);
+                }
             } else {
-                edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP, center, 
-                        targetVerticalCP, targetStraightCP);
+                if (normalSource && normalTarget) {
+                    // If using sloppy routing we want to use a central y point which is just halfway
+                    // between the nodes. We add a small offset to create a curved line between the nodes.
+                    // The side of the offset is calculated depending on the difference of 
+                    // target indegree and source outdegree.
+                    int indegree = 0;
+                    int outdegree = 0;
+                    // Count all the incoming and outgoing edges
+                    for (LPort port : edge.getTarget().getNode().getPorts()) {
+                        indegree += port.getIncomingEdges().size();
+                    }
+                    for (LPort port : edge.getSource().getNode().getPorts()) {
+                        outdegree += port.getOutgoingEdges().size();
+                    }
+                    final int degreeDiff = (int) Math.signum(outdegree - indegree);
+                    final double centerYPos = ((targetAnchor.y + sourceAnchor.y) / 2)
+                            + (targetAnchor.y - sourceAnchor.y) * (0.4 * degreeDiff);
+                    
+                    edge.getBendPoints().addAll(new KVector(centerXPos, centerYPos));
+                } else if (normalSource) {
+                    // If leaving a normal source, add the straight part of the target dummy.
+                    // This mostly prevents intersections with big nodes in the same layer as the target 
+                    edge.getBendPoints().addAll(targetVerticalCP, targetStraightCP);
+                } else if (normalTarget) {
+                    // If entering a normal source, keep the straight part of the source dummy.
+                    edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP);
+                }
             }
-
         }
     }
 

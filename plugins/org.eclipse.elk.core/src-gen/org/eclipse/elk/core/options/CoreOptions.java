@@ -28,6 +28,8 @@ import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.BoxLayoutProvider;
+import org.eclipse.elk.core.util.ExclusiveBounds;
 import org.eclipse.elk.core.util.nodespacing.Spacing;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
@@ -59,10 +61,18 @@ public class CoreOptions implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Lower bound value for {@link #ASPECT_RATIO}.
+   */
+  private final static Comparable<? super Float> ASPECT_RATIO_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * The desired aspect ratio of the drawing, that is the quotient of width by height.
    */
   public final static IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            "org.eclipse.elk.aspectRatio");
+            "org.eclipse.elk.aspectRatio",
+            null,
+            ASPECT_RATIO_LOWER_BOUND,
+            null);
   
   /**
    * A fixed list of bend points for the edge. This is used by the 'Fixed Layout' algorithm to
@@ -318,6 +328,11 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   private final static float SCALE_FACTOR_DEFAULT = 1;
   
   /**
+   * Lower bound value for {@link #SCALE_FACTOR}.
+   */
+  private final static Comparable<? super Float> SCALE_FACTOR_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * The scaling factor to be applied to the corresponding node in recursive layout. It causes
    * the corresponding node's size to be adjusted, and its ports and labels to be sized and
    * placed accordingly after the layout of that node has been determined (and before the node
@@ -328,7 +343,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Float> SCALE_FACTOR = new Property<Float>(
             "org.eclipse.elk.scaleFactor",
             SCALE_FACTOR_DEFAULT,
-            null,
+            SCALE_FACTOR_LOWER_BOUND,
             null);
   
   /**
@@ -351,6 +366,11 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   private final static int ANIM_TIME_FACTOR_DEFAULT = 100;
   
   /**
+   * Lower bound value for {@link #ANIM_TIME_FACTOR}.
+   */
+  private final static Comparable<? super Integer> ANIM_TIME_FACTOR_LOWER_BOUND = Integer.valueOf(0);
+  
+  /**
    * Factor for computation of animation time. The higher the value, the longer the animation
    * time. If the value is 0, the resulting time is always equal to the minimum defined by
    * 'Minimal Animation Time'.
@@ -358,7 +378,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Integer> ANIM_TIME_FACTOR = new Property<Integer>(
             "org.eclipse.elk.animTimeFactor",
             ANIM_TIME_FACTOR_DEFAULT,
-            null,
+            ANIM_TIME_FACTOR_LOWER_BOUND,
             null);
   
   /**
@@ -382,12 +402,17 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   private final static int MAX_ANIM_TIME_DEFAULT = 4000;
   
   /**
+   * Lower bound value for {@link #MAX_ANIM_TIME}.
+   */
+  private final static Comparable<? super Integer> MAX_ANIM_TIME_LOWER_BOUND = Integer.valueOf(0);
+  
+  /**
    * The maximal time for animations, in milliseconds.
    */
   public final static IProperty<Integer> MAX_ANIM_TIME = new Property<Integer>(
             "org.eclipse.elk.maxAnimTime",
             MAX_ANIM_TIME_DEFAULT,
-            null,
+            MAX_ANIM_TIME_LOWER_BOUND,
             null);
   
   /**
@@ -396,12 +421,17 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   private final static int MIN_ANIM_TIME_DEFAULT = 400;
   
   /**
+   * Lower bound value for {@link #MIN_ANIM_TIME}.
+   */
+  private final static Comparable<? super Integer> MIN_ANIM_TIME_LOWER_BOUND = Integer.valueOf(0);
+  
+  /**
    * The minimal time for animations, in milliseconds.
    */
   public final static IProperty<Integer> MIN_ANIM_TIME = new Property<Integer>(
             "org.eclipse.elk.minAnimTime",
             MIN_ANIM_TIME_DEFAULT,
-            null,
+            MIN_ANIM_TIME_LOWER_BOUND,
             null);
   
   /**
@@ -449,9 +479,31 @@ public class CoreOptions implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #BOX_PACKING_MODE}.
+   */
+  private final static BoxLayoutProvider.PackingMode BOX_PACKING_MODE_DEFAULT = BoxLayoutProvider.PackingMode.SIMPLE;
+  
+  /**
+   * Configures the packing mode used by the {@link BoxLayoutProvider}.
+   * If SIMPLE is not required (neither priorities are used nor the interactive mode),
+   * GROUP_DEC can improve the packing and decrease the area.
+   * GROUP_MIXED and GROUP_INC may, in very specific scenarios, work better.
+   */
+  public final static IProperty<BoxLayoutProvider.PackingMode> BOX_PACKING_MODE = new Property<BoxLayoutProvider.PackingMode>(
+            "org.eclipse.elk.box.packingMode",
+            BOX_PACKING_MODE_DEFAULT,
+            null,
+            null);
+  
+  /**
    * Default value for {@link #SPACING_BORDER}.
    */
-  private final static float SPACING_BORDER_DEFAULT = 12f;
+  private final static float SPACING_BORDER_DEFAULT = 12;
+  
+  /**
+   * Lower bound value for {@link #SPACING_BORDER}.
+   */
+  private final static Comparable<? super Float> SPACING_BORDER_LOWER_BOUND = Float.valueOf(0f);
   
   /**
    * Spacing of the content of a parent node to its inner border. The inner border is the node
@@ -460,7 +512,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   public final static IProperty<Float> SPACING_BORDER = new Property<Float>(
             "org.eclipse.elk.spacing.border",
             SPACING_BORDER_DEFAULT,
-            null,
+            SPACING_BORDER_LOWER_BOUND,
             null);
   
   /**
@@ -469,12 +521,17 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   private final static float SPACING_LABEL_DEFAULT = 0;
   
   /**
+   * Lower bound value for {@link #SPACING_LABEL}.
+   */
+  private final static Comparable<? super Float> SPACING_LABEL_LOWER_BOUND = Float.valueOf(0f);
+  
+  /**
    * Determines the amount of space to be left around labels.
    */
   public final static IProperty<Float> SPACING_LABEL = new Property<Float>(
             "org.eclipse.elk.spacing.label",
             SPACING_LABEL_DEFAULT,
-            null,
+            SPACING_LABEL_LOWER_BOUND,
             null);
   
   /**
@@ -483,13 +540,18 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   private final static float SPACING_NODE_DEFAULT = 20;
   
   /**
+   * Lower bound value for {@link #SPACING_NODE}.
+   */
+  private final static Comparable<? super Float> SPACING_NODE_LOWER_BOUND = Float.valueOf(0f);
+  
+  /**
    * Overall spacing between elements. This is mostly interpreted as the minimal distance
    * between each two nodes and may also influence the spacing between edges.
    */
   public final static IProperty<Float> SPACING_NODE = new Property<Float>(
             "org.eclipse.elk.spacing.node",
             SPACING_NODE_DEFAULT,
-            null,
+            SPACING_NODE_LOWER_BOUND,
             null);
   
   /**
@@ -498,12 +560,17 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   private final static float SPACING_PORT_DEFAULT = 10;
   
   /**
+   * Lower bound value for {@link #SPACING_PORT}.
+   */
+  private final static Comparable<? super Float> SPACING_PORT_LOWER_BOUND = Float.valueOf(0f);
+  
+  /**
    * Spacing between ports of a given node.
    */
   public final static IProperty<Float> SPACING_PORT = new Property<Float>(
             "org.eclipse.elk.spacing.port",
             SPACING_PORT_DEFAULT,
-            null,
+            SPACING_PORT_LOWER_BOUND,
             null);
   
   /**
@@ -678,10 +745,15 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   private final static float NODE_SIZE_MIN_WIDTH_DEFAULT = 0;
   
+  /**
+   * Lower bound value for {@link #NODE_SIZE_MIN_WIDTH}.
+   */
+  private final static Comparable<? super Float> NODE_SIZE_MIN_WIDTH_LOWER_BOUND = Float.valueOf(0f);
+  
   public final static IProperty<Float> NODE_SIZE_MIN_WIDTH = new Property<Float>(
             "org.eclipse.elk.nodeSize.minWidth",
             NODE_SIZE_MIN_WIDTH_DEFAULT,
-            null,
+            NODE_SIZE_MIN_WIDTH_LOWER_BOUND,
             null);
   
   /**
@@ -689,10 +761,15 @@ public class CoreOptions implements ILayoutMetaDataProvider {
    */
   private final static float NODE_SIZE_MIN_HEIGHT_DEFAULT = 0;
   
+  /**
+   * Lower bound value for {@link #NODE_SIZE_MIN_HEIGHT}.
+   */
+  private final static Comparable<? super Float> NODE_SIZE_MIN_HEIGHT_LOWER_BOUND = Float.valueOf(0f);
+  
   public final static IProperty<Float> NODE_SIZE_MIN_HEIGHT = new Property<Float>(
             "org.eclipse.elk.nodeSize.minHeight",
             NODE_SIZE_MIN_HEIGHT_DEFAULT,
-            null,
+            NODE_SIZE_MIN_HEIGHT_LOWER_BOUND,
             null);
   
   /**
@@ -716,10 +793,18 @@ public class CoreOptions implements ILayoutMetaDataProvider {
             "org.eclipse.elk.font.name");
   
   /**
+   * Lower bound value for {@link #FONT_SIZE}.
+   */
+  private final static Comparable<? super Integer> FONT_SIZE_LOWER_BOUND = Integer.valueOf(1);
+  
+  /**
    * Font size used for a label.
    */
   public final static IProperty<Integer> FONT_SIZE = new Property<Integer>(
-            "org.eclipse.elk.font.size");
+            "org.eclipse.elk.font.size",
+            null,
+            FONT_SIZE_LOWER_BOUND,
+            null);
   
   /**
    * The offset to the port position where connections shall be attached.
@@ -877,7 +962,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Aspect Ratio",
         "The desired aspect ratio of the drawing, that is the quotient of width by height.",
         null,
-        null,
+        ASPECT_RATIO_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1155,7 +1240,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Scale Factor",
         "The scaling factor to be applied to the corresponding node in recursive layout. It causes the corresponding node\'s size to be adjusted, and its ports and labels to be sized and placed accordingly after the layout of that node has been determined (and before the node itself and its siblings are arranged). The scaling is not reverted afterwards, so the resulting layout graph contains the adjusted size and position data. This option is currently not supported if \'Layout Hierarchy\' is set.",
         SCALE_FACTOR_DEFAULT,
-        null,
+        SCALE_FACTOR_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1188,7 +1273,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Animation Time Factor",
         "Factor for computation of animation time. The higher the value, the longer the animation time. If the value is 0, the resulting time is always equal to the minimum defined by \'Minimal Animation Time\'.",
         ANIM_TIME_FACTOR_DEFAULT,
-        null,
+        ANIM_TIME_FACTOR_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
@@ -1216,7 +1301,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Maximal Animation Time",
         "The maximal time for animations, in milliseconds.",
         MAX_ANIM_TIME_DEFAULT,
-        null,
+        MAX_ANIM_TIME_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
@@ -1230,7 +1315,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Minimal Animation Time",
         "The minimal time for animations, in milliseconds.",
         MIN_ANIM_TIME_DEFAULT,
-        null,
+        MIN_ANIM_TIME_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
@@ -1280,12 +1365,25 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         , "de.cau.cs.kieler.zoomToFit"
     ));
     registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
+        "org.eclipse.elk.box.packingMode",
+        "box",
+        "Box Layout Mode",
+        "Configures the packing mode used by the {@link BoxLayoutProvider}. If SIMPLE is not required (neither priorities are used nor the interactive mode), GROUP_DEC can improve the packing and decrease the area. GROUP_MIXED and GROUP_INC may, in very specific scenarios, work better.",
+        BOX_PACKING_MODE_DEFAULT,
+        null,
+        null,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.ENUM,
+        BoxLayoutProvider.PackingMode.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.spacing.border",
         "spacing",
         "Border Spacing",
         "Spacing of the content of a parent node to its inner border. The inner border is the node border, which is given by width and height, with subtracted insets.",
         SPACING_BORDER_DEFAULT,
-        null,
+        SPACING_BORDER_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1299,7 +1397,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Label Spacing",
         "Determines the amount of space to be left around labels.",
         SPACING_LABEL_DEFAULT,
-        null,
+        SPACING_LABEL_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1313,7 +1411,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Node Spacing",
         "Overall spacing between elements. This is mostly interpreted as the minimal distance between each two nodes and may also influence the spacing between edges.",
         SPACING_NODE_DEFAULT,
-        null,
+        SPACING_NODE_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1327,11 +1425,11 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Port Spacing",
         "Spacing between ports of a given node.",
         SPACING_PORT_DEFAULT,
-        null,
+        SPACING_PORT_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
-        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS, org.eclipse.elk.core.data.LayoutOptionData.Target.NODES),
         org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.portSpacing"
     ));
@@ -1519,7 +1617,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Minimum Width",
         null,
         NODE_SIZE_MIN_WIDTH_DEFAULT,
-        null,
+        NODE_SIZE_MIN_WIDTH_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1532,7 +1630,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Minimum Height",
         null,
         NODE_SIZE_MIN_HEIGHT_DEFAULT,
-        null,
+        NODE_SIZE_MIN_HEIGHT_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1573,7 +1671,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
         "Font Size",
         "Font size used for a label.",
         null,
-        null,
+        FONT_SIZE_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,

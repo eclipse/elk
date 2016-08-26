@@ -11,26 +11,37 @@
 package org.eclipse.elk.core.debug.views.execution;
 
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
-import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Label provider for execution times retrieved from ELK progress monitors.
+ * Label provider for executions.
  */
-public class ExecutionLabelProvider extends LabelProvider {
+final class ExecutionLabelProvider extends LabelProvider implements IStyledLabelProvider {
+    
+    /** What the label provider can display. */
+    public static enum DisplayMode { NAME, TIME_TOTAL, TIME_LOCAL };
+    
 
-    /** path to the image used for elements. */
+    /** Path to the image used for elements. */
     private static final String IMAGE_PATH = "/icons/execution.gif";
-
-    /** the image used for each element. */
+    /** The image used for each element. */
     private Image elementImage;
+    /** What we should display. */
+    private DisplayMode displayMode;
+    
 
     /**
      * Creates an execution label provider.
+     * 
+     * @param displayMode
+     *            What this label provider should display.
      */
-    public ExecutionLabelProvider() {
+    public ExecutionLabelProvider(final DisplayMode displayMode) {
         elementImage = ElkDebugPlugin.imageDescriptorFromPlugin(ElkDebugPlugin.PLUGIN_ID, IMAGE_PATH).createImage();
+        this.displayMode = displayMode;
     }
     
     /**
@@ -38,31 +49,32 @@ public class ExecutionLabelProvider extends LabelProvider {
      */
     @Override
     public Image getImage(final Object element) {
-        if (element instanceof IElkProgressMonitor) {
+        if (displayMode == DisplayMode.NAME && element instanceof Execution) {
             return elementImage;
         } else {
             return null;
         }
     }
 
-    /**
-     * {@inheritDoc}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
      */
     @Override
-    public String getText(final Object element) {
-        if (element instanceof IElkProgressMonitor) {
-            IElkProgressMonitor monitor = (IElkProgressMonitor) element;
-            String baseText = monitor.getTaskName() + ": ";
-            double time = monitor.getExecutionTime();
-            if (monitor.getSubMonitors().isEmpty()) {
-                return baseText + toString(time);
-            } else {
-                double childrenTime = 0;
-                for (IElkProgressMonitor child : monitor.getSubMonitors()) {
-                    childrenTime += child.getExecutionTime();
-                }
-                double localTime = Math.max(time - childrenTime, 0);
-                return baseText + toString(time) + " [" + toString(localTime) + " local]";
+    public StyledString getStyledText(Object element) {
+        if (element instanceof Execution) {
+            Execution execution = (Execution) element;
+            
+            switch (displayMode) {
+            case NAME:
+                return new StyledString(execution.getName());
+            case TIME_TOTAL:
+                return new StyledString(timeToString(execution.getExecutionTimeIncludingChildren()));
+            case TIME_LOCAL:
+                return execution.getChildren().isEmpty()
+                        ? new StyledString("")
+                        : new StyledString(timeToString(execution.getExecutionTimeLocal()));
+            default:
+                return null;
             }
         } else {
             return null;
@@ -75,13 +87,9 @@ public class ExecutionLabelProvider extends LabelProvider {
      * @param time time in seconds
      * @return a string representation
      */
-    private String toString(final double time) {
-        if (time >= 1.0) {
-            return String.format("%1$.3f s", time);
-        } else {
-            // SUPPRESS CHECKSTYLE NEXT MagicNumber
-            return String.format("%1$.3f ms", time * 1000);
-        }
+    private String timeToString(final double time) {
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        return String.format("%1$.3f", time * 1000);
     }
 
     /**

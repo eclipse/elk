@@ -5,6 +5,7 @@ package org.eclipse.elk.core.options;
 
 import java.util.EnumSet;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -87,6 +88,26 @@ public class BoxLayouterOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> INTERACTIVE = CoreOptions.INTERACTIVE;
   
+  /**
+   * Property constant to access Node Size Minimum from within the layout algorithm code.
+   */
+  public final static IProperty<KVector> NODE_SIZE_MINIMUM = CoreOptions.NODE_SIZE_MINIMUM;
+  
+  /**
+   * Property constant to access Minimum Width from within the layout algorithm code.
+   */
+  public final static IProperty<Float> NODE_SIZE_MIN_WIDTH = CoreOptions.NODE_SIZE_MIN_WIDTH;
+  
+  /**
+   * Property constant to access Minimum Height from within the layout algorithm code.
+   */
+  public final static IProperty<Float> NODE_SIZE_MIN_HEIGHT = CoreOptions.NODE_SIZE_MIN_HEIGHT;
+  
+  /**
+   * Property constant to access Box Layout Mode from within the layout algorithm code.
+   */
+  public final static IProperty<BoxLayoutProvider.PackingMode> BOX_PACKING_MODE = CoreOptions.BOX_PACKING_MODE;
+  
   public void apply(final org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry registry) {
     registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
         "org.eclipse.elk.box",
@@ -137,6 +158,26 @@ public class BoxLayouterOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.box",
         "org.eclipse.elk.interactive",
         INTERACTIVE.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.box",
+        "org.eclipse.elk.nodeSize.minimum",
+        NODE_SIZE_MINIMUM.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.box",
+        "org.eclipse.elk.nodeSize.minWidth",
+        NODE_SIZE_MIN_WIDTH.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.box",
+        "org.eclipse.elk.nodeSize.minHeight",
+        NODE_SIZE_MIN_HEIGHT.getDefault()
+    );
+    registry.addOptionSupport(
+        "org.eclipse.elk.box",
+        "org.eclipse.elk.box.packingMode",
+        BOX_PACKING_MODE.getDefault()
     );
   }
 }

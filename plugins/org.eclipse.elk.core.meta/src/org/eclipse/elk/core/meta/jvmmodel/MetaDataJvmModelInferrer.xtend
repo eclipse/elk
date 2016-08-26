@@ -14,11 +14,6 @@ import com.google.common.collect.Iterables
 import com.google.inject.Inject
 import java.util.EnumSet
 import java.util.LinkedList
-import org.eclipse.elk.core.data.ILayoutMetaDataProvider
-import org.eclipse.elk.core.data.LayoutAlgorithmData
-import org.eclipse.elk.core.data.LayoutCategoryData
-import org.eclipse.elk.core.data.LayoutOptionData
-import org.eclipse.elk.core.data.LayoutOptionData.Type
 import org.eclipse.elk.core.meta.metaData.MdAlgorithm
 import org.eclipse.elk.core.meta.metaData.MdBundle
 import org.eclipse.elk.core.meta.metaData.MdBundleMember
@@ -28,9 +23,6 @@ import org.eclipse.elk.core.meta.metaData.MdModel
 import org.eclipse.elk.core.meta.metaData.MdOption
 import org.eclipse.elk.core.meta.metaData.MdOptionDependency
 import org.eclipse.elk.core.meta.metaData.MdOptionSupport
-import org.eclipse.elk.core.options.GraphFeature
-import org.eclipse.elk.core.util.AlgorithmFactory
-import org.eclipse.elk.core.util.IDataObject
 import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.properties.Property
 import org.eclipse.xtend2.lib.StringConcatenationClient
@@ -92,7 +84,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         // Create a class for the general option definitions to be used by clients as well as for the registration
         // method that instantiates the ILayoutMetaDataProviders
         acceptor.accept(bundle.toClass(bundle.qualifiedTargetClass)) [
-            superTypes += typeRef(ILayoutMetaDataProvider)
+            superTypes += typeRef("org.eclipse.elk.core.data.ILayoutMetaDataProvider")
             fileHeader = model.documentation
             documentation = bundle.documentation
             
@@ -122,7 +114,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             
             // 3. Implementation of ILayoutMetaDataProvider#apply(Registry)
             members += bundle.toMethod('apply', typeRef(void)) [
-                parameters += bundle.toParameter('registry', typeRef(ILayoutMetaDataProvider.Registry))
+                parameters += bundle.toParameter('registry', typeRef("org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry"))
                 body = '''
                     «registerLayoutOptions(bundle)»
                     «registerLayoutCategories(bundle)»
@@ -215,7 +207,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     
     private def StringConcatenationClient registerLayoutOptions(MdBundle bundle) '''
         «FOR option : bundle.members.getAllOptionDefinitions»
-            registry.register(new «LayoutOptionData»(
+            registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
                 «option.qualifiedName.toCodeString»,
                 «option.groups.map[name].join('.').toCodeString»,
                 «(option.label ?: option.name).shrinkWhiteSpace.toCodeString»,
@@ -223,19 +215,19 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 «IF option.defaultValue === null»null,«ELSE»«option.defaultConstantName»,«ENDIF»
                 «IF option.lowerBound === null»null,«ELSE»«option.lowerBoundConstantName»,«ENDIF»
                 «IF option.upperBound === null»null,«ELSE»«option.upperBoundConstantName»,«ENDIF»
-                «LayoutOptionData».Type.«option.optionType»,
+                org.eclipse.elk.core.data.LayoutOptionData.Type.«option.optionType»,
                 «option.optionTypeClass».class,
                 «IF option.targets.empty»
                     null,
                 «ELSE»
-                    «EnumSet».of(«FOR t : option.targets SEPARATOR ', '»«LayoutOptionData».Target.«t.toString.toUpperCase»«ENDFOR»),
+                    «EnumSet».of(«FOR t : option.targets SEPARATOR ', '»org.eclipse.elk.core.data.LayoutOptionData.Target.«t.toString.toUpperCase»«ENDFOR»),
                 «ENDIF»
                 «IF option.programmatic || option.output || option.global»
-                    «LayoutOptionData».Visibility.HIDDEN
+                    org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
                 «ELSEIF option.advanced»
-                    «LayoutOptionData».Visibility.ADVANCED
+                    org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
                 «ELSE»
-                    «LayoutOptionData».Visibility.VISIBLE
+                    org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
                 «ENDIF»
                 «IF !option.legacyIds.empty»
                     «option.legacyIds.map[', "' + it + '"'].join»
@@ -257,7 +249,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     
     private def StringConcatenationClient registerLayoutCategories(MdBundle bundle) '''
         «FOR category : bundle.members.filter(MdCategory)»
-            registry.register(new «LayoutCategoryData»(
+            registry.register(new org.eclipse.elk.core.data.LayoutCategoryData(
                 «category.qualifiedName.toCodeString»,
                 «(category.label ?: category.name).shrinkWhiteSpace.toCodeString»,
                 «category.description.shrinkWhiteSpace.toCodeString»
@@ -276,7 +268,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     // ALGORITHM METADATA PROVIDER CLASS GENERATION
 
     /**
-     * Generates code for the given algorithm'm metadata provider class.
+     * Generates code for the given algorithm's metadata provider class.
      * 
      * @param algorithm
      *            the algorithm to create one or more {@link JvmDeclaredType declared types} from.
@@ -304,11 +296,13 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         // method that instantiates the ILayoutMetaDataProviders
         acceptor.accept(algorithm.toClass(algorithm.qualifiedTargetClass)) [
             // Implement the ILayoutMetaDataProvider interface and... BE DOCUMENTED!
-            superTypes += typeRef(ILayoutMetaDataProvider)
+            superTypes += typeRef("org.eclipse.elk.core.data.ILayoutMetaDataProvider")
             fileHeader = algorithm.bundle.documentation
             documentation = algorithm.documentation
             
             // 1. Public constants for supported layout options
+            members += algorithm.toAlgorithmId
+            
             for (support : algorithm.supportedOptions) {
                 if (support.value !== null) {
                     members += support.toSupportedOptionDefault
@@ -318,7 +312,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             
             // 2. Implementation of ILayoutMetaDataProvider#apply(Registry)
             members += algorithm.toMethod('apply', typeRef(void)) [
-                parameters += algorithm.toParameter('registry', typeRef(ILayoutMetaDataProvider.Registry))
+                parameters += algorithm.toParameter('registry', typeRef("org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry"))
                 body = '''
                     «registerLayoutAlgorithm(algorithm)»
                 '''
@@ -326,6 +320,18 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         ]
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    // Algorithm ID Constant
+    
+    private def toAlgorithmId(MdAlgorithm algorithm) {
+        return algorithm.toField("ALGORITHM_ID", typeRef(String)) [
+            visibility = JvmVisibility.PUBLIC
+            static = true
+            final = true
+            initializer = '''«algorithm.qualifiedName.toCodeString»'''
+            documentation = '''The id of the «algorithm.label» algorithm.'''
+        ]
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     // Property Constants
@@ -368,18 +374,18 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     // Registration Code
     
     private def StringConcatenationClient registerLayoutAlgorithm(MdAlgorithm algorithm) '''
-        registry.register(new «LayoutAlgorithmData»(
+        registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
             «algorithm.qualifiedName.toCodeString»,
             «(algorithm.label ?: algorithm.name).shrinkWhiteSpace.toCodeString»,
             «algorithm.description.shrinkWhiteSpace.toCodeString»,
-            new «AlgorithmFactory»(«algorithm.provider».class, "«algorithm.parameter»"),
+            new org.eclipse.elk.core.util.AlgorithmFactory(«algorithm.provider».class, "«algorithm.parameter»"),
             «algorithm.category?.qualifiedName.toCodeString»,
             «algorithm.bundle?.label.toCodeString»,
             «algorithm.previewImage.toCodeString»,
             «IF algorithm.supportedFeatures.empty»
                 null
             «ELSE»
-                «EnumSet».of(«FOR f : algorithm.supportedFeatures SEPARATOR ', '»«GraphFeature».«f.toString.toUpperCase»«ENDFOR»)
+                «EnumSet».of(«FOR f : algorithm.supportedFeatures SEPARATOR ', '»org.eclipse.elk.core.options.GraphFeature.«f.toString.toUpperCase»«ENDFOR»)
             «ENDIF»
         ));
         «FOR support : algorithm.supportedOptions»
@@ -428,32 +434,33 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         groups
     }
     
-    private def Type getOptionType(MdOption option) {
+    private def String getOptionType(MdOption option) {
         val jvmType = option.type?.type
         switch jvmType {
             
             JvmPrimitiveType: switch jvmType.identifier {
-                case boolean.name:  return Type.BOOLEAN
-                case int.name:      return Type.INT
-                case float.name:    return Type.FLOAT
+                case boolean.name:  return "BOOLEAN"
+                case int.name:      return "INT"
+                case float.name:    return "FLOAT"
                 // TODO it may be better to prevent double from the start
-                case double.name:   return Type.FLOAT
+                case double.name:   return "FLOAT"
             } 
             
             JvmGenericType: switch jvmType.identifier {
-                case Boolean.canonicalName:   return Type.BOOLEAN
-                case Integer.canonicalName:   return Type.INT
-                case Float.canonicalName:     return Type.FLOAT
-                case Double.canonicalName:    return Type.FLOAT
-                case String.canonicalName:    return Type.STRING
-                case EnumSet.canonicalName:   return Type.ENUMSET
-                case jvmType.hasSupertype(IDataObject): return Type.OBJECT
+                case Boolean.canonicalName:   return "BOOLEAN"
+                case Integer.canonicalName:   return "INT"
+                case Float.canonicalName:     return "FLOAT"
+                case Double.canonicalName:    return "FLOAT"
+                case String.canonicalName:    return "STRING"
+                case EnumSet.canonicalName:   return "ENUMSET"
+//                case jvmType.hasSupertype(IDataObject): return "OBJECT"
+                default:                      return "OBJECT"
             }
             
-            JvmEnumerationType: return Type.ENUM
+            JvmEnumerationType: return "ENUM"
             
         }
-        return Type.UNDEFINED;
+        return "UNDEFINED";
     }
     
     private def boolean hasSupertype(JvmDeclaredType type, Class<?> superType) {

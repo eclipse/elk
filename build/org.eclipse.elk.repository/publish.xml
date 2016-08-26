@@ -1,34 +1,69 @@
-<project name="Eclipse Layout Kernel" default="publish" basedir=".">
+<!--
+Provides a number of targets that know what to do with built update
+sites. This includes:
+
+  * copy    - Copies a complete directory ${sourceDir} (which presumably
+              contains an update site) to a target directory ${targetDir}.
+  * purge   - Purges the target directory ${targetDir}. By removing it.
+              Completely.
+  * zipIt   - Zips the content of ${sourceDir} into a ZIP file at
+              ${targetDir}/${targetZipFileName}.
+-->
+<project name="Eclipse Layout Kernel" basedir=".">
 
     <!-- ================================================================= -->
     <!-- P R O P E R T I E S                                               -->
     <!-- ================================================================= -->
-    <property name="dir.source" value="target/repository/" />
-    <!-- The dir.target property must be set externally. -->
+    <property name="sourceDir" value="target/repository/" />
+    <property name="targetZipFileName" value="elk-nightly.zip" />
+    <!-- The targetDir property must be set externally. -->
 
 
     <!-- ================================================================= -->
-    <!-- P U B L I S H                                                     -->
+    <!-- P U R G E                                                         -->
     <!-- ================================================================= -->
-    <target name="publish"
-            description="Publishes a built update site to its download location.">
+    <target name="purge"
+            description="Purges the target directory by removing it.">
 
-        <!-- Produce a zip archive of the update site -->
-        <zip zipfile="${dir.source}/elk-nightly.zip"
-             update="false">
+        <delete dir="${targetDir}" />
+    </target>
 
-            <zipfileset dir="${dir.source}" />
-        </zip>
+
+    <!-- ================================================================= -->
+    <!-- C O P Y                                                           -->
+    <!-- ================================================================= -->
+    <target name="copy"
+            description="Copies a source directory to a target directory.">
 
         <!-- Empty the target directory -->
-        <delete dir="${dir.target}" />
-        <mkdir dir="${dir.target}" />
+        <delete dir="${targetDir}" />
+
+        <!-- Recreate the target directory. It can happen that this task
+             fails seemingly at random. To be sure, we wrap it in a retry
+             task that repeats the mkdir call up to 10 times, with a pause
+             between each pair of attempts (the retrydelay is measured in
+             milliseconds). -->
+        <retry retrycount="10" retrydelay="1000">
+            <mkdir dir="${targetDir}" />
+        </retry>
 
         <!-- Copy to target directory -->
-        <copy todir="${dir.target}">
-            <fileset dir="${dir.source}" />
+        <copy todir="${targetDir}">
+            <fileset dir="${sourceDir}" />
         </copy>
+    </target>
 
+
+    <!-- ================================================================= -->
+    <!-- Z I P   I T                                                       -->
+    <!-- ================================================================= -->
+    <target name="zipIt"
+            description="Produces a zip file from the source directory.">
+
+        <!-- Produce a zip archive of the update site -->
+        <zip zipfile="${sourceDir}/${targetZipFileName}" update="false">
+            <zipfileset dir="${sourceDir}" />
+        </zip>
     </target>
 
 </project>

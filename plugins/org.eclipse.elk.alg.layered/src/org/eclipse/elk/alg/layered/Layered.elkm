@@ -24,6 +24,7 @@ import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
+import org.eclipse.elk.core.util.ExclusiveBounds
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -129,6 +130,9 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
     supports edgeCenterLabelPlacementStrategy
     supports org.eclipse.elk.margins
+    supports edgeRouting.sloppySplineRouting
+    supports edgeRouting.sloppySplineLayerSpacing
+    supports layering.coffmanGraham.layerBound
 }
 
 
@@ -196,6 +200,7 @@ group layering {
             label "Upper Bound On Width [MinWidth Layerer]"
             description "Defines a loose upper bound on the width of the MinWidth layerer."
             default = 4
+            lowerBound = 1
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.EXP_MIN_WIDTH
@@ -203,8 +208,12 @@ group layering {
         
         advanced option upperLayerEstimationScalingFactor: int {
             label "Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
-            description "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations."
+            description
+                "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
+                haven't been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth
+                algorithm. Compensates for too high estimations."
             default = 2
+            lowerBound = 1
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.EXP_MIN_WIDTH
@@ -226,6 +235,7 @@ group layering {
             label "Max Node Promotion Iterations"
             description "Limits the number of iterations for node promotion."
             default = 0
+            lowerBound = 0
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.nodePromotionBoundary
             requires org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
@@ -233,6 +243,17 @@ group layering {
 
     }
     
+    group coffmanGraham {
+        
+        advanced option layerBound: int {
+            label "Layer Bound"
+            description "The maximum number of nodes allowed per layer."
+            default = Integer.MAX_VALUE
+            targets parents
+            requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.COFFMAN_GRAHAM
+        }
+        
+    }
 }
 
 
@@ -331,6 +352,7 @@ group nodePlacement {
             label "Linear Segments Deflection Dampening"
             description "Dampens the movement of nodes to keep the diagram from getting too large."
             default = 0.3f
+            lowerBound = ExclusiveBounds.greaterThan(0)
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening
             requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.LINEAR_SEGMENTS
@@ -353,7 +375,24 @@ group edgeRouting {
         legacyIds de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement
         requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
     }
+
+    option sloppySplineRouting: boolean {
+        label "Sloppy Spline Routing"
+        description 
+            "Use less spline control points at the start and end of an edge. Might lead to crossings edge/node overlap."
+        default = true
+        targets parents
+        requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+    }
     
+    option sloppySplineLayerSpacing: float {
+        label "Sloppy Spline Layer Spacing Factor"
+        description "Spacing factor for routing area between layers when using sloppy spline routing."
+        default = 0.4f
+        targets parents
+        requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+        requires sloppySplineRouting == true
+    }
 }
 
 
@@ -368,6 +407,7 @@ group spacing {
             "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
             an edge and a node."
         default = 0.5f
+        lowerBound = ExclusiveBounds.greaterThan(0)
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor
     }
@@ -378,6 +418,7 @@ group spacing {
             "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
             edges."
         default = 0.5f
+        lowerBound = ExclusiveBounds.greaterThan(0)
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.edgeSpacingFactor
     }
@@ -388,6 +429,7 @@ group spacing {
             "Factor by which the usual spacing is multiplied to determine the in-layer spacing between
             objects."
         default = 1
+        lowerBound = ExclusiveBounds.greaterThan(0)
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.inLayerSpacingFactor
     }
@@ -449,6 +491,7 @@ group highDegreeNodes {
         label "High Degree Node Threshold"
         description "Whether a node is considered to have a high degree."
         default = 16
+        lowerBound = 0
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.threshold
         requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
@@ -458,6 +501,7 @@ group highDegreeNodes {
         label "High Degree Node Maximum Tree Height"
         description "Maximum height of a subtree connected to a high degree node to be moved to separate layers."
         default = 5
+        lowerBound = 0
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight
         requires org.eclipse.elk.alg.layered.highDegreeNodes.treatment == true
@@ -547,11 +591,12 @@ advanced option sausageFolding: boolean {
 }
 
 advanced option thoroughness: int {
-    label "Thoroughness"
-    description "How much effort should be spent to produce a nice layout."
-    default = 7
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.thoroughness
+	label "Thoroughness"
+	description "How much effort should be spent to produce a nice layout."
+	default = 7
+    lowerBound = 1
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.thoroughness
 }
 
 advanced option unnecessaryBendpoints: boolean {

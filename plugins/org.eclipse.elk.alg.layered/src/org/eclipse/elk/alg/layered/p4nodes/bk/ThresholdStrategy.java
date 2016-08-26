@@ -250,6 +250,13 @@ public abstract class ThresholdStrategy {
                     continue;
                 }
                 
+                // in order to straighten 'e' the block represented by 'pp.free'
+                // would have to be moved. However, since that block is already 
+                // part of a straightened edge, it cannot be moved again
+                if (bal.su[bal.root[pp.free.id].id] || bal.su[bal.root[pp.free.id].id]) {
+                    continue;
+                }
+                
                 hasEdges = true;
                 
                 // if the other node does not have a position yet, ignore this edge
@@ -317,6 +324,12 @@ public abstract class ThresholdStrategy {
                             - rootPort.getPosition().y
                             - rootPort.getAnchor().y;
                 }
+                
+                // we are not allowed to move this block anymore 
+                // in order to straighten another edge
+                bal.su[bal.root[left.getNode().id].id] = true;
+                bal.su[bal.root[right.getNode().id].id] = true;
+                
                 return threshold;
             }
             return invalid;
@@ -334,7 +347,7 @@ public abstract class ThresholdStrategy {
                 // first is the node, second whether it is regarded as root
                 Postprocessable pp = postProcessablesQueue.poll();
                 Postprocessable pick = pickEdge(pp);
-                
+
                 if (pick.edge == null) {
                     continue;
                 }
@@ -387,7 +400,6 @@ public abstract class ThresholdStrategy {
                 double availableSpace = bal.checkSpaceAbove(block.getNode(), delta);
                 assert DoubleMath.fuzzyEquals(availableSpace, 0, EPSILON) || availableSpace >= 0;
                 bal.shiftBlock(block.getNode(), -availableSpace);
-                
                 return availableSpace > 0;
             } else if (delta < 0 && -delta < THRESHOLD) {
                 
@@ -396,7 +408,6 @@ public abstract class ThresholdStrategy {
                 double availableSpace = bal.checkSpaceBelow(block.getNode(), -delta);
                 assert DoubleMath.fuzzyEquals(availableSpace, 0, EPSILON) || availableSpace >= 0;
                 bal.shiftBlock(block.getNode(), availableSpace);
-                
                 return availableSpace > 0;
             }
             

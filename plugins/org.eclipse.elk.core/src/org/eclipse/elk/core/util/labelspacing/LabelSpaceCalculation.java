@@ -13,8 +13,10 @@ package org.eclipse.elk.core.util.labelspacing;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.nodespacing.Rectangle;
@@ -84,65 +86,114 @@ public final class LabelSpaceCalculation {
         }
         
         // Retrieve the node's label placement policy
-        final LabelLocation nodeLabelPlacement = LabelLocation.fromNodeLabelPlacement(
-                node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
-
+        final Set<NodeLabelPlacement> nodeLabelPlacement = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
+        final LabelLocation nodeLabelLocation = LabelLocation.fromNodeLabelPlacement(nodeLabelPlacement);
+        
         // Compute a bounding box for each location where labels should be placed.
         // The size is calculated from the size of all labels stacked vertically at that location.
-
         for (final LabelAdapter<?> label : node.getLabels()) {
             LabelLocation labelPlacement =
-                    LabelLocation.fromNodeLabelPlacement(label
-                            .getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
+                    LabelLocation.fromNodeLabelPlacement(label.getProperty(CoreOptions.NODE_LABELS_PLACEMENT));
+            
             // If no valid placement is set on the label, use the node's placement policy.
             if (labelPlacement == LabelLocation.UNDEFINED) {
-                labelPlacement = nodeLabelPlacement;
+                labelPlacement = nodeLabelLocation;
             }
+            
             // Save the location of this label in its id field for later use.
             label.setVolatileId(labelPlacement.ordinal());
+            
             // Create or retrieve the label group for the current label.
-            final Rectangle boundingBox =
-                    retrieveLabelGroupsBoundingBox(labelGroupsBoundingBoxes, labelPlacement);
+            final Rectangle boundingBox = retrieveLabelGroupsBoundingBox(labelGroupsBoundingBoxes, labelPlacement);
             boundingBox.width = Math.max(boundingBox.width, label.getSize().x);
             boundingBox.height += label.getSize().y + labelSpacing;
         }
-
+        
+        // We need to count different label placement boxes towards different kinds of insets, depending on whether
+        // or not H_PRIORITY is set on the node itself (see H_PRIORITY documentation)
+        boolean hPrio = nodeLabelPlacement.contains(NodeLabelPlacement.H_PRIORITY);
+        
         // Calculate the node label space required inside the node (only label groups on the inside
         // are relevant here).
         for (final Entry<LabelLocation, LabelGroup> entry : labelGroupsBoundingBoxes.entrySet()) {
             final Rectangle boundingBox = entry.getValue();
+            
             // From each existing label group, remove the last superfluous label spacing
             // (the mere existence of a label group implies that it contains at least one label)
             boundingBox.height -= labelSpacing;
             switch (entry.getKey()) {
-            // Top 3 label groups
             case IN_T_L:
+                if (hPrio) {
+                    insets.left = Math.max(
+                            insets.left,
+                            boundingBox.width + labelSpacing + nodeLabelInsets.left);
+                } else {
+                    insets.top = Math.max(
+                            insets.top,
+                            boundingBox.height + labelSpacing + nodeLabelInsets.top);
+                }
+                break;
+                
             case IN_T_C:
+                insets.top = Math.max(
+                        insets.top,
+                        boundingBox.height + labelSpacing + nodeLabelInsets.top);
+                break;
+                
             case IN_T_R:
-                insets.top =
-                        Math.max(insets.top, boundingBox.height
-                                + labelSpacing + nodeLabelInsets.top);
+                if (hPrio) {
+                    insets.right = Math.max(
+                            insets.right,
+                            boundingBox.width + labelSpacing + nodeLabelInsets.right);
+                } else {
+                    insets.top = Math.max(
+                            insets.top,
+                            boundingBox.height + labelSpacing + nodeLabelInsets.top);
+                }
                 break;
-            // Left label group
+                
             case IN_C_L:
-                insets.left =
-                        Math.max(insets.left, boundingBox.width
-                                + labelSpacing + nodeLabelInsets.left);
+                insets.left = Math.max(
+                        insets.left,
+                        boundingBox.width + labelSpacing + nodeLabelInsets.left);
                 break;
-            // Right label group
+                
             case IN_C_R:
-                insets.right =
-                        Math.max(insets.right, boundingBox.width
-                                + labelSpacing + nodeLabelInsets.right);
+                insets.right = Math.max(
+                        insets.right,
+                        boundingBox.width + labelSpacing + nodeLabelInsets.right);
                 break;
-            // Bottom 3 label groups
+                
             case IN_B_L:
-            case IN_B_C:
-            case IN_B_R:
-                insets.bottom =
-                        Math.max(insets.bottom, boundingBox.height
-                                + labelSpacing + nodeLabelInsets.bottom);
+                if (hPrio) {
+                    insets.left = Math.max(
+                            insets.left,
+                            boundingBox.width + labelSpacing + nodeLabelInsets.left);
+                } else {
+                    insets.bottom = Math.max(
+                            insets.bottom,
+                            boundingBox.height + labelSpacing + nodeLabelInsets.bottom);
+                }
                 break;
+                
+            case IN_B_C:
+                insets.bottom = Math.max(
+                        insets.bottom,
+                        boundingBox.height + labelSpacing + nodeLabelInsets.bottom);
+                break;
+                
+            case IN_B_R:
+                if (hPrio) {
+                    insets.right = Math.max(
+                            insets.right,
+                            boundingBox.width + labelSpacing + nodeLabelInsets.right);
+                } else {
+                    insets.bottom = Math.max(
+                            insets.bottom,
+                            boundingBox.height + labelSpacing + nodeLabelInsets.bottom);
+                }
+                break;
+                
             default:
                 // In all other cases, no specific action is required
             }

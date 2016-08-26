@@ -168,10 +168,13 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 if (nestedGraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                         GraphProperties.EXTERNAL_PORTS)) {
                     
+                    // We need the port constraints to position external ports (Issues KIPRA-1528, ELK-48) 
+                    PortConstraints portConstraints = node.getProperty(LayeredOptions.PORT_CONSTRAINTS);
+                    
                     for (LPort port : node.getPorts()) {
                         if (dummyNodeMap.get(port) == null) {
                             LNode dummyNode = LGraphUtil.createExternalPortDummy(port,
-                                    PortConstraints.FREE, port.getSide(), -port.getNetFlow(),
+                                    portConstraints, port.getSide(), -port.getNetFlow(),
                                     null, null, port.getSize(),
                                     nestedGraph.getProperty(LayeredOptions.DIRECTION), nestedGraph);
                             dummyNode.setProperty(InternalProperties.ORIGIN, port);

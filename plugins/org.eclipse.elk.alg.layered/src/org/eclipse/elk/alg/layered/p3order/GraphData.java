@@ -50,7 +50,7 @@ public class GraphData {
     private SweepCopy currentlyBestNodeAndPortOrder;
     private SweepCopy bestNodeNPortOrder;
     private ICrossingMinimizationHeuristic crossMinimizer;
-    private SweepPortDistributor portDistributor;
+    private ISweepPortDistributor portDistributor;
     private boolean processRecursively;
     private LNode parent;
     private boolean hasParent;
@@ -286,7 +286,7 @@ public class GraphData {
     /**
      * @return the portDistributor
      */
-    public SweepPortDistributor portDistributor() {
+    public ISweepPortDistributor portDistributor() {
         return portDistributor;
     }
 

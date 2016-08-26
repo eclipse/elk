@@ -20,6 +20,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 
 /**
  * A processor which determines the height for each level by setting it to the height of the tallest
@@ -54,8 +55,8 @@ public class LevelHeightProcessor implements ILayoutProcessor {
         }
 
         /** start with the root and level down by dsf */
-        if (root != null) {            
-            setNeighbors(root.getChildren(), progressMonitor);
+        if (root != null) {
+            setNeighbors(Lists.newArrayList(root), progressMonitor);
         }
 
         progressMonitor.done();

@@ -11,8 +11,9 @@
 
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
-    <tycho-version>0.21.0</tycho-version>
     <targetJdk>1.8</targetJdk>
+    <tycho-version>0.21.0</tycho-version>
+    <xtext-version>2.7.2</xtext-version>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
@@ -46,20 +47,76 @@
       </modules>
     </profile>
 
+    <!-- The Meta Data Language compiler. -->
+    <profile>
+      <id>elk-meta</id>
+
+      <modules>
+        <module>org.eclipse.elk.targetplatform</module>
+        <module>../plugins/org.eclipse.elk.graph</module>
+        <module>../plugins/org.eclipse.elk.core.meta</module>
+      </modules>
+
+      <!-- The meta data language compiler gets pushed to a Maven repository. -->
+      <distributionManagement>
+        <repository>
+          <id>elk-meta-repository</id>
+          <name>ELK Meta Data Language Compiler Repository</name>
+          <url>${elkMeta.publishUrl}</url>
+          <layout>default</layout>
+          <uniqueVersion>false</uniqueVersion>
+        </repository>
+
+        <downloadUrl>${elkMeta.repositoryUrl}</downloadUrl>
+      </distributionManagement>
+    </profile>
+
+    <!-- Activate to have the generated artifacts signed by Eclipse. -->
+    <!-- Only works if the build is run on the Eclipse infrastructure. -->
+    <profile>
+        <id>sign</id>
+
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.eclipse.cbi.maven.plugins</groupId>
+              <artifactId>eclipse-jarsigner-plugin</artifactId>
+              <version>1.1.3</version>
+              <executions>
+                <execution>
+                  <id>sign</id>
+                  <phase>verify</phase>
+                  <goals>
+                    <goal>sign</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+
   </profiles>
 
 
   <!-- Maven plugin repositories -->
   <pluginRepositories>
     <pluginRepository>
-      <id>xtend</id>
-      <layout>default</layout>
-      <url>http://build.eclipse.org/common/xtend/maven</url>
-    </pluginRepository>
-    <pluginRepository>
       <id>jboss-releases</id>
       <name>JBoss Releases Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>eclipse-cbi</id>
+      <name>Eclipse Common Build Infrastructure Maven Repository</name>
+      <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>eclipse-elk-meta</id>
+      <name>ELK Meta Data Language Compiler Maven Repository</name>
+      <url>${elkMeta.repositoryUrl}</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -116,19 +173,64 @@
           <argLine>-ea</argLine>
         </configuration>
       </plugin>
+
     </plugins>
 
     <pluginManagement>
       <plugins>
 
+        <plugin>
+          <groupId>org.eclipse.xtext</groupId>
+          <artifactId>xtext-maven-plugin</artifactId>
+          <version>${xtext-version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <languages>
+              <language>
+                <setup>org.eclipse.elk.core.meta.MetaDataStandaloneSetup</setup>
+                <outputConfigurations>
+                  <outputConfiguration>
+                    <outputDirectory>${basedir}/src-gen/</outputDirectory>
+                  </outputConfiguration>
+                </outputConfigurations>
+              </language>
+            </languages>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.eclipse.elk</groupId>
+              <artifactId>org.eclipse.elk.graph</artifactId>
+              <version>0.1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+              <groupId>org.eclipse.elk</groupId>
+              <artifactId>org.eclipse.elk.core.meta</artifactId>
+              <version>0.1.0-SNAPSHOT</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
         <!-- maven xtend plugin to tell maven how to compile xtend code -->
         <plugin>
           <groupId>org.eclipse.xtend</groupId>
           <artifactId>xtend-maven-plugin</artifactId>
-          <version>2.7.2</version>
+          <version>${xtext-version}</version>
           <configuration>
             <outputDirectory>${basedir}/xtend-gen</outputDirectory>
           </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <!-- add src-gen and xtend-gen to source-directories -->
@@ -156,7 +258,7 @@
         <!-- generated code needs cleanup too -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>2.4.1</version>
+          <version>3.0.0</version>
           <configuration>
             <filesets>
               <fileset>
@@ -168,6 +270,14 @@
             </filesets>
           </configuration>
         </plugin>
+
+        <!-- child projects may use this to be excempted from inclusion in the Maven repository -->
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-deploy-plugin</artifactId>
+           <version>2.8.2</version>
+       </plugin>
+
       </plugins>
     </pluginManagement>
   </build>

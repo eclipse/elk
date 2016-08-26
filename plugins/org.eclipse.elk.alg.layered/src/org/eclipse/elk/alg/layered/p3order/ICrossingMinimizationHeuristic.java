@@ -37,7 +37,7 @@ public interface ICrossingMinimizationHeuristic {
      * @param isForwardSweep
      *            whether we are sweeping forward or not.
      */
-    boolean setFirstLayerOrder(LNode[][] order, boolean isForwardSweep);
+    boolean setFirstLayerOrder(LNode[][] order, boolean forwardSweep);
 
     /**
      * Minimize crossings in the layer as indicated by freeLayerIndex.

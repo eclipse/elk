@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.elk.core.debug.views.execution;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -34,7 +37,8 @@ public class ExecutionView extends ViewPart {
     /** the tree viewer used to display content. */
     private TreeViewer viewer;
     /** the list of executions. */
-    private List<IElkProgressMonitor> executions = new LinkedList<IElkProgressMonitor>();
+    private List<Execution> executions = new ArrayList<>();
+    
 
     /**
      * Creates an execution view.
@@ -42,6 +46,7 @@ public class ExecutionView extends ViewPart {
     public ExecutionView() {
         super();
     }
+    
 
     /**
      * Adds an execution and updates the tree viewer of the currently active execution view.
@@ -53,7 +58,7 @@ public class ExecutionView extends ViewPart {
             public void run() {
                 ExecutionView activeView = findView();
                 if (progressMonitor != null && activeView != null) {
-                    activeView.executions.add(progressMonitor);
+                    activeView.executions.add(Execution.fromProgressMonitor(progressMonitor));
                     activeView.viewer.refresh();
                 }
             }
@@ -102,8 +107,30 @@ public class ExecutionView extends ViewPart {
         // create tree viewer
         viewer = new TreeViewer(parent);
         viewer.setContentProvider(new ExecutionContentProvider());
-        viewer.setLabelProvider(new ExecutionLabelProvider());
         viewer.setInput(executions);
+        
+        // setup tree columns
+        viewer.getTree().setHeaderVisible(true);
+        
+        TreeViewerColumn nameColumn = new TreeViewerColumn(viewer, SWT.NONE);
+        nameColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
+                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.NAME)));
+        nameColumn.getColumn().setText("Name");
+        nameColumn.getColumn().setWidth(500);
+        
+        TreeViewerColumn timeColumn = new TreeViewerColumn(viewer, SWT.NONE);
+        timeColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
+                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.TIME_TOTAL)));
+        timeColumn.getColumn().setAlignment(SWT.RIGHT);
+        timeColumn.getColumn().setText("Time [ms]");
+        timeColumn.getColumn().setWidth(100);
+        
+        TreeViewerColumn localTimeColumn = new TreeViewerColumn(viewer, SWT.NONE);
+        localTimeColumn.setLabelProvider(new DelegatingStyledCellLabelProvider(
+                new ExecutionLabelProvider(ExecutionLabelProvider.DisplayMode.TIME_LOCAL)));
+        localTimeColumn.getColumn().setAlignment(SWT.RIGHT);
+        localTimeColumn.getColumn().setText("Local Time [ms]");
+        localTimeColumn.getColumn().setWidth(100);
     }
 
     /**

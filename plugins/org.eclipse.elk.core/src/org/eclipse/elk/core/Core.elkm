@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.elk
 
-import org.eclipse.elk.core.util.FixedLayoutProvider
-import org.eclipse.elk.core.math.KVectorChain
-import org.eclipse.elk.core.math.KVector
 import java.util.EnumSet
 import org.eclipse.elk.core.^labels.ILabelManager
-import org.eclipse.elk.core.util.nodespacing.Spacing
+import org.eclipse.elk.core.math.KVector
+import org.eclipse.elk.core.math.KVectorChain
 import org.eclipse.elk.core.util.BoxLayoutProvider
+import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.util.FixedLayoutProvider
 import org.eclipse.elk.core.util.RandomLayoutProvider
 import java.util.ArrayList
+import org.eclipse.elk.core.util.nodespacing.Spacing
+import org.eclipse.elk.core.util.BoxLayoutProvider.PackingMode
 
 // Sort based on normal - advanced - programmatic - global - output and within the groups alphabetically
 // If different types are within a group, move the group to the first category 
@@ -94,6 +96,10 @@ algorithm fixed(FixedLayoutProvider) {
     metadataClass core.options.FixedLayouterOptions 
 	supports position
 	supports bendPoints
+	supports nodeSize.constraints
+	supports nodeSize.minimum
+	supports nodeSize.minWidth
+	supports nodeSize.minHeight
 	supports org.eclipse.elk.spacing.border = 15
 }
 
@@ -110,6 +116,23 @@ algorithm box(BoxLayoutProvider) {
 	supports org.eclipse.elk.nodeSize.options
 	supports aspectRatio = 1.3f
 	supports interactive
+    supports nodeSize.minimum
+    supports nodeSize.minWidth
+    supports nodeSize.minHeight
+    supports box.packingMode
+}
+
+group box {
+    option packingMode: PackingMode {
+        label "Box Layout Mode"
+        description 
+            "Configures the packing mode used by the {@link BoxLayoutProvider}.
+             If SIMPLE is not required (neither priorities are used nor the interactive mode),
+             GROUP_DEC can improve the packing and decrease the area. 
+             GROUP_MIXED and GROUP_INC may, in very specific scenarios, work better."
+        default = BoxLayoutProvider$PackingMode.SIMPLE
+        targets parents
+    }
 }
 
 algorithm random(RandomLayoutProvider) {
@@ -146,6 +169,7 @@ advanced option alignment: Alignment {
 advanced option aspectRatio: float {
 	label "Aspect Ratio"
 	description "The desired aspect ratio of the drawing, that is the quotient of width by height."
+    lowerBound = ExclusiveBounds.greaterThan(0)
 	targets parents
 	legacyIds de.cau.cs.kieler.aspectRatio
 }
@@ -227,7 +251,8 @@ group spacing {
 		description
 			"Spacing of the content of a parent node to its inner border. The inner border is the node
 			border, which is given by width and height, with subtracted insets."
-		default = 12f
+		default = 12
+        lowerBound = 0f
 		targets parents
 		legacyIds de.cau.cs.kieler.borderSpacing
 	}
@@ -236,6 +261,7 @@ group spacing {
 		label "Label Spacing"
 		description "Determines the amount of space to be left around labels."
 		default = 0
+        lowerBound = 0f
 		targets edges, nodes
 		legacyIds de.cau.cs.kieler.labelSpacing
 	}
@@ -246,6 +272,7 @@ group spacing {
 			"Overall spacing between elements. This is mostly interpreted as the minimal distance
 			between each two nodes and may also influence the spacing between edges."
 		default = 20
+        lowerBound = 0f
 		targets parents
 		legacyIds de.cau.cs.kieler.spacing
 	}
@@ -254,7 +281,8 @@ group spacing {
 		label "Port Spacing"
 		description "Spacing between ports of a given node."
 		default = 10
-		targets nodes
+        lowerBound = 0f
+		targets parents, nodes
 		legacyIds de.cau.cs.kieler.portSpacing
 	}
 	
@@ -446,12 +474,14 @@ group nodeSize {
 	deprecated advanced option minWidth: float {
 		label "Minimum Width"
 		default = 0
+        lowerBound = 0f
 		targets nodes
 	}
 	
 	deprecated advanced option minHeight: float {
 		label "Minimum Height"
 		default = 0 
+        lowerBound = 0f
 		targets nodes
 	}
 }
@@ -507,6 +537,7 @@ group font {
 	programmatic option size: int {
 		label "Font Size"
 		description "Font size used for a label."
+        lowerBound = 1
 		targets labels
 		legacyIds de.cau.cs.kieler.fontSize
 	}
@@ -549,7 +580,7 @@ programmatic option noLayout: boolean {
 		layer, use the 'Fixed Layout' algorithm for that node."
 	default = false
 	targets nodes, edges, ports, labels
-	legacyIds de.cau.cs.kieler.noLayout
+    legacyIds de.cau.cs.kieler.noLayout
 }
 
 // --- PORT
@@ -620,6 +651,7 @@ programmatic option scaleFactor: float {
 		itself and its siblings are arranged). The scaling is not reverted afterwards, so the
 		resulting layout graph contains the adjusted size and position data. This option is
 		currently not supported if 'Layout Hierarchy' is set."
+    lowerBound = ExclusiveBounds.greaterThan(0)
 	default = 1
 	targets nodes
 	legacyIds de.cau.cs.kieler.scaleFactor
@@ -693,6 +725,7 @@ global option animTimeFactor: int {
 		time. If the value is 0, the resulting time is always equal to the minimum defined by
 		'Minimal Animation Time'."
 	default = 100
+    lowerBound = 0
 	targets parents
 	legacyIds de.cau.cs.kieler.animTimeFactor
 }
@@ -711,6 +744,7 @@ global option maxAnimTime: int {
 	label "Maximal Animation Time"
 	description "The maximal time for animations, in milliseconds."
 	default = 4000
+    lowerBound = 0
 	targets parents
 	legacyIds de.cau.cs.kieler.maxAnimTime
 }
@@ -719,6 +753,7 @@ global option minAnimTime: int {
 	label "Minimal Animation Time"
 	description "The minimal time for animations, in milliseconds."
 	default = 400
+    lowerBound = 0
 	targets parents
 	legacyIds de.cau.cs.kieler.minAnimTime
 }

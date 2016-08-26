@@ -30,6 +30,7 @@ import org.eclipse.elk.alg.layered.properties.WideNodesStrategy;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.util.ExclusiveBounds;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -163,12 +164,17 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static int THOROUGHNESS_DEFAULT = 7;
   
   /**
+   * Lower bound value for {@link #THOROUGHNESS}.
+   */
+  private final static Comparable<? super Integer> THOROUGHNESS_LOWER_BOUND = Integer.valueOf(1);
+  
+  /**
    * How much effort should be spent to produce a nice layout.
    */
   public final static IProperty<Integer> THOROUGHNESS = new Property<Integer>(
             "org.eclipse.elk.layered.thoroughness",
             THOROUGHNESS_DEFAULT,
-            null,
+            THOROUGHNESS_LOWER_BOUND,
             null);
   
   /**
@@ -282,12 +288,17 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static int LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT = 4;
   
   /**
+   * Lower bound value for {@link #LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH}.
+   */
+  private final static Comparable<? super Integer> LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_LOWER_BOUND = Integer.valueOf(1);
+  
+  /**
    * Defines a loose upper bound on the width of the MinWidth layerer.
    */
   public final static IProperty<Integer> LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH = new Property<Integer>(
             "org.eclipse.elk.layered.layering.minWidth.upperBoundOnWidth",
             LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT,
-            null,
+            LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_LOWER_BOUND,
             null);
   
   /**
@@ -296,12 +307,19 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static int LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT = 2;
   
   /**
-   * Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.
+   * Lower bound value for {@link #LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR}.
+   */
+  private final static Comparable<? super Integer> LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_LOWER_BOUND = Integer.valueOf(1);
+  
+  /**
+   * Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
+   * haven't been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth
+   * algorithm. Compensates for too high estimations.
    */
   public final static IProperty<Integer> LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR = new Property<Integer>(
             "org.eclipse.elk.layered.layering.minWidth.upperLayerEstimationScalingFactor",
             LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT,
-            null,
+            LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_LOWER_BOUND,
             null);
   
   /**
@@ -324,11 +342,30 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static int LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT = 0;
   
   /**
+   * Lower bound value for {@link #LAYERING_NODE_PROMOTION_MAX_ITERATIONS}.
+   */
+  private final static Comparable<? super Integer> LAYERING_NODE_PROMOTION_MAX_ITERATIONS_LOWER_BOUND = Integer.valueOf(0);
+  
+  /**
    * Limits the number of iterations for node promotion.
    */
   public final static IProperty<Integer> LAYERING_NODE_PROMOTION_MAX_ITERATIONS = new Property<Integer>(
             "org.eclipse.elk.layered.layering.nodePromotion.maxIterations",
             LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT,
+            LAYERING_NODE_PROMOTION_MAX_ITERATIONS_LOWER_BOUND,
+            null);
+  
+  /**
+   * Default value for {@link #LAYERING_COFFMAN_GRAHAM_LAYER_BOUND}.
+   */
+  private final static int LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEFAULT = Integer.MAX_VALUE;
+  
+  /**
+   * The maximum number of nodes allowed per layer.
+   */
+  public final static IProperty<Integer> LAYERING_COFFMAN_GRAHAM_LAYER_BOUND = new Property<Integer>(
+            "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
+            LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEFAULT,
             null,
             null);
   
@@ -454,12 +491,17 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static float NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT = 0.3f;
   
   /**
+   * Lower bound value for {@link #NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING}.
+   */
+  private final static Comparable<? super Float> NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * Dampens the movement of nodes to keep the diagram from getting too large.
    */
   public final static IProperty<Float> NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING = new Property<Float>(
             "org.eclipse.elk.layered.nodePlacement.linearSegments.deflectionDampening",
             NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT,
-            null,
+            NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_LOWER_BOUND,
             null);
   
   /**
@@ -474,9 +516,42 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #EDGE_ROUTING_SLOPPY_SPLINE_ROUTING}.
+   */
+  private final static boolean EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEFAULT = true;
+  
+  /**
+   * Use less spline control points at the start and end of an edge. Might lead to crossings edge/node overlap.
+   */
+  public final static IProperty<Boolean> EDGE_ROUTING_SLOPPY_SPLINE_ROUTING = new Property<Boolean>(
+            "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+            EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEFAULT,
+            null,
+            null);
+  
+  /**
+   * Default value for {@link #EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING}.
+   */
+  private final static float EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEFAULT = 0.4f;
+  
+  /**
+   * Spacing factor for routing area between layers when using sloppy spline routing.
+   */
+  public final static IProperty<Float> EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING = new Property<Float>(
+            "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+            EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEFAULT,
+            null,
+            null);
+  
+  /**
    * Default value for {@link #SPACING_EDGE_NODE_SPACING_FACTOR}.
    */
   private final static float SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT = 0.5f;
+  
+  /**
+   * Lower bound value for {@link #SPACING_EDGE_NODE_SPACING_FACTOR}.
+   */
+  private final static Comparable<? super Float> SPACING_EDGE_NODE_SPACING_FACTOR_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
   
   /**
    * Factor by which the object spacing is multiplied to arrive at the minimal spacing between
@@ -485,7 +560,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   public final static IProperty<Float> SPACING_EDGE_NODE_SPACING_FACTOR = new Property<Float>(
             "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",
             SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT,
-            null,
+            SPACING_EDGE_NODE_SPACING_FACTOR_LOWER_BOUND,
             null);
   
   /**
@@ -494,13 +569,18 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static float SPACING_EDGE_SPACING_FACTOR_DEFAULT = 0.5f;
   
   /**
+   * Lower bound value for {@link #SPACING_EDGE_SPACING_FACTOR}.
+   */
+  private final static Comparable<? super Float> SPACING_EDGE_SPACING_FACTOR_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * Factor by which the object spacing is multiplied to arrive at the minimal spacing between
    * edges.
    */
   public final static IProperty<Float> SPACING_EDGE_SPACING_FACTOR = new Property<Float>(
             "org.eclipse.elk.layered.spacing.edgeSpacingFactor",
             SPACING_EDGE_SPACING_FACTOR_DEFAULT,
-            null,
+            SPACING_EDGE_SPACING_FACTOR_LOWER_BOUND,
             null);
   
   /**
@@ -509,13 +589,18 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static float SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT = 1;
   
   /**
+   * Lower bound value for {@link #SPACING_IN_LAYER_SPACING_FACTOR}.
+   */
+  private final static Comparable<? super Float> SPACING_IN_LAYER_SPACING_FACTOR_LOWER_BOUND = ExclusiveBounds.greaterThan(0);
+  
+  /**
    * Factor by which the usual spacing is multiplied to determine the in-layer spacing between
    * objects.
    */
   public final static IProperty<Float> SPACING_IN_LAYER_SPACING_FACTOR = new Property<Float>(
             "org.eclipse.elk.layered.spacing.inLayerSpacingFactor",
             SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT,
-            null,
+            SPACING_IN_LAYER_SPACING_FACTOR_LOWER_BOUND,
             null);
   
   /**
@@ -580,12 +665,17 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static int HIGH_DEGREE_NODES_THRESHOLD_DEFAULT = 16;
   
   /**
+   * Lower bound value for {@link #HIGH_DEGREE_NODES_THRESHOLD}.
+   */
+  private final static Comparable<? super Integer> HIGH_DEGREE_NODES_THRESHOLD_LOWER_BOUND = Integer.valueOf(0);
+  
+  /**
    * Whether a node is considered to have a high degree.
    */
   public final static IProperty<Integer> HIGH_DEGREE_NODES_THRESHOLD = new Property<Integer>(
             "org.eclipse.elk.layered.highDegreeNodes.threshold",
             HIGH_DEGREE_NODES_THRESHOLD_DEFAULT,
-            null,
+            HIGH_DEGREE_NODES_THRESHOLD_LOWER_BOUND,
             null);
   
   /**
@@ -594,12 +684,17 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static int HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT = 5;
   
   /**
+   * Lower bound value for {@link #HIGH_DEGREE_NODES_TREE_HEIGHT}.
+   */
+  private final static Comparable<? super Integer> HIGH_DEGREE_NODES_TREE_HEIGHT_LOWER_BOUND = Integer.valueOf(0);
+  
+  /**
    * Maximum height of a subtree connected to a high degree node to be moved to separate layers.
    */
   public final static IProperty<Integer> HIGH_DEGREE_NODES_TREE_HEIGHT = new Property<Integer>(
             "org.eclipse.elk.layered.highDegreeNodes.treeHeight",
             HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT,
-            null,
+            HIGH_DEGREE_NODES_TREE_HEIGHT_LOWER_BOUND,
             null);
   
   /**
@@ -633,6 +728,11 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   private final static LayeringStrategy LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEP_LAYERING_STRATEGY = LayeringStrategy.EXP_MIN_WIDTH;
   
   /**
+   * Required value for dependency between {@link #LAYERING_COFFMAN_GRAHAM_LAYER_BOUND} and {@link #LAYERING_STRATEGY}.
+   */
+  private final static LayeringStrategy LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEP_LAYERING_STRATEGY = LayeringStrategy.COFFMAN_GRAHAM;
+  
+  /**
    * Required value for dependency between {@link #NODE_PLACEMENT_BK_EDGE_STRAIGHTENING} and {@link #NODE_PLACEMENT_STRATEGY}.
    */
   private final static NodePlacementStrategy NODE_PLACEMENT_BK_EDGE_STRAIGHTENING_DEP_NODE_PLACEMENT_STRATEGY = NodePlacementStrategy.BRANDES_KOEPF;
@@ -651,6 +751,21 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
    * Required value for dependency between {@link #EDGE_ROUTING_SELF_LOOP_PLACEMENT} and {@link #EDGE_ROUTING}.
    */
   private final static EdgeRouting EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
+  
+  /**
+   * Required value for dependency between {@link #EDGE_ROUTING_SLOPPY_SPLINE_ROUTING} and {@link #EDGE_ROUTING}.
+   */
+  private final static EdgeRouting EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
+  
+  /**
+   * Required value for dependency between {@link #EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING} and {@link #EDGE_ROUTING}.
+   */
+  private final static EdgeRouting EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEP_EDGE_ROUTING = EdgeRouting.SPLINES;
+  
+  /**
+   * Required value for dependency between {@link #EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING} and {@link #EDGE_ROUTING_SLOPPY_SPLINE_ROUTING}.
+   */
+  private final static boolean EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEP_EDGE_ROUTING_SLOPPY_SPLINE_ROUTING = true;
   
   /**
    * Required value for dependency between {@link #COMPACTION_CONNECTED_COMPONENTS} and {@link #SEPARATE_CONNECTED_COMPONENTS}.
@@ -806,7 +921,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "Thoroughness",
         "How much effort should be spent to produce a nice layout.",
         THOROUGHNESS_DEFAULT,
-        null,
+        THOROUGHNESS_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
@@ -918,7 +1033,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "Upper Bound On Width [MinWidth Layerer]",
         "Defines a loose upper bound on the width of the MinWidth layerer.",
         LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_DEFAULT,
-        null,
+        LAYERING_MIN_WIDTH_UPPER_BOUND_ON_WIDTH_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
@@ -935,9 +1050,9 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered.layering.minWidth.upperLayerEstimationScalingFactor",
         "layering.minWidth",
         "Upper Layer Estimation Scaling Factor [MinWidth Layerer]",
-        "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.",
+        "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven\'t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations.",
         LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_DEFAULT,
-        null,
+        LAYERING_MIN_WIDTH_UPPER_LAYER_ESTIMATION_SCALING_FACTOR_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
@@ -970,7 +1085,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "Max Node Promotion Iterations",
         "Limits the number of iterations for node promotion.",
         LAYERING_NODE_PROMOTION_MAX_ITERATIONS_DEFAULT,
-        null,
+        LAYERING_NODE_PROMOTION_MAX_ITERATIONS_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
@@ -982,6 +1097,24 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered.layering.nodePromotion.maxIterations",
         "org.eclipse.elk.layered.layering.nodePromotion.strategy",
         null
+    );
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
+        "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
+        "layering.coffmanGraham",
+        "Layer Bound",
+        "The maximum number of nodes allowed per layer.",
+        LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEFAULT,
+        null,
+        null,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
+        Integer.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.layered.layering.coffmanGraham.layerBound",
+        "org.eclipse.elk.layered.layering.strategy",
+        LAYERING_COFFMAN_GRAHAM_LAYER_BOUND_DEP_LAYERING_STRATEGY
     );
     registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.layered.crossingMinimization.strategy",
@@ -1108,7 +1241,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "Linear Segments Deflection Dampening",
         "Dampens the movement of nodes to keep the diagram from getting too large.",
         NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_DEFAULT,
-        null,
+        NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1141,12 +1274,53 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         EDGE_ROUTING_SELF_LOOP_PLACEMENT_DEP_EDGE_ROUTING
     );
     registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+        "edgeRouting",
+        "Sloppy Spline Routing",
+        "Use less spline control points at the start and end of an edge. Might lead to crossings edge/node overlap.",
+        EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEFAULT,
+        null,
+        null,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
+        Boolean.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+        "org.eclipse.elk.edgeRouting",
+        EDGE_ROUTING_SLOPPY_SPLINE_ROUTING_DEP_EDGE_ROUTING
+    );
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+        "edgeRouting",
+        "Sloppy Spline Layer Spacing Factor",
+        "Spacing factor for routing area between layers when using sloppy spline routing.",
+        EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEFAULT,
+        null,
+        null,
+        org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
+        Float.class,
+        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
+        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
+    ));
+    registry.addDependency(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+        "org.eclipse.elk.edgeRouting",
+        EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEP_EDGE_ROUTING
+    );
+    registry.addDependency(
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing",
+        "org.eclipse.elk.layered.edgeRouting.sloppySplineRouting",
+        EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING_DEP_EDGE_ROUTING_SLOPPY_SPLINE_ROUTING
+    );
+    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "org.eclipse.elk.layered.spacing.edgeNodeSpacingFactor",
         "spacing",
         "Edge Node Spacing Factor",
         "Factor by which the object spacing is multiplied to arrive at the minimal spacing between an edge and a node.",
         SPACING_EDGE_NODE_SPACING_FACTOR_DEFAULT,
-        null,
+        SPACING_EDGE_NODE_SPACING_FACTOR_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1160,7 +1334,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "Edge Spacing Factor",
         "Factor by which the object spacing is multiplied to arrive at the minimal spacing between edges.",
         SPACING_EDGE_SPACING_FACTOR_DEFAULT,
-        null,
+        SPACING_EDGE_SPACING_FACTOR_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1174,7 +1348,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "In-layer Spacing Factor",
         "Factor by which the usual spacing is multiplied to determine the in-layer spacing between objects.",
         SPACING_IN_LAYER_SPACING_FACTOR_DEFAULT,
-        null,
+        SPACING_IN_LAYER_SPACING_FACTOR_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
@@ -1249,7 +1423,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "High Degree Node Threshold",
         "Whether a node is considered to have a high degree.",
         HIGH_DEGREE_NODES_THRESHOLD_DEFAULT,
-        null,
+        HIGH_DEGREE_NODES_THRESHOLD_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,
@@ -1268,7 +1442,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         "High Degree Node Maximum Tree Height",
         "Maximum height of a subtree connected to a high degree node to be moved to separate layers.",
         HIGH_DEGREE_NODES_TREE_HEIGHT_DEFAULT,
-        null,
+        HIGH_DEGREE_NODES_TREE_HEIGHT_LOWER_BOUND,
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.INT,
         Integer.class,

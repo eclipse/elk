@@ -29,18 +29,31 @@ The repository's structure is pretty straightforward. We only have a few folders
   Contains all the plugins ELK consists of.
 * `setups`:
   Contains our Oomph setup files.
+* `tests`:
+  Contains unit tests.
 
 
 ## Building ELK
 
 ELK is built using Maven.
-To build the update site,
-simply navigate to the `build` folder
-and type:
+To build everything,
+first navigate to the `build` folder.
+
+The build itself is split into two parts.
+We first need to build and install
+our meta data language compiler
+required during the main build,
+and then trigger the main build itself:
 
 ```
+mvn clean install -P elk-meta
 mvn clean package
 ```
 
-There are more build profiles available
-that are defined and documented in `build/pom.xml`.
+If built on the Eclipse infrastructure,
+the produced artifacts can be signed
+by calling the main build as follows:
+
+```
+mvn clean verify -P elk-update-site -P sign
+```
