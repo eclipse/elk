@@ -73,35 +73,28 @@ public class GraphData implements IInitializable {
         lGraph = graph;
         crossMinType = cMT;
         currentNodeOrder = graph.toNodeArray();
-
-        initHierarchyInformation(graph, graphs);
-
-        initAuxiliaryObjects(graph, cMT);
-
-        processRecursively = layerSweepTypeDecider.useBottomUp();
-    }
-
-    private void initHierarchyInformation(final LGraph graph, final List<GraphData> graphs) {
+        
+        // Init hierarchy information.
         parent = lGraph.getProperty(InternalProperties.PARENT_LNODE);
         hasParent = parent != null;
         parentGraphData = hasParent ? graphs.get(parent.getGraph().id) : null;
         Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         hasExternalPorts = graphProperties.contains(GraphProperties.EXTERNAL_PORTS);
         childGraphs = Lists.newArrayList();
-    }
 
-    private void initAuxiliaryObjects(final LGraph graph, final CrossMinType cMT) {
+        // Init all Objects needing initialization by graph traversal.
         initializer = new Initializer(currentNodeOrder);
         crossingsCounter = new AllCrossingsCounter(currentNodeOrder);
         portDistributor = lGraph.getProperty(InternalProperties.RANDOM).nextBoolean()
                 ? new NodeRelativePortDistributor(currentNodeOrder) : new LayerTotalPortDistributor(currentNodeOrder);
         ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(currentNodeOrder);
         layerSweepTypeDecider = new LayerSweepTypeDecider(this);
-
+        
+        // Apply Initializer.
         List<IInitializable> initializables =
                 Arrays.asList(crossingsCounter, constraintResolver, layerSweepTypeDecider, portDistributor, this);
         Initializer.init(initializables);
-
+        
         if (cMT == CrossMinType.BARYCENTER) {
             crossMinimizer = new BarycenterHeuristic(constraintResolver, graph.getProperty(InternalProperties.RANDOM),
                     (AbstractBarycenterPortDistributor) portDistributor);
@@ -109,6 +102,7 @@ public class GraphData implements IInitializable {
             crossMinimizer =
                     new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH));
         }
+        processRecursively = layerSweepTypeDecider.useBottomUp();
     }
 
     /**
