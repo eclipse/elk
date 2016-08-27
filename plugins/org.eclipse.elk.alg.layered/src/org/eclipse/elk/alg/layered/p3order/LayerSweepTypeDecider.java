@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -26,45 +25,43 @@ import org.eclipse.elk.core.options.PortSide;
 import com.google.common.collect.Iterables;
 
 /**
+ * In order to decide whether to sweep into the graph or not, we compare the number of paths to nodes whose position is
+ * decided on by random decisions to the number of paths to nodes whose position depends on cross-hierarchy edges. By
+ * calculating (pathsToRandom - pathsToHierarchical) / allPaths, this value will always be between -1 (many cross
+ * hierarchical paths) and +1 (many random paths). By setting the boundary
+ * CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, we can choose how likely it is to be hierarchical or more bottom up.
+ * 
  * @author alan
  *
  */
 public class LayerSweepTypeDecider {
 
     private GraphData graphData;
+    private NodeInfo[][] nodeInfo;
 
     /**
-     * Create Decider for which layer sweep.
+     * Create Decider to choose for each child graph between bottom-up and sweeping into the graph.
+     * 
+     * @param nodeInfo
      */
-    public LayerSweepTypeDecider(final GraphData gd) {
+    public LayerSweepTypeDecider(final GraphData gd, final NodeInfo[][] nodeInfo) {
         this.graphData = gd;
+        this.nodeInfo = nodeInfo;
     }
 
-    /*
-     * In order to decide whether to sweep into the graph or not, we compare the number of paths to nodes whose position
-     * is decided on by random decisions to the number of paths to nodes whose position depends on cross-hierarchy
-     * edges. By calculating (pathsToRandom - pathsToHierarchical) / allPaths, this value will always be between -1
-     * (many cross hierarchical paths) and +1 (many random paths). By setting the boundary
-     * CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, we can choose how likely it is to be hierarchical or more bottom
-     * up.
-     */
     /**
      * Decide whether to use bottom up or cross-hierarchical sweep method.
      * 
      * @return decision
      */
     public boolean useBottomUp() {
-        if (bottomUpForced() || rootNode() || fewerThanTwoInOutEdges()) {
+        float boundary = graphData.lGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
+        if (bottomUpForced(boundary) || rootNode() || fewerThanTwoInOutEdges()) {
             return true;
         }
+
         if (graphData.crossMinDeterministic()) {
             return false;
-        }
-
-        float boundary = graphData.lGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
-        if (boundary < -1) {
-            // TODO-alan for testing purposes. Remove!
-            return new Random().nextBoolean();
         }
 
         int pathsToRandom = 0;
@@ -165,8 +162,8 @@ public class LayerSweepTypeDecider {
         return !graphData.hasParent();
     }
 
-    private Boolean bottomUpForced() {
-        return graphData.lGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_BOTTOM_UP);
+    private boolean bottomUpForced(final float boundary) {
+        return boundary < -1;
     }
 
     private LNode targetNode(final LEdge edge) {
@@ -200,6 +197,6 @@ public class LayerSweepTypeDecider {
     }
 
     private NodeInfo nodeInfoFor(final LNode n) {
-        return graphData.nodeInfo()[n.getLayer().id][n.id];
+        return nodeInfo[n.getLayer().id][n.id];
     }
 }

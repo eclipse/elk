@@ -178,7 +178,6 @@ class KGraphImporter {
         
         Direction parentGraphDirection = lgraph.getProperty(LayeredOptions.DIRECTION);
 
-        Direction direction = lgraph.getProperty(LayeredOptions.DIRECTION);
         // Transform the node's children
         knodeQueue.addAll(kgraph.getChildren());
         while (!knodeQueue.isEmpty()) {
@@ -205,7 +204,6 @@ class KGraphImporter {
                             == HierarchyHandling.INCLUDE_CHILDREN;
 
                 if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
-                    knodeLayout.setProperty(LayeredOptions.DIRECTION, direction);
                     LGraph nestedGraph = createLGraph(knode);
                     nestedGraph.setProperty(LayeredOptions.DIRECTION, parentGraphDirection);
                     lnode.setProperty(InternalProperties.NESTED_LGRAPH, nestedGraph);

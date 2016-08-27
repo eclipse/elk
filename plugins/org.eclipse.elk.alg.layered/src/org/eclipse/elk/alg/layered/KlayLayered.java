@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -81,7 +84,7 @@ import org.eclipse.elk.core.util.Pair;
  *       algorithm until a given layout processor has finished executing (its sibling,
  *       {@link #runLayoutTestUntil(Class, boolean, TestExecutionState)}, can also stop just before a
  *       given layout processor starts executing). All of these methods resume execution from where the
- * algorithm has stopped previously.</li>
+ *       algorithm has stopped previously.</li>
  * </ol>
  * 
  * @see ILayoutPhase
@@ -184,7 +187,7 @@ public final class KlayLayered {
     /**
      * Processors can be marked as operating on the full hierarchy.
      * 
-     * All graphs are collected using a breadth first search and this list reversed, so that for each graph, all
+     * All graphs are collected using a breadth first search and this list is reversed, so that for each graph, all
      * following graphs are on the same hierarchy level or higher, i.e. closer to the parent graph. Each graph then has
      * a unique algorithm, which is comprised of a sequence of processors. The processors can vary depending on the
      * characteristics of each graph. The list of graphs and their algorithms is then traversed. If a processor is not
@@ -196,7 +199,7 @@ public final class KlayLayered {
         monitor.begin("Recursive Hierarchical layout", 2); // SUPPRESS CHECKSTYLE MagicNumber
 
         // Perform a reversed breadth first search: The graphs in the lowest hierarchy come first.
-        List<LGraph> graphs = collectAllGraphsBottomUp(lgraph);
+        Collection<LGraph> graphs = collectAllGraphsBottomUp(lgraph);
 
         // Get list of processors for each graph, since they can be different.
         // Iterators are used, so that processing of a graph can be paused and continued easily.
@@ -240,9 +243,9 @@ public final class KlayLayered {
      *            the root graph
      * @return Graphs in breadth first search in compound graphs in reverse order.
      */
-    private List<LGraph> collectAllGraphsBottomUp(final LGraph root) {
-        LinkedList<LGraph> collectedGraphs = new LinkedList<>();
-        LinkedList<LGraph> continueSearchingTheseGraphs = new LinkedList<>();
+    private Collection<LGraph> collectAllGraphsBottomUp(final LGraph root) {
+        Deque<LGraph> collectedGraphs = new ArrayDeque<>();
+        Deque<LGraph> continueSearchingTheseGraphs = new ArrayDeque<>();
         collectedGraphs.push(root);
         continueSearchingTheseGraphs.push(root);
 
@@ -265,8 +268,8 @@ public final class KlayLayered {
     }
 
     private List<Pair<LGraph, Iterator<ILayoutProcessor>>> prepareForLayout(
-            final List<LGraph> graphs) {
-        List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphAlgorithms = new LinkedList<>();
+            final Collection<LGraph> graphs) {
+        List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphAlgorithms = new ArrayList<>();
         for (LGraph g : graphs) {
             graphConfigurator.prepareGraphForLayout(g);
             List<ILayoutProcessor> processors = g.getProperty(InternalProperties.PROCESSORS);

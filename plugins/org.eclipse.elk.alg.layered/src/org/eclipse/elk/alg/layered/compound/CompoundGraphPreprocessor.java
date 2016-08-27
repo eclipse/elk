@@ -89,7 +89,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     /** map of original edges to generated cross-hierarchy edges. */
     private Multimap<LEdge, CrossHierarchyEdge> crossHierarchyMap;
     /** map of ports to their assigned dummy nodes in the nested graphs. */
-    private final Map<LPort, LNode> dummyNodeMap = Maps.newLinkedHashMap();
+    private final Map<LPort, LNode> dummyNodeMap = Maps.newHashMap();
 
     
     ////////////////////////////////////////////////////////////////////////////////////////////

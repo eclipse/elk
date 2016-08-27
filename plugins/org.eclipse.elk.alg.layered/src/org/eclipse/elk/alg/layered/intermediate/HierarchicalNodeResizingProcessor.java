@@ -49,7 +49,7 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
      */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Finish hierarchical layout", 1);
+        progressMonitor.begin("Layout inner graph in parent node.", 1);
         for (Layer layer : graph) {
             graph.getLayerlessNodes().addAll(layer.getNodes());
             layer.getNodes().clear();

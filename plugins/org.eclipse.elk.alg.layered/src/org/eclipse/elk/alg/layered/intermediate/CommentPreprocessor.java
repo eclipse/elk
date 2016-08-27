@@ -204,9 +204,8 @@ public final class CommentPreprocessor implements ILayoutProcessor {
             edge.setTarget(null);
             if (oppositePort.getDegree() == 0) {
                 oppositePort.setNode(null);
-
             }
-            removeDummyNode(oppositePort);
+            removeHierarchicalPortDummyNode(oppositePort);
         } else {
             edge.setSource(null);
             if (oppositePort.getDegree() == 0) {
@@ -216,8 +215,7 @@ public final class CommentPreprocessor implements ILayoutProcessor {
         edge.getBendPoints().clear();
     }
 
-    // TODO-alan test? Ask?
-    private void removeDummyNode(final LPort oppositePort) {
+    private void removeHierarchicalPortDummyNode(final LPort oppositePort) {
         LNode dummy = oppositePort.getProperty(InternalProperties.PORT_DUMMY);
         if (dummy != null) {
             Layer layer = dummy.getLayer();
@@ -227,5 +225,4 @@ public final class CommentPreprocessor implements ILayoutProcessor {
             }
         }
     }
-
 }

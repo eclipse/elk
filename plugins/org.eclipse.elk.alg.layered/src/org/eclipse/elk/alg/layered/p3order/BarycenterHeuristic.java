@@ -50,30 +50,8 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     private AbstractBarycenterPortDistributor portDistributor;
 
     /**
-     * Constructs a Barycenter heuristic for crossing minimization between two layers.
+     * Constructs a Barycenter heuristic for crossing minimization.
      * 
-     * @param barycenterState
-     *            the barycenter values of every node in the graph, indexed by layer.id and node.id.
-     * @param constraintResolver
-     *            the constraint resolver
-     * @param graphRandom
-     *            the random number generator
-     * @param portRanks
-     *            the array of port ranks
-     */
-    public BarycenterHeuristic(final BarycenterState[][] barycenterState,
-            final IConstraintResolver constraintResolver, final Random graphRandom,
-            final float[] portRanks) {
-        this.barycenterState = barycenterState;
-        this.constraintResolver = constraintResolver;
-        this.random = graphRandom;
-        this.portRanks = portRanks;
-    }
-
-    /**
-     * Constructs a Barycenter heuristic for crossing minimization between two layers handing over
-     * dependency of the portDistributor.
-     *
      * @param constraintResolver
      *            the constraint resolver
      * @param random
@@ -86,8 +64,11 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     public BarycenterHeuristic(final BarycenterState[][] barycenterState,
             final IConstraintResolver constraintResolver, final Random random,
             final AbstractBarycenterPortDistributor portDistributor) {
-        this(barycenterState, constraintResolver, random, portDistributor.getPortRanks());
         this.portDistributor = portDistributor;
+        this.barycenterState = barycenterState;
+        this.constraintResolver = constraintResolver;
+        this.random = random;
+        this.portRanks = portDistributor.getPortRanks();
     }
 
     /**

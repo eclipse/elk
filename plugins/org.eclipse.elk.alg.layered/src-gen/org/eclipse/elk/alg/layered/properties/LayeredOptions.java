@@ -311,11 +311,6 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
   public final static IProperty<CrossingMinimizationStrategy> CROSSING_MINIMIZATION_STRATEGY = LayeredMetaDataProvider.CROSSING_MINIMIZATION_STRATEGY;
   
   /**
-   * Property constant to access Always bottom up from within the layout algorithm code.
-   */
-  public final static IProperty<Boolean> CROSSING_MINIMIZATION_BOTTOM_UP = LayeredMetaDataProvider.CROSSING_MINIMIZATION_BOTTOM_UP;
-  
-  /**
    * Property constant to access Hierarchical Sweepiness from within the layout algorithm code.
    */
   public final static IProperty<Float> CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS = LayeredMetaDataProvider.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS;
@@ -745,11 +740,6 @@ public class LayeredOptions implements ILayoutMetaDataProvider {
         "org.eclipse.elk.layered",
         "org.eclipse.elk.layered.crossingMinimization.strategy",
         CROSSING_MINIMIZATION_STRATEGY.getDefault()
-    );
-    registry.addOptionSupport(
-        "org.eclipse.elk.layered",
-        "org.eclipse.elk.layered.crossingMinimization.bottomUp",
-        CROSSING_MINIMIZATION_BOTTOM_UP.getDefault()
     );
     registry.addOptionSupport(
         "org.eclipse.elk.layered",

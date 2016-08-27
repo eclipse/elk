@@ -86,7 +86,6 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.layering.layerConstraint
     supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
     supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
-    supports org.eclipse.elk.alg.layered.crossingMinimization.bottomUp
     supports org.eclipse.elk.alg.layered.crossingMinimization.hierarchicalSweepiness
     supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch
     supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
@@ -277,13 +276,6 @@ group crossingMinimization {
         targets parents 
     }
 
-    option bottomUp: boolean { 
-        label "Always bottom up"
-        description "Enforce bottom up layout"  
-        default = false
-        targets parents 
-    }
-    
     advanced option greedySwitch: GreedySwitchType {
         label "Greedy Switch Crossing Minimization"
         description "Greedy Switch strategy for crossing minimization."

@@ -398,20 +398,6 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
             null);
   
   /**
-   * Default value for {@link #CROSSING_MINIMIZATION_BOTTOM_UP}.
-   */
-  private final static boolean CROSSING_MINIMIZATION_BOTTOM_UP_DEFAULT = false;
-  
-  /**
-   * Enforce bottom up layout
-   */
-  public final static IProperty<Boolean> CROSSING_MINIMIZATION_BOTTOM_UP = new Property<Boolean>(
-            "org.eclipse.elk.layered.crossingMinimization.bottomUp",
-            CROSSING_MINIMIZATION_BOTTOM_UP_DEFAULT,
-            null,
-            null);
-  
-  /**
    * Default value for {@link #CROSSING_MINIMIZATION_GREEDY_SWITCH}.
    */
   private final static GreedySwitchType CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT = GreedySwitchType.ONE_SIDED;
@@ -1140,19 +1126,6 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         org.eclipse.elk.core.data.LayoutOptionData.Type.FLOAT,
         Float.class,
-        EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
-        org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
-    ));
-    registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
-        "org.eclipse.elk.layered.crossingMinimization.bottomUp",
-        "crossingMinimization",
-        "Always bottom up",
-        "Enforce bottom up layout",
-        CROSSING_MINIMIZATION_BOTTOM_UP_DEFAULT,
-        null,
-        null,
-        org.eclipse.elk.core.data.LayoutOptionData.Type.BOOLEAN,
-        Boolean.class,
         EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
         org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
     ));

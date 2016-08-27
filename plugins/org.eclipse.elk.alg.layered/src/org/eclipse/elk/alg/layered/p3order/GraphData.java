@@ -11,10 +11,7 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -27,7 +24,6 @@ import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic.BarycenterState;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepTypeDecider.NodeInfo;
 import org.eclipse.elk.alg.layered.p3order.constraints.ForsterConstraintResolver;
-import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
 import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
@@ -45,23 +41,29 @@ import com.google.common.collect.Multimap;
  *
  */
 public class GraphData {
+    /** Raw graph data. */
     private LGraph lGraph;
+
+    /** Saved node orders. */
     private LNode[][] currentNodeOrder;
     private SweepCopy currentlyBestNodeAndPortOrder;
     private SweepCopy bestNodeNPortOrder;
+
+    /** Processing type information. */
+    private boolean processRecursively;
+    private CrossMinType crossMinType;
+
+    /** Hierarchy access. */
+    private List<LGraph> childGraphs;
+    private boolean hasExternalPorts;
+    private boolean hasParent;
+    private GraphData parentGraphData;
+    private LNode parent;
+
+    /** Pre-initialized auxiliary objects. */
     private ICrossingMinimizationHeuristic crossMinimizer;
     private ISweepPortDistributor portDistributor;
-    private boolean processRecursively;
-    private LNode parent;
-    private boolean hasParent;
-    private AllCrossingsCounter crossCounter;
-    private List<LGraph> childGraphs;
-    private List<GraphData> subGraph;
-    private boolean externalPorts;
-    private CrossMinType crossMinType;
-    private Map<Integer, Integer> childNumPorts;
-    private GraphData parentGraphData;
-    private NodeInfo[][] nodeInfo;
+    private AllCrossingsCounter crossingsCounter;
 
     /**
      * Create object collecting information about a graph.
@@ -73,20 +75,22 @@ public class GraphData {
      */
     public GraphData(final LGraph graph, final CrossMinType cMT, final List<GraphData> graphs) {
         lGraph = graph;
-        crossMinType = cMT;
-        childNumPorts = new HashMap<>();
-        childGraphs = Lists.newArrayList();
-        subGraph = Lists.newArrayList();
-        externalPorts = graph.getProperty(InternalProperties.GRAPH_PROPERTIES)
-                .contains(GraphProperties.EXTERNAL_PORTS);
+
         int graphSize = graph.getLayers().size();
-        currentNodeOrder = new LNode[graphSize][];
+        crossMinType = cMT;
+        childGraphs = Lists.newArrayList();
+
+        // Per-node information for crossing counting, crossing minimization
         int[][] nodePositions = new int[graphSize][];
-        nodeInfo = new NodeInfo[graphSize][];
+        NodeInfo[][] nodeInfo = new NodeInfo[graphSize][];
+        currentNodeOrder = new LNode[graphSize][];
+        BarycenterState[][] barycenterStates = new BarycenterState[graph.getLayers().size()][];
+        Multimap<LNode, LNode> layoutUnits = LinkedHashMultimap.create();
+
+        // Per-layer information for crossings counting
         boolean[] hasNorthSouthPorts = new boolean[graphSize];
         int[] inLayerEdgeCount = new int[graphSize];
-        Multimap<LNode, LNode> layoutUnits = LinkedHashMultimap.create();
-        BarycenterState[][] barycenterStates = new BarycenterState[graph.getLayers().size()][];
+        boolean[] hasHyperEdges = new boolean[graphSize];
 
         // Visit complete graph and collect all necessary information.
         int portId = 0;
@@ -94,6 +98,7 @@ public class GraphData {
             Layer layer = graph.getLayers().get(layerIndex);
             layer.id = layerIndex;
             List<LNode> nodes = layer.getNodes();
+
             nodePositions[layerIndex] = new int[nodes.size()];
             nodeInfo[layerIndex] = new NodeInfo[nodes.size()];
             currentNodeOrder[layerIndex] = new LNode[nodes.size()];
@@ -102,6 +107,7 @@ public class GraphData {
             for (int nodeIndex = 0; nodeIndex < nodes.size(); nodeIndex++) {
                 LNode node = nodes.get(nodeIndex);
                 node.id = nodeIndex;
+
                 barycenterStates[layerIndex][nodeIndex] = new BarycenterState(node);
                 nodePositions[layerIndex][nodeIndex] = nodeIndex;
                 nodeInfo[layerIndex][nodeIndex] = new NodeInfo();
@@ -120,9 +126,15 @@ public class GraphData {
                 for (LPort port : node.getPorts()) {
                     port.id = portId++;
                     for (LEdge edge : port.getOutgoingEdges()) {
-                        if (edge.getTarget().getNode().getLayer() == edge.getSource().getNode()
-                                .getLayer()) {
+                        if (edge.getTarget().getNode().getLayer() == edge.getSource().getNode().getLayer()) {
                             inLayerEdgeCount[layerIndex]++;
+                        }
+                    }
+                    if (port.getOutgoingEdges().size() + port.getIncomingEdges().size() > 1) {
+                        if (port.getSide() == PortSide.EAST) {
+                            hasHyperEdges[layerIndex] = true;
+                        } else if (port.getSide() == PortSide.WEST && layerIndex > 0) {
+                            hasHyperEdges[layerIndex - 1] = true;
                         }
                     }
                 }
@@ -134,55 +146,49 @@ public class GraphData {
             }
         }
 
-        int[] portPos = new int[portId];
-        crossCounter =
-                new AllCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, getHyperedges(currentNodeOrder), portPos);
-        initNodePortDistributors(graph, cMT, nodePositions, layoutUnits, barycenterStates, portId, portPos);
+        crossingsCounter =
+                new AllCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, hasHyperEdges, new int[portId]);
 
-        initParentInfo(graphs, portId);
-        processRecursively = new LayerSweepTypeDecider(this).useBottomUp();
-        if (hasParent && !processRecursively) {
-            parentGraphData.subGraph.add(this);
-        }
+        portDistributor = initPortDistributor(nodePositions, portId);
+
+        initCrossingsMinimizer(graph, cMT, barycenterStates, layoutUnits, portDistributor);
+
+        initHierarchyInformation(graph, graphs, nodeInfo);
     }
 
-    private void initParentInfo(final List<GraphData> graphs, final int portId) {
+    private void initHierarchyInformation(final LGraph graph, final List<GraphData> graphs,
+            final NodeInfo[][] nodeInfo) {
         parent = lGraph.getProperty(InternalProperties.PARENT_LNODE);
         hasParent = parent != null;
         if (hasParent) {
             parentGraphData = graphs.get(parent.getGraph().id);
-            if (crossMinAlwaysImproves()) {
-                parentGraphData.childNumPorts.put(lGraph.id, portId);
-            }
+        }
+        hasExternalPorts =
+                graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS);
+        processRecursively = new LayerSweepTypeDecider(this, nodeInfo).useBottomUp();
+    }
+
+    private void initCrossingsMinimizer(final LGraph graph, final CrossMinType cMT,
+            final BarycenterState[][] barycenterStates, final Multimap<LNode, LNode> layoutUnits,
+            final ISweepPortDistributor portDist) {
+        if (cMT == CrossMinType.BARYCENTER) {
+            crossMinimizer = new BarycenterHeuristic(barycenterStates,
+                    new ForsterConstraintResolver(barycenterStates, layoutUnits),
+                    graph.getProperty(InternalProperties.RANDOM),
+                    (AbstractBarycenterPortDistributor) portDist);
+        } else {
+            crossMinimizer =
+                    new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH));
         }
     }
 
-
-    private void initNodePortDistributors(final LGraph graph, final CrossMinType cMT, final int[][] nodePositions,
-            final Multimap<LNode, LNode> layoutUnits, final BarycenterState[][] barycenterStates, final int portId,
-            final int[] portPos) {
-        Random random = graph.getProperty(InternalProperties.RANDOM);
+    private ISweepPortDistributor initPortDistributor(final int[][] nodePositions, final int portId) {
         // if (crossMinAlwaysImproves() && !childGraphs.isEmpty()) {
         // portDistributor = new GreedyPortDistributor(portPos, childNumPorts);} else //TODO-alan
-        if (random.nextBoolean()) {
-            portDistributor = new NodeRelativePortDistributor(new float[portId], nodePositions);
+        if (lGraph.getProperty(InternalProperties.RANDOM).nextBoolean()) {
+            return new NodeRelativePortDistributor(new float[portId], nodePositions);
         } else {
-            portDistributor = new LayerTotalPortDistributor(new float[portId], nodePositions);
-        }
-
-        switch (cMT) {
-        case BARYCENTER:
-            IConstraintResolver constraintResolver =
-                    new ForsterConstraintResolver(barycenterStates, layoutUnits);
-            crossMinimizer = new BarycenterHeuristic(barycenterStates, constraintResolver,
-                    random, (AbstractBarycenterPortDistributor) portDistributor);
-            break;
-        case GREEDY_SWITCH:
-            crossMinimizer =
-                    new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH));
-            break;
-        default:
-            throw new UnsupportedOperationException("This heuristic is not implemented yet.");
+            return new LayerTotalPortDistributor(new float[portId], nodePositions);
         }
     }
 
@@ -192,30 +198,6 @@ public class GraphData {
 
     private boolean hasNestedGraph(final LNode node) {
         return nestedGraphOf(node) != null;
-    }
-
-    private boolean[] getHyperedges(final LNode[][] nodeOrder) {
-        boolean[] hasHyperedges = new boolean[nodeOrder.length];
-        for (int layerIndex = 0; layerIndex < nodeOrder.length - 1; layerIndex++) {
-            LNode[] leftLayer = nodeOrder[layerIndex];
-            hasHyperedges[layerIndex] |= checkForHyperedges(leftLayer, PortSide.EAST);
-            LNode[] rightLayer = nodeOrder[layerIndex + 1];
-            hasHyperedges[layerIndex] |= checkForHyperedges(rightLayer, PortSide.WEST);
-        }
-        return hasHyperedges;
-    }
-
-    private boolean checkForHyperedges(final LNode[] layer, final PortSide side) {
-        for (LNode node : layer) {
-            for (LPort port : node.getPorts()) {
-                if (port.getSide() == side) {
-                    if (port.getOutgoingEdges().size() + port.getIncomingEdges().size() > 1) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -273,7 +255,7 @@ public class GraphData {
      * @return the crossCounter
      */
     public AllCrossingsCounter crossCounter() {
-        return crossCounter;
+        return crossingsCounter;
     }
 
     /**
@@ -312,17 +294,10 @@ public class GraphData {
     }
 
     /**
-     * @return child graphs
-     */
-    public Collection<GraphData> childGraphsToSweepInto() {
-        return subGraph;
-    }
-
-    /**
      * @return whether this graph's parent node has external ports.
      */
     public boolean hasExternalPorts() {
-        return externalPorts;
+        return hasExternalPorts;
     }
 
     @Override
@@ -334,8 +309,7 @@ public class GraphData {
      * @return Copy of node order for currently best sweep.
      */
     public SweepCopy getBestSweep() {
-        return crossMinimizer.isDeterministic() ? currentlyBestNodeAndPortOrder()
-                : bestNodeNPortOrder();
+        return crossMinimizer.isDeterministic() ? currentlyBestNodeAndPortOrder() : bestNodeNPortOrder();
     }
 
     /**
@@ -353,19 +327,13 @@ public class GraphData {
     }
 
     /**
+     * TODO-alan change double cross-min type greedy switch.
+     * 
      * @return
      */
     public boolean crossMinAlwaysImproves() {
         return crossMinType == CrossMinType.GREEDY_SWITCH
                 && !lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH).isOneSided();
-    }
-
-    /**
-     * @return
-     */
-    public NodeInfo[][] nodeInfo() {
-        // TODO Auto-generated method stub
-        return nodeInfo;
     }
 
 }

@@ -48,7 +48,6 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
     private int[][] nodePositions;
     private final float[] portBarycenter;
     private final List<LPort> inLayerPorts;
-    /** Whether to assume port order to be fixed. */
 
     /**
      * Constructs a port distributor for the given array of port ranks. All ports are required to be

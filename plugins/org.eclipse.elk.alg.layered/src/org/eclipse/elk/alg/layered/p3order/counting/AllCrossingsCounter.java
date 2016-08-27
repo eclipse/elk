@@ -14,7 +14,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Counts all crossings in a graph. <br/>
+ * Counts all crossings in a graph.
  *
  * @author alan
  */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2015 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
@@ -44,8 +43,8 @@ import com.google.common.collect.Sets;
  * be dealt with <i>bottom-up</i> or <i>hierarchically</i>.
  * 
  * <ul>
- * <li>bottom-up: the nodes of a child graph are sorted, then the order ports of hierarchy border traversing edges are
- * fixed. Then the parent graph is layouted, viewing the child graph as an atomic node.</li>
+ * <li>bottom-up: the nodes of a child graph are sorted, then the order of ports of hierarchy border traversing edges
+ * are fixed. Then the parent graph is layouted, viewing the child graph as an atomic node.</li>
  * <li>hierarchical: When reaching a node with a child graph marked as hierarchical: First the ports are sorted on the
  * outside of the graph. Then the nodes on the inside are sorted by the order of the ports. Then the child graph is
  * swept through. Then the ports of the parent node are sorted by the order of the nodes on the last layer of the child
@@ -53,6 +52,20 @@ import com.google.common.collect.Sets;
  * </ul>
  * 
  * Therefore this is a <i>hierarchical</i> processor which must have access to the root graph.
+ *
+ * <ul>
+ * <li>Kozo Sugiyama, Shojiro Tagawa, and Mitsuhiko Toda. Methods for visual understanding of hierarchical system
+ * structures. IEEE Transactions on Systems, Man and Cybernetics, 11(2):109–125, February 1981.
+ * </ul>
+ * 
+ * <dl>
+ * <dt>Precondition:</dt>
+ * <dd>The graph has a proper layering, i.e. all long edges have been splitted; all nodes have at least fixed port
+ * sides.</dd>
+ * <dt>Postcondition:</dt>
+ * <dd>The order of nodes in each layer and the order of ports in each node are optimized to yield as few edge crossings
+ * as possible</dd>
+ * </dl>
  *
  * @author alan
  *
@@ -110,7 +123,9 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
         iterateAndMinimize(graphsToSweepOn, minimizingMethod);
 
-        setGraphs();
+        for (GraphData gD : graphData) {
+            gD.getBestSweep().transferNodeAndPortOrdersToGraph(gD.lGraph());
+        }
 
         progressMonitor.done();
     }
@@ -192,8 +207,11 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             GraphData gD = countCrossingsIn.pop();
             totalCrossings +=
                     gD.crossCounter().countAllCrossings(gD.currentNodeOrder());
-            for (GraphData child : gD.childGraphsToSweepInto()) {
-                totalCrossings += countCurrentNumberOfCrossings(child);
+            for (LGraph childLGraph : gD.childGraphs()) {
+                GraphData child = graphData.get(childLGraph.id);
+                if (!child.dontSweepInto()) {
+                    totalCrossings += countCurrentNumberOfCrossings(child);
+                }
             }
         }
 
@@ -217,29 +235,29 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
         graph.portDistributor().distributePortsWhileSweeping(nodes, firstIndex(forward, length), forward);
         LNode[] firstLayer = nodes[firstIndex(forward, length)];
-        boolean improved = layoutHierarchicalNodes(firstLayer, forward, firstSweep);
+        boolean improved = sweepInHierarchicalNodes(firstLayer, forward, firstSweep);
         for (int i = firstFree(forward, length); isNotEnd(length, i, forward); i += next(forward)) {
             improved |= graph.crossMinimizer().minimizeCrossings(nodes, i, forward, firstSweep);
             graph.portDistributor().distributePortsWhileSweeping(nodes, i, forward);
-            improved |= layoutHierarchicalNodes(nodes[i], forward, firstSweep);
+            improved |= sweepInHierarchicalNodes(nodes[i], forward, firstSweep);
         }
 
         graphsWhoseNodeOrderChanged.add(graph);
         return improved;
     }
 
-    private boolean layoutHierarchicalNodes(final LNode[] layer, final boolean isForwardSweep,
+    private boolean sweepInHierarchicalNodes(final LNode[] layer, final boolean isForwardSweep,
             final boolean isFirstSweep) {
         boolean improved = false;
         for (LNode node : layer) {
             if (hasNestedGraph(node) && !graphData.get(nestedGraphOf(node).id).dontSweepInto()) {
-                improved |= layoutHierarchicalNode(isForwardSweep, node, isFirstSweep);
+                improved |= sweepInHierarchicalNode(isForwardSweep, node, isFirstSweep);
             }
         }
         return improved;
     }
 
-    private boolean layoutHierarchicalNode(final boolean isForwardSweep, final LNode node,
+    private boolean sweepInHierarchicalNode(final boolean isForwardSweep, final LNode node,
             final boolean isFirstSweep) {
         LGraph nestedLGraph = nestedGraphOf(node);
         GraphData nestedGraph = graphData.get(nestedLGraph.id);
@@ -294,22 +312,6 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         }
 
         return sortedDummies;
-    }
-
-    private void setGraphs() {
-        for (GraphData gD : graphData) {
-            SweepCopy sweep = gD.crossMinimizer().isDeterministic() ? gD.currentlyBestNodeAndPortOrder()
-                    : gD.bestNodeNPortOrder();
-            sweep.setSavedPortOrdersToNodes();
-            List<Layer> layers = gD.lGraph().getLayers();
-            for (int i = 0; i < layers.size(); i++) {
-                List<LNode> nodes = layers.get(i).getNodes();
-                for (int j = 0; j < nodes.size(); j++) {
-                    LNode node = sweep.nodes()[i][j];
-                    gD.lGraph().getLayers().get(i).getNodes().set(j, node);
-                }
-            }
-        }
     }
 
     private void saveAllNodeOrdersOfChangedGraphs() {
@@ -403,7 +405,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         return graphsToSweepOn;
     }
 
-    private boolean turnedOff(final LGraph graph) {
+    private boolean turnedOff(final LGraph graph) { // TODO-alan
         return crossMinType == CrossMinType.GREEDY_SWITCH
                 && graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) == GreedySwitchType.OFF;
     }
@@ -429,10 +431,8 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     }
 
     /**
-     * Type of crossing minimizer.
+     * Type of crossing minimizer. //TODO-alan remove duplicate with greedyswitchtype?
      * 
-     * @author alan
-     *
      */
     public enum CrossMinType {
         /** Use BarycenterHeuristic. */
@@ -451,9 +451,12 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
                             Lists.newArrayList(IntermediateProcessorStrategy.LONG_EDGE_JOINER,
                                     IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER));
     
-    /** TODO Java 8 api not supported yet. 
-     * @param <T>*/
-    private interface Consumer<T> { 
+    /**
+     * TODO Java 8 api not supported yet and Guava's Void is much much uglier.
+     * 
+     * @param <T>
+     */
+    private interface Consumer<T> {
         void accept(T input);
     }
 }

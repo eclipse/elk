@@ -178,7 +178,7 @@ public class CoreOptions implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #LAYOUT_HIERARCHY}.
    */
-  private final static boolean LAYOUT_HIERARCHY_DEFAULT = true;
+  private final static boolean LAYOUT_HIERARCHY_DEFAULT = false;
   
   /**
    * Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy
