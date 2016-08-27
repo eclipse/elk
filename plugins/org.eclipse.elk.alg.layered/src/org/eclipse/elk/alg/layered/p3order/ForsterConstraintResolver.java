@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p3order.constraints;
+package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -44,7 +44,7 @@ import com.google.common.collect.Multimap;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class ForsterConstraintResolver implements IConstraintResolver, IInitializable {
+public class ForsterConstraintResolver implements  IInitializable {
 
     /** the layout units for handling dummy nodes for north / south ports. */
     private Multimap<LNode, LNode> layoutUnits;

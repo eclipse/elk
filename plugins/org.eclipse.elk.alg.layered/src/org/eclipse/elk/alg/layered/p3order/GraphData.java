@@ -19,7 +19,6 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchHeuristic;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.constraints.ForsterConstraintResolver;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;

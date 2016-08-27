@@ -19,8 +19,6 @@ import java.util.Random;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.constraints.ForsterConstraintResolver;
-import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
 
@@ -44,7 +42,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     /** the random number generator. */
     private final Random random;
     /** the constraint resolver for ordering constraints. */
-    private IConstraintResolver constraintResolver;
+    private ForsterConstraintResolver constraintResolver;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
     private BarycenterState[][] barycenterState;
     /** The Barycenter PortDistributor is used to ask for the port ranks.*/

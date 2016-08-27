@@ -11,11 +11,14 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 
 /**
  * PortDistributor to be used while sweeping in phase 3.
- * 
+ * <p>
+ * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * </p>
  * @author alan
  *
  */
