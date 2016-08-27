@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
@@ -29,12 +30,13 @@ import com.google.common.collect.Lists;
  * 
  * @author alan TODO-alan does not work in first layer.
  */
-public class GreedyPortDistributor implements ISweepPortDistributor{
+public class GreedyPortDistributor implements ISweepPortDistributor {
 
     private CrossingsCounter crossingsCounter;
     private final int[] portPos;
     private final Map<Integer, Integer> childNumPorts;
 
+    /** Return new GreedyPortDistributor. */
     public GreedyPortDistributor(final int[] portPos, final Map<Integer, Integer> childNumPorts) {
         this.portPos = portPos;
         this.childNumPorts = childNumPorts;
@@ -180,6 +182,15 @@ public class GreedyPortDistributor implements ISweepPortDistributor{
         } else {
             return ps;
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable#initializer()
+     */
+    @Override
+    public AbstractInitializer initializer() {
+        // TODO-alan Auto-generated method stub
+        return null;
     }
 
 }

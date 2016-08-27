@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 
 /**
  * PortDistributor to be used while sweeping in phase 3.
@@ -18,7 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
  * @author alan
  *
  */
-public interface ISweepPortDistributor {
+public interface ISweepPortDistributor extends IInitializable {
 
     /**
      * Distribute ports in one layer. To be used in the context of layer sweep.

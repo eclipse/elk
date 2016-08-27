@@ -10,39 +10,29 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order.counting;
 
+import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
- * Counts all crossings in a graph.
+ * Counts all crossings in a graph. Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
  *
  * @author alan
  */
-public final class AllCrossingsCounter {
+public final class AllCrossingsCounter implements IInitializable {
 
     private CrossingsCounter crossingCounter;
     private NorthSouthEdgeAllCrossingsCounter northSouthEdgeCrossingCounter;
     private boolean[] hasHyperEdgesEastOfIndex;
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
+    private AbstractInitializer initializer;
 
-    /**
-     * Create utility class for counting all different kinds of crossings.
-     * 
-     * @param inLayerEdgeCount
-     *            Number of inlayer edges per layer for {@link HyperedgeCrossingsCounter}.
-     * @param hasNorthSouthPorts
-     *            Whether graph has north south ports in a given layer for {@link HyperedgeCrossingsCounter}.
-     * @param hasHyperEdgesEastOfIndex
-     *            Whether there are hyperedges to the right of each layer index.
-     * @param portPos
-     *            port position array to prevent frequent large array creation.
-     */
-    public AllCrossingsCounter(final int[] inLayerEdgeCount,
-            final boolean[] hasNorthSouthPorts, final boolean[] hasHyperEdgesEastOfIndex, final int[] portPos) {
-        this.hasHyperEdgesEastOfIndex = hasHyperEdgesEastOfIndex;
-        hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount, hasNorthSouthPorts, portPos);
-        northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPos);
-        crossingCounter = new CrossingsCounter(portPos);
+    /** Returns crossings counter. Must be initialized using {@link AbstractInitializer#init(java.util.List)}! */
+    public AllCrossingsCounter(final LNode[][] graph) {
+        initializer = new Initializer(graph);
     }
 
     /**
@@ -79,4 +69,60 @@ public final class AllCrossingsCounter {
         return totalCrossings;
     }
 
+    /** Defines what needs to be initialized traversing the graph. */
+    private final class Initializer extends AbstractInitializer {
+        private int[] inLayerEdgeCounts;
+        private boolean[] hasNorthSouthPorts;
+        private int nPorts;
+
+        private Initializer(final LNode[][] graph) {
+            super(graph);
+            inLayerEdgeCounts = new int[graph.length];
+            hasNorthSouthPorts = new boolean[graph.length];
+            hasHyperEdgesEastOfIndex = new boolean[graph.length];
+            nPorts = 0;
+        }
+
+        @Override
+        public void initAtNodeLevel(final int l, final int n) {
+            LNode node = getNodeOrder()[l][n];
+            hasNorthSouthPorts[l] |= node.getType() == NodeType.NORTH_SOUTH_PORT;
+        }
+
+        @Override
+        public void initAtPortLevel(final int l, final int n, final int p) {
+            LPort port = port(l, n, p);
+            port.id = nPorts++;
+            if (port.getOutgoingEdges().size() + port.getIncomingEdges().size() > 1) {
+                if (port.getSide() == PortSide.EAST) {
+                    hasHyperEdgesEastOfIndex[l] = true;
+                } else if (port.getSide() == PortSide.WEST && l > 0) {
+                    hasHyperEdgesEastOfIndex[l - 1] = true;
+                }
+            }
+        }
+
+        @Override
+        public void initAtEdgeLevel(final int l, final int n, final int p, final int e) { 
+            LEdge edge = edge(l, n, p, e);
+            LPort port = port(l, n, p);
+            if (edge.getSource() == port
+                    && edge.getSource().getNode().getLayer() == edge.getTarget().getNode().getLayer()) {
+                inLayerEdgeCounts[l]++;
+            }
+        } 
+        
+        @Override
+        public void initAfterTraversal() {
+            int[] portPos = new int[nPorts];
+            hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCounts, hasNorthSouthPorts, portPos);
+            northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPos);
+            crossingCounter = new CrossingsCounter(portPos);
+        }
+    }
+
+    @Override
+    public AbstractInitializer initializer() {
+        return initializer;
+    }
 }

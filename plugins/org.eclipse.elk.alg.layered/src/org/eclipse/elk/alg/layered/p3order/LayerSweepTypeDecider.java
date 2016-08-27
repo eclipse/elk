@@ -17,7 +17,8 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -31,22 +32,29 @@ import com.google.common.collect.Iterables;
  * hierarchical paths) and +1 (many random paths). By setting the boundary
  * CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, we can choose how likely it is to be hierarchical or more bottom up.
  * 
+ * <p>
+ * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * </p>
  * @author alan
  *
  */
-public class LayerSweepTypeDecider {
+public class LayerSweepTypeDecider implements IInitializable {
 
-    private GraphData graphData;
     private NodeInfo[][] nodeInfo;
+    private AbstractInitializer initializer;
+    private GraphData graphData;
 
     /**
-     * Create Decider to choose for each child graph between bottom-up and sweeping into the graph.
+     * Creates LayerSweepTypeDecider for deciding whether to sweep into graphs or not.
+     * <p>
+     * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+     * </p>
      * 
-     * @param nodeInfo
+     * @param currentNodeOrder
      */
-    public LayerSweepTypeDecider(final GraphData gd, final NodeInfo[][] nodeInfo) {
-        this.graphData = gd;
-        this.nodeInfo = nodeInfo;
+    public LayerSweepTypeDecider(final GraphData graphData) {
+        this.graphData = graphData;
+        initializer = new Initializer(graphData.currentNodeOrder());
     }
 
     /**
@@ -55,7 +63,8 @@ public class LayerSweepTypeDecider {
      * @return decision
      */
     public boolean useBottomUp() {
-        float boundary = graphData.lGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
+        float boundary = graphData.lGraph()
+                .getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
         if (bottomUpForced(boundary) || rootNode() || fewerThanTwoInOutEdges()) {
             return true;
         }
@@ -68,7 +77,7 @@ public class LayerSweepTypeDecider {
         int pathsToHierarchical = 0;
 
         List<LNode> nsPortDummies = new ArrayList<>();
-        for (Layer layer : graphData.lGraph()) {
+        for (LNode[] layer : graphData.currentNodeOrder()) {
             nsPortDummies.clear();
             for (LNode node : layer) {
                 if (isNorthSouthDummy(node)) {
@@ -198,5 +207,30 @@ public class LayerSweepTypeDecider {
 
     private NodeInfo nodeInfoFor(final LNode n) {
         return nodeInfo[n.getLayer().id][n.id];
+    }
+    /** Defines what needs to be initialized traversing the graph. */
+    private final class Initializer extends AbstractInitializer {
+        private Initializer(final LNode[][] graph) {
+            super(graph);
+            nodeInfo = new NodeInfo[graph.length][];
+        }
+
+        @Override
+        public void initAtLayerLevel(final int l) {
+            getNodeOrder()[l][0].getLayer().id = l;
+            nodeInfo[l] = new NodeInfo[getNodeOrder()[l].length];
+        }
+
+        @Override
+        public void initAtNodeLevel(final int l, final int n) {
+            LNode node = getNodeOrder()[l][n];
+            node.id = n;
+            nodeInfo[l][n] = new NodeInfo();
+        }
+    }
+
+    @Override
+    public AbstractInitializer initializer() {
+        return initializer;
     }
 }

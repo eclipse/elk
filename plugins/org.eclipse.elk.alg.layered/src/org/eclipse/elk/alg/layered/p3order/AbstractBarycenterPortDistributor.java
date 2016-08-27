@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
@@ -41,28 +42,25 @@ import com.google.common.collect.Lists;
  */
 public abstract class AbstractBarycenterPortDistributor implements ISweepPortDistributor {
 
+    private AbstractInitializer initializer;
+
     /** port ranks array in which the results of ranks calculation are stored. */
-    private final float[] portRanks;
+    private float[] portRanks;
     private float minBarycenter;
     private float maxBarycenter;
     private int[][] nodePositions;
-    private final float[] portBarycenter;
-    private final List<LPort> inLayerPorts;
+    private float[] portBarycenter;
+    private List<LPort> inLayerPorts;
 
     /**
      * Constructs a port distributor for the given array of port ranks. All ports are required to be
      * assigned ids in the range of the given array.
      *
-     * @param portRanks
-     *            The array of port ranks
-     * @param nodePos
-     *            array of node positions.
+     * @param graph the current order of the nodes in the graph.
+     *  
      */
-    public AbstractBarycenterPortDistributor(final float[] portRanks, final int[][] nodePos) {
-        this.portRanks = portRanks;
-        inLayerPorts = Lists.newArrayList();
-        portBarycenter = new float[portRanks.length];
-        nodePositions = nodePos;
+    public AbstractBarycenterPortDistributor(final LNode[][] graph) {
+        initializer = new Initializer(graph);
     }
 
     /**
@@ -367,4 +365,47 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
         });
     }
 
+    @Override
+    public AbstractInitializer initializer() {
+        return initializer;
+    }
+
+    /** Defines what needs to be initialized traversing the graph. */
+    private final class Initializer extends AbstractInitializer {
+        private int nPorts;
+
+        private Initializer(final LNode[][] graph) {
+            super(graph);
+            nPorts = 0;
+            inLayerPorts = Lists.newArrayList();
+            nodePositions = new int[graph.length][];
+        }
+
+        @Override
+        public void initAtLayerLevel(final int l) {
+            nodePositions[l] = new int[getNodeOrder()[l].length];
+        }
+
+        @Override
+        public void initAtNodeLevel(final int l, final int n) {
+            LNode node = getNodeOrder()[l][n];
+            node.id = n;
+            nodePositions[l][n] = n;
+        }
+
+        @Override
+        public void initAtPortLevel(final int l, final int n, final int p) {
+            port(l, n, p).id = nPorts++;
+        }
+
+        @Override
+        public void initAfterTraversal() {
+            portRanks = new float[nPorts];
+            portBarycenter = new float[nPorts];
+        }
+
+        @Override
+        public void initAtEdgeLevel(final int l, final int n, final int p, final int e) {
+        }
+    }
 }

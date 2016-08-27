@@ -29,17 +29,15 @@ import org.eclipse.elk.core.options.PortSide;
  * @kieler.rating proposed yellow by msp
  */
 public final class NodeRelativePortDistributor extends AbstractBarycenterPortDistributor {
-    
+
     /**
-     * Constructs a node-relative port distributor with the given array of ranks.
-     * All ports are required to be assigned ids in the range of the given array.
+     * Constructs a node-relative port distributor.
      * 
-     * @param portRanks
-     *            The array of port ranks
+     * @param graph
+     *            The current order of the node in the graph.
      */
-    public NodeRelativePortDistributor(final float[] portRanks,
-            final int[][] nodePositions) {
-        super(portRanks, nodePositions);
+    public NodeRelativePortDistributor(final LNode[][] graph) {
+        super(graph);
     }
 
     /**
@@ -48,7 +46,6 @@ public final class NodeRelativePortDistributor extends AbstractBarycenterPortDis
     @Override
     protected float calculatePortRanks(final LNode node, final float rankSum, final PortType type) {
         float[] portRanks = getPortRanks();
-
 
         switch (type) {
         case INPUT: {

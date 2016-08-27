@@ -34,7 +34,7 @@ public interface ICrossingMinimizationHeuristic {
      *
      * @param order
      *            the current order of the nodes.
-     * @param isForwardSweep
+     * @param forwardSweep
      *            whether we are sweeping forward or not.
      */
     boolean setFirstLayerOrder(LNode[][] order, boolean forwardSweep);

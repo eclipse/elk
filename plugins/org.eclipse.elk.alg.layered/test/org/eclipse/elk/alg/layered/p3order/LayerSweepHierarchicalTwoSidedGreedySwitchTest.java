@@ -26,11 +26,13 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.junit.Ignore;
 import org.junit.Test;
 
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF MethodName
+@Ignore
 public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCreator {
     /**
      * <pre>

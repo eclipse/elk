@@ -10,7 +10,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.LayerSweepTypeDecider.NodeInfo;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
@@ -102,25 +102,9 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
         setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f, graph);
         GraphData gd = new GraphData(innerGraph, CrossMinType.BARYCENTER,
                 Arrays.asList(new GraphData(graph, CrossMinType.BARYCENTER, null)));
-        LayerSweepTypeDecider td = new LayerSweepTypeDecider(gd, makeNodeInfos(innerGraph));
+        LayerSweepTypeDecider td = new LayerSweepTypeDecider(gd);
+        AbstractInitializer.init(Arrays.asList(td));
         assertTrue(td.useBottomUp());
-    }
-
-    /**
-     * @param innerGraph
-     * @return
-     */
-    private NodeInfo[][] makeNodeInfos(final LGraph graph) {
-        LNode[][] nodes = graph.toNodeArray();
-        NodeInfo[][] ni = new NodeInfo[nodes.length][];
-        for (int i = 0; i < nodes.length; i++) {
-            LNode[] ns = nodes[i];
-            ni[i] = new NodeInfo[ns.length];
-            for (int j = 0; j < ns.length; j++) {
-                ni[i][j] = new NodeInfo();
-            }
-        }
-        return ni;
     }
 
     /**

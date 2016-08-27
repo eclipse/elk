@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
@@ -80,7 +82,6 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Interactive crossing minimization", 1);
-        int[][] nodePositions = initNodePositions(layeredGraph);
         int portCount = 0;
         int layerIndex = 0;
         for (Layer layer : layeredGraph) {
@@ -138,30 +139,15 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
             });
 
             // TODO-alan test and ask.
-            AbstractBarycenterPortDistributor portDistributor =
-                    new NodeRelativePortDistributor(new float[portCount], nodePositions);
-            portDistributor.distributePortsWhileSweeping(layeredGraph.toNodeArray(), layerIndex++, true);
+            LNode[][] nodeOrder = layeredGraph.toNodeArray();
+            AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(nodeOrder);
+            AbstractInitializer.init(Arrays.asList(portDistributor));
+            portDistributor.distributePortsWhileSweeping(nodeOrder, layerIndex++, true);
         }
         
         monitor.done();
     }
     
-    private int[][] initNodePositions(final LGraph graph) {
-        int lp = 0;
-        int[][] pos = new int[graph.getLayers().size()][];
-        for (Layer layer : graph) {
-            layer.id = lp++;
-            pos[layer.id] = new int[layer.getNodes().size()];
-            List<LNode> nodes = layer.getNodes();
-            for (int i = 0; i < nodes.size(); i++) {
-                LNode node = nodes.get(i);
-                node.id = i;
-                pos[layer.id][node.id] = i;
-            }
-        }
-        return pos;
-    }
-
     /**
      * Determine a vertical position for the given node.
      * 

@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.layered.p3order;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -21,6 +22,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -184,7 +186,8 @@ public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftNode, rightNode);
         List<LPort> expectedPortRightNode = copyPortsInIndexOrder(rightNode, 1, 0);
         setUpIds();
-        ISweepPortDistributor portDist = new LayerTotalPortDistributor(new float[4], new int[2][1]);
+        ISweepPortDistributor portDist = new LayerTotalPortDistributor(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist));
         portDist.distributePortsWhileSweeping(getGraph().toNodeArray(), 1, true);
 
         assertThat(rightNode.getPorts(), is(expectedPortRightNode));

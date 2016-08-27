@@ -231,7 +231,7 @@ public final class LPort extends LShape {
      * 
      * @return an iterable over all connected edges.
      */
-    public Iterable<LEdge> getConnectedEdges() {
+    public List<LEdge> getConnectedEdges() {
         if (edgeListsHaveChanged) {
             connectedEdges = new ArrayList<>(incomingEdges.size() + outgoingEdges.size());
             connectedEdges.addAll(incomingEdges);

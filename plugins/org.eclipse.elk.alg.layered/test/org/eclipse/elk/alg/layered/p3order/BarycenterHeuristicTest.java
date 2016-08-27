@@ -19,8 +19,8 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
-import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic.BarycenterState;
 import org.eclipse.elk.alg.layered.p3order.constraints.ForsterConstraintResolver;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.options.PortSide;
@@ -61,12 +61,13 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         setUpIds();
         LNode[][] nodes = getGraph().toNodeArray();
 
-        float[] portRanks = new float[4];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(graph.toNodeArray());
+        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
+        AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
+
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
-        BarycenterState[][] barycenters = getBarycenterArr();
-        BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(barycenters, new MockConstraintResolver(), random, portDist);
+        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
 
         LNode[] expectedOrder = switchOrderInArray(0, 1, nodes[1]);
 
@@ -77,6 +78,7 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
 
     /**
      * <pre>
+     *  
      * *  *
      *  \/
      *  /\
@@ -95,12 +97,11 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         setUpIds();
 
         LNode[][] nodes = getGraph().toNodeArray();
-        float[] portRanks = new float[4];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(graph.toNodeArray());
+        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
-        BarycenterState[][] barycenters = getBarycenterArr();
-        BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(barycenters, new MockConstraintResolver(), random, portDist);
+        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
 
         LNode[] expectedOrder = Arrays.copyOf(nodes[0], nodes[0].length);
         LNode[] expectedSwitchedOrder = switchOrderInArray(0, 1, nodes[0]);
@@ -111,25 +112,6 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         random.setChangeBy(-0.01);
         minimizeCrossings(crossMin, nodes[0], false, true, true);
         assertThat(nodes[0], is(expectedSwitchedOrder));
-    }
-
-    private BarycenterState[][] getBarycenterArr() {
-        BarycenterState[][] barycenters = new BarycenterState[getGraph().getLayers().size()][];
-        int i = 0;
-        for (Layer l : getGraph().getLayers()) {
-            barycenters[i] = new BarycenterState[l.getNodes().size()];
-            l.id = i;
-
-            int j = 0;
-            for (LNode node : l) {
-                node.id = j;
-                barycenters[i][j] = new BarycenterState(node);
-                j++;
-            }
-
-            i++;
-        }
-        return barycenters;
     }
 
     /**
@@ -154,17 +136,14 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         setUpIds();
 
         LNode[][] nodes = getGraph().toNodeArray();
-        float[] portRanks = new float[6];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
-        portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
-        BarycenterState[][] barycenters = getBarycenterArr();
-        BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(barycenters, new MockConstraintResolver(), random, portDist);
-
         LNode[] expectedSwitchedOrder = switchOrderInArray(0, 1, nodes[2]);
         LNode[] expectedOrderSecondLayer = Arrays.copyOf(nodes[1], nodes[1].length);
 
-        portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(graph.toNodeArray());
+        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
+
+        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
         minimizeCrossings(crossMin, nodes[0], false, true, true);
 
@@ -172,31 +151,11 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         minimizeCrossings(crossMin, nodes[1], false, false, true);
         assertThat(nodes[1], is(expectedOrderSecondLayer));
 
-        portDist.calculatePortRanks(nodes[2], PortType.OUTPUT);
         minimizeCrossings(crossMin, nodes[2], false, false, true);
 
         assertThat(nodes[2], is(expectedSwitchedOrder));
     }
 
-
-    /**
-     * @return
-     */
-    private int[][] initNodePositions() {
-        int lp = 0;
-        int[][] pos = new int[graph.getLayers().size()][];
-        for (Layer layer : graph) {
-            layer.id = lp++;
-            pos[layer.id] = new int[layer.getNodes().size()];
-            List<LNode> nodes = layer.getNodes();
-            for (int i = 0; i < nodes.size(); i++) {
-                LNode node = nodes.get(i);
-                node.id = i;
-                pos[layer.id][node.id] = i;
-            }
-        }
-        return pos;
-    }
 
     /**
      * <pre>
@@ -228,12 +187,12 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
 
         LNode[][] nodes = getGraph().toNodeArray();
 
-        float[] portRanks = new float[4];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(graph.toNodeArray());
+        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
+
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
-        BarycenterState[][] barycenters = getBarycenterArr();
-        BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(barycenters, new MockConstraintResolver(), random, portDist);
+        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
 
         LNode[] expectedOrder = switchOrderInArray(0, 1, nodes[1]);
 
@@ -268,12 +227,13 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
 
         LNode[][] nodes = getGraph().toNodeArray();
 
-        float[] portRanks = new float[4];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(graph.toNodeArray());
+        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
+
         portDist.calculatePortRanks(nodes[1], PortType.INPUT);
-        BarycenterState[][] barycenters = getBarycenterArr();
         BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(barycenters, new MockConstraintResolver(), random, portDist);
+                new BarycenterHeuristic(constraintResolver, random, portDist);
 
         LNode[] expectedOrder = switchOrderInArray(0, 1, nodes[0]);
 
@@ -310,12 +270,13 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         setUpIds();
         LNode[][] nodes = getGraph().toNodeArray();
 
-        float[] portRanks = new float[5];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(graph.toNodeArray());
+        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
+
         portDist.calculatePortRanks(nodes[0], PortType.INPUT);
-        BarycenterState[][] barycenters = getBarycenterArr();
         BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(barycenters, new MockConstraintResolver(), random, portDist);
+                new BarycenterHeuristic(constraintResolver, random, portDist);
 
         LNode[] expectedOrder = getArrayInIndexOrder(nodes[1], 2, 0, 1);
 
@@ -359,15 +320,13 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
             }
         }
 
-        float[] portRanks = new float[5];
-        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(portRanks, initNodePositions());
+        NodeRelativePortDistributor portDist = new NodeRelativePortDistributor(graph.toNodeArray());
+        ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
+
         portDist.calculatePortRanks(nodes[0], PortType.INPUT);
 
-        BarycenterState[][] barycenters = getBarycenterArr();
-        ForsterConstraintResolver constraintResolver =
-                new ForsterConstraintResolver(barycenters, layoutUnits);
-        BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(barycenters, constraintResolver, random, portDist);
+        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
         LNode[] expectedOrder = getArrayInIndexOrder(nodes[1], 1, 0, 3, 2);
 
         random.setChangeBy(-0.01);

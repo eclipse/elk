@@ -19,6 +19,7 @@ import java.util.Random;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.constraints.ForsterConstraintResolver;
 import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
@@ -39,15 +40,15 @@ import com.google.common.collect.Lists;
 public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
     /** the array of port ranks. */
-    private final float[] portRanks;
+    private float[] portRanks;
     /** the random number generator. */
     private final Random random;
     /** the constraint resolver for ordering constraints. */
-    private final IConstraintResolver constraintResolver;
+    private IConstraintResolver constraintResolver;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
-    private final BarycenterState[][] barycenterState;
+    private BarycenterState[][] barycenterState;
     /** The Barycenter PortDistributor is used to ask for the port ranks.*/
-    private AbstractBarycenterPortDistributor portDistributor;
+    private final AbstractBarycenterPortDistributor portDistributor;
 
     /**
      * Constructs a Barycenter heuristic for crossing minimization.
@@ -61,13 +62,12 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
      * @param barycenterState
      *            the barycenters accessed by layer.id and node.id
      */
-    public BarycenterHeuristic(final BarycenterState[][] barycenterState,
-            final IConstraintResolver constraintResolver, final Random random,
+    public BarycenterHeuristic(final ForsterConstraintResolver constraintResolver, final Random random,
             final AbstractBarycenterPortDistributor portDistributor) {
-        this.portDistributor = portDistributor;
-        this.barycenterState = barycenterState;
         this.constraintResolver = constraintResolver;
         this.random = random;
+        this.portDistributor = portDistributor;
+        barycenterState = constraintResolver.getBarycenterStates();
         this.portRanks = portDistributor.getPortRanks();
     }
 
@@ -302,6 +302,12 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
             this.node = node;
         }
 
+        @Override
+        public String toString() {
+            return "BarycenterState [node=" + node + ", summedWeight=" + summedWeight + ", degree=" + degree
+                    + ", barycenter=" + barycenter + ", visited=" + visited + "]";
+        }
+
     }
     
     /**
@@ -387,4 +393,5 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     public boolean isDeterministic() {
         return false;
     }
+
 }

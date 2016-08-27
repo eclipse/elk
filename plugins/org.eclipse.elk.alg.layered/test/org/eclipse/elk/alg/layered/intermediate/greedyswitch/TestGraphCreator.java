@@ -23,7 +23,6 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
@@ -1230,18 +1229,6 @@ public class TestGraphCreator {
         copy[j] = first;
         copy[i] = snd;
         return copy;
-    }
-
-    protected class MockConstraintResolver implements IConstraintResolver {
-
-        public MockConstraintResolver() {
-            // TODO Auto-generated constructor stub
-        }
-
-        @Override
-        public void processConstraints(final List<LNode> nodes) {
-        }
-
     }
 
     protected LNode addExternalPortDummyNodeToLayer(final Layer layer, final LPort port) {

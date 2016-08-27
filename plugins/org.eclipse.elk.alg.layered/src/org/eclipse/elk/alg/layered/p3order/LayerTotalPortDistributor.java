@@ -27,17 +27,13 @@ import org.eclipse.elk.core.options.PortSide;
 public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistributor {
     
     /**
-     * Constructs a layer-total port distributor with the given array of ranks.
-     * All ports are required to be assigned ids in the range of the given array.
+     * Constructs a layer-total port distributor.
      * 
-     * @param portRanks
-     *            The array of port ranks comment
-     * @param nodePositions
+     * @param graph the current order of the nodes in the graph.
      */
-    public LayerTotalPortDistributor(final float[] portRanks, final int[][] nodePositions) {
-        super(portRanks, nodePositions);
+    public LayerTotalPortDistributor(final LNode[][] graph) {
+        super(graph);
     }
-    
 
     /**
      * {@inheritDoc}
