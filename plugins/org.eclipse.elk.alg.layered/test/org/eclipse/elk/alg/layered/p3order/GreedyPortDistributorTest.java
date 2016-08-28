@@ -11,23 +11,22 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author alan
@@ -41,26 +40,8 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
     // CHECKSTYLEOFF MethodName
 
     private void setUpDistributor() {
-        int nPorts = 0;
-        List<LGraph> graphs = Lists.newArrayList(graph);
-        Map<Integer,Integer> childNumPorts = new HashMap<>();
-        int gId = 0;
-        int i = 0;
-        while(i < graphs.size()) {
-            LGraph g = graphs.get(i++);
-            g.id = gId++;
-            for (Layer l : g) {
-                for (LNode n : l) {
-                    nPorts += n.getPorts().size();
-                    LGraph nestedGraph = n.getProperty(InternalProperties.NESTED_LGRAPH);
-                    if (nestedGraph != null) {
-                        graphs.add(nestedGraph);
-                    }
-                }
-            }
-            childNumPorts.put(g.id, nPorts);
-        }
-        portDist = new GreedyPortDistributor(new int[nPorts], childNumPorts);
+        portDist = new GreedyPortDistributor(graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(portDist));
     }
     /**
      * <pre>
@@ -82,8 +63,9 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         PortSide side = PortSide.WEST;
         setUpDistributor();
         portDist.initForLayers(leftNodes, getGraph().toNodeArray()[1], side, new int[4]);
-        portDist.distributePorts(rightNode, side);
+        boolean improved = portDist.distributePorts(rightNode, side);
 
+        assertTrue(improved);
         assertThat(rightNode.getPorts(), is(expectedPortOrderRightNode));
     }
 
@@ -341,6 +323,32 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         portDist.distributePortsWhileSweeping(nodeOrder, 0, false);
 
         assertThat(leftOuterNode.getPorts(), is(expectedPortOrderLeftNode));
+    }
+
+    /**
+     * <pre>
+     * ___
+     * | |--*
+     * |_|--*
+     * </pre>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void noChange() throws Exception {
+        Layer leftLayer = makeLayer(getGraph());
+        Layer rightLayer = makeLayer(getGraph());
+        LNode[] leftNodes = addNodesToLayer(1, leftLayer);
+        LNode[] rightNodes = addNodesToLayer(2, rightLayer);
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        PortSide side = PortSide.EAST;
+        LNode[][] nodeOrder = getGraph().toNodeArray();
+        setUpDistributor();
+        portDist.initForLayers(nodeOrder[0], getGraph().toNodeArray()[1], side, new int[10]);
+        boolean improved = portDist.distributePortsWhileSweeping(nodeOrder, 0, false);
+
+        assertFalse(improved);
     }
 
     private List<LPort> portsOrderedAs(final LNode rightNode, final int... indices) {

@@ -29,6 +29,8 @@ import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF MethodName
@@ -129,6 +131,42 @@ public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCre
         setUpAndMinimizeCrossings();
 
         assertThat(innerGraph.getLayers().get(0).getNodes(), is(expectedOrderLeft));
+    }
+
+    /**
+     * <pre>
+     * _________
+     * | ___   |  ___
+     * | | |--*p _| |
+     * | | |   |x | |
+     * | |_|--*p -|_|
+     * |po fix | po fix
+     * |_______|
+     * </pre>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void usingBarycenterPortDistributorWithTwoSidedGreedySwitchLeadsToEndlessLoop() throws Exception {
+        LNode leftNode = addNodeToLayer(makeLayer(graph));
+        LNode rightNode = addNodeToLayer(makeLayer(graph));
+        LPort[] leftPorts = addPortsOnSide(2, leftNode, PortSide.EAST);
+        eastWestEdgeFromTo(leftPorts[0], rightNode);
+        eastWestEdgeFromTo(leftPorts[1], rightNode);
+        setFixedOrderConstraint(rightNode);
+        LGraph innerGraph = nestedGraph(leftNode);
+        Layer[] innerLayers = makeLayers(2, innerGraph);
+        LNode innerLeftNode = addNodeToLayer(innerLayers[0]);
+        setFixedOrderConstraint(innerLeftNode);
+        LNode[] dummies = addExternalPortDummiesToLayer(innerLayers[1], leftPorts);
+        eastWestEdgeFromTo(innerLeftNode, dummies[0]);
+        eastWestEdgeFromTo(innerLeftNode, dummies[1]);
+        List<LNode> expectedOrderDummies = Lists.newArrayList(innerGraph.getLayers().get(1));
+        // sweep backward
+        random.setNextBoolean(false);
+        setUpAndMinimizeCrossings();
+
+        assertThat(innerGraph.getLayers().get(1).getNodes(), is(expectedOrderDummies));
     }
 
     private void setAllGraphsToGreedySwitchType(final LGraph graph,

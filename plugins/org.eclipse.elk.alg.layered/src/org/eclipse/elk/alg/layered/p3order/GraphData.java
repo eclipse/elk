@@ -86,8 +86,13 @@ public class GraphData implements IInitializable {
         // Init all Objects needing initialization by graph traversal.
         initializer = new Initializer(currentNodeOrder);
         crossingsCounter = new AllCrossingsCounter(currentNodeOrder);
-        portDistributor = lGraph.getProperty(InternalProperties.RANDOM).nextBoolean()
-                ? new NodeRelativePortDistributor(currentNodeOrder) : new LayerTotalPortDistributor(currentNodeOrder);
+        if (crossMinAlwaysImproves()) {
+            portDistributor = new GreedyPortDistributor(currentNodeOrder);
+        } else if ( lGraph.getProperty(InternalProperties.RANDOM).nextBoolean()) {
+            portDistributor = new NodeRelativePortDistributor(currentNodeOrder);
+        } else {
+            portDistributor = new LayerTotalPortDistributor(currentNodeOrder);
+        }
         ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(currentNodeOrder);
         layerSweepTypeDecider = new LayerSweepTypeDecider(this);
         

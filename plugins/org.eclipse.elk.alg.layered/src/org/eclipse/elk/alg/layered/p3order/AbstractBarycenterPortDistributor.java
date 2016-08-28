@@ -77,7 +77,7 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
     // Port Rank Assignment
 
     @Override
-    public void distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
+    public boolean distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
             final boolean isForwardSweep) {
         updateNodePositions(nodeOrder, currentIndex);
         LNode[] freeLayer = nodeOrder[currentIndex];
@@ -101,6 +101,9 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
                 distributePorts(node, side);
             }
         }
+        // Barycenter port distributor can not be used with always improving crossing minimization heuristics
+        // which do not need to count.
+        return false;
     }
 
     /**

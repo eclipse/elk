@@ -34,7 +34,7 @@ public interface ISweepPortDistributor extends IInitializable {
      * @param isForwardSweep
      *            whether we are sweeping forward or not.
      */
-    void distributePortsWhileSweeping(LNode[][] order, int freeLayerIndex,
+    boolean distributePortsWhileSweeping(LNode[][] order, int freeLayerIndex,
             boolean isForwardSweep);
 
 }

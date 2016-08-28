@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -33,20 +32,20 @@ import com.google.common.collect.Lists;
 public class GreedyPortDistributor implements ISweepPortDistributor {
 
     private CrossingsCounter crossingsCounter;
-    private final int[] portPos;
-    private final Map<Integer, Integer> childNumPorts;
+    private int[] portPos;
+    private AbstractInitializer initializer;
 
     /** Return new GreedyPortDistributor. */
-    public GreedyPortDistributor(final int[] portPos, final Map<Integer, Integer> childNumPorts) {
-        this.portPos = portPos;
-        this.childNumPorts = childNumPorts;
+    public GreedyPortDistributor(final LNode[][] currentNodeOrder) {
+        this.initializer = new Initializer(currentNodeOrder);
     }
 
     /**
      * Distribute ports greedily on a single node.
      */
-    public void distributePorts(final LNode node, final PortSide side) {
+    public boolean distributePorts(final LNode node, final PortSide side) {
         List<LPort> ports = portListViewInNorthSouthEastWestOrder(node, side);
+        boolean improved = false;
         boolean continueSwitching;
         do {
             continueSwitching = false;
@@ -54,23 +53,34 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
                 LPort upperPort = ports.get(i);
                 LPort lowerPort = ports.get(i + 1);
                 if (switchingDecreasesCrossings(upperPort, lowerPort, node)) {
+                    improved = true;
                     switchPorts(ports, node, i, i + 1);
                     continueSwitching = true;
                 }
             }
         } while (continueSwitching);
+        return improved;
     }
 
     @Override
-    public void distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
+    public boolean distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
             final boolean isForwardSweep) {
-        int leftIndex = isForwardSweep ? currentIndex - 1 : currentIndex;
-        int rightIndex = isForwardSweep ? currentIndex : currentIndex + 1;
-        PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
-        initForLayers(nodeOrder[leftIndex], nodeOrder[rightIndex], side, portPos);
-        for (LNode node : nodeOrder[currentIndex]) {
-            distributePorts(node, side);
+        if (isForwardSweep && currentIndex > 0) {
+            initForLayers(nodeOrder[currentIndex - 1], nodeOrder[currentIndex], PortSide.WEST, portPos);
+        } else if (!isForwardSweep && currentIndex < nodeOrder.length - 1) {
+            initForLayers(nodeOrder[currentIndex], nodeOrder[currentIndex + 1], PortSide.EAST, portPos);
+        } else {
+            // TODO-alan cache
+            crossingsCounter = new CrossingsCounter(portPos);
+            crossingsCounter.initOneSidePortPositions(nodeOrder[currentIndex],
+                    isForwardSweep ? PortSide.WEST : PortSide.EAST);
         }
+        PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
+        boolean improved = false;
+        for (LNode node : nodeOrder[currentIndex]) {
+            improved |= distributePorts(node, side);
+        }
+        return improved;
     }
 
     /**
@@ -155,13 +165,29 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable#initializer()
-     */
     @Override
     public AbstractInitializer initializer() {
-        // TODO-alan Auto-generated method stub
-        return null;
+        return initializer;
+    }
+
+    /** Defines what needs to be initialized traversing the graph. */
+    private final class Initializer extends AbstractInitializer {
+        int nPorts;
+
+        private Initializer(final LNode[][] graph) {
+            super(graph);
+            nPorts = 0;
+        }
+
+        @Override
+        public void initAtNodeLevel(final int l, final int n) {
+            LNode node = nodeOrder()[l][n];
+            nPorts += node.getPorts().size();
+        }
+
+        public void initAfterTraversal() {
+            portPos = new int[nPorts];
+        }
     }
 
 }
