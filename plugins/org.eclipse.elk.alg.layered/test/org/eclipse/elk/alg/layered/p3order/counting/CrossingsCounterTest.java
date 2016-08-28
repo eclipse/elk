@@ -250,105 +250,35 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
 
     /**
      * <pre>
-     * ___
-     * | |\/*
-     * |_|/\*
-     * </pre>
-     */
-    @Test
-    public void countCrossingsBetweenNodesOnSide_GivenSimpleCross() throws Exception {
-        LNode[] leftNodes = addNodesToLayer(1, makeLayer());
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-        counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.WEST);
-
-        assertThat(counter.countCrossingsBetweenNodesOnSide(rightNodes[0], rightNodes[1], PortSide.WEST), is(1));
-    }
-
-    /**
-     * <pre>
-     * ___
-     * | |--*
-     * |_|--*
-     * </pre>
-     *
-     */
-    @Test
-    public void countCrossingsBetweenNodesOnSide_GivenNoCross_CountsCrossingWhenSwitched() throws Exception {
-        LNode[] leftNodes = addNodesToLayer(1, makeLayer());
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-        counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.WEST);
-
-        assertThat(counter.countCrossingsBetweenNodesOnSide(rightNodes[1], rightNodes[0], PortSide.WEST), is(1));
-    }
-
-    /**
-     * <pre>
-     * *   *<- Into same port
+     * *   *
      *  \//
      *  //\
      * *   *
+     * ^Into same port
      * </pre>
      */
     @Test
-    public void countCrossingsBetweenNodesOnSide_twoEdgesIntoSamePort() {
+    public void countCrossingsBetweenPorts_twoEdgesIntoSamePort() {
         Layer leftLayer = makeLayer();
         Layer rightLayer = makeLayer();
-
+        
         LNode topLeft = addNodeToLayer(leftLayer);
         LNode bottomLeft = addNodeToLayer(leftLayer);
         LNode topRight = addNodeToLayer(rightLayer);
         LNode bottomRight = addNodeToLayer(rightLayer);
-
+        
         eastWestEdgeFromTo(topLeft, bottomRight);
-        LPort bottomLeftSecondPort = addPortOnSide(bottomLeft, PortSide.EAST);
-        LPort bottomLeftFirstPort = addPortOnSide(bottomLeft, PortSide.EAST);
-        LPort topRightFirstPort = addPortOnSide(topRight, PortSide.WEST);
-        LPort topRightSecondPort = addPortOnSide(topRight, PortSide.WEST);
-
-        addEdgeBetweenPorts(bottomLeftFirstPort, topRightFirstPort);
-        addEdgeBetweenPorts(bottomLeftSecondPort, topRightSecondPort);
+        LPort bottomLeftPort = addPortOnSide(bottomLeft, PortSide.EAST);
+        LPort topRightPort = addPortOnSide(topRight, PortSide.WEST);
+        
+        addEdgeBetweenPorts(bottomLeftPort, topRightPort);
+        addEdgeBetweenPorts(bottomLeftPort, topRightPort);
         setUpIds();
-
+        
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
         counter.initForCountingBetweenOnSide(order()[0], order()[1], PortSide.WEST);
-
-        assertThat(counter.countCrossingsBetweenNodesOnSide(topRight, bottomRight, PortSide.WEST), is(2));
-    }
-
-    /**
-     * <pre>
-     * *   *
-     *  \ /
-     * *-+-*
-     *  / \
-     * *   *
-     * </pre>
-     */
-    @Test
-    public void countCrossingsBetweenNodesOnSide_crossWithExtraEdgeInBetween() {
-        LNode[] leftNodes = addNodesToLayer(3, makeLayer());
-        LNode[] rightNodes = addNodesToLayer(3, makeLayer());
-
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[2]);
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
-        eastWestEdgeFromTo(leftNodes[2], rightNodes[0]);
-        setUpIds();
-
-        counter = new CrossingsCounter(new int[getNumPorts(order())]);
-        counter.initForCountingBetweenOnSide(order()[0], order()[1], PortSide.WEST);
-
-        assertThat(counter.countCrossingsBetweenNodesOnSide(rightNodes[0], rightNodes[1], PortSide.WEST), is(1));
-
-        counter.initForCountingBetweenOnSide(order()[0], order()[1], PortSide.EAST);
-        assertThat(counter.countCrossingsBetweenNodesOnSide(leftNodes[0], leftNodes[1], PortSide.EAST), is(1));
+        
+        assertThat(counter.countCrossingsBetweenPorts(bottomLeftPort, topLeft.getPorts().get(0)), is(2));
     }
 
     @Ignore

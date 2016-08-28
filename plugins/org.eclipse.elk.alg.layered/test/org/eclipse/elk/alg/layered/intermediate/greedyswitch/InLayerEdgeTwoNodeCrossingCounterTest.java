@@ -14,7 +14,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.Pair;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -25,7 +28,8 @@ import org.junit.Test;
  *
  */
 public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphCreator {
-    private InLayerEdgeTwoNodeCrossingCounter counter;
+    private CrossingsCounter leftCounter;
+    private CrossingsCounter rightCounter;
     private int lowerUpperCrossings;
     private int upperLowerCrossings;
     private LNode[] nodeOrder;
@@ -126,57 +130,6 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
     }
 
-    @Test
-    public void ignoresCrossingsWhenPortOrderNotSet() {
-        getInLayerEdgesCrossingsButNoFixedOrder();
-
-        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
-
-        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-
-    }
-
-    @Test
-    public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLower() {
-        getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLower();
-
-        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
-
-        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-
-    }
-
-    /**
-     *
-     * <pre>
-     *      *
-     *     /____
-     *     \|  |
-     *    //|  | <-- count between this node
-     * *-++-|  |
-     *   || |__|
-     *   ||
-     * *-++-*    <-- and this node
-     *    \\
-     *      *
-     * .
-     * </pre>
-     *
-     * Port order not fixed.
-     *
-     */
-    @Test
-    public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLowerLowerUpsideDown() {
-        getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLowerUpsideDown();
-
-        countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
-
-        assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
-        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-
-    }
 
     @Test
     public void crossingsOnBothSides() {
@@ -291,16 +244,6 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
     }
 
     @Test
-    public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
-        multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder();
-
-        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
-
-        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
-    }
-
-    @Test
     public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
         multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings();
 
@@ -327,14 +270,6 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
         countCrossingsInLayerForUpperNodeLowerNode(0, 2, 3);
         assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
-    }
-
-    @Test
-    public void noPortOrderConstraintShouldResolveCrossing() {
-        getInLayerEdgesDownwardGraphNoFixedOrder();
-        countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
-        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
-        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
     }
 
     @Test
@@ -369,8 +304,12 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
     @Test
     public void multipleEdgesIntoOnePort_ShouldNotCauseCrossing() {
         LNode[] nodes = addNodesToLayer(3, makeLayer(getGraph()));
-        addInLayerEdge(nodes[0], nodes[2], PortSide.EAST);
-        addInLayerEdge(nodes[1], nodes[2], PortSide.EAST);
+        final PortSide portSide = PortSide.EAST;
+        LPort portOne = addPortOnSide(nodes[0], portSide);
+        LPort portTwo = addPortOnSide(nodes[1], portSide);
+        LPort portThree = addPortOnSide(nodes[2], portSide);
+        addEdgeBetweenPorts(portOne, portThree);
+        addEdgeBetweenPorts(portTwo, portThree);
 
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
@@ -398,9 +337,14 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
     }
 
     private void countCrossings(final int upperNodeIndex, final int lowerNodeIndex) {
-        counter.countCrossingsBetweenNodes(nodeOrder[upperNodeIndex], nodeOrder[lowerNodeIndex]);
-        upperLowerCrossings = counter.getUpperLowerCrossings();
-        lowerUpperCrossings = counter.getLowerUpperCrossings();
+        Pair<Integer, Integer> leftCrossings = leftCounter.countInLayerCrossingsBetweenNodesInBothOrders(
+                nodeOrder[upperNodeIndex], nodeOrder[lowerNodeIndex],
+                PortSide.WEST);
+        Pair<Integer, Integer> rightCrossings = rightCounter.countInLayerCrossingsBetweenNodesInBothOrders(
+                nodeOrder[upperNodeIndex], nodeOrder[lowerNodeIndex],
+                PortSide.EAST);
+        upperLowerCrossings = leftCrossings.getFirst() + rightCrossings.getFirst();
+        lowerUpperCrossings = leftCrossings.getSecond() + rightCrossings.getSecond();
     }
 
     /**
@@ -414,7 +358,24 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
         LNode[][] currentOrder = getGraph().toNodeArray();
         nodeOrder = currentOrder[layerIndex];
         numberIdsAscendinglyIn(nodeOrder);
-        counter = InLayerEdgeTwoNodeCrossingCounter.createAssumingHierarchicalNodePortOrderFixed(nodeOrder);
+        leftCounter = new CrossingsCounter(new int[getNPorts(currentOrder)]);
+        rightCounter =  new CrossingsCounter(new int[getNPorts(currentOrder)]);
+        leftCounter.initOneSidePortPositions(nodeOrder, PortSide.WEST);
+        rightCounter.initOneSidePortPositions(nodeOrder, PortSide.EAST);
+    }
+
+    /**
+     * @param currentOrder
+     * @return
+     */
+    private int getNPorts(final LNode[][] currentOrder) {
+        int nPorts = 0;
+        for (LNode[] lNodes : currentOrder) {
+            for (LNode n : lNodes) {
+                nPorts += n.getPorts().size();
+            }
+        }
+        return nPorts;
     }
 
     private void numberIdsAscendinglyIn(final LNode[] nodes) {
@@ -424,7 +385,8 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
     }
 
     private void switchOrderAndNotifyCounter(final int indexOne, final int indexTwo) {
-        counter.notifyOfSwitch(nodeOrder[indexOne], nodeOrder[indexTwo]);
+        leftCounter.switchNodes(nodeOrder[indexOne], nodeOrder[indexTwo], PortSide.WEST);
+        rightCounter.switchNodes(nodeOrder[indexOne], nodeOrder[indexTwo], PortSide.EAST);
         LNode one = nodeOrder[indexOne];
         nodeOrder[indexOne] = nodeOrder[indexTwo];
         nodeOrder[indexTwo] = one;
