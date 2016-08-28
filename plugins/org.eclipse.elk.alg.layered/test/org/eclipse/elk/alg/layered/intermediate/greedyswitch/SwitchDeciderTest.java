@@ -267,19 +267,19 @@ public class SwitchDeciderTest {
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
         assertThat(decider.doesSwitchReduceCrossings(2, 3), is(true));
 
-        decider.notifyOfSwitch(getNodesInLayer(1).get(0), getNodesInLayer(1).get(1));
+        decider.notifyOfSwitch(currentNodeOrder[freeLayerIndex][0], currentNodeOrder[freeLayerIndex][1]);
         switchNodes(0, 1);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
         assertThat(decider.doesSwitchReduceCrossings(2, 3), is(true));
 
-        decider.notifyOfSwitch(getNodesInLayer(1).get(2), getNodesInLayer(1).get(3));
+        decider.notifyOfSwitch(currentNodeOrder[freeLayerIndex][2], currentNodeOrder[freeLayerIndex][3]);
         switchNodes(2, 3);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
         assertThat(decider.doesSwitchReduceCrossings(2, 3), is(false));
 
-        decider.notifyOfSwitch(getNodesInLayer(1).get(1), getNodesInLayer(1).get(2));
+        decider.notifyOfSwitch(currentNodeOrder[freeLayerIndex][1], currentNodeOrder[freeLayerIndex][2]);
         switchNodes(1, 2);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
@@ -367,8 +367,19 @@ public class SwitchDeciderTest {
     private SwitchDecider givenDeciderForFreeLayer(final int layerIndex, final CrossingCountSide direction) {
         freeLayerIndex = layerIndex;
         currentNodeOrder = getCurrentNodeOrder();
-        return SwitchDecider.create(layerIndex, currentNodeOrder,
-                CrossingMatrixFiller.create(greedyType, currentNodeOrder, layerIndex, direction));
+        return new SwitchDecider(layerIndex, currentNodeOrder,
+                CrossingMatrixFiller.create(greedyType, currentNodeOrder, layerIndex, direction),
+                new int[getNPorts(currentNodeOrder)]);
+    }
+
+    private int getNPorts(final LNode[][] currentOrder) {
+        int nPorts = 0;
+        for (LNode[] lNodes : currentOrder) {
+            for (LNode n : lNodes) {
+                nPorts += n.getPorts().size();
+            }
+        }
+        return nPorts;
     }
 
     private LNode[][] getCurrentNodeOrder() {

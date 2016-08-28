@@ -329,38 +329,6 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
     /**
      * <pre>
      * *   ___
-     *  \  | |==*
-     * *-+-|_|--
-     *    \    |
-     *     *---|
-     * </pre>
-     */
-    @Test
-    public void resolvesInNotTakenSweepDirectionInLayerPortOrderCrossingsAfterSwitch() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
-        LNode[] middleNodes = addNodesToLayer(2, makeLayer(getGraph()));
-        LNode rightNode = addNodeToLayer(makeLayer(getGraph()));
-
-        eastWestEdgeFromTo(middleNodes[0], rightNode);
-        eastWestEdgeFromTo(middleNodes[0], rightNode);
-        addInLayerEdge(middleNodes[0], middleNodes[1], PortSide.EAST);
-        eastWestEdgeFromTo(leftNodes[0], middleNodes[1]);
-        eastWestEdgeFromTo(leftNodes[1], middleNodes[0]);
-        setUpIds();
-
-        List<LNode> expectedNodeOrderMiddleLayer = switchOrderOfNodesInLayer(0, 1, 1);
-        List<LPort> expectedPortOrderMiddleTopNode =
-                copyPortsInIndexOrder(middleNodes[0], 2, 0, 1, 3);
-
-        setUpAndMinimizeCrossings();
-
-        assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedNodeOrderMiddleLayer));
-        assertThat(middleNodes[0].getPorts(), is(expectedPortOrderMiddleTopNode));
-    }
-
-    /**
-     * <pre>
-     * *   ___
      *  \  | |
      * *-+-| |
      *   |/|_|

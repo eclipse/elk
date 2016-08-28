@@ -42,6 +42,7 @@ public class GraphData implements IInitializable {
     private LNode[][] currentNodeOrder;
     private SweepCopy currentlyBestNodeAndPortOrder;
     private SweepCopy bestNodeNPortOrder;
+    private int nPorts;
 
     /** Processing type information. */
     private boolean processRecursively;
@@ -100,7 +101,8 @@ public class GraphData implements IInitializable {
                     (AbstractBarycenterPortDistributor) portDistributor);
         } else {
             crossMinimizer =
-                    new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH));
+                    new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH),
+                            nPorts);
         }
         processRecursively = layerSweepTypeDecider.useBottomUp();
     }
@@ -250,14 +252,17 @@ public class GraphData implements IInitializable {
     private final class Initializer extends AbstractInitializer {
         private Initializer(final LNode[][] graph) {
             super(graph);
+            nPorts = 0;
         }
 
         @Override
         public void initAtNodeLevel(final int l, final int n) {
-            LGraph nestedGraph = nodeOrder()[l][n].getProperty(InternalProperties.NESTED_LGRAPH);
+            LNode node = nodeOrder()[l][n];
+            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
             if (nestedGraph != null) {
                 childGraphs.add(nestedGraph);
             }
+            nPorts += node.getPorts().size();
         }
     }
 

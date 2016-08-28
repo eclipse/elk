@@ -13,10 +13,12 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.Pair;
 
 /**
  * This class decides whether two neighboring nodes should be switched. There are two variants:
@@ -35,7 +37,8 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public final class SwitchDecider {
     private final LNode[] freeLayer;
-    private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
+    private final CrossingsCounter leftInLayerCounter;
+    private final CrossingsCounter rightInLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final CrossingMatrixFiller crossingMatrixFiller;
 
@@ -49,10 +52,10 @@ public final class SwitchDecider {
      * @param crossingMatrixFiller
      *            the crossing matrix filler
      * @param assumeCompoundNodeFixedPortOrder
+     * @param portPositions
      */
-    private SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
-            final CrossingMatrixFiller crossingMatrixFiller,
-            final boolean assumeCompoundNodeFixedPortOrder) {
+    public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
+            final CrossingMatrixFiller crossingMatrixFiller, final int[] portPositions) {
         
         this.crossingMatrixFiller = crossingMatrixFiller;
         if (freeLayerIndex >= graph.length) {
@@ -61,10 +64,10 @@ public final class SwitchDecider {
         }
         freeLayer = graph[freeLayerIndex];
 
-        inLayerCounter =
-                assumeCompoundNodeFixedPortOrder ? InLayerEdgeTwoNodeCrossingCounter
-                        .createAssumingHierarchicalNodePortOrderFixed(freeLayer)
-                        : InLayerEdgeTwoNodeCrossingCounter.create(freeLayer);
+        leftInLayerCounter = new CrossingsCounter(portPositions);
+        rightInLayerCounter = new CrossingsCounter(portPositions);
+        leftInLayerCounter.initOneSidePortPositions(freeLayer, PortSide.WEST);
+        rightInLayerCounter.initOneSidePortPositions(freeLayer, PortSide.EAST);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
     }
 
@@ -77,7 +80,8 @@ public final class SwitchDecider {
      *            a node
      */
     public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
-        inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
+        leftInLayerCounter.switchNodes(upperNode, lowerNode, PortSide.WEST);
+        rightInLayerCounter.switchNodes(upperNode, lowerNode, PortSide.EAST);
     }
 
     /**
@@ -93,15 +97,18 @@ public final class SwitchDecider {
         LNode upperNode = freeLayer[upperNodeIndex];
         LNode lowerNode = freeLayer[lowerNodeIndex];
 
-        inLayerCounter.countCrossingsBetweenNodes(upperNode, lowerNode);
+        Pair<Integer, Integer> leftInlayer =
+                leftInLayerCounter.countInLayerCrossingsBetweenNodesInBothOrders(upperNode, lowerNode, PortSide.WEST);
+        Pair<Integer, Integer> rightInlayer =
+                rightInLayerCounter.countInLayerCrossingsBetweenNodesInBothOrders(upperNode, lowerNode, PortSide.EAST);
         northSouthCounter.countCrossings(upperNode, lowerNode);
         int upperLowerCrossings =
                 crossingMatrixFiller.getCrossingMatrixEntry(upperNode, lowerNode)
-                        + inLayerCounter.getUpperLowerCrossings()
+                        + leftInlayer.getFirst() + rightInlayer.getFirst()
                         + northSouthCounter.getUpperLowerCrossings();
         int lowerUpperCrossings =
                 crossingMatrixFiller.getCrossingMatrixEntry(lowerNode, upperNode)
-                        + inLayerCounter.getLowerUpperCrossings()
+                        + leftInlayer.getSecond() + rightInlayer.getSecond()
                         + northSouthCounter.getLowerUpperCrossings();
 
         return upperLowerCrossings > lowerUpperCrossings;
@@ -202,37 +209,4 @@ public final class SwitchDecider {
         EAST
     }
 
-
-    /**
-     * Creates SwitchDecider not assuming fixed port order. Crossings between edges connected to
-     * node with free port order are assumed to be non-existent. Note that this is not always true.
-     * 
-     * @param freeLayerIndex
-     *            Index of layer being reordered.
-     * @param graph
-     *            Node order of complete graph
-     * @param crossingMatrixFiller
-     *            The filler for the crossing matrix
-     * @return the Decider.
-     */
-    public static SwitchDecider create(final int freeLayerIndex, final LNode[][] graph,
-            final CrossingMatrixFiller crossingMatrixFiller) {
-        return new SwitchDecider(freeLayerIndex, graph, crossingMatrixFiller, false);
-    }
-
-    /**
-     * Creates SwitchDecider assuming fixed port order.
-     * 
-     * @param freeLayerIndex
-     *            Index of layer being reordered.
-     * @param graph
-     *            Node order of complete graph
-     * @param crossingMatrixFiller
-     *            The filler for the crossing matrix
-     * @return the Decider.
-     */
-    public static SwitchDecider createAssumingFixedPortOrder(final int freeLayerIndex,
-            final LNode[][] graph, final CrossingMatrixFiller crossingMatrixFiller) {
-        return new SwitchDecider(freeLayerIndex, graph, crossingMatrixFiller, true);
-    }
 }

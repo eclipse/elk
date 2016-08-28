@@ -40,14 +40,17 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
     private final GreedySwitchType greedySwitchType;
     private LNode[][] currentNodeOrder;
     private SwitchDecider switchDecider;
+    private int[] portPositions;
 
     /**
      * Create GreedySwitchHeuristic.
      *
      * @param greedyType
      *            The greedy switch type.
+     * @param nPorts
      */
-    public GreedySwitchHeuristic(final GreedySwitchType greedyType) {
+    public GreedySwitchHeuristic(final GreedySwitchType greedyType, final int nPorts) {
+        portPositions = new int[nPorts];
         greedySwitchType = GreedySwitchType.ONE_SIDED;
     }
 
@@ -82,8 +85,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
         CrossingMatrixFiller crossingMatrixFiller =
                 CrossingMatrixFiller.createAssumingFixedPortOrder(greedySwitchType,
                         currentNodeOrder, freeLayerIndex, side);
-        return SwitchDecider.createAssumingFixedPortOrder(freeLayerIndex, currentNodeOrder,
-                crossingMatrixFiller);
+        return new SwitchDecider(freeLayerIndex, currentNodeOrder, crossingMatrixFiller, portPositions);
     }
 
     private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex) {
