@@ -111,7 +111,7 @@ public final class CrossingMatrixFiller {
      *            The index of the layer whose nodes are being reordered.
      * @param direction
      *            The direction of the sweep.
-     * @return the filler.
+     * @return the filler. TODO-alan remove
      */
     public static CrossingMatrixFiller createAssumingFixedPortOrder(
             final GreedySwitchType greedyType, final LNode[][] graph, final int freeLayerIndex,

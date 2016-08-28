@@ -224,8 +224,8 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
 
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
         counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.WEST);
-        assertThat(counter.countCrossingsBetweenPorts(rightNodes[1].getPorts().get(1), rightNodes[1].getPorts().get(0)),
-                is(1));
+        assertThat(counter.countCrossingsBetweenPortsInBothOrders(rightNodes[1].getPorts().get(1),
+                rightNodes[1].getPorts().get(0)).getFirst(), is(1));
     }
 
     /**
@@ -244,8 +244,9 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
 
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
         counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.EAST);
-        assertThat(counter.countCrossingsBetweenPorts(leftNodes[0].getPorts().get(0), leftNodes[0].getPorts().get(1)),
-                is(1));
+        assertThat(counter
+                .countCrossingsBetweenPortsInBothOrders(leftNodes[0].getPorts().get(0), leftNodes[0].getPorts().get(1))
+                .getFirst(), is(1));
     }
 
     /**
@@ -278,7 +279,8 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
         counter.initForCountingBetweenOnSide(order()[0], order()[1], PortSide.WEST);
         
-        assertThat(counter.countCrossingsBetweenPorts(bottomLeftPort, topLeft.getPorts().get(0)), is(2));
+        assertThat(counter.countCrossingsBetweenPortsInBothOrders(bottomLeftPort, topLeft.getPorts().get(0)).getFirst(),
+                is(2));
     }
 
     @Ignore

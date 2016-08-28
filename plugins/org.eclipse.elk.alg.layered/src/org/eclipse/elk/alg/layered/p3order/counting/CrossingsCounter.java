@@ -118,15 +118,20 @@ public final class CrossingsCounter {
     }
 
     /**
-     * Count crossings between two ports. Before using this method, the layers must be initialized beforehand.
-     * @param portOne
-     * @param portTwo
+     * @param lNode
+     * @param lNode2
+     * @param east
      * @return
      */
-    public int countCrossingsBetweenPorts(final LPort portOne, final LPort portTwo) {
-        assert portOne.getSide() == portTwo.getSide();
-        Iterable<LPort> ports = connectedPortsSortedByPosition(portOne, portTwo);
-        return countCrossingsOnPorts(ports);
+    public Pair<Integer, Integer> countCrossingsBetweenPortsInBothOrders(final LPort upperPort,
+            final LPort lowerPort) {
+        List<LPort> ports = connectedPortsSortedByPosition(upperPort, lowerPort);
+        int upperLowerCrossings = countCrossingsOnPorts(ports);
+        switchPorts(upperPort, lowerPort);
+        Collections.sort(ports, (a, b) -> Integer.compare(positionOf(a), positionOf(b)));
+        int lowerUpperCrossings = countCrossingsOnPorts(ports);
+        switchPorts(lowerPort, upperPort);
+        return Pair.of(upperLowerCrossings, lowerUpperCrossings);
     }
 
     /**
@@ -166,7 +171,7 @@ public final class CrossingsCounter {
     }
 
     public List<LPort> initOneSidePortPositions(final LNode[] nodes, final PortSide side) {
-        List<LPort> ports = new ArrayList<>(nodes.length * 2);
+        List<LPort> ports = new ArrayList<>();
         initPositions(nodes, ports, side, true, true);
         indexTree = new BinaryIndexedTree(ports.size());
         return ports;
@@ -295,7 +300,6 @@ public final class CrossingsCounter {
                 indexTree.add(ends.pop());
             }
         }
-        
         return crossings;
     }
    

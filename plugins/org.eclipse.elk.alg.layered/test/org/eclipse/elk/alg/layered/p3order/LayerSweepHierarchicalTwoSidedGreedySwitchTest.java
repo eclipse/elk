@@ -24,15 +24,14 @@ import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinT
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
-import org.junit.Ignore;
 import org.junit.Test;
 
 // CHECKSTYLEOFF javadoc
 // CHECKSTYLEOFF MagicNumber
 // CHECKSTYLEOFF MethodName
-@Ignore
 public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCreator {
     /**
      * <pre>
@@ -134,6 +133,8 @@ public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCre
 
     private void setAllGraphsToGreedySwitchType(final LGraph graph,
             final GreedySwitchType greedyType) {
+        graph.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
+        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 1f);
         graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH, greedyType);
         for (Layer layer : graph) {
             for (LNode node : layer) {

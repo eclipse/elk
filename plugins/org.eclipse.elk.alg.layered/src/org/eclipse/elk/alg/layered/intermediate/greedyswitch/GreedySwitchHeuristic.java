@@ -51,7 +51,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
      */
     public GreedySwitchHeuristic(final GreedySwitchType greedyType, final int nPorts) {
         portPositions = new int[nPorts];
-        greedySwitchType = GreedySwitchType.ONE_SIDED;
+        greedySwitchType = greedyType;
     }
 
     /**

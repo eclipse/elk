@@ -364,10 +364,6 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
         rightCounter.initOneSidePortPositions(nodeOrder, PortSide.EAST);
     }
 
-    /**
-     * @param currentOrder
-     * @return
-     */
     private int getNPorts(final LNode[][] currentOrder) {
         int nPorts = 0;
         for (LNode[] lNodes : currentOrder) {

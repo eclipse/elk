@@ -14,14 +14,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.BetweenLayerEdgeTwoNodeCrossingsCounter;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.Lists;
 
@@ -92,52 +92,23 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
     }
 
     private boolean switchingDecreasesCrossings(final LPort upperPort, final LPort lowerPort, final LNode node) {
-        int upperLowerCrossings = crossingsCounter.countCrossingsBetweenPorts(upperPort, lowerPort);
-        int lowerUpperCrossings = crossingsCounter.countCrossingsBetweenPorts(lowerPort, upperPort);
+        Pair<Integer, Integer> originalNSwitchedCrossings =
+                crossingsCounter.countCrossingsBetweenPortsInBothOrders(upperPort, lowerPort);
+        int upperLowerCrossings = originalNSwitchedCrossings.getFirst();
+        int lowerUpperCrossings = originalNSwitchedCrossings.getSecond();
         if (isHierarchical(upperPort) && isHierarchical(lowerPort)) {
-            CrossingsCounter innerCounter =
-                    new CrossingsCounter(new int[childNumPorts.get(nestedGraphOf(node).id)]);
-            PortSide innerSide = upperPort.getSide().opposed();
-            initHierarchicalCounter(node, innerCounter, upperPort.getSide(), innerSide);
-            LNode upperDummy = dummyNodeFor(upperPort);
-            LNode lowerDummy = dummyNodeFor(lowerPort);
-            upperLowerCrossings += innerCounter.countCrossingsBetweenNodesOnSide(upperDummy, lowerDummy, innerSide);
-            lowerUpperCrossings += innerCounter.countCrossingsBetweenNodesOnSide(lowerDummy, upperDummy, innerSide);
+            LNode[][] innerGraph = node.getProperty(InternalProperties.NESTED_LGRAPH).toNodeArray();
+            // TODO-alan cache?
+            BetweenLayerEdgeTwoNodeCrossingsCounter counter =
+                    BetweenLayerEdgeTwoNodeCrossingsCounter.createAssumingPortOrderFixed(innerGraph,
+                            upperPort.getSide() == PortSide.EAST ? innerGraph.length - 1 : 0);
+            LNode upperNode = upperPort.getProperty(InternalProperties.PORT_DUMMY);
+            LNode lowerNode = lowerPort.getProperty(InternalProperties.PORT_DUMMY);
+            counter.countBothSideCrossings(upperNode, lowerNode);
+            upperLowerCrossings += counter.getUpperLowerCrossings();
+            lowerUpperCrossings += counter.getLowerUpperCrossings();
         }
         return upperLowerCrossings > lowerUpperCrossings;
-    }
-
-    private void initHierarchicalCounter(final LNode node, final CrossingsCounter innerCounter,
-            final PortSide outerSide, final PortSide innerSide) {
-        if (innerSide == PortSide.WEST) {
-            innerCounter.initForCountingBetweenOnSide(layerBesideDummyNodes(node, outerSide),
-                    dummyNodes(node, outerSide), innerSide);
-        } else {
-            innerCounter.initForCountingBetweenOnSide(dummyNodes(node, outerSide),
-                    layerBesideDummyNodes(node, outerSide), innerSide);
-        }
-    }
-
-    private LNode dummyNodeFor(final LPort port) {
-        return port.getProperty(InternalProperties.PORT_DUMMY);
-    }
-
-    private LNode[] layerBesideDummyNodes(final LNode node, final PortSide side) {
-        LGraph graph = nestedGraphOf(node);
-        List<Layer> layers = graph.getLayers();
-        return side == PortSide.EAST ? layers.get(layers.size() - 2).getNodes().toArray(new LNode[0])
-                : layers.get(1).getNodes().toArray(new LNode[0]);
-    }
-
-    private LGraph nestedGraphOf(final LNode node) {
-        return node.getProperty(InternalProperties.NESTED_LGRAPH);
-    }
-
-    private LNode[] dummyNodes(final LNode node, final PortSide side) {
-        LGraph graph = nestedGraphOf(node);
-        List<Layer> layers = graph.getLayers();
-        return side == PortSide.EAST ? layers.get(layers.size() - 1).getNodes().toArray(new LNode[0])
-                : layers.get(0).getNodes().toArray(new LNode[0]);
     }
 
     private boolean isHierarchical(final LPort port) {

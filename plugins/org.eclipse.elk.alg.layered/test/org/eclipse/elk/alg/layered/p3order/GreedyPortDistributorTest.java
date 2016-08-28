@@ -25,7 +25,6 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -34,7 +33,6 @@ import com.google.common.collect.Lists;
  * @author alan
  *
  */
-@Ignore
 public class GreedyPortDistributorTest extends TestGraphCreator {
     private GreedyPortDistributor portDist;
 
