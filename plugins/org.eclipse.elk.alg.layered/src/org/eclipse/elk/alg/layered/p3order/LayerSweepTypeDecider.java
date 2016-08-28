@@ -217,13 +217,13 @@ public class LayerSweepTypeDecider implements IInitializable {
 
         @Override
         public void initAtLayerLevel(final int l) {
-            getNodeOrder()[l][0].getLayer().id = l;
-            nodeInfo[l] = new NodeInfo[getNodeOrder()[l].length];
+            nodeOrder()[l][0].getLayer().id = l;
+            nodeInfo[l] = new NodeInfo[nodeOrder()[l].length];
         }
 
         @Override
         public void initAtNodeLevel(final int l, final int n) {
-            LNode node = getNodeOrder()[l][n];
+            LNode node = nodeOrder()[l][n];
             node.id = n;
             nodeInfo[l][n] = new NodeInfo();
         }

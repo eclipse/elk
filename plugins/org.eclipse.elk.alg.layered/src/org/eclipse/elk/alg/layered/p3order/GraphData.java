@@ -254,7 +254,7 @@ public class GraphData implements IInitializable {
 
         @Override
         public void initAtNodeLevel(final int l, final int n) {
-            LGraph nestedGraph = getNodeOrder()[l][n].getProperty(InternalProperties.NESTED_LGRAPH);
+            LGraph nestedGraph = nodeOrder()[l][n].getProperty(InternalProperties.NESTED_LGRAPH);
             if (nestedGraph != null) {
                 childGraphs.add(nestedGraph);
             }

@@ -383,12 +383,12 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
 
         @Override
         public void initAtLayerLevel(final int l) {
-            nodePositions[l] = new int[getNodeOrder()[l].length];
+            nodePositions[l] = new int[nodeOrder()[l].length];
         }
 
         @Override
         public void initAtNodeLevel(final int l, final int n) {
-            LNode node = getNodeOrder()[l][n];
+            LNode node = nodeOrder()[l][n];
             node.id = n;
             nodePositions[l][n] = n;
         }

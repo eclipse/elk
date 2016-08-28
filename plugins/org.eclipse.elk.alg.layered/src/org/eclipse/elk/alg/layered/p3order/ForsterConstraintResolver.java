@@ -532,13 +532,13 @@ public class ForsterConstraintResolver implements  IInitializable {
 
         @Override
         public void initAtLayerLevel(final int l) {
-            barycenterStates[l] = new BarycenterState[getNodeOrder()[l].length];
-            constraintGroups[l] = new ConstraintGroup[getNodeOrder()[l].length];
+            barycenterStates[l] = new BarycenterState[nodeOrder()[l].length];
+            constraintGroups[l] = new ConstraintGroup[nodeOrder()[l].length];
         }
 
         @Override
         public void initAtNodeLevel(final int l, final int n) {
-            LNode node = getNodeOrder()[l][n];
+            LNode node = nodeOrder()[l][n];
             barycenterStates[l][n] = new BarycenterState(node);
             constraintGroups[l][n] = new ConstraintGroup(node);
             LNode layoutUnit = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);

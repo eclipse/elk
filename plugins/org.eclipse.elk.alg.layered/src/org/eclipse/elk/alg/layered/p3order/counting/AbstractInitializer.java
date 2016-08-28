@@ -96,7 +96,7 @@ public abstract class AbstractInitializer {
     }
 
     /** Returns node order. */
-    public LNode[][] getNodeOrder() {
+    public LNode[][] nodeOrder() {
         return nodeOrder;
     }
 }

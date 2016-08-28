@@ -85,7 +85,7 @@ public final class AllCrossingsCounter implements IInitializable {
 
         @Override
         public void initAtNodeLevel(final int l, final int n) {
-            LNode node = getNodeOrder()[l][n];
+            LNode node = nodeOrder()[l][n];
             hasNorthSouthPorts[l] |= node.getType() == NodeType.NORTH_SOUTH_PORT;
         }
 
