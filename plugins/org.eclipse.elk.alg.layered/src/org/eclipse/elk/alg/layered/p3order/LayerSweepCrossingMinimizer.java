@@ -25,7 +25,6 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortConstraints;
@@ -52,12 +51,13 @@ import com.google.common.collect.Sets;
  * </ul>
  * 
  * Therefore this is a <i>hierarchical</i> processor which must have access to the root graph.
- *
+ * <p>
+ * Reference for the original layer sweep:
  * <ul>
  * <li>Kozo Sugiyama, Shojiro Tagawa, and Mitsuhiko Toda. Methods for visual understanding of hierarchical system
  * structures. IEEE Transactions on Systems, Man and Cybernetics, 11(2):109–125, February 1981.
  * </ul>
- * 
+ * </p>
  * <dl>
  * <dt>Precondition:</dt>
  * <dd>The graph has a proper layering, i.e. all long edges have been splitted; all nodes have at least fixed port
@@ -104,7 +104,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Minimize Crossings " + crossMinType, 1);
 
-        if (layeredGraph.getLayers().isEmpty() || turnedOff(layeredGraph)) {
+        if (layeredGraph.getLayers().isEmpty()) {
             progressMonitor.done();
             return;
         }
@@ -406,11 +406,6 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
         return graphsToSweepOn;
     }
 
-    private boolean turnedOff(final LGraph graph) { // TODO-alan
-        return crossMinType == CrossMinType.GREEDY_SWITCH
-                && graph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) == GreedySwitchType.OFF;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -446,7 +441,6 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
             IntermediateProcessingConfiguration.createEmpty()
                     .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
-                    .addBeforePhase4(IntermediateProcessorStrategy.GREEDY_SWITCH)
                     .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
                     .addAll(Slot.AFTER_PHASE_5,
                             Lists.newArrayList(IntermediateProcessorStrategy.LONG_EDGE_JOINER,

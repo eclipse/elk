@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.layered.intermediate.NodePromotionStrategy;
 import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
+import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
@@ -313,6 +314,10 @@ final class GraphConfigurator {
         // Introduce in-layer constraints to preserve the order of regular nodes
         if (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE)) {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
+        }
+
+        if (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) != GreedySwitchType.OFF) {
+            configuration.addBeforePhase4(IntermediateProcessorStrategy.GREEDY_SWITCH);
         }
 
         return configuration;
