@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
+import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -367,9 +370,11 @@ public class SwitchDeciderTest {
     private SwitchDecider givenDeciderForFreeLayer(final int layerIndex, final CrossingCountSide direction) {
         freeLayerIndex = layerIndex;
         currentNodeOrder = getCurrentNodeOrder();
+        CrossingMatrixFiller crossingMatrixFiller = CrossingMatrixFiller.create(greedyType, currentNodeOrder, layerIndex, direction);
         return new SwitchDecider(layerIndex, currentNodeOrder,
-                CrossingMatrixFiller.create(greedyType, currentNodeOrder, layerIndex, direction),
-                new int[getNPorts(currentNodeOrder)]);
+                crossingMatrixFiller,
+                new int[getNPorts(currentNodeOrder)],
+                new GraphData(graph, CrossMinType.GREEDY_SWITCH, new ArrayList<>()), greedyType.isOneSided());
     }
 
     private int getNPorts(final LNode[][] currentOrder) {

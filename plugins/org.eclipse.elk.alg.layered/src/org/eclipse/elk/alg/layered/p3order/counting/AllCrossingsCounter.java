@@ -25,6 +25,11 @@ import org.eclipse.elk.core.options.PortSide;
 public final class AllCrossingsCounter implements IInitializable {
 
     private CrossingsCounter crossingCounter;
+
+    public CrossingsCounter betweenAndInLayerCrossingCounter() {
+        return crossingCounter;
+    }
+
     private NorthSouthEdgeAllCrossingsCounter northSouthEdgeCrossingCounter;
     private boolean[] hasHyperEdgesEastOfIndex;
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;

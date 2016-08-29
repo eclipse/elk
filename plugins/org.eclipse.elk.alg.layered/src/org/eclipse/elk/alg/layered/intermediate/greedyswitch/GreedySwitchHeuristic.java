@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
+import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.alg.layered.p3order.ICrossingMinimizationHeuristic;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 
@@ -41,6 +42,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
     private LNode[][] currentNodeOrder;
     private SwitchDecider switchDecider;
     private int[] portPositions;
+    private GraphData graphData;
 
     /**
      * Create GreedySwitchHeuristic.
@@ -49,7 +51,8 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
      *            The greedy switch type.
      * @param nPorts
      */
-    public GreedySwitchHeuristic(final GreedySwitchType greedyType, final int nPorts) {
+    public GreedySwitchHeuristic(final GreedySwitchType greedyType, final int nPorts, final GraphData graphData) {
+        this.graphData = graphData;
         portPositions = new int[nPorts];
         greedySwitchType = greedyType;
     }
@@ -85,7 +88,8 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
         CrossingMatrixFiller crossingMatrixFiller =
                 CrossingMatrixFiller.createAssumingFixedPortOrder(greedySwitchType,
                         currentNodeOrder, freeLayerIndex, side);
-        return new SwitchDecider(freeLayerIndex, currentNodeOrder, crossingMatrixFiller, portPositions);
+        return new SwitchDecider(freeLayerIndex, currentNodeOrder, crossingMatrixFiller, portPositions, graphData,
+                greedySwitchType.isOneSided());
     }
 
     private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex) {
@@ -109,8 +113,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
         return continueSwitching;
     }
 
-    private boolean switchIfImproves(final int layerIndex, final int upperNodeIndex,
-            final int lowerNodeIndex) {
+    private boolean switchIfImproves(final int layerIndex, final int upperNodeIndex, final int lowerNodeIndex) {
         boolean continueSwitching = false;
 
         if (switchDecider.doesSwitchReduceCrossings(upperNodeIndex, lowerNodeIndex)) {

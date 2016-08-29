@@ -33,7 +33,7 @@ import org.eclipse.elk.graph.KNode;
 public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
     ///////////////////////////////////////////////////////////////////////////////
-    // Variables
+    // Variables°
 
     /** the layout algorithm used for regular layout runs. */
     private final KlayLayered klayLayered = new KlayLayered();

@@ -147,7 +147,7 @@ public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCre
      * @throws Exception
      */
     @Test
-    public void usingBarycenterPortDistributorWithTwoSidedGreedySwitchLeadsToEndlessLoop() throws Exception {
+    public void onlyTwoSidedGreedySwitchReturnsNoChange() throws Exception {
         LNode leftNode = addNodeToLayer(makeLayer(graph));
         LNode rightNode = addNodeToLayer(makeLayer(graph));
         LPort[] leftPorts = addPortsOnSide(2, leftNode, PortSide.EAST);
@@ -164,6 +164,41 @@ public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCre
         List<LNode> expectedOrderDummies = Lists.newArrayList(innerGraph.getLayers().get(1));
         // sweep backward
         random.setNextBoolean(false);
+        setUpAndMinimizeCrossings();
+
+        assertThat(innerGraph.getLayers().get(1).getNodes(), is(expectedOrderDummies));
+    }
+
+    /**
+     * <pre>
+     * _________
+     * | ___   |  ___
+     * | | |\ *p__| |
+     * | | | x |  | |
+     * | |_|/ *p--|_|
+     * |po fix | po fix
+     * |_______|
+     * </pre>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void crossingBeforeLastLayerCausesCrossingOutside_TwoSidedPrevents() throws Exception {
+        LNode leftNode = addNodeToLayer(makeLayer(graph));
+        LNode rightNode = addNodeToLayer(makeLayer(graph));
+        LPort[] leftPorts = addPortsOnSide(2, leftNode, PortSide.EAST);
+        eastWestEdgeFromTo(leftPorts[1], rightNode);
+        eastWestEdgeFromTo(leftPorts[0], rightNode);
+        setFixedOrderConstraint(rightNode);
+        LGraph innerGraph = nestedGraph(leftNode);
+        Layer[] innerLayers = makeLayers(2, innerGraph);
+        LNode innerLeftNode = addNodeToLayer(innerLayers[0]);
+        setFixedOrderConstraint(innerLeftNode);
+        LNode[] dummies = addExternalPortDummiesToLayer(innerLayers[1], leftPorts);
+        eastWestEdgeFromTo(innerLeftNode, dummies[1]);
+        eastWestEdgeFromTo(innerLeftNode, dummies[0]);
+        List<LNode> expectedOrderDummies = Lists.newArrayList(innerGraph.getLayers().get(1));
+
         setUpAndMinimizeCrossings();
 
         assertThat(innerGraph.getLayers().get(1).getNodes(), is(expectedOrderDummies));

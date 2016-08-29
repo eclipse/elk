@@ -88,7 +88,7 @@ public class GraphData implements IInitializable {
         crossingsCounter = new AllCrossingsCounter(currentNodeOrder);
         if (crossMinAlwaysImproves()) {
             portDistributor = new GreedyPortDistributor(currentNodeOrder);
-        } else if ( lGraph.getProperty(InternalProperties.RANDOM).nextBoolean()) {
+        } else if (lGraph.getProperty(InternalProperties.RANDOM).nextBoolean()) {
             portDistributor = new NodeRelativePortDistributor(currentNodeOrder);
         } else {
             portDistributor = new LayerTotalPortDistributor(currentNodeOrder);
@@ -107,7 +107,7 @@ public class GraphData implements IInitializable {
         } else {
             crossMinimizer =
                     new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH),
-                            nPorts);
+                            nPorts, this);
         }
         processRecursively = layerSweepTypeDecider.useBottomUp();
     }

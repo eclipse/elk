@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
@@ -41,6 +42,10 @@ public final class SwitchDecider {
     private final CrossingsCounter rightInLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final CrossingMatrixFiller crossingMatrixFiller;
+    private GraphData graphData;
+    private CrossingsCounter parentRightCrossCounter;
+    private CrossingsCounter parentLeftCrossCounter;
+    private boolean oneSided;
 
     /**
      * Creates SwitchDecider.
@@ -53,11 +58,15 @@ public final class SwitchDecider {
      *            the crossing matrix filler
      * @param assumeCompoundNodeFixedPortOrder
      * @param portPositions
+     * @param parentCrossingsCounter
      */
     public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
-            final CrossingMatrixFiller crossingMatrixFiller, final int[] portPositions) {
+            final CrossingMatrixFiller crossingMatrixFiller, final int[] portPositions,
+            final GraphData graphData, final boolean oneSided) {
         
         this.crossingMatrixFiller = crossingMatrixFiller;
+        this.graphData = graphData;
+        this.oneSided = oneSided;
         if (freeLayerIndex >= graph.length) {
             throw new IndexOutOfBoundsException(
                     "Greedy SwitchDecider: Free layer layer not in graph.");
@@ -65,10 +74,23 @@ public final class SwitchDecider {
         freeLayer = graph[freeLayerIndex];
 
         leftInLayerCounter = new CrossingsCounter(portPositions);
-        rightInLayerCounter = new CrossingsCounter(portPositions);
         leftInLayerCounter.initOneSidePortPositions(freeLayer, PortSide.WEST);
+        rightInLayerCounter = new CrossingsCounter(portPositions);
         rightInLayerCounter.initOneSidePortPositions(freeLayer, PortSide.EAST);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
+        if (graphData.hasParent() && !graphData.dontSweepInto()) {// TODO-alan move out executed in every layer
+            GraphData parentGraphData = graphData.parentGraphData();
+            LNode[][] parentNodeOrder = parentGraphData.currentNodeOrder();
+            parentLeftCrossCounter = parentGraphData.crossCounter().betweenAndInLayerCrossingCounter();
+            int parentNodeLayerPos = graphData.parent().getLayer().id;
+            LNode[] leftLayer = parentNodeLayerPos > 0 ? parentNodeOrder[parentNodeLayerPos - 1] : new LNode[0];
+            LNode[] middleLayer = parentNodeOrder[parentNodeLayerPos];
+            LNode[] rightLayer = parentNodeLayerPos < parentNodeOrder.length - 1
+                    ? parentNodeOrder[parentNodeLayerPos + 1] : new LNode[0];
+            parentLeftCrossCounter.initForCountingBetweenOnSide(leftLayer, middleLayer, PortSide.WEST);
+            parentRightCrossCounter = new CrossingsCounter(parentLeftCrossCounter.getPortPositions());
+            parentRightCrossCounter.initForCountingBetweenOnSide(middleLayer, rightLayer, PortSide.EAST);
+        }
     }
 
     /**
@@ -82,6 +104,7 @@ public final class SwitchDecider {
     public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
         leftInLayerCounter.switchNodes(upperNode, lowerNode, PortSide.WEST);
         rightInLayerCounter.switchNodes(upperNode, lowerNode, PortSide.EAST);
+        // In case of hierarchical layer sweep: Ports are ordered by final order at the end of the sweep.
     }
 
     /**
@@ -96,7 +119,7 @@ public final class SwitchDecider {
 
         LNode upperNode = freeLayer[upperNodeIndex];
         LNode lowerNode = freeLayer[lowerNodeIndex];
-
+        
         Pair<Integer, Integer> leftInlayer =
                 leftInLayerCounter.countInLayerCrossingsBetweenNodesInBothOrders(upperNode, lowerNode, PortSide.WEST);
         Pair<Integer, Integer> rightInlayer =
@@ -110,6 +133,18 @@ public final class SwitchDecider {
                 crossingMatrixFiller.getCrossingMatrixEntry(lowerNode, upperNode)
                         + leftInlayer.getSecond() + rightInlayer.getSecond()
                         + northSouthCounter.getLowerUpperCrossings();
+
+        if (!oneSided && graphData.hasParent() && !graphData.dontSweepInto()
+                && upperNode.getType() == NodeType.EXTERNAL_PORT) {
+            LPort upperPort = (LPort) upperNode.getProperty(InternalProperties.ORIGIN);
+            LPort lowerPort = (LPort) lowerNode.getProperty(InternalProperties.ORIGIN);
+            CrossingsCounter crossCounter =
+                    upperPort.getSide() == PortSide.EAST ? parentRightCrossCounter : parentLeftCrossCounter;
+            Pair<Integer, Integer> crossingNumbers =
+                    crossCounter.countCrossingsBetweenPortsInBothOrders(upperPort, lowerPort);
+            upperLowerCrossings += crossingNumbers.getFirst();
+            lowerUpperCrossings += crossingNumbers.getSecond();
+        }
 
         return upperLowerCrossings > lowerUpperCrossings;
     }

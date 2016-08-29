@@ -1318,6 +1318,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftInnerNodesleft[0], leftInnerNodesRight[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[1], leftInnerNodesRight[0]);
         getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f);
+
         List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();

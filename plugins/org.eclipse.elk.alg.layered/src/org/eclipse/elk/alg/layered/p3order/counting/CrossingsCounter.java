@@ -37,6 +37,11 @@ import com.google.common.collect.Lists;
  */
 public final class CrossingsCounter {
     private final int[] portPositions;
+
+    public int[] getPortPositions() {
+        return portPositions;
+    }
+
     private BinaryIndexedTree indexTree;
     private final Deque<Integer> ends;
 
@@ -164,9 +169,11 @@ public final class CrossingsCounter {
      */
     public void initForCountingBetweenOnSide(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes,
             final PortSide sideToCountOn) {
-        List<LPort> ports = sideToCountOn == PortSide.EAST
-                ? setPositionsCounterClockwise(leftLayerNodes, rightLayerNodes)
-                : getClockwisePortsAndSetPositions(leftLayerNodes, rightLayerNodes);
+        List<LPort> ports = 
+//                sideToCountOn == PortSide.EAST ?
+                setPositionsCounterClockwise(leftLayerNodes, rightLayerNodes)
+        // : getClockwisePortsAndSetPositions(leftLayerNodes, rightLayerNodes)
+        ;
         indexTree = new BinaryIndexedTree(ports.size());
     }
 
@@ -234,23 +241,31 @@ public final class CrossingsCounter {
                 }
             }
         }
-        return getSortedPortList(ports);
+        return asListSortedByPosition(ports);
     }
 
     private List<LPort> connectedPortsSortedByPosition(final LPort upperPort, final LPort lowerPort) {
         Set<LPort> ports = new HashSet<>();
-        for (LPort port : Arrays.asList(upperPort, lowerPort)) {
+        for (LPort port : new LPort[] { upperPort, lowerPort }) {
             for (LEdge edge : port.getConnectedEdges()) {
-                if (!edge.isSelfLoop()) {
+                if (!isPortSelfLoop(edge)) {
                     ports.add(port);
                     ports.add(otherEndOf(edge, port));
                 }
             }
         }
-        return getSortedPortList(ports);
+        return asListSortedByPosition(ports);
     }
 
-    private List<LPort> getSortedPortList(final Set<LPort> ports) {
+    /**
+     * @param edge
+     * @return
+     */
+    private boolean isPortSelfLoop(final LEdge edge) {
+        return edge.getSource() == edge.getTarget();
+    }
+
+    private List<LPort> asListSortedByPosition(final Set<LPort> ports) {
         List<LPort> relevantPorts = Lists.newArrayList(ports);
         Collections.sort(relevantPorts, (a, b) -> Integer.compare(positionOf(a), positionOf(b)));
         return relevantPorts;
