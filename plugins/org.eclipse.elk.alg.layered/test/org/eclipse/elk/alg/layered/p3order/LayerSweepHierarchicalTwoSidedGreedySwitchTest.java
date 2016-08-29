@@ -204,6 +204,42 @@ public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCre
         assertThat(innerGraph.getLayers().get(1).getNodes(), is(expectedOrderDummies));
     }
 
+    /**
+     * <pre>
+     *        _________
+     * ___   |   ___ |
+     * | |---p* /| | |
+     * | |   | x | | |
+     * |_|---p* \|_| |
+     * po fix| po fix|
+     *       |_______|
+     * </pre>
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void crossingBeforeFirstLayerCausesCrossingOutside_TwoSidedPrevents() throws Exception {
+        LNode leftNode = addNodeToLayer(makeLayer(graph));
+        LNode rightNode = addNodeToLayer(makeLayer(graph));
+        LPort[] rightPorts = addPortsOnSide(2, rightNode, PortSide.WEST);
+        eastWestEdgeFromTo(leftNode, rightPorts[1]);
+        eastWestEdgeFromTo(leftNode, rightPorts[0]);
+        setFixedOrderConstraint(leftNode);
+        LGraph innerGraph = nestedGraph(rightNode);
+        Layer[] innerLayers = makeLayers(2, innerGraph);
+        LNode innerRightNode = addNodeToLayer(innerLayers[1]);
+        setFixedOrderConstraint(innerRightNode);
+        LNode[] dummies = addExternalPortDummiesToLayer(innerLayers[0], rightPorts);
+        eastWestEdgeFromTo(dummies[0], innerRightNode);
+        eastWestEdgeFromTo(dummies[1], innerRightNode);
+        List<LNode> expectedOrderDummies = Lists.newArrayList(innerGraph.getLayers().get(0));
+        // backwardSweep
+        random.setNextBoolean(false);
+        setUpAndMinimizeCrossings();
+
+        assertThat(innerGraph.getLayers().get(0).getNodes(), is(expectedOrderDummies));
+    }
+
     private void setAllGraphsToGreedySwitchType(final LGraph graph,
             final GreedySwitchType greedyType) {
         graph.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);

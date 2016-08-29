@@ -223,7 +223,7 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
 
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
-        counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.WEST);
+        counter.initForCountingBetweenOnSide(leftNodes, rightNodes);
         assertThat(counter.countCrossingsBetweenPortsInBothOrders(rightNodes[1].getPorts().get(1),
                 rightNodes[1].getPorts().get(0)).getFirst(), is(1));
     }
@@ -243,7 +243,7 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
 
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
-        counter.initForCountingBetweenOnSide(leftNodes, rightNodes, PortSide.EAST);
+        counter.initForCountingBetweenOnSide(leftNodes, rightNodes);
         assertThat(counter
                 .countCrossingsBetweenPortsInBothOrders(leftNodes[0].getPorts().get(0), leftNodes[0].getPorts().get(1))
                 .getFirst(), is(1));
@@ -277,7 +277,7 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         setUpIds();
         
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
-        counter.initForCountingBetweenOnSide(order()[0], order()[1], PortSide.WEST);
+        counter.initForCountingBetweenOnSide(order()[0], order()[1]);
         
         assertThat(counter.countCrossingsBetweenPortsInBothOrders(bottomLeftPort, topLeft.getPorts().get(0)).getFirst(),
                 is(2));

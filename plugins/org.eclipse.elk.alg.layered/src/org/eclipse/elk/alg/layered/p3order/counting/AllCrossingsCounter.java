@@ -25,11 +25,6 @@ import org.eclipse.elk.core.options.PortSide;
 public final class AllCrossingsCounter implements IInitializable {
 
     private CrossingsCounter crossingCounter;
-
-    public CrossingsCounter betweenAndInLayerCrossingCounter() {
-        return crossingCounter;
-    }
-
     private NorthSouthEdgeAllCrossingsCounter northSouthEdgeCrossingCounter;
     private boolean[] hasHyperEdgesEastOfIndex;
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
@@ -72,6 +67,15 @@ public final class AllCrossingsCounter implements IInitializable {
 
         totalCrossings += northSouthEdgeCrossingCounter.countCrossings(leftLayer);
         return totalCrossings;
+    }
+
+    /**
+     * Get between- and in.layer CrossingCounter.
+     * 
+     * @return crossingCounter
+     */
+    public CrossingsCounter betweenAndInLayerCrossingCounter() {
+        return crossingCounter;
     }
 
     /** Defines what needs to be initialized traversing the graph. */

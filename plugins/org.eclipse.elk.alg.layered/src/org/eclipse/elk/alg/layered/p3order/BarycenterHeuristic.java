@@ -19,6 +19,7 @@ import java.util.Random;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
 
@@ -57,16 +58,15 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
      *            the random number generator
      * @param portDistributor
      *            calculates the port ranks for the barycenter heuristic.
-     * @param barycenterState
-     *            the barycenters accessed by layer.id and node.id
+     * @param graph
+     *            current node order
      */
     public BarycenterHeuristic(final ForsterConstraintResolver constraintResolver, final Random random,
-            final AbstractBarycenterPortDistributor portDistributor) {
+            final AbstractBarycenterPortDistributor portDistributor, final LNode[][] graph) {
         this.constraintResolver = constraintResolver;
         this.random = random;
         this.portDistributor = portDistributor;
-        barycenterState = constraintResolver.getBarycenterStates();
-        this.portRanks = portDistributor.getPortRanks();
+        initializer = new Initializer(graph);
     }
 
     /**
@@ -324,6 +324,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         }
         return 0;
     };
+    private AbstractInitializer initializer;
 
     @Override
     public boolean minimizeCrossings(final LNode[][] order, final int freeLayerIndex,
@@ -392,4 +393,26 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
         return false;
     }
 
+    @Override
+    public AbstractInitializer initializer() {
+        return initializer;
+    }
+
+    /** Defines what needs to be initialized traversing the graph. */
+    private final class Initializer extends AbstractInitializer {
+        private Initializer(final LNode[][] graph) {
+            super(graph);
+        }
+
+        @Override
+        public void initAfterTraversal() {
+            barycenterState = constraintResolver.getBarycenterStates();
+            portRanks = portDistributor.getPortRanks();
+        }
+
+        @Override
+        public void initAtLayerLevel(final int l) {
+            nodeOrder()[l][0].getLayer().id = l;
+        }
+    }
 }

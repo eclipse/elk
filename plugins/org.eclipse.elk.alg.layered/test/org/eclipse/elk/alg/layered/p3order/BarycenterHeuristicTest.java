@@ -66,7 +66,9 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
 
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
-        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
+        BarycenterHeuristic crossMin =
+                new BarycenterHeuristic(constraintResolver, random, portDist, graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(crossMin));
 
         LNode[] expectedOrder = switchOrderInArray(0, 1, nodes[1]);
 
@@ -100,7 +102,9 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
         AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
-        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
+        BarycenterHeuristic crossMin =
+                new BarycenterHeuristic(constraintResolver, random, portDist, graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(crossMin));
 
         LNode[] expectedOrder = Arrays.copyOf(nodes[0], nodes[0].length);
         LNode[] expectedSwitchedOrder = switchOrderInArray(0, 1, nodes[0]);
@@ -142,7 +146,9 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(graph.toNodeArray());
         AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
 
-        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
+        BarycenterHeuristic crossMin =
+                new BarycenterHeuristic(constraintResolver, random, portDist, graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(crossMin));
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
         minimizeCrossings(crossMin, nodes[0], false, true, true);
 
@@ -191,7 +197,9 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
         AbstractInitializer.init(Arrays.asList(portDist, constraintResolver));
 
         portDist.calculatePortRanks(nodes[0], PortType.OUTPUT);
-        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
+        BarycenterHeuristic crossMin =
+                new BarycenterHeuristic(constraintResolver, random, portDist, graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(crossMin));
 
         LNode[] expectedOrder = switchOrderInArray(0, 1, nodes[1]);
 
@@ -232,7 +240,8 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
 
         portDist.calculatePortRanks(nodes[1], PortType.INPUT);
         BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(constraintResolver, random, portDist);
+                new BarycenterHeuristic(constraintResolver, random, portDist, graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(crossMin));
 
         LNode[] expectedOrder = switchOrderInArray(0, 1, nodes[0]);
 
@@ -275,7 +284,8 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
 
         portDist.calculatePortRanks(nodes[0], PortType.INPUT);
         BarycenterHeuristic crossMin =
-                new BarycenterHeuristic(constraintResolver, random, portDist);
+                new BarycenterHeuristic(constraintResolver, random, portDist, graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(crossMin));
 
         LNode[] expectedOrder = getArrayInIndexOrder(nodes[1], 2, 0, 1);
 
@@ -325,7 +335,9 @@ public class BarycenterHeuristicTest extends TestGraphCreator {
 
         portDist.calculatePortRanks(nodes[0], PortType.INPUT);
 
-        BarycenterHeuristic crossMin = new BarycenterHeuristic(constraintResolver, random, portDist);
+        BarycenterHeuristic crossMin =
+                new BarycenterHeuristic(constraintResolver, random, portDist, graph.toNodeArray());
+        AbstractInitializer.init(Arrays.asList(crossMin));
         LNode[] expectedOrder = getArrayInIndexOrder(nodes[1], 1, 0, 3, 2);
 
         random.setChangeBy(-0.01);

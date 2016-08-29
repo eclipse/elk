@@ -374,7 +374,8 @@ public class SwitchDeciderTest {
         return new SwitchDecider(layerIndex, currentNodeOrder,
                 crossingMatrixFiller,
                 new int[getNPorts(currentNodeOrder)],
-                new GraphData(graph, CrossMinType.GREEDY_SWITCH, new ArrayList<>()), greedyType.isOneSided());
+                new GraphData(graph, CrossMinType.GREEDY_SWITCH, new ArrayList<>()), greedyType.isOneSided(), null,
+                null);
     }
 
     private int getNPorts(final LNode[][] currentOrder) {

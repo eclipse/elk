@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 
 /**
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
@@ -24,7 +25,7 @@ import org.eclipse.elk.alg.layered.graph.LNode;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public interface ICrossingMinimizationHeuristic {
+public interface ICrossingMinimizationHeuristic extends IInitializable {
 
     /** Determines whether the heuristic always improves. */
     boolean alwaysImproves();

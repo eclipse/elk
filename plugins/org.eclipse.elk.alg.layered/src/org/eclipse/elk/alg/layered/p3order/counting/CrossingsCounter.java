@@ -1,5 +1,5 @@
 /*******************************************************************************
-  * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,10 +37,6 @@ import com.google.common.collect.Lists;
  */
 public final class CrossingsCounter {
     private final int[] portPositions;
-
-    public int[] getPortPositions() {
-        return portPositions;
-    }
 
     private BinaryIndexedTree indexTree;
     private final Deque<Integer> ends;
@@ -117,7 +113,7 @@ public final class CrossingsCounter {
      * @return number of crossings.
      */
     public int countInLayerCrossingsOnSide(final LNode[] nodes, final PortSide side) {
-        List<LPort> ports = initOneSidePortPositions(nodes, side);
+        List<LPort> ports = initPortPositionsForInLayerCrossings(nodes, side);
 
         return countInLayerCrossingsOnPorts(ports);
     }
@@ -164,20 +160,20 @@ public final class CrossingsCounter {
      *            Nodes in western layer.
      * @param rightLayerNodes
      *            Nodes in eastern layer.
-     * @param sideToCountOn
-     *            Side on which the crossings are counted.
      */
-    public void initForCountingBetweenOnSide(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes,
-            final PortSide sideToCountOn) {
-        List<LPort> ports = 
-//                sideToCountOn == PortSide.EAST ?
-                setPositionsCounterClockwise(leftLayerNodes, rightLayerNodes)
-        // : getClockwisePortsAndSetPositions(leftLayerNodes, rightLayerNodes)
-        ;
+    public void initForCountingBetweenOnSide(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
+        List<LPort> ports = setPositionsCounterClockwise(leftLayerNodes, rightLayerNodes);
         indexTree = new BinaryIndexedTree(ports.size());
     }
 
-    public List<LPort> initOneSidePortPositions(final LNode[] nodes, final PortSide side) {
+    /**
+     * Initializes the counter for counting in-layer crossings on a specific side of a single layer.
+     * 
+     * @param nodes
+     * @param side
+     * @return
+     */
+    public List<LPort> initPortPositionsForInLayerCrossings(final LNode[] nodes, final PortSide side) {
         List<LPort> ports = new ArrayList<>();
         initPositions(nodes, ports, side, true, true);
         indexTree = new BinaryIndexedTree(ports.size());
@@ -332,13 +328,7 @@ public final class CrossingsCounter {
         return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
-    private List<LPort> getClockwisePortsAndSetPositions(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
-        List<LPort> ports = new ArrayList<>();
-        initPositions(rightLayerNodes, ports, PortSide.WEST, true, false);
-        initPositions(leftLayerNodes, ports, PortSide.EAST, false, false);
-        return ports;
-    }
-
+    // remove unneeded options
     private void initPositions(final LNode[] nodes, final List<LPort> ports,
             final PortSide side, final boolean topDown, final boolean getCardinalities) {
         int numPorts = ports.size();
@@ -386,5 +376,14 @@ public final class CrossingsCounter {
         initPositions(leftLayerNodes, ports, PortSide.EAST, true, false);
         initPositions(rightLayerNodes, ports, PortSide.WEST, false, false);
         return ports;
+    }
+
+    /**
+     * Return portPositions of this counter.
+     * 
+     * @return portPositions
+     */
+    public int[] getPortPositions() {
+        return portPositions;
     }
 }

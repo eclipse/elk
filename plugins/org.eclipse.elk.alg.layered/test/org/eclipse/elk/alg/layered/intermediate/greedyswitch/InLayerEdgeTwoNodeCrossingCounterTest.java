@@ -360,8 +360,8 @@ public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphC
         numberIdsAscendinglyIn(nodeOrder);
         leftCounter = new CrossingsCounter(new int[getNPorts(currentOrder)]);
         rightCounter =  new CrossingsCounter(new int[getNPorts(currentOrder)]);
-        leftCounter.initOneSidePortPositions(nodeOrder, PortSide.WEST);
-        rightCounter.initOneSidePortPositions(nodeOrder, PortSide.EAST);
+        leftCounter.initPortPositionsForInLayerCrossings(nodeOrder, PortSide.WEST);
+        rightCounter.initPortPositionsForInLayerCrossings(nodeOrder, PortSide.EAST);
     }
 
     private int getNPorts(final LNode[][] currentOrder) {

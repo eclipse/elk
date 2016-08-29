@@ -66,13 +66,13 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
     public boolean distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
             final boolean isForwardSweep) {
         if (isForwardSweep && currentIndex > 0) {
-            initForLayers(nodeOrder[currentIndex - 1], nodeOrder[currentIndex], PortSide.WEST, portPos);
+            initForLayers(nodeOrder[currentIndex - 1], nodeOrder[currentIndex], portPos);
         } else if (!isForwardSweep && currentIndex < nodeOrder.length - 1) {
-            initForLayers(nodeOrder[currentIndex], nodeOrder[currentIndex + 1], PortSide.EAST, portPos);
+            initForLayers(nodeOrder[currentIndex], nodeOrder[currentIndex + 1], portPos);
         } else {
             // TODO-alan cache
             crossingsCounter = new CrossingsCounter(portPos);
-            crossingsCounter.initOneSidePortPositions(nodeOrder[currentIndex],
+            crossingsCounter.initPortPositionsForInLayerCrossings(nodeOrder[currentIndex],
                     isForwardSweep ? PortSide.WEST : PortSide.EAST);
         }
         PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
@@ -90,15 +90,12 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
      *            The western layer.
      * @param rightLayer
      *            The eastern layer.
-     * @param sideToCountOn
-     *            The side to count the crossings on.
      * @param portPositions
      *            The positions of the ports.
      */
-    public void initForLayers(final LNode[] leftLayer, final LNode[] rightLayer, final PortSide sideToCountOn,
-            final int[] portPositions) {
+    public void initForLayers(final LNode[] leftLayer, final LNode[] rightLayer, final int[] portPositions) {
         crossingsCounter = new CrossingsCounter(portPositions);
-        crossingsCounter.initForCountingBetweenOnSide(leftLayer, rightLayer, sideToCountOn);
+        crossingsCounter.initForCountingBetweenOnSide(leftLayer, rightLayer);
     }
 
     private boolean switchingDecreasesCrossings(final LPort upperPort, final LPort lowerPort, final LNode node) {
@@ -172,7 +169,7 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
 
     /** Defines what needs to be initialized traversing the graph. */
     private final class Initializer extends AbstractInitializer {
-        int nPorts;
+        private int nPorts;
 
         private Initializer(final LNode[][] graph) {
             super(graph);

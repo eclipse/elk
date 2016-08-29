@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +41,6 @@ public class GraphData implements IInitializable {
     private LNode[][] currentNodeOrder;
     private SweepCopy currentlyBestNodeAndPortOrder;
     private SweepCopy bestNodeNPortOrder;
-    private int nPorts;
 
     /** Processing type information. */
     private boolean processRecursively;
@@ -96,19 +94,17 @@ public class GraphData implements IInitializable {
         ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(currentNodeOrder);
         layerSweepTypeDecider = new LayerSweepTypeDecider(this);
         
-        // Apply Initializer.
-        List<IInitializable> initializables =
-                Arrays.asList(crossingsCounter, constraintResolver, layerSweepTypeDecider, portDistributor, this);
-        Initializer.init(initializables);
-        
         if (cMT == CrossMinType.BARYCENTER) {
             crossMinimizer = new BarycenterHeuristic(constraintResolver, graph.getProperty(InternalProperties.RANDOM),
-                    (AbstractBarycenterPortDistributor) portDistributor);
+                    (AbstractBarycenterPortDistributor) portDistributor, currentNodeOrder);
         } else {
-            crossMinimizer =
-                    new GreedySwitchHeuristic(lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH),
-                            nPorts, this);
+            crossMinimizer = new GreedySwitchHeuristic(
+                    lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH), this);
         }
+        List<IInitializable> initializables = Lists.newArrayList(crossingsCounter, constraintResolver,
+                layerSweepTypeDecider, portDistributor, this, crossMinimizer);
+        // Apply Initializer.
+        Initializer.init(initializables);
         processRecursively = layerSweepTypeDecider.useBottomUp();
     }
 
@@ -257,7 +253,6 @@ public class GraphData implements IInitializable {
     private final class Initializer extends AbstractInitializer {
         private Initializer(final LNode[][] graph) {
             super(graph);
-            nPorts = 0;
         }
 
         @Override
@@ -267,7 +262,6 @@ public class GraphData implements IInitializable {
             if (nestedGraph != null) {
                 childGraphs.add(nestedGraph);
             }
-            nPorts += node.getPorts().size();
         }
     }
 

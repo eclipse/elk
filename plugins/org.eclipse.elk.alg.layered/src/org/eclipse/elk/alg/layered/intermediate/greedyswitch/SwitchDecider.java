@@ -32,10 +32,6 @@ import org.eclipse.elk.core.util.Pair;
  * 
  * @author alan
  */
-/**
- * @author alan
- *
- */
 public final class SwitchDecider {
     private final LNode[] freeLayer;
     private final CrossingsCounter leftInLayerCounter;
@@ -58,15 +54,24 @@ public final class SwitchDecider {
      *            the crossing matrix filler
      * @param assumeCompoundNodeFixedPortOrder
      * @param portPositions
-     * @param parentCrossingsCounter
+     *            port position array
+     * @param parentRightCrossCounter
+     *            crossings counter for counting crossings on the right of the child graph.
+     * @param parentLeftCrossCounter
+     *            crossings counter for counting crossings on the right of the child graph.
+     *            TODO-alan consider this constructor. Its so long.
      */
     public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
             final CrossingMatrixFiller crossingMatrixFiller, final int[] portPositions,
-            final GraphData graphData, final boolean oneSided) {
+            final GraphData graphData, final boolean oneSided, final CrossingsCounter parentLeftCrossCounter,
+            final CrossingsCounter parentRightCrossCounter) {
         
         this.crossingMatrixFiller = crossingMatrixFiller;
         this.graphData = graphData;
         this.oneSided = oneSided;
+        // TODO-alan Use the parents and initialize here if needed.
+        this.parentLeftCrossCounter = parentLeftCrossCounter;
+        this.parentRightCrossCounter = parentRightCrossCounter;
         if (freeLayerIndex >= graph.length) {
             throw new IndexOutOfBoundsException(
                     "Greedy SwitchDecider: Free layer layer not in graph.");
@@ -74,23 +79,10 @@ public final class SwitchDecider {
         freeLayer = graph[freeLayerIndex];
 
         leftInLayerCounter = new CrossingsCounter(portPositions);
-        leftInLayerCounter.initOneSidePortPositions(freeLayer, PortSide.WEST);
+        leftInLayerCounter.initPortPositionsForInLayerCrossings(freeLayer, PortSide.WEST);
         rightInLayerCounter = new CrossingsCounter(portPositions);
-        rightInLayerCounter.initOneSidePortPositions(freeLayer, PortSide.EAST);
+        rightInLayerCounter.initPortPositionsForInLayerCrossings(freeLayer, PortSide.EAST);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
-        if (graphData.hasParent() && !graphData.dontSweepInto()) {// TODO-alan move out executed in every layer
-            GraphData parentGraphData = graphData.parentGraphData();
-            LNode[][] parentNodeOrder = parentGraphData.currentNodeOrder();
-            parentLeftCrossCounter = parentGraphData.crossCounter().betweenAndInLayerCrossingCounter();
-            int parentNodeLayerPos = graphData.parent().getLayer().id;
-            LNode[] leftLayer = parentNodeLayerPos > 0 ? parentNodeOrder[parentNodeLayerPos - 1] : new LNode[0];
-            LNode[] middleLayer = parentNodeOrder[parentNodeLayerPos];
-            LNode[] rightLayer = parentNodeLayerPos < parentNodeOrder.length - 1
-                    ? parentNodeOrder[parentNodeLayerPos + 1] : new LNode[0];
-            parentLeftCrossCounter.initForCountingBetweenOnSide(leftLayer, middleLayer, PortSide.WEST);
-            parentRightCrossCounter = new CrossingsCounter(parentLeftCrossCounter.getPortPositions());
-            parentRightCrossCounter.initForCountingBetweenOnSide(middleLayer, rightLayer, PortSide.EAST);
-        }
     }
 
     /**
