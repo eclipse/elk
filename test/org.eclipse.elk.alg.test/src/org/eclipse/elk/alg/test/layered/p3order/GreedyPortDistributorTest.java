@@ -147,6 +147,30 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
         assertThat(leftNodes[0].getPorts(), is(expectedPortOrderLeftNode));
     }
 
+    /**
+     * <pre>
+     * ___
+     * | |\/*
+     * |_|/\*
+     * </pre>
+     */
+    @Test
+    public void distributePorts_fixedPortOrder_NoChange() throws Exception {
+        LNode[] leftNodes = addNodesToLayer(1, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
+        setFixedOrderConstraint(leftNodes[0]);
+
+        List<LPort> expectedPortOrderLeftNode = portsOrderedAs(leftNodes[0], 0, 1);
+
+        PortSide side = PortSide.EAST;
+        setUpDistributor();
+        portDist.initForLayers(leftNodes, rightNodes, new int[4]);
+        portDist.distributePorts(leftNodes[0], side);
+
+        assertThat(leftNodes[0].getPorts(), is(expectedPortOrderLeftNode));
+    }
 
     /**
      * <pre>

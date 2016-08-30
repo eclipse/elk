@@ -19,6 +19,7 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.BetweenLayerEdgeTwo
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
 
@@ -44,6 +45,9 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
      * Distribute ports greedily on a single node.
      */
     public boolean distributePorts(final LNode node, final PortSide side) {
+        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            return false;
+        }
         List<LPort> ports = portListViewInNorthSouthEastWestOrder(node, side);
         boolean improved = false;
         boolean continueSwitching;
