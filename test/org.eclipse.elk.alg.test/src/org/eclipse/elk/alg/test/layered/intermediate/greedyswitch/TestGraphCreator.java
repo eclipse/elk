@@ -419,8 +419,6 @@ public class TestGraphCreator {
      * .
      * </pre>
      *
-     * Port order not fixed.
-     *
      * @return Graph of the form above.
      */
     public LGraph getMoreComplexThreeLayerGraph() {
@@ -431,16 +429,23 @@ public class TestGraphCreator {
         LNode[] leftNodes = addNodesToLayer(3, leftLayer);
         LNode[] middleNodes = addNodesToLayer(2, middleLayer);
         LNode[] rightNodes = addNodesToLayer(3, rightLayer);
+        
+        LPort leftMiddleNodePort = addPortOnSide(leftNodes[1], PortSide.EAST);
+        LPort middleLowerNodePortEast = addPortOnSide(middleNodes[1], PortSide.EAST);
+        LPort middleUpperNodePortEast = addPortOnSide(middleNodes[0], PortSide.EAST);
+        LPort rightUpperNodePort = addPortOnSide(rightNodes[0], PortSide.WEST);
+        LPort rightMiddleNodePort = addPortOnSide(rightNodes[1], PortSide.WEST);
+        setUpIds();
 
-        eastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
-        eastWestEdgeFromTo(middleNodes[0], rightNodes[1]);
-        eastWestEdgeFromTo(middleNodes[0], rightNodes[1]);
-        eastWestEdgeFromTo(middleNodes[1], rightNodes[0]);
-        eastWestEdgeFromTo(middleNodes[1], rightNodes[2]);
-        eastWestEdgeFromTo(leftNodes[0], middleNodes[0]);
-        eastWestEdgeFromTo(leftNodes[1], middleNodes[0]);
-        eastWestEdgeFromTo(leftNodes[1], middleNodes[1]);
+        addEdgeBetweenPorts(middleUpperNodePortEast, rightUpperNodePort);
+        addEdgeBetweenPorts(middleUpperNodePortEast, rightMiddleNodePort);
+        addEdgeBetweenPorts(middleUpperNodePortEast, rightMiddleNodePort);
+        eastWestEdgeFromTo(middleLowerNodePortEast, rightNodes[2]);
+        eastWestEdgeFromTo(leftMiddleNodePort, middleNodes[0]);
+        eastWestEdgeFromTo(middleNodes[1], rightUpperNodePort);
+        eastWestEdgeFromTo(leftMiddleNodePort, middleNodes[1]);
         eastWestEdgeFromTo(leftNodes[2], middleNodes[0]);
+        eastWestEdgeFromTo(leftNodes[0], middleNodes[0]);
 
         setUpIds();
         return graph;

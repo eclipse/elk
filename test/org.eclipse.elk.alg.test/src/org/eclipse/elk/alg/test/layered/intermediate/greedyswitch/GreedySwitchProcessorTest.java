@@ -67,9 +67,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
      */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED },
-                { GreedySwitchType.TWO_SIDED },// TODO-alan
-        });
+        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED }, { GreedySwitchType.TWO_SIDED } });
     }
 
     // CHECKSTYLEOFF javadoc
@@ -256,7 +254,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
      * *\  --*
      *   \/ /
      * *-*===*
-     *  + /
+     *  x /
      * * * --*
      * Port order not fixed.
      * </pre>
@@ -268,19 +266,12 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         List<LNode> expectedOrderLayerOne;
         List<LNode> expectedOrderLayerTwo;
         List<LNode> expectedOrderLayerThree;
-        if (greedyType.isOneSided()) {
-            expectedOrderLayerOne = switchOrderOfNodesInLayer(1, 2, 0);
-            expectedOrderLayerTwo = getNodesInLayer(1);
-            expectedOrderLayerThree = switchOrderOfNodesInLayer(0, 1, 2);
-        } else {
-            expectedOrderLayerOne = switchOrderOfNodesInLayer(1, 2, 0);
-            expectedOrderLayerTwo = getNodesInLayer(1);
-            expectedOrderLayerThree = switchOrderOfNodesInLayer(0, 1, 2);
-        }
+        expectedOrderLayerOne = switchOrderOfNodesInLayer(1, 2, 0);
+        expectedOrderLayerTwo = getNodesInLayer(1);
+        expectedOrderLayerThree = switchOrderOfNodesInLayer(0, 1, 2);
         startGreedySwitcherWithCurrentType();
         assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
         assertThat("Layer three", getNodesInLayer(2), is(expectedOrderLayerThree));
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
     }
 
     @Test
@@ -315,14 +306,16 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
     public void switchMoreThanOnce() {
         LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
         LNode[] rightNodes = addNodesToLayer(4, makeLayer(getGraph()));
+        LPort leftTopPort = addPortOnSide(leftNodes[0], PortSide.EAST);
+        LPort leftLowerPort = addPortOnSide(leftNodes[1], PortSide.EAST);
+        LPort rightTopPort = addPortOnSide(rightNodes[0], PortSide.WEST);
 
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[2]);
+        addEdgeBetweenPorts(leftLowerPort, rightTopPort);
+        eastWestEdgeFromTo(leftLowerPort, rightNodes[2]);
 
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[3]);
-
+        addEdgeBetweenPorts(leftTopPort, rightTopPort);
+        eastWestEdgeFromTo(leftTopPort, rightNodes[1]);
+        eastWestEdgeFromTo(leftTopPort, rightNodes[3]);
         setUpIds();
 
         List<LNode> oneSidedFirstLayer = new ArrayList<LNode>(getNodesInLayer(0));

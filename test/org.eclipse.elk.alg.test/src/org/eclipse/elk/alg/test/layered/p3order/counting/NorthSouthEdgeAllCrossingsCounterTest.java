@@ -20,7 +20,6 @@ import org.eclipse.elk.alg.layered.p3order.counting.NorthSouthEdgeAllCrossingsCo
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -123,14 +122,6 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
         getNorthSouthAllSidesMultipleCrossings();
         int crossingCount = initCounterForLayerWithIndexAndCountInLayer(1);
         assertThat(crossingCount, is(4));
-    }
-
-    @Test
-    public void noFixedOrderConstraint() {
-        getNorthSouthDownwardCrossingGraph();
-        getGraph().toNodeArray()[0][0].setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
-        int crossingCount = initCounterForLayerWithIndexAndCountInLayer(0);
-        assertThat(crossingCount, is(0));
     }
 
     @Test

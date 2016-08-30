@@ -106,9 +106,8 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
         if (isHierarchical(upperPort) && isHierarchical(lowerPort)) {
             LNode[][] innerGraph = node.getProperty(InternalProperties.NESTED_LGRAPH).toNodeArray();
             // TODO-alan cache?
-            BetweenLayerEdgeTwoNodeCrossingsCounter counter =
-                    BetweenLayerEdgeTwoNodeCrossingsCounter.createAssumingPortOrderFixed(innerGraph,
-                            upperPort.getSide() == PortSide.EAST ? innerGraph.length - 1 : 0);
+            BetweenLayerEdgeTwoNodeCrossingsCounter counter = new BetweenLayerEdgeTwoNodeCrossingsCounter(innerGraph,
+                    upperPort.getSide() == PortSide.EAST ? innerGraph.length - 1 : 0);
             LNode upperNode = upperPort.getProperty(InternalProperties.PORT_DUMMY);
             LNode lowerNode = lowerPort.getProperty(InternalProperties.PORT_DUMMY);
             counter.countBothSideCrossings(upperNode, lowerNode);

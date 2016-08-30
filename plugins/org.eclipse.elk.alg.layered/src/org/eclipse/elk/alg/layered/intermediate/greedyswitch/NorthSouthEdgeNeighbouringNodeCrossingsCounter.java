@@ -92,11 +92,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     }
 
     private void processIfTwoNorthSouthNodes(final LNode upperNode, final LNode lowerNode) {
-        if (isNorthSouth(upperNode) && isNorthSouth(lowerNode)) {
-            if (noFixedPortOrderOn(originOf(upperNode))
-                    || haveDifferentOrigins(upperNode, lowerNode)) {
-                return;
-            }
+        if (isNorthSouth(upperNode) && isNorthSouth(lowerNode) && !haveDifferentOrigins(upperNode, lowerNode)) {
             if (hasEdgesInBothDirections(upperNode) || hasEdgesInBothDirections(lowerNode)) {
                 upperLowerCrossings = 1;
                 lowerUpperCrossings = 1;
@@ -229,10 +225,6 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
 
     private LNode originOf(final LNode node) {
         return (LNode) node.getProperty(InternalProperties.ORIGIN);
-    }
-
-    private boolean noFixedPortOrderOn(final LNode node) {
-        return !node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private boolean isLongEdgeDummy(final LNode node) {

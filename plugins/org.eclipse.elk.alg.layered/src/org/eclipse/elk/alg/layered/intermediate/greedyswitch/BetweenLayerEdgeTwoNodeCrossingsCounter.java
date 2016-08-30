@@ -18,8 +18,6 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -42,7 +40,6 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
     private final Map<LPort, Integer> portPositions;
     private final Map<LNode, AdjacencyList> easternAdjacencies;
     private final Map<LNode, AdjacencyList> westernAdjacencies;
-    private final boolean assumePortOrderFixed;
 
     /**
      * Create {@link BetweenLayerEdgeTwoNodeCrossingsCounter}. Naming assumes a left-right layer
@@ -54,9 +51,7 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
      *            Index of free layer.
      * @param assumePortOrderFixed
      */
-    private BetweenLayerEdgeTwoNodeCrossingsCounter(final LNode[][] currentNodeOrder,
-            final int freeLayerIndex, final boolean assumePortOrderFixed) {
-        this.assumePortOrderFixed = assumePortOrderFixed;
+    public BetweenLayerEdgeTwoNodeCrossingsCounter(final LNode[][] currentNodeOrder, final int freeLayerIndex) {
         portPositions = Maps.newHashMap();
         easternAdjacencies = Maps.newHashMap();
         westernAdjacencies = Maps.newHashMap();
@@ -87,24 +82,9 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
         for (LNode node : currentNodeOrder[layerIndex]) {
             Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, portSide);
             for (LPort port : ports) {
-                portPositions.put(port, portId);
-                if (portOrderIsFixed(node)) {
-                    portId++;
-                }
-            }
-            if (!portOrderIsFixed(node)) {
-                portId++;
+                portPositions.put(port, portId++);
             }
         }
-    }
-
-    private boolean portOrderIsFixed(final LNode node) {
-        return node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()
-                || hasNestedGraph(node) && assumePortOrderFixed;
-    }
-
-    private boolean hasNestedGraph(final LNode node) {
-        return node.getProperty(InternalProperties.NESTED_LGRAPH) != null;
     }
 
     /**
@@ -421,34 +401,5 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
      */
     public int getLowerUpperCrossings() {
         return lowerUpperCrossings;
-    }
-
-    /**
-     * Does not assume fixed port order. Crossings between edges connected to node with free port
-     * order are assumed to be non-existent. Note that this is not always true.
-     * 
-     * @param currentNodeOrder
-     *            The current graph node order.
-     * @param freeLayerIndex
-     *            The layer whose nodes are being exchanged.
-     * @return the counter
-     */
-    public static BetweenLayerEdgeTwoNodeCrossingsCounter create(final LNode[][] currentNodeOrder,
-            final int freeLayerIndex) {
-        return new BetweenLayerEdgeTwoNodeCrossingsCounter(currentNodeOrder, freeLayerIndex, false);
-    }
-
-    /**
-     * Assumes fixed port order.
-     * 
-     * @param currentNodeOrder
-     *            The current graph node order.
-     * @param freeLayerIndex
-     *            The layer whose nodes are being exchanged.
-     * @return the counter
-     */
-    public static BetweenLayerEdgeTwoNodeCrossingsCounter createAssumingPortOrderFixed(
-            final LNode[][] currentNodeOrder, final int freeLayerIndex) {
-        return new BetweenLayerEdgeTwoNodeCrossingsCounter(currentNodeOrder, freeLayerIndex, true);
     }
 }

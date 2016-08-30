@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.CrossingMatrixFiller;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider;
@@ -26,6 +27,7 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.Cross
 import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
+import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -39,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  *
  */
 @RunWith(Parameterized.class)
-public class SwitchDeciderTest {
+public class SwitchDeciderTest extends TestGraphCreator {
 
     private final GreedySwitchType greedyType;
 
@@ -64,7 +66,6 @@ public class SwitchDeciderTest {
         greedyType = gT;
     }
 
-    private final TestGraphCreator creator = new TestGraphCreator();
     private LGraph graph;
     private SwitchDecider decider;
     private LNode[][] currentNodeOrder;
@@ -74,7 +75,7 @@ public class SwitchDeciderTest {
     // CHECKSTYLEOFF MagicNumber
     @Test
     public void crossFormed() {
-        graph = creator.getCrossFormedGraph();
+        graph = getCrossFormedGraph();
         setUpIds();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
@@ -84,18 +85,9 @@ public class SwitchDeciderTest {
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
     }
 
-    private void setUpIds() {
-        for (Layer l : graph) {
-            int i = 0;
-            for (LNode n : l) {
-                n.id = i++;
-            }
-        }
-    }
-
     @Test
     public void oneNode() {
-        graph = creator.getOneNodeGraph();
+        graph = getOneNodeGraph();
 
         decider = givenDeciderForFreeLayer(0, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 0), is(false));
@@ -117,7 +109,7 @@ public class SwitchDeciderTest {
      */
     @Test
     public void inLayerSwitchable() {
-        graph = creator.getInLayerEdgesGraph();
+        graph = getInLayerEdgesGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
@@ -128,7 +120,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void multipleEdgesBetweenSameNodes() {
-        graph = creator.getMultipleEdgesBetweenSameNodesGraph();
+        graph = getMultipleEdgesBetweenSameNodesGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
@@ -139,7 +131,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void selfLoops() {
-        graph = creator.getCrossWithManySelfLoopsGraph();
+        graph = getCrossWithManySelfLoopsGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
@@ -179,7 +171,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void moreComplex() {
-        graph = creator.getMoreComplexThreeLayerGraph();
+        graph = getMoreComplexThreeLayerGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
@@ -200,7 +192,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void switchOnlyTrueForOneSided() {
-        graph = creator.getSwitchOnlyOneSided();
+        graph = getSwitchOnlyOneSided();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         if (greedyType.isOneSided()) {
@@ -212,7 +204,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void switchOnlyTrueForOneSidedEasternSide() {
-        graph = creator.getSwitchOnlyEastOneSided();
+        graph = getSwitchOnlyEastOneSided();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.EAST);
         if (greedyType.isOneSided()) {
@@ -224,7 +216,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void constraintsPreventSwitch() {
-        graph = creator.getCrossFormedGraphWithConstraintsInSecondLayer();
+        graph = getCrossFormedGraphWithConstraintsInSecondLayer();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
@@ -239,7 +231,7 @@ public class SwitchDeciderTest {
 
     @Test
     public void switchAndRecount() {
-        graph = creator.getCrossFormedGraph();
+        graph = getCrossFormedGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
@@ -255,18 +247,21 @@ public class SwitchDeciderTest {
 
     @Test
     public void switchAndRecountCounterBug() {
-        LNode[] leftNodes = creator.addNodesToLayer(2, creator.makeLayer(creator.getGraph()));
-        LNode[] rightNodes = creator.addNodesToLayer(4, creator.makeLayer(creator.getGraph()));
+        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
+        LNode[] rightNodes = addNodesToLayer(4, makeLayer(getGraph()));
+        LPort leftTopPort = addPortOnSide(leftNodes[0], PortSide.EAST);
+        LPort leftLowerPort = addPortOnSide(leftNodes[1], PortSide.EAST);
+        LPort rightTopPort = addPortOnSide(rightNodes[0], PortSide.WEST);
 
-        creator.eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
-        creator.eastWestEdgeFromTo(leftNodes[1], rightNodes[2]);
+        addEdgeBetweenPorts(leftLowerPort, rightTopPort);
+        eastWestEdgeFromTo(leftLowerPort, rightNodes[2]);
 
-        creator.eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
-        creator.eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
-        creator.eastWestEdgeFromTo(leftNodes[0], rightNodes[3]);
+        addEdgeBetweenPorts(leftTopPort, rightTopPort);
+        eastWestEdgeFromTo(leftTopPort, rightNodes[1]);
+        eastWestEdgeFromTo(leftTopPort, rightNodes[3]);
 
-        creator.setUpIds();
-        graph = creator.getGraph();
+        setUpIds();
+        graph = getGraph();
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
@@ -294,19 +289,12 @@ public class SwitchDeciderTest {
 
     @Test
     public void switchAndRecountReducedCounterBug() {
-        graph = creator.getSwitchedProblemGraph();
+        graph = getSwitchedProblemGraph();
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
         for (int i = 0; i < getNodesInLayer(1).size() - 1; i++) {
             assertThat("attempted switch " + i + " with " + (i + 1), decider.doesSwitchReduceCrossings(i, i + 1),
                     is(false));
         }
-    }
-
-    @Test
-    public void ignoresNoFixedOrder() {
-        graph = creator.getGraphNoCrossingsDueToPortOrderNotFixed();
-        decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
-        assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
     }
 
     @Test
@@ -365,19 +353,15 @@ public class SwitchDeciderTest {
         currentNodeOrder[freeLayerIndex][lowerNodeIndex] = upperNode;
     }
 
-    private List<LNode> getNodesInLayer(final int layerIndex) {
-        return graph.getLayers().get(layerIndex).getNodes();
-    }
-
     private SwitchDecider givenDeciderForFreeLayer(final int layerIndex, final CrossingCountSide direction) {
         freeLayerIndex = layerIndex;
         currentNodeOrder = getCurrentNodeOrder();
-        CrossingMatrixFiller crossingMatrixFiller = CrossingMatrixFiller.create(greedyType, currentNodeOrder, layerIndex, direction);
+        CrossingMatrixFiller crossingMatrixFiller =
+                new CrossingMatrixFiller(greedyType, currentNodeOrder, layerIndex, direction);
         return new SwitchDecider(layerIndex, currentNodeOrder,
                 crossingMatrixFiller,
                 new int[getNPorts(currentNodeOrder)],
-                new GraphData(graph, CrossMinType.GREEDY_SWITCH, new ArrayList<>()), greedyType.isOneSided(), null,
-                null);
+                new GraphData(graph, CrossMinType.GREEDY_SWITCH, new ArrayList<>()), greedyType.isOneSided());
     }
 
     private int getNPorts(final LNode[][] currentOrder) {

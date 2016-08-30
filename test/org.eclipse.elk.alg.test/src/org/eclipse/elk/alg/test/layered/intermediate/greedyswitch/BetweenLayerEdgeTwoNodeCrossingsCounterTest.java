@@ -45,7 +45,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(0);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 0);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 0);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -63,7 +63,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -81,7 +81,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(0);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 0);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 0);
         setUpperNode(0);
         setLowerNode(0);
 
@@ -99,7 +99,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -117,7 +117,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(2);
 
@@ -135,7 +135,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(2);
 
@@ -153,7 +153,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -165,20 +165,13 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
         assertEasternSideLowerUpperCrossingsIs(0);
     }
 
-    // @formatter:off
-    /**
-     * *\ --* \/ / *-*===* + / * * --*
-     *
-     * @return
-     */
-    // @formatter:on
     @Test
     public void moreComplexThreeLayerGraph() {
         getMoreComplexThreeLayerGraph();
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -196,7 +189,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -212,18 +205,21 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
     public void switchThreeTimes() {
         LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
         LNode[] rightNodes = addNodesToLayer(4, makeLayer(getGraph()));
+        LPort leftTopPort = addPortOnSide(leftNodes[0], PortSide.EAST);
+        LPort leftLowerPort = addPortOnSide(leftNodes[1], PortSide.EAST);
+        LPort rightTopPort = addPortOnSide(rightNodes[0], PortSide.WEST);
 
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[2]);
+        addEdgeBetweenPorts(leftLowerPort, rightTopPort);
+        eastWestEdgeFromTo(leftLowerPort, rightNodes[2]);
 
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[3]);
+        addEdgeBetweenPorts(leftTopPort, rightTopPort);
+        eastWestEdgeFromTo(leftTopPort, rightNodes[1]);
+        eastWestEdgeFromTo(leftTopPort, rightNodes[3]);
 
         setUpIds();
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(0);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 0);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 0);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -240,7 +236,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
         twoEdgesIntoSamePort();
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -257,7 +253,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
         twoEdgesIntoSamePortCrossesWhenSwitched();
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(0);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 0);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 0);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -274,7 +270,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
         twoEdgesIntoSamePortResolvesCrossingWhenSwitched();
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(0);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 0);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 0);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -291,7 +287,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
         twoEdgesIntoSamePortFromEastWithFixedPortOrder();
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(0);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 0);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 0);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -304,11 +300,23 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
     }
 
     @Test
-    public void multipleEdgesAndSingleEdgeShouldAlwaysReturnSameValue() {
-        multipleEdgesAndSingleEdge();
+    public void multipleEdgesIntoSamePort_causesNoCrossings() {
+        Layer leftLayer = makeLayer(graph);
+        Layer rightLayer = makeLayer(graph);
+        
+        LNode topLeft = addNodeToLayer(leftLayer);
+        LNode bottomLeft = addNodeToLayer(leftLayer);
+        LNode bottomRight = addNodeToLayer(rightLayer);
+        
+        LPort bottomRightPort = addPortOnSide(bottomRight, PortSide.WEST);
+
+        eastWestEdgeFromTo(topLeft, bottomRightPort);
+        eastWestEdgeFromTo(topLeft, bottomRightPort);
+        eastWestEdgeFromTo(bottomLeft, bottomRightPort);
+        setUpIds();
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(0);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 0);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 0);
         setUpperNode(0);
         setLowerNode(1);
 
@@ -349,7 +357,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreato
 
         nodeOrder = getGraph().toNodeArray();
         layerToCountIn = getGraph().getLayers().get(1);
-        crossingCounter = BetweenLayerEdgeTwoNodeCrossingsCounter.create(nodeOrder, 1);
+        crossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(nodeOrder, 1);
         setUpperNode(0);
         setLowerNode(1);
 

@@ -19,7 +19,6 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.NorthSouthEdgeNeigh
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -90,15 +89,6 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest extends NorthSou
         countCrossingsInLayerBetweenNodes(1, 0, 1);
         assertThat(counter.getUpperLowerCrossings(), is(0));
         assertThat(counter.getLowerUpperCrossings(), is(1));
-    }
-
-    @Test
-    public void noFixedOrderConstraint() {
-        getNorthSouthDownwardCrossingGraph();
-        getGraph().toNodeArray()[0][0].setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
-        countCrossingsInLayerBetweenNodes(0, 1, 2);
-        assertThat(counter.getUpperLowerCrossings(), is(0));
-        assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
     @Test

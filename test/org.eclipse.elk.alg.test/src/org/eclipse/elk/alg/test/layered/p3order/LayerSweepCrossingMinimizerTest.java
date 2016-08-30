@@ -962,33 +962,6 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
 
     /**
      * <pre>
-     * *\ /*
-     *   x
-     *  / \
-     * *---*
-     * </pre>
-     *
-     * Node order free left bottom node.
-     */
-    @Test
-    public void givenCrossWhichWouldCauseCrossingIfPortOrderWouldBeFixed_ShouldBeRemoved() {
-        LNode[] leftNodes = addNodesToLayer(2, makeLayer(getGraph()));
-        LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
-        eastWestEdgeFromTo(leftNodes[0], rightNodes[1]);
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[0]);
-        eastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
-
-        List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, getGraph().getLayers().get(1));
-
-        setUpAndMinimizeCrossings();
-
-        List<LNode> actualOrderRight = getGraph().getLayers().get(1).getNodes();
-        assertThat(actualOrderRight, is(expectedOrderRight));
-
-    }
-
-    /**
-     * <pre>
      * ____  _____
      * |*-+  +-* |
      * |  |\/|   |
@@ -1322,9 +1295,11 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f);
 
         List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedInnerOrderRight = Lists.newArrayList(leftInnerNodesRight[1], leftInnerNodesRight[0]);
 
         setUpAndMinimizeCrossings();
 
+        assertThat(leftInnerGraph.getLayers().get(1).getNodes(), is(expectedInnerOrderRight));
         assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedOrderRight));
     }
 

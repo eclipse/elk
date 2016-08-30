@@ -113,13 +113,11 @@ public class NorthSouthEdgeAllCrossingsCounter {
         int crossings = 0;
         for (LNode node : layer) {
             crossings += getLongEdgeDummyCrossings(node);
-            if (fixedPortOrderOn(node)) {
-                if (hasPortOnSide(node, PortSide.NORTH)) {
-                    crossings += getCrossingsOnSide(node, PortSide.NORTH);
-                }
-                if (hasPortOnSide(node, PortSide.SOUTH)) {
-                    crossings += getCrossingsOnSide(node, PortSide.SOUTH);
-                }
+            if (hasPortOnSide(node, PortSide.NORTH)) {
+                crossings += getCrossingsOnSide(node, PortSide.NORTH);
+            }
+            if (hasPortOnSide(node, PortSide.SOUTH)) {
+                crossings += getCrossingsOnSide(node, PortSide.SOUTH);
             }
         }
         return crossings;
@@ -228,10 +226,6 @@ public class NorthSouthEdgeAllCrossingsCounter {
         return factor
                 * Math.min(cardinalityOnSide(node, side) - 1 - positionOf(port),
                 nearnessBetween(node, northSouthDummy));
-    }
-
-    private boolean fixedPortOrderOn(final LNode node) {
-        return node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private boolean hasPortOnSide(final LNode node, final PortSide side) {
