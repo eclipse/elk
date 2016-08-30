@@ -14,23 +14,24 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.alg.layered.p3order.ICrossingMinimizationHeuristic;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 
 /**
  * <p>
- * Implements the greedy switch heuristic: For two neighboring nodes, check to see if by exchanging
- * their positions ("switching" them) the number of crossings is reduced. If it is, switch them, if
- * it is not, don't. This principle is continued throughout the graph for all nodes in each layer.
+ * Implements the greedy switch heuristic: For two neighboring nodes, check to see if by exchanging their positions
+ * ("switching" them) the number of crossings is reduced. If it is, switch them, if it is not, don't. This principle is
+ * continued throughout the graph for all nodes in each layer.
  * </p>
  * <p>
- * Configuration depends on the {@link GreedySwitchType} set on the graph:
+ * Configuration depends on the {@link CrossMinType} set on the graph:
  * </p>
  * <ul>
- * <li>isOneSided: fixes the order of one layer and changes the order in a neighboring layer using
- * the number of crossings to this neighboring layer. To prevent increasing the number of crosses,
- * after each forward and backward sweep the number of crossings in the graph are recounted. If
- * isOneSided is not false, it sets a layer as free and counts crossings to both neighboring layers.
+ * <li>{@link CrossMinType#ONE_SIDED_GREEDY_SWITCH}: fixes the order of one layer and changes the order in a neighboring
+ * layer using the number of crossings to this neighboring layer. To prevent increasing the number of crosses, after
+ * each forward and backward sweep the number of crossings in the graph are recounted.
+ * <li>{@link CrossMinType#TWO_SIDED_GREEDY_SWITCH}: If one sided is not false, it sets a layer as free and counts
+ * crossings to both neighboring layers.
  *
  * </ul>
  *
@@ -39,7 +40,7 @@ import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
  */
 public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
 
-    private final GreedySwitchType greedySwitchType;
+    private final CrossMinType greedySwitchType;
     private LNode[][] currentNodeOrder;
     private SwitchDecider switchDecider;
     private int[] portPositions;
@@ -53,7 +54,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
      *            The greedy switch type.
      * @param nPorts
      */
-    public GreedySwitchHeuristic(final GreedySwitchType greedyType, final GraphData graphData) {
+    public GreedySwitchHeuristic(final CrossMinType greedyType, final GraphData graphData) {
         initializer = new Initializer(graphData.currentNodeOrder());
         this.graphData = graphData;
         greedySwitchType = greedyType;
@@ -90,7 +91,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
         CrossingMatrixFiller crossingMatrixFiller =
                 new CrossingMatrixFiller(greedySwitchType, currentNodeOrder, freeLayerIndex, side);
         return new SwitchDecider(freeLayerIndex, currentNodeOrder, crossingMatrixFiller, portPositions,
-                graphData, greedySwitchType.isOneSided());
+                graphData, greedySwitchType == CrossMinType.ONE_SIDED_GREEDY_SWITCH);
     }
 
     private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex) {
@@ -140,7 +141,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
 
     @Override
     public boolean alwaysImproves() {
-        return !greedySwitchType.isOneSided();
+        return !(greedySwitchType == CrossMinType.ONE_SIDED_GREEDY_SWITCH);
     }
 
     @Override

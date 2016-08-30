@@ -21,11 +21,8 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.TestGraphCreator;
-import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.junit.Test;
@@ -241,29 +238,9 @@ public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCre
         assertThat(innerGraph.getLayers().get(0).getNodes(), is(expectedOrderDummies));
     }
 
-    private void setAllGraphsToGreedySwitchType(final LGraph graph,
-            final GreedySwitchType greedyType) {
-        graph.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
-        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 1f);
-        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH, greedyType);
-        for (Layer layer : graph) {
-            for (LNode node : layer) {
-                if (isCompound(node)) {
-                    setAllGraphsToGreedySwitchType(
-                            node.getProperty(InternalProperties.NESTED_LGRAPH), greedyType);
-                }
-            }
-        }
-    }
-
-    private boolean isCompound(final LNode n) {
-        return n.getProperty(InternalProperties.NESTED_LGRAPH) != null;
-    }
-
     private void setUpAndMinimizeCrossings() {
         LayerSweepCrossingMinimizer crossMin =
-                new LayerSweepCrossingMinimizer(CrossMinType.GREEDY_SWITCH);
-        setAllGraphsToGreedySwitchType(getGraph(), GreedySwitchType.TWO_SIDED);
+                new LayerSweepCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
         crossMin.process(getGraph(), new BasicProgressMonitor());
     }
 }

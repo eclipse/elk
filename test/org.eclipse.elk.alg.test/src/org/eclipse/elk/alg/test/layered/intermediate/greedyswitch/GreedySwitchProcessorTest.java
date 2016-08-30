@@ -23,8 +23,6 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -44,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class GreedySwitchProcessorTest extends TestGraphCreator {
     private final LayerSweepCrossingMinimizer greedySwitcher;
     private final IElkProgressMonitor monitor;
-    private final GreedySwitchType greedyType;
+    private final CrossMinType greedyType;
 
     /**
      * Constructor called by Parameterized.
@@ -52,22 +50,22 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
      * @param gT
      *            greedyType
      */
-    public GreedySwitchProcessorTest(final GreedySwitchType gT) {
+    public GreedySwitchProcessorTest(final CrossMinType gT) {
         greedyType = gT;
-        greedySwitcher = new LayerSweepCrossingMinimizer(CrossMinType.GREEDY_SWITCH);
+        greedySwitcher = new LayerSweepCrossingMinimizer(gT);
 
         monitor = new BasicProgressMonitor();
     }
 
     /**
-     * Sets the Parameters to be tested as all elements of the GreedySwitchType
-     * enum.
+     * Sets the Parameters to be tested as all elements of the CrossMinType enum.
      *
      * @return parameters
      */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED }, { GreedySwitchType.TWO_SIDED } });
+        return Arrays.asList(
+                new Object[][] { { CrossMinType.ONE_SIDED_GREEDY_SWITCH }, { CrossMinType.TWO_SIDED_GREEDY_SWITCH } });
     }
 
     // CHECKSTYLEOFF javadoc
@@ -78,7 +76,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
 
         List<LNode> expectedOrderLayerOne;
         List<LNode> expectedOrderLayerTwo;
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             expectedOrderLayerOne = getNodesInLayer(0);
             expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
         } else {
@@ -93,7 +91,6 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
     }
 
     private void startGreedySwitcherWithCurrentType() {
-        getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH, greedyType);
         greedySwitcher.process(getGraph(), monitor);
     }
 
@@ -159,7 +156,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
 
         List<LNode> expectedOrderLayerOne;
         List<LNode> expectedOrderLayerTwo;
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             expectedOrderLayerOne = getNodesInLayer(0);
             expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
         } else {
@@ -205,7 +202,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
 
         List<LNode> expectedOrderLayerOne;
         List<LNode> expectedOrderLayerTwo;
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             expectedOrderLayerOne = getNodesInLayer(0);
             expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
         } else {
@@ -242,7 +239,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
 
         startGreedySwitcherWithCurrentType();
 
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             assertThat(getNodesInLayer(layerIndex), is(expectedOrderOneSided));
         } else {
             assertThat(getNodesInLayer(layerIndex), is(expectedOrderTwoSided));
@@ -262,11 +259,8 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
     @Test
     public void moreComplex() {
         getMoreComplexThreeLayerGraph();
-
-        List<LNode> expectedOrderLayerOne;
         List<LNode> expectedOrderLayerTwo;
         List<LNode> expectedOrderLayerThree;
-        expectedOrderLayerOne = switchOrderOfNodesInLayer(1, 2, 0);
         expectedOrderLayerTwo = getNodesInLayer(1);
         expectedOrderLayerThree = switchOrderOfNodesInLayer(0, 1, 2);
         startGreedySwitcherWithCurrentType();
@@ -283,7 +277,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(getNodesInLayer(layerIndex));
 
         startGreedySwitcherWithCurrentType();
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             assertThat(getNodesInLayer(layerIndex), is(expectedOrderOneSided));
         } else {
             assertThat(getNodesInLayer(layerIndex), is(expectedOrderTwoSided));
@@ -327,7 +321,7 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         List<LNode> twoSidedFirstSwitchSecondLayer = switchOrderOfNodesInLayer(1, 2, 1);
         List<LNode> twoSidedsecondSwitchSecondLayer = getCopyWithSwitchedOrder(0, 1, twoSidedFirstSwitchSecondLayer);
         startGreedySwitcherWithCurrentType();
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             assertThat("Layer one" + getNodesInLayer(0), getNodesInLayer(0), is(oneSidedFirstLayer));
             assertThat("Layer two " + getNodesInLayer(1), getNodesInLayer(1), is(oneSidedThirdSwitchSecondLayer));
         } else {

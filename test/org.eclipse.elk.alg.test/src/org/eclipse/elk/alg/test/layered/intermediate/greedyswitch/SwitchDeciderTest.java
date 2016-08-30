@@ -26,7 +26,6 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,17 +42,17 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class SwitchDeciderTest extends TestGraphCreator {
 
-    private final GreedySwitchType greedyType;
+    private final CrossMinType greedyType;
 
     /**
-     * This method is needed by Parameterized.class. The parameters are all
-     * elements of the GreedySwitchType enum.
+     * This method is needed by Parameterized.class. The parameters are all elements of the CrossMinType enum.
      *
      * @return parameters
      */
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
-        return Arrays.asList(new Object[][] { { GreedySwitchType.ONE_SIDED }, { GreedySwitchType.TWO_SIDED } });
+        return Arrays.asList(
+                new Object[][] { { CrossMinType.ONE_SIDED_GREEDY_SWITCH }, { CrossMinType.TWO_SIDED_GREEDY_SWITCH } });
     }
 
     /**
@@ -62,7 +61,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
      * @param gT
      *            the greedy type
      */
-    public SwitchDeciderTest(final GreedySwitchType gT) {
+    public SwitchDeciderTest(final CrossMinType gT) {
         greedyType = gT;
     }
 
@@ -162,7 +161,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
         graph = new NorthSouthEdgeTestGraphCreator().getThreeLayerNorthSouthCrossingGraph();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
         } else {
             assertThat(decider.doesSwitchReduceCrossings(1, 2), is(false));
@@ -195,7 +194,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
         graph = getSwitchOnlyOneSided();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.WEST);
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
         } else {
             assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
@@ -207,7 +206,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
         graph = getSwitchOnlyEastOneSided();
 
         decider = givenDeciderForFreeLayer(1, CrossingCountSide.EAST);
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
         } else {
             assertThat(decider.doesSwitchReduceCrossings(0, 1), is(false));
@@ -304,7 +303,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
 
         assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
 
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
         }
 
@@ -313,7 +312,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
 
         assertThat(decider.doesSwitchReduceCrossings(0, 1), is(true));
 
-        if (greedyType.isOneSided()) {
+        if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
             assertThat(decider.doesSwitchReduceCrossings(1, 2), is(true));
         }
     }
@@ -361,7 +360,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
         return new SwitchDecider(layerIndex, currentNodeOrder,
                 crossingMatrixFiller,
                 new int[getNPorts(currentNodeOrder)],
-                new GraphData(graph, CrossMinType.GREEDY_SWITCH, new ArrayList<>()), greedyType.isOneSided());
+                new GraphData(graph, CrossMinType.ONE_SIDED_GREEDY_SWITCH, new ArrayList<>()), greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH);
     }
 
     private int getNPorts(final LNode[][] currentOrder) {

@@ -27,7 +27,6 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.TestGraphCreator;
@@ -68,7 +67,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
     @Parameters(name = "{0}")
     public static Iterable<Object[]> greedyTypes() {
         return Arrays.asList(
-                new Object[][] { { CrossMinType.BARYCENTER }, { CrossMinType.GREEDY_SWITCH } });
+                new Object[][] { { CrossMinType.BARYCENTER }, { CrossMinType.ONE_SIDED_GREEDY_SWITCH } });
     }
 
     @Before
@@ -853,8 +852,6 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftInnerDummyNodes[1], innerNodes[1]);
 
         List<LPort> expextedPorts = copyPortsInIndexOrder(middleOuterNode, 1, 0, 3, 2);
-
-        setAllGraphsToGreedySwitchType(getGraph(), GreedySwitchType.ONE_SIDED);
 
         setUpAndMinimizeCrossings();
 
@@ -1677,27 +1674,9 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
     }
 
     private void setUpAndMinimizeCrossings() {
-        setAllGraphsToGreedySwitchType(getGraph(), GreedySwitchType.ONE_SIDED);
         if (crossMinType == CrossMinType.BARYCENTER) {
             getGraph().setProperty(LayeredOptions.THOROUGHNESS, 1);
         }
         crossMin.process(getGraph(), new BasicProgressMonitor());
-    }
-
-    private void setAllGraphsToGreedySwitchType(final LGraph graph,
-            final GreedySwitchType greedyType) {
-        graph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH, greedyType);
-        for (Layer layer : graph) {
-            for (LNode node : layer) {
-                if (isCompound(node)) {
-                    setAllGraphsToGreedySwitchType(
-                            node.getProperty(InternalProperties.NESTED_LGRAPH), greedyType);
-                }
-            }
-        }
-    }
-
-    private boolean isCompound(final LNode n) {
-        return n.getProperty(InternalProperties.NESTED_LGRAPH) != null;
     }
 }

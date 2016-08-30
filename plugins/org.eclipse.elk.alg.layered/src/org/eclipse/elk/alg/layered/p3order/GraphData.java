@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +24,6 @@ import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitial
 import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 
 import com.google.common.collect.Lists;
 
@@ -65,12 +65,12 @@ public class GraphData implements IInitializable {
      * 
      * @param graph
      *            The graph
-     * @param cMT
+     * @param crossMinType
      *            The CrossMinimizer
      */
-    public GraphData(final LGraph graph, final CrossMinType cMT, final List<GraphData> graphs) {
+    public GraphData(final LGraph graph, final CrossMinType crossMinType, final List<GraphData> graphs) {
         lGraph = graph;
-        crossMinType = cMT;
+        this.crossMinType = crossMinType;
         currentNodeOrder = graph.toNodeArray();
         
         // Init hierarchy information.
@@ -84,7 +84,7 @@ public class GraphData implements IInitializable {
         // Init all Objects needing initialization by graph traversal.
         initializer = new Initializer(currentNodeOrder);
         crossingsCounter = new AllCrossingsCounter(currentNodeOrder);
-        if (crossMinAlwaysImproves()) {
+        if (crossMinType == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
             portDistributor = new GreedyPortDistributor(currentNodeOrder);
         } else if (lGraph.getProperty(InternalProperties.RANDOM).nextBoolean()) {
             portDistributor = new NodeRelativePortDistributor(currentNodeOrder);
@@ -94,12 +94,11 @@ public class GraphData implements IInitializable {
         ForsterConstraintResolver constraintResolver = new ForsterConstraintResolver(currentNodeOrder);
         layerSweepTypeDecider = new LayerSweepTypeDecider(this);
         
-        if (cMT == CrossMinType.BARYCENTER) {
+        if (crossMinType == CrossMinType.BARYCENTER) {
             crossMinimizer = new BarycenterHeuristic(constraintResolver, graph.getProperty(InternalProperties.RANDOM),
                     (AbstractBarycenterPortDistributor) portDistributor, currentNodeOrder);
         } else {
-            crossMinimizer = new GreedySwitchHeuristic(
-                    lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH), this);
+            crossMinimizer = new GreedySwitchHeuristic(crossMinType, this);
         }
         List<IInitializable> initializables = Lists.newArrayList(crossingsCounter, constraintResolver,
                 layerSweepTypeDecider, portDistributor, this, crossMinimizer);
@@ -210,7 +209,7 @@ public class GraphData implements IInitializable {
 
     @Override
     public String toString() {
-        return lGraph.toString();
+        return Arrays.deepToString(currentNodeOrder);
     }
 
     /**
@@ -235,13 +234,10 @@ public class GraphData implements IInitializable {
     }
 
     /**
-     * TODO-alan change double cross-min type greedy switch.
-     * 
-     * @return
+     * @return whether this CrossingMinimizer always improves
      */
     public boolean crossMinAlwaysImproves() {
-        return crossMinType == CrossMinType.GREEDY_SWITCH
-                && !lGraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH).isOneSided();
+        return crossMinimizer.alwaysImproves();
     }
 
     @Override

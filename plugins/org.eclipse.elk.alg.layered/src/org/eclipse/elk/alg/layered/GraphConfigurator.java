@@ -317,10 +317,13 @@ final class GraphConfigurator {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
         }
 
-        if (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) != GreedySwitchType.OFF
-                && lgraph.getProperty(
+        GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH);
+        if (greedySwitchType != GreedySwitchType.OFF && lgraph.getProperty(
                         LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) != CrossingMinimizationStrategy.INTERACTIVE) {
-            configuration.addBeforePhase4(IntermediateProcessorStrategy.GREEDY_SWITCH);
+            IntermediateProcessorStrategy internalGreedyType = greedySwitchType == GreedySwitchType.ONE_SIDED
+                                    ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
+                                    : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
+            configuration.addBeforePhase4(internalGreedyType);
         }
 
         return configuration;

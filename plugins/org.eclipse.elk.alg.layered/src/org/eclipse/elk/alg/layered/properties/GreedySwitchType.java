@@ -17,52 +17,12 @@ package org.eclipse.elk.alg.layered.properties;
  *
  */
 public enum GreedySwitchType {
-
     /** Only consider crossings to one side of the free layer. Calculate crossing matrix on demand. */
-    ONE_SIDED(true, false),
+    ONE_SIDED,
     /** Consider crossings to both sides of the free layer. Calculate crossing matrix on demand. */
-    TWO_SIDED(false, false),
-    /**
-     * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
-     * Compare all upward and downward sweeps.
-     */
-    ONE_SIDED_BEST_OF_UP_OR_DOWN(true,
-            false),
-    /**
-     * Consider crossings to both sides of the free layer. Calculate crossing matrix on demand.
-     * Compare all upward and downward sweeps.
-     */
-    TWO_SIDED_BEST_OF_UP_OR_DOWN(false,
-            false),
-    /**
-     * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
-     * Compare all upward and downward sweeps. Use hyperedge crossings counter for between layer
-     * edges
-     */
-    ONE_SIDED_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES(true,
-            true),
-    /**
-     * Consider crossings to both sides of the free layer. Calculate crossing matrix on demand.
-     * Compare all upward and downward sweeps. Use hyperedge crossings counter for between layer
-     * edges.
-     */
-    TWO_SIDED_BEST_OF_UP_OR_DOWN_ORTHOGONAL_HYPEREDGES(false,
-            true),
-    /**
-     * Only consider crossings to one side of the free layer. Calculate crossing matrix on demand.
-     * Use hyperedge crossings counter for between layer edges.
-     */
-    ONE_SIDED_ORTHOGONAL_HYPEREDGES(true, true),
-    /** Don't use greedy switch heuristic. */
-    OFF(false, false);
-
-    private final boolean isOneSided;
-    private final boolean useHperedgeCounter;
-
-    GreedySwitchType(final boolean isOneSided, final boolean useOrthogonalCounter) {
-        this.isOneSided = isOneSided;
-        useHperedgeCounter = useOrthogonalCounter;
-    }
+    TWO_SIDED,
+    /** Do not use greedy switch. */
+    OFF;
 
     /**
      * Only considers crossings to one side of the free layer.
@@ -70,17 +30,7 @@ public enum GreedySwitchType {
      * @return true if only considers two layers.
      */
     public boolean isOneSided() {
-        return isOneSided;
+        return this == ONE_SIDED;
     }
-
-    /**
-     * Uses hyperedge crossing count approximization for between-layer edges.
-     * 
-     * @return whether this applies.
-     */
-    public boolean useHyperedgeCounter() {
-        return useHperedgeCounter;
-    }
-
 }
 

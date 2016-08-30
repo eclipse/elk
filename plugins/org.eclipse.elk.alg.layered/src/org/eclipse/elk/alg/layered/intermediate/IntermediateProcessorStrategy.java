@@ -92,8 +92,10 @@ public enum IntermediateProcessorStrategy {
     NORTH_SOUTH_PORT_PREPROCESSOR,
 
     // Before Phase 4
-    /** Hierachical greedy switch crossing reduction. */
-    GREEDY_SWITCH,
+    /** Hierachical one-sided greedy switch crossing reduction. */
+    ONE_SIDED_GREEDY_SWITCH,
+    /** Hierachical two-sided greedy switch crossing reduction. */
+    TWO_SIDED_GREEDY_SWITCH,
     /** Unhide self loops after phase 3. */
     SPLINE_SELF_LOOP_POSITIONER,
     /** Compacts looong sausages. This is a hidden feature. */
@@ -191,8 +193,11 @@ public enum IntermediateProcessorStrategy {
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
 
-        case GREEDY_SWITCH:
-            return new LayerSweepCrossingMinimizer(CrossMinType.GREEDY_SWITCH);
+        case ONE_SIDED_GREEDY_SWITCH:
+            return new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
+            
+        case TWO_SIDED_GREEDY_SWITCH:
+            return new LayerSweepCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
 
         case HIERARCHICAL_NODE_RESIZER:
             return new HierarchicalNodeResizingProcessor();

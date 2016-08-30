@@ -400,7 +400,7 @@ public class LayeredMetaDataProvider implements ILayoutMetaDataProvider {
   /**
    * Default value for {@link #CROSSING_MINIMIZATION_GREEDY_SWITCH}.
    */
-  private final static GreedySwitchType CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT = GreedySwitchType.ONE_SIDED;
+  private final static GreedySwitchType CROSSING_MINIMIZATION_GREEDY_SWITCH_DEFAULT = GreedySwitchType.TWO_SIDED;
   
   /**
    * Greedy Switch strategy for crossing minimization.

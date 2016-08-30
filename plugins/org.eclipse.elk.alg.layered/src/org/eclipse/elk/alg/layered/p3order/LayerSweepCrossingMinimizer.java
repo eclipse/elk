@@ -76,6 +76,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     private Random random;
     private long randomSeed;
     private final CrossMinType crossMinType;
+    private long randomChildSeed;
 
     /**
      * Creates LayerSweepHierarchicalCrossingMinimizer using barycenter minimizer type.
@@ -164,6 +165,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
             int crossings = minimizeCrossingsWithCounter(gData);
             if (crossings < bestCrossings) {
                 bestCrossings = crossings;
+                randomChildSeed = random.nextInt();
                 saveAllNodeOrdersOfChangedGraphs();
                 if (bestCrossings == 0) {
                     break;
@@ -260,6 +262,9 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     private boolean sweepInHierarchicalNode(final boolean isForwardSweep, final LNode node,
             final boolean isFirstSweep) {
+        // Reset the seed, otherwise copies of hierarchical graphs in different parent nodes are
+        // layouted differently.
+        random.setSeed(randomChildSeed);
         LGraph nestedLGraph = nestedGraphOf(node);
         GraphData nestedGraph = graphData.get(nestedLGraph.id);
         LNode[][] nestedGraphNodeOrder = nestedGraph.currentNodeOrder();
@@ -427,14 +432,16 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     }
 
     /**
-     * Type of crossing minimizer. //TODO-alan remove duplicate with greedyswitchtype?
+     * Type of crossing minimizer.
      * 
      */
     public enum CrossMinType {
         /** Use BarycenterHeuristic. */
         BARYCENTER,
         /** Use one-sided GreedySwitchHeuristic. */
-        GREEDY_SWITCH;
+        ONE_SIDED_GREEDY_SWITCH,
+        /** Use two-sided GreedySwitchHeuristic. */
+        TWO_SIDED_GREEDY_SWITCH
     }
 
     /** intermediate processing configuration. */

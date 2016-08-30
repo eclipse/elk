@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 
 /**
  * This class manages the crossing matrix and fills it on demand. It needs to be reinitialized for
@@ -33,11 +33,11 @@ public final class CrossingMatrixFiller {
      * 
      * @param assumeFixedPortOrder
      */
-    public CrossingMatrixFiller(final GreedySwitchType greedyType, final LNode[][] graph,
+    public CrossingMatrixFiller(final CrossMinType greedySwitchType, final LNode[][] graph,
             final int freeLayerIndex, final CrossingCountSide direction) {
         
         this.direction = direction;
-        oneSided = greedyType.isOneSided();
+        oneSided = greedySwitchType == CrossMinType.ONE_SIDED_GREEDY_SWITCH;
 
         LNode[] freeLayer = graph[freeLayerIndex];
         isCrossingMatrixFilled = new boolean[freeLayer.length][freeLayer.length];
