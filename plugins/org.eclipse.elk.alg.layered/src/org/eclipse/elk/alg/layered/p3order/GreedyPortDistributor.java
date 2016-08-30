@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -26,7 +25,7 @@ import org.eclipse.elk.core.util.Pair;
 import com.google.common.collect.Lists;
 
 /**
- * Distribute ports greedily on a single node. TODO-alan this is currently broken :-(
+ * Distribute ports greedily on a single node. TODO-alan make one-sided/two-sided
  * 
  * @author alan TODO-alan does not work in first layer.
  */
@@ -34,36 +33,12 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
 
     private CrossingsCounter crossingsCounter;
     private int[] portPos;
+    private BetweenLayerEdgeTwoNodeCrossingsCounter hierarchicalCrossingsCounter;
     private AbstractInitializer initializer;
 
     /** Return new GreedyPortDistributor. */
     public GreedyPortDistributor(final LNode[][] currentNodeOrder) {
         this.initializer = new Initializer(currentNodeOrder);
-    }
-
-    /**
-     * Distribute ports greedily on a single node.
-     */
-    public boolean distributePorts(final LNode node, final PortSide side) {
-        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-            return false;
-        }
-        List<LPort> ports = portListViewInNorthSouthEastWestOrder(node, side);
-        boolean improved = false;
-        boolean continueSwitching;
-        do {
-            continueSwitching = false;
-            for (int i = 0; i < ports.size() - 1; i++) {
-                LPort upperPort = ports.get(i);
-                LPort lowerPort = ports.get(i + 1);
-                if (switchingDecreasesCrossings(upperPort, lowerPort, node)) {
-                    improved = true;
-                    switchPorts(ports, node, i, i + 1);
-                    continueSwitching = true;
-                }
-            }
-        } while (continueSwitching);
-        return improved;
     }
 
     @Override
@@ -74,7 +49,6 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
         } else if (!isForwardSweep && currentIndex < nodeOrder.length - 1) {
             initForLayers(nodeOrder[currentIndex], nodeOrder[currentIndex + 1], portPos);
         } else {
-            // TODO-alan cache
             crossingsCounter = new CrossingsCounter(portPos);
             crossingsCounter.initPortPositionsForInLayerCrossings(nodeOrder[currentIndex],
                     isForwardSweep ? PortSide.WEST : PortSide.EAST);
@@ -82,87 +56,77 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
         PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
         boolean improved = false;
         for (LNode node : nodeOrder[currentIndex]) {
-            improved |= distributePorts(node, side);
+            List<LPort> ports = node.getPorts(side);
+            boolean useHierarchicalCrossCounter =
+                    !ports.isEmpty() && node.getProperty(InternalProperties.COMPOUND_NODE);
+            if (useHierarchicalCrossCounter) {
+                LNode[][] innerGraph = node.getProperty(InternalProperties.NESTED_LGRAPH).toNodeArray();
+                hierarchicalCrossingsCounter =
+                        new BetweenLayerEdgeTwoNodeCrossingsCounter(innerGraph,
+                        isForwardSweep ? 0 : innerGraph.length - 1);
+            }
+            improved |= distributePorts(node, side, useHierarchicalCrossCounter);
         }
         return improved;
     }
 
     /**
-     * Initialize crossings counter for given layers and side.
-     *
-     * @param leftLayer
-     *            The western layer.
-     * @param rightLayer
-     *            The eastern layer.
-     * @param portPositions
-     *            The positions of the ports.
+     * Distribute ports greedily on a single node.
      */
-    public void initForLayers(final LNode[] leftLayer, final LNode[] rightLayer, final int[] portPositions) {
+    private boolean distributePorts(final LNode node, final PortSide side, final boolean useHierarchicalCrosscounter) {
+        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            return false;
+        }
+        List<LPort> ports = node.getPorts(side);
+        if (side == PortSide.SOUTH || side == PortSide.WEST) {
+            ports = Lists.reverse(ports);
+        }
+        boolean improved = false;
+        boolean continueSwitching;
+        do {
+            continueSwitching = false;
+            for (int i = 0; i < ports.size() - 1; i++) {
+                LPort upperPort = ports.get(i);
+                LPort lowerPort = ports.get(i + 1);
+                if (switchingDecreasesCrossings(upperPort, lowerPort, node, useHierarchicalCrosscounter)) {
+                    improved = true;
+                    switchPorts(ports, node, i, i + 1);
+                    continueSwitching = true;
+                }
+            }
+        } while (continueSwitching);
+        return improved;
+    }
+
+    /**
+     * Initialize crossings counter for given layers and side.
+     */
+    private void initForLayers(final LNode[] leftLayer, final LNode[] rightLayer, final int[] portPositions) {
         crossingsCounter = new CrossingsCounter(portPositions);
         crossingsCounter.initForCountingBetweenOnSide(leftLayer, rightLayer);
     }
 
-    private boolean switchingDecreasesCrossings(final LPort upperPort, final LPort lowerPort, final LNode node) {
+    private boolean switchingDecreasesCrossings(final LPort upperPort, final LPort lowerPort, final LNode node,
+            final boolean useHierarchicalCrosscounter) {
         Pair<Integer, Integer> originalNSwitchedCrossings =
                 crossingsCounter.countCrossingsBetweenPortsInBothOrders(upperPort, lowerPort);
         int upperLowerCrossings = originalNSwitchedCrossings.getFirst();
         int lowerUpperCrossings = originalNSwitchedCrossings.getSecond();
-        if (isHierarchical(upperPort) && isHierarchical(lowerPort)) {
-            LNode[][] innerGraph = node.getProperty(InternalProperties.NESTED_LGRAPH).toNodeArray();
-            // TODO-alan cache?
-            BetweenLayerEdgeTwoNodeCrossingsCounter counter = new BetweenLayerEdgeTwoNodeCrossingsCounter(innerGraph,
-                    upperPort.getSide() == PortSide.EAST ? innerGraph.length - 1 : 0);
+        if (useHierarchicalCrosscounter) {
             LNode upperNode = upperPort.getProperty(InternalProperties.PORT_DUMMY);
             LNode lowerNode = lowerPort.getProperty(InternalProperties.PORT_DUMMY);
-            counter.countBothSideCrossings(upperNode, lowerNode);
-            upperLowerCrossings += counter.getUpperLowerCrossings();
-            lowerUpperCrossings += counter.getLowerUpperCrossings();
+            hierarchicalCrossingsCounter.countBothSideCrossings(upperNode, lowerNode);
+            upperLowerCrossings += hierarchicalCrossingsCounter.getUpperLowerCrossings();
+            lowerUpperCrossings += hierarchicalCrossingsCounter.getLowerUpperCrossings();
         }
         return upperLowerCrossings > lowerUpperCrossings;
     }
 
-    private boolean isHierarchical(final LPort port) {
-        return port.getProperty(InternalProperties.INSIDE_CONNECTIONS);
-    }
-
     private void switchPorts(final List<LPort> ports, final LNode node, final int topPort, final int bottomPort) {
+        crossingsCounter.switchPorts(ports.get(topPort), ports.get(bottomPort));
         LPort lower = ports.get(bottomPort);
         ports.set(bottomPort, ports.get(topPort));
         ports.set(topPort, lower);
-        crossingsCounter.switchPorts(ports.get(topPort), ports.get(bottomPort));
-    }
-
-    // TODO-alan potentially slow and is cached
-    private List<LPort> portListViewInNorthSouthEastWestOrder(final LNode node, final PortSide side) {
-        int firstIndexForCurrentSide = 0;
-        PortSide currentSide = PortSide.NORTH;
-        int currentIndex = 0;
-        List<LPort> ports = node.getPorts();
-        for (; currentIndex < ports.size(); currentIndex++) {
-            LPort port = ports.get(currentIndex);
-            if (port.getSide() != currentSide) {
-                if (firstIndexForCurrentSide != currentIndex && currentSide == side) {
-                    return reverseSublist(side, firstIndexForCurrentSide, currentIndex, ports);
-                }
-                currentSide = port.getSide();
-                firstIndexForCurrentSide = currentIndex;
-            }
-        }
-        if (currentSide == side) {
-            return reverseSublist(side, firstIndexForCurrentSide, currentIndex, ports);
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    private List<LPort> reverseSublist(final PortSide side, final int firstIndexForCurrentSide, final int currentIndex,
-            final List<LPort> ports) {
-        List<LPort> ps = ports.subList(firstIndexForCurrentSide, currentIndex);
-        if (side == PortSide.SOUTH || side == PortSide.WEST) {
-            return Lists.reverse(ps);
-        } else {
-            return ps;
-        }
     }
 
     @Override
