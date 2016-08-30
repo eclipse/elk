@@ -280,22 +280,25 @@ public final class LNode extends LShape {
     }
     
     /**
-     * Returns an iterable for all ports of given side.
+     * Returns an sublist view for all ports of given side. Non-structural changes to this list are reflected in the
+     * original list.
      * 
-     * @param side a port side
+     * @param side
+     *            a port side
      * @return an iterable for the ports of given side
      */
     public List<LPort> getPorts(final PortSide side) {
-        if (portSidesCached) {
-            Pair<Integer, Integer> indices = portSideIndices.get(side);
-            if (indices == null) {
-                return Collections.emptyList();
-            } else {
-                // We must create a new sublist each time, because the order of the ports on one side can change.
-                return ports.subList(indices.getFirst(), indices.getSecond());
-            }
+        if (!portSidesCached) {
+            // If not explicitly cached, this will be repeated each time. However, this has the same complexity as
+            // filtering by side.
+            findPortSideIndices();
+        }
+        Pair<Integer, Integer> indices = portSideIndices.get(side);
+        if (indices == null) {
+            return Collections.emptyList();
         } else {
-            return Lists.newArrayList(Iterables.filter(ports, LPort.sidePredicate(side)));
+            // We must create a new sublist each time, because the order of the ports on one side can change.
+            return ports.subList(indices.getFirst(), indices.getSecond());
         }
     }
     
@@ -465,6 +468,10 @@ public final class LNode extends LShape {
      */
     public void cachePortSides() {
         portSidesCached = true;
+        findPortSideIndices();
+    }
+
+    private void findPortSideIndices() {
         portSideIndices = Maps.newEnumMap(PortSide.class);
         int firstIndexForCurrentSide = 0;
         PortSide currentSide = PortSide.NORTH;
