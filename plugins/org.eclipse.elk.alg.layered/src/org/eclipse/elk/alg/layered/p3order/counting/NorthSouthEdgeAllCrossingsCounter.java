@@ -216,15 +216,14 @@ public class NorthSouthEdgeAllCrossingsCounter {
 
     private int numberOfWesternCrossings(final LNode node, final LPort port,
             final LNode northSouthDummy, final PortSide side) {
-        int factor = edgesRoutedOrthogonally ? 1 : northSouthDummy.getPorts().get(0).getDegree();
+        int factor = northSouthDummy.getPorts().get(0).getDegree();
         return factor * Math.min(positionOf(port), nearnessBetween(node, northSouthDummy));
     }
 
     private int numberOfEasternCrossings(final LNode node, final LPort port,
             final LNode northSouthDummy, final PortSide side) {
-        int factor = edgesRoutedOrthogonally ? 1 : northSouthDummy.getPorts().get(0).getDegree();
-        return factor
-                * Math.min(cardinalityOnSide(node, side) - 1 - positionOf(port),
+        int factor = northSouthDummy.getPorts().get(0).getDegree();
+        return factor * Math.min(cardinalityOnSide(node, side) - 1 - positionOf(port),
                 nearnessBetween(node, northSouthDummy));
     }
 

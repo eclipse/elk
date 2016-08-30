@@ -17,11 +17,8 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.counting.NorthSouthEdgeAllCrossingsCounter;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
-import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -194,9 +191,8 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
      * </pre>
      *
      */
-    // TODO-alan does this ever happen?
-    @Ignore
-    public void givenPolylineRoutingWhenMoreThanOneEdgeIntoNSNode_countsTheseToo() {
+    @Test
+    public void moreThanOneEdgeIntoNSNode_countsTheseToo() {
         LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
         LNode[] middleNodes = addNodesToLayer(3, makeLayer(getGraph()));
         LNode[] rightNodes = addNodesToLayer(2, makeLayer(getGraph()));
@@ -209,7 +205,6 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
         // second edge on middle node
         LPort middleNodePort = middleNodes[1].getPorts().get(0);
         eastWestEdgeFromTo(middleNodePort, rightNodes[1]);
-        getGraph().setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
 
         int crossingCount = initCounterForLayerWithIndexAndCountInLayer(1);
 
