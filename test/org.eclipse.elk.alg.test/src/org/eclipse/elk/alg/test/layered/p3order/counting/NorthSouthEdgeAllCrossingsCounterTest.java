@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p3order.counting;
+package org.eclipse.elk.alg.test.layered.p3order.counting;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -16,8 +16,9 @@ import static org.junit.Assert.assertThat;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
+import org.eclipse.elk.alg.layered.p3order.counting.NorthSouthEdgeAllCrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;

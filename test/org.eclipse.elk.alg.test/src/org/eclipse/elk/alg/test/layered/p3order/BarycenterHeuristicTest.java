@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p3order;
+package org.eclipse.elk.alg.test.layered.p3order;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -18,10 +18,13 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
+import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic;
+import org.eclipse.elk.alg.layered.p3order.ForsterConstraintResolver;
+import org.eclipse.elk.alg.layered.p3order.NodeRelativePortDistributor;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
+import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Before;
 import org.junit.Test;

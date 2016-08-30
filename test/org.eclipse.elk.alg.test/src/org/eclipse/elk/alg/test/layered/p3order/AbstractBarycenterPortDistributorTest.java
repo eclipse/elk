@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p3order;
+package org.eclipse.elk.alg.test.layered.p3order;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -20,9 +20,12 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.intermediate.greedyswitch.TestGraphCreator;
+import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.ISweepPortDistributor;
+import org.eclipse.elk.alg.layered.p3order.LayerTotalPortDistributor;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
+import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Ignore;
 import org.junit.Test;

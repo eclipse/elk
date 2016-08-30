@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
+package org.eclipse.elk.alg.test.layered.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -20,6 +20,8 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.CrossingMatrixFiller;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
 import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
