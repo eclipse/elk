@@ -82,6 +82,9 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Interactive crossing minimization", 1);
+        LNode[][] nodeOrder = layeredGraph.toNodeArray();
+        AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(nodeOrder);
+        AbstractInitializer.init(Arrays.asList(portDistributor));
         int portCount = 0;
         int layerIndex = 0;
         for (Layer layer : layeredGraph) {
@@ -137,12 +140,8 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
                     return compare;
                 }
             });
-
-            // TODO-alan test and ask.
-            LNode[][] nodeOrder = layeredGraph.toNodeArray();
-            AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(nodeOrder);
-            AbstractInitializer.init(Arrays.asList(portDistributor));
-            portDistributor.distributePortsWhileSweeping(nodeOrder, layerIndex++, true);
+            portDistributor.distributePortsWhileSweeping(nodeOrder, layerIndex, true);
+            layerIndex++;
         }
         
         monitor.done();

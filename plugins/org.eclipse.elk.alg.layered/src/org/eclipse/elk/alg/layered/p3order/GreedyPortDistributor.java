@@ -25,9 +25,9 @@ import org.eclipse.elk.core.util.Pair;
 import com.google.common.collect.Lists;
 
 /**
- * Distribute ports greedily on a single node. TODO-alan make one-sided/two-sided
+ * Distribute ports greedily on a single node.
  * 
- * @author alan TODO-alan does not work in first layer.
+ * @author alan
  */
 public class GreedyPortDistributor implements ISweepPortDistributor {
 
