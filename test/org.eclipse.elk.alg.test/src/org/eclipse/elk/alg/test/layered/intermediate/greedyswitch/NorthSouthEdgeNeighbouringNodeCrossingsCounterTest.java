@@ -20,7 +20,6 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -303,7 +302,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest extends NorthSou
      * </pre>
      *
      */
-    @Ignore // TODO-alan ask is this possible
+    @Test
     public void givenPolylineRoutingWhenMoreThanOneEdgeIntoNSNode_countsTheseToo() {
         LNode leftNode = addNodeToLayer(makeLayer(getGraph()));
         LNode[] middleNodes = addNodesToLayer(3, makeLayer(getGraph()));
@@ -357,7 +356,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest extends NorthSou
         countCrossingsInLayerBetweenNodes(1, 0, 1);
 
         assertThat(counter.getUpperLowerCrossings(), is(1));
-        assertThat(counter.getLowerUpperCrossings(), is(1));
+        assertThat(counter.getLowerUpperCrossings(), is(0));
     }
 
     /**
@@ -372,7 +371,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest extends NorthSou
      * </pre>
      */
     @Test
-    public void multipleEdgesInBithNSNode() {
+    public void edgesInBothDirections() {
         LNode[] leftLayer = addNodesToLayer(2, makeLayer());
         LNode[] middleLayer = addNodesToLayer(3, makeLayer());
         LNode[] rightLayer = addNodesToLayer(2, makeLayer());
@@ -402,6 +401,54 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounterTest extends NorthSou
         // counted by a
         // different crossings counter.
         assertThat(counter.getLowerUpperCrossings(), is(1));
+    }
+
+    /**
+     * <pre>
+     * *===.--*
+     *     |
+     * *-.====*
+     *   | |
+     *  _|_|_
+     *  |   |
+     *  |___|
+     * </pre>
+     */
+    @Test
+    public void multipleEdgesInBothDirectionsNSNode() {
+        LNode[] leftLayer = addNodesToLayer(2, makeLayer());
+        LNode[] middleLayer = addNodesToLayer(3, makeLayer());
+        LNode[] rightLayer = addNodesToLayer(2, makeLayer());
+
+        setFixedOrderConstraint(middleLayer[2]);
+
+        addNorthSouthEdge(PortSide.NORTH, middleLayer[2], middleLayer[1], leftLayer[1], true);
+
+        LPort normalNodePort = addPortOnSide(rightLayer[1], PortSide.WEST);
+        LPort dummyNodePort = addPortOnSide(middleLayer[1], PortSide.EAST);
+        addEdgeBetweenPorts(dummyNodePort, normalNodePort);
+        addEdgeBetweenPorts(dummyNodePort, normalNodePort);
+        LPort originPort = middleLayer[2].getPorts().get(0);
+        dummyNodePort.setProperty(InternalProperties.ORIGIN, originPort);
+
+        addNorthSouthEdge(PortSide.NORTH, middleLayer[2], middleLayer[0], rightLayer[0], false);
+
+        normalNodePort = addPortOnSide(rightLayer[0], PortSide.EAST);
+        dummyNodePort = addPortOnSide(middleLayer[0], PortSide.WEST);
+        addEdgeBetweenPorts(dummyNodePort, normalNodePort);
+        addEdgeBetweenPorts(dummyNodePort, normalNodePort);
+        originPort = middleLayer[2].getPorts().get(1);
+        dummyNodePort.setProperty(InternalProperties.ORIGIN, originPort);
+
+
+
+        countCrossingsInLayerBetweenNodes(1, 0, 1);
+
+        assertThat(counter.getUpperLowerCrossings(), is(2));
+        // Note that the three other crossings which result from this switch are
+        // counted by a
+        // different crossings counter.
+        assertThat(counter.getLowerUpperCrossings(), is(2));
     }
 
     private void switchNodes(final int upper, final int lower) {
