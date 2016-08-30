@@ -39,9 +39,8 @@ public final class SwitchDecider {
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final CrossingMatrixFiller crossingMatrixFiller;
     private GraphData graphData;
-    private CrossingsCounter parentRightCrossCounter;
-    private CrossingsCounter parentLeftCrossCounter;
-    private boolean oneSided;
+    private CrossingsCounter parentCrossCounter;
+    private boolean countCrossingsCausedByPortSwitch;
 
     /**
      * Creates SwitchDecider.
@@ -52,29 +51,20 @@ public final class SwitchDecider {
      *            The graph as LNode[][]
      * @param crossingMatrixFiller
      *            the crossing matrix filler
-     * @param assumeCompoundNodeFixedPortOrder
      * @param portPositions
      *            port position array
-     * @param parentRightCrossCounter
-     *            crossings counter for counting crossings on the right of the child graph.
-     * @param parentLeftCrossCounter
-     *            crossings counter for counting crossings on the right of the child graph.
-     *            TODO-alan consider this constructor. Its so long.
+     * @param oneSided
+     *            whether greedy mode is one sided or two-sided (not one-sided)
+     * @param graphData
+     *            collected graphData
      */
     public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
             final CrossingMatrixFiller crossingMatrixFiller, final int[] portPositions,
-            final GraphData graphData, final boolean oneSided, final CrossingsCounter parentLeftCrossCounter,
-            final CrossingsCounter parentRightCrossCounter) {
-        
+            final GraphData graphData, final boolean oneSided) {
         this.crossingMatrixFiller = crossingMatrixFiller;
         this.graphData = graphData;
-        this.oneSided = oneSided;
-        // TODO-alan Use the parents and initialize here if needed.
-        this.parentLeftCrossCounter = parentLeftCrossCounter;
-        this.parentRightCrossCounter = parentRightCrossCounter;
         if (freeLayerIndex >= graph.length) {
-            throw new IndexOutOfBoundsException(
-                    "Greedy SwitchDecider: Free layer layer not in graph.");
+            throw new IndexOutOfBoundsException("Greedy SwitchDecider: Free layer not in graph.");
         }
         freeLayer = graph[freeLayerIndex];
 
@@ -83,6 +73,29 @@ public final class SwitchDecider {
         rightInLayerCounter = new CrossingsCounter(portPositions);
         rightInLayerCounter.initPortPositionsForInLayerCrossings(freeLayer, PortSide.EAST);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
+        countCrossingsCausedByPortSwitch = !oneSided && graphData.hasParent() && !graphData.dontSweepInto()
+                && freeLayer[0].getType() == NodeType.EXTERNAL_PORT;
+        if (countCrossingsCausedByPortSwitch) {
+            initParentCrossingsCounters(freeLayerIndex, graph.length);
+        }
+    }
+
+    private void initParentCrossingsCounters(final int freeLayerIndex, final int length) {
+        GraphData parentGraphData = graphData.parentGraphData();
+        LNode[][] parentNodeOrder = parentGraphData.currentNodeOrder();
+        int[] portPos = parentGraphData.crossCounter().betweenAndInLayerCrossingCounter().getPortPositions();
+        parentCrossCounter = new CrossingsCounter(portPos);
+        int parentNodeLayerPos = graphData.parent().getLayer().id;
+        LNode[] leftLayer = parentNodeLayerPos > 0 ? parentNodeOrder[parentNodeLayerPos - 1] : new LNode[0];
+        LNode[] middleLayer = parentNodeOrder[parentNodeLayerPos];
+        LNode[] rightLayer = parentNodeLayerPos < parentNodeOrder.length - 1 ? parentNodeOrder[parentNodeLayerPos + 1]
+                : new LNode[0];
+        boolean rightMostLayer = freeLayerIndex == length - 1;
+        if (rightMostLayer) {
+            parentCrossCounter.initForCountingBetweenOnSide(middleLayer, rightLayer);
+        } else {
+            parentCrossCounter.initForCountingBetweenOnSide(leftLayer, middleLayer);
+        }
     }
 
     /**
@@ -126,14 +139,11 @@ public final class SwitchDecider {
                         + leftInlayer.getSecond() + rightInlayer.getSecond()
                         + northSouthCounter.getLowerUpperCrossings();
 
-        if (!oneSided && graphData.hasParent() && !graphData.dontSweepInto()
-                && upperNode.getType() == NodeType.EXTERNAL_PORT) {
+        if (countCrossingsCausedByPortSwitch) {
             LPort upperPort = (LPort) upperNode.getProperty(InternalProperties.ORIGIN);
             LPort lowerPort = (LPort) lowerNode.getProperty(InternalProperties.ORIGIN);
-            CrossingsCounter crossCounter =
-                    upperPort.getSide() == PortSide.EAST ? parentRightCrossCounter : parentLeftCrossCounter;
             Pair<Integer, Integer> crossingNumbers =
-                    crossCounter.countCrossingsBetweenPortsInBothOrders(upperPort, lowerPort);
+                    parentCrossCounter.countCrossingsBetweenPortsInBothOrders(upperPort, lowerPort);
             upperLowerCrossings += crossingNumbers.getFirst();
             lowerUpperCrossings += crossingNumbers.getSecond();
         }

@@ -15,7 +15,6 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.Cross
 import org.eclipse.elk.alg.layered.p3order.GraphData;
 import org.eclipse.elk.alg.layered.p3order.ICrossingMinimizationHeuristic;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
-import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 
 /**
@@ -45,8 +44,6 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
     private SwitchDecider switchDecider;
     private int[] portPositions;
     private GraphData graphData;
-    private CrossingsCounter parentLeftCrossCounter;
-    private CrossingsCounter parentRightCrossCounter;
     private AbstractInitializer initializer;
 
     /**
@@ -91,10 +88,9 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
 
     private SwitchDecider getNewSwitchDecider(final int freeLayerIndex, final CrossingCountSide side) {
         CrossingMatrixFiller crossingMatrixFiller =
-                CrossingMatrixFiller.createAssumingFixedPortOrder(greedySwitchType,
-                        currentNodeOrder, freeLayerIndex, side);
+                new CrossingMatrixFiller(greedySwitchType, currentNodeOrder, freeLayerIndex, side);
         return new SwitchDecider(freeLayerIndex, currentNodeOrder, crossingMatrixFiller, portPositions,
-                graphData, greedySwitchType.isOneSided(), parentLeftCrossCounter, parentRightCrossCounter);
+                graphData, greedySwitchType.isOneSided());
     }
 
     private boolean continueSwitchingUntilNoImprovementInLayer(final int freeLayerIndex) {
@@ -177,24 +173,6 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
         @Override
         public void initAfterTraversal() {
             portPositions = new int[nPorts];
-            initParentCrossingsCounters();
-        }
-
-        private void initParentCrossingsCounters() {
-            if (graphData.hasParent() && !graphData.dontSweepInto()) {
-                GraphData parentGraphData = graphData.parentGraphData();
-                LNode[][] parentNodeOrder = parentGraphData.currentNodeOrder();
-                int[] portPos = parentGraphData.crossCounter().betweenAndInLayerCrossingCounter().getPortPositions();
-                parentLeftCrossCounter = new CrossingsCounter(portPos);
-                int parentNodeLayerPos = graphData.parent().getLayer().id;
-                LNode[] leftLayer = parentNodeLayerPos > 0 ? parentNodeOrder[parentNodeLayerPos - 1] : new LNode[0];
-                LNode[] middleLayer = parentNodeOrder[parentNodeLayerPos];
-                LNode[] rightLayer = parentNodeLayerPos < parentNodeOrder.length - 1
-                        ? parentNodeOrder[parentNodeLayerPos + 1] : new LNode[0];
-                parentLeftCrossCounter.initForCountingBetweenOnSide(leftLayer, middleLayer);
-                parentRightCrossCounter = new CrossingsCounter(portPos);
-                parentRightCrossCounter.initForCountingBetweenOnSide(middleLayer, rightLayer);
-            }
         }
     }
 
