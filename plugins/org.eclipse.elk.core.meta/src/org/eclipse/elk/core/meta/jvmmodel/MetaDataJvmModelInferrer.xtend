@@ -38,6 +38,7 @@ import org.eclipse.xtext.util.Strings
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
+import java.util.List
 
 /**
  * Infers a JVM model from the source model. 
@@ -490,7 +491,8 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 val genericType = property.type.type as JvmGenericType;
                 
                 // Double and FLoat... same as above. Also, with EnumSets we want to have the type of the set's
-                // content as the option type, not the EnumSet type itself
+                // content as the option type, not the EnumSet type itself. Finally, with Lists, we need to drop the
+                // generic type argument
                 if (genericType.identifier == "java.lang.Double") {
                     return typeRef(Float);
                 } else if (genericType.identifier == "java.lang.Long") {
@@ -498,6 +500,8 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 } else if (genericType.identifier == "java.util.EnumSet") {
                     val outer = property.type as JvmParameterizedTypeReference
                     return outer.arguments.head.cloneWithProxies
+                } else if (genericType.identifier == "java.util.List") {
+                    return typeRef(List);
                 }
             }
             
