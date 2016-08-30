@@ -21,6 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.intermediate.NodePromotionStrategy;
 import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrategy;
+import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
@@ -316,7 +317,9 @@ final class GraphConfigurator {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
         }
 
-        if (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) != GreedySwitchType.OFF) {
+        if (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH) != GreedySwitchType.OFF
+                && lgraph.getProperty(
+                        LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) != CrossingMinimizationStrategy.INTERACTIVE) {
             configuration.addBeforePhase4(IntermediateProcessorStrategy.GREEDY_SWITCH);
         }
 
