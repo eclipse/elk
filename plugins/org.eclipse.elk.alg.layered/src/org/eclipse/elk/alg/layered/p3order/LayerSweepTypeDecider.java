@@ -103,7 +103,8 @@ public class LayerSweepTypeDecider implements IInitializable {
                     pathsToHierarchical += currentNode.hierarchicalInfluence;
                     transferInfoToTarget(currentNode, edge);
                 }
-                for (LPort port : Iterables.concat(node.getPorts(PortSide.NORTH), node.getPorts(PortSide.SOUTH))) {
+                for (LPort port : Iterables.concat(node.getPortSideView(PortSide.NORTH),
+                        node.getPortSideView(PortSide.SOUTH))) {
                     LNode nsDummy = port.getProperty(InternalProperties.PORT_DUMMY);
                     if (nsDummy != null) {
                         pathsToRandom += currentNode.randomInfluence;
@@ -163,8 +164,8 @@ public class LayerSweepTypeDecider implements IInitializable {
     }
 
     private boolean fewerThanTwoInOutEdges() {
-        return graphData.parent().getPorts(PortSide.EAST).size() < 2
-                && graphData.parent().getPorts(PortSide.WEST).size() < 2;
+        return graphData.parent().getPortSideView(PortSide.EAST).size() < 2
+                && graphData.parent().getPortSideView(PortSide.WEST).size() < 2;
     }
 
     private boolean rootNode() {
@@ -180,12 +181,12 @@ public class LayerSweepTypeDecider implements IInitializable {
     }
 
     private boolean hasNoEasternPorts(final LNode node) {
-        List<LPort> eastPorts = node.getPorts(PortSide.EAST);
+        List<LPort> eastPorts = node.getPortSideView(PortSide.EAST);
         return eastPorts.isEmpty() || !Iterables.any(eastPorts, p -> p.getConnectedEdges().iterator().hasNext());
     }
 
     private boolean hasNoWesternPorts(final LNode node) {
-        List<LPort> westPorts = node.getPorts(PortSide.WEST);
+        List<LPort> westPorts = node.getPortSideView(PortSide.WEST);
         return westPorts.isEmpty() || !Iterables.any(westPorts, p -> p.getConnectedEdges().iterator().hasNext());
     }
 

@@ -97,34 +97,23 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
         }
     }
 
-    private boolean hasEdgesInBothDirections(final LNode n) {
-        boolean east = false;
-        boolean west = false;
-        for (LPort p : n.getPorts()) {
-            east |= p.getSide() == PortSide.EAST;
-            west |= p.getSide() == PortSide.WEST;
-        }
-        return east && west;
-    }
-
     private void countCrossingsOfTwoNorthSouthDummies(final LNode furtherFromNormalNode,
             final LNode closerToNormalNode) {
         if (originPortPositionOf(furtherFromNormalNode) > originPortPositionOf(closerToNormalNode)) {
-            List<LPort> closerEastPorts = closerToNormalNode.getPorts(PortSide.EAST);
+            List<LPort> closerEastPorts = closerToNormalNode.getPortSideView(PortSide.EAST);
             upperLowerCrossings = closerEastPorts.isEmpty() ? 0 : closerEastPorts.get(0).getDegree();
-            List<LPort> furtherWestPorts = furtherFromNormalNode.getPorts(PortSide.WEST);
+            List<LPort> furtherWestPorts = furtherFromNormalNode.getPortSideView(PortSide.WEST);
             lowerUpperCrossings = furtherWestPorts.isEmpty() ? 0 : furtherWestPorts.get(0).getDegree();
         } else {
-            List<LPort> closerWestPorts = closerToNormalNode.getPorts(PortSide.WEST);
+            List<LPort> closerWestPorts = closerToNormalNode.getPortSideView(PortSide.WEST);
             upperLowerCrossings = closerWestPorts.isEmpty() ? 0 : closerWestPorts.get(0).getDegree();
-            List<LPort> furtherEastPorts = furtherFromNormalNode.getPorts(PortSide.EAST);
+            List<LPort> furtherEastPorts = furtherFromNormalNode.getPortSideView(PortSide.EAST);
             lowerUpperCrossings = furtherEastPorts.isEmpty() ? 0 : furtherEastPorts.get(0).getDegree();
         }
     }
 
     private void processIfNorthSouthLongEdgeDummyCrossing(final LNode upperNode,
             final LNode lowerNode) {
-
         if (isNorthSouth(upperNode) && isLongEdgeDummy(lowerNode)) {
             if (isNorthOfNormalNode(upperNode)) {
                 upperLowerCrossings = 1;
@@ -155,7 +144,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
 
     private int numberOfNorthSouthEdges(final LNode node, final PortSide side) {
         int numberOfEdges = 0;
-        for (LPort port : node.getPorts(side)) {
+        for (LPort port : node.getPortSideView(side)) {
             numberOfEdges += hasConnectedNorthSouthEdge(port) ? 1 : 0;
         }
         return numberOfEdges;
@@ -167,13 +156,6 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
 
     private boolean haveDifferentOrigins(final LNode upperNode, final LNode lowerNode) {
         return originOf(upperNode) != originOf(lowerNode);
-    }
-
-    private PortSide getPortDirectionFromNorthSouthNode(final LNode node) {
-        assert isNorthSouth(node);
-        boolean northSouthNodeOnlyHasOneInBetweenLayerEdge = node.getPorts().size() == 1;
-        assert northSouthNodeOnlyHasOneInBetweenLayerEdge;
-        return node.getPorts().get(0).getSide();
     }
 
     private int originPortPositionOf(final LNode node) {

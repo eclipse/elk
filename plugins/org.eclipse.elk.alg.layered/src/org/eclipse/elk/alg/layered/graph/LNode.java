@@ -280,18 +280,29 @@ public final class LNode extends LShape {
     }
     
     /**
-     * Returns an sublist view for all ports of given side. Non-structural changes to this list are reflected in the
-     * original list.
+     * Returns an iterable for all ports of given side.
+     * 
+     * @param side a port side
+     * @return an iterable for the ports of given side
+     */
+    public Iterable<LPort> getPorts(final PortSide side) {
+        return Iterables.filter(ports, LPort.sidePredicate(side));
+    }
+    
+    /**
+     * Returns a sublist view for all ports of given side. WARNING: Use this only after port sides are fixed!
+     * Non-structural changes to this list are reflected in the original list. Sublist indices can be cached using
+     * {@link LNode#cachePortSides()}.
      * 
      * @param side
      *            a port side
      * @return an iterable for the ports of given side
      */
-    public List<LPort> getPorts(final PortSide side) {
+    public List<LPort> getPortSideView(final PortSide side) {
         if (!portSidesCached) {
             // If not explicitly cached, this will be repeated each time. However, this has the same complexity as
             // filtering by side.
-            findPortSideIndices();
+            findPortIndices();
         }
         Pair<Integer, Integer> indices = portSideIndices.get(side);
         if (indices == null) {
@@ -301,16 +312,17 @@ public final class LNode extends LShape {
             return ports.subList(indices.getFirst(), indices.getSecond());
         }
     }
-    
+
     /**
      * Returns an iterable for all ports of a given type and side.
      * 
-     * @param portType a port type.
-     * @param side a port side.
+     * @param portType
+     *            a port type.
+     * @param side
+     *            a port side.
      * @return an iterable for the ports of the given type and side.
      */
     public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {
-        // TODO Consider changing to list and caching when ready.
         return Iterables.filter(getPorts(side), LPort.getInOutputPredicate(portType));
     }
     
@@ -468,10 +480,10 @@ public final class LNode extends LShape {
      */
     public void cachePortSides() {
         portSidesCached = true;
-        findPortSideIndices();
+        findPortIndices();
     }
 
-    private void findPortSideIndices() {
+    private void findPortIndices() {
         portSideIndices = Maps.newEnumMap(PortSide.class);
         int firstIndexForCurrentSide = 0;
         PortSide currentSide = PortSide.NORTH;

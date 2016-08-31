@@ -87,6 +87,16 @@ public final class LPort extends LShape {
     }
 
     /**
+     * Return predicate for filtering by side.
+     * 
+     * @param side
+     * @return predicate
+     */
+    public static Predicate<LPort> sidePredicate(final PortSide side) {
+        return port -> port.getSide() == side;
+    }
+
+    /**
      * Sets the owning node and adds itself to the node's list of ports. If the port was previously
      * in another node, it is removed from that node's list of ports. Be careful not to use this
      * method while iterating through the ports list of the old node nor of the new node, since that

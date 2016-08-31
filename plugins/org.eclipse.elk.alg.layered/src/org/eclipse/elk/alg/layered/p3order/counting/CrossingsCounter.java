@@ -348,14 +348,14 @@ public final class CrossingsCounter {
     private List<LPort> getPorts(final LNode node, final PortSide side, final boolean topDown) {
         if (side == PortSide.EAST) {
             if (topDown) {
-                return node.getPorts(side);
+                return node.getPortSideView(side);
             } else {
-                return Lists.reverse(node.getPorts(side));
+                return Lists.reverse(node.getPortSideView(side));
             }
         } else if (topDown) {
-                return Lists.reverse(node.getPorts(side));
+            return Lists.reverse(node.getPortSideView(side));
         } else {
-                return node.getPorts(side);
+            return node.getPortSideView(side);
         }
     }
 

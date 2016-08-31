@@ -83,6 +83,7 @@ public final class SwitchDecider {
     private void initParentCrossingsCounters(final int freeLayerIndex, final int length) {
         GraphInfoHolder parentGraphData = graphData.parentGraphData();
         LNode[][] parentNodeOrder = parentGraphData.currentNodeOrder();
+        // TODO-alan bad
         int[] portPos = parentGraphData.crossCounter().betweenAndInLayerCrossingCounter().getPortPositions();
         parentCrossCounter = new CrossingsCounter(portPos);
         int parentNodeLayerPos = graphData.parent().getLayer().id;
@@ -205,7 +206,7 @@ public final class SwitchDecider {
     }
 
     private boolean hasEdgesOnSide(final LNode node, final PortSide side) {
-        Iterable<LPort> ports = node.getPorts(side);
+        Iterable<LPort> ports = node.getPortSideView(side);
         for (LPort port : ports) {
             if (port.getProperty(InternalProperties.PORT_DUMMY) != null
                     || port.getConnectedEdges().iterator().hasNext()) {

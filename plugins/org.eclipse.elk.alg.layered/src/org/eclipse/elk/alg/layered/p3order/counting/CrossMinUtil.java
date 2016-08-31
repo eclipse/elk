@@ -41,10 +41,10 @@ public final class CrossMinUtil {
         switch (side) {
         case EAST:
         case NORTH:
-            return node.getPorts(side);
+            return node.getPortSideView(side);
         case SOUTH:
         case WEST:
-            return Lists.reverse(node.getPorts(side));
+            return Lists.reverse(node.getPortSideView(side));
         }
         return Collections.emptyList();
     }
