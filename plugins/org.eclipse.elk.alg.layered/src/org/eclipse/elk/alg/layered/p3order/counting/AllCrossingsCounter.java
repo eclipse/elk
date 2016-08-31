@@ -60,6 +60,8 @@ public final class AllCrossingsCounter implements IInitializable {
             LNode[] rightLayer = currentOrder[layerIndex + 1];
             if (hasHyperEdgesEastOfIndex[layerIndex]) {
                 totalCrossings = hyperedgeCrossingsCounter.countCrossings(leftLayer, rightLayer);
+                totalCrossings += crossingCounter.countInLayerCrossingsOnSide(leftLayer, PortSide.EAST);
+                totalCrossings += crossingCounter.countInLayerCrossingsOnSide(rightLayer, PortSide.WEST);
             } else {
                 totalCrossings = crossingCounter.countCrossingsBetweenLayers(leftLayer, rightLayer);
             }
