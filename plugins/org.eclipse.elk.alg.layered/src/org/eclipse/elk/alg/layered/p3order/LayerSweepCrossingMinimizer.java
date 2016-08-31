@@ -217,11 +217,13 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     /** For use with any two-layer crossing minimizer which always improves crossings (e.g. two-sided greedy switch). */
     private void minimizeCrossingsNoCounter(final GraphInfoHolder gData) {
         boolean isForwardSweep = random.nextBoolean();
-        boolean improved = gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
-        do {
-            improved = sweepReducingCrossings(gData, isForwardSweep, false);
+        boolean improved = true;
+        while (improved) {
+            improved = false;
+            improved = gData.crossMinimizer().setFirstLayerOrder(gData.currentNodeOrder(), isForwardSweep);
+            improved |= sweepReducingCrossings(gData, isForwardSweep, false);
             isForwardSweep = !isForwardSweep;
-        } while (improved);
+        }
         setCurrentlyBestNodeOrders();
     }
 
