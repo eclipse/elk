@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.BetweenLayerEdgeTwoNodeCrossingsCounter;
@@ -56,11 +57,15 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
         PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
         boolean improved = false;
         for (LNode node : nodeOrder[currentIndex]) {
+            if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                continue;
+            }
             List<LPort> ports = node.getPorts(side);
             boolean useHierarchicalCrossCounter =
                     !ports.isEmpty() && node.getProperty(InternalProperties.COMPOUND_NODE);
             if (useHierarchicalCrossCounter) {
-                LNode[][] innerGraph = node.getProperty(InternalProperties.NESTED_LGRAPH).toNodeArray();
+                LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+                LNode[][] innerGraph = nestedGraph.toNodeArray();
                 hierarchicalCrossingsCounter =
                         new BetweenLayerEdgeTwoNodeCrossingsCounter(innerGraph,
                         isForwardSweep ? 0 : innerGraph.length - 1);
@@ -74,9 +79,7 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
      * Distribute ports greedily on a single node.
      */
     private boolean distributePorts(final LNode node, final PortSide side, final boolean useHierarchicalCrosscounter) {
-        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-            return false;
-        }
+
         List<LPort> ports = node.getPorts(side);
         if (side == PortSide.SOUTH || side == PortSide.WEST) {
             ports = Lists.reverse(ports);
