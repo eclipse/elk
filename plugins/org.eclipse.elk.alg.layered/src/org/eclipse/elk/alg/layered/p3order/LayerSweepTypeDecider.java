@@ -42,7 +42,7 @@ public class LayerSweepTypeDecider implements IInitializable {
 
     private NodeInfo[][] nodeInfo;
     private AbstractInitializer initializer;
-    private GraphData graphData;
+    private GraphInfoHolder graphData;
 
     /**
      * Creates LayerSweepTypeDecider for deciding whether to sweep into graphs or not.
@@ -52,7 +52,7 @@ public class LayerSweepTypeDecider implements IInitializable {
      * 
      * @param currentNodeOrder
      */
-    public LayerSweepTypeDecider(final GraphData graphData) {
+    public LayerSweepTypeDecider(final GraphInfoHolder graphData) {
         this.graphData = graphData;
         initializer = new Initializer(graphData.currentNodeOrder());
     }

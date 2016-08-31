@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
-import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.ICrossingMinimizationHeuristic;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
@@ -44,7 +44,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
     private LNode[][] currentNodeOrder;
     private SwitchDecider switchDecider;
     private int[] portPositions;
-    private GraphData graphData;
+    private GraphInfoHolder graphData;
     private AbstractInitializer initializer;
 
     /**
@@ -54,7 +54,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
      *            The greedy switch type.
      * @param nPorts
      */
-    public GreedySwitchHeuristic(final CrossMinType greedyType, final GraphData graphData) {
+    public GreedySwitchHeuristic(final CrossMinType greedyType, final GraphInfoHolder graphData) {
         initializer = new Initializer(graphData.currentNodeOrder());
         this.graphData = graphData;
         greedySwitchType = greedyType;

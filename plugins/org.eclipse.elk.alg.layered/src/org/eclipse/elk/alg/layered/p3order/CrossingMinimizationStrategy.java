@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 
 /**
  * Enumeration of and factory for the different available crossing minimization strategies.
@@ -45,7 +46,7 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
     public ILayoutPhase create() {
         switch (this) {
         case LAYER_SWEEP:
-            return new LayerSweepCrossingMinimizer();
+            return new LayerSweepCrossingMinimizer(CrossMinType.BARYCENTER);
             
         case INTERACTIVE:
             return new InteractiveCrossingMinimizer();

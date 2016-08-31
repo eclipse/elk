@@ -8,7 +8,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepTypeDecider;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
@@ -60,8 +60,8 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
         graph.id = 0;
         nestedGraph.id = 1;
         setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0.1f, graph);
-        GraphData gd = new GraphData(nestedGraph, CrossMinType.BARYCENTER,
-                Arrays.asList(new GraphData(graph, CrossMinType.BARYCENTER, null)));
+        GraphInfoHolder gd = new GraphInfoHolder(nestedGraph, CrossMinType.BARYCENTER,
+                Arrays.asList(new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null)));
         assertTrue(gd.dontSweepInto());
     }
 
@@ -102,8 +102,8 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
         innerGraph.id = 1;
 
         setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f, graph);
-        GraphData gd = new GraphData(innerGraph, CrossMinType.BARYCENTER,
-                Arrays.asList(new GraphData(graph, CrossMinType.BARYCENTER, null)));
+        GraphInfoHolder gd = new GraphInfoHolder(innerGraph, CrossMinType.BARYCENTER,
+                Arrays.asList(new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null)));
         LayerSweepTypeDecider td = new LayerSweepTypeDecider(gd);
         AbstractInitializer.init(Arrays.asList(td));
         assertTrue(td.useBottomUp());
@@ -138,8 +138,8 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
         innerGraph.id = 1;
 
         setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -0.1f, graph);
-        GraphData gd = new GraphData(innerGraph, CrossMinType.BARYCENTER,
-                Arrays.asList(new GraphData(graph, CrossMinType.BARYCENTER, null)));
+        GraphInfoHolder gd = new GraphInfoHolder(innerGraph, CrossMinType.BARYCENTER,
+                Arrays.asList(new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null)));
         assertTrue(gd.dontSweepInto());
     }
 

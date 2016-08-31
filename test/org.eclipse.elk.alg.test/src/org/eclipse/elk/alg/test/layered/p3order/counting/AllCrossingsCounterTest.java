@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.InLayerEdgeTestGraphCreator;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
@@ -227,7 +227,7 @@ public class AllCrossingsCounterTest extends TestGraphCreator {
                 }
             }
         }
-        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, null);
+        GraphInfoHolder gd = new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null);
         return gd.crossCounter().countAllCrossings(nodeArray);
     }
 }

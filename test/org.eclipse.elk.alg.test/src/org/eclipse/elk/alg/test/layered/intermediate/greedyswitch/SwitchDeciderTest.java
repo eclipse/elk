@@ -24,7 +24,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.CrossingMatrixFiller;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
-import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
@@ -360,7 +360,7 @@ public class SwitchDeciderTest extends TestGraphCreator {
         return new SwitchDecider(layerIndex, currentNodeOrder,
                 crossingMatrixFiller,
                 new int[getNPorts(currentNodeOrder)],
-                new GraphData(graph, CrossMinType.ONE_SIDED_GREEDY_SWITCH, new ArrayList<>()), greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH);
+                new GraphInfoHolder(graph, CrossMinType.ONE_SIDED_GREEDY_SWITCH, new ArrayList<>()), greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH);
     }
 
     private int getNPorts(final LNode[][] currentOrder) {

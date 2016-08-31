@@ -33,7 +33,7 @@ import com.google.common.collect.Lists;
  * @author alan
  *
  */
-public class GraphData implements IInitializable {
+public class GraphInfoHolder implements IInitializable {
     /** Raw graph data. */
     private LGraph lGraph;
 
@@ -50,7 +50,7 @@ public class GraphData implements IInitializable {
     private List<LGraph> childGraphs;
     private boolean hasExternalPorts;
     private boolean hasParent;
-    private GraphData parentGraphData;
+    private GraphInfoHolder parentGraphData;
     private LNode parent;
     private LayerSweepTypeDecider layerSweepTypeDecider;
 
@@ -68,7 +68,7 @@ public class GraphData implements IInitializable {
      * @param crossMinType
      *            The CrossMinimizer
      */
-    public GraphData(final LGraph graph, final CrossMinType crossMinType, final List<GraphData> graphs) {
+    public GraphInfoHolder(final LGraph graph, final CrossMinType crossMinType, final List<GraphInfoHolder> graphs) {
         lGraph = graph;
         this.crossMinType = crossMinType;
         currentNodeOrder = graph.toNodeArray();
@@ -222,7 +222,7 @@ public class GraphData implements IInitializable {
     /**
      * @return the parentGraphData
      */
-    public GraphData parentGraphData() {
+    public GraphInfoHolder parentGraphData() {
         return parentGraphData;
     }
 

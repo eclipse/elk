@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
@@ -38,7 +38,7 @@ public final class SwitchDecider {
     private final CrossingsCounter rightInLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final CrossingMatrixFiller crossingMatrixFiller;
-    private GraphData graphData;
+    private GraphInfoHolder graphData;
     private CrossingsCounter parentCrossCounter;
     private boolean countCrossingsCausedByPortSwitch;
 
@@ -60,7 +60,7 @@ public final class SwitchDecider {
      */
     public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
             final CrossingMatrixFiller crossingMatrixFiller, final int[] portPositions,
-            final GraphData graphData, final boolean oneSided) {
+            final GraphInfoHolder graphData, final boolean oneSided) {
         this.crossingMatrixFiller = crossingMatrixFiller;
         this.graphData = graphData;
         if (freeLayerIndex >= graph.length) {
@@ -81,7 +81,7 @@ public final class SwitchDecider {
     }
 
     private void initParentCrossingsCounters(final int freeLayerIndex, final int length) {
-        GraphData parentGraphData = graphData.parentGraphData();
+        GraphInfoHolder parentGraphData = graphData.parentGraphData();
         LNode[][] parentNodeOrder = parentGraphData.currentNodeOrder();
         int[] portPos = parentGraphData.crossCounter().betweenAndInLayerCrossingCounter().getPortPositions();
         parentCrossCounter = new CrossingsCounter(portPos);

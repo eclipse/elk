@@ -20,7 +20,7 @@ import java.util.Random;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p3order.GraphData;
+import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.InLayerEdgeTestGraphCreator;
@@ -130,7 +130,7 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         addEdgeBetweenPorts(bottomLeftTopPort, topRightTopPort);
         addEdgeBetweenPorts(bottomLeftBottomPort, topRightBottomPort);
 
-        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, null);
+        GraphInfoHolder gd = new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null);
         gd.portDistributor().distributePortsWhileSweeping(order(), 1, true);
 
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
@@ -159,7 +159,7 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
     @Test
     public void countCrossingsBetweenLayers_moreComplexThreeLayerGraph() {
         getMoreComplexThreeLayerGraph();
-        GraphData gd = new GraphData(graph, CrossMinType.BARYCENTER, null);
+        GraphInfoHolder gd = new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null);
         gd.portDistributor().distributePortsWhileSweeping(order(), 1, true);
         counter = new CrossingsCounter(new int[getNumPorts(order())]);
         assertThat(counter.countCrossingsBetweenLayers(order()[0], order()[1]), is(1));
