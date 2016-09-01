@@ -83,6 +83,7 @@ public class TestGraphCreator {
      * @return return empty graph.
      */
     public LGraph getEmptyGraph() {
+        graph = new LGraph();
         setUpGraph(graph);
         return graph;
     }
@@ -1218,7 +1219,7 @@ public class TestGraphCreator {
         return copy;
     }
 
-    protected <T> List<T> switchOrderInList(final int i, final int j, final List<T> list) {
+    protected <T> List<T> copyOfListSwitchingOrder(final int i, final int j, final List<T> list) {
         List<T> listCopy = new ArrayList<T>(list);
         T first = listCopy.get(i);
         T second = listCopy.get(j);
@@ -1280,12 +1281,12 @@ public class TestGraphCreator {
         return switchedList;
     }
 
-    protected List<LNode> getNodesInLayer(final int layerIndex) {
+    protected List<LNode> copyOfNodesInLayer(final int layerIndex) {
         return new ArrayList<LNode>(graph.getLayers().get(layerIndex).getNodes());
     }
 
-    protected List<LNode> switchOrderOfNodesInLayer(final int nodeOne, final int nodeTwo, final int layerIndex) {
-        List<LNode> layer = getNodesInLayer(layerIndex);
+    protected List<LNode> copyOfSwitchOrderOfNodesInLayer(final int nodeOne, final int nodeTwo, final int layerIndex) {
+        List<LNode> layer = copyOfNodesInLayer(layerIndex);
         return getCopyWithSwitchedOrder(nodeOne, nodeTwo, layer);
     }
 

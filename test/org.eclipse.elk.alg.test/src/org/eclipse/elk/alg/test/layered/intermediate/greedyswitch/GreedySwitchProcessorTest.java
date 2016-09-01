@@ -77,17 +77,17 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         List<LNode> expectedOrderLayerOne;
         List<LNode> expectedOrderLayerTwo;
         if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
-            expectedOrderLayerOne = getNodesInLayer(0);
-            expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
+            expectedOrderLayerOne = copyOfNodesInLayer(0);
+            expectedOrderLayerTwo = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
         } else {
-            expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
-            expectedOrderLayerTwo = getNodesInLayer(1);
+            expectedOrderLayerOne = copyOfSwitchOrderOfNodesInLayer(0, 1, 0);
+            expectedOrderLayerTwo = copyOfNodesInLayer(1);
         }
 
         startGreedySwitcherWithCurrentType();
 
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer one", copyOfNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     private void startGreedySwitcherWithCurrentType() {
@@ -98,44 +98,44 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
     public void constraintsPreventSwitchInSecondLayer() {
         getCrossFormedGraphWithConstraintsInSecondLayer();
 
-        List<LNode> expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
-        List<LNode> expectedOrderLayerTwo = getNodesInLayer(1);
+        List<LNode> expectedOrderLayerOne = copyOfSwitchOrderOfNodesInLayer(0, 1, 0);
+        List<LNode> expectedOrderLayerTwo = copyOfNodesInLayer(1);
 
         startGreedySwitcherWithCurrentType();
 
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer one", copyOfNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     @Test
     public void constraintsPreventAnySwitch() {
         getCrossFormedGraphConstraintsPreventAnySwitch();
 
-        List<LNode> expectedOrderLayerOne = getNodesInLayer(0);
-        List<LNode> expectedOrderLayerTwo = getNodesInLayer(1);
+        List<LNode> expectedOrderLayerOne = copyOfNodesInLayer(0);
+        List<LNode> expectedOrderLayerTwo = copyOfNodesInLayer(1);
 
         startGreedySwitcherWithCurrentType();
 
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer one", copyOfNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     @Test
     public void layoutUnitConstraintPreventsSwitch() {
         getNodesInDifferentLayoutUnitsPreventSwitch();
 
-        List<LNode> expectedOrderLayerTwo = getNodesInLayer(1);
+        List<LNode> expectedOrderLayerTwo = copyOfNodesInLayer(1);
 
         startGreedySwitcherWithCurrentType();
 
-        assertThat("Layer one", getNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer one", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     @Test
     public void oneNode() {
         getOneNodeGraph();
         int layerIndex = 0;
-        switchOrderOfNodesInLayer(0, 0, layerIndex);
+        copyOfSwitchOrderOfNodesInLayer(0, 0, layerIndex);
         // should cause no errors
     }
 
@@ -143,11 +143,11 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
     public void inLayerSwitchable() {
         getInLayerEdgesGraph();
 
-        List<LNode> expectedOrder = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedOrder = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
 
         startGreedySwitcherWithCurrentType();
 
-        assertThat(getNodesInLayer(1), is(expectedOrder));
+        assertThat(copyOfNodesInLayer(1), is(expectedOrder));
     }
 
     @Test
@@ -157,17 +157,17 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         List<LNode> expectedOrderLayerOne;
         List<LNode> expectedOrderLayerTwo;
         if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
-            expectedOrderLayerOne = getNodesInLayer(0);
-            expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
+            expectedOrderLayerOne = copyOfNodesInLayer(0);
+            expectedOrderLayerTwo = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
         } else {
-            expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
-            expectedOrderLayerTwo = getNodesInLayer(1);
+            expectedOrderLayerOne = copyOfSwitchOrderOfNodesInLayer(0, 1, 0);
+            expectedOrderLayerTwo = copyOfNodesInLayer(1);
         }
 
         startGreedySwitcherWithCurrentType();
 
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer one", copyOfNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     @Test
@@ -203,17 +203,17 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         List<LNode> expectedOrderLayerOne;
         List<LNode> expectedOrderLayerTwo;
         if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
-            expectedOrderLayerOne = getNodesInLayer(0);
-            expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
+            expectedOrderLayerOne = copyOfNodesInLayer(0);
+            expectedOrderLayerTwo = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
         } else {
-            expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
-            expectedOrderLayerTwo = getNodesInLayer(1);
+            expectedOrderLayerOne = copyOfSwitchOrderOfNodesInLayer(0, 1, 0);
+            expectedOrderLayerTwo = copyOfNodesInLayer(1);
         }
 
         startGreedySwitcherWithCurrentType();
 
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer one", copyOfNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     /**
@@ -234,15 +234,15 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         graph = new NorthSouthEdgeTestGraphCreator().getNorthSouthDownwardCrossingGraph();
 
         int layerIndex = 0;
-        List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(getNodesInLayer(layerIndex));
-        List<LNode> expectedOrderOneSided = switchOrderOfNodesInLayer(1, 2, layerIndex);
+        List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(copyOfNodesInLayer(layerIndex));
+        List<LNode> expectedOrderOneSided = copyOfSwitchOrderOfNodesInLayer(1, 2, layerIndex);
 
         startGreedySwitcherWithCurrentType();
 
         if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
-            assertThat(getNodesInLayer(layerIndex), is(expectedOrderOneSided));
+            assertThat(copyOfNodesInLayer(layerIndex), is(expectedOrderOneSided));
         } else {
-            assertThat(getNodesInLayer(layerIndex), is(expectedOrderTwoSided));
+            assertThat(copyOfNodesInLayer(layerIndex), is(expectedOrderTwoSided));
         }
     }
 
@@ -261,11 +261,11 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         getMoreComplexThreeLayerGraph();
         List<LNode> expectedOrderLayerTwo;
         List<LNode> expectedOrderLayerThree;
-        expectedOrderLayerTwo = getNodesInLayer(1);
-        expectedOrderLayerThree = switchOrderOfNodesInLayer(0, 1, 2);
+        expectedOrderLayerTwo = copyOfNodesInLayer(1);
+        expectedOrderLayerThree = copyOfSwitchOrderOfNodesInLayer(0, 1, 2);
         startGreedySwitcherWithCurrentType();
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
-        assertThat("Layer three", getNodesInLayer(2), is(expectedOrderLayerThree));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer three", copyOfNodesInLayer(2), is(expectedOrderLayerThree));
     }
 
     @Test
@@ -273,27 +273,27 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         getSwitchOnlyOneSided();
 
         int layerIndex = 1;
-        List<LNode> expectedOrderOneSided = switchOrderOfNodesInLayer(0, 1, layerIndex);
-        List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(getNodesInLayer(layerIndex));
+        List<LNode> expectedOrderOneSided = copyOfSwitchOrderOfNodesInLayer(0, 1, layerIndex);
+        List<LNode> expectedOrderTwoSided = new ArrayList<LNode>(copyOfNodesInLayer(layerIndex));
 
         startGreedySwitcherWithCurrentType();
         if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
-            assertThat(getNodesInLayer(layerIndex), is(expectedOrderOneSided));
+            assertThat(copyOfNodesInLayer(layerIndex), is(expectedOrderOneSided));
         } else {
-            assertThat(getNodesInLayer(layerIndex), is(expectedOrderTwoSided));
+            assertThat(copyOfNodesInLayer(layerIndex), is(expectedOrderTwoSided));
         }
     }
 
     @Test
     public void doesNotWorsenCrossAmount() {
         getGraphWhichCouldBeWorsenedBySwitch();
-        List<LNode> expectedOrderFirstLayer = new ArrayList<LNode>(getNodesInLayer(0));
-        List<LNode> expectedOrderSecondLayer = new ArrayList<LNode>(getNodesInLayer(1));
+        List<LNode> expectedOrderFirstLayer = new ArrayList<LNode>(copyOfNodesInLayer(0));
+        List<LNode> expectedOrderSecondLayer = new ArrayList<LNode>(copyOfNodesInLayer(1));
 
         startGreedySwitcherWithCurrentType();
 
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderFirstLayer));
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderSecondLayer));
+        assertThat("Layer one", copyOfNodesInLayer(0), is(expectedOrderFirstLayer));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderSecondLayer));
     }
 
     @Test
@@ -312,21 +312,21 @@ public class GreedySwitchProcessorTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftTopPort, rightNodes[3]);
         setUpIds();
 
-        List<LNode> oneSidedFirstLayer = new ArrayList<LNode>(getNodesInLayer(0));
-        List<LNode> oneSidedFirstSwitchSecondLayer = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> oneSidedFirstLayer = new ArrayList<LNode>(copyOfNodesInLayer(0));
+        List<LNode> oneSidedFirstSwitchSecondLayer = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
         List<LNode> oneSidedsecondSwitchSecondLayer = getCopyWithSwitchedOrder(2, 3, oneSidedFirstSwitchSecondLayer);
         List<LNode> oneSidedThirdSwitchSecondLayer = getCopyWithSwitchedOrder(1, 2, oneSidedsecondSwitchSecondLayer);
 
-        List<LNode> twoSidedFirstLayer = switchOrderOfNodesInLayer(0, 1, 0);
-        List<LNode> twoSidedFirstSwitchSecondLayer = switchOrderOfNodesInLayer(1, 2, 1);
+        List<LNode> twoSidedFirstLayer = copyOfSwitchOrderOfNodesInLayer(0, 1, 0);
+        List<LNode> twoSidedFirstSwitchSecondLayer = copyOfSwitchOrderOfNodesInLayer(1, 2, 1);
         List<LNode> twoSidedsecondSwitchSecondLayer = getCopyWithSwitchedOrder(0, 1, twoSidedFirstSwitchSecondLayer);
         startGreedySwitcherWithCurrentType();
         if (greedyType == CrossMinType.ONE_SIDED_GREEDY_SWITCH) {
-            assertThat("Layer one" + getNodesInLayer(0), getNodesInLayer(0), is(oneSidedFirstLayer));
-            assertThat("Layer two " + getNodesInLayer(1), getNodesInLayer(1), is(oneSidedThirdSwitchSecondLayer));
+            assertThat("Layer one" + copyOfNodesInLayer(0), copyOfNodesInLayer(0), is(oneSidedFirstLayer));
+            assertThat("Layer two " + copyOfNodesInLayer(1), copyOfNodesInLayer(1), is(oneSidedThirdSwitchSecondLayer));
         } else {
-            assertThat("Layer one " + getNodesInLayer(0), getNodesInLayer(0), is(twoSidedFirstLayer));
-            assertThat("Layer two " + getNodesInLayer(1), getNodesInLayer(1), is(twoSidedsecondSwitchSecondLayer));
+            assertThat("Layer one " + copyOfNodesInLayer(0), copyOfNodesInLayer(0), is(twoSidedFirstLayer));
+            assertThat("Layer two " + copyOfNodesInLayer(1), copyOfNodesInLayer(1), is(twoSidedsecondSwitchSecondLayer));
         }
 
     }

@@ -347,7 +347,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftNodes[1], middleNodes[0]);
         setUpIds();
 
-        List<LNode> expectedNodeOrderMiddleLayer = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedNodeOrderMiddleLayer = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
         List<LPort> expectedPortOrderMiddleTopNode = copyPortsInIndexOrder(middleNodes[0], 1, 0);
 
         setUpAndMinimizeCrossings();
@@ -446,7 +446,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftOuterPorts[1], rightNodes[0]);
         makeNestedTwoNodeGraphWithEasternPorts(leftOuterNode, leftOuterPorts);
 
-        List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedOrderRight = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
 
@@ -483,7 +483,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftInnerNodesleft[0], leftInnerNodesRight[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[1], leftInnerNodesRight[0]);
 
-        List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedOrderRight = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
 
@@ -512,12 +512,12 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftTopNode, rightNode);
         eastWestEdgeFromTo(leftBottomNode, rightNode);
 
-        List<LNode> expectedOrderLayerOne = switchOrderOfNodesInLayer(0, 1, 0);
+        List<LNode> expectedOrderLayerOne = copyOfSwitchOrderOfNodesInLayer(0, 1, 0);
 
         getRandom().setNextBoolean(false); // sweeps backward
         setUpAndMinimizeCrossings();
 
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer one", copyOfNodesInLayer(0), is(expectedOrderLayerOne));
     }
 
     /**
@@ -541,13 +541,13 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftNodes[0], rightNodes[2]);
         eastWestEdgeFromTo(leftNodes[1], rightNodes[1]);
 
-        List<LNode> expectedOrderLayerTwo = switchOrderOfNodesInLayer(1, 2, 1);
-        List<LNode> expectedOrderLayerOne = getNodesInLayer(0);
+        List<LNode> expectedOrderLayerTwo = copyOfSwitchOrderOfNodesInLayer(1, 2, 1);
+        List<LNode> expectedOrderLayerOne = copyOfNodesInLayer(0);
 
         setUpAndMinimizeCrossings();
 
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
-        assertThat("Layer one", getNodesInLayer(0), is(expectedOrderLayerOne));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer one", copyOfNodesInLayer(0), is(expectedOrderLayerOne));
 
     }
 
@@ -577,11 +577,11 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(middleNodes[1], rightNode);
         eastWestEdgeFromTo(middleNodes[0], rightNode);
 
-        List<LNode> expectedOrderLayerTwo = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedOrderLayerTwo = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
 
-        assertThat("Layer two", getNodesInLayer(1), is(expectedOrderLayerTwo));
+        assertThat("Layer two", copyOfNodesInLayer(1), is(expectedOrderLayerTwo));
     }
 
     /**
@@ -658,8 +658,8 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgesFromTo(2, middleNodes[1], rightNodes[1]);
         eastWestEdgesFromTo(2, middleNodes[0], rightNodes[1]);
 
-        List<LNode> expectedWrongOrder = getNodesInLayer(0);
-        List<LNode> expectedCorrectOrder = switchOrderOfNodesInLayer(0, 1, 0);
+        List<LNode> expectedWrongOrder = copyOfNodesInLayer(0);
+        List<LNode> expectedCorrectOrder = copyOfSwitchOrderOfNodesInLayer(0, 1, 0);
 
         setUpAndMinimizeCrossings();
 
@@ -700,7 +700,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         LPort rightTopPort = addPortOnSide(rightNodes[0], PortSide.WEST);
         addEdgeBetweenPorts(hierarchPort, rightTopPort);
 
-        List<LNode> expectedCorrectOrder = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedCorrectOrder = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
 
@@ -737,7 +737,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         LPort rightTopPort = addPortOnSide(rightNodes[0], PortSide.WEST);
         addEdgeBetweenPorts(hierarchPort, rightTopPort);
 
-        List<LNode> expectedCorrectOrder = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedCorrectOrder = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
         assertThat(getGraph().getLayers().get(1).getNodes(), is(expectedCorrectOrder));
@@ -773,7 +773,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         addEdgeBetweenPorts(leftTopPort, rightLowerPort);
         addEdgeBetweenPorts(leftLowerPort, rightUpperNodeLowerPort);
 
-        List<LNode> expectedCorrectOrder = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedCorrectOrder = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
 
         setUpAndMinimizeCrossings();
 
@@ -1126,7 +1126,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
             eastWestEdgeFromTo(leftInnerNodesLeft[i], leftInnerNodesRight[i]);
         }
 
-        List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedOrderRight = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
         List<LPort> expectedPortOrderLeft = copyPortsInIndexOrder(leftOuterNode, 1, 0);
 
         setUpAndMinimizeCrossings();
@@ -1291,7 +1291,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftInnerNodesleft[1], leftInnerNodesRight[0]);
         getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f);
 
-        List<LNode> expectedOrderRight = switchOrderOfNodesInLayer(0, 1, 1);
+        List<LNode> expectedOrderRight = copyOfSwitchOrderOfNodesInLayer(0, 1, 1);
         List<LNode> expectedInnerOrderRight = Lists.newArrayList(leftInnerNodesRight[1], leftInnerNodesRight[0]);
 
         setUpAndMinimizeCrossings();
@@ -1659,7 +1659,7 @@ public class LayerSweepCrossingMinimizerTest extends TestGraphCreator {
 
         random.setNextBoolean(false);
         getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f);
-        new LayerSweepCrossingMinimizer().process(graph, new BasicProgressMonitor());
+        new LayerSweepCrossingMinimizer(CrossMinType.BARYCENTER).process(graph, new BasicProgressMonitor());
 
         assertEquals(leftNode.getPorts(), expectedPortOrder);
     }
