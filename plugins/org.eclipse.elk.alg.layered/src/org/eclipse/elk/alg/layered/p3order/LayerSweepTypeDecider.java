@@ -35,6 +35,7 @@ import com.google.common.collect.Iterables;
  * <p>
  * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
  * </p>
+ * 
  * @author alan
  *
  */
@@ -78,33 +79,39 @@ public class LayerSweepTypeDecider implements IInitializable {
 
         List<LNode> nsPortDummies = new ArrayList<>();
         for (LNode[] layer : graphData.currentNodeOrder()) {
-            nsPortDummies.clear();
             for (LNode node : layer) {
+                // We must visit all sources of edges first, so we collect north south dummies for later.
                 if (isNorthSouthDummy(node)) {
                     nsPortDummies.add(node);
                     continue;
                 }
+
                 NodeInfo currentNode = nodeInfoFor(node);
+                // Check for hierarchical port dummies or random influence.
                 if (isExternalPortDummy(node)) {
                     currentNode.hierarchicalInfluence = 1;
                     if (isEasternDummy(node)) {
                         pathsToHierarchical += currentNode.connectedEdges;
                     }
-                } else {
-                    if (hasNoWesternPorts(node)) {
-                        currentNode.randomInfluence = 1;
-                    }
-                    if (hasNoEasternPorts(node)) {
-                        pathsToRandom += currentNode.connectedEdges;
-                    }
+                } else if (hasNoWesternPorts(node)) {
+                    currentNode.randomInfluence = 1;
+                } else if (hasNoEasternPorts(node)) {
+                    pathsToRandom += currentNode.connectedEdges;
                 }
+
+                // Increase counts of paths by the number outgoing edges times the influence
+                // and transfer information to targets.
                 for (LEdge edge : node.getOutgoingEdges()) {
                     pathsToRandom += currentNode.randomInfluence;
                     pathsToHierarchical += currentNode.hierarchicalInfluence;
                     transferInfoToTarget(currentNode, edge);
                 }
-                for (LPort port : Iterables.concat(node.getPortSideView(PortSide.NORTH),
-                        node.getPortSideView(PortSide.SOUTH))) {
+
+                // Do the same for north/south dummies: Increase counts of paths by the number outgoing edges times the
+                // influence and transfer information to dummies.
+                Iterable<LPort> northSouthPorts =
+                        Iterables.concat(node.getPortSideView(PortSide.NORTH), node.getPortSideView(PortSide.SOUTH));
+                for (LPort port : northSouthPorts) {
                     LNode nsDummy = port.getProperty(InternalProperties.PORT_DUMMY);
                     if (nsDummy != null) {
                         pathsToRandom += currentNode.randomInfluence;
@@ -113,6 +120,8 @@ public class LayerSweepTypeDecider implements IInitializable {
                     }
                 }
             }
+
+            // Now process nsPortDummies
             for (LNode node : nsPortDummies) {
                 NodeInfo currentNode = nodeInfoFor(node);
                 for (LEdge edge : node.getOutgoingEdges()) {
@@ -121,6 +130,7 @@ public class LayerSweepTypeDecider implements IInitializable {
                     transferInfoToTarget(currentNode, edge);
                 }
             }
+            nsPortDummies.clear();
         }
 
         double allPaths = pathsToRandom + pathsToHierarchical;
@@ -150,7 +160,7 @@ public class LayerSweepTypeDecider implements IInitializable {
      *
      */
     static class NodeInfo {
-        private int connectedEdges = 0;
+        private int connectedEdges;
         private int hierarchicalInfluence;
         private int randomInfluence;
 

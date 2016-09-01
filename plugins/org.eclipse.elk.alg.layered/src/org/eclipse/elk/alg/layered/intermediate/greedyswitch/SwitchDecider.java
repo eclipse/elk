@@ -83,8 +83,7 @@ public final class SwitchDecider {
     private void initParentCrossingsCounters(final int freeLayerIndex, final int length) {
         GraphInfoHolder parentGraphData = graphData.parentGraphData();
         LNode[][] parentNodeOrder = parentGraphData.currentNodeOrder();
-        // TODO-alan bad
-        int[] portPos = parentGraphData.crossCounter().betweenAndInLayerCrossingCounter().getPortPositions();
+        int[] portPos = parentGraphData.portPositions();
         parentCrossCounter = new CrossingsCounter(portPos);
         int parentNodeLayerPos = graphData.parent().getLayer().id;
         LNode[] leftLayer = parentNodeLayerPos > 0 ? parentNodeOrder[parentNodeLayerPos - 1] : new LNode[0];

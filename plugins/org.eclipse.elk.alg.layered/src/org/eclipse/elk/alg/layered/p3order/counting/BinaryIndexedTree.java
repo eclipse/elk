@@ -115,7 +115,7 @@ public class BinaryIndexedTree {
     }
 
     /**
-     * 
+     * Clears contents of tree.
      */
     public void clear() {
         binarySums = new int[maxNum + 1];
@@ -123,6 +123,11 @@ public class BinaryIndexedTree {
         size = 0;
     }
 
+    /**
+     * Returns true if this tree is empty.
+     * 
+     * @return
+     */
     public boolean isEmpty() {
         return size == 0;
     }

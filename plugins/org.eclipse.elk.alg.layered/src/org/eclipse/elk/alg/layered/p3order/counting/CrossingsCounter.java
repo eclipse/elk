@@ -16,10 +16,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -119,12 +119,15 @@ public final class CrossingsCounter {
     }
 
     /**
-     * * TODO-alan comment
+     * Count crossings caused between edges incident to upperPort and lowerPort and when the order of these two is
+     * switched.
      * 
-     * @param lNode
-     * @param lNode2
-     * @param east
-     * @return
+     * @param upperPort
+     *            the upper port
+     * @param lowerPort
+     *            the lower port
+     * @return {@link Pair} of integers where {@link Pair#getFirst()} returns the crossings in the unswitched and
+     *         {@link Pair#getSecond()} in the switched order.
      */
     public Pair<Integer, Integer> countCrossingsBetweenPortsInBothOrders(final LPort upperPort,
             final LPort lowerPort) {
@@ -142,16 +145,20 @@ public final class CrossingsCounter {
     }
 
     /**
-     * TODO-alan comment
+     * Count crossings caused between edges incident to upperNode and lowerNode and when the order of these two is
+     * switched.
      * 
-     * @param lNode
-     * @param lNode2
-     * @param east
-     * @return
+     * @param upperNode
+     *            the upper node
+     * @param lowerNode
+     *            the lower node
+     * @param side
+     *            the side on which to count
+     * @return {@link Pair} of integers where {@link Pair#getFirst()} returns the crossings in the unswitched and
+     *         {@link Pair#getSecond()} in the switched order.
      */
     public Pair<Integer, Integer> countInLayerCrossingsBetweenNodesInBothOrders(final LNode upperNode,
-            final LNode lowerNode,
-            final PortSide side) {
+            final LNode lowerNode, final PortSide side) {
         List<LPort> ports = connectedInLayerPortsSortedByPosition(upperNode, lowerNode, side);
         int upperLowerCrossings = countInLayerCrossingsOnPorts(ports);
         switchNodes(upperNode, lowerNode, side);
@@ -228,15 +235,9 @@ public final class CrossingsCounter {
         }
     }
 
-    /**
-     * @param upperNode
-     * @param lowerNode
-     * @param side
-     * @return
-     */
     private List<LPort> connectedInLayerPortsSortedByPosition(final LNode upperNode, final LNode lowerNode,
             final PortSide side) {
-        Set<LPort> ports = new HashSet<>();
+        Set<LPort> ports = new TreeSet<>((a, b) -> Integer.compare(positionOf(a), positionOf(b)));
         for (LNode node : Arrays.asList(upperNode, lowerNode)) {
             for (LPort port : CrossMinUtil.inNorthSouthEastWestOrder(node, side)) {
                 for (LEdge edge : port.getConnectedEdges()) {
@@ -249,11 +250,11 @@ public final class CrossingsCounter {
                 }
             }
         }
-        return asListSortedByPosition(ports);
+        return Lists.newArrayList(ports);
     }
 
     private List<LPort> connectedPortsSortedByPosition(final LPort upperPort, final LPort lowerPort) {
-        Set<LPort> ports = new HashSet<>();
+        Set<LPort> ports = new TreeSet<>((a, b) -> Integer.compare(positionOf(a), positionOf(b)));
         for (LPort port : new LPort[] { upperPort, lowerPort }) {
             ports.add(port);
             for (LEdge edge : port.getConnectedEdges()) {
@@ -262,21 +263,11 @@ public final class CrossingsCounter {
                 }
             }
         }
-        return asListSortedByPosition(ports);
+        return Lists.newArrayList(ports);
     }
 
-    /**
-     * @param edge
-     * @return
-     */
     private boolean isPortSelfLoop(final LEdge edge) {
         return edge.getSource() == edge.getTarget();
-    }
-
-    private List<LPort> asListSortedByPosition(final Set<LPort> ports) {
-        List<LPort> relevantPorts = Lists.newArrayList(ports);
-        Collections.sort(relevantPorts, (a, b) -> Integer.compare(positionOf(a), positionOf(b)));
-        return relevantPorts;
     }
 
     private int countCrossingsOnPorts(final Iterable<LPort> ports) {

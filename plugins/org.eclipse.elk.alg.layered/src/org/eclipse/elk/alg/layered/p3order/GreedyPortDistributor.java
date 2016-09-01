@@ -45,31 +45,27 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
     @Override
     public boolean distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
             final boolean isForwardSweep) {
-        if (isForwardSweep && currentIndex > 0) {
-            initForLayers(nodeOrder[currentIndex - 1], nodeOrder[currentIndex], portPos);
-        } else if (!isForwardSweep && currentIndex < nodeOrder.length - 1) {
-            initForLayers(nodeOrder[currentIndex], nodeOrder[currentIndex + 1], portPos);
-        } else {
-            crossingsCounter = new CrossingsCounter(portPos);
-            crossingsCounter.initPortPositionsForInLayerCrossings(nodeOrder[currentIndex],
-                    isForwardSweep ? PortSide.WEST : PortSide.EAST);
-        }
+        initialize(nodeOrder, currentIndex, isForwardSweep);
+
+        return distributePortsInLayer(nodeOrder, currentIndex, isForwardSweep);
+    }
+
+    private boolean distributePortsInLayer(final LNode[][] nodeOrder, final int currentIndex,
+            final boolean isForwardSweep) {
         PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
         boolean improved = false;
         for (LNode node : nodeOrder[currentIndex]) {
             if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 continue;
             }
-            List<LPort> ports = node.getPortSideView(side);
             LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
-            boolean useHierarchicalCrossCounter = !ports.isEmpty() && nestedGraph != null;
+            boolean useHierarchicalCrossCounter = !node.getPortSideView(side).isEmpty() && nestedGraph != null;
             if (useHierarchicalCrossCounter) {
                 LNode[][] innerGraph = nestedGraph.toNodeArray();
-                hierarchicalCrossingsCounter =
-                        new BetweenLayerEdgeTwoNodeCrossingsCounter(innerGraph,
+                hierarchicalCrossingsCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(innerGraph,
                         isForwardSweep ? 0 : innerGraph.length - 1);
             }
-            improved |= distributePorts(node, side, useHierarchicalCrossCounter);
+            improved |= distributePortsOnNode(node, side, useHierarchicalCrossCounter);
         }
         return improved;
     }
@@ -77,7 +73,8 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
     /**
      * Distribute ports greedily on a single node.
      */
-    private boolean distributePorts(final LNode node, final PortSide side, final boolean useHierarchicalCrosscounter) {
+    private boolean distributePortsOnNode(final LNode node, final PortSide side,
+            final boolean useHierarchicalCrosscounter) {
 
         List<LPort> ports = node.getPortSideView(side);
         if (side == PortSide.SOUTH || side == PortSide.WEST) {
@@ -131,6 +128,18 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
         LPort lower = ports.get(bottomPort);
         ports.set(bottomPort, ports.get(topPort));
         ports.set(topPort, lower);
+    }
+
+    private void initialize(final LNode[][] nodeOrder, final int currentIndex, final boolean isForwardSweep) {
+        if (isForwardSweep && currentIndex > 0) {
+            initForLayers(nodeOrder[currentIndex - 1], nodeOrder[currentIndex], portPos);
+        } else if (!isForwardSweep && currentIndex < nodeOrder.length - 1) {
+            initForLayers(nodeOrder[currentIndex], nodeOrder[currentIndex + 1], portPos);
+        } else {
+            crossingsCounter = new CrossingsCounter(portPos);
+            crossingsCounter.initPortPositionsForInLayerCrossings(nodeOrder[currentIndex],
+                    isForwardSweep ? PortSide.WEST : PortSide.EAST);
+        }
     }
 
     @Override

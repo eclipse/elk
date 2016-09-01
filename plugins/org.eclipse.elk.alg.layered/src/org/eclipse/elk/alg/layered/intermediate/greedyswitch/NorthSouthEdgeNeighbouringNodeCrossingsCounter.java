@@ -186,14 +186,6 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
         return node.getType() == NodeType.NORTH_SOUTH_PORT;
     }
 
-    private int numberOfEdgesConnectTo(final LNode node) {
-        int n = 0;
-        for (LPort port : node.getPorts()) {
-            n += port.getDegree();
-        }
-        return n;
-    }
-
     private boolean isNormal(final LNode node) {
         return node.getType() == NodeType.NORMAL;
     }

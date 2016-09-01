@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.Random;
+
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 
@@ -37,4 +40,20 @@ public interface ISweepPortDistributor extends IInitializable {
     boolean distributePortsWhileSweeping(LNode[][] order, int freeLayerIndex,
             boolean isForwardSweep);
 
+    /**
+     * Make a port distributor.
+     * 
+     * @author alan
+     *
+     */
+    static ISweepPortDistributor create(final CrossMinType cmt, final Random r, final LNode[][] currentOrder) {
+        if (cmt == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
+            return new GreedyPortDistributor(currentOrder);
+        } else if (r.nextBoolean()) {
+            return new NodeRelativePortDistributor(currentOrder);
+        } else {
+            return new LayerTotalPortDistributor(currentOrder);
+        }
+    }
 }
+

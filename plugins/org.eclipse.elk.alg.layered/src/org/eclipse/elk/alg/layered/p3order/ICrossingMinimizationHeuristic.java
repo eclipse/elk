@@ -57,4 +57,5 @@ public interface ICrossingMinimizationHeuristic extends IInitializable {
 
     /** Determines whether the heuristic is deterministic or has random decisions. */
     boolean isDeterministic();
+
 }

@@ -156,7 +156,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
 
     /** Defines information to be initialized during graph traversal. */
     private final class Initializer extends AbstractInitializer {
-        private int nPorts = 0;
+        private int nPorts;
         private Initializer(final LNode[][] graph) {
             super(graph);
         }
