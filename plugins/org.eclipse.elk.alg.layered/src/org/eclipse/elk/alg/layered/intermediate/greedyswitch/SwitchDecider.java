@@ -110,7 +110,11 @@ public final class SwitchDecider {
     public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
         leftInLayerCounter.switchNodes(upperNode, lowerNode, PortSide.WEST);
         rightInLayerCounter.switchNodes(upperNode, lowerNode, PortSide.EAST);
-        // In case of hierarchical layer sweep: Ports are ordered by final order at the end of the sweep.
+        if (countCrossingsCausedByPortSwitch) {
+            LPort upperPort = (LPort) upperNode.getProperty(InternalProperties.ORIGIN);
+            LPort lowerPort = (LPort) lowerNode.getProperty(InternalProperties.ORIGIN);
+            parentCrossCounter.switchPorts(upperPort, lowerPort);
+        }
     }
 
     /**

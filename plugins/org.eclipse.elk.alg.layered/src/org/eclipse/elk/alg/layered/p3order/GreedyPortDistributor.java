@@ -60,11 +60,10 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
             if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 continue;
             }
-            List<LPort> ports = node.getPorts(side);
-            boolean useHierarchicalCrossCounter =
-                    !ports.isEmpty() && node.getProperty(InternalProperties.COMPOUND_NODE);
+            List<LPort> ports = node.getPortSideView(side);
+            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            boolean useHierarchicalCrossCounter = !ports.isEmpty() && nestedGraph != null;
             if (useHierarchicalCrossCounter) {
-                LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
                 LNode[][] innerGraph = nestedGraph.toNodeArray();
                 hierarchicalCrossingsCounter =
                         new BetweenLayerEdgeTwoNodeCrossingsCounter(innerGraph,
@@ -80,7 +79,7 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
      */
     private boolean distributePorts(final LNode node, final PortSide side, final boolean useHierarchicalCrosscounter) {
 
-        List<LPort> ports = node.getPorts(side);
+        List<LPort> ports = node.getPortSideView(side);
         if (side == PortSide.SOUTH || side == PortSide.WEST) {
             ports = Lists.reverse(ports);
         }
@@ -118,9 +117,11 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
         if (useHierarchicalCrosscounter) {
             LNode upperNode = upperPort.getProperty(InternalProperties.PORT_DUMMY);
             LNode lowerNode = lowerPort.getProperty(InternalProperties.PORT_DUMMY);
-            hierarchicalCrossingsCounter.countBothSideCrossings(upperNode, lowerNode);
-            upperLowerCrossings += hierarchicalCrossingsCounter.getUpperLowerCrossings();
-            lowerUpperCrossings += hierarchicalCrossingsCounter.getLowerUpperCrossings();
+            if (upperNode != null && lowerNode != null) {
+                hierarchicalCrossingsCounter.countBothSideCrossings(upperNode, lowerNode);
+                upperLowerCrossings += hierarchicalCrossingsCounter.getUpperLowerCrossings();
+                lowerUpperCrossings += hierarchicalCrossingsCounter.getLowerUpperCrossings();
+            }
         }
         return upperLowerCrossings > lowerUpperCrossings;
     }
