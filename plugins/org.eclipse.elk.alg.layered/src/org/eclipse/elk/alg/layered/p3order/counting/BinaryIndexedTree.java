@@ -24,6 +24,7 @@ public class BinaryIndexedTree {
     private int[] binarySums;
     private int[] numsPerIndex;
     private int size;
+    private int maxNum;
 
     /**
      * Construct tree given maximum number of elements.
@@ -32,6 +33,7 @@ public class BinaryIndexedTree {
      *            maximum number elements.
      */
     public BinaryIndexedTree(final int maxNum) {
+        this.maxNum = maxNum;
         binarySums = new int[maxNum + 1];
         numsPerIndex = new int[maxNum];
         size = 0;
@@ -116,7 +118,12 @@ public class BinaryIndexedTree {
      * 
      */
     public void clear() {
-        // TODO Auto-generated method stub
+        binarySums = new int[maxNum + 1];
+        numsPerIndex = new int[maxNum];
+        size = 0;
+    }
 
+    public boolean isEmpty() {
+        return size == 0;
     }
 }

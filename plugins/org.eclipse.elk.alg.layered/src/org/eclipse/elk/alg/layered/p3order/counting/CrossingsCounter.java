@@ -119,6 +119,8 @@ public final class CrossingsCounter {
     }
 
     /**
+     * * TODO-alan comment
+     * 
      * @param lNode
      * @param lNode2
      * @param east
@@ -128,14 +130,20 @@ public final class CrossingsCounter {
             final LPort lowerPort) {
         List<LPort> ports = connectedPortsSortedByPosition(upperPort, lowerPort);
         int upperLowerCrossings = countCrossingsOnPorts(ports);
+        // Since we might add endpositions of ports which are not in the ports list, we need to explicitly clear
+        // the index tree.
+        indexTree.clear();
         switchPorts(upperPort, lowerPort);
         Collections.sort(ports, (a, b) -> Integer.compare(positionOf(a), positionOf(b)));
         int lowerUpperCrossings = countCrossingsOnPorts(ports);
+        indexTree.clear();
         switchPorts(lowerPort, upperPort);
         return Pair.of(upperLowerCrossings, lowerUpperCrossings);
     }
 
     /**
+     * TODO-alan comment
+     * 
      * @param lNode
      * @param lNode2
      * @param east
@@ -147,9 +155,13 @@ public final class CrossingsCounter {
         List<LPort> ports = connectedInLayerPortsSortedByPosition(upperNode, lowerNode, side);
         int upperLowerCrossings = countInLayerCrossingsOnPorts(ports);
         switchNodes(upperNode, lowerNode, side);
+        // Since we might add endpositions of ports which are not in the ports list, we need to explicitly clear
+        // the index tree.
+        indexTree.clear();
         Collections.sort(ports, (a, b) -> Integer.compare(positionOf(a), positionOf(b)));
         int lowerUpperCrossings = countInLayerCrossingsOnPorts(ports);
         switchNodes(lowerNode, upperNode, side);
+        indexTree.clear();
         return Pair.of(upperLowerCrossings, lowerUpperCrossings);
     }
 
@@ -243,9 +255,9 @@ public final class CrossingsCounter {
     private List<LPort> connectedPortsSortedByPosition(final LPort upperPort, final LPort lowerPort) {
         Set<LPort> ports = new HashSet<>();
         for (LPort port : new LPort[] { upperPort, lowerPort }) {
+            ports.add(port);
             for (LEdge edge : port.getConnectedEdges()) {
                 if (!isPortSelfLoop(edge)) {
-                    ports.add(port);
                     ports.add(otherEndOf(edge, port));
                 }
             }
@@ -284,6 +296,7 @@ public final class CrossingsCounter {
                 indexTree.add(ends.pop());
             }
         }
+
         return crossings;
     }
 

@@ -33,7 +33,6 @@ import org.junit.Test;
 // CHECKSTYLEOFF MethodName
 public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
     private CrossingsCounter counter;
-    private LNode[][] order;
 
 
     /**
@@ -248,6 +247,41 @@ public class CrossingsCounterTest extends InLayerEdgeTestGraphCreator {
         assertThat(counter
                 .countCrossingsBetweenPortsInBothOrders(leftNodes[0].getPorts().get(0), leftNodes[0].getPorts().get(1))
                 .getFirst(), is(1));
+    }
+
+    /**
+     * <pre>
+     * *---         *---
+     * ___ \       ___  \
+     * | |\/* and: | |--* 
+     * | |/\*      | |--*
+     * |_|         |_|
+     * </pre>
+     */
+    @Test
+    public void countingTwoDifferentGraphs_DoesNotInterfereWithEachOther() throws Exception {
+        LNode[] leftNodes = addNodesToLayer(3, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(3, makeLayer());
+        LNode leftNode = leftNodes[1];
+        LPort[] leftPorts = addPortsOnSide(2, leftNode, PortSide.EAST);
+        eastWestEdgeFromTo(leftNodes[2], rightNodes[1]);
+        eastWestEdgeFromTo(leftPorts[0], rightNodes[1]);
+        eastWestEdgeFromTo(leftPorts[1], rightNodes[0]);
+        eastWestEdgeFromTo(leftNodes[0], rightNodes[0]);
+
+        counter = new CrossingsCounter(new int[getNumPorts(order())]);
+        counter.initForCountingBetweenOnSide(leftNodes, rightNodes);
+        assertThat(counter
+                .countCrossingsBetweenPortsInBothOrders(leftNode.getPorts().get(0), leftNode.getPorts().get(1))
+                .getFirst(), is(1));
+
+        counter.switchPorts(leftPorts[0], leftPorts[1]);
+        leftNode.getPorts().set(0, leftPorts[1]);
+        leftNode.getPorts().set(1, leftPorts[0]);
+        assertThat(counter
+                .countCrossingsBetweenPortsInBothOrders(leftNode.getPorts().get(0), leftNode.getPorts().get(1))
+                .getFirst(), is(0));
+
     }
 
     /**
