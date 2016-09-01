@@ -65,7 +65,7 @@ public class LayerSweepTypeDecider implements IInitializable {
     public boolean useBottomUp() {
         float boundary = graphData.lGraph()
                 .getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
-        if (bottomUpForced(boundary) || rootNode() || fewerThanTwoInOutEdges()) {
+        if (bottomUpForced(boundary) || rootNode() || fixedPortOrder() || fewerThanTwoInOutEdges()) {
             return true;
         }
 
@@ -126,6 +126,10 @@ public class LayerSweepTypeDecider implements IInitializable {
         double allPaths = pathsToRandom + pathsToHierarchical;
         double normalized = allPaths == 0 ? Double.MAX_VALUE : (pathsToRandom - pathsToHierarchical) / allPaths;
         return normalized >= boundary;
+    }
+
+    private boolean fixedPortOrder() {
+        return graphData.parent().getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     private void transferInfoToTarget(final NodeInfo currentNode, final LEdge edge) {
