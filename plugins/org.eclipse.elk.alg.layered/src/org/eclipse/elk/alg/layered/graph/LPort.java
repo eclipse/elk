@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.graph;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.UnaryOperator;
 
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
@@ -56,12 +52,11 @@ public final class LPort extends LShape {
     private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
 
     /** the edges going into the port. */
-    private final List<LEdge> incomingEdges = new NoteChangeList<>(4);
+    private final List<LEdge> incomingEdges = Lists.newArrayListWithCapacity(4);
     /** the edges going out of the port. */
-    private final List<LEdge> outgoingEdges = new NoteChangeList<>(4);
-    /** All connected edges in one list. */
-    private List<LEdge> connectedEdges;
-
+    private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
+    /** All connected edges in a combined iterable. */
+    private Iterable<LEdge> connectedEdges = new CombineIter<LEdge>(incomingEdges, outgoingEdges);
     /**
      * Returns the node that owns this port.
      * 
@@ -231,14 +226,9 @@ public final class LPort extends LShape {
      * 
      * @return an iterable over all connected edges.
      */
-    public List<LEdge> getConnectedEdges() {
-        if (edgeListsHaveChanged) {
-            connectedEdges = new ArrayList<>(incomingEdges.size() + outgoingEdges.size());
-            connectedEdges.addAll(incomingEdges);
-            connectedEdges.addAll(outgoingEdges);
-            edgeListsHaveChanged = false;
-        }
+    public Iterable<LEdge> getConnectedEdges() {
         return connectedEdges;
+        // return Iterables.concat(incomingEdges, outgoingEdges);
     }
 
     /**
@@ -332,92 +322,42 @@ public final class LPort extends LShape {
         }
     }
 
-    private boolean edgeListsHaveChanged = true;
-
-    private class NoteChangeList<T> extends ArrayList<T> {
-
-        private static final long serialVersionUID = 33124633927146694L;
-
-        public NoteChangeList(final int initialCapacity) {
-            super(initialCapacity);
+    /**
+     * Combines two Iterables. We use this instead of guaves Iterables.concat() because it is faster.
+     * 
+     * @author alan
+     *
+     * @param <T>
+     */
+    private static class CombineIter<T> implements Iterable<T> {
+        private Iterable<T> firstIterable;
+        private Iterable<T> secondIterable;
+    
+        CombineIter(final Iterable<T> firstIterable, final Iterable<T> secondIterable) {
+            this.firstIterable = firstIterable;
+            this.secondIterable = secondIterable;
         }
-
+    
         @Override
-        public boolean add(final T e) {
-            edgeListsHaveChanged = true;
-            return super.add(e);
-        }
-
-        @Override
-        public boolean remove(final Object o) {
-            edgeListsHaveChanged = true;
-            return super.remove(o);
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends T> c) {
-            edgeListsHaveChanged = true;
-            return super.addAll(c);
-        }
-
-        @Override
-        public boolean addAll(final int index, final Collection<? extends T> c) {
-            edgeListsHaveChanged = true;
-            return super.addAll(index, c);
-        }
-
-        @Override
-        public boolean removeAll(final Collection<?> c) {
-            edgeListsHaveChanged = true;
-            return super.removeAll(c);
-        }
-
-        @Override
-        public boolean retainAll(final Collection<?> c) {
-            edgeListsHaveChanged = true;
-            return super.retainAll(c);
-        }
-
-        @Override
-        public void replaceAll(final UnaryOperator<T> operator) {
-            edgeListsHaveChanged = true;
-            super.replaceAll(operator);
-        }
-
-        @Override
-        public boolean removeIf(final java.util.function.Predicate<? super T> filter) {
-            edgeListsHaveChanged = true;
-            return super.removeIf(filter);
-        }
-
-        @Override
-        public void sort(final Comparator<? super T> c) {
-            edgeListsHaveChanged = true;
-            super.sort(c);
-        }
-
-        @Override
-        public void clear() {
-            edgeListsHaveChanged = true;
-            super.clear();
-        }
-
-        @Override
-        public T set(final int index, final T element) {
-            edgeListsHaveChanged = true;
-            return super.set(index, element);
-        }
-
-        @Override
-        public void add(final int index, final T element) {
-            edgeListsHaveChanged = true;
-            super.add(index, element);
-        }
-
-        @Override
-        public T remove(final int index) {
-            edgeListsHaveChanged = true;
-            return super.remove(index);
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                private Iterator<T> firstIterator = firstIterable.iterator();
+                private Iterator<T> secondIterator = secondIterable.iterator();
+    
+                @Override
+                public boolean hasNext() {
+                    return firstIterator.hasNext() || secondIterator.hasNext();
+                }
+    
+                @Override
+                public T next() {
+                    if (firstIterator.hasNext()) {
+                        return firstIterator.next();
+                    } else {
+                        return secondIterator.next();
+                    }
+                }
+            };
         }
     }
 
