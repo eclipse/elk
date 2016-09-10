@@ -11,7 +11,6 @@
 package org.eclipse.elk.alg.layered;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -36,8 +35,8 @@ public interface ILayoutProcessor {
     /**
      * Overwrite this default method in the rare case when a processor accesses the complete hierarchy. In this case,
      * when HIERARCHY_HANDLING in {@link org.eclipse.elk.alg.layered.properties.LayeredOptions} is set to
-     * INCLUDE_CHILDREN ({@link HierarchyHandling}), all the processing will be executed recursively for all processors
-     * preceding this one and this processor will have access to the root graph.
+     * INCLUDE_CHILDREN ({@link org.eclipse.elk.core.options.HierarchyHandling}), all the processing will be executed
+     * recursively for all processors preceding this one and this processor will have access to the root graph.
      * 
      * @return whether this processor is hierarchical.
      */

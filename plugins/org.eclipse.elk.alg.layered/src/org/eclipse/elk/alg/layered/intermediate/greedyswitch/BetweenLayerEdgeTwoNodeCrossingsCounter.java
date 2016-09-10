@@ -49,7 +49,6 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
      *            Currently considered node ordering.
      * @param freeLayerIndex
      *            Index of free layer.
-     * @param assumePortOrderFixed
      */
     public BetweenLayerEdgeTwoNodeCrossingsCounter(final LNode[][] currentNodeOrder, final int freeLayerIndex) {
         portPositions = Maps.newHashMap();
@@ -378,7 +377,7 @@ public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
 
             @Override
             public int compareTo(final Adjacency o) {
-                return position < o.position ? -1 : (position == o.position ? 0 : 1);
+                return (position < o.position) ? -1 : ((position == o.position) ? 0 : 1);
             }
 
             @Override

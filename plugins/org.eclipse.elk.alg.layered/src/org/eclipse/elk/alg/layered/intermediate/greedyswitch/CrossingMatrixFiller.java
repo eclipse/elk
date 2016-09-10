@@ -30,8 +30,6 @@ public final class CrossingMatrixFiller {
     // SUPPRESS CHECKSTYLE NEXT 30 Javadoc
     /**
      * Constructs class which manages the crossing matrix.
-     * 
-     * @param assumeFixedPortOrder
      */
     public CrossingMatrixFiller(final CrossMinType greedySwitchType, final LNode[][] graph,
             final int freeLayerIndex, final CrossingCountSide direction) {

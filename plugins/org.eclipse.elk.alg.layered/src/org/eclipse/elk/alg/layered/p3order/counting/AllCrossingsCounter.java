@@ -114,8 +114,7 @@ public final class AllCrossingsCounter implements IInitializable {
         }
 
         @Override
-        public void initAtEdgeLevel(final int l, final int n, final int p, final int e) { 
-            LEdge edge = edge(l, n, p, e);
+        public void initAtEdgeLevel(final int l, final int n, final int p, final int e, final LEdge edge) { 
             LPort port = port(l, n, p);
             if (edge.getSource() == port
                     && edge.getSource().getNode().getLayer() == edge.getTarget().getNode().getLayer()) {

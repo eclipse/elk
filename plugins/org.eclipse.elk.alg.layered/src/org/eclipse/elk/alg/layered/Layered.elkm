@@ -289,14 +289,14 @@ group crossingMinimization {
     }
     
     advanced option semiInteractive: boolean {
-        label "Semi-Interactive Crossing Minimization"
-        description 
-            "Preserves the order of nodes within a layer but still minimizes 
-             crossings between edges connecting long edge dummies. 
-             Requires a crossing minimization strategy that is able to 
-             process 'in-layer' constraints."
-        default = false
-        targets parents
+    	label "Semi-Interactive Crossing Minimization"
+    	description 
+    		"Preserves the order of nodes within a layer but still minimizes 
+			 crossings between edges connecting long edge dummies. 
+			 Requires a crossing minimization strategy that is able to 
+			 process 'in-layer' constraints."
+		default = false
+		targets parents
     }
     
 }
@@ -318,14 +318,14 @@ group nodePlacement {
     group bk {
         
         advanced option edgeStraightening: EdgeStraighteningStrategy {
-            label "Edge Straightening"
-            description
-                "Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges
+        	label "Edge Straightening"
+        	description
+        	    "Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges
                 at the expense of diagram size."
-            default = EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS
-            targets parents
-            legacyIds de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy
-            requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
+        	default = EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS
+        	targets parents
+        	legacyIds de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy
+        	requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
         }
         
         // TODO Turn this into two layout options
@@ -510,80 +510,80 @@ group highDegreeNodes {
  *    miscellaneous
  * ------------------------*/
 advanced option contentAlignment: EnumSet<ContentAlignment> {
-    label "Content Alignment"
-    description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
-    default = EnumSet.noneOf(ContentAlignment)
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
+	label "Content Alignment"
+	description "Specifies how the content of compound nodes is to be aligned, e.g. top-left."
+	default = EnumSet.noneOf(ContentAlignment)
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
 }
 
 advanced option edgeCenterLabelPlacementStrategy: EdgeLabelPlacementStrategy {
-    label "Edge Label Placement Strategy"
-    description "Determines in which layer center labels of long edges should be placed."
-    default = EdgeLabelPlacementStrategy.CENTER
-    targets parents
-    legacyIds de.cau.cs.kieler.edgeLabelPlacementStrategy
+	label "Edge Label Placement Strategy"
+	description "Determines in which layer center labels of long edges should be placed."
+	default = EdgeLabelPlacementStrategy.CENTER
+	targets parents
+	legacyIds de.cau.cs.kieler.edgeLabelPlacementStrategy
 }
 
 option edgeLabelSideSelection: EdgeLabelSideSelection {
-    label "Edge Label Side Selection"
-    description "Method to decide on edge label sides."
-    default = EdgeLabelSideSelection.ALWAYS_DOWN
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.edgeLabelSideSelection
-    requires org.eclipse.elk.edgeRouting == EdgeRouting.ORTHOGONAL
+	label "Edge Label Side Selection"
+	description "Method to decide on edge label sides."
+	default = EdgeLabelSideSelection.ALWAYS_DOWN
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.edgeLabelSideSelection
+	requires org.eclipse.elk.edgeRouting == EdgeRouting.ORTHOGONAL
 }
 
 advanced option feedbackEdges: boolean {
-    label "Feedback Edges"
-    description "Whether feedback edges should be highlighted by routing around the nodes."
-    default = false
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.feedBackEdges
+	label "Feedback Edges"
+	description "Whether feedback edges should be highlighted by routing around the nodes."
+	default = false
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.feedBackEdges
 }
 
 advanced option interactiveReferencePoint: InteractiveReferencePoint {
-    label "Interactive Reference Point"
-    description "Determines which point of a node is considered by interactive layout phases."
-    default = InteractiveReferencePoint.CENTER
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.interactiveReferencePoint
-    requires org.eclipse.elk.alg.layered.cycleBreaking.strategy == CycleBreakingStrategy.INTERACTIVE
-    requires org.eclipse.elk.alg.layered.crossingMinimization.strategy == CrossingMinimizationStrategy.INTERACTIVE
+	label "Interactive Reference Point"
+	description "Determines which point of a node is considered by interactive layout phases."
+	default = InteractiveReferencePoint.CENTER
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.interactiveReferencePoint
+	requires org.eclipse.elk.alg.layered.cycleBreaking.strategy == CycleBreakingStrategy.INTERACTIVE
+	requires org.eclipse.elk.alg.layered.crossingMinimization.strategy == CrossingMinimizationStrategy.INTERACTIVE
 }
 
 advanced option mergeEdges: boolean {
-    label "Merge Edges"
-    description
-        "Edges that have no ports are merged so they touch the connected nodes at the same points.
-        When this option is disabled, one port is created for each edge directly connected to a
-        node. When it is enabled, all such incoming edges share an input port, and all outgoing
-        edges share an output port."
-    default = false
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.mergeEdges
+	label "Merge Edges"
+	description
+		"Edges that have no ports are merged so they touch the connected nodes at the same points.
+		When this option is disabled, one port is created for each edge directly connected to a
+		node. When it is enabled, all such incoming edges share an input port, and all outgoing
+		edges share an output port."
+	default = false
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.mergeEdges
 }
 
 advanced option mergeHierarchyEdges: boolean {
-    label "Merge Hierarchy-Crossing Edges"
-    description
-        "If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports
-        as possible. They are broken by the algorithm, with hierarchical ports inserted as
-        required. Usually, one such port is created for each edge at each hierarchy crossing point.
-        With this option set to true, we try to create as few hierarchical ports as possible in
-        the process. In particular, all edges that form a hyperedge can share a port."
-    default = true
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.mergeHierarchyEdges
+	label "Merge Hierarchy-Crossing Edges"
+	description
+		"If hierarchical layout is active, hierarchy-crossing edges use as few hierarchical ports
+		as possible. They are broken by the algorithm, with hierarchical ports inserted as
+		required. Usually, one such port is created for each edge at each hierarchy crossing point.
+		With this option set to true, we try to create as few hierarchical ports as possible in
+		the process. In particular, all edges that form a hyperedge can share a port."
+	default = true
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.mergeHierarchyEdges
 }
 
 advanced option sausageFolding: boolean {
-    label "Sausage Folding"
-    description "Whether long sausages should be folded up nice and tight."
-    default = false
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.sausageFolding
-    requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.LONGEST_PATH
+	label "Sausage Folding"
+	description "Whether long sausages should be folded up nice and tight."
+	default = false
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.sausageFolding
+	requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.LONGEST_PATH
 }
 
 advanced option thoroughness: int {
@@ -596,23 +596,23 @@ advanced option thoroughness: int {
 }
 
 advanced option unnecessaryBendpoints: boolean {
-    label "Add Unnecessary Bendpoints"
-    description
-        "Adds bend points even if an edge does not change direction. If true, each long edge dummy
-        will contribute a bend point to its edges and hierarchy-crossing edges will always get a
-        bend point where they cross hierarchy boundaries. By default, bend points are only added
-        where an edge changes direction."
-    default = false
-    targets parents
-    legacyIds de.cau.cs.kieler.klay.layered.unnecessaryBendpoints
+	label "Add Unnecessary Bendpoints"
+	description
+		"Adds bend points even if an edge does not change direction. If true, each long edge dummy
+		will contribute a bend point to its edges and hierarchy-crossing edges will always get a
+		bend point where they cross hierarchy boundaries. By default, bend points are only added
+		where an edge changes direction."
+	default = false
+	targets parents
+	legacyIds de.cau.cs.kieler.klay.layered.unnecessaryBendpoints
 }
 
 advanced option northOrSouthPort: boolean {
-    label "North or South Port"
-    description
+	label "North or South Port"
+	description
         "Specifies that this port can either be placed on the north side of a node or on the south
         side (if port constraints permit)"
-    default = false
-    targets ports
-    legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
+	default = false
+	targets ports
+	legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
 }

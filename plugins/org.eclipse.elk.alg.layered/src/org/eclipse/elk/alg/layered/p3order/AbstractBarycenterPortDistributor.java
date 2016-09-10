@@ -408,7 +408,7 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
         }
 
         @Override
-        public void initAtEdgeLevel(final int l, final int n, final int p, final int e) {
+        public void initAtEdgeLevel(final int l, final int n, final int p, final int e, LEdge edge) {
         }
     }
 }

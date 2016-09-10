@@ -175,16 +175,6 @@ final class GraphConfigurator {
                         IntermediateProcessingConfiguration.Slot.AFTER_PHASE_5));
     }
     
-    /**
-     * TODO Comments have lies.
-     * Returns the cycle breaker to use for the given graph depending on the property settings.
-     * 
-     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
-     * used. Otherwise, a new instance is created and put in the phase cache.</p>
-     * 
-     * @param lgraph the graph to return the cycle breaker for.
-     * @return the cycle breaker to use.
-     */
     private ILayoutPhase cachedLayoutPhase(final ILayoutPhaseFactory factory) {
         ILayoutPhase layoutPhase = phaseCache.get(factory);
         

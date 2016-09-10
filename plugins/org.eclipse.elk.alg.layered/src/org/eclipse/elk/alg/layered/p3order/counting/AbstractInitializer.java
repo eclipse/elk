@@ -43,7 +43,7 @@ public abstract class AbstractInitializer {
     public void initAtPortLevel(final int l, final int n, final int p) { }
 
     /** Initialize anything needed at edge level. */
-    public void initAtEdgeLevel(final int l, final int n, final int p, final int e) { }
+    public void initAtEdgeLevel(final int l, final int n, final int p, final int e, final LEdge edge) { }
 
     /** Finish initialization. */
     public void initAfterTraversal() { }
@@ -52,11 +52,6 @@ public abstract class AbstractInitializer {
     /** Shortcut to get port. */
     protected LPort port(final int l, final int n, final int p) {
         return nodeOrder[l][n].getPorts().get(p);
-    }
-
-    /** Shortcut to get edge. */
-    protected LEdge edge(final int l, final int n, final int p, final int e) {
-        return nodeOrder[l][n].getPorts().get(p).getConnectedEdges().get(e);
     }
 
     /** Implement this in using class. */
@@ -82,9 +77,10 @@ public abstract class AbstractInitializer {
                         i.initializer().initAtPortLevel(l, n, p);
                     }
                     LPort port = ports.get(p);
-                    for (int e = 0; e < port.getConnectedEdges().size(); e++) {
+                    int e = 0;
+                    for (LEdge edge : port.getConnectedEdges()) {
                         for (IInitializable i : initializables) {
-                            i.initializer().initAtEdgeLevel(l, n, p, e);
+                            i.initializer().initAtEdgeLevel(l, n, p, e++, edge);
                         }
                     }
                 }

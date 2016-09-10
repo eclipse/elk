@@ -70,7 +70,7 @@ import org.eclipse.elk.core.util.Pair;
  *   <li>{@link #doCompoundLayout(LGraph, IElkProgressMonitor)} computes a layout for the given graph
  *     and for its subgraphs, if any. (Subgraphs are attached to nodes through the
  *     {@link InternalProperties#NESTED_LGRAPH} property.)</li>
- * <li>If you have a {@code KGraph} instead of an {@code LGraph}, you might want to use
+ *   <li>If you have a {@code KGraph} instead of an {@code LGraph}, you might want to use
  *     {@link LayeredLayoutProvider#doLayout(org.eclipse.elk.graph.KNode, IElkProgressMonitor)}
  *     instead.</li>
  * </ol>
