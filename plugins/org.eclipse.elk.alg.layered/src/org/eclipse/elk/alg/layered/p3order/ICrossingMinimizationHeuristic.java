@@ -11,14 +11,17 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 
 /**
- * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
- * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
- * order. Given constraints are to be respected, possibly by the use of an
- * {@link org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver}.
- *
+ * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that minimizes edge
+ * crossings between the given free layer and a neighboring layer with fixed node order. Given constraints are to be
+ * respected, possibly by the use of an {@link org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver}.
+ * <p>
+ * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * </p>
+ * 
  * @author cds
  * @author ima
  * @author msp

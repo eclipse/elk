@@ -163,20 +163,6 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
         assertThat(crossingCount, is(0));
     }
 
-    @Test
-    public void northSouthCrossingRemovedAfterSwitch() {
-        getNorthSouthUpwardCrossingGraph();
-        LNode[] layer = getGraph().toNodeArray()[0];
-
-        initCounterForLayerWithIndexAndCountInLayer(0);
-        switchNodes(layer, 0, 1);
-        counter.notifyNodeSwitch(layer[0], layer[1]);
-
-        int crossingCount = counter.countCrossings(layer);
-
-        assertThat(crossingCount, is(0));
-    }
-
     /**
      * <pre>
      *

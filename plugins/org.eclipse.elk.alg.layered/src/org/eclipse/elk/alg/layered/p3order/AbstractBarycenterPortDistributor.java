@@ -406,9 +406,5 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
             portRanks = new float[nPorts];
             portBarycenter = new float[nPorts];
         }
-
-        @Override
-        public void initAtEdgeLevel(final int l, final int n, final int p, final int e, LEdge edge) {
-        }
     }
 }

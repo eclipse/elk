@@ -58,17 +58,4 @@ public class BinaryIndexedTreeTest {
         assertThat(ft.size(), is(2));
         assertThat(ft.rank(2), is(1));
     }
-
-    @Test
-    public void sumBetween() throws Exception {
-        BinaryIndexedTree ft = new BinaryIndexedTree(5);
-        ft.add(0);
-        ft.add(2);
-        ft.add(1);
-        ft.add(1);
-        ft.add(3);
-
-        assertThat(ft.sumBetween(0, 3), is(3));
-
-    }
 }

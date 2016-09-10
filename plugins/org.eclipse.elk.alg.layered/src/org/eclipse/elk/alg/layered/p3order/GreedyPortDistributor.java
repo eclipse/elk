@@ -37,7 +37,12 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
     private BetweenLayerEdgeTwoNodeCrossingsCounter hierarchicalCrossingsCounter;
     private AbstractInitializer initializer;
 
-    /** Return new GreedyPortDistributor. */
+    /**
+     * Return new GreedyPortDistributor.
+     * 
+     * @param currentNodeOrder
+     *            the current order of the nodes
+     */
     public GreedyPortDistributor(final LNode[][] currentNodeOrder) {
         this.initializer = new Initializer(currentNodeOrder);
     }

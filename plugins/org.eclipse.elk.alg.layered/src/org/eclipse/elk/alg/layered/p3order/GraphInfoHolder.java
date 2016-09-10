@@ -30,7 +30,10 @@ import com.google.common.collect.Lists;
 
 /**
  * Collects data needed for cross minimization and port distribution.
- *
+ * <p>
+ * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * </p>
+ * 
  * @author alan
  *
  */
@@ -69,6 +72,8 @@ public class GraphInfoHolder implements IInitializable {
      *            The graph
      * @param crossMinType
      *            The CrossMinimizer
+     * @param graphs
+     *            the complete list of all graphs in the hierarchy
      */
     public GraphInfoHolder(final LGraph graph, final CrossMinType crossMinType, final List<GraphInfoHolder> graphs) {
         lGraph = graph;

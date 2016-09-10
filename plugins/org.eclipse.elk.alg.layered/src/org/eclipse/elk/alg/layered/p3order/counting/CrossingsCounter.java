@@ -189,8 +189,10 @@ public final class CrossingsCounter {
      * Initializes the counter for counting in-layer crossings on a specific side of a single layer.
      * 
      * @param nodes
+     *            The order of the nodes in the layer
      * @param side
-     * @return
+     *            The side to initialize
+     * @return the ports on which to count crossings on
      */
     public List<LPort> initPortPositionsForInLayerCrossings(final LNode[] nodes, final PortSide side) {
         List<LPort> ports = new ArrayList<>();
@@ -222,6 +224,8 @@ public final class CrossingsCounter {
      *            The node which was the upper node before switching.
      * @param wasLowerNode
      *            The node which was the lower node before switching.
+     * @param side
+     *            The side on which the crossings are currently being counted.
      */
     public void switchNodes(final LNode wasUpperNode, final LNode wasLowerNode, final PortSide side) {
         Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(wasUpperNode, side);

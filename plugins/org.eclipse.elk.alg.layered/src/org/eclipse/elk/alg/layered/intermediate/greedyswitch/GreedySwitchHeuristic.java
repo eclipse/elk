@@ -52,7 +52,8 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
      *
      * @param greedyType
      *            The greedy switch type.
-     * @param nPorts
+     * @param graphData
+     *            Graph information holder for crossing minimization.
      */
     public GreedySwitchHeuristic(final CrossMinType greedyType, final GraphInfoHolder graphData) {
         initializer = new Initializer(graphData.currentNodeOrder());

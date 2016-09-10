@@ -27,32 +27,56 @@ public abstract class AbstractInitializer {
 
     private LNode[][] nodeOrder;
 
-    /** Constructor to ensure we have the node order. */
+    /**
+     * Constructor to ensure we have the node order.
+     * 
+     * @param graph
+     *            the node order
+     */
     public AbstractInitializer(final LNode[][] graph) {
         this.nodeOrder = graph;
     }
     
-    // @formatter:off
-    /** Initialize anything needed at layer level. */
+    //@formatter:off
+    /** Initialize anything needed at layer level. @param l layer index */
     public void initAtLayerLevel(final int l) { }
 
-    /** Initialize anything needed at node level. */
+    /** Initialize anything needed at node level. 
+     * @param l layer index 
+     * @param n node index */
     public void initAtNodeLevel(final int l, final int n) { }
 
-    /** Initialize anything needed at port level. */
+    /** Initialize anything needed at port level. 
+     * @param l layer index 
+     * @param n node index 
+     * @param p port index
+     */
     public void initAtPortLevel(final int l, final int n, final int p) { }
 
-    /** Initialize anything needed at edge level. */
+    /**
+     Initialize anything needed at edge level. 
+     @param l layer index
+     @param n node index
+     @param p port index
+     @param e edge index
+     @param edge edge
+     */
     public void initAtEdgeLevel(final int l, final int n, final int p, final int e, final LEdge edge) { }
 
     /** Finish initialization. */
     public void initAfterTraversal() { }
-    // @formatter:on
     
-    /** Shortcut to get port. */
+    
+    /**
+     Shortcut to get port.
+     @param l layer index
+     @param n node index
+     @param p port index
+     */
     protected LPort port(final int l, final int n, final int p) {
         return nodeOrder[l][n].getPorts().get(p);
     }
+    //@formatter:on
 
     /** Implement this in using class. */
     public interface IInitializable {
@@ -60,7 +84,12 @@ public abstract class AbstractInitializer {
         AbstractInitializer initializer();
     }
     
-    /** Traverse graph and on each level call the respective methods for a list of initializable objects. */ 
+    /**
+     * Traverse graph and on each level call the respective methods for a list of initializable objects.
+     * 
+     * @param initializables
+     *            The objects to be initialized
+     */
     public static void init(final List<IInitializable> initializables) {
         LNode[][] order = initializables.get(0).initializer().nodeOrder;
         for (int l = 0; l < order.length; l++) {

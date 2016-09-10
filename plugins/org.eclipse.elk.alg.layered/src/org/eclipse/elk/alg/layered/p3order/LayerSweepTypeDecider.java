@@ -51,7 +51,8 @@ public class LayerSweepTypeDecider implements IInitializable {
      * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
      * </p>
      * 
-     * @param currentNodeOrder
+     * @param graphData
+     *            the graph holder object for auxiliary graph information needed in crossing minimization
      */
     public LayerSweepTypeDecider(final GraphInfoHolder graphData) {
         this.graphData = graphData;

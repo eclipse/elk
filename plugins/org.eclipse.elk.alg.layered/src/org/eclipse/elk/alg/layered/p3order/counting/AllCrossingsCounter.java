@@ -20,6 +20,10 @@ import org.eclipse.elk.core.options.PortSide;
 /**
  * Counts all crossings in a graph. Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
  *
+ * <p>
+ * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * </p>
+ * 
  * @author alan
  */
 public final class AllCrossingsCounter implements IInitializable {
@@ -30,7 +34,12 @@ public final class AllCrossingsCounter implements IInitializable {
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
     private AbstractInitializer initializer;
 
-    /** Returns crossings counter. Must be initialized using {@link AbstractInitializer#init(java.util.List)}! */
+    /**
+     * Returns crossings counter. Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+     * 
+     * @param graph
+     *            the current node order
+     */
     public AllCrossingsCounter(final LNode[][] graph) {
         initializer = new Initializer(graph);
     }
@@ -39,7 +48,8 @@ public final class AllCrossingsCounter implements IInitializable {
      * Count all crossings.
      * 
      * @param currentOrder
-     * @return
+     *            the current node order
+     * @return the number of crossings in the graph
      */
     public int countAllCrossings(final LNode[][] currentOrder) {
         if (currentOrder.length == 0) {
@@ -69,15 +79,6 @@ public final class AllCrossingsCounter implements IInitializable {
 
         totalCrossings += northSouthEdgeCrossingCounter.countCrossings(leftLayer);
         return totalCrossings;
-    }
-
-    /**
-     * Get between- and in.layer CrossingCounter.
-     * 
-     * @return crossingCounter
-     */
-    public CrossingsCounter betweenAndInLayerCrossingCounter() {
-        return crossingCounter;
     }
 
     /** Defines what needs to be initialized traversing the graph. */

@@ -56,11 +56,13 @@ public class ForsterConstraintResolver implements  IInitializable {
     
     
     /**
-     * Returns constraint resolver. 
+     * Returns constraint resolver.
      * <p>
      * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
      * </p>
+     * 
      * @param currentNodeOrder
+     *            the current node order
      */
     public ForsterConstraintResolver(final LNode[][] currentNodeOrder) {
         initializer = new Initializer(currentNodeOrder);

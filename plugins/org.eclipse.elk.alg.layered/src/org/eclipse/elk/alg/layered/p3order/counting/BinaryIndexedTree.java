@@ -102,19 +102,6 @@ public class BinaryIndexedTree {
     }
 
     /**
-     * Sum all between the given indices (excluding boundaries).
-     * 
-     * @param from
-     *            Sum from this index
-     * @param to
-     *            to this index
-     * @return sum
-     */
-    public int sumBetween(final int from, final int to) {
-        return rank(to) - rank(from + 1);
-    }
-
-    /**
      * Clears contents of tree.
      */
     public void clear() {

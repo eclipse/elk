@@ -267,19 +267,5 @@ public class NorthSouthEdgeAllCrossingsCounter {
         return origin;
     }
 
-    /**
-     * Whenever the order of two nodes are switched this counter needs to be notified.
-     * 
-     * @param nodeOne
-     *            first node.
-     * @param nodeTwo
-     *            second node.
-     */
-    public void notifyNodeSwitch(final LNode nodeOne, final LNode nodeTwo) {
-        int formerPositionOfOne = nodePositions[nodeOne.id];
-        nodePositions[nodeOne.id] = nodePositions[nodeTwo.id];
-        nodePositions[nodeTwo.id] = formerPositionOfOne;
-    }
-
 }
 

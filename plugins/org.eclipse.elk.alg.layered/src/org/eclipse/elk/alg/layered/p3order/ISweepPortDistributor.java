@@ -39,12 +39,17 @@ public interface ISweepPortDistributor extends IInitializable {
      */
     boolean distributePortsWhileSweeping(LNode[][] order, int freeLayerIndex,
             boolean isForwardSweep);
-
+    
     /**
      * Make a port distributor.
      * 
-     * @author alan
-     *
+     * @param cmt
+     *            the crossing minimization type
+     * @param r
+     *            random number generator for this graph
+     * @param currentOrder
+     *            the current order of the nodes.
+     * @return the port distributor
      */
     static ISweepPortDistributor create(final CrossMinType cmt, final Random r, final LNode[][] currentOrder) {
         if (cmt == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
