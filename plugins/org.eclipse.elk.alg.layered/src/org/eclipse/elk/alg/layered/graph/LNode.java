@@ -26,10 +26,6 @@ import com.google.common.collect.Maps;
 
 /**
  * A node in a layered graph.
- * <p>
- * The ports of a node on a specific side can be cached using cachePortSides. WARNING: This can only be used when soon
- * as the sides of each port will not change anymore. This is currently the case after running the
- * {@link org.eclipse.elk.alg.layered.intermediate.PortListSorter}.
  * 
  * @author msp
  * @kieler.design proposed by msp
@@ -290,7 +286,8 @@ public final class LNode extends LShape {
     }
     
     /**
-     * Returns a sublist view for all ports of given side. WARNING: Use this only after port sides are fixed!
+     * Returns a sublist view for all ports of given side. WARNING: Use this only after port sides are fixed! This is
+     * currently the case after running the {@link org.eclipse.elk.alg.layered.intermediate.PortListSorter}.
      * Non-structural changes to this list are reflected in the original list. Sublist indices can be cached using
      * {@link LNode#cachePortSides()}.
      * 
