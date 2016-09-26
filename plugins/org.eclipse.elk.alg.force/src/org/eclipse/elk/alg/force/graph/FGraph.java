@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.force.graph;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.force.properties.ForceOptions;
@@ -32,13 +32,13 @@ public final class FGraph extends MapPropertyHolder {
     private static final long serialVersionUID = -2396315570561498425L;
     
     /** All nodes of this graph. */
-    private LinkedList<FNode> nodes = new LinkedList<FNode>();
+    private List<FNode> nodes = new ArrayList<>();
     /** All edges of this graph. */
-    private LinkedList<FEdge> edges = new LinkedList<FEdge>();
+    private List<FEdge> edges = new ArrayList<>();
     /** All labels of this graph. */
-    private LinkedList<FLabel> labels = new LinkedList<FLabel>();
+    private List<FLabel> labels = new ArrayList<>();
     /** All bend points of this graph. */
-    private LinkedList<FBendpoint> bendPoints = new LinkedList<FBendpoint>();
+    private List<FBendpoint> bendPoints = new ArrayList<>();
     /** adjacency matrix of the graph. */
     private int[][] adjacency;
 
