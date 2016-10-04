@@ -103,26 +103,16 @@ public class SausageFolding implements ILayoutProcessor {
         }
         
         // figure out a reasonable width and height for the desired aspect ratio
-        int rows = 0;
-        double dist = Double.MAX_VALUE, lastDist = Double.MAX_VALUE;
-        do {
-            rows++;
-            currentAR = (sumWidth / rows) / (maxHeight * rows);
-            lastDist = dist;
-            dist = Math.abs(currentAR - desiredAR); 
-        } while (currentAR > desiredAR);
-        
-        // select the width/height combination which is closer to the desired aspect ratio
-        if (lastDist < dist) {
-            rows--;
-        }
+        //  i.e. we seek 'rows' s.t. desiredAr = ((longestPath / rows) * maxWidth) / (rows * maxHeight) 
+        double rowsd = Math.sqrt((longestPath * maxWidth) / (desiredAR * maxHeight));
+        int rows = (int) Math.round(rowsd);
         
         // System.out.println("Max Height: " + maxHeight);
         // System.out.println("Max Width: " + maxWidth);
         // System.out.println("LongestPath: " + longestPath);
         // System.out.println("SumWidth: " + sumWidth);
         // System.out.println("Desired AR: " + desiredAR);
-        // System.out.println("Current AR:" + currentAR);
+        // System.out.println("Current AR: " + currentAR);
         // System.out.println("Rows: " + rows);
         
         int nodesPerRow = longestPath / Math.max(1, rows);
