@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.force.graph;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.core.math.KVector;
@@ -123,7 +123,7 @@ public final class FNode extends FParticle {
      */
     public List<FNode> getChildren() {
         if (children == null) {
-            children = new LinkedList<FNode>();
+            children = new ArrayList<>();
         }
         return children;
     }

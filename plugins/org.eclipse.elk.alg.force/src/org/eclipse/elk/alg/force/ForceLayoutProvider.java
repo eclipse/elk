@@ -43,7 +43,7 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void layout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("KLay Force", 1);
+        progressMonitor.begin("ELK Force", 1);
         
         // transform the input graph
         IGraphImporter<KNode> graphImporter = new KGraphImporter();
