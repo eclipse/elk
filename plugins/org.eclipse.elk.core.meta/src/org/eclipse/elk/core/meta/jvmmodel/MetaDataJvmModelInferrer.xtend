@@ -148,8 +148,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                         «IF option.defaultValue !== null»«option.defaultConstantName»«ELSE»null«ENDIF»,
                         «IF option.lowerBound !== null»«option.lowerBoundConstantName»«ELSE»null«ENDIF»,
                         «IF option.upperBound !== null»«option.upperBoundConstantName»«ELSE»null«ENDIF»«ENDIF»)'''
-            if (option.deprecated)
+            if (option.deprecated) {
                 annotations += annotationRef(Deprecated)
+                deprecated = true
+            }
             documentation = option.description.trimLines
         ]
     }
@@ -366,8 +368,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                             «typeRef(support.option.bundle.qualifiedTargetClass)».«support.option.constantName»,
                             «support.option.defaultConstantName»)'''
                 }
-            if (support.option.deprecated)
+            if (support.option.deprecated) {
                 annotations += annotationRef(Deprecated)
+                deprecated = true
+            }
             documentation = '''Property constant to access «support.option.label ?: support.option.name» from within the layout algorithm code.'''
         ]
     }
