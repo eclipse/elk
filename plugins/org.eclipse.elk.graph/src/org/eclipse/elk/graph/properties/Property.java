@@ -13,7 +13,10 @@ package org.eclipse.elk.graph.properties;
 import java.lang.reflect.Method;
 
 /**
- * A property that uses a string for identification.
+ * Definition of a property that can be set on an {@link IPropertyHolder}. A property is described
+ * by its identifier, which is a String. Properties may have a default value which is returned by
+ * a property holder if the property is not set on it. Properties may also define lower and upper
+ * bounds that restrict which values are considered legal.
  *
  * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
  * @kieler.rating proposed yellow 2012-07-10 msp

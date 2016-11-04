@@ -1,83 +1,86 @@
-/*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+/**
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Kiel University - initial API and implementation
- *******************************************************************************/
+ */
 package org.eclipse.elk.graph.impl;
 
-import org.eclipse.elk.graph.KGraphPackage;
-import org.eclipse.elk.graph.PersistentEntry;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkGraphPackage;
+
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.ecore.EClass;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Persistent Entry</b></em>'.
+ * An implementation of the model object '<em><b>Elk Bend Point</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * <ul>
- *   <li>{@link org.eclipse.elk.graph.impl.PersistentEntryImpl#getKey <em>Key</em>}</li>
- *   <li>{@link org.eclipse.elk.graph.impl.PersistentEntryImpl#getValue <em>Value</em>}</li>
- * </ul>
  * </p>
+ * <ul>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkBendPointImpl#getX <em>X</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkBendPointImpl#getY <em>Y</em>}</li>
+ * </ul>
  *
  * @generated
  */
-public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry {
+public class ElkBendPointImpl extends MinimalEObjectImpl.Container implements ElkBendPoint {
     /**
-     * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
+     * The default value of the '{@link #getX() <em>X</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getKey()
+     * @see #getX()
      * @generated
      * @ordered
      */
-    protected static final String KEY_EDEFAULT = null;
+    protected static final double X_EDEFAULT = 0.0;
 
     /**
-     * The cached value of the '{@link #getKey() <em>Key</em>}' attribute.
+     * The cached value of the '{@link #getX() <em>X</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getKey()
+     * @see #getX()
      * @generated
      * @ordered
      */
-    protected String key = KEY_EDEFAULT;
+    protected double x = X_EDEFAULT;
 
     /**
-     * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
+     * The default value of the '{@link #getY() <em>Y</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getValue()
+     * @see #getY()
      * @generated
      * @ordered
      */
-    protected static final String VALUE_EDEFAULT = null;
+    protected static final double Y_EDEFAULT = 0.0;
 
     /**
-     * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
+     * The cached value of the '{@link #getY() <em>Y</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see #getValue()
+     * @see #getY()
      * @generated
      * @ordered
      */
-    protected String value = VALUE_EDEFAULT;
+    protected double y = Y_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected PersistentEntryImpl() {
+    protected ElkBendPointImpl() {
         super();
     }
 
@@ -88,7 +91,7 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
      */
     @Override
     protected EClass eStaticClass() {
-        return KGraphPackage.Literals.PERSISTENT_ENTRY;
+        return ElkGraphPackage.Literals.ELK_BEND_POINT;
     }
 
     /**
@@ -96,8 +99,8 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getKey() {
-        return key;
+    public double getX() {
+        return x;
     }
 
     /**
@@ -105,11 +108,11 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setKey(String newKey) {
-        String oldKey = key;
-        key = newKey;
+    public void setX(double newX) {
+        double oldX = x;
+        x = newX;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KGraphPackage.PERSISTENT_ENTRY__KEY, oldKey, key));
+            eNotify(new ENotificationImpl(this, Notification.SET, ElkGraphPackage.ELK_BEND_POINT__X, oldX, x));
     }
 
     /**
@@ -117,8 +120,8 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
      * <!-- end-user-doc -->
      * @generated
      */
-    public String getValue() {
-        return value;
+    public double getY() {
+        return y;
     }
 
     /**
@@ -126,11 +129,21 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
      * <!-- end-user-doc -->
      * @generated
      */
-    public void setValue(String newValue) {
-        String oldValue = value;
-        value = newValue;
+    public void setY(double newY) {
+        double oldY = y;
+        y = newY;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KGraphPackage.PERSISTENT_ENTRY__VALUE, oldValue, value));
+            eNotify(new ENotificationImpl(this, Notification.SET, ElkGraphPackage.ELK_BEND_POINT__Y, oldY, y));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void set(final double x, final double y) {
+        setX(x);
+        setY(y);
     }
 
     /**
@@ -141,10 +154,10 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KGraphPackage.PERSISTENT_ENTRY__KEY:
-                return getKey();
-            case KGraphPackage.PERSISTENT_ENTRY__VALUE:
-                return getValue();
+            case ElkGraphPackage.ELK_BEND_POINT__X:
+                return getX();
+            case ElkGraphPackage.ELK_BEND_POINT__Y:
+                return getY();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -157,11 +170,11 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KGraphPackage.PERSISTENT_ENTRY__KEY:
-                setKey((String)newValue);
+            case ElkGraphPackage.ELK_BEND_POINT__X:
+                setX((Double)newValue);
                 return;
-            case KGraphPackage.PERSISTENT_ENTRY__VALUE:
-                setValue((String)newValue);
+            case ElkGraphPackage.ELK_BEND_POINT__Y:
+                setY((Double)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -175,11 +188,11 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KGraphPackage.PERSISTENT_ENTRY__KEY:
-                setKey(KEY_EDEFAULT);
+            case ElkGraphPackage.ELK_BEND_POINT__X:
+                setX(X_EDEFAULT);
                 return;
-            case KGraphPackage.PERSISTENT_ENTRY__VALUE:
-                setValue(VALUE_EDEFAULT);
+            case ElkGraphPackage.ELK_BEND_POINT__Y:
+                setY(Y_EDEFAULT);
                 return;
         }
         super.eUnset(featureID);
@@ -193,10 +206,10 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KGraphPackage.PERSISTENT_ENTRY__KEY:
-                return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-            case KGraphPackage.PERSISTENT_ENTRY__VALUE:
-                return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+            case ElkGraphPackage.ELK_BEND_POINT__X:
+                return x != X_EDEFAULT;
+            case ElkGraphPackage.ELK_BEND_POINT__Y:
+                return y != Y_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
@@ -211,12 +224,12 @@ public class PersistentEntryImpl extends EObjectImpl implements PersistentEntry 
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (key: ");
-        result.append(key);
-        result.append(", value: ");
-        result.append(value);
+        result.append(" (x: ");
+        result.append(x);
+        result.append(", y: ");
+        result.append(y);
         result.append(')');
         return result.toString();
     }
 
-} //PersistentEntryImpl
+} //ElkBendPointImpl

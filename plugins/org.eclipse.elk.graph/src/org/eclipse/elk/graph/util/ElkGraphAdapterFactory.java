@@ -1,23 +1,27 @@
-/*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+/**
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Kiel University - initial API and implementation
- *******************************************************************************/
+ */
 package org.eclipse.elk.graph.util;
 
 import java.util.Map;
 
 import org.eclipse.elk.graph.*;
+
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
+
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
+
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -25,17 +29,17 @@ import org.eclipse.emf.ecore.EObject;
  * The <b>Adapter Factory</b> for the model.
  * It provides an adapter <code>createXXX</code> method for each class of the model.
  * <!-- end-user-doc -->
- * @see org.eclipse.elk.graph.KGraphPackage
+ * @see org.eclipse.elk.graph.ElkGraphPackage
  * @generated
  */
-public class KGraphAdapterFactory extends AdapterFactoryImpl {
+public class ElkGraphAdapterFactory extends AdapterFactoryImpl {
     /**
      * The cached model package.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected static KGraphPackage modelPackage;
+    protected static ElkGraphPackage modelPackage;
 
     /**
      * Creates an instance of the adapter factory.
@@ -43,9 +47,9 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
      * <!-- end-user-doc -->
      * @generated
      */
-    public KGraphAdapterFactory() {
+    public ElkGraphAdapterFactory() {
         if (modelPackage == null) {
-            modelPackage = KGraphPackage.eINSTANCE;
+            modelPackage = ElkGraphPackage.eINSTANCE;
         }
     }
 
@@ -74,51 +78,59 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KGraphSwitch<Adapter> modelSwitch =
-        new KGraphSwitch<Adapter>() {
+    protected ElkGraphSwitch<Adapter> modelSwitch =
+        new ElkGraphSwitch<Adapter>() {
             @Override
-            public Adapter caseKGraphElement(KGraphElement object) {
-                return createKGraphElementAdapter();
-            }
-            @Override
-            public Adapter caseKLabeledGraphElement(KLabeledGraphElement object) {
-                return createKLabeledGraphElementAdapter();
-            }
-            @Override
-            public Adapter caseKGraphData(KGraphData object) {
-                return createKGraphDataAdapter();
-            }
-            @Override
-            public Adapter caseKNode(KNode object) {
-                return createKNodeAdapter();
-            }
-            @Override
-            public Adapter caseKEdge(KEdge object) {
-                return createKEdgeAdapter();
-            }
-            @Override
-            public Adapter caseKPort(KPort object) {
-                return createKPortAdapter();
-            }
-            @Override
-            public Adapter caseKLabel(KLabel object) {
-                return createKLabelAdapter();
+            public Adapter caseIPropertyHolder(IPropertyHolder object) {
+                return createIPropertyHolderAdapter();
             }
             @Override
             public Adapter caseEMapPropertyHolder(EMapPropertyHolder object) {
                 return createEMapPropertyHolderAdapter();
             }
             @Override
-            public Adapter caseIPropertyToObjectMap(Map.Entry<IProperty<?>, Object> object) {
-                return createIPropertyToObjectMapAdapter();
+            public Adapter caseElkGraphElement(ElkGraphElement object) {
+                return createElkGraphElementAdapter();
             }
             @Override
-            public Adapter caseIPropertyHolder(IPropertyHolder object) {
-                return createIPropertyHolderAdapter();
+            public Adapter caseElkShape(ElkShape object) {
+                return createElkShapeAdapter();
             }
             @Override
-            public Adapter casePersistentEntry(PersistentEntry object) {
-                return createPersistentEntryAdapter();
+            public Adapter caseElkLabel(ElkLabel object) {
+                return createElkLabelAdapter();
+            }
+            @Override
+            public Adapter caseElkConnectableShape(ElkConnectableShape object) {
+                return createElkConnectableShapeAdapter();
+            }
+            @Override
+            public Adapter caseElkNode(ElkNode object) {
+                return createElkNodeAdapter();
+            }
+            @Override
+            public Adapter caseElkPort(ElkPort object) {
+                return createElkPortAdapter();
+            }
+            @Override
+            public Adapter caseElkEdge(ElkEdge object) {
+                return createElkEdgeAdapter();
+            }
+            @Override
+            public Adapter caseElkBendPoint(ElkBendPoint object) {
+                return createElkBendPointAdapter();
+            }
+            @Override
+            public Adapter caseElkEdgeSection(ElkEdgeSection object) {
+                return createElkEdgeSectionAdapter();
+            }
+            @Override
+            public Adapter caseElkPropertyToValueMapEntry(Map.Entry<IProperty<?>, Object> object) {
+                return createElkPropertyToValueMapEntryAdapter();
+            }
+            @Override
+            public Adapter caseElkPersistentEntry(ElkPersistentEntry object) {
+                return createElkPersistentEntryAdapter();
             }
             @Override
             public Adapter defaultCase(EObject object) {
@@ -141,100 +153,16 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
 
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.KGraphElement <em>Element</em>}'.
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.properties.IPropertyHolder <em>IProperty Holder</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.elk.graph.KGraphElement
+     * @see org.eclipse.elk.graph.properties.IPropertyHolder
      * @generated
      */
-    public Adapter createKGraphElementAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.KLabeledGraphElement <em>KLabeled Graph Element</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.elk.graph.KLabeledGraphElement
-     * @generated
-     */
-    public Adapter createKLabeledGraphElementAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.KGraphData <em>Data</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.elk.graph.KGraphData
-     * @generated
-     */
-    public Adapter createKGraphDataAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.KNode <em>KNode</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.elk.graph.KNode
-     * @generated
-     */
-    public Adapter createKNodeAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.KEdge <em>KEdge</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.elk.graph.KEdge
-     * @generated
-     */
-    public Adapter createKEdgeAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.KPort <em>KPort</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.elk.graph.KPort
-     * @generated
-     */
-    public Adapter createKPortAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.KLabel <em>KLabel</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.elk.graph.KLabel
-     * @generated
-     */
-    public Adapter createKLabelAdapter() {
+    public Adapter createIPropertyHolderAdapter() {
         return null;
     }
 
@@ -253,7 +181,133 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>IProperty To Object Map</em>}'.
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkGraphElement <em>Element</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkGraphElement
+     * @generated
+     */
+    public Adapter createElkGraphElementAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkShape <em>Elk Shape</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkShape
+     * @generated
+     */
+    public Adapter createElkShapeAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkLabel <em>Elk Label</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkLabel
+     * @generated
+     */
+    public Adapter createElkLabelAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkConnectableShape <em>Elk Connectable Shape</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkConnectableShape
+     * @generated
+     */
+    public Adapter createElkConnectableShapeAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkNode <em>Elk Node</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkNode
+     * @generated
+     */
+    public Adapter createElkNodeAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkPort <em>Elk Port</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkPort
+     * @generated
+     */
+    public Adapter createElkPortAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkEdge <em>Elk Edge</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkEdge
+     * @generated
+     */
+    public Adapter createElkEdgeAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkBendPoint <em>Elk Bend Point</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkBendPoint
+     * @generated
+     */
+    public Adapter createElkBendPointAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkEdgeSection <em>Elk Edge Section</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.eclipse.elk.graph.ElkEdgeSection
+     * @generated
+     */
+    public Adapter createElkEdgeSectionAdapter() {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>Elk Property To Value Map Entry</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -262,35 +316,21 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
      * @see java.util.Map.Entry
      * @generated
      */
-    public Adapter createIPropertyToObjectMapAdapter() {
+    public Adapter createElkPropertyToValueMapEntryAdapter() {
         return null;
     }
 
     /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.properties.IPropertyHolder <em>IProperty Holder</em>}'.
+     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.ElkPersistentEntry <em>Elk Persistent Entry</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore cases;
      * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
-     * @see org.eclipse.elk.graph.properties.IPropertyHolder
+     * @see org.eclipse.elk.graph.ElkPersistentEntry
      * @generated
      */
-    public Adapter createIPropertyHolderAdapter() {
-        return null;
-    }
-
-    /**
-     * Creates a new adapter for an object of class '{@link org.eclipse.elk.graph.PersistentEntry <em>Persistent Entry</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.eclipse.elk.graph.PersistentEntry
-     * @generated
-     */
-    public Adapter createPersistentEntryAdapter() {
+    public Adapter createElkPersistentEntryAdapter() {
         return null;
     }
 
@@ -306,4 +346,4 @@ public class KGraphAdapterFactory extends AdapterFactoryImpl {
         return null;
     }
 
-} //KGraphAdapterFactory
+} //ElkGraphAdapterFactory

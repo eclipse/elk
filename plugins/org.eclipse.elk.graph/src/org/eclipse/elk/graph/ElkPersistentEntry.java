@@ -1,35 +1,35 @@
-/*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+/**
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Kiel University - initial API and implementation
- *******************************************************************************/
+ */
 package org.eclipse.elk.graph;
 
 import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Persistent Entry</b></em>'.
+ * A representation of the model object '<em><b>Elk Persistent Entry</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
- * <ul>
- *   <li>{@link org.eclipse.elk.graph.PersistentEntry#getKey <em>Key</em>}</li>
- *   <li>{@link org.eclipse.elk.graph.PersistentEntry#getValue <em>Value</em>}</li>
- * </ul>
  * </p>
+ * <ul>
+ *   <li>{@link org.eclipse.elk.graph.ElkPersistentEntry#getKey <em>Key</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.ElkPersistentEntry#getValue <em>Value</em>}</li>
+ * </ul>
  *
- * @see org.eclipse.elk.graph.KGraphPackage#getPersistentEntry()
+ * @see org.eclipse.elk.graph.ElkGraphPackage#getElkPersistentEntry()
  * @model
  * @generated
  */
-public interface PersistentEntry extends EObject {
+public interface ElkPersistentEntry extends EObject {
     /**
      * Returns the value of the '<em><b>Key</b></em>' attribute.
      * <!-- begin-user-doc -->
@@ -40,14 +40,14 @@ public interface PersistentEntry extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Key</em>' attribute.
      * @see #setKey(String)
-     * @see org.eclipse.elk.graph.KGraphPackage#getPersistentEntry_Key()
+     * @see org.eclipse.elk.graph.ElkGraphPackage#getElkPersistentEntry_Key()
      * @model required="true"
      * @generated
      */
     String getKey();
 
     /**
-     * Sets the value of the '{@link org.eclipse.elk.graph.PersistentEntry#getKey <em>Key</em>}' attribute.
+     * Sets the value of the '{@link org.eclipse.elk.graph.ElkPersistentEntry#getKey <em>Key</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Key</em>' attribute.
@@ -66,14 +66,14 @@ public interface PersistentEntry extends EObject {
      * <!-- end-user-doc -->
      * @return the value of the '<em>Value</em>' attribute.
      * @see #setValue(String)
-     * @see org.eclipse.elk.graph.KGraphPackage#getPersistentEntry_Value()
+     * @see org.eclipse.elk.graph.ElkGraphPackage#getElkPersistentEntry_Value()
      * @model
      * @generated
      */
     String getValue();
 
     /**
-     * Sets the value of the '{@link org.eclipse.elk.graph.PersistentEntry#getValue <em>Value</em>}' attribute.
+     * Sets the value of the '{@link org.eclipse.elk.graph.ElkPersistentEntry#getValue <em>Value</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @param value the new value of the '<em>Value</em>' attribute.
@@ -82,4 +82,4 @@ public interface PersistentEntry extends EObject {
      */
     void setValue(String value);
 
-} // PersistentEntry
+} // ElkPersistentEntry

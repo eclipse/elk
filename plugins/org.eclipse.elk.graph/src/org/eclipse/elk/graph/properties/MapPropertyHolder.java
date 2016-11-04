@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * An abstract holder class for properties that uses a hash map.
+ * An implementation of {@link IPropertyHolder} based on a {@link HashMap}.
  *
  * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
  * @kieler.rating proposed yellow 2012-07-10 msp

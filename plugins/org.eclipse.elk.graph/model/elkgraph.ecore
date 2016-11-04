@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="graph" nsURI="http://elk.eclipse.org/ElkGraph" nsPrefix="graph">
+  <eClassifiers xsi:type="ecore:EDataType" name="IProperty" instanceClassName="org.eclipse.elk.graph.properties.IProperty">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IPropertyHolder" instanceClassName="org.eclipse.elk.graph.properties.IPropertyHolder"
+      abstract="true" interface="true">
+    <eOperations name="setProperty" eType="#//IPropertyHolder">
+      <eTypeParameters name="T"/>
+      <eParameters name="property">
+        <eGenericType eClassifier="#//IProperty">
+          <eTypeArguments>
+            <eLowerBound eTypeParameter="#//IPropertyHolder/setProperty/T"/>
+          </eTypeArguments>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="value">
+        <eGenericType eTypeParameter="#//IPropertyHolder/setProperty/T"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="getProperty">
+      <eGenericType eTypeParameter="#//IPropertyHolder/getProperty/T"/>
+      <eTypeParameters name="T"/>
+      <eParameters name="property">
+        <eGenericType eClassifier="#//IProperty">
+          <eTypeArguments eTypeParameter="#//IPropertyHolder/getProperty/T"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eOperations name="copyProperties" eType="#//IPropertyHolder">
+      <eParameters name="source" eType="#//IPropertyHolder"/>
+    </eOperations>
+    <eOperations name="getAllProperties">
+      <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+        <eTypeArguments eClassifier="#//IProperty">
+          <eTypeArguments/>
+        </eTypeArguments>
+        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+      </eGenericType>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EMapPropertyHolder" eSuperTypes="#//IPropertyHolder">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A property holder implementation based on {@link org.eclipse.emf.common.util.EMap} which can be used in Ecore models.&#xA;&#xA;&lt;p>This property holder implementation currently has two ways for saving properties: a map of properties as well as a map of &lt;em>persistent entries&lt;/em>. Persistent entries are String-String pairs containing String representations of properties. When a graph is serialized, it is the persistent entries that get serialized, not the properties themselves. This has two implications. First, to save a graph, one has to call {@link #makePersistent()} first. Second, after loading a graph, one of the methods in {@link org.eclipse.elk.core.util.GraphDataUtil} needs to be called to turn persistent entries back into usable properties.&lt;/p>"/>
+    </eAnnotations>
+    <eOperations name="makePersistent">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Serialize all entries of the properties map using {@link Object#toString()} and write them into the list of persistent entries. The previous content is cleared. Call this method before serializing an ElkGraph.&#xA;&#xA;&lt;p>&lt;em>Note:&lt;/em>&#xA;This method may be replaced by an alternative mechanism that does not require calling any methods in order to serialize the graph."/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
+        eType="#//ElkPropertyToValueMapEntry" transient="true" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Map of properties configured for this property holder."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="persistentEntries" upperBound="-1"
+        eType="#//ElkPersistentEntry">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Map of persistent entries of this property holder. See class documentation for more details."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkGraphElement" eSuperTypes="#//EMapPropertyHolder">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="This is the superclass of all elements of a graph such as nodes, edges, ports, and labels. Each element can have an arbitrary number of labels attached to it. A graph element can also hold properties that, for instance, influence how it is treated by layout algorithms. Finally, each graph element can have an arbitrary number of {@link ElkGraphData} objects associated with it to further annotate it with more specific information."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="labels" upperBound="-1"
+        eType="#//ElkLabel" containment="true" eOpposite="#//ElkLabel/parent">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Labels associated with this graph element.&#xA;&#xA;&lt;p>Adding or removing a label to/from this list automatically updates its parent element.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="An optional String identifier for this graph element. Can be used as an ID for defining graphs in Xtext-based languages."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkShape" eSuperTypes="#//ElkGraphElement">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A shape is a graph element whose placement and extend can be described by x and y coordinates as well as a width and a height. The coordinates of a shape describe the position of its top left corner, relative to the origin of its parent element. The width and height of a shape describe the extend of its rectangular bounding box."/>
+    </eAnnotations>
+    <eOperations name="setDimensions">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Convenience method to set the shape's width and height simultaneously by calling their respective set methods."/>
+        <details key="body" value="setWidth(width);&#xA;setHeight(height);"/>
+      </eAnnotations>
+      <eParameters name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+      <eParameters name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    </eOperations>
+    <eOperations name="setLocation">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Convenience method to set the shape's x and y coordinates simultaneously by calling their respective set methods."/>
+        <details key="body" value="setX(x);&#xA;setY(y);"/>
+      </eAnnotations>
+      <eParameters name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+      <eParameters name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble" defaultValueLiteral="0.0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Height of the shape's rectangular bounding box."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0.0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Height of the shape's rectangular bounding box."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0.0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="X coordinate of the shape's top left corner, relative to the origin of its parent object."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0.0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Y coordinate of the shape's top left corner, relative to the origin of its parent object."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkLabel" eSuperTypes="#//ElkShape">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Labels are used to associate graph elements with text to be displayed in a diagram. The element the label annotates is its parent element."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ElkGraphElement"
+        eOpposite="#//ElkGraphElement/labels">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Graph element the label annotates.&#xA;&#xA;&lt;p>Setting the parent element automatically updates its list of labels.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The label's text."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkConnectableShape" eSuperTypes="#//ElkShape">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A graph element that can be the end point of an edge."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingEdges" upperBound="-1"
+        eType="#//ElkEdge" eOpposite="#//ElkEdge/sources">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="List of edges that leave this connectable shape.&#xA;&#xA;&lt;p>Adding or removing an edge to/from this list automatically updates its list of sources.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingEdges" upperBound="-1"
+        eType="#//ElkEdge" eOpposite="#//ElkEdge/targets">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="List of edges that go into this connectable shape.&#xA;&#xA;&lt;p>Adding or removing an edge to/from this list automatically updates its list of targets.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkNode" eSuperTypes="#//ElkConnectableShape">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A node in the graph. Edges can be connected to the node directly or through one of its ports.&#xA;&#xA;&lt;p>All nodes except one must have an assigned parent node. The node that does not have a parent node is the graph's root node and represents the graph itself. There can only be one root node for each graph. The parent-child relationship of nodes induces hierarchy in nested graphs: a node's children constitute the graph contained in and represented by that node.&lt;/p>"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ports" upperBound="-1"
+        eType="#//ElkPort" containment="true" eOpposite="#//ElkPort/parent">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The node's list of ports.&#xA;&#xA;&lt;p>Adding or removing a port to/from this list automatically sets its parent node.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//ElkNode" containment="true" eOpposite="#//ElkNode/parent">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Child nodes contained in this node. If the node contains at least one child node, the node is a &lt;em>hierarchical node&lt;/em>.&#xA;&#xA;&lt;p>Adding or removing a node to/from this list automatically sets its parent node.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ElkNode"
+        eOpposite="#//ElkNode/children">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The node's parent node, if any. If the node has a parent, its location is interpreted relative to the parent node's origin. If it does not, the meaning of its location is not defined. A node without a parent node is called the &lt;em>root node&lt;/em>.&#xA;&#xA;&lt;p>Setting the node's parent node automatically updates the parent node's list of child nodes.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="containedEdges" upperBound="-1"
+        eType="#//ElkEdge" containment="true" eOpposite="#//ElkEdge/containingNode">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The edges contained in this node. Note that containment does not imply connection: an edge contained in this list is not necessarily connected to this node. The coordinates of the edge's source points, target points, and end points are interpreted relative to this node's origin. See the documentation for {@link ElkEdge} for more details on which node an edge should be contained in.&#xA;&#xA;&lt;p>Adding or removing an edge to/from this list automatically sets its containing node.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hierarchical" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        changeable="false" volatile="true" transient="true" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Whether or not this node is considered to be a hierarchical node. It is a hierarchical node if its list of child nodes is not empty.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkPort" eSuperTypes="#//ElkConnectableShape">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A port represents an explicit point through which to connect to a node. Different ports of a node will usually have different associated meanings, much like different method parameters. Each port belongs to the node it is contained in."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ElkNode"
+        eOpposite="#//ElkNode/ports">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The node the port belongs to.&#xA;&#xA;&lt;p>Setting the parent node automatically update's the node's list of ports.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkEdge" eSuperTypes="#//ElkGraphElement">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="An edge connects one or more source elements ({@link ElkConnectableShape}s) with one or more target elements ({@link ElkConnectableShape}s). If an edge connects at most one source with at most one target, it is called a &lt;em>regular edge&lt;/em> (although it is usually simply called an &lt;em>edge&lt;/em>). If an edge has more than a single source or more than a single target, it is called a &lt;em>hyperedge&lt;/em>. If all of the edge's sources and targets have the same parent node, it is a &lt;em>simple edge&lt;/em>; otherwise, it is called a &lt;em>hierarchical edge&lt;/em>.&#xA;&#xA;Each edge must be assigned to a containing node. The containing node defines the point where it is hooked into the graph's object hierarchy, which is important for serializing the graph. The containing node's origin is the point the edge's source, target, and bend points are relative to. As a rule of thumb, edges should always be contained in the lowest common representing node of the graphs of all elements it connects, with one exception: if an edge connects a node with one of its descendants, that node should be the edge's containing node. The {@link GraphUtil} class contains methods that help with finding the correct containing node.&#xA;&#xA;The routing of an edge is specified by the {@link ElkEdgeSection} objects it contains. If the edge is a regular edge (as opposed to a hyperedge), it contains at most a single {@link ElkEdgeSection} which specifies a single source point, a single end point, and an arbitrary number of bend points. If the edge is a hyperedge, it contains at least one {@link ElkEdgeSection} for each of its sources and targets (&lt;em>outer edge sections&lt;/em>) as well as an arbitrary number of {@link ElkEdgeSection} objects to connect the outer sections (&lt;em>inner edge sections&lt;/em>)."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="containingNode" eType="#//ElkNode"
+        eOpposite="#//ElkNode/containedEdges">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The node the edge is contained in. This has nothing to do with what the edge connects to.&#xA;&#xA;&lt;p>Setting the contained node automatically update's the node's list of contained edges.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sources" upperBound="-1"
+        eType="#//ElkConnectableShape" eOpposite="#//ElkConnectableShape/outgoingEdges">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The edge's list of source elements. For an edge to make sense, it should have at least one source element.&#xA;&#xA;&lt;p>Adding or removing an element to/from this list automatically updates its list of outgoing edges.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="targets" upperBound="-1"
+        eType="#//ElkConnectableShape" eOpposite="#//ElkConnectableShape/incomingEdges">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The edge's list of target elements. For an edge to make sense, it should have at least one target element.&#xA;&#xA;&lt;p>Adding or removing an element to/from this list automatically updates its list of incoming edges.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sections" upperBound="-1"
+        eType="#//ElkEdgeSection" containment="true" eOpposite="#//ElkEdgeSection/parent">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="All edge sections that define the routing of this edge.&#xA;&#xA;&lt;p>Adding or removing an edge section to/from this list automatically updates its parent edge.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hyperedge" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        changeable="false" volatile="true" transient="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Whether this edge is a hyperedge or not. It is considered to be a hyperedge if it has at most one source and at most one target. The result is only meaningful if the node has at least one source and one target.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hierarchical" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        changeable="false" volatile="true" transient="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Whether the edge is a hierarchical edge or not. It is hierarchical if its sources and targets do not all have the same parent node.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkBendPoint">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="A bend point of an {@link ElkEdgeSection}. The coordinates of a bend point are always relative to the origin of the containing node of the edge the bend point belongs to."/>
+    </eAnnotations>
+    <eOperations name="set">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Sets the bend point's x and y coordinates simultaneously by calling their respective set methods."/>
+        <details key="body" value="setX(x);&#xA;setY(y);"/>
+      </eAnnotations>
+      <eParameters name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+      <eParameters name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0.0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The bend point's x coordinate, relative to the origin of the edge's containing node."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"
+        defaultValueLiteral="0.0">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The bend point's y coordinate, relative to the origin of the edge's containing node."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkEdgeSection" eSuperTypes="#//EMapPropertyHolder">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="An edge section defines the routing of an edge, or a part of that routing. If the edge is a regular edge (as opposed to a hyperedge), it will have a single edge section that connects to the edge's source element and target element. The section will then completely define the edge's start point, its end point, and all of its bend points. This is a special case of the more general case described below.&#xA;&#xA;&lt;p>If the section's parent edge is a hyperedge, defining the routing will be more complicated. There will be enough edge sections to connect all of the edge's souce and target elements. The sections will effectively define a &lt;em>routing graph&lt;/em>: all sections in the graph will connect to other sections and/or sources and targets of the edge, each effectively defining a part of the complex route the edge will take. We call an edge section that connects to at least one {@link ElkConnectableShape} an &lt;em>outer section&lt;/em>. Edge sections that connect only to other edge sections are referred to as &lt;em>inner sections&lt;/em>.&lt;/p>&#xA;&#xA;&lt;p>Conceptually, the routing graph would be undirected. The way references work in EMF, however, forces us to distinguish between a section's incoming and outgoing sections. This is not much of a problem, however: each routing graph can be made acyclic.&lt;/p>&#xA;&#xA;&lt;p>All coordinates that define a section's route are relative to the origin of its edge's containing node.&lt;/p>&#xA;&#xA;&lt;p>Note that edge sections are property holders to allow algorithms to pass more detailed information about an edge section back to the client.&lt;/p>"/>
+    </eAnnotations>
+    <eOperations name="setStartLocation">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Sets the x and y coordinates of the section's start point simultaneously by calling their respective set methods."/>
+        <details key="body" value="setStartX(x);&#xA;setStartY(y);"/>
+      </eAnnotations>
+      <eParameters name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+      <eParameters name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    </eOperations>
+    <eOperations name="setEndLocation">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Sets the x and y coordinates of the section's end point simultaneously by calling their respective set methods."/>
+        <details key="body" value="setEndX(x);&#xA;setEndY(y);"/>
+      </eAnnotations>
+      <eParameters name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+      <eParameters name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startX" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="X coordinate of the section's start point, relative to the origin of the edge's containing node."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startY" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Y coordinate of the section's start point, relative to the origin of the edge's containing node."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endX" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="X coordinate of the section's end point, relative to the origin of the edge's containing node."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endY" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Y coordinate of the section's end point, relative to the origin of the edge's containing node."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bendPoints" upperBound="-1"
+        eType="#//ElkBendPoint" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The section's list of bend points. May well be empty if the section represents a straight line."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ElkEdge"
+        eOpposite="#//ElkEdge/sections">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The edge this section belongs to.&#xA;&#xA;&lt;p>Setting the parent edge automatically updates its list of edge sections.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingShape" eType="#//ElkConnectableShape">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The shape this section ends at, if any. If there is one, this section is an &lt;em>outer section&lt;/em>."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingShape" eType="#//ElkConnectableShape">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The shape this section starts at, if any. If there is one, this section is an &lt;em>outer section&lt;/em>."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoingSections" upperBound="-1"
+        eType="#//ElkEdgeSection" eOpposite="#//ElkEdgeSection/incomingSections">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="List of outgoing sections this section is connected to. Must not be empty if this section is an &lt;em>inner section&lt;/em> (not connected to a shape).&#xA;&#xA;&lt;p>Adding or removing a section to/from this list automatically updates its list of incoming sections.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingSections" upperBound="-1"
+        eType="#//ElkEdgeSection" eOpposite="#//ElkEdgeSection/outgoingSections">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="List of incoming sections this section is connected to. Must not be empty if this section is an &lt;em>inner section&lt;/em> (not connected to a shape).&#xA;&#xA;&lt;p>Adding or removing a section to/from this list automatically updates its list of outgoing sections.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkPropertyToValueMapEntry" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" lowerBound="1">
+      <eGenericType eClassifier="#//IProperty">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ElkPersistentEntry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

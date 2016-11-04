@@ -1,40 +1,45 @@
-/*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+/**
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Kiel University - initial API and implementation
- *******************************************************************************/
+ */
 package org.eclipse.elk.graph.impl;
 
-import org.eclipse.elk.graph.KGraphPackage;
+import org.eclipse.elk.graph.ElkGraphPackage;
+
 import org.eclipse.elk.graph.properties.IProperty;
+
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.EMap;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>IProperty To Object Map</b></em>'.
+ * An implementation of the model object '<em><b>Elk Property To Value Map Entry</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * <ul>
- *   <li>{@link org.eclipse.elk.graph.impl.IPropertyToObjectMapImpl#getTypedKey <em>Key</em>}</li>
- *   <li>{@link org.eclipse.elk.graph.impl.IPropertyToObjectMapImpl#getTypedValue <em>Value</em>}</li>
- * </ul>
  * </p>
+ * <ul>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl#getTypedKey <em>Key</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl#getTypedValue <em>Value</em>}</li>
+ * </ul>
  *
  * @generated
  */
-public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.Entry<IProperty<?>,Object> {
+public class ElkPropertyToValueMapEntryImpl extends MinimalEObjectImpl.Container implements BasicEMap.Entry<IProperty<?>,Object> {
     /**
      * The cached value of the '{@link #getTypedKey() <em>Key</em>}' attribute.
      * <!-- begin-user-doc -->
@@ -70,7 +75,7 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
      * <!-- end-user-doc -->
      * @generated
      */
-    protected IPropertyToObjectMapImpl() {
+    protected ElkPropertyToValueMapEntryImpl() {
         super();
     }
 
@@ -81,7 +86,7 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
      */
     @Override
     protected EClass eStaticClass() {
-        return KGraphPackage.Literals.IPROPERTY_TO_OBJECT_MAP;
+        return ElkGraphPackage.Literals.ELK_PROPERTY_TO_VALUE_MAP_ENTRY;
     }
 
     /**
@@ -102,7 +107,7 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
         IProperty<?> oldKey = key;
         key = newKey;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KGraphPackage.IPROPERTY_TO_OBJECT_MAP__KEY, oldKey, key));
+            eNotify(new ENotificationImpl(this, Notification.SET, ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY, oldKey, key));
     }
 
     /**
@@ -123,7 +128,7 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
         Object oldValue = value;
         value = newValue;
         if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, KGraphPackage.IPROPERTY_TO_OBJECT_MAP__VALUE, oldValue, value));
+            eNotify(new ENotificationImpl(this, Notification.SET, ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE, oldValue, value));
     }
 
     /**
@@ -134,9 +139,9 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP__KEY:
+            case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY:
                 return getTypedKey();
-            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP__VALUE:
+            case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE:
                 return getTypedValue();
         }
         return super.eGet(featureID, resolve, coreType);
@@ -150,10 +155,10 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP__KEY:
+            case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY:
                 setTypedKey((IProperty<?>)newValue);
                 return;
-            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP__VALUE:
+            case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE:
                 setTypedValue(newValue);
                 return;
         }
@@ -168,10 +173,10 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP__KEY:
+            case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY:
                 setTypedKey((IProperty<?>)null);
                 return;
-            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP__VALUE:
+            case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE:
                 setTypedValue(VALUE_EDEFAULT);
                 return;
         }
@@ -186,9 +191,9 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP__KEY:
+            case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY:
                 return key != null;
-            case KGraphPackage.IPROPERTY_TO_OBJECT_MAP__VALUE:
+            case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE:
                 return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
         }
         return super.eIsSet(featureID);
@@ -197,23 +202,19 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated NOT
+     * @generated
      */
     @Override
     public String toString() {
         if (eIsProxy()) return super.toString();
 
-        if (key != null && value != null) {
-            return key + "=" + value;
-        } else {
-            StringBuffer result = new StringBuffer(super.toString());
-            result.append(" (key: ");
-            result.append(key);
-            result.append(", value: ");
-            result.append(value);
-            result.append(')');
-            return result.toString();
-        }
+        StringBuffer result = new StringBuffer(super.toString());
+        result.append(" (key: ");
+        result.append(key);
+        result.append(", value: ");
+        result.append(value);
+        result.append(')');
+        return result.toString();
     }
 
     /**
@@ -294,4 +295,4 @@ public class IPropertyToObjectMapImpl extends EObjectImpl implements BasicEMap.E
         return container == null ? null : (EMap<IProperty<?>, Object>)container.eGet(eContainmentFeature());
     }
 
-} //IPropertyToObjectMapImpl
+} //ElkPropertyToValueMapEntryImpl

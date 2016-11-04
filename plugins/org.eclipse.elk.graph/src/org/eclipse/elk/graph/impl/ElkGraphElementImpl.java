@@ -1,41 +1,44 @@
-/*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+/**
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     Kiel University - initial API and implementation
- *******************************************************************************/
+ */
 package org.eclipse.elk.graph.impl;
 
 import java.util.Collection;
 
-import org.eclipse.elk.graph.KGraphPackage;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KLabeledGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkGraphPackage;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>KLabeled Graph Element</b></em>'.
+ * An implementation of the model object '<em><b>Element</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * <ul>
- *   <li>{@link org.eclipse.elk.graph.impl.KLabeledGraphElementImpl#getLabels <em>Labels</em>}</li>
- * </ul>
  * </p>
+ * <ul>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkGraphElementImpl#getLabels <em>Labels</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkGraphElementImpl#getIdentifier <em>Identifier</em>}</li>
+ * </ul>
  *
  * @generated
  */
-public abstract class KLabeledGraphElementImpl extends KGraphElementImpl implements KLabeledGraphElement {
+public class ElkGraphElementImpl extends EMapPropertyHolderImpl implements ElkGraphElement {
     /**
      * The cached value of the '{@link #getLabels() <em>Labels</em>}' containment reference list.
      * <!-- begin-user-doc -->
@@ -44,14 +47,34 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
      * @generated
      * @ordered
      */
-    protected EList<KLabel> labels;
+    protected EList<ElkLabel> labels;
+
+    /**
+     * The default value of the '{@link #getIdentifier() <em>Identifier</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getIdentifier()
+     * @generated
+     * @ordered
+     */
+    protected static final String IDENTIFIER_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getIdentifier() <em>Identifier</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getIdentifier()
+     * @generated
+     * @ordered
+     */
+    protected String identifier = IDENTIFIER_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    protected KLabeledGraphElementImpl() {
+    protected ElkGraphElementImpl() {
         super();
     }
 
@@ -62,7 +85,7 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
      */
     @Override
     protected EClass eStaticClass() {
-        return KGraphPackage.Literals.KLABELED_GRAPH_ELEMENT;
+        return ElkGraphPackage.Literals.ELK_GRAPH_ELEMENT;
     }
 
     /**
@@ -70,11 +93,32 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList<KLabel> getLabels() {
+    public EList<ElkLabel> getLabels() {
         if (labels == null) {
-            labels = new EObjectContainmentWithInverseEList<KLabel>(KLabel.class, this, KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS, KGraphPackage.KLABEL__PARENT);
+            labels = new EObjectContainmentWithInverseEList<ElkLabel>(ElkLabel.class, this, ElkGraphPackage.ELK_GRAPH_ELEMENT__LABELS, ElkGraphPackage.ELK_LABEL__PARENT);
         }
         return labels;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setIdentifier(String newIdentifier) {
+        String oldIdentifier = identifier;
+        identifier = newIdentifier;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, ElkGraphPackage.ELK_GRAPH_ELEMENT__IDENTIFIER, oldIdentifier, identifier));
     }
 
     /**
@@ -86,7 +130,7 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
     @Override
     public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS:
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__LABELS:
                 return ((InternalEList<InternalEObject>)(InternalEList<?>)getLabels()).basicAdd(otherEnd, msgs);
         }
         return super.eInverseAdd(otherEnd, featureID, msgs);
@@ -100,7 +144,7 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
-            case KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS:
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__LABELS:
                 return ((InternalEList<?>)getLabels()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -114,8 +158,10 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
     @Override
     public Object eGet(int featureID, boolean resolve, boolean coreType) {
         switch (featureID) {
-            case KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS:
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__LABELS:
                 return getLabels();
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__IDENTIFIER:
+                return getIdentifier();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -129,9 +175,12 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
     @Override
     public void eSet(int featureID, Object newValue) {
         switch (featureID) {
-            case KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS:
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__LABELS:
                 getLabels().clear();
-                getLabels().addAll((Collection<? extends KLabel>)newValue);
+                getLabels().addAll((Collection<? extends ElkLabel>)newValue);
+                return;
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__IDENTIFIER:
+                setIdentifier((String)newValue);
                 return;
         }
         super.eSet(featureID, newValue);
@@ -145,8 +194,11 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
     @Override
     public void eUnset(int featureID) {
         switch (featureID) {
-            case KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS:
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__LABELS:
                 getLabels().clear();
+                return;
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__IDENTIFIER:
+                setIdentifier(IDENTIFIER_EDEFAULT);
                 return;
         }
         super.eUnset(featureID);
@@ -160,10 +212,28 @@ public abstract class KLabeledGraphElementImpl extends KGraphElementImpl impleme
     @Override
     public boolean eIsSet(int featureID) {
         switch (featureID) {
-            case KGraphPackage.KLABELED_GRAPH_ELEMENT__LABELS:
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__LABELS:
                 return labels != null && !labels.isEmpty();
+            case ElkGraphPackage.ELK_GRAPH_ELEMENT__IDENTIFIER:
+                return IDENTIFIER_EDEFAULT == null ? identifier != null : !IDENTIFIER_EDEFAULT.equals(identifier);
         }
         return super.eIsSet(featureID);
     }
 
-} //KLabeledGraphElementImpl
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public String toString() {
+        if (eIsProxy()) return super.toString();
+
+        StringBuffer result = new StringBuffer(super.toString());
+        result.append(" (identifier: ");
+        result.append(identifier);
+        result.append(')');
+        return result.toString();
+    }
+
+} //ElkGraphElementImpl

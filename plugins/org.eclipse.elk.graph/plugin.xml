@@ -14,10 +14,11 @@
 <plugin>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated elkgraph -->
       <package
-            uri="http://elk.eclipse.org/KGraph"
-            class="org.eclipse.elk.graph.KGraphPackage"
-            genModel="model/kgraph.genmodel"/>
+            uri="http://elk.eclipse.org/ElkGraph"
+            class="org.eclipse.elk.graph.ElkGraphPackage"
+            genModel="model/elkgraph.genmodel"/>
    </extension>
 
 </plugin>
