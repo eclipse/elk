@@ -22,9 +22,9 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.ISweepPortDistributor;
-import org.eclipse.elk.alg.layered.p3order.LayerTotalPortDistributor;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
+import org.eclipse.elk.alg.layered.p3order.LayerTotalPortDistributor;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Ignore;
@@ -32,10 +32,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-/**
- * @author alan
- *
- */
 public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
     // CHECKSTYLEOFF javadoc
     // CHECKSTYLEOFF MagicNumber
@@ -189,9 +185,10 @@ public class AbstractBarycenterPortDistributorTest extends TestGraphCreator {
         eastWestEdgeFromTo(leftNode, rightNode);
         List<LPort> expectedPortRightNode = copyPortsInIndexOrder(rightNode, 1, 0);
         setUpIds();
-        ISweepPortDistributor portDist = new LayerTotalPortDistributor(graph.toNodeArray());
-        AbstractInitializer.init(Arrays.asList(portDist));
-        portDist.distributePortsWhileSweeping(getGraph().toNodeArray(), 1, true);
+        LNode[][] nodeArray = graph.toNodeArray();
+        ISweepPortDistributor portDist = new LayerTotalPortDistributor(nodeArray.length);
+        IInitializable.init(Arrays.asList(portDist), nodeArray);
+        portDist.distributePortsWhileSweeping(nodeArray, 1, true);
 
         assertThat(rightNode.getPorts(), is(expectedPortRightNode));
     }

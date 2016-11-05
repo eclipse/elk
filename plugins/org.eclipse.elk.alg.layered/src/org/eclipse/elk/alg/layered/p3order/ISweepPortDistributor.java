@@ -14,16 +14,13 @@ import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 
 /**
  * PortDistributor to be used while sweeping in phase 3.
  * <p>
- * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * Must be initialized using {@link IInitializable#init(java.util.List)}!
  * </p>
- * @author alan
- *
  */
 public interface ISweepPortDistributor extends IInitializable {
 
@@ -53,11 +50,11 @@ public interface ISweepPortDistributor extends IInitializable {
      */
     static ISweepPortDistributor create(final CrossMinType cmt, final Random r, final LNode[][] currentOrder) {
         if (cmt == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
-            return new GreedyPortDistributor(currentOrder);
+            return new GreedyPortDistributor();
         } else if (r.nextBoolean()) {
-            return new NodeRelativePortDistributor(currentOrder);
+            return new NodeRelativePortDistributor(currentOrder.length);
         } else {
-            return new LayerTotalPortDistributor(currentOrder);
+            return new LayerTotalPortDistributor(currentOrder.length);
         }
     }
 }

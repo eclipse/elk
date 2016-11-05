@@ -29,8 +29,6 @@ import org.junit.Test;
 /**
  * Test for extracted and modified AllCrossingsCounter.
  *
- * @author alan
- *
  */
 public class AllCrossingsCounterTest extends TestGraphCreator {
 

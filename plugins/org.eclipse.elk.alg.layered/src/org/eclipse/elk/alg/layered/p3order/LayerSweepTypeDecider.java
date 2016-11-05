@@ -17,8 +17,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -33,7 +32,7 @@ import com.google.common.collect.Iterables;
  * CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, we can choose how likely it is to be hierarchical or more bottom up.
  * 
  * <p>
- * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * Must be initialized using {@link IInitializable#init(java.util.List)}!
  * </p>
  * 
  * @author alan
@@ -42,13 +41,12 @@ import com.google.common.collect.Iterables;
 public class LayerSweepTypeDecider implements IInitializable {
 
     private NodeInfo[][] nodeInfo;
-    private AbstractInitializer initializer;
     private GraphInfoHolder graphData;
 
     /**
      * Creates LayerSweepTypeDecider for deciding whether to sweep into graphs or not.
      * <p>
-     * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+     * Must be initialized using {@link IInitializable#init(java.util.List)}!
      * </p>
      * 
      * @param graphData
@@ -56,7 +54,7 @@ public class LayerSweepTypeDecider implements IInitializable {
      */
     public LayerSweepTypeDecider(final GraphInfoHolder graphData) {
         this.graphData = graphData;
-        initializer = new Initializer(graphData.currentNodeOrder());
+        nodeInfo = new NodeInfo[graphData.currentNodeOrder().length][];
     }
 
     /**
@@ -157,8 +155,6 @@ public class LayerSweepTypeDecider implements IInitializable {
     /**
      * For a single node, collects number of paths to nodes with random or hierarchical nodes.
      * 
-     * @author alan
-     *
      */
     static class NodeInfo {
         private int connectedEdges;
@@ -224,29 +220,17 @@ public class LayerSweepTypeDecider implements IInitializable {
     private NodeInfo nodeInfoFor(final LNode n) {
         return nodeInfo[n.getLayer().id][n.id];
     }
-    /** Defines what needs to be initialized traversing the graph. */
-    private final class Initializer extends AbstractInitializer {
-        private Initializer(final LNode[][] graph) {
-            super(graph);
-            nodeInfo = new NodeInfo[graph.length][];
-        }
 
-        @Override
-        public void initAtLayerLevel(final int l) {
-            nodeOrder()[l][0].getLayer().id = l;
-            nodeInfo[l] = new NodeInfo[nodeOrder()[l].length];
-        }
-
-        @Override
-        public void initAtNodeLevel(final int l, final int n) {
-            LNode node = nodeOrder()[l][n];
-            node.id = n;
-            nodeInfo[l][n] = new NodeInfo();
-        }
+    @Override
+    public void initAtLayerLevel(final int l, final LNode[][] nodeOrder) {
+        nodeOrder[l][0].getLayer().id = l;
+        nodeInfo[l] = new NodeInfo[nodeOrder[l].length];
     }
 
     @Override
-    public AbstractInitializer initializer() {
-        return initializer;
+    public void initAtNodeLevel(final int l, final int n, final LNode[][] nodeOrder) {
+        LNode node = nodeOrder[l][n];
+        node.id = n;
+        nodeInfo[l][n] = new NodeInfo();
     }
 }

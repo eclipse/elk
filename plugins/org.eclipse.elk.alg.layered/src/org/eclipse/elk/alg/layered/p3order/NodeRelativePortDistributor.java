@@ -36,8 +36,8 @@ public final class NodeRelativePortDistributor extends AbstractBarycenterPortDis
      * @param graph
      *            The current order of the node in the graph.
      */
-    public NodeRelativePortDistributor(final LNode[][] graph) {
-        super(graph);
+    public NodeRelativePortDistributor(final int numLayers) {
+        super(numLayers);
     }
 
     /**

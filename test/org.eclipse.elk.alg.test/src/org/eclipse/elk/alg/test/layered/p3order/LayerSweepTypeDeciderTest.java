@@ -9,9 +9,9 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
-import org.eclipse.elk.alg.layered.p3order.LayerSweepTypeDecider;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepTypeDecider;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.core.options.PortSide;
@@ -105,7 +105,7 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
         GraphInfoHolder gd = new GraphInfoHolder(innerGraph, CrossMinType.BARYCENTER,
                 Arrays.asList(new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null)));
         LayerSweepTypeDecider td = new LayerSweepTypeDecider(gd);
-        AbstractInitializer.init(Arrays.asList(td));
+        IInitializable.init(Arrays.asList(td), innerGraph.toNodeArray());
         assertTrue(td.useBottomUp());
     }
 

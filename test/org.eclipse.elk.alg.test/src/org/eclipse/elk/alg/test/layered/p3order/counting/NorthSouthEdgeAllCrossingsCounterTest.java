@@ -24,8 +24,6 @@ import org.junit.Test;
 /**
  * Tests {@link NorthSouthEdgeAllCrossingsCounter}.
  *
- * @author alan
- *
  */
 public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGraphCreator {
     private NorthSouthEdgeAllCrossingsCounter counter;

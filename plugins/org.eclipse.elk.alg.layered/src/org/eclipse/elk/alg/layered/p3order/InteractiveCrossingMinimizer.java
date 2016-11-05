@@ -25,7 +25,7 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
@@ -83,8 +83,8 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Interactive crossing minimization", 1);
         LNode[][] nodeOrder = layeredGraph.toNodeArray();
-        AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(nodeOrder);
-        AbstractInitializer.init(Arrays.asList(portDistributor));
+        AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(nodeOrder.length);
+        IInitializable.init(Arrays.asList(portDistributor), nodeOrder);
         int portCount = 0;
         int layerIndex = 0;
         for (Layer layer : layeredGraph) {

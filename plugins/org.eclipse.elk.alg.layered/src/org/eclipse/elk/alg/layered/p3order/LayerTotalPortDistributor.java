@@ -26,13 +26,8 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistributor {
     
-    /**
-     * Constructs a layer-total port distributor.
-     * 
-     * @param graph the current order of the nodes in the graph.
-     */
-    public LayerTotalPortDistributor(final LNode[][] graph) {
-        super(graph);
+    public LayerTotalPortDistributor(final int numLayers) {
+        super(numLayers);
     }
 
     /**

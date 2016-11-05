@@ -15,7 +15,6 @@ import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.Cross
 import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.ICrossingMinimizationHeuristic;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 
 /**
  * <p>
@@ -44,7 +43,7 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
     private SwitchDecider switchDecider;
     private int[] portPositions;
     private GraphInfoHolder graphData;
-    private AbstractInitializer initializer;
+    private int nPorts;
 
     /**
      * Create GreedySwitchHeuristic.
@@ -55,7 +54,6 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
      *            Graph information holder for crossing minimization.
      */
     public GreedySwitchHeuristic(final CrossMinType greedyType, final GraphInfoHolder graphData) {
-        initializer = new Initializer(graphData.currentNodeOrder());
         this.graphData = graphData;
         greedySwitchType = greedyType;
     }
@@ -150,31 +148,18 @@ public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
     }
 
     @Override
-    public AbstractInitializer initializer() {
-        return initializer;
+    public void initAtPortLevel(final int l, final int n, final int p, final LNode[][] nodeOrder) {
+        nPorts++;
     }
 
-    /** Defines information to be initialized during graph traversal. */
-    private final class Initializer extends AbstractInitializer {
-        private int nPorts;
-        private Initializer(final LNode[][] graph) {
-            super(graph);
-        }
+    @Override
+    public void initAtLayerLevel(final int l, final LNode[][] nodeOrder) {
+        nodeOrder[l][0].getLayer().id = l;
+    }
 
-        @Override
-        public void initAtPortLevel(final int l, final int n, final int p) {
-            nPorts++;
-        }
-
-        @Override
-        public void initAtLayerLevel(final int l) {
-            nodeOrder()[l][0].getLayer().id = l;
-        }
-
-        @Override
-        public void initAfterTraversal() {
-            portPositions = new int[nPorts];
-        }
+    @Override
+    public void initAfterTraversal() {
+        portPositions = new int[nPorts];
     }
 
 }

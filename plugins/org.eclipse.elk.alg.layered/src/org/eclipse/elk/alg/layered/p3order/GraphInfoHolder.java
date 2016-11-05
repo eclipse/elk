@@ -20,9 +20,8 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchHeuristic;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
 import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 
@@ -31,7 +30,7 @@ import com.google.common.collect.Lists;
 /**
  * Collects data needed for cross minimization and port distribution.
  * <p>
- * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * Must be initialized using {@link IInitializable#init(java.util.List)}!
  * </p>
  * 
  * @author alan
@@ -61,7 +60,7 @@ public class GraphInfoHolder implements IInitializable {
     private ICrossingMinimizationHeuristic crossMinimizer;
     private ISweepPortDistributor portDistributor;
     private AllCrossingsCounter crossingsCounter;
-    private AbstractInitializer initializer;
+    private int nPorts;
 
 
     /**
@@ -87,7 +86,6 @@ public class GraphInfoHolder implements IInitializable {
         childGraphs = Lists.newArrayList();
 
         // Init all objects needing initialization by graph traversal.
-        initializer = new Initializer(currentNodeOrder);
         crossingsCounter = new AllCrossingsCounter(currentNodeOrder);
         Random random = lGraph.getProperty(InternalProperties.RANDOM);
         portDistributor = ISweepPortDistributor.create(crossMinType, random, currentNodeOrder);
@@ -106,7 +104,7 @@ public class GraphInfoHolder implements IInitializable {
         initializables.add(crossMinimizer);
 
         // Apply Initializer.
-        Initializer.init(initializables);
+        IInitializable.init(initializables, currentNodeOrder);
 
         // calculate whether we need to use bottom up or sweep into this graph.
         useBottomUp = layerSweepTypeDecider.useBottomUp();
@@ -256,36 +254,22 @@ public class GraphInfoHolder implements IInitializable {
     }
 
     @Override
-    public AbstractInitializer initializer() {
-        return initializer;
+    public void initAtNodeLevel(final int l, final int n, final LNode[][] nodeOrder) {
+        LNode node = nodeOrder[l][n];
+        LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+        if (nestedGraph != null) {
+            childGraphs.add(nestedGraph);
+        }
     }
-    
-    /** Defines what needs to be initialized traversing the graph. */
-    private final class Initializer extends AbstractInitializer {
-        private int nPorts;
-        private Initializer(final LNode[][] graph) {
-            super(graph);
-            nPorts = 0;
-        }
 
-        @Override
-        public void initAtNodeLevel(final int l, final int n) {
-            LNode node = nodeOrder()[l][n];
-            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
-            if (nestedGraph != null) {
-                childGraphs.add(nestedGraph);
-            }
-        }
+    @Override
+    public void initAtPortLevel(final int l, final int n, final int p, final LNode[][] nodeOrder) {
+        nPorts++;
+    }
 
-        @Override
-        public void initAtPortLevel(final int l, final int n, final int p) {
-            nPorts++;
-        }
-
-        @Override
-        public void initAfterTraversal() {
-            portPositions = new int[nPorts];
-        }
+    @Override
+    public void initAfterTraversal() {
+        portPositions = new int[nPorts];
     }
 
 }

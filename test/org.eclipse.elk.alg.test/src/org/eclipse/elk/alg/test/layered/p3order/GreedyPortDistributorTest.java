@@ -24,15 +24,11 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.p3order.GreedyPortDistributor;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Test;
 
-/**
- * @author alan
- *
- */
 public class GreedyPortDistributorTest extends TestGraphCreator {
     private GreedyPortDistributor portDist;
 
@@ -41,8 +37,9 @@ public class GreedyPortDistributorTest extends TestGraphCreator {
     // CHECKSTYLEOFF MethodName
 
     private void setUpDistributor() {
-        portDist = new GreedyPortDistributor(graph.toNodeArray());
-        AbstractInitializer.init(Arrays.asList(portDist));
+        portDist = new GreedyPortDistributor();
+        LNode[][] nodeArray = graph.toNodeArray();
+        IInitializable.init(Arrays.asList(portDist), nodeArray);
     }
 
     /**

@@ -16,8 +16,7 @@ import java.util.ListIterator;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic.BarycenterState;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer.IInitializable;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.util.Pair;
 
@@ -35,7 +34,7 @@ import com.google.common.collect.Multimap;
  * values and are already sorted by these barycenter values.
  * 
  * <p>
- * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+ * Must be initialized using {@link IInitializable#init(java.util.List)}!
  * </p>
  * 
  * @author cds
@@ -52,20 +51,21 @@ public class ForsterConstraintResolver implements  IInitializable {
     private BarycenterState[][] barycenterStates;
     /** the constraint groups,  indexed by layer.id and node.id. */
     private ConstraintGroup[][] constraintGroups;
-    private Initializer initializer;
     
     
     /**
      * Returns constraint resolver.
      * <p>
-     * Must be initialized using {@link AbstractInitializer#init(java.util.List)}!
+     * Must be initialized using {@link IInitializable#init(java.util.List)}!
      * </p>
      * 
      * @param currentNodeOrder
      *            the current node order
      */
     public ForsterConstraintResolver(final LNode[][] currentNodeOrder) {
-        initializer = new Initializer(currentNodeOrder);
+        barycenterStates = new BarycenterState[currentNodeOrder.length][];
+        constraintGroups = new ConstraintGroup[currentNodeOrder.length][];
+        layoutUnits = LinkedHashMultimap.create();
     }
 
     /**
@@ -519,34 +519,19 @@ public class ForsterConstraintResolver implements  IInitializable {
     }
 
     @Override
-    public AbstractInitializer initializer() {
-        return initializer;
+    public void initAtLayerLevel(final int l, final LNode[][] nodeOrder) {
+        barycenterStates[l] = new BarycenterState[nodeOrder[l].length];
+        constraintGroups[l] = new ConstraintGroup[nodeOrder[l].length];
     }
-    
-    /** Defines what needs to be initialized traversing the graph. */
-    private final class Initializer extends AbstractInitializer {
-        private Initializer(final LNode[][] graph) {
-            super(graph);
-            barycenterStates = new BarycenterState[graph.length][];
-            constraintGroups = new ConstraintGroup[graph.length][];
-            layoutUnits = LinkedHashMultimap.create();
-        }
 
-        @Override
-        public void initAtLayerLevel(final int l) {
-            barycenterStates[l] = new BarycenterState[nodeOrder()[l].length];
-            constraintGroups[l] = new ConstraintGroup[nodeOrder()[l].length];
-        }
-
-        @Override
-        public void initAtNodeLevel(final int l, final int n) {
-            LNode node = nodeOrder()[l][n];
-            barycenterStates[l][n] = new BarycenterState(node);
-            constraintGroups[l][n] = new ConstraintGroup(node);
-            LNode layoutUnit = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
-            if (layoutUnit != null) {
-                layoutUnits.put(layoutUnit, node);
-            }
+    @Override
+    public void initAtNodeLevel(final int l, final int n, final LNode[][] nodeOrder) {
+        LNode node = nodeOrder[l][n];
+        barycenterStates[l][n] = new BarycenterState(node);
+        constraintGroups[l][n] = new ConstraintGroup(node);
+        LNode layoutUnit = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+        if (layoutUnit != null) {
+            layoutUnits.put(layoutUnit, node);
         }
     }
 }

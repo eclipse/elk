@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
@@ -40,9 +40,7 @@ import com.google.common.collect.Lists;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public abstract class AbstractBarycenterPortDistributor implements ISweepPortDistributor {
-
-    private AbstractInitializer initializer;
+public abstract class AbstractBarycenterPortDistributor implements ISweepPortDistributor, IInitializable {
 
     /** port ranks array in which the results of ranks calculation are stored. */
     private float[] portRanks;
@@ -59,8 +57,9 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
      * @param graph the current order of the nodes in the graph.
      *  
      */
-    public AbstractBarycenterPortDistributor(final LNode[][] graph) {
-        initializer = new Initializer(graph);
+    public AbstractBarycenterPortDistributor(final int numLayers) {
+        inLayerPorts = Lists.newArrayList();
+        nodePositions = new int[numLayers][];
     }
 
     /**
@@ -368,37 +367,23 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
         });
     }
 
-    @Override
-    public AbstractInitializer initializer() {
-        return initializer;
-    }
-
-    /** Defines what needs to be initialized traversing the graph. */
-    private final class Initializer extends AbstractInitializer {
         private int nPorts;
 
-        private Initializer(final LNode[][] graph) {
-            super(graph);
-            nPorts = 0;
-            inLayerPorts = Lists.newArrayList();
-            nodePositions = new int[graph.length][];
+        @Override
+    public void initAtLayerLevel(final int l, final LNode[][] nodeOrder) {
+        nodePositions[l] = new int[nodeOrder[l].length];
         }
 
         @Override
-        public void initAtLayerLevel(final int l) {
-            nodePositions[l] = new int[nodeOrder()[l].length];
-        }
-
-        @Override
-        public void initAtNodeLevel(final int l, final int n) {
-            LNode node = nodeOrder()[l][n];
+    public void initAtNodeLevel(final int l, final int n, final LNode[][] nodeOrder) {
+        LNode node = nodeOrder[l][n];
             node.id = n;
             nodePositions[l][n] = n;
         }
 
         @Override
-        public void initAtPortLevel(final int l, final int n, final int p) {
-            port(l, n, p).id = nPorts++;
+    public void initAtPortLevel(final int l, final int n, final int p, final LNode[][] nodeOrder) {
+        nodeOrder[l][n].getPorts().get(p).id = nPorts++;
         }
 
         @Override
@@ -406,5 +391,4 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
             portRanks = new float[nPorts];
             portBarycenter = new float[nPorts];
         }
-    }
 }

@@ -16,8 +16,8 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.BetweenLayerEdgeTwoNodeCrossingsCounter;
-import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -30,22 +30,12 @@ import com.google.common.collect.Lists;
  * 
  * @author alan
  */
-public class GreedyPortDistributor implements ISweepPortDistributor {
+public class GreedyPortDistributor implements ISweepPortDistributor, IInitializable {
 
     private CrossingsCounter crossingsCounter;
+    private int nPorts;
     private int[] portPos;
     private BetweenLayerEdgeTwoNodeCrossingsCounter hierarchicalCrossingsCounter;
-    private AbstractInitializer initializer;
-
-    /**
-     * Return new GreedyPortDistributor.
-     * 
-     * @param currentNodeOrder
-     *            the current order of the nodes
-     */
-    public GreedyPortDistributor(final LNode[][] currentNodeOrder) {
-        this.initializer = new Initializer(currentNodeOrder);
-    }
 
     @Override
     public boolean distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
@@ -148,28 +138,13 @@ public class GreedyPortDistributor implements ISweepPortDistributor {
     }
 
     @Override
-    public AbstractInitializer initializer() {
-        return initializer;
+    public void initAtNodeLevel(final int l, final int n, final LNode[][] nodeOrder) {
+        LNode node = nodeOrder[l][n];
+        nPorts += node.getPorts().size();
     }
 
-    /** Defines what needs to be initialized traversing the graph. */
-    private final class Initializer extends AbstractInitializer {
-        private int nPorts;
-
-        private Initializer(final LNode[][] graph) {
-            super(graph);
-            nPorts = 0;
-        }
-
-        @Override
-        public void initAtNodeLevel(final int l, final int n) {
-            LNode node = nodeOrder()[l][n];
-            nPorts += node.getPorts().size();
-        }
-
-        public void initAfterTraversal() {
-            portPos = new int[nPorts];
-        }
+    public void initAfterTraversal() {
+        portPos = new int[nPorts];
     }
 
 }
