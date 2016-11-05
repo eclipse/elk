@@ -185,26 +185,35 @@ public final class KlayLayered {
     }
     
     /**
-     * Processors can be marked as operating on the full hierarchy.
+     * Processors can be marked as operating on the full hierarchy using
+     * {@link ILayoutProcessor#operatesOnFullHierarchy()}.
      * 
      * All graphs are collected using a breadth first search and this list is reversed, so that for each graph, all
      * following graphs are on the same hierarchy level or higher, i.e. closer to the parent graph. Each graph then has
-     * a unique algorithm, which is comprised of a sequence of processors. The processors can vary depending on the
-     * characteristics of each graph. The list of graphs and their algorithms is then traversed. If a processor is not
-     * hierarchical it is simply executed. It it is hierarchical and this graph is not the root graph, this processor is
-     * skipped and the algorithm is paused until the processor has been executed on the root graph. Then the algorithm
-     * is continued, starting with the level lowest in the hierarchy, i.e. furthest away from the root graph.
+     * a unique configuration of ELK Layered, which is comprised of a sequence of processors. The processors can vary
+     * depending on the characteristics of each graph. The list of graphs and their algorithms is then traversed. If a
+     * processor is not hierarchical it is simply executed. If it it is hierarchical and this graph is not the root
+     * graph, this processor is skipped and the algorithm is paused until the processor has been executed on the root
+     * graph. Then the algorithm is continued, starting with the level lowest in the hierarchy, i.e. furthest away from
+     * the root graph.
      */
     private void hierarchicalLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
-        monitor.begin("Recursive Hierarchical layout", 2); // SUPPRESS CHECKSTYLE MagicNumber
-
         // Perform a reversed breadth first search: The graphs in the lowest hierarchy come first.
         Collection<LGraph> graphs = collectAllGraphsBottomUp(lgraph);
 
         // Get list of processors for each graph, since they can be different.
         // Iterators are used, so that processing of a graph can be paused and continued easily.
-        List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphsAndAlgorithms =
-                prepareForLayout(graphs);
+        int work = 0;
+        List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphsAndAlgorithms = new ArrayList<>();
+        for (LGraph g : graphs) {
+            graphConfigurator.prepareGraphForLayout(g);
+            List<ILayoutProcessor> processors = g.getProperty(InternalProperties.PROCESSORS);
+            work += processors.size();
+            Iterator<ILayoutProcessor> algorithm = processors.iterator();
+            graphsAndAlgorithms.add(Pair.of(g, algorithm));
+        }
+
+        monitor.begin("Recursive Hierarchical layout", work);
 
         // When the root graph has finished layout, the layout is complete.
         Iterator<ILayoutProcessor> rootProcessors = getProcessorsForRootGraph(graphsAndAlgorithms);
@@ -265,18 +274,6 @@ public final class KlayLayered {
     private Iterator<ILayoutProcessor> getProcessorsForRootGraph(
             final List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphsAndAlgorithms) {
         return graphsAndAlgorithms.get(graphsAndAlgorithms.size() - 1).getSecond();
-    }
-
-    private List<Pair<LGraph, Iterator<ILayoutProcessor>>> prepareForLayout(
-            final Collection<LGraph> graphs) {
-        List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphAlgorithms = new ArrayList<>();
-        for (LGraph g : graphs) {
-            graphConfigurator.prepareGraphForLayout(g);
-            List<ILayoutProcessor> processors = g.getProperty(InternalProperties.PROCESSORS);
-            Iterator<ILayoutProcessor> algorithm = processors.iterator();
-            graphAlgorithms.add(Pair.of(g, algorithm));
-        }
-        return graphAlgorithms;
     }
 
     private boolean isRoot(final LGraph graph) {
