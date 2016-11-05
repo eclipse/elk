@@ -215,6 +215,10 @@ final class GraphConfigurator {
                 intermediateProcessorCache.put(processor, processorImpl);
             }
 
+            assert !(slot.nonTopological() && processorImpl
+                    .operatesOnFullHierarchy()) : "Do not use hierarchical processor after start of any "
+                            + "non-topological processor (currently after start of phase 4)";
+
             // add the layout processor to the list of processors for this slot
             result.add(processorImpl);
         }
