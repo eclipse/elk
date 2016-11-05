@@ -16,10 +16,6 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.core.options.PortSide;
 
-/**
- * @author alan
- *
- */
 public class InLayerEdgeTestGraphCreator extends TestGraphCreator {
     // CHECKSTYLEOFF MagicNumber
     /**

@@ -18,7 +18,6 @@ package org.eclipse.elk.alg.layered.p3order.counting;
  * number of values in the left branch of the node.
  *
  * @author alan
- *
  */
 public class BinaryIndexedTree {
     private int[] binarySums;

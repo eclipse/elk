@@ -36,7 +36,6 @@ import org.eclipse.elk.alg.layered.p3order.counting.AbstractInitializer;
  * </ul>
  *
  * @author alan
- *
  */
 public class GreedySwitchHeuristic implements ICrossingMinimizationHeuristic {
 

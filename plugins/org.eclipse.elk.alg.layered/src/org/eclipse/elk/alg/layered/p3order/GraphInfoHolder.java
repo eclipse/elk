@@ -35,7 +35,6 @@ import com.google.common.collect.Lists;
  * </p>
  * 
  * @author alan
- *
  */
 public class GraphInfoHolder implements IInitializable {
     /** Raw graph data. */

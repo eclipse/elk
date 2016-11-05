@@ -24,7 +24,6 @@ import org.eclipse.elk.alg.layered.networksimplex.NEdge;
 import org.eclipse.elk.alg.layered.networksimplex.NGraph;
 import org.eclipse.elk.alg.layered.networksimplex.NNode;
 import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
-import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 
@@ -252,7 +251,7 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
                     
                     // keep vertical segments close to the node if they are inverted ports
                     if (srcPort.getSide() == PortSide.WEST 
-                            && LPort.getInOutputPredicate(PortType.OUTPUT).apply(srcPort)) {
+                            && LPort.OUTPUT_PREDICATE.apply(srcPort)) {
 
                         for (CNode n : lEdgeMap.get(lEdge)) {
                             if (n.hitbox.x < cNode.hitbox.x) {
@@ -272,7 +271,7 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
                     }
 
                     if (tgtPort.getSide() == PortSide.EAST 
-                            && LPort.getInOutputPredicate(PortType.INPUT).apply(tgtPort)) {
+                            && LPort.INPUT_PREDICATE.apply(tgtPort)) {
 
                         for (CNode n : lEdgeMap.get(lEdge)) {
                             if (n.hitbox.x > cNode.hitbox.x) {

@@ -36,7 +36,6 @@ import org.junit.runners.Parameterized.Parameters;
  * the same and all three two sided methods must behave the same.
  *
  * @author alan
- *
  */
 @RunWith(Parameterized.class)
 public class GreedySwitchProcessorTest extends TestGraphCreator {

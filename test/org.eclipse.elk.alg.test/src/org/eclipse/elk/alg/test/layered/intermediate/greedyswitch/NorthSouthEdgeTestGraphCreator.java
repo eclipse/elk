@@ -21,7 +21,6 @@ import org.eclipse.elk.core.options.PortSide;
  * Creates getGraph()s for north south edge testing.
  *
  * @author alan
- *
  */
 public class NorthSouthEdgeTestGraphCreator extends TestGraphCreator {
     // CHECKSTYLEOFF MagicNumber

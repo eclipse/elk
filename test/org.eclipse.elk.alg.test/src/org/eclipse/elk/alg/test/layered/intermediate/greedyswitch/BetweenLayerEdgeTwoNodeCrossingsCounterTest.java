@@ -27,7 +27,6 @@ import org.junit.Test;
  * Tests counting crosses of edges in between layers for neighbouring nodes.
  *
  * @author alan
- *
  */
 public class BetweenLayerEdgeTwoNodeCrossingsCounterTest extends TestGraphCreator {
     private BetweenLayerEdgeTwoNodeCrossingsCounter crossingCounter;

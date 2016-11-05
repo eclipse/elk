@@ -20,6 +20,8 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -272,7 +274,14 @@ public final class LNode extends LShape {
      * @return an iterable for the ports of given type
      */
     public Iterable<LPort> getPorts(final PortType portType) {
-        return Iterables.filter(ports, LPort.getInOutputPredicate(portType));
+        switch (portType) {
+        case INPUT:
+            return Iterables.filter(ports, LPort.INPUT_PREDICATE);
+        case OUTPUT:
+            return Iterables.filter(ports, LPort.OUTPUT_PREDICATE);
+        default:
+            return Collections.emptyList();
+        }
     }
     
     /**
@@ -282,14 +291,26 @@ public final class LNode extends LShape {
      * @return an iterable for the ports of given side
      */
     public Iterable<LPort> getPorts(final PortSide side) {
-        return Iterables.filter(ports, LPort.sidePredicate(side));
+        switch (side) {
+        case NORTH:
+            return Iterables.filter(ports, LPort.NORTH_PREDICATE);
+        case EAST:
+            return Iterables.filter(ports, LPort.EAST_PREDICATE);
+        case SOUTH:
+            return Iterables.filter(ports, LPort.SOUTH_PREDICATE);
+        case WEST:
+            return Iterables.filter(ports, LPort.WEST_PREDICATE);
+        default:
+            return Collections.emptyList();
+        }
     }
     
     /**
      * Returns a sublist view for all ports of given side. WARNING: Use this only after port sides are fixed! This is
      * currently the case after running the {@link org.eclipse.elk.alg.layered.intermediate.PortListSorter}.
-     * Non-structural changes to this list are reflected in the original list. Sublist indices can be cached using
-     * {@link LNode#cachePortSides()}.
+     * Non-structural changes to this list are reflected in the original list. A structural modification is any
+     * operation that adds or deletes one or more elements; merely setting the value of an element is not a structural
+     * modification. Sublist indices can be cached using {@link LNode#cachePortSides()}.
      * 
      * @param side
      *            a port side
@@ -313,14 +334,42 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of a given type and side.
      * 
-     * @param portType
-     *            a port type.
-     * @param side
-     *            a port side.
+     * @param portType a port type.
+     * @param side a port side.
      * @return an iterable for the ports of the given type and side.
      */
     public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {
-        return Iterables.filter(getPorts(side), LPort.getInOutputPredicate(portType));
+        Predicate<LPort> typePredicate = null;
+        switch (portType) {
+        case INPUT:
+            typePredicate = LPort.INPUT_PREDICATE;
+            break;
+        case OUTPUT:
+            typePredicate = LPort.OUTPUT_PREDICATE;
+            break;
+        }
+        
+        Predicate<LPort> sidePredicate = null;
+        switch (side) {
+        case NORTH:
+            sidePredicate = LPort.NORTH_PREDICATE;
+            break;
+        case EAST:
+            sidePredicate = LPort.EAST_PREDICATE;
+            break;
+        case SOUTH:
+            sidePredicate = LPort.SOUTH_PREDICATE;
+            break;
+        case WEST:
+            sidePredicate = LPort.WEST_PREDICATE;
+            break;
+        }
+        
+        if (typePredicate != null && sidePredicate != null) {
+            return Iterables.filter(ports, Predicates.and(typePredicate, sidePredicate));
+        } else {
+            return Collections.emptyList();
+        }
     }
     
     /**

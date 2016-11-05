@@ -1,16 +1,13 @@
-/*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+/*******************************************************************************
+ * Copyright (c) 2016 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
- *
- * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
- *   + Department of Computer Science
- *     + Real-Time and Embedded Systems Group
- *
- * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
- */
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.Set;
@@ -36,11 +33,16 @@ import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * This Processor maps an inner graph to its parent node. It must be run as the last non-hierarchical processor in a
- * compound layout.
- *
- * @author alan
- *
+ * This processor resizes a child graph to fit the parent node. It must be run as the last non-hierarchical processor in
+ * a hierarchical graph.
+ * 
+ * <dl>
+ * <dt>Precondition:</dt>
+ * <dd>graph with layout completed</dd>
+ * <dt>Postcondition:</dt>
+ * <dd>Graph is resized to fit parent node</dd>
+ * <dt>Slots:</dt>
+ * <dd>After phase 5.</dd>
  */
 public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
 
@@ -49,7 +51,7 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
      */
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Layout inner graph in parent node.", 1);
+        progressMonitor.begin("Resize child graph to fit parent.", 1);
         for (Layer layer : graph) {
             graph.getLayerlessNodes().addAll(layer.getNodes());
             layer.getNodes().clear();
@@ -120,7 +122,7 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
      *
      * <p>
      * Major parts of this method are adapted from
-     * {@link KimlUtil#resizeNode(de.cau.cs.kieler.core.kgraph.KNode, float, float, boolean)}.
+     * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.KNode, float, float, boolean, boolean)}.
      * </p>
      *
      * <p>

@@ -311,20 +311,20 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
     /**
      * Compares two {@link LNode}s based on their barycenter values.
      */
-    private final Comparator<LNode> barycenterStateComparator =
+    private final Comparator<LNode> barycenterStateComparator = 
         (n1, n2) -> {
-        BarycenterState s1 = stateOf(n1);
-        BarycenterState s2 = stateOf(n2);
-        if (s1.barycenter != null && s2.barycenter != null) {
-            return s1.barycenter.compareTo(s2.barycenter);
-        } else if (s1.barycenter != null) {
-            return -1;
-        } else if (s2.barycenter != null) {
-            return 1;
-        }
-        return 0;
-    };
-    private AbstractInitializer initializer;
+            BarycenterState s1 = stateOf(n1);
+            BarycenterState s2 = stateOf(n2);
+                if (s1.barycenter != null && s2.barycenter != null) {
+                    return s1.barycenter.compareTo(s2.barycenter);
+                } else if (s1.barycenter != null) {
+                    return -1;
+                } else if (s2.barycenter != null) {
+                    return 1;
+                }
+                return 0;
+        };
+    private IInitializable initializer;
 
     @Override
     public boolean minimizeCrossings(final LNode[][] order, final int freeLayerIndex,

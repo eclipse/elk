@@ -42,7 +42,6 @@ import com.google.common.collect.Lists;
  * cannot be used in every case. TODO consider moving all downward into base
  *
  * @author alan
- *
  */
 public class TestGraphCreator {
     private int portId = 0;

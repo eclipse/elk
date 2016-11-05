@@ -40,7 +40,6 @@ import com.google.common.collect.Lists;
  * Parameterized.class to create six different test cases.
  *
  * @author alan
- *
  */
 @RunWith(Parameterized.class)
 public class SwitchDeciderTest extends TestGraphCreator {

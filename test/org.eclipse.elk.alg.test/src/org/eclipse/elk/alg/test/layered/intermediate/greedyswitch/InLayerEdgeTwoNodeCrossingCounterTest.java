@@ -25,7 +25,6 @@ import org.junit.Test;
  * Tests {@link InLayerEdgeTwoNodeCrossingCounter}.
  *
  * @author alan
- *
  */
 public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphCreator {
     private CrossingsCounter leftCounter;
