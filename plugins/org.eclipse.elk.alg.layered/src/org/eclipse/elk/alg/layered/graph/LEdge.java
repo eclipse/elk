@@ -224,4 +224,39 @@ public final class LEdge extends LGraphElement {
         return this.labels;
     }
 
+    /**
+     * @param port
+     *            one of the ports of this edge.
+     * @return the other port of this edge. That is, if {@code port} is the source port of this edge, the target port is
+     *         returned and vice versa.
+     * @throws IllegalArgumentException
+     *             if {@code port} is neither target nor source of this edge.
+     */
+    public LPort getOther(final LPort port) {
+        if (port == source) {
+            return target;
+        } else if (port == target) {
+            return source;
+        } else {
+            throw new IllegalArgumentException("'port' must be either the source port or target port of the edge.");
+        }
+    }
+
+    /**
+     * @param node
+     *            one of the nodes of this edge.
+     * @return the other node of this edge. That is, if {@code node} is the source node of this edge, the target node is
+     *         returned and vice versa.
+     * @throws IllegalArgumentException
+     *             if {@code node} is neither target nor source of this edge.
+     */
+    public LNode getOther(final LNode node) {
+        if (node == source.getNode()) {
+            return target.getNode();
+        } else if (node == target.getNode()) {
+            return source.getNode();
+        } else {
+            throw new IllegalArgumentException("'node' must either be the source node or target node of the edge.");
+        }
+    }
 }

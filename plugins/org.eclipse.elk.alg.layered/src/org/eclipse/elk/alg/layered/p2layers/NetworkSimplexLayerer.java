@@ -304,7 +304,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
             // execute the network simplex algorithm on the (sub-)graph
             NetworkSimplex.forGraph(graph).withIterationLimit(iterLimit)
                     .withPreviousLayering(layeredGraph)
-                    .withBalancing(wideNodesStrategy == WideNodesStrategy.AGGRESSIVE)
+                    .withBalancing(wideNodesStrategy == WideNodesStrategy.OFF)
                     .execute(monitor.subTask(1));
 
             // the layers are store in the NNode's layer field.

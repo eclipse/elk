@@ -1,0 +1,80 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Kiel University - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.alg.force
+
+import org.eclipse.elk.alg.force.stress.StressLayoutProvider
+import org.eclipse.elk.alg.force.stress.StressMajorization.Dimension
+
+/**
+ * Declarations for the ELK Stress layout algorithm.
+ */
+bundle {
+    metadataClass properties.StressMetaDataProvider
+    idPrefix org.eclipse.elk.stress
+}
+
+algorithm stress(StressLayoutProvider) {
+    label "ELK Stress"
+    description
+        "Minimizes the stress within a layout using stress majorization.
+        Stress exists if the euclidean distance between a pair of 
+        nodes doesn't match their graph theoretic distance, that is, 
+        the shortest path between the two nodes.
+        The method allows to specify individual edge lengths."
+    metadataClass properties.StressOptions
+    category org.eclipse.elk.force
+    
+    supports org.eclipse.elk.interactive
+    supports fixed
+    supports dimension
+    supports epsilon
+    supports iterationLimit
+    supports desiredEdgeLength
+}
+
+option fixed: boolean {
+    label "Fixed Position"
+    description "Prevent that the node is moved by the layout algorithm."
+    default = false
+    targets nodes
+}
+
+option desiredEdgeLength: float {
+    label "Desired Edge Length"
+    description 
+        "Either specified for parent nodes or for individual edges, 
+        where the latter takes higher precedence."
+    default = 100f
+    targets parents, edges 
+}
+
+option dimension: Dimension {
+    label "Layout Dimension"
+    description "Dimensions that are permitted to be altered during layout."
+    default = Dimension.XY
+    targets parents
+}
+
+option epsilon: float {
+    label "Stress Epsilon"
+    description "Termination criterion for the iterative process."
+    default = 10e-4f
+    targets parents
+} 
+
+option iterationLimit: int {
+    label "Iteration Limit"
+    description 
+        "Maximum number of performed iterations. Takes higher
+        precedence than 'epsilon'."
+    default = Integer.MAX_VALUE
+    targets parents
+}

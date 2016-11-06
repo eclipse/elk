@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.force.graph;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
@@ -31,9 +31,9 @@ public final class FEdge extends MapPropertyHolder {
     private static final long serialVersionUID = 4387555754824186467L;
     
     /** the bend points of the edge. */
-    private List<FBendpoint> bendpoints = new LinkedList<FBendpoint>();
+    private List<FBendpoint> bendpoints = new ArrayList<>();
     /** the labels of the edge. */
-    private List<FLabel> labels = new LinkedList<FLabel>();
+    private List<FLabel> labels = new ArrayList<>();
     /** the source node of the edge. */
     private FNode source;
     /** the target node of the edge. */

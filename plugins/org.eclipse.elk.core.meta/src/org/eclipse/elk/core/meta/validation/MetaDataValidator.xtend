@@ -30,10 +30,10 @@ class MetaDataValidator extends AbstractMetaDataValidator {
 	
     @Check
     def void checkDuplicateMemberId(MdBundle bundle) {
-        bundle.members.checkDuplicatePropertyIds
+        bundle.members.checkDuplicateIds
     }
     
-    def void checkDuplicatePropertyIds(Iterable<? extends MdBundleMember> elements) {
+    private def void checkDuplicateIds(Iterable<? extends MdBundleMember> elements) {
         val Map<String, MdAlgorithm> algorithmIds = newHashMap
         val Map<String, MdCategory> categoryIds = newHashMap
         val Map<String, MdOption> propertyIds = newHashMap
@@ -44,28 +44,28 @@ class MetaDataValidator extends AbstractMetaDataValidator {
                 MdCategory: categoryIds.checkExistsAndRemember(element)
                 MdGroup: {
                     groupIds.checkExistsAndRemember(element)
-                    element.children.checkDuplicatePropertyIds
+                    element.children.checkDuplicateIds
                 }
                 MdOption: propertyIds.checkExistsAndRemember(element)
             }
         }
     }
     
-    def  <T extends MdBundleMember> void checkExistsAndRemember(Map<String, T> map, T element) {
+    private def  <T extends MdBundleMember> void checkExistsAndRemember(Map<String, T> map, T element) {
         if (map.containsKey(element.name)) {
                 val otherMember = map.get(element.name)
                 if (otherMember !== null) {
-                    duplicateName(otherMember)
+                    duplicateId(otherMember)
                     // The first occurrence should be marked only once
                     map.put(element.name, null)
                 }
-                duplicateName(element)
+                duplicateId(element)
             } else {
                 map.put(element.name, element)
             }
     }
     
-    def void duplicateName(MdBundleMember member) {
+    private def void duplicateId(MdBundleMember member) {
         error("The id '" + member.name + "' is already used.", member, MD_BUNDLE_MEMBER__NAME)
     }
 	

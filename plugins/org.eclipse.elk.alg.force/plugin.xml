@@ -16,6 +16,9 @@
       <provider
             class="org.eclipse.elk.alg.force.properties.ForceMetaDataProvider">
       </provider>
+      <provider
+            class="org.eclipse.elk.alg.force.properties.StressMetaDataProvider">
+      </provider>
       
    </extension>
 

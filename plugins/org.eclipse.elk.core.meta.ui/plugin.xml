@@ -91,7 +91,7 @@
 		<page
 			class="org.eclipse.elk.core.meta.ui.MetaDataExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
 			id="org.eclipse.elk.core.meta.MetaData"
-			name="MetaData">
+			name="ELK Meta Data">
 			<keywordReference id="org.eclipse.elk.core.meta.ui.keyword_MetaData"/>
 		</page>
 		<page

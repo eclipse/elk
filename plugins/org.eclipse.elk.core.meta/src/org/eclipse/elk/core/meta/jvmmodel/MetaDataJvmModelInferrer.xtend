@@ -14,6 +14,7 @@ import com.google.common.collect.Iterables
 import com.google.inject.Inject
 import java.util.EnumSet
 import java.util.LinkedList
+import java.util.List
 import org.eclipse.elk.core.meta.metaData.MdAlgorithm
 import org.eclipse.elk.core.meta.metaData.MdBundle
 import org.eclipse.elk.core.meta.metaData.MdBundleMember
@@ -38,7 +39,6 @@ import org.eclipse.xtext.util.Strings
 import org.eclipse.xtext.xbase.jvmmodel.AbstractModelInferrer
 import org.eclipse.xtext.xbase.jvmmodel.IJvmDeclaredTypeAcceptor
 import org.eclipse.xtext.xbase.jvmmodel.JvmTypesBuilder
-import java.util.List
 
 /**
  * Infers a JVM model from the source model. 
@@ -142,13 +142,16 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             visibility = JvmVisibility.PUBLIC
             static = true
             final = true
-            deprecated = option.deprecated
             initializer = '''
                 new «Property»<«option.type.asWrapperTypeIfPrimitive ?: typeRef(Object)»>(
                         «option.qualifiedName.toCodeString»«IF option.hasDefaultOrBounds»,
                         «IF option.defaultValue !== null»«option.defaultConstantName»«ELSE»null«ENDIF»,
                         «IF option.lowerBound !== null»«option.lowerBoundConstantName»«ELSE»null«ENDIF»,
                         «IF option.upperBound !== null»«option.upperBoundConstantName»«ELSE»null«ENDIF»«ENDIF»)'''
+            if (option.deprecated) {
+                annotations += annotationRef(Deprecated)
+                deprecated = true
+            }
             documentation = option.description.trimLines
         ]
     }
@@ -357,7 +360,6 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             visibility = JvmVisibility.PUBLIC
             static = true
             final = true
-            deprecated = support.option.deprecated
             initializer = 
                 if (support.value === null) {
                     '''«typeRef(support.option.bundle.qualifiedTargetClass)».«support.option.constantName»'''
@@ -366,6 +368,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                             «typeRef(support.option.bundle.qualifiedTargetClass)».«support.option.constantName»,
                             «support.option.defaultConstantName»)'''
                 }
+            if (support.option.deprecated) {
+                annotations += annotationRef(Deprecated)
+                deprecated = true
+            }
             documentation = '''Property constant to access «support.option.label ?: support.option.name» from within the layout algorithm code.'''
         ]
     }
@@ -445,7 +451,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 case float.name:    return "FLOAT"
                 // TODO it may be better to prevent double from the start
                 case double.name:   return "FLOAT"
-            } 
+            }
             
             JvmGenericType: switch jvmType.identifier {
                 case Boolean.canonicalName:   return "BOOLEAN"
