@@ -22,14 +22,5 @@ public enum GreedySwitchType {
     TWO_SIDED,
     /** Do not use greedy switch. */
     OFF;
-
-    /**
-     * Only considers crossings to one side of the free layer.
-     * 
-     * @return true if only considers two layers.
-     */
-    public boolean isOneSided() {
-        return this == ONE_SIDED;
-    }
 }
 

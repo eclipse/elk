@@ -86,6 +86,5 @@ class SweepCopy {
                 node.getPorts().addAll(portOrders.get(i).get(j));
             }
         }
-
     }
 }

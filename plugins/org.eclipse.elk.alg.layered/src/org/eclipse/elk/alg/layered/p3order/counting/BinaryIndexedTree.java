@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,9 +72,7 @@ public class BinaryIndexedTree {
     }
 
     /**
-     * Return size of tree.
-     *
-     * @return size
+     * @return size of tree.
      */
     public int size() {
         return size;
@@ -110,9 +108,7 @@ public class BinaryIndexedTree {
     }
 
     /**
-     * Returns true if this tree is empty.
-     * 
-     * @return
+     * @return true if this tree is empty
      */
     public boolean isEmpty() {
         return size == 0;

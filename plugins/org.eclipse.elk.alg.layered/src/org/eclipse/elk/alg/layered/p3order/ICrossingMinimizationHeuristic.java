@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchHeuristic;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 
 /**
@@ -33,7 +34,9 @@ public interface ICrossingMinimizationHeuristic extends IInitializable {
     boolean alwaysImproves();
 
     /**
-     * Set the order in the first layer (with regard to the sweep direction) according to how the heuristic works.
+     * Set the order in the first fixed layer visited in the sweep according to how the heuristic works. As an example,
+     * {@link BarycenterHeuristic#setFirstLayerOrder(LNode[][], boolean)} randomizes order, while
+     * {@link GreedySwitchHeuristic} does nothing.
      *
      * @param order
      *            the current order of the nodes.

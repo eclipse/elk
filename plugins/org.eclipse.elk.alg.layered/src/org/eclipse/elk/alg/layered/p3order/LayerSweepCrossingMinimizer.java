@@ -73,7 +73,7 @@ import com.google.common.collect.Sets;
 public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     /** Collected information about each graph. */
     private List<GraphInfoHolder> graphInfoHolders;
-    /** We only need to save the orders of graphs if there node order actually changed. */
+    /** We only need to save the orders of graphs if their node order actually changed. */
     private Set<GraphInfoHolder> graphsWhoseNodeOrderChanged;
     private Random random;
     private long randomSeed;
@@ -138,6 +138,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     private void setPortOrderOnParentGraph(final GraphInfoHolder gData) {
         if (gData.hasExternalPorts()) {
             SweepCopy bestSweep = gData.getBestSweep();
+            // Sort ports on left and right side of the parent node
             sortPortsByDummyPositionsInLastLayer(bestSweep.nodes(), gData.parent(), true);
             sortPortsByDummyPositionsInLastLayer(bestSweep.nodes(), gData.parent(), false);
             gData.parent().setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
@@ -204,7 +205,7 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /*
      * We only need to count crossings below the current graph and also only if they are marked as to be processed
-     * hierarchically
+     * hierarchically.
      */
     private int countCurrentNumberOfCrossings(final GraphInfoHolder currentGraph) {
         int totalCrossings = 0;
@@ -278,20 +279,20 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     }
 
     private void sortPortsByDummyPositionsInLastLayer(final LNode[][] nodeOrder, final LNode parent,
-            final boolean isForwardSweep) {
-        int endIndex = endIndex(isForwardSweep, nodeOrder.length);
+            final boolean onRightMostLayer) {
+        int endIndex = endIndex(onRightMostLayer, nodeOrder.length);
         LNode[] lastLayer = nodeOrder[endIndex];
         if (!isExternalPortDummy(lastLayer[0])) {
             return;
         }
 
-        int j = firstIndex(isForwardSweep, lastLayer.length);
+        int j = firstIndex(onRightMostLayer, lastLayer.length);
         List<LPort> ports = parent.getPorts();
         for (int i = 0; i < ports.size(); i++) {
             LPort port = ports.get(i);
-            if (isOnEndOfSweepSide(port, isForwardSweep) && isHierarchical(port)) {
+            if (isOnEndOfSweepSide(port, onRightMostLayer) && isHierarchical(port)) {
                 ports.set(i, originPort(lastLayer[j]));
-                j += next(isForwardSweep);
+                j += next(onRightMostLayer);
             }
         }
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class GraphInfoHolder implements IInitializable {
     /** Saved node orders. */
     private LNode[][] currentNodeOrder;
     private SweepCopy currentlyBestNodeAndPortOrder;
-    private SweepCopy bestNodeNPortOrder;
+    private SweepCopy bestNodeAndPortOrder;
     private int[] portPositions;
 
     /** Processing type information. */
@@ -150,7 +150,7 @@ public class GraphInfoHolder implements IInitializable {
      * @return the bestNodeNPortOrder
      */
     public SweepCopy bestNodeNPortOrder() {
-        return bestNodeNPortOrder;
+        return bestNodeAndPortOrder;
     }
 
     /**
@@ -158,7 +158,7 @@ public class GraphInfoHolder implements IInitializable {
      *            the bestNodeNPortOrder to set
      */
     public void setBestNodeNPortOrder(final SweepCopy bestNodeNPortOrder) {
-        this.bestNodeNPortOrder = bestNodeNPortOrder;
+        this.bestNodeAndPortOrder = bestNodeNPortOrder;
     }
 
     /**

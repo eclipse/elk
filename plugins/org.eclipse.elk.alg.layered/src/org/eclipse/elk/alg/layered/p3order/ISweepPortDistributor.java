@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public interface ISweepPortDistributor extends IInitializable {
         if (cmt == CrossMinType.TWO_SIDED_GREEDY_SWITCH) {
             return new GreedyPortDistributor();
         } else if (r.nextBoolean()) {
+            // Since both methods lead to different results, but neither is clearly better, we choose randomly.
             return new NodeRelativePortDistributor(currentOrder.length);
         } else {
             return new LayerTotalPortDistributor(currentOrder.length);
