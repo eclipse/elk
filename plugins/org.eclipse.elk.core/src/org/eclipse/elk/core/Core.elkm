@@ -18,7 +18,6 @@ import org.eclipse.elk.core.util.BoxLayoutProvider
 import org.eclipse.elk.core.util.ExclusiveBounds
 import org.eclipse.elk.core.util.FixedLayoutProvider
 import org.eclipse.elk.core.util.RandomLayoutProvider
-import java.util.ArrayList
 import org.eclipse.elk.core.util.nodespacing.Spacing
 import org.eclipse.elk.core.util.BoxLayoutProvider.PackingMode
 

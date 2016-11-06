@@ -33,6 +33,8 @@ import com.google.common.collect.Lists;
  * class for distributing the ports of nodes where the order of ports is not fixed,
  * which has to be done as the last step of each crossing minimization processor.
  * There are different ways to determine port ranks, therefore that is done in concrete subclasses.
+ * <p>
+ * Must be initialized using {@link IInitializable#init(List, LNode[][])}.
  *
  * @author cds
  * @author ima
@@ -51,11 +53,11 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
     private List<LPort> inLayerPorts;
 
     /**
-     * Constructs a port distributor for the given array of port ranks. All ports are required to be
-     * assigned ids in the range of the given array.
+     * Constructs a port distributor for the given array of port ranks. 
+     * All ports are required to be assigned ids in the range of the given array.
      *
-     * @param graph the current order of the nodes in the graph.
-     *  
+     * @param numLayers
+     *            the number of layers in the graph.
      */
     public AbstractBarycenterPortDistributor(final int numLayers) {
         inLayerPorts = Lists.newArrayList();

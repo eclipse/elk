@@ -250,8 +250,7 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
                         .create();
                     
                     // keep vertical segments close to the node if they are inverted ports
-                    if (srcPort.getSide() == PortSide.WEST 
-                            && LPort.OUTPUT_PREDICATE.apply(srcPort)) {
+                    if (srcPort.getSide() == PortSide.WEST && LPort.OUTPUT_PREDICATE.apply(srcPort)) {
 
                         for (CNode n : lEdgeMap.get(lEdge)) {
                             if (n.hitbox.x < cNode.hitbox.x) {
@@ -270,8 +269,7 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
                         }
                     }
 
-                    if (tgtPort.getSide() == PortSide.EAST 
-                            && LPort.INPUT_PREDICATE.apply(tgtPort)) {
+                    if (tgtPort.getSide() == PortSide.EAST && LPort.INPUT_PREDICATE.apply(tgtPort)) {
 
                         for (CNode n : lEdgeMap.get(lEdge)) {
                             if (n.hitbox.x > cNode.hitbox.x) {

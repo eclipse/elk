@@ -19,7 +19,6 @@ import java.util.Random;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.PortType;
 
@@ -323,7 +322,6 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
                 }
                 return 0;
         };
-    private IInitializable initializer;
 
     @Override
     public boolean minimizeCrossings(final LNode[][] order, final int freeLayerIndex,

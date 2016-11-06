@@ -33,8 +33,8 @@ public final class NodeRelativePortDistributor extends AbstractBarycenterPortDis
     /**
      * Constructs a node-relative port distributor.
      * 
-     * @param graph
-     *            The current order of the node in the graph.
+     * @param numLayers
+     *            The number of layers in the graph.
      */
     public NodeRelativePortDistributor(final int numLayers) {
         super(numLayers);

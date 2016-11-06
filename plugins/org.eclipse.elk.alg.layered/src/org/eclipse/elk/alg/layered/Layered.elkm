@@ -35,85 +35,85 @@ bundle {
 }
 
 algorithm layered(LayeredLayoutProvider) {
-    label "ELK Layered"    
-    description
-        "Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
-        possible into one direction by placing nodes into subsequent layers. This implementation
-        supports different routing styles (straight, orthogonal, splines); if orthogonal routing is
-        selected, arbitrary port constraints are respected, thus enabling the layout of block
-        diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
-        compound graphs with cross-hierarchy edges is supported when the respective option is
-        activated on the top level."
-    metadataClass properties.LayeredOptions
-    category org.eclipse.elk.layered
-    features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
-    preview images/layered.png
-    supports org.eclipse.elk.spacing.node = 20
-    supports org.eclipse.elk.spacing.border = 12
-    supports org.eclipse.elk.spacing.port
-    supports org.eclipse.elk.spacing.^label
-    supports org.eclipse.elk.priority = 0
-    supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
-    supports org.eclipse.elk.port.borderOffset = 0
-    supports org.eclipse.elk.randomSeed = 1
-    supports org.eclipse.elk.aspectRatio = 1.6f
-    supports org.eclipse.elk.noLayout
-    supports org.eclipse.elk.portConstraints
-    supports org.eclipse.elk.port.side
-    supports org.eclipse.elk.debugMode
-    supports org.eclipse.elk.alignment
-    supports org.eclipse.elk.layoutHierarchy // TODO deprecated
-    supports org.eclipse.elk.hierarchyHandling
-    supports org.eclipse.elk.separateConnectedComponents = true
-    supports org.eclipse.elk.insideSelfLoops.activate
-    supports org.eclipse.elk.insideSelfLoops.yo
-    supports org.eclipse.elk.nodeSize.constraints
-    supports org.eclipse.elk.nodeSize.options
-    supports org.eclipse.elk.direction = Direction.UNDEFINED
-    supports org.eclipse.elk.nodeLabels.placement
-    supports org.eclipse.elk.portLabels.placement
-    supports org.eclipse.elk.portAlignment.basic = PortAlignment.JUSTIFIED
-    supports org.eclipse.elk.portAlignment.north
-    supports org.eclipse.elk.portAlignment.south
-    supports org.eclipse.elk.portAlignment.west
-    supports org.eclipse.elk.portAlignment.east
-    supports org.eclipse.elk.alg.layered.spacing.edgeNodeSpacingFactor
+	label "ELK Layered"
+	description
+		"Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
+		possible into one direction by placing nodes into subsequent layers. This implementation
+		supports different routing styles (straight, orthogonal, splines); if orthogonal routing is
+		selected, arbitrary port constraints are respected, thus enabling the layout of block
+		diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
+		compound graphs with cross-hierarchy edges is supported when the respective option is
+		activated on the top level."
+	metadataClass properties.LayeredOptions
+	category org.eclipse.elk.layered
+	features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
+	preview images/layered.png
+	supports org.eclipse.elk.spacing.node = 20
+	supports org.eclipse.elk.spacing.border = 12
+	supports org.eclipse.elk.spacing.port
+	supports org.eclipse.elk.spacing.^label
+	supports org.eclipse.elk.priority = 0
+	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
+	supports org.eclipse.elk.port.borderOffset = 0
+	supports org.eclipse.elk.randomSeed = 1
+	supports org.eclipse.elk.aspectRatio = 1.6f
+	supports org.eclipse.elk.noLayout
+	supports org.eclipse.elk.portConstraints
+	supports org.eclipse.elk.port.side
+	supports org.eclipse.elk.debugMode
+	supports org.eclipse.elk.alignment
+	supports org.eclipse.elk.layoutHierarchy // TODO deprecated
+	supports org.eclipse.elk.hierarchyHandling
+	supports org.eclipse.elk.separateConnectedComponents = true
+	supports org.eclipse.elk.insideSelfLoops.activate
+	supports org.eclipse.elk.insideSelfLoops.yo
+	supports org.eclipse.elk.nodeSize.constraints
+	supports org.eclipse.elk.nodeSize.options
+	supports org.eclipse.elk.direction = Direction.UNDEFINED
+	supports org.eclipse.elk.nodeLabels.placement
+	supports org.eclipse.elk.portLabels.placement
+	supports org.eclipse.elk.portAlignment.basic = PortAlignment.JUSTIFIED
+	supports org.eclipse.elk.portAlignment.north
+	supports org.eclipse.elk.portAlignment.south
+	supports org.eclipse.elk.portAlignment.west
+	supports org.eclipse.elk.portAlignment.east
+	supports org.eclipse.elk.alg.layered.spacing.edgeNodeSpacingFactor
     supports org.eclipse.elk.alg.layered.spacing.edgeSpacingFactor
-    supports unnecessaryBendpoints
-    supports org.eclipse.elk.alg.layered.layering.strategy
-    supports org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
-    supports thoroughness
-    supports org.eclipse.elk.alg.layered.layering.layerConstraint
-    supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
-    supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
+	supports unnecessaryBendpoints
+	supports org.eclipse.elk.alg.layered.layering.strategy
+	supports org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
+	supports thoroughness
+	supports org.eclipse.elk.alg.layered.layering.layerConstraint
+	supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
+	supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
+	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch
+	supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
+	supports mergeEdges
+	supports mergeHierarchyEdges
+	supports interactiveReferencePoint
+	supports org.eclipse.elk.alg.layered.nodePlacement.strategy
+	supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
+	supports edgeLabelSideSelection
+	supports feedbackEdges
+	supports org.eclipse.elk.alg.layered.spacing.inLayerSpacingFactor
+	supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
+	supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
+	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopPlacement
+	supports contentAlignment
+	supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
+	supports org.eclipse.elk.alg.layered.compaction.postCompaction.strategy
+	supports org.eclipse.elk.alg.layered.compaction.postCompaction.constraints
+	supports org.eclipse.elk.alg.layered.compaction.connectedComponents
+	supports org.eclipse.elk.alg.layered.highDegreeNodes.treatment
+	supports org.eclipse.elk.alg.layered.highDegreeNodes.threshold
+	supports org.eclipse.elk.alg.layered.highDegreeNodes.treeHeight
+	supports org.eclipse.elk.nodeSize.minimum
+	supports org.eclipse.elk.nodeSize.minWidth
+	supports org.eclipse.elk.nodeSize.minHeight
+	supports org.eclipse.elk.junctionPoints
+	supports org.eclipse.elk.edge.thickness
+	supports org.eclipse.elk.edgeLabels.placement
     supports org.eclipse.elk.alg.layered.crossingMinimization.hierarchicalSweepiness
-    supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch
-    supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
-    supports mergeEdges
-    supports mergeHierarchyEdges
-    supports interactiveReferencePoint
-    supports org.eclipse.elk.alg.layered.nodePlacement.strategy
-    supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
-    supports edgeLabelSideSelection
-    supports feedbackEdges
-    supports org.eclipse.elk.alg.layered.spacing.inLayerSpacingFactor
-    supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
-    supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
-    supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopPlacement
-    supports contentAlignment
-    supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
-    supports org.eclipse.elk.alg.layered.compaction.postCompaction.strategy
-    supports org.eclipse.elk.alg.layered.compaction.postCompaction.constraints
-    supports org.eclipse.elk.alg.layered.compaction.connectedComponents
-    supports org.eclipse.elk.alg.layered.highDegreeNodes.treatment
-    supports org.eclipse.elk.alg.layered.highDegreeNodes.threshold
-    supports org.eclipse.elk.alg.layered.highDegreeNodes.treeHeight
-    supports org.eclipse.elk.nodeSize.minimum
-    supports org.eclipse.elk.nodeSize.minWidth
-    supports org.eclipse.elk.nodeSize.minHeight
-    supports org.eclipse.elk.junctionPoints
-    supports org.eclipse.elk.edge.thickness
-    supports org.eclipse.elk.edgeLabels.placement
     supports org.eclipse.elk.port.index
     supports org.eclipse.elk.commentBox
     supports org.eclipse.elk.hypernode

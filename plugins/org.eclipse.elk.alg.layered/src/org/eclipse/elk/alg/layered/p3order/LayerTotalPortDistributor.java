@@ -26,6 +26,9 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public final class LayerTotalPortDistributor extends AbstractBarycenterPortDistributor {
     
+    /**
+     * Constructs a layer-total port distributor.
+     */
     public LayerTotalPortDistributor(final int numLayers) {
         super(numLayers);
     }
