@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 2014, 2015 alan and others.
+ * Copyright (c) 2016, Kiel University.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,9 +95,8 @@ public class GreedyPortDistributor implements ISweepPortDistributor, IInitializa
     /**
      * Initialize crossings counter for given layers and side.
      */
-    private void initForLayers(final LNode[] leftLayer, final LNode[] rightLayer, final int[] portPositions) {
-        crossingsCounter = new CrossingsCounter(portPositions);
-        crossingsCounter.initForCountingBetweenOnSide(leftLayer, rightLayer);
+    private void initForLayers(final LNode[] leftLayer, final LNode[] rightLayer) {
+        crossingsCounter.initForCountingBetween(leftLayer, rightLayer);
     }
 
     private boolean switchingDecreasesCrossings(final LPort upperPort, final LPort lowerPort, final LNode node,
@@ -127,11 +126,10 @@ public class GreedyPortDistributor implements ISweepPortDistributor, IInitializa
 
     private void initialize(final LNode[][] nodeOrder, final int currentIndex, final boolean isForwardSweep) {
         if (isForwardSweep && currentIndex > 0) {
-            initForLayers(nodeOrder[currentIndex - 1], nodeOrder[currentIndex], portPos);
+            initForLayers(nodeOrder[currentIndex - 1], nodeOrder[currentIndex]);
         } else if (!isForwardSweep && currentIndex < nodeOrder.length - 1) {
-            initForLayers(nodeOrder[currentIndex], nodeOrder[currentIndex + 1], portPos);
+            initForLayers(nodeOrder[currentIndex], nodeOrder[currentIndex + 1]);
         } else {
-            crossingsCounter = new CrossingsCounter(portPos);
             crossingsCounter.initPortPositionsForInLayerCrossings(nodeOrder[currentIndex],
                     isForwardSweep ? PortSide.WEST : PortSide.EAST);
         }
@@ -143,8 +141,10 @@ public class GreedyPortDistributor implements ISweepPortDistributor, IInitializa
         nPorts += node.getPorts().size();
     }
 
+    @Override
     public void initAfterTraversal() {
         portPos = new int[nPorts];
+        crossingsCounter = new CrossingsCounter(portPos);
     }
 
 }

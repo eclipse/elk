@@ -12,12 +12,9 @@ package org.eclipse.elk.alg.layered.p3order.counting;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -31,8 +28,43 @@ import org.eclipse.elk.core.util.Pair;
 import com.google.common.collect.Lists;
 
 /**
- * Counts in-layer and between layer crossings. Does not count North-South crossings.
- *
+ * Counts in-layer and between layer crossings. Does not count North-South crossings. Before usage, each port must have
+ * a unique id and each node an id unique for it's layer.
+ * <p>
+ * For counting in-layer crossings with {@link #countInLayerCrossingsOnSide(LNode[], PortSide)}, we step through each
+ * edge and add the position of the end of the edge to a sorted list. Each time we meet the same edge again, we delete
+ * it from the list again. Each time we add an edge end position, the number of crossings is the index of the this
+ * position in the sorted list. The implementation of this list guarantees that adding, deleting and finding indices is
+ * log n.
+ * 
+ * <pre>
+ *           List
+ * 0--       [2]
+ * 1-+-|     [2,3]
+ *   | |
+ * 2-- |     [3]
+ * 3----     []
+ * </pre>
+ * 
+ * Between-layer crossings become in-layer crossings if we fold and rotate the right layer downward and pretend that we
+ * are in a single layer. For example:
+ * 
+ * <pre>
+ * 0  3
+ *  \/
+ *  /\
+ * 1  2
+ * becomes:
+ * 0--
+ * 1-+-|
+ *   | |
+ * 2-- |
+ * 3----
+ * Ta daaa!
+ * </pre>
+ * 
+ * This is used in {@link #countCrossingsBetweenLayers(LNode[], LNode[])}.
+ * 
  * @author alan
  */
 public final class CrossingsCounter {
@@ -41,7 +73,7 @@ public final class CrossingsCounter {
     private BinaryIndexedTree indexTree;
     private final Deque<Integer> ends;
 
-    private Map<LNode, Integer> nodeCardinalities;
+    private int[] nodeCardinalities;
 
     /**
      * Create crossings counter.
@@ -52,26 +84,8 @@ public final class CrossingsCounter {
     public CrossingsCounter(final int[] portPositions) {
         this.portPositions = portPositions;
         ends = new ArrayDeque<>();
-        nodeCardinalities = new HashMap<>();
     }
 
-    /*
-     * Between-layer crossings become in-layer crossings if we fold and rotate the right layer downward and
-     * pretend that we are in a single layer. For example:
-     * <pre>
-     * 0  3
-     *  \/
-     *  /\
-     * 1  2
-     * becomes:
-     * 0--
-     * 1-+-|
-     *   | |
-     * 2-- |
-     * 3----
-     * Ta daaa!
-     * </pre>
-    */
     /**
      * Count in-layer and between-layer crossings between the two given layers.
      *
@@ -88,21 +102,6 @@ public final class CrossingsCounter {
         return countCrossingsOnPorts(ports);
     }
 
-    /*
-     * The aim was to count in-layer edges in O(n log n). We step through each edge and add the
-     * position of the end of the edge to a sorted list. Each time we meet the same edge again,
-     * we delete it from the list again. Each time we add an edge end position, the number of crossings
-     * is the index of the this position in the sorted list. The implementation of this list
-     * guarantees that adding, deleting and finding indices is log n.
-     * @formatter:off
-     *           List
-     * 0--       [2]
-     * 1-+-|     [2,3]
-     *   | |
-     * 2-- |     [3]
-     * 3----     []
-     * @formatter:on
-     */
     /**
      * Only count in-layer crossings on the given side.
      *
@@ -120,7 +119,9 @@ public final class CrossingsCounter {
 
     /**
      * Count crossings caused between edges incident to upperPort and lowerPort and when the order of these two is
-     * switched.
+     * switched. Initialize before use with {@link #initForCountingBetween(LNode[], LNode[])} when not on either end of
+     * a graph. If you do want to use this to the left of the leftmost or to the right of the rightmost layer, use
+     * {@link #initPortPositionsForInLayerCrossings(LNode[], PortSide)}.
      * 
      * @param upperPort
      *            the upper port
@@ -146,7 +147,7 @@ public final class CrossingsCounter {
 
     /**
      * Count crossings caused between edges incident to upperNode and lowerNode and when the order of these two is
-     * switched.
+     * switched. Initialize before use with {@link #initPortPositionsForInLayerCrossings(LNode[], PortSide)}.
      * 
      * @param upperNode
      *            the upper node
@@ -173,20 +174,24 @@ public final class CrossingsCounter {
     }
 
     /**
-     * Initializes the counter for counting crosses on a specific side of two layers.
+     * Initializes the counter for counting crosses on a specific side of two layers. Use this method if only if you do
+     * not need to count all crossings, such as with {@link #countCrossingsBetweenPortsInBothOrders(LPort, LPort)}.
      *
      * @param leftLayerNodes
      *            Nodes in western layer.
      * @param rightLayerNodes
      *            Nodes in eastern layer.
      */
-    public void initForCountingBetweenOnSide(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
+    public void initForCountingBetween(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
         List<LPort> ports = setPositionsCounterClockwise(leftLayerNodes, rightLayerNodes);
         indexTree = new BinaryIndexedTree(ports.size());
     }
 
     /**
-     * Initializes the counter for counting in-layer crossings on a specific side of a single layer.
+     * Initializes the counter for counting in-layer crossings on a specific side of a single layer. Use this method if
+     * only if you do not need to count all in layer crossings, such as with
+     * {@link #countCrossingsBetweenPortsInBothOrders(LPort, LPort)} on one end of a graph or
+     * {@link #countInLayerCrossingsBetweenNodesInBothOrders(LNode, LNode, PortSide)} in the middle.
      * 
      * @param nodes
      *            The order of the nodes in the layer
@@ -230,19 +235,19 @@ public final class CrossingsCounter {
     public void switchNodes(final LNode wasUpperNode, final LNode wasLowerNode, final PortSide side) {
         Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(wasUpperNode, side);
         for (LPort port : ports) {
-            portPositions[port.id] = positionOf(port) + nodeCardinalities.get(wasLowerNode);
+            portPositions[port.id] = positionOf(port) + nodeCardinalities[wasLowerNode.id];
         }
         
         ports = CrossMinUtil.inNorthSouthEastWestOrder(wasLowerNode, side);
         for (LPort port : ports) {
-            portPositions[port.id] =  positionOf(port) - nodeCardinalities.get(wasUpperNode);
+            portPositions[port.id] = positionOf(port) - nodeCardinalities[wasUpperNode.id];
         }
     }
 
     private List<LPort> connectedInLayerPortsSortedByPosition(final LNode upperNode, final LNode lowerNode,
             final PortSide side) {
         Set<LPort> ports = new TreeSet<>((a, b) -> Integer.compare(positionOf(a), positionOf(b)));
-        for (LNode node : Arrays.asList(upperNode, lowerNode)) {
+        for (LNode node : new LNode[] { upperNode, lowerNode }) {
             for (LPort port : CrossMinUtil.inNorthSouthEastWestOrder(node, side)) {
                 for (LEdge edge : port.getConnectedEdges()) {
                     if (!edge.isSelfLoop()) {
@@ -300,7 +305,6 @@ public final class CrossingsCounter {
         for (LPort port : ports) {
             indexTree.removeAll(positionOf(port));
             int numBetweenLayerEdges = 0;
-            int size = indexTree.size();
             // First get crossings for all edges.
             for (LEdge edge : port.getConnectedEdges()) {
                 if (isInLayer(edge)) {
@@ -313,7 +317,7 @@ public final class CrossingsCounter {
                     numBetweenLayerEdges++;
                 }
             }
-            crossings += size * numBetweenLayerEdges;
+            crossings += indexTree.size() * numBetweenLayerEdges;
             // Then add end points.
             while (!ends.isEmpty()) {
                 indexTree.add(ends.pop());
@@ -336,15 +340,17 @@ public final class CrossingsCounter {
         return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
     }
 
-    // remove unneeded options
     private void initPositions(final LNode[] nodes, final List<LPort> ports,
             final PortSide side, final boolean topDown, final boolean getCardinalities) {
         int numPorts = ports.size();
+        if (getCardinalities) {
+            nodeCardinalities = new int[nodes.length];
+        }
         for (int i = start(nodes, topDown); end(i, topDown, nodes); i += step(topDown)) {
             LNode node = nodes[i];
             List<LPort> nodePorts = getPorts(node, side, topDown);
             if (getCardinalities) {
-                nodeCardinalities.put(node, nodePorts.size());
+                nodeCardinalities[node.id] = nodePorts.size();
             }
             for (LPort port : nodePorts) {
                 portPositions[port.id] = numPorts++;
@@ -387,9 +393,7 @@ public final class CrossingsCounter {
     }
 
     /**
-     * Return portPositions of this counter.
-     * 
-     * @return portPositions
+     * @return portPositions of this counter
      */
     public int[] getPortPositions() {
         return portPositions;

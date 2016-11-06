@@ -92,9 +92,9 @@ public final class SwitchDecider {
                 : new LNode[0];
         boolean rightMostLayer = freeLayerIndex == length - 1;
         if (rightMostLayer) {
-            parentCrossCounter.initForCountingBetweenOnSide(middleLayer, rightLayer);
+            parentCrossCounter.initForCountingBetween(middleLayer, rightLayer);
         } else {
-            parentCrossCounter.initForCountingBetweenOnSide(leftLayer, middleLayer);
+            parentCrossCounter.initForCountingBetween(leftLayer, middleLayer);
         }
     }
 
