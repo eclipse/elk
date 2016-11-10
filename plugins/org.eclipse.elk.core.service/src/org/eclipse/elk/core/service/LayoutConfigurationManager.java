@@ -22,7 +22,7 @@ import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.GraphFeature;
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Iterators;
@@ -185,8 +185,10 @@ public class LayoutConfigurationManager {
      */
     protected boolean isFullHierarchyLayout(final ILayoutConfigurationStore config) {
         Object layoutHierarchyVal = config.getOptionValue(CoreOptions.LAYOUT_HIERARCHY.getId());
-        boolean layoutHierarchy = layoutHierarchyVal instanceof Boolean ? (Boolean) layoutHierarchyVal
+        boolean layoutHierarchy = layoutHierarchyVal instanceof Boolean
+                ? (Boolean) layoutHierarchyVal
                 : Boolean.parseBoolean((String) layoutHierarchyVal);
+                
         if (layoutHierarchy) {
             LayoutAlgorithmData algoData = getAlgorithm(config);
             return algoData != null
@@ -229,10 +231,10 @@ public class LayoutConfigurationManager {
         LayoutConfigurator result = new LayoutConfigurator();
         if (configProvider != null) {
             configureElement(layoutMapping.getLayoutGraph(), layoutMapping, result);
-            Iterator<KGraphElement> allElements = Iterators.filter(layoutMapping.getLayoutGraph().eAllContents(),
-                    KGraphElement.class);
+            Iterator<ElkGraphElement> allElements = Iterators.filter(layoutMapping.getLayoutGraph().eAllContents(),
+                    ElkGraphElement.class);
             while (allElements.hasNext()) {
-                KGraphElement element = allElements.next();
+                ElkGraphElement element = allElements.next();
                 configureElement(element, layoutMapping, result);
             }
         }
@@ -242,8 +244,9 @@ public class LayoutConfigurationManager {
     /**
      * Transfer option values from a configuration store of a graph element to a configurator.
      */
-    protected void configureElement(final KGraphElement element, final LayoutMapping layoutMapping,
+    protected void configureElement(final ElkGraphElement element, final LayoutMapping layoutMapping,
             final LayoutConfigurator configurator) {
+        
         Object diagramPart = layoutMapping.getGraphMap().get(element);
         ILayoutConfigurationStore configurationStore = configProvider.get(layoutMapping.getWorkbenchPart(),
                 diagramPart);
@@ -256,9 +259,8 @@ public class LayoutConfigurationManager {
      * Transfer option values from the given configuration store to a configurator using the given graph
      * element as key.
      */
-    protected void configureElement(final KGraphElement element,
-            final ILayoutConfigurationStore configStore, final LayoutConfigurator configurator,
-            final boolean recursiveOnly) {
+    protected void configureElement(final ElkGraphElement element, final ILayoutConfigurationStore configStore,
+            final LayoutConfigurator configurator, final boolean recursiveOnly) {
         
         ILayoutConfigurationStore parentStore = configStore.getParent();
         if (parentStore != null) {

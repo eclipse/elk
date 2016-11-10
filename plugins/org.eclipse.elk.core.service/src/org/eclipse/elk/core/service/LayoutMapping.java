@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.service;
 
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -31,9 +31,9 @@ public class LayoutMapping extends MapPropertyHolder {
     private static final long serialVersionUID = 2237409212851510612L;
     
     /** the bidirectional mapping of layout graph elements to diagram parts. */
-    private final BiMap<KGraphElement, Object> graphElemMap = HashBiMap.create();
+    private final BiMap<ElkGraphElement, Object> graphElemMap = HashBiMap.create();
     /** the top-level parent node of the layout graph. */
-    private KNode layoutGraph;
+    private ElkNode layoutGraph;
     /** the top-level diagram part. */
     private Object parentElement;
     /** the workbench part for wich the mapping was created, if any. */
@@ -53,7 +53,7 @@ public class LayoutMapping extends MapPropertyHolder {
      * 
      * @return the graph element map
      */
-    public BiMap<KGraphElement, Object> getGraphMap() {
+    public BiMap<ElkGraphElement, Object> getGraphMap() {
         return graphElemMap;
     }
     
@@ -62,7 +62,7 @@ public class LayoutMapping extends MapPropertyHolder {
      * 
      * @param layoutGraph the layout graph
      */
-    public void setLayoutGraph(final KNode layoutGraph) {
+    public void setLayoutGraph(final ElkNode layoutGraph) {
         this.layoutGraph = layoutGraph;
     }
     
@@ -71,7 +71,7 @@ public class LayoutMapping extends MapPropertyHolder {
      * 
      * @return the layout graph
      */
-    public KNode getLayoutGraph() {
+    public ElkNode getLayoutGraph() {
         return layoutGraph;
     }
     

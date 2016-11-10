@@ -31,7 +31,6 @@ import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -44,11 +43,11 @@ import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.IValidatingGraphElementVisitor;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
@@ -169,24 +168,24 @@ public class DiagramLayoutEngine {
      * Filter for {@link LayoutConfigurator} that checks for each option whether its configured targets
      * match the input element.
      */
-    public static final Predicate<Pair<KGraphElement, IProperty<?>>> OPTION_TARGET_FILTER =
-        (Pair<KGraphElement, IProperty<?>> input) -> {
+    public static final Predicate<Pair<ElkGraphElement, IProperty<?>>> OPTION_TARGET_FILTER =
+        (Pair<ElkGraphElement, IProperty<?>> input) -> {
             LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(input.getSecond().getId());
             if (optionData != null) {
-                KGraphElement e = input.getFirst();
+                ElkGraphElement e = input.getFirst();
                 Set<LayoutOptionData.Target> targets = optionData.getTargets();
-                if (e instanceof KNode) {
-                    if (((KNode) e).getChildren().isEmpty()) {
+                if (e instanceof ElkNode) {
+                    if (((ElkNode) e).isHierarchical()) {
                         return targets.contains(LayoutOptionData.Target.NODES);
                     } else {
                         return targets.contains(LayoutOptionData.Target.NODES)
                                 || targets.contains(LayoutOptionData.Target.PARENTS);
                     }
-                } else if (e instanceof KEdge) {
+                } else if (e instanceof ElkEdge) {
                     return targets.contains(LayoutOptionData.Target.EDGES);
-                } else if (e instanceof KPort) {
+                } else if (e instanceof ElkPort) {
                     return targets.contains(LayoutOptionData.Target.PORTS);
-                } else if (e instanceof KLabel) {
+                } else if (e instanceof ElkLabel) {
                     return targets.contains(LayoutOptionData.Target.LABELS);
                 }
             }
@@ -580,15 +579,15 @@ public class DiagramLayoutEngine {
         boolean layoutAncestors = params.getGlobalSettings().getProperty(CoreOptions.LAYOUT_ANCESTORS);
         if (layoutAncestors) {
             // Mark all parallel areas for exclusion from layout
-            KGraphElement graphElem = mapping.getGraphMap().inverse().get(mapping.getParentElement());
-            if (graphElem instanceof KNode && ((KNode) graphElem).getParent() != null) {
+            ElkGraphElement graphElem = mapping.getGraphMap().inverse().get(mapping.getParentElement());
+            if (graphElem instanceof ElkNode && ((ElkNode) graphElem).getParent() != null) {
                 if (params.configurators.isEmpty()) {
                     params.configurators.add(new LayoutConfigurator());
                 }
-                KNode node = (KNode) graphElem;
+                ElkNode node = (ElkNode) graphElem;
                 do {
-                    KNode parent = node.getParent();
-                    for (KNode child : parent.getChildren()) {
+                    ElkNode parent = node.getParent();
+                    for (ElkNode child : parent.getChildren()) {
                         if (child != node) {
                             for (LayoutConfigurator c : params.configurators) {
                                 IPropertyHolder childConfig = c.configure(child);
@@ -639,8 +638,9 @@ public class DiagramLayoutEngine {
                 visitors.removeFirst();
                 
                 // If an additional layout configurator is attached to the graph, consider it in the future
-                LayoutConfigurator addConfig = mapping.getLayoutGraph().getData(KShapeLayout.class).getProperty(
-                        LayoutConfigurator.ADD_LAYOUT_CONFIG);
+                LayoutConfigurator addConfig =
+                        mapping.getLayoutGraph().getProperty(LayoutConfigurator.ADD_LAYOUT_CONFIG);
+                
                 if (addConfig != null) {
                     ListIterator<LayoutConfigurator> configIter2 = params.configurators.listIterator(
                             configIter.nextIndex());
@@ -715,14 +715,14 @@ public class DiagramLayoutEngine {
      * 
      * @throws GraphValidationException if an error is found while validating the graph
      */
-    protected void applyVisitors(final KNode graph, final IGraphElementVisitor... visitors)
+    protected void applyVisitors(final ElkNode graph, final IGraphElementVisitor... visitors)
                 throws GraphValidationException {
         for (int i = 0; i < visitors.length; i++) {
             visitors[i].visit(graph);
         }
-        Iterator<KGraphElement> allElements = Iterators.filter(graph.eAllContents(), KGraphElement.class);
+        Iterator<ElkGraphElement> allElements = Iterators.filter(graph.eAllContents(), ElkGraphElement.class);
         while (allElements.hasNext()) {
-            KGraphElement element = allElements.next();
+            ElkGraphElement element = allElements.next();
             for (int i = 0; i < visitors.length; i++) {
                 visitors[i].visit(element);
             }
@@ -763,7 +763,7 @@ public class DiagramLayoutEngine {
      * 
      * @param graph the parent node of the layout graph
      */
-    protected void exportLayoutGraph(final KNode graph) {
+    protected void exportLayoutGraph(final ElkNode graph) {
         URI exportUri = getExportURI(graph);
         if (exportUri != null) {
             // serialize all properties of the graph
@@ -786,7 +786,7 @@ public class DiagramLayoutEngine {
      * 
      * @param graph the parent node of the layout graph
      */
-    protected URI getExportURI(final KNode graph) {
+    protected URI getExportURI(final ElkNode graph) {
         String path = System.getProperty("user.home");
         if (path != null) {
             if (path.endsWith(File.separator)) {

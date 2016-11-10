@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.rendering;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -30,7 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 public class GraphRenderingCanvas extends Canvas implements PaintListener {
 
     /** the painted layout graph. */
-    private KNode layoutGraph;
+    private ElkNode layoutGraph;
     /** the graph renderer used for painting. */
     private GraphRenderer graphRenderer;
     
@@ -94,11 +93,10 @@ public class GraphRenderingCanvas extends Canvas implements PaintListener {
      * 
      * @param thelayoutGraph layout graph to be painted
      */
-    public void setLayoutGraph(final KNode thelayoutGraph) {
+    public void setLayoutGraph(final ElkNode thelayoutGraph) {
         // set new size values for the canvas
         if (thelayoutGraph != null) {
-            KShapeLayout shapeLayout = thelayoutGraph.getData(KShapeLayout.class);
-            setSize(new Point((int) shapeLayout.getWidth() + 1, (int) shapeLayout.getHeight() + 1));
+            setSize(new Point((int) thelayoutGraph.getWidth() + 1, (int) thelayoutGraph.getHeight() + 1));
         }
 
         this.layoutGraph = thelayoutGraph;
@@ -110,7 +108,7 @@ public class GraphRenderingCanvas extends Canvas implements PaintListener {
      * 
      * @return the painted layout graph
      */
-    public KNode getLayoutGraph() {
+    public ElkNode getLayoutGraph() {
         return layoutGraph;
     }
     

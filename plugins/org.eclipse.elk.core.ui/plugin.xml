@@ -163,11 +163,11 @@ point="org.eclipse.ui.menus">
  <extension
        point="org.eclipse.emf.ecore.extension_parser">
     <parser
-          class="org.eclipse.elk.core.ui.util.KGraphResourceFactory"
+          class="org.eclipse.elk.core.ui.util.ElkGraphResourceFactory"
           type="kgx">
     </parser>
     <parser
-          class="org.eclipse.elk.core.ui.util.KGraphResourceFactory"
+          class="org.eclipse.elk.core.ui.util.ElkGraphResourceFactory"
           type="kgraph">
     </parser>
  </extension>

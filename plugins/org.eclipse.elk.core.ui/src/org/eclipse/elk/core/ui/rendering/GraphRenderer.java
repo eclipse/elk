@@ -10,15 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.core.ui.rendering;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -26,10 +21,15 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.EdgeType;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.ElkShape;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
@@ -63,7 +63,7 @@ public class GraphRenderer {
      * The most recently drawn graph; if the next graph to be drawn is different, we will automatically
      * flush our cache.
      */
-    private KNode mostRecentlyDrawnGraph = null;
+    private ElkNode mostRecentlyDrawnGraph = null;
     
     // CHECKSTYLEOFF MagicNumber
     
@@ -162,7 +162,7 @@ public class GraphRenderer {
      * @param graphics the graphics context used to paint
      * @param area the area to fill
      */
-    public void render(final KNode parentNode, final GC graphics, final Rectangle area) {
+    public void render(final ElkNode parentNode, final GC graphics, final Rectangle area) {
         if (mostRecentlyDrawnGraph != parentNode) {
             flushCache();
             mostRecentlyDrawnGraph = parentNode;
@@ -175,14 +175,8 @@ public class GraphRenderer {
         int maxDepth = Math.max(maxDepth(parentNode), 1);
         int nodeAlpha = 200 / maxDepth + 55;
         
-        // render the nodes and ports
-        Set<KEdge> edgeSet = new HashSet<KEdge>();
-        renderNodeChildren(parentNode, graphics, area, baseOffset, edgeSet, nodeAlpha);
-        
-        // render the edges
-        for (KEdge edge : edgeSet) {
-            renderEdge(parentNode, edge, graphics, area, nodeAlpha);
-        }
+        // render the nodes and ports and edges
+        renderNodeChildren(parentNode, graphics, area, baseOffset, nodeAlpha);
     }
 
     /**
@@ -192,17 +186,16 @@ public class GraphRenderer {
      * @param graphics the graphics context used to paint
      * @param area dirty area that needs painting
      * @param offset offset to be added to relative coordinates
-     * @param edgeSet set to be filled with edges that are found on the way
      * @param nodeAlpha alpha value for nodes
      */
-    private void renderNodeChildren(final KNode parent, final GC graphics, final Rectangle area,
-            final KVector offset, final Set<KEdge> edgeSet, final int nodeAlpha) {
+    private void renderNodeChildren(final ElkNode parent, final GC graphics, final Rectangle area,
+            final KVector offset, final int nodeAlpha) {
         
-        for (KNode child : parent.getChildren()) {
-            PaintRectangle rect = boundsMap.get(child);
+        for (ElkNode childNode : parent.getChildren()) {
+            PaintRectangle rect = boundsMap.get(childNode);
             if (rect == null) {
-                rect = new PaintRectangle(child.getData(KShapeLayout.class), offset, scale);
-                boundsMap.put(child, rect);
+                rect = new PaintRectangle(childNode, offset, scale);
+                boundsMap.put(childNode, rect);
             }
             KVector childOffset = new KVector(rect.x, rect.y);
             
@@ -223,33 +216,29 @@ public class GraphRenderer {
                 
                 rect.painted = true;
                 
-                // compute the offset required to make the children's coordinates absolute
-                KVector contentOffset = new KVector(childOffset);
-                KInsets insets = child.getData(KShapeLayout.class).getInsets();
-                contentOffset.add(insets.getLeft() * scale, insets.getTop() * scale);
-                
-                renderNodeChildren(child, graphics, area, contentOffset, edgeSet, nodeAlpha);
+                renderNodeChildren(childNode, graphics, area, childOffset, nodeAlpha);
             }
             
             // render node labels
             if (configurator.getNodeLabelFont() != null) {
                 graphics.setFont(configurator.getNodeLabelFont());
-                for (KLabel label : child.getLabels()) {
+                for (ElkLabel label : childNode.getLabels()) {
                     renderLabel(label, graphics, area, childOffset, nodeAlpha);
                 }
             }
 
             // render ports
-            for (KPort port : child.getPorts()) {
+            for (ElkPort port : childNode.getPorts()) {
                 renderPort(port, graphics, area, childOffset, nodeAlpha);
             }
-
-            // store all incident edges to render them later
-            edgeSet.addAll(child.getIncomingEdges());
-            edgeSet.addAll(child.getOutgoingEdges());
+        }
+        
+        // Paint the edges contained in this node
+        for (ElkEdge childEdge : parent.getContainedEdges()) {
+            renderEdge(childEdge, graphics, area, offset, nodeAlpha);
         }
     }
-    
+
     /**
      * Paints a label for the given dirty area. Expects the correct font to be already set.
      * 
@@ -259,14 +248,13 @@ public class GraphRenderer {
      * @param offset offset to be added to relative coordinates
      * @param labelAlpha alpha value for labels
      */
-    private void renderLabel(final KLabel label, final GC graphics, final Rectangle area,
+    private void renderLabel(final ElkLabel label, final GC graphics, final Rectangle area,
             final KVector offset, final int labelAlpha) {
         
         if (graphics.getFont().getFontData()[0].getHeight() >= MIN_FONT_HEIGHT) {
             PaintRectangle rect = boundsMap.get(label);
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             if (rect == null) {
-                rect = new PaintRectangle(labelLayout, offset, scale);
+                rect = new PaintRectangle(label, offset, scale);
                 boundsMap.put(label, rect);
             }
             
@@ -310,12 +298,12 @@ public class GraphRenderer {
      * @param offset offset to be added to relative coordinates
      * @param labelAlpha alpha value for labels
      */
-    private void renderPort(final KPort port, final GC graphics, final Rectangle area,
+    private void renderPort(final ElkPort port, final GC graphics, final Rectangle area,
             final KVector offset, final int labelAlpha) {
         
         PaintRectangle rect = boundsMap.get(port);
         if (rect == null) {
-            rect = new PaintRectangle(port.getData(KShapeLayout.class), offset, scale);
+            rect = new PaintRectangle(port, offset, scale);
             boundsMap.put(port, rect);
         }
         
@@ -339,7 +327,7 @@ public class GraphRenderer {
         if (configurator.getPortLabelFont() != null) {
             graphics.setFont(configurator.getPortLabelFont());
             KVector portOffset = new KVector(rect.x, rect.y);
-            for (KLabel label : port.getLabels()) {
+            for (ElkLabel label : port.getLabels()) {
                 renderLabel(label, graphics, area, portOffset, labelAlpha);
             }
         }
@@ -348,82 +336,72 @@ public class GraphRenderer {
     /**
      * Paints an edge for the given dirty area.
      * 
-     * @param graph the top-level node of the graph
      * @param edge the edge to paint
      * @param graphics the graphics context used to paint
      * @param area dirty area that needs painting
+     * @param offset offset to be added to relative coordinates
      * @param labelAlpha alpha value for labels
      */
-    private void renderEdge(final KNode graph, final KEdge edge, final GC graphics,
-            final Rectangle area, final int labelAlpha) {
+    private void renderEdge(final ElkEdge edge, final GC graphics, final Rectangle area, final KVector offset,
+            final int labelAlpha) {
         
         if (configurator.getEdgeColor() == null) {
             return;
         }
         
-        if (!ElkUtil.isDescendant(edge.getSource(), graph)
-                || !ElkUtil.isDescendant(edge.getTarget(), graph)) {
-            
-            // the edge points to some node outside of the rendered subgraph
-            return;
-        }
-        
-        // calculate an offset for edge coordinates
-        KNode parent = edge.getSource();
-        if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
-            parent = parent.getParent();
-        }
-        KNode node = parent;
-        KVector offset = new KVector();
-        while (node != graph) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            KInsets insets = nodeLayout.getInsets();
-            offset.add(nodeLayout.getXpos() + insets.getLeft(),
-                    nodeLayout.getYpos() + insets.getTop());
-            node = node.getParent();
-        }
-        offset.scale(scale).add(baseOffset);
-        
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        PaintRectangle rect = boundsMap.get(edge);
-        
-        if (rect == null) {
-            rect = new PaintRectangle(edgeLayout, offset, scale);
-            boundsMap.put(edge, rect);
-        }
-        
-        if (!rect.painted && rect.intersects(area)) {
-            graphics.setAlpha(255);
-            
-            // The background color is required to fill the arrow of directed edges
-            graphics.setForeground(configurator.getEdgeColor());
-            graphics.setBackground(configurator.getEdgeColor());
-            
-            KVectorChain bendPoints = edgeLayout.createVectorChain();
-            if (edgeLayout.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-                bendPoints = ElkMath.approximateBezierSpline(bendPoints);
-            }
-            bendPoints.scale(scale).offset(offset);
-            KVector point1 = bendPoints.getFirst();
-            for (KVector point2 : bendPoints) {
-                graphics.drawLine((int) Math.round(point1.x), (int) Math.round(point1.y),
-                        (int) Math.round(point2.x), (int) Math.round(point2.y));
-                point1 = point2;
+        // Find our if the edge is actually eligible to be painted
+        if (isEdgeFullyContainedInGraphToDraw(edge)) {
+            // Get a PaintRectangle ready for the edge
+            PaintRectangle rect = boundsMap.get(edge);
+            if (rect == null) {
+                rect = new PaintRectangle(edge, offset, scale);
+                boundsMap.put(edge, rect);
             }
             
-            if (edgeLayout.getProperty(CoreOptions.EDGE_TYPE) != EdgeType.UNDIRECTED) {
-                // draw an arrow at the last segment of the connection
-                int[] arrowPoly = makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
-                if (arrowPoly != null) {
-                    graphics.fillPolygon(arrowPoly);
+            if (!rect.painted && rect.intersects(area)) {
+                // Gather some information
+                final boolean splineEdge = edge.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES;
+                final boolean directedEdge = edge.getProperty(CoreOptions.EDGE_TYPE) != EdgeType.UNDIRECTED;
+                
+                graphics.setAlpha(255);
+                
+                // The background color is required to fill the arrow of directed edges
+                graphics.setForeground(configurator.getEdgeColor());
+                graphics.setBackground(configurator.getEdgeColor());
+                
+                for (ElkEdgeSection edgeSection : edge.getSections()) {
+                    KVectorChain bendPoints = ElkUtil.createVectorChain(edgeSection);
+                    
+                    if (splineEdge) {
+                        bendPoints = ElkMath.approximateBezierSpline(bendPoints);
+                    }
+                    
+                    bendPoints.scale(scale).offset(offset);
+                    
+                    // Draw the damn edge already...!
+                    KVector point1 = bendPoints.getFirst();
+                    for (KVector point2 : bendPoints) {
+                        graphics.drawLine(
+                                (int) Math.round(point1.x), (int) Math.round(point1.y),
+                                (int) Math.round(point2.x), (int) Math.round(point2.y));
+                        point1 = point2;
+                    }
+                    
+                    if (directedEdge) {
+                        // draw an arrow at the last segment of the connection
+                        int[] arrowPoly = makeArrow(bendPoints.get(bendPoints.size() - 2), bendPoints.getLast());
+                        if (arrowPoly != null) {
+                            graphics.fillPolygon(arrowPoly);
+                        }
+                    }
                 }
+                
+                rect.painted = true;
             }
-            
-            rect.painted = true;
         }
         
         // paint junction points
-        KVectorChain vc = edgeLayout.getProperty(CoreOptions.JUNCTION_POINTS);
+        KVectorChain vc = edge.getProperty(CoreOptions.JUNCTION_POINTS);
         if (vc != null) {
             for (KVector v : vc) {
                 KVector center = v.clone().scale(scale).add(offset).sub(2, 2);
@@ -434,7 +412,7 @@ public class GraphRenderer {
         // paint the edge labels
         if (configurator.getEdgeLabelFont() != null) {
             graphics.setFont(configurator.getEdgeLabelFont());
-            for (KLabel label : edge.getLabels()) {
+            for (ElkLabel label : edge.getLabels()) {
                 renderLabel(label, graphics, area, offset, labelAlpha);
             }
         }
@@ -484,9 +462,9 @@ public class GraphRenderer {
      * @param parent the parent node of the graph
      * @return the maximal depth of contained nodes
      */
-    private int maxDepth(final KNode parent) {
+    private int maxDepth(final ElkNode parent) {
         int maxDepth = 0;
-        for (KNode child : parent.getChildren()) {
+        for (ElkNode child : parent.getChildren()) {
             int depth = maxDepth(child) + 1;
             if (depth > maxDepth) {
                 maxDepth = depth;
@@ -494,9 +472,33 @@ public class GraphRenderer {
         }
         return maxDepth;
     }
+    
+    /**
+     * Checks if all of the nodes connected by the given edge are children of the graph to be painted.
+     * 
+     * @param childEdge the edge to check.
+     * @return {@code false} if there is at least one node incident to the edge which is not a descendant of the graph
+     *         to be painted.
+     */
+    private boolean isEdgeFullyContainedInGraphToDraw(final ElkEdge childEdge) {
+        return areDescendantsOf(childEdge.getSources()) && areDescendantsOf(childEdge.getTargets());
+    }
+    
+    /**
+     * Checks if all of the connectable shapes belong to nodes that are descendants of the graph to be drawn.
+     */
+    private boolean areDescendantsOf(final List<ElkConnectableShape> shapes) {
+        for (ElkConnectableShape child : shapes) {
+            if (!ElkGraphUtil.isDescendant(ElkGraphUtil.connectableShapeToNode(child), mostRecentlyDrawnGraph)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 
     /**
-     * Rectangle class used to mark painted objects.
+     * Rectangle class used to mark painted shapes and edges.
      */
     private static class PaintRectangle {
         private int x, y, width, height;
@@ -505,37 +507,48 @@ public class GraphRenderer {
         /**
          * Creates a paint rectangle from a shape layout object.
          * 
-         * @param shapeLayout shape layout from which values shall be taken
+         * @param shape shape layout from which values shall be taken
          * @param offset offset to be added to coordinate values
          */
-        PaintRectangle(final KShapeLayout shapeLayout, final KVector offset, final double scale) {
-            this.x = (int) Math.round(shapeLayout.getXpos() * scale + offset.x);
-            this.y = (int) Math.round(shapeLayout.getYpos() * scale + offset.y);
-            this.width = Math.max((int) Math.round(shapeLayout.getWidth() * scale), 1);
-            this.height = Math.max((int) Math.round(shapeLayout.getHeight() * scale), 1);
+        PaintRectangle(final ElkShape shape, final KVector offset, final double scale) {
+            this.x = (int) Math.round(shape.getX() * scale + offset.x);
+            this.y = (int) Math.round(shape.getY() * scale + offset.y);
+            this.width = Math.max((int) Math.round(shape.getWidth() * scale), 1);
+            this.height = Math.max((int) Math.round(shape.getHeight() * scale), 1);
         }
 
         /**
          * Creates a paint rectangle from an edge layout object.
          * 
-         * @param edgeLayout edge layout from which the values shall be determined
+         * @param edge edge layout from which the values shall be determined
          * @param offset offset to be added to coordinate values
          * @param scale the scale to apply to all coordinates
          */
-        PaintRectangle(final KEdgeLayout edgeLayout, final KVector offset, final double scale) {
-            float minX = edgeLayout.getSourcePoint().getX(), minY = edgeLayout.getSourcePoint()
-                    .getY();
-            float maxX = minX, maxY = minY;
-            for (KPoint point : edgeLayout.getBendPoints()) {
-                minX = Math.min(minX, point.getX());
-                minY = Math.min(minY, point.getY());
-                maxX = Math.max(maxX, point.getX());
-                maxY = Math.max(maxY, point.getY());
+        PaintRectangle(final ElkEdge edge, final KVector offset, final double scale) {
+            double minX = Double.MAX_VALUE;
+            double maxX = Double.MIN_VALUE;
+            double minY = Double.MAX_VALUE;
+            double maxY = Double.MIN_VALUE;
+            
+            for (ElkEdgeSection edgeSection : edge.getSections()) {
+                minX = Math.min(minX, edgeSection.getStartX());
+                minY = Math.min(minY, edgeSection.getStartY());
+                maxX = Math.max(maxX, edgeSection.getStartX());
+                maxY = Math.max(maxY, edgeSection.getStartY());
+
+                minX = Math.min(minX, edgeSection.getEndX());
+                minY = Math.min(minY, edgeSection.getEndY());
+                maxX = Math.max(maxX, edgeSection.getEndX());
+                maxY = Math.max(maxY, edgeSection.getEndY());
+                
+                for (ElkBendPoint bendPoint : edgeSection.getBendPoints()) {
+                    minX = Math.min(minX, bendPoint.getX());
+                    minY = Math.min(minY, bendPoint.getY());
+                    maxX = Math.max(maxX, bendPoint.getX());
+                    maxY = Math.max(maxY, bendPoint.getY());
+                }
             }
-            minX = Math.min(minX, edgeLayout.getTargetPoint().getX());
-            minY = Math.min(minY, edgeLayout.getTargetPoint().getY());
-            maxX = Math.max(maxX, edgeLayout.getTargetPoint().getX());
-            maxY = Math.max(maxY, edgeLayout.getTargetPoint().getY());
+            
             this.x = (int) Math.round(minX * scale + offset.x);
             this.y = (int) Math.round(minY * scale + offset.y);
             this.width = (int) Math.round((maxX - minX) * scale);

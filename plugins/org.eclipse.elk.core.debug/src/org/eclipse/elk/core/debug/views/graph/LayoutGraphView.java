@@ -11,7 +11,7 @@
 package org.eclipse.elk.core.debug.views.graph;
 
 import org.eclipse.elk.core.ui.rendering.GraphRenderingCanvas;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
@@ -49,12 +49,12 @@ public class LayoutGraphView extends ViewPart {
      * 
      * @param graph the graph to be drawn.
      */
-    public static void updateWithGraph(final KNode graph) {
+    public static void updateWithGraph(final ElkNode graph) {
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 LayoutGraphView activeView = findView();
                 if (graph != null && activeView != null) {
-                    KNode nodeCopy = EcoreUtil.copy(graph);
+                    ElkNode nodeCopy = EcoreUtil.copy(graph);
                     activeView.getCanvas().setLayoutGraph(nodeCopy);
                 }
             }

@@ -15,9 +15,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.ui.rendering.GraphRenderingCanvas;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -76,10 +75,9 @@ public class ImageExportAction extends Action {
                             monitor.beginTask("Export PNG Image", 2);
 
                             // paint the layout graph
-                            KNode graph = canvas.getLayoutGraph();
-                            KShapeLayout graphSize = graph.getData(KShapeLayout.class);
-                            Rectangle area = new Rectangle(0, 0, (int) graphSize.getWidth() + 1,
-                                    (int) graphSize.getHeight() + 1);
+                            ElkNode graph = canvas.getLayoutGraph();
+                            Rectangle area = new Rectangle(0, 0, (int) graph.getWidth() + 1,
+                                    (int) graph.getHeight() + 1);
                             Image image = new Image(canvas.getDisplay(), area.width, area.height);
                             canvas.getRenderer().markDirty(area);
                             canvas.getRenderer().render(graph, new GC(image), area);

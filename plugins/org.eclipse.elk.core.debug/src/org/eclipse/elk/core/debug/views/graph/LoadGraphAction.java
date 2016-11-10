@@ -18,13 +18,12 @@ import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KGraphData;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.PersistentEntry;
+import org.eclipse.elk.graph.EMapPropertyHolder;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPersistentEntry;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
@@ -84,7 +83,7 @@ public class LoadGraphAction extends Action {
             Resource resource = resourceSet.createResource(uri);
             try {
                 resource.load(null);
-                KNode content = (KNode) resource.getContents().get(0);
+                ElkNode content = (ElkNode) resource.getContents().get(0);
                 layout(content);
             } catch (IOException exception) {
                 throw new WrappedException(exception);
@@ -97,22 +96,22 @@ public class LoadGraphAction extends Action {
      * 
      * @param graph a graph
      */
-    private void layout(final KNode graph) {
+    private void layout(final ElkNode graph) {
         // deserialize layout options
         LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         Iterator<EObject> contentIter = graph.eAllContents();
         while (contentIter.hasNext()) {
             EObject obj = contentIter.next();
-            if (obj instanceof KGraphData) {
-                KGraphData graphData = (KGraphData) obj;
-                for (PersistentEntry entry : graphData.getPersistentEntries()) {
+            if (obj instanceof EMapPropertyHolder) {
+                EMapPropertyHolder propertyHolder = (EMapPropertyHolder) obj;
+                for (ElkPersistentEntry entry : propertyHolder.getPersistentEntries()) {
                     LayoutOptionData optionData = dataService.getOptionData(entry.getKey());
                     
                     if (optionData != null) {
                         Object value = optionData.parseValue(entry.getValue());
                         
                         if (value != null) {
-                            graphData.setProperty(optionData, value);
+                            propertyHolder.setProperty(optionData, value);
                         }
                     }
                 }
@@ -120,9 +119,8 @@ public class LoadGraphAction extends Action {
         }
         
         // perform layout using a graph layout engine
-        KShapeLayout graphLayout = graph.getData(KShapeLayout.class);
         IElkProgressMonitor monitor = new BasicProgressMonitor();
-        if (graphLayout != null && !graphLayout.getProperty(CoreOptions.NO_LAYOUT)) {
+        if (!graph.getProperty(CoreOptions.NO_LAYOUT)) {
             IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
             layoutEngine.layout(graph, monitor);
         }

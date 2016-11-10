@@ -15,41 +15,40 @@ import java.util.Map;
 
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.GraphDataUtil;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 /**
- * A custom resource factory that returns resources for KGraph xmi models, e.g. 
- * .kgt or .kgraph files. The dedicated resource takes care of loading and storing
- * custom layout properties within the model itself.
+ * A custom resource factory that returns resources for ElkGraph xmi models. The dedicated resource takes care
+ * of loading and storing custom layout properties within the model itself.
  * 
- * @see ElkUtil#loadDataElements(KNode)
- * @see ElkUtil#persistDataElements(KNode)
+ * @see ElkUtil#loadDataElements(ElkNode)
+ * @see ElkUtil#persistDataElements(ElkNode)
  * 
  * @author uru
  */
-public class KGraphResourceFactory implements Resource.Factory {
+public class ElkGraphResourceFactory implements Resource.Factory {
 
     /**
      * {@inheritDoc}
      */
     public Resource createResource(final URI uri) {
-        return new KGraphResource(uri);
+        return new ElkGraphResource(uri);
     }
 
     /**
      * See the above class comment for further information. 
      */
-    public static class KGraphResource extends XMIResourceImpl {
+    public static class ElkGraphResource extends XMIResourceImpl {
 
         /**
          * @param uri
          *            the desired uri.
          */
-        public KGraphResource(final URI uri) {
+        public ElkGraphResource(final URI uri) {
             super(uri);
         }
 
@@ -61,11 +60,9 @@ public class KGraphResourceFactory implements Resource.Factory {
             super.load(options);
             if (!this.getContents().isEmpty()) {
                 EObject o = this.getContents().get(0);
-                if (o instanceof KNode) {
+                if (o instanceof ElkNode) {
                     // parse persisted key-value pairs using KIML's layout data service
-                    GraphDataUtil.loadDataElements((KNode) o);
-                    // validate layout data and references and fill in missing data
-                    ElkUtil.validate((KNode) o);
+                    GraphDataUtil.loadDataElements((ElkNode) o);
                 }
             }
         }
@@ -77,8 +74,8 @@ public class KGraphResourceFactory implements Resource.Factory {
         public void save(final Map<?, ?> options) throws IOException {
             if (!this.getContents().isEmpty()) {
                 EObject o = this.getContents().get(0);
-                if (o instanceof KNode) {
-                    ElkUtil.persistDataElements((KNode) o);
+                if (o instanceof ElkNode) {
+                    ElkUtil.persistDataElements((ElkNode) o);
                 }
             }
 
