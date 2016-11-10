@@ -47,7 +47,7 @@ Workflow {
 		}
 		language = StandardLanguage {
 			name = "org.eclipse.elk.core.meta.MetaData"
-			fileExtensions = "elkm"
+			fileExtensions = "melk"
             
 			serializer = {
 				generateStub = false
