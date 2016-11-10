@@ -11,18 +11,9 @@
 package org.eclipse.elk.core.util;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KIdentifier;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -35,14 +26,17 @@ import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.selection.DefaultSelectionIterator;
 import org.eclipse.elk.core.util.selection.SelectionIterator;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphData;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KGraphFactory;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KLabeledGraphElement;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.EMapPropertyHolder;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkGraphFactory;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.ElkShape;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
@@ -50,8 +44,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -81,141 +73,7 @@ public final class ElkUtil {
     private ElkUtil() {
     }
     
-
-    /**
-     * Creates a KNode, initializes some attributes, and returns it.
-     * 
-     * @return an initialized KNode
-     */
-    public static KNode createInitializedNode() {
-        KNode layoutNode = KGraphFactory.eINSTANCE.createKNode();
-        KShapeLayout layout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
-        layout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
-        layoutNode.getData().add(layout);
-        return layoutNode;
-    }
-
-    /**
-     * Creates a KEdge, initializes some attributes, and returns it.
-     * 
-     * @return an initialized KEdge
-     */
-    public static KEdge createInitializedEdge() {
-        KEdge edge = KGraphFactory.eINSTANCE.createKEdge();
-        KEdgeLayout edgeLayout = KLayoutDataFactory.eINSTANCE.createKEdgeLayout();
-        edgeLayout.setSourcePoint(KLayoutDataFactory.eINSTANCE.createKPoint());
-        edgeLayout.setTargetPoint(KLayoutDataFactory.eINSTANCE.createKPoint());
-        edge.getData().add(edgeLayout);
-        return edge;
-    }
-
-    /**
-     * Creates a KPort, initializes some attributes, and returns it.
-     * 
-     * @return an initialized KPort
-     */
-    public static KPort createInitializedPort() {
-        KPort port = KGraphFactory.eINSTANCE.createKPort();
-        KShapeLayout portLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
-        portLayout.setInsets(KLayoutDataFactory.eINSTANCE.createKInsets());
-        port.getData().add(portLayout);
-        return port;
-    }
-
-    /**
-     * Creates a KLabel, initializes some attributes, and returns it.
-     * 
-     * @param element a labeled graph element
-     * @return an initialized KLabel
-     */
-    public static KLabel createInitializedLabel(final KLabeledGraphElement element) {
-        KLabel label = KGraphFactory.eINSTANCE.createKLabel();
-        KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
-        label.getData().add(labelLayout);
-        label.setText("");
-        label.setParent(element);
-        return label;
-    }
     
-    /**
-     * Ensures that each element contained in the given graph is attributed correctly for
-     * usage in KIML. {@link KGraphElement}
-     * 
-     * @param graph the parent node of a graph 
-     */
-    public static void validate(final KNode graph) {
-        KLayoutDataFactory layoutFactory = KLayoutDataFactory.eINSTANCE;
-        
-        // construct an iterator that first returns the root node, i.e. 'graph',
-        //  and all contained {@link KGraphElement KGraphElements} afterwards
-        //  ({@link KGraphData} are omitted for performance reasons)
-        Iterator<KGraphElement> contentIter = Iterators.concat(
-                Lists.newArrayList(graph).iterator(),
-                Iterators.filter(graph.eAllContents(), KGraphElement.class));
-        
-        // Note that using an iterator and adding elements works here
-        //  as the eAllContents() iterator relies on the lists provided by eContents()
-        //  of EObjects that, in turn, provides a mirrored list of all contained elements.
-        while (contentIter.hasNext()) {
-            EObject element = contentIter.next();
-            // Make sure nodes are OK
-            if (element instanceof KNode) {
-                KNode node = (KNode) element;
-                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-                if (nodeLayout == null) {
-                    nodeLayout = layoutFactory.createKShapeLayout();                   
-                    node.getData().add(nodeLayout);
-                } 
-                if (nodeLayout.getInsets() == null) {
-                    nodeLayout.setInsets(layoutFactory.createKInsets());
-                }
-            // Make sure ports are OK           
-            } else if (element instanceof KPort) {
-                KPort port = (KPort) element;
-                KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                if (portLayout == null) {
-                    port.getData().add(layoutFactory.createKShapeLayout());
-                }
-            // Make sure labels are OK
-            } else if (element instanceof KLabel) {
-                KLabel label = (KLabel) element;
-                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                if (labelLayout == null) {
-                    label.getData().add(layoutFactory.createKShapeLayout());
-                }
-                if (label.getText() == null) {
-                    label.setText("");
-                }
-            // Make sure edges are OK
-            } else if (element instanceof KEdge) {
-                KEdge edge = (KEdge) element;
-                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                if (edgeLayout == null) {
-                    edgeLayout = layoutFactory.createKEdgeLayout();
-                    edge.getData().add(edgeLayout);
-                }
-                if (edgeLayout.getSourcePoint() == null) {
-                    edgeLayout.setSourcePoint(layoutFactory.createKPoint());
-                }
-                if (edgeLayout.getTargetPoint() == null) {
-                    edgeLayout.setTargetPoint(layoutFactory.createKPoint());
-                }
-                // ports and edges are not opposite, so check whether they are connected properly
-                KPort sourcePort = edge.getSourcePort();
-                if (sourcePort != null) {
-                    if (!sourcePort.getEdges().contains(edge)) {
-                        sourcePort.getEdges().add(edge);
-                    }
-                }
-                KPort targetPort = edge.getTargetPort();
-                if (targetPort != null) {
-                    if (!targetPort.getEdges().contains(edge)) {
-                        targetPort.getEdges().add(edge);
-                    }
-                }
-            }
-        }
-    }
     
     /**
      * Create a unique identifier for the given graph element. Note that this identifier
@@ -224,13 +82,8 @@ public final class ElkUtil {
      * 
      * @param element a graph element
      */
-    public static void createIdentifier(final KGraphElement element) {
-        KIdentifier identifier = element.getData(KIdentifier.class);
-        if (identifier == null) {
-            identifier = KLayoutDataFactory.eINSTANCE.createKIdentifier();
-            element.getData().add(identifier);
-        }
-        identifier.setId(Integer.toString(element.hashCode()));
+    public static void createIdentifier(final ElkGraphElement element) {
+        element.setIdentifier(Integer.toString(element.hashCode()));
     }
 
     /**
@@ -240,25 +93,28 @@ public final class ElkUtil {
      * @param port port to analyze
      * @param direction the overall layout direction
      * @return the port side relative to its containing node
+     * @throws IllegalStateException if the port does not have a parent node.
      */
-    public static PortSide calcPortSide(final KPort port, final Direction direction) {
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
-
+    public static PortSide calcPortSide(final ElkPort port, final Direction direction) {
+        if (port.getParent() == null) {
+            throw new IllegalStateException("port must have a parent node to calculate the port side");
+        }
+        
         // if the node has zero size, we cannot decide anything
-        KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
-        float nodeWidth = nodeLayout.getWidth(), nodeHeight = nodeLayout.getHeight();
+        ElkNode node = port.getParent();
+        double nodeWidth = node.getWidth(), nodeHeight = node.getHeight();
         if (nodeWidth <= 0 && nodeHeight <= 0) {
             return PortSide.UNDEFINED;
         }
 
         // check direction-dependent criterion
-        float xpos = portLayout.getXpos(), ypos = portLayout.getYpos();
+        double xpos = port.getX(), ypos = port.getY();
         switch (direction) {
         case LEFT:
         case RIGHT:
             if (xpos < 0) {
                 return PortSide.WEST;
-            } else if (xpos + portLayout.getWidth() > nodeWidth) {
+            } else if (xpos + port.getWidth() > nodeWidth) {
                 return PortSide.EAST;
             }
             break;
@@ -266,20 +122,18 @@ public final class ElkUtil {
         case DOWN:
             if (ypos < 0) {
                 return PortSide.NORTH;
-            } else if (ypos + portLayout.getHeight() > nodeHeight) {
+            } else if (ypos + port.getHeight() > nodeHeight) {
                 return PortSide.SOUTH;
             }
         }
         
         // check general criterion
-        float widthPercent = (xpos + portLayout.getWidth() / 2) / nodeWidth;
-        float heightPercent = (ypos + portLayout.getHeight() / 2) / nodeHeight;
-        if (widthPercent + heightPercent <= 1
-                && widthPercent - heightPercent <= 0) {
+        double widthPercent = (xpos + port.getWidth() / 2) / nodeWidth;
+        double heightPercent = (ypos + port.getHeight() / 2) / nodeHeight;
+        if (widthPercent + heightPercent <= 1 && widthPercent - heightPercent <= 0) {
             // port is on the left
             return PortSide.WEST;
-        } else if (widthPercent + heightPercent >= 1
-                && widthPercent - heightPercent >= 0) {
+        } else if (widthPercent + heightPercent >= 1 && widthPercent - heightPercent >= 0) {
             // port is on the right
             return PortSide.EAST;
         } else if (heightPercent < 1.0f / 2) {
@@ -299,19 +153,23 @@ public final class ElkUtil {
      * @param port a port
      * @param side the side on the node for the given port
      * @return the offset on the side
+     * @throws IllegalStateException if the port does not have a parent node.
      */
-    public static float calcPortOffset(final KPort port, final PortSide side) {
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        KShapeLayout nodeLayout = port.getNode().getData(KShapeLayout.class);
+    public static double calcPortOffset(final ElkPort port, final PortSide side) {
+        if (port.getParent() == null) {
+            throw new IllegalStateException("port must have a parent node to calculate the port side");
+        }
+        
+        ElkNode node = port.getParent();
         switch (side) {
         case NORTH:
-            return -(portLayout.getYpos() + portLayout.getHeight());
+            return -(port.getY() + port.getHeight());
         case EAST:
-            return portLayout.getXpos() - nodeLayout.getWidth();
+            return port.getX() - node.getWidth();
         case SOUTH:
-            return portLayout.getYpos() - nodeLayout.getHeight();
+            return port.getY() - node.getHeight();
         case WEST:
-            return -(portLayout.getXpos() + portLayout.getWidth());
+            return -(port.getX() + port.getWidth());
         }
         return 0;
     }
@@ -324,60 +182,54 @@ public final class ElkUtil {
      * @return a vector holding the width and height resizing ratio, or {@code null} if the size
      *     constraint is set to {@code FIXED}
      */
-    public static KVector resizeNode(final KNode node) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
+    public static KVector resizeNode(final ElkNode node) {
+        Set<SizeConstraint> sizeConstraint = node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
         if (sizeConstraint.isEmpty()) {
             return null;
         }
         
-        float newWidth = 0, newHeight = 0;
+        double newWidth = 0, newHeight = 0;
 
         if (sizeConstraint.contains(SizeConstraint.PORTS)) {
-            PortConstraints portConstraints = nodeLayout.getProperty(CoreOptions.PORT_CONSTRAINTS);
-            float minNorth = 2, minEast = 2, minSouth = 2, minWest = 2;
+            PortConstraints portConstraints = node.getProperty(CoreOptions.PORT_CONSTRAINTS);
+            double minNorth = 2, minEast = 2, minSouth = 2, minWest = 2;
             Direction direction = node.getParent() == null
-                    ? nodeLayout.getProperty(CoreOptions.DIRECTION)
-                    : node.getParent().getData(KShapeLayout.class).getProperty(CoreOptions.DIRECTION);
-            for (KPort port : node.getPorts()) {
-                KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                PortSide portSide = portLayout.getProperty(CoreOptions.PORT_SIDE);
+                    ? node.getProperty(CoreOptions.DIRECTION)
+                    : node.getParent().getProperty(CoreOptions.DIRECTION);
+            for (ElkPort port : node.getPorts()) {
+                PortSide portSide = port.getProperty(CoreOptions.PORT_SIDE);
                 if (portSide == PortSide.UNDEFINED) {
                     portSide = calcPortSide(port, direction);
-                    portLayout.setProperty(CoreOptions.PORT_SIDE, portSide);
+                    port.setProperty(CoreOptions.PORT_SIDE, portSide);
                 }
                 if (portConstraints == PortConstraints.FIXED_POS) {
                     switch (portSide) {
                     case NORTH:
-                        minNorth = Math.max(minNorth, portLayout.getXpos()
-                                + portLayout.getWidth());
+                        minNorth = Math.max(minNorth, port.getX() + port.getWidth());
                         break;
                     case EAST:
-                        minEast = Math.max(minEast, portLayout.getYpos()
-                                + portLayout.getHeight());
+                        minEast = Math.max(minEast, port.getY() + port.getHeight());
                         break;
                     case SOUTH:
-                        minSouth = Math.max(minSouth, portLayout.getXpos()
-                                + portLayout.getWidth());
+                        minSouth = Math.max(minSouth, port.getX() + port.getWidth());
                         break;
                     case WEST:
-                        minWest = Math.max(minWest, portLayout.getYpos()
-                                + portLayout.getHeight());
+                        minWest = Math.max(minWest, port.getY() + port.getHeight());
                         break;
                     }
                 } else {
                     switch (portSide) {
                     case NORTH:
-                        minNorth += portLayout.getWidth() + 2;
+                        minNorth += port.getWidth() + 2;
                         break;
                     case EAST:
-                        minEast += portLayout.getHeight() + 2;
+                        minEast += port.getHeight() + 2;
                         break;
                     case SOUTH:
-                        minSouth += portLayout.getWidth() + 2;
+                        minSouth += port.getWidth() + 2;
                         break;
                     case WEST:
-                        minWest += portLayout.getHeight() + 2;
+                        minWest += port.getHeight() + 2;
                         break;
                     }
                 }
@@ -400,26 +252,25 @@ public final class ElkUtil {
      * @param moveLabels whether label positions should be adjusted
      * @return a vector holding the width and height resizing ratio
      */
-    public static KVector resizeNode(final KNode node, final float newWidth, final float newHeight,
+    public static KVector resizeNode(final ElkNode node, final double newWidth, final double newHeight,
             final boolean movePorts, final boolean moveLabels) {
         
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        Set<SizeConstraint> sizeConstraint = nodeLayout.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
+        Set<SizeConstraint> sizeConstraint = node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
         
-        KVector oldSize = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight());
+        KVector oldSize = new KVector(node.getWidth(), node.getHeight());
         KVector newSize;
         
         // Calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            Set<SizeOptions> sizeOptions = nodeLayout.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
-            KVector minSize = nodeLayout.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
-            float minWidth, minHeight;
+            Set<SizeOptions> sizeOptions = node.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
+            KVector minSize = node.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
+            double minWidth, minHeight;
             if (minSize == null) {
-                minWidth = nodeLayout.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
-                minHeight = nodeLayout.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
+                minWidth = node.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
+                minHeight = node.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
             } else {
-                minWidth = (float) minSize.x;
-                minHeight = (float) minSize.y; 
+                minWidth = minSize.x;
+                minHeight = minSize.y; 
             }
             
             // If minimum width or height are not set, maybe default to default values
@@ -438,49 +289,47 @@ public final class ElkUtil {
             newSize = new KVector(newWidth, newHeight);
         }
         
-        float widthRatio = (float) (newSize.x / oldSize.x);
-        float heightRatio = (float) (newSize.y / oldSize.y);
-        float widthDiff = (float) (newSize.x - oldSize.x);
-        float heightDiff = (float) (newSize.y - oldSize.y);
+        double widthRatio = newSize.x / oldSize.x;
+        double heightRatio = newSize.y / oldSize.y;
+        double widthDiff = newSize.x - oldSize.x;
+        double heightDiff = newSize.y - oldSize.y;
 
         // update port positions
         if (movePorts) {
             Direction direction = node.getParent() == null
-                    ? nodeLayout.getProperty(CoreOptions.DIRECTION)
-                    : node.getParent().getData(KShapeLayout.class).getProperty(CoreOptions.DIRECTION);
-            boolean fixedPorts =
-                    nodeLayout.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
+                    ? node.getProperty(CoreOptions.DIRECTION)
+                    : node.getParent().getProperty(CoreOptions.DIRECTION);
+            boolean fixedPorts = node.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
             
-            for (KPort port : node.getPorts()) {
-                KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                PortSide portSide = portLayout.getProperty(CoreOptions.PORT_SIDE);
+            for (ElkPort port : node.getPorts()) {
+                PortSide portSide = port.getProperty(CoreOptions.PORT_SIDE);
                 
                 if (portSide == PortSide.UNDEFINED) {
                     portSide = calcPortSide(port, direction);
-                    portLayout.setProperty(CoreOptions.PORT_SIDE, portSide);
+                    port.setProperty(CoreOptions.PORT_SIDE, portSide);
                 }
                 
                 switch (portSide) {
                 case NORTH:
                     if (!fixedPorts) {
-                        portLayout.setXpos(portLayout.getXpos() * widthRatio);
+                        port.setX(port.getX() * widthRatio);
                     }
                     break;
                 case EAST:
-                    portLayout.setXpos(portLayout.getXpos() + widthDiff);
+                    port.setX(port.getX() + widthDiff);
                     if (!fixedPorts) {
-                        portLayout.setYpos(portLayout.getYpos() * heightRatio);
+                        port.setY(port.getY() * heightRatio);
                     }
                     break;
                 case SOUTH:
                     if (!fixedPorts) {
-                        portLayout.setXpos(portLayout.getXpos() * widthRatio);
+                        port.setX(port.getX() * widthRatio);
                     }
-                    portLayout.setYpos(portLayout.getYpos() + heightDiff);
+                    port.setY(port.getY() + heightDiff);
                     break;
                 case WEST:
                     if (!fixedPorts) {
-                        portLayout.setYpos(portLayout.getYpos() * heightRatio);
+                        port.setY(port.getY() * heightRatio);
                     }
                     break;
                 }
@@ -488,69 +337,58 @@ public final class ElkUtil {
         }
         
         // resize the node AFTER ports have been placed, since calcPortSide needs the old size
-        nodeLayout.setSize((float) newSize.x, (float) newSize.y);
+        node.setDimensions(newSize.x, newSize.y);
         
         // update label positions
         if (moveLabels) {
-            for (KLabel label : node.getLabels()) {
-                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                float midx = labelLayout.getXpos() + labelLayout.getWidth() / 2;
-                float midy = labelLayout.getYpos() + labelLayout.getHeight() / 2;
-                float widthPercent = midx / (float) oldSize.x;
-                float heightPercent = midy / (float) oldSize.y;
+            for (ElkLabel label : node.getLabels()) {
+                double midx = label.getX() + label.getWidth() / 2;
+                double midy = label.getY() + label.getHeight() / 2;
+                double widthPercent = midx / oldSize.x;
+                double heightPercent = midy / oldSize.y;
                 
                 if (widthPercent + heightPercent >= 1) {
                     if (widthPercent - heightPercent > 0 && midy >= 0) {
                         // label is on the right
-                        labelLayout.setXpos(labelLayout.getXpos() + widthDiff);
-                        labelLayout.setYpos(labelLayout.getYpos() + heightDiff * heightPercent);
+                        label.setX(label.getX() + widthDiff);
+                        label.setY(label.getY() + heightDiff * heightPercent);
                     } else if (widthPercent - heightPercent < 0 && midx >= 0) {
                         // label is on the bottom
-                        labelLayout.setXpos(labelLayout.getXpos() + widthDiff * widthPercent);
-                        labelLayout.setYpos(labelLayout.getYpos() + heightDiff);
+                        label.setX(label.getX() + widthDiff * widthPercent);
+                        label.setY(label.getY() + heightDiff);
                     }
                 }
             }
         }
         
         // set fixed size option for the node: now the size is assumed to stay as determined here
-        nodeLayout.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
+        node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
         
         return new KVector(widthRatio, heightRatio);
     }
 
     /**
-     * Applies the scaling factor configured in terms of {@link CoreOptions#SCALE_FACTOR} in its
-     * {@link KShapeLayout} to {@code node} 's size data, and updates the layout data of
-     * {@code node}'s ports and labels accordingly.<br>
+     * Applies the scaling factor configured in terms of {@link CoreOptions#SCALE_FACTOR} to {@code node}'s
+     * size data, and updates the layout data of {@code node}'s ports and labels accordingly.<br>
      * <b>Note:</b> The scaled layout data won't be reverted during the layout process, see
      * {@link CoreOptions#SCALE_FACTOR}.
      * 
-     * @author chsch
-     * 
      * @param node
-     *            the {@link KNode} to be scaled
+     *            the node to be scaled
      */
-    public static void applyConfiguredNodeScaling(final KNode node) {
-        final KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
-        final float scalingFactor = shapeLayout.getProperty(CoreOptions.SCALE_FACTOR);
-
+    public static void applyConfiguredNodeScaling(final ElkNode node) {
+        final float scalingFactor = node.getProperty(CoreOptions.SCALE_FACTOR);
         if (scalingFactor == 1f) {
             return;
         }
 
-        shapeLayout.setSize(scalingFactor * shapeLayout.getWidth(),
-                scalingFactor * shapeLayout.getHeight());
+        node.setDimensions(scalingFactor * node.getWidth(), scalingFactor * node.getHeight());
 
-        for (KGraphElement kge : Iterables.concat(node.getPorts(), node.getLabels())) {
-            final KShapeLayout kgeLayout = kge.getData(KShapeLayout.class);
-
-            kgeLayout.setPos(scalingFactor * kgeLayout.getXpos(),
-                    scalingFactor * kgeLayout.getYpos());
-            kgeLayout.setSize(scalingFactor * kgeLayout.getWidth(),
-                    scalingFactor * kgeLayout.getHeight());
+        for (ElkShape shape : Iterables.concat(node.getPorts(), node.getLabels())) {
+            shape.setLocation(scalingFactor * shape.getX(), scalingFactor * shape.getY());
+            shape.setDimensions(scalingFactor * shape.getWidth(), scalingFactor * shape.getHeight());
             
-            final KVector anchor = kgeLayout.getProperty(CoreOptions.PORT_ANCHOR);
+            final KVector anchor = shape.getProperty(CoreOptions.PORT_ANCHOR);
             if (anchor != null) {
                 anchor.x *= scalingFactor;
                 anchor.y *= scalingFactor;
@@ -566,8 +404,8 @@ public final class ElkUtil {
      * @param parent a parent node
      * @return {@code true} if {@code child} is a direct or indirect child of {@code parent}.
      */
-    public static boolean isDescendant(final KNode child, final KNode parent) {
-        KNode current = child;
+    public static boolean isDescendant(final ElkNode child, final ElkNode parent) {
+        ElkNode current = child;
         while (current.getParent() != null) {
             current = current.getParent();
             if (current == parent) {
@@ -585,13 +423,14 @@ public final class ElkUtil {
      * @param parent the parent node to which the point is relative to
      * @return {@code point} for convenience
      */
-    public static KVector toAbsolute(final KVector point, final KNode parent) {
-        KNode node = parent;
+    public static KVector toAbsolute(final KVector point, final ElkNode parent) {
+        ElkNode node = parent;
         while (node != null) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            KInsets insets = nodeLayout.getInsets();
-            point.add(nodeLayout.getXpos() + insets.getLeft(),
-                    nodeLayout.getYpos() + insets.getTop());
+            // MIGRATE Insets used to be interesting here, investigate possible problems
+//            KInsets insets = nodeLayout.getInsets();
+//            point.add(nodeLayout.getXpos() + insets.getLeft(),
+//                    nodeLayout.getYpos() + insets.getTop());
+            point.add(node.getX(), node.getY());
             node = node.getParent();
         }
         return point;
@@ -605,13 +444,14 @@ public final class ElkUtil {
      * @param parent the parent node to which the point shall be made relative to
      * @return {@code point} for convenience
      */
-    public static KVector toRelative(final KVector point, final KNode parent) {
-        KNode node = parent;
+    public static KVector toRelative(final KVector point, final ElkNode parent) {
+        ElkNode node = parent;
         while (node != null) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            KInsets insets = nodeLayout.getInsets();
-            point.add(-nodeLayout.getXpos() - insets.getLeft(),
-                        -nodeLayout.getYpos() - insets.getTop());
+            // MIGRATE Insets used to be interesting here, investigate possible problems
+//            KInsets insets = nodeLayout.getInsets();
+//            point.add(-nodeLayout.getXpos() - insets.getLeft(),
+//                        -nodeLayout.getYpos() - insets.getTop());
+            point.add(-node.getX(), -node.getY());
             node = node.getParent();
         }
         return point;
@@ -624,47 +464,44 @@ public final class ElkUtil {
      * @param xoffset x coordinate offset
      * @param yoffset y coordinate offset
      */
-    public static void translate(final KNode parent, final float xoffset, final float yoffset) {
-        for (KNode child : parent.getChildren()) {
+    public static void translate(final ElkNode parent, final double xoffset, final double yoffset) {
+        for (ElkNode child : parent.getChildren()) {
             // Translate node position
-            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
-            nodeLayout.setXpos(nodeLayout.getXpos() + xoffset);
-            nodeLayout.setYpos(nodeLayout.getYpos() + yoffset);
+            child.setLocation(child.getX() + xoffset, child.getY() + yoffset);
             
             // Translate edge bend points
-            for (KEdge edge : child.getOutgoingEdges()) {
-                // If the target of this edge is a descendent of the current child, its bend points are
-                // relative to the child's position and thus don't need to be translated
-                if (!isDescendant(edge.getTarget(), child)) {
-                    // Translate edge bend points
-                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                    translate(edgeLayout.getSourcePoint(), xoffset, yoffset);
-                    for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-                        translate(bendPoint, xoffset, yoffset);
-                    }
-                    translate(edgeLayout.getTargetPoint(), xoffset, yoffset);
-                    
-                    // Translate edge label positions
-                    for (KLabel edgeLabel : edge.getLabels()) {
-                        KShapeLayout labelLayout = edgeLabel.getData(KShapeLayout.class);
-                        labelLayout.setXpos(labelLayout.getXpos() + xoffset);
-                        labelLayout.setYpos(labelLayout.getYpos() + yoffset);
-                    }
+            // MIGRATE This used to be outgoing edges; check if it makes sense to translate all contained edges instead
+            for (ElkEdge edge : child.getContainedEdges()) {
+                for (ElkEdgeSection section : edge.getSections()) {
+                    translate(section, xoffset, yoffset);
+                }
+                
+                // Translate edge label positions
+                for (ElkLabel edgeLabel : edge.getLabels()) {
+                    edgeLabel.setLocation(edgeLabel.getX() + xoffset, edgeLabel.getY() + yoffset);
                 }
             }
         }
     }
     
     /**
-     * Translates the given point by an offset.
+     * Translates the given edge section by an offset.
      * 
-     * @param point point that shall be translated
+     * @param section edge section that shall be translated
      * @param xoffset x coordinate offset
      * @param yoffset y coordinate offset
      */
-    public static void translate(final KPoint point, final float xoffset, final float yoffset) {
-        point.setX(point.getX() + xoffset);
-        point.setY(point.getY() + yoffset);
+    public static void translate(final ElkEdgeSection section, final double xoffset, final double yoffset) {
+        // Translate source point
+        section.setStartLocation(section.getStartX() + xoffset, section.getStartY() + yoffset);
+        
+        // Translate bend points
+        for (ElkBendPoint bendPoint : section.getBendPoints()) {
+            bendPoint.set(bendPoint.getX() + xoffset, bendPoint.getY() + yoffset);
+        }
+        
+        // Translate target point
+        section.setEndLocation(section.getEndX() + xoffset, section.getEndY() + yoffset);
     }
 
     /**
@@ -673,12 +510,12 @@ public final class ElkUtil {
      *
      * @param graph the root element of the graph to persist elements of.
      */
-    public static void persistDataElements(final KNode graph) {
+    public static void persistDataElements(final ElkNode graph) {
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
-            if (eObject instanceof KGraphData) {
-                ((KGraphData) eObject).makePersistent();
+            if (eObject instanceof EMapPropertyHolder) {
+                ((EMapPropertyHolder) eObject).makePersistent();
             }
         }
     }
@@ -691,101 +528,105 @@ public final class ElkUtil {
      * @param edge an edge
      * @return a list of junction points
      */
-    public static KVectorChain determineJunctionPoints(final KEdge edge) {
-        KVectorChain junctionPoints = new KVectorChain();
-        Map<KEdge, KVector[]> pointsMap = Maps.newHashMap();
-        pointsMap.put(edge, getPoints(edge));
+    public static KVectorChain determineJunctionPoints(final ElkEdge edge) {
+        // MIGRATE This method will have to take different coordinate systems resulting from different edge containments into account
         
-        // for each connected port p
-        List<KPort> connectedPorts = Lists.newArrayListWithCapacity(2);
-        if (edge.getSourcePort() != null) {
-            connectedPorts.add(edge.getSourcePort());
-        }
-        if (edge.getTargetPort() != null) {
-            connectedPorts.add(edge.getTargetPort());
-        }
-        for (KPort p : connectedPorts) {
-            
-            // let allConnectedEdges be the set of edges connected to p without the main edge
-            List<KEdge> allConnectedEdges = Lists.newLinkedList();
-            allConnectedEdges.addAll(p.getEdges());
-            allConnectedEdges.remove(edge);
-            if (!allConnectedEdges.isEmpty()) {
-                KVector[] thisPoints = pointsMap.get(edge);
-                boolean reverse;
-                
-                // let p1 be the start point
-                KVector p1;
-                if (p == edge.getTargetPort()) {
-                    p1 = thisPoints[thisPoints.length - 1];
-                    reverse = true;
-                } else {
-                    p1 = thisPoints[0];
-                    reverse = false;
-                }
-                
-                // for all bend points of this connection
-                for (int i = 1; i < thisPoints.length; i++) {
-                    // let p2 be the next bend point on this connection
-                    KVector p2;
-                    if (reverse) {
-                        p2 = thisPoints[thisPoints.length - 1 - i];
-                    } else {
-                        p2 = thisPoints[i];
-                    }
-                    
-                    // for all other connections that are still on the same track as this one
-                    Iterator<KEdge> allEdgeIter = allConnectedEdges.iterator();
-                    while (allEdgeIter.hasNext()) {
-                        KEdge otherEdge = allEdgeIter.next();
-                        KVector[] otherPoints = pointsMap.get(otherEdge);
-                        if (otherPoints == null) {
-                            otherPoints = getPoints(otherEdge);
-                            pointsMap.put(otherEdge, otherPoints);
-                        }
-                        if (otherPoints.length <= i) {
-                            allEdgeIter.remove();
-                        } else {
-                            
-                            // let p3 be the next bend point of the other connection
-                            KVector p3;
-                            if (reverse) {
-                                p3 = otherPoints[otherPoints.length - 1 - i];
-                            } else {
-                                p3 = otherPoints[i];
-                            }
-                            if (p2.x != p3.x || p2.y != p3.y) {
-                                // the next point of this and the other connection differ
-                                double dx2 = p2.x - p1.x;
-                                double dy2 = p2.y - p1.y;
-                                double dx3 = p3.x - p1.x;
-                                double dy3 = p3.y - p1.y;
-                                if ((dx3 * dy2) == (dy3 * dx2)
-                                        && signum(dx2) == signum(dx3)
-                                        && signum(dy2) == signum(dy3)) {
-                                    
-                                    // the points p1, p2, p3 form a straight line,
-                                    // now check whether p2 is between p1 and p3
-                                    if (Math.abs(dx2) < Math.abs(dx3)
-                                            || Math.abs(dy2) < Math.abs(dy3)) {
-                                        junctionPoints.add(p2);
-                                    }
-                                    
-                                } else if (i > 1) {
-                                    // p2 and p3 have diverged, so the last common point is p1
-                                    junctionPoints.add(p1);
-                                }
-
-                                // do not consider the other connection in the next iterations
-                                allEdgeIter.remove();
-                            }
-                        }
-                    }
-                    // for the next iteration p2 is taken as reference point
-                    p1 = p2;
-                }
-            }
-        }
+        KVectorChain junctionPoints = new KVectorChain();
+        
+//        Map<KEdge, KVector[]> pointsMap = Maps.newHashMap();
+//        pointsMap.put(edge, getPoints(edge));
+//        
+//        // for each connected port p
+//        List<KPort> connectedPorts = Lists.newArrayListWithCapacity(2);
+//        if (edge.getSourcePort() != null) {
+//            connectedPorts.add(edge.getSourcePort());
+//        }
+//        if (edge.getTargetPort() != null) {
+//            connectedPorts.add(edge.getTargetPort());
+//        }
+//        for (KPort p : connectedPorts) {
+//            
+//            // let allConnectedEdges be the set of edges connected to p without the main edge
+//            List<KEdge> allConnectedEdges = Lists.newLinkedList();
+//            allConnectedEdges.addAll(p.getEdges());
+//            allConnectedEdges.remove(edge);
+//            if (!allConnectedEdges.isEmpty()) {
+//                KVector[] thisPoints = pointsMap.get(edge);
+//                boolean reverse;
+//                
+//                // let p1 be the start point
+//                KVector p1;
+//                if (p == edge.getTargetPort()) {
+//                    p1 = thisPoints[thisPoints.length - 1];
+//                    reverse = true;
+//                } else {
+//                    p1 = thisPoints[0];
+//                    reverse = false;
+//                }
+//                
+//                // for all bend points of this connection
+//                for (int i = 1; i < thisPoints.length; i++) {
+//                    // let p2 be the next bend point on this connection
+//                    KVector p2;
+//                    if (reverse) {
+//                        p2 = thisPoints[thisPoints.length - 1 - i];
+//                    } else {
+//                        p2 = thisPoints[i];
+//                    }
+//                    
+//                    // for all other connections that are still on the same track as this one
+//                    Iterator<KEdge> allEdgeIter = allConnectedEdges.iterator();
+//                    while (allEdgeIter.hasNext()) {
+//                        KEdge otherEdge = allEdgeIter.next();
+//                        KVector[] otherPoints = pointsMap.get(otherEdge);
+//                        if (otherPoints == null) {
+//                            otherPoints = getPoints(otherEdge);
+//                            pointsMap.put(otherEdge, otherPoints);
+//                        }
+//                        if (otherPoints.length <= i) {
+//                            allEdgeIter.remove();
+//                        } else {
+//                            
+//                            // let p3 be the next bend point of the other connection
+//                            KVector p3;
+//                            if (reverse) {
+//                                p3 = otherPoints[otherPoints.length - 1 - i];
+//                            } else {
+//                                p3 = otherPoints[i];
+//                            }
+//                            if (p2.x != p3.x || p2.y != p3.y) {
+//                                // the next point of this and the other connection differ
+//                                double dx2 = p2.x - p1.x;
+//                                double dy2 = p2.y - p1.y;
+//                                double dx3 = p3.x - p1.x;
+//                                double dy3 = p3.y - p1.y;
+//                                if ((dx3 * dy2) == (dy3 * dx2)
+//                                        && signum(dx2) == signum(dx3)
+//                                        && signum(dy2) == signum(dy3)) {
+//                                    
+//                                    // the points p1, p2, p3 form a straight line,
+//                                    // now check whether p2 is between p1 and p3
+//                                    if (Math.abs(dx2) < Math.abs(dx3)
+//                                            || Math.abs(dy2) < Math.abs(dy3)) {
+//                                        junctionPoints.add(p2);
+//                                    }
+//                                    
+//                                } else if (i > 1) {
+//                                    // p2 and p3 have diverged, so the last common point is p1
+//                                    junctionPoints.add(p1);
+//                                }
+//
+//                                // do not consider the other connection in the next iterations
+//                                allEdgeIter.remove();
+//                            }
+//                        }
+//                    }
+//                    // for the next iteration p2 is taken as reference point
+//                    p1 = p2;
+//                }
+//            }
+//        }
+        
         return junctionPoints;
     }
     
@@ -807,125 +648,135 @@ public final class ElkUtil {
     }
     
     /**
-     * Get the edge points as an array of vectors.
+     * Get the edge points as an array of vectors. Note that this method requires the edge to have exactly one
+     * edge section.
      * 
      * @param edge an edge
      * @return an array with all edge points
+     * @throws IllegalArgumentException if the edge has no or more than one edge section.
      */
-    private static KVector[] getPoints(final KEdge edge) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        int n = edgeLayout.getBendPoints().size() + 2;
-        KVector[] points = new KVector[n];
-        points[0] = edgeLayout.getSourcePoint().createVector();
-        ListIterator<KPoint> pointIter = edgeLayout.getBendPoints().listIterator();
-        while (pointIter.hasNext()) {
-            KPoint bendPoint = pointIter.next();
-            points[pointIter.nextIndex()] = bendPoint.createVector();
+    private static KVector[] getPoints(final ElkEdge edge) {
+        if (edge.getSections().size() != 1) {
+            throw new IllegalArgumentException("The edge needs to have exactly one edge section. Found: "
+                    + edge.getSections().size());
         }
-        points[n - 1] = edgeLayout.getTargetPoint().createVector();
+        
+        ElkEdgeSection section = edge.getSections().get(0);
+        
+        int n = section.getBendPoints().size() + 2;
+        KVector[] points = new KVector[n];
+        
+        // Source point
+        points[0] = new KVector(section.getStartX(), section.getStartY());
+        
+        // Bend points
+        ListIterator<ElkBendPoint> pointIter = section.getBendPoints().listIterator();
+        while (pointIter.hasNext()) {
+            ElkBendPoint bendPoint = pointIter.next();
+            points[pointIter.nextIndex()] = new KVector(bendPoint.getX(), bendPoint.getY());
+        }
+        
+        // Target point
+        points[n - 1] = new KVector(section.getEndX(), section.getEndY());
+        
         return points;
     }
 
     /**
-     * Determines the {@link KEdge KEdges} that are (transitively) connected to the given
-     * {@code kedges} across hierarchy boundaries via common ports. See
-     * {@link #getConnectedEdges(KEdge)} for details.
+     * Determines the edges that are (transitively) connected to the given edges across hierarchy boundaries
+     * via common ports. See {@link #getConnectedEdges(ElkEdge)} for details.
      *
-     * @see #getConnectedEdges(KEdge)
-     * @param kedges
-     *            an {@link Iterable} of {@link KEdge KEdges} that shall be checked
-     * @return an {@link Iterator} visiting the given {@code kedges} and all (transitively)
-     *         connected ones.
-     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     * @see #getConnectedEdges(ElkEdge)
+     * @param edges
+     *            an {@link Iterable} of edges that shall be checked
+     * @return an {@link Iterator} visiting the given edges and all (transitively) connected ones.
+     * @deprecated Use {@link #getConnectedElements(ElkEdge, SelectionIterator, SelectionIterator)} in
      *             combination with {@link DefaultSelectionIterator}
      */
-    public static Iterator<KEdge> getConnectedEdges(final Iterable<KEdge> kedges) {
-        return Iterators.concat(
-                Iterators.transform(kedges.iterator(), new Function<KEdge, Iterator<KEdge>>() {
-
-            public Iterator<KEdge> apply(final KEdge kedge) {
+    public static Iterator<ElkEdge> getConnectedEdges(final Iterable<ElkEdge> edges) {
+        return Iterators.concat(Iterators.transform(edges.iterator(), new Function<ElkEdge, Iterator<ElkEdge>>() {
+            public Iterator<ElkEdge> apply(final ElkEdge kedge) {
                 return getConnectedEdges(kedge);
             }
         }));
     }
 
     /**
-     * Determines the {@link KEdge KEdges} that are (transitively) connected to {@code kedge} across
-     * hierarchy boundaries via common ports. Rational: Multiple {@link KEdge KEdges} that are
-     * pairwise connected by means of a {@link KPort} (target port of edge a == source port of edge
-     * b or vice versa) may form one logical connection. This kind splitting might be already
+     * Determines the edges that are (transitively) connected to the given edge across
+     * hierarchy boundaries via common ports. Rational: Multiple edges that are
+     * pairwise connected by means of an {@link ElkPort} (target port of edge a == source port of edge
+     * b or vice versa) may form one logical connection. This kind of splitting might be already
      * present in the view model, or is performed by the layout algorithm for decomposing a nested
      * layout input graph into flat sub graphs.
      *
-     * @param kedge
-     *            the {@link KEdge} check for connected edges
-     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
+     * @param edge
+     *            the edge check for connected edges
+     * @return an {@link Iterator} visiting the given edge and all connected edges in a(n
      *         almost) breadth first search fashion
-     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     * @deprecated Use {@link #getConnectedElements(ElkEdge, SelectionIterator, SelectionIterator)} in
      *             combination with {@link DefaultSelectionIterator}
      */
-    public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
+    public static Iterator<ElkEdge> getConnectedEdges(final ElkEdge edge) {
         // Default behavior should be to not select the ports
-        return Iterators.filter(getConnectedElements(kedge, false), KEdge.class);
+        return Iterators.filter(getConnectedElements(edge, false), ElkEdge.class);
     }
     
     /**
-     * Determines the {@link KGraphElement KGraphElements} that are (transitively) connected to
-     * {@code kedge} across hierarchy boundaries via common ports. Rational: Multiple {@link KEdge
-     * KEdges} that are pairwise connected by means of a {@link KPort} (target port of edge a ==
-     * source port of edge b or vice versa) may form one logical connection. This kind splitting
+     * Determines the {@link ElkGraphElement ElkGraphElements} that are (transitively) connected to
+     * {@code kedge} across hierarchy boundaries via common ports. Rational: Multiple {@link ElkEdge
+     * ElkEdges} that are pairwise connected by means of an {@link ElkPort} (target port of edge a ==
+     * source port of edge b or vice versa) may form one logical connection. This kind of splitting
      * might be already present in the view model, or is performed by the layout algorithm for
      * decomposing a nested layout input graph into flat sub graphs.
      * This version allows to also include ports in the selection.
      *
      * @param kedge
-     *            the {@link KEdge} check for connected elements
+     *            the edge to check for connected elements
      * @param addPorts
      *            flag to determine, whether ports should be added to the selection or not
-     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
+     * @return an {@link Iterator} visiting the given {@code edge} and all connected edges in a(n
      *         almost) breadth first search fashion
-     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     * @deprecated Use {@link #getConnectedElements(ElkEdge, SelectionIterator, SelectionIterator)} in
      *             combination with {@link DefaultSelectionIterator}
      */
-    public static Iterator<KGraphElement> getConnectedElements(final KEdge kedge,
-            final boolean addPorts) {
+    public static Iterator<ElkGraphElement> getConnectedElements(final ElkEdge edge, final boolean addPorts) {
+        final SelectionIterator sourceSideIt = new DefaultSelectionIterator(edge, addPorts, false);
+        final SelectionIterator targetSideIt = new DefaultSelectionIterator(edge, addPorts, true);
 
-        final SelectionIterator sourceSideIt = new DefaultSelectionIterator(kedge, addPorts, false);
-        final SelectionIterator targetSideIt = new DefaultSelectionIterator(kedge, addPorts, true);
-
-        return getConnectedElements(kedge, sourceSideIt, targetSideIt);
+        return getConnectedElements(edge, sourceSideIt, targetSideIt);
     }
     
     /**
-     * Determines the {@link KEdge KEdges} that are (transitively) connected to {@code kedge} across
-     * hierarchy boundaries via common ports. Rational: Multiple {@link KEdge KEdges} that are
-     * pairwise connected by means of a {@link KPort} (target port of edge a == source port of edge
-     * b or vice versa) may form one logical connection. This kind splitting might be already
+     * Determines the {@link ElkEdge ElkEdges} that are (transitively) connected to {@code edge} across
+     * hierarchy boundaries via common ports. Rational: Multiple {@link ElkEdge ElkEdges} that are
+     * pairwise connected by means of na {@link ElkPort} (target port of edge a == source port of edge
+     * b or vice versa) may form one logical connection. This kind of splitting might be already
      * present in the view model, or is performed by the layout algorithm for decomposing a nested
      * layout input graph into flat sub graphs.
      *
-     * @param kedge
-     *            the {@link KEdge} check for connected elements
+     * @param edge
+     *            the {@link ElkEdge} check for connected elements
      * @param sourceIterator
      *            the {@link SelectionIterator} to be used for iterating towards the tail of the
      *            selected edge
      * @param targetIterator
      *            the {@link SelectionIterator} to be used for iterating towards the head of the
      *            selected edge
-     * @return an {@link Iterator} visiting the given {@code kedge} and all connected elements
+     * @return an {@link Iterator} visiting the given {@code edge} and all connected elements
      *         determined by the {@link SelectionIterator SelectionIterators}
      */
-    public static Iterator<KGraphElement> getConnectedElements(final KEdge kedge,
+    public static Iterator<ElkGraphElement> getConnectedElements(final ElkEdge edge,
             final SelectionIterator sourceIterator, final SelectionIterator targetIterator) {
 
-        // get a singleton iterator offering 'kedge'
-        final Iterator<KGraphElement> kedgeIt = Iterators.singletonIterator((KGraphElement) kedge);
+        // get a singleton iterator offering 'edge'
+        final Iterator<ElkGraphElement> kedgeIt = Iterators.singletonIterator(edge);
+        
         // Keep a set of visited elements for the tree iterators
-        final Set<KPort> visited = Sets.newHashSet();
+        final Set<ElkPort> visited = Sets.newHashSet();
 
         // Grab source iterator if edge has a source
         final SelectionIterator sourceSideIt =
-                kedge.getSourcePort() == null ? null : sourceIterator;
+                !edge.getSources().isEmpty() ? null : sourceIterator;
         if (sourceSideIt != null) {
             // Configure the iterator
             sourceSideIt.attachVisitedSet(visited);
@@ -933,14 +784,14 @@ public final class ElkUtil {
 
         // Grab target iterator if edge has a target
         final SelectionIterator targetSideIt =
-                kedge.getTargetPort() == null ? null : targetIterator;
+                !edge.getTargets().isEmpty() ? null : targetIterator;
         if (targetSideIt != null) {
             // Configure the iterator
             targetSideIt.attachVisitedSet(visited);
         }
 
         // concatenate the source-sidewise and target-sidewise iterators if present ...
-        final Iterator<KGraphElement> connectedEdges =
+        final Iterator<ElkGraphElement> connectedEdges =
                 sourceSideIt == null ? targetSideIt : targetSideIt == null ? sourceSideIt
                         : Iterators.concat(sourceSideIt, targetSideIt);
 
@@ -958,69 +809,61 @@ public final class ElkUtil {
      * @param graph
      *            the graph to configure.
      */
-    public static void configureDefaultsRecursively(final KNode graph) {
-
-        Iterator<KGraphElement> kgeIt =
-                Iterators.filter(graph.eAllContents(), KGraphElement.class);
+    public static void configureDefaultsRecursively(final ElkNode graph) {
+        Iterator<ElkGraphElement> kgeIt = Iterators.filter(graph.eAllContents(), ElkGraphElement.class);
         while (kgeIt.hasNext()) {
-            KGraphElement kge = kgeIt.next();
-            if (kge instanceof KNode) {
-                configureWithDefaultValues((KNode) kge);
-            } else if (kge instanceof KPort) {
-                configureWithDefaultValues((KPort) kge);
-            } else if (kge instanceof KEdge) {
-                configureWithDefaultValues((KEdge) kge);
+            ElkGraphElement kge = kgeIt.next();
+            if (kge instanceof ElkNode) {
+                configureWithDefaultValues((ElkNode) kge);
+            } else if (kge instanceof ElkPort) {
+                configureWithDefaultValues((ElkPort) kge);
+            } else if (kge instanceof ElkEdge) {
+                configureWithDefaultValues((ElkEdge) kge);
             }
         }
     }
+    
     /**
      * Adds some default values to the passed node. This includes a reasonable size, a label based
-     * on the node's {@link KIdentifier} and a inside center node label placement.
+     * on the node's identifier and a inside center node label placement.
      * 
      * Such default values are useful for fast test case generation.
      * 
      * @param node
      *            a node of a graph
      */
-    public static void configureWithDefaultValues(final KNode node) {
-       
+    public static void configureWithDefaultValues(final ElkNode node) {
         // Make sure the node has a size if the size constraints are fixed
-        KShapeLayout sl = node.getData(KShapeLayout.class);
-        if (sl != null) {
-            Set<SizeConstraint> sc = sl.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
-            
-            if (sc.equals(SizeConstraint.fixed()) && sl.getWidth() == 0f && sl.getHeight() == 0f) {
-                sl.setWidth(DEFAULT_MIN_WIDTH * 2 * 2);
-                sl.setHeight(DEFAULT_MIN_HEIGHT * 2 * 2);
-            }
-        } 
+        Set<SizeConstraint> sc = node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
+        
+        if (sc.equals(SizeConstraint.fixed()) && node.getWidth() == 0f && node.getHeight() == 0f) {
+            node.setWidth(DEFAULT_MIN_WIDTH * 2 * 2);
+            node.setHeight(DEFAULT_MIN_HEIGHT * 2 * 2);
+        }
         
         // label
         ensureLabel(node);
-        if (sl != null) {
-            Set<NodeLabelPlacement> nlp = sl.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
-            if (nlp.equals(NodeLabelPlacement.fixed())) {
-                sl.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideCenter());
-            }
+        
+        Set<NodeLabelPlacement> nlp = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
+        if (nlp.equals(NodeLabelPlacement.fixed())) {
+            node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideCenter());
         }
         
     }
     
     /**
      * Adds some default values to the passed port. This includes a reasonable size 
-     * and a label based on the port's {@link KIdentifier}.
+     * and a label based on the port's identifier.
      * 
      * Such default values are useful for fast test case generation.
      * 
      * @param port
      *            a port of a node of a graph
      */
-    public static void configureWithDefaultValues(final KPort port) {
-
-        KShapeLayout sl = port.getData(KShapeLayout.class);
-        if (sl != null && sl.getWidth() == 0f && sl.getHeight() == 0f) {
-            sl.setWidth(DEFAULT_MIN_WIDTH / 2 / 2);
-            sl.setHeight(DEFAULT_MIN_HEIGHT / 2 / 2);
+    public static void configureWithDefaultValues(final ElkPort port) {
+        if (port.getWidth() == 0 && port.getHeight() == 0) {
+            port.setWidth(DEFAULT_MIN_WIDTH / 2 / 2);
+            port.setHeight(DEFAULT_MIN_HEIGHT / 2 / 2);
         }
         
         ensureLabel(port);
@@ -1032,28 +875,22 @@ public final class ElkUtil {
      * @param edge
      *            an edge of a graph
      */
-    public static void configureWithDefaultValues(final KEdge edge) {
-
-        KLayoutData ld = edge.getData(KLayoutData.class);
-        if (ld != null) {
-            EdgeLabelPlacement elp = ld.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-            if (elp == EdgeLabelPlacement.UNDEFINED) {
-                ld.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER);
-            }
+    public static void configureWithDefaultValues(final ElkEdge edge) {
+        EdgeLabelPlacement elp = edge.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+        if (elp == EdgeLabelPlacement.UNDEFINED) {
+            edge.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER);
         }
     }
     
     /**
      * If the element does not already own a label, a label is created based on the element's
-     * {@link KIdentifier} (if it exists, that is).
+     * identifier.
      */
-    private static void ensureLabel(final KLabeledGraphElement klge) {
+    private static void ensureLabel(final ElkGraphElement klge) {
         if (klge.getLabels().isEmpty()) {
-
-            KIdentifier id = klge.getData(KIdentifier.class);
-            if (id != null && !Strings.isNullOrEmpty(id.getId())) {
-                KLabel label = createInitializedLabel(klge);
-                label.setText(id.getId());
+            if (!Strings.isNullOrEmpty(klge.getIdentifier())) {
+                ElkLabel label = ElkGraphUtil.createLabel(klge);
+                label.setText(klge.getIdentifier());
             }
         }
     }
@@ -1061,34 +898,108 @@ public final class ElkUtil {
     /**
      * Print information on the given graph element to the given string builder.
      */
-    public static void printElementPath(final KGraphElement element, final StringBuilder builder) {
-        if (element.eContainer() instanceof KGraphElement) {
-            printElementPath((KGraphElement) element.eContainer(), builder);
+    public static void printElementPath(final ElkGraphElement element, final StringBuilder builder) {
+        if (element.eContainer() instanceof ElkGraphElement) {
+            printElementPath((ElkGraphElement) element.eContainer(), builder);
             builder.append(" > ");
         } else {
             builder.append("Root ");
         }
+        
         String className = element.eClass().getName();
-        if (className.startsWith("K")) {
-            builder.append(className.substring(1));
+        if (className.startsWith("Elk")) {
+            // CHECKSTYLEOFF MagicNumber
+            builder.append(className.substring(3));
+            // CHECKSTYLEON MagicNumber
         } else {
             builder.append(className);
         }
-        if (element instanceof KLabeledGraphElement) {
-            KLabeledGraphElement labeledElement = (KLabeledGraphElement) element;
+        
+        if (element instanceof ElkLabel) {
+            String text = ((ElkLabel) element).getText();
+            if (!Strings.isNullOrEmpty(text)) {
+                builder.append(' ').append(text);
+            }
+        } else  if (element instanceof ElkGraphElement) {
+            ElkGraphElement labeledElement = (ElkGraphElement) element;
             if (!labeledElement.getLabels().isEmpty()) {
-                KLabel firstLabel = labeledElement.getLabels().get(0);
+                ElkLabel firstLabel = labeledElement.getLabels().get(0);
                 String text = firstLabel.getText();
-                if (text != null && !text.isEmpty()) {
+                if (!Strings.isNullOrEmpty(text)) {
                     builder.append(' ').append(text);
                 }
             }
-        } else if (element instanceof KLabel) {
-            String text = ((KLabel) element).getText();
-            if (text != null && !text.isEmpty()) {
-                builder.append(' ').append(text);
-            }
         }
+    }
+    
+    /**
+     * Applies the vector chain's vectors to the given edge section. The first and the last point of the vector chain
+     * are used as the section's new source and start point, respectively. The remaining points become the section's
+     * new bend points. The method tries to reuse as many bend points as possible instead of wiping all bend points
+     * out and creating new ones.
+     * 
+     * @param vectorChain the vector chain to apply.
+     * @param section the edge section to apply the chain to.
+     * @throws IllegalArgumentException if the vector chain contains less than two vectors.
+     */
+    public static void applyVectorChain(final KVectorChain vectorChain, final ElkEdgeSection section) {
+        // We need at least a start and an end point
+        if (vectorChain.size() < 2) {
+            throw new IllegalArgumentException("The vector chain must contain at least a source and a target point.");
+        }
+        
+        // Start point
+        KVector firstPoint = vectorChain.getFirst();
+        section.setStartLocation(firstPoint.x, firstPoint.y);
+        
+        // Reuse as many existing bend points as possible
+        ListIterator<ElkBendPoint> oldPointIter = section.getBendPoints().listIterator();
+        ListIterator<KVector> newPointIter = vectorChain.listIterator(1);
+        
+        while (newPointIter.nextIndex() < vectorChain.size() - 1) {
+            KVector nextPoint = newPointIter.next();
+            ElkBendPoint bendpoint;
+            if (oldPointIter.hasNext()) {
+                bendpoint = oldPointIter.next();
+            } else {
+                bendpoint = ElkGraphFactory.eINSTANCE.createElkBendPoint();
+                oldPointIter.add(bendpoint);
+            }
+            
+            bendpoint.set(nextPoint.x, nextPoint.y);
+        }
+        
+        // Remove existing bend points that we did not use
+        while (oldPointIter.hasNext()) {
+            oldPointIter.next();
+            oldPointIter.remove();
+        }
+        
+        // End point
+        KVector lastPoint = vectorChain.getLast();
+        section.setEndLocation(lastPoint.x, lastPoint.y);
+    }
+    
+    /**
+     * Creates a vector chain containing the start point, bend points, and end point of the given edge section. Note
+     * that modifying the vector chain will be of no consequence to the edge section.
+     * 
+     * @param edgeSection 
+     *            the edge section to initialize the vector chain with.
+     * @return the vector chain.
+     */
+    public static KVectorChain createVectorChain(final ElkEdgeSection edgeSection) {
+        KVectorChain chain = new KVectorChain();
+        
+        chain.add(new KVector(edgeSection.getStartX(), edgeSection.getStartY()));
+        
+        for (ElkBendPoint bendPoint : edgeSection.getBendPoints()) {
+            chain.add(new KVector(bendPoint.getX(), bendPoint.getY()));
+        }
+        
+        chain.add(new KVector(edgeSection.getEndX(), edgeSection.getEndY()));
+        
+        return chain;
     }
     
 }

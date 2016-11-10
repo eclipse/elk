@@ -13,13 +13,10 @@ package org.eclipse.elk.core.util.adapters;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphElementAdapter;
@@ -29,21 +26,24 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Insets;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.ElkShape;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.util.ECollections;
 
 import com.google.common.collect.Lists;
 
 /**
- * Contains implementations of the {@link GraphAdapters} interfaces for the KGraph. To obtain an
- * adapter for a full KGraph, simply call {@link #adapt(KGraph)}. To obtain an adapter only for a
- * single node, call {@link #adaptSingleNode(KNode)}.
+ * Contains implementations of the {@link GraphAdapters} interfaces for the ElkGraph. To obtain an
+ * adapter for a full ElkGraph, simply call {@link #adapt(ElkNode)}. To obtain an adapter only for a
+ * single node, call {@link #adaptSingleNode(ElkNode)}.
  * 
  * @author uru
  */
@@ -54,14 +54,14 @@ public final class KGraphAdapters {
     }
 
     /**
-     * Creates the necessary adapters for the KGraph rooted at the given node.
+     * Creates the necessary adapters for the ElkGraph rooted at the given node.
      * 
      * @param graph
      *            the graph that should be wrapped in an adapter
-     * @return an {@link KGraphAdapter} for the passed graph.
+     * @return an {@link ElkGraphAdapter} for the passed graph.
      */
-    public static KGraphAdapter adapt(final KNode graph) {
-        return new KGraphAdapter(graph);
+    public static ElkGraphAdapter adapt(final ElkNode graph) {
+        return new ElkGraphAdapter(graph);
     }
 
     /**
@@ -69,16 +69,19 @@ public final class KGraphAdapters {
      * 
      * @param node
      *            the node that should be wrapped in an adapter
-     * @return an {@link KNodeAdapter} for the passed node.
+     * @return an {@link ElkNodeAdapter} for the passed node.
      */
-    public static KNodeAdapter adaptSingleNode(final KNode node) {
-        return new KNodeAdapter(node);
+    public static ElkNodeAdapter adaptSingleNode(final ElkNode node) {
+        return new ElkNodeAdapter(node);
     }
 
     /**
-     * Implements basic adpater functionality for {@link KGraphElement}s.
+     * Implements basic adpater functionality for {@link ElkGraphElement}s.
+     * 
+     * @param <T>
+     *            the type of the underlying graph element.
      */
-    private abstract static class AbstractKGraphElementAdapter<T extends KGraphElement> implements
+    private abstract static class AbstractElkGraphElementAdapter<T extends ElkShape> implements
             GraphElementAdapter<T> {
         
         private static final IProperty<Float> OFFSET_PROXY = new Property<Float>(
@@ -88,8 +91,6 @@ public final class KGraphAdapters {
         // CHECKSTYLEOFF VisibilityModifier
         /** The wrapped element. */
         protected T element;
-        /** The layout data of the wrapped element. */
-        protected KShapeLayout layout;
         // CHECKSTYLEON VisibilityModifier
         /**
          * Internally used versatile data field. Can be used for arbitrary information.
@@ -104,15 +105,8 @@ public final class KGraphAdapters {
          * @param element
          *            the element to be wrapped in this adapter.
          */
-        protected AbstractKGraphElementAdapter(final T element) {
+        protected AbstractElkGraphElementAdapter(final T element) {
             this.element = element;
-            
-            try {
-                layout = element.getData(KShapeLayout.class);
-            } catch (ClassCastException cce) {
-                throw new RuntimeException(
-                        "Graph adapters are only supported for shape-full types.");
-            }
         }
 
 
@@ -121,70 +115,73 @@ public final class KGraphAdapters {
          */
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
-            // the nodespacing implementation requires a default value for the offset property
+            // the node spacing implementation requires a default value for the offset property
             if (prop.equals(CoreOptions.PORT_BORDER_OFFSET)) {
-                return (P) layout.getProperty(OFFSET_PROXY);
+                return (P) element.getProperty(OFFSET_PROXY);
             }
             
-            return layout.getProperty(prop);
+            return element.getProperty(prop);
         }
 
         /**
          * {@inheritDoc}
          */
         public KVector getPosition() {
-            return new KVector(layout.getXpos(), layout.getYpos());
+            return new KVector(element.getX(), element.getY());
         }
 
         /**
          * {@inheritDoc}
          */
         public KVector getSize() {
-            return new KVector(layout.getWidth(), layout.getHeight());
+            return new KVector(element.getWidth(), element.getHeight());
         }
 
         /**
          * {@inheritDoc}
          */
         public void setSize(final KVector size) {
-            layout.setWidth((float) size.x);
-            layout.setHeight((float) size.y);
+            element.setWidth(size.x);
+            element.setHeight(size.y);
         }
 
         /**
          * {@inheritDoc}
          */
         public void setPosition(final KVector pos) {
-            layout.setXpos((float) pos.x);
-            layout.setYpos((float) pos.y);
+            element.setX(pos.x);
+            element.setY(pos.y);
         }
 
         /**
          * {@inheritDoc}
          */
         public Insets getInsets() {
-            KInsets kinsets = layout.getInsets();
-            Insets insets =
-                    new Insets(kinsets.getTop(), kinsets.getLeft(), kinsets.getBottom(),
-                            kinsets.getRight());
-            return insets;
+            ElkInsets elkInsets = element.getProperty(CoreOptions.INSETS);
+            if (elkInsets == null) {
+                return new Insets();
+            } else {
+                return new Insets(
+                        elkInsets.getTop(),
+                        elkInsets.getLeft(),
+                        elkInsets.getBottom(),
+                        elkInsets.getRight());
+            }
         }
 
         /**
          * {@inheritDoc}
          */
         public void setInsets(final Insets insets) {
-            layout.getInsets().setLeft((float) insets.left);
-            layout.getInsets().setTop((float) insets.top);
-            layout.getInsets().setRight((float) insets.right);
-            layout.getInsets().setBottom((float) insets.bottom);
+            element.setProperty(CoreOptions.INSETS,
+                    new ElkInsets(insets.top, insets.right, insets.bottom, insets.left));
         }
 
         /**
          * {@inheritDoc}
          */
         public Margins getMargin() {
-            Margins margins = layout.getProperty(CoreOptions.MARGINS);
+            Margins margins = element.getProperty(CoreOptions.MARGINS);
             if (margins == null) {
                 margins = new Margins();
             }
@@ -197,7 +194,7 @@ public final class KGraphAdapters {
         public void setMargin(final Margins margin) {
             // analog to the insets case, we copy the margins object here
             Margins newMargin = new Margins(margin); 
-            layout.setProperty(CoreOptions.MARGINS, newMargin);
+            element.setProperty(CoreOptions.MARGINS, newMargin);
         }
         
         /**
@@ -216,20 +213,20 @@ public final class KGraphAdapters {
     }
 
     /**
-     * Adapter for KGraphs rooted at a given node.
+     * Adapter for ElkGraphs rooted at a given node.
      */
-    public static final class KGraphAdapter extends AbstractKGraphElementAdapter<KNode> implements
-            GraphAdapter<KNode> {
+    public static final class ElkGraphAdapter extends AbstractElkGraphElementAdapter<ElkNode> implements
+            GraphAdapter<ElkNode> {
         
         /** cached list of child node adapters. */
         private List<NodeAdapter<?>> childNodes = null;
         
         /**
-         * Creates a new adapter for the KGraph rooted at the given node.
+         * Creates a new adapter for the ElkGraph rooted at the given node.
          * 
-         * @param node root of the KGraph to be adapted.
+         * @param node root of the ElkGraph to be adapted.
          */
-        private KGraphAdapter(final KNode node) {
+        private ElkGraphAdapter(final ElkNode node) {
             super(node);
         }
 
@@ -239,8 +236,8 @@ public final class KGraphAdapters {
         public Iterable<NodeAdapter<?>> getNodes() {
             if (childNodes == null) {
                 childNodes = Lists.newArrayListWithExpectedSize(element.getChildren().size());
-                for (KNode n : element.getChildren()) {
-                    childNodes.add(new KNodeAdapter(n));
+                for (ElkNode n : element.getChildren()) {
+                    childNodes.add(new ElkNodeAdapter(n));
                 }
             }
             return childNodes;
@@ -248,10 +245,10 @@ public final class KGraphAdapters {
     }
 
     /**
-     * Adapter for {@link KNode}s.
+     * Adapter for {@link ElkNode}s.
      */
-    public static final class KNodeAdapter extends AbstractKGraphElementAdapter<KNode> implements
-            NodeAdapter<KNode> {
+    public static final class ElkNodeAdapter extends AbstractElkGraphElementAdapter<ElkNode> implements
+            NodeAdapter<ElkNode> {
         
         /** Cached list of label adapters. */
         private List<LabelAdapter<?>> labelAdapters = null;
@@ -269,7 +266,7 @@ public final class KGraphAdapters {
          * @param node
          *            the node to adapt.
          */
-        private KNodeAdapter(final KNode node) {
+        private ElkNodeAdapter(final ElkNode node) {
             super(node);
         }
         
@@ -280,8 +277,8 @@ public final class KGraphAdapters {
         public List<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
-                for (KLabel l : element.getLabels()) {
-                    labelAdapters.add(new KLabelAdapter(l));
+                for (ElkLabel l : element.getLabels()) {
+                    labelAdapters.add(new ElkLabelAdapter(l));
                 }
             }
             return labelAdapters;
@@ -293,8 +290,8 @@ public final class KGraphAdapters {
         public List<PortAdapter<?>> getPorts() {
             if (portAdapters == null) {
                 portAdapters = Lists.newArrayListWithExpectedSize(element.getPorts().size());
-                for (KPort p : element.getPorts()) {
-                    portAdapters.add(new KPortAdapter(p));
+                for (ElkPort p : element.getPorts()) {
+                    portAdapters.add(new ElkPortAdapter(p));
                 }
             }
             return portAdapters;
@@ -305,10 +302,9 @@ public final class KGraphAdapters {
          */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             if (incomingEdgeAdapters == null) {
-                incomingEdgeAdapters = Lists.newArrayListWithExpectedSize(
-                        element.getIncomingEdges().size());
-                for (KEdge e : element.getIncomingEdges()) {
-                    incomingEdgeAdapters.add(new KEdgeAdapter(e));
+                incomingEdgeAdapters = Lists.newArrayListWithExpectedSize(element.getIncomingEdges().size());
+                for (ElkEdge e : element.getIncomingEdges()) {
+                    incomingEdgeAdapters.add(new ElkEdgeAdapter(e));
                 }
             }
             return incomingEdgeAdapters;
@@ -319,10 +315,9 @@ public final class KGraphAdapters {
          */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
             if (outgoingEdgeAdapters == null) {
-                outgoingEdgeAdapters = Lists.newArrayListWithExpectedSize(
-                        element.getOutgoingEdges().size());
-                for (KEdge e : element.getOutgoingEdges()) {
-                    outgoingEdgeAdapters.add(new KEdgeAdapter(e));
+                outgoingEdgeAdapters = Lists.newArrayListWithExpectedSize(element.getOutgoingEdges().size());
+                for (ElkEdge e : element.getOutgoingEdges()) {
+                    outgoingEdgeAdapters.add(new ElkEdgeAdapter(e));
                 }
             }
             return outgoingEdgeAdapters;
@@ -341,9 +336,8 @@ public final class KGraphAdapters {
         @SuppressWarnings("unchecked")
         public void sortPortList(final Comparator<?> comparator) {
             // Iterate through the nodes of all layers
-            KLayoutData layout = element.getData(KLayoutData.class);
-            if (layout.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-                ECollections.sort(element.getPorts(), (Comparator<KPort>) comparator);
+            if (element.getProperty(CoreOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+                ECollections.sort(element.getPorts(), (Comparator<ElkPort>) comparator);
             }
         }
 
@@ -356,10 +350,10 @@ public final class KGraphAdapters {
     }
 
     /**
-     * Adapter for {@link KLabel}s.
+     * Adapter for {@link ElkLabel}s.
      */
-    private static final class KLabelAdapter extends AbstractKGraphElementAdapter<KLabel> implements
-            LabelAdapter<KLabel> {
+    private static final class ElkLabelAdapter extends AbstractElkGraphElementAdapter<ElkLabel> implements
+            LabelAdapter<ElkLabel> {
 
         /**
          * Creates a new adapter for the given label.
@@ -367,7 +361,7 @@ public final class KGraphAdapters {
          * @param label
          *            the label to adapt.
          */
-        private KLabelAdapter(final KLabel label) {
+        private ElkLabelAdapter(final ElkLabel label) {
             super(label);
         }
         
@@ -376,15 +370,15 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public LabelSide getSide() {
-            return layout.getProperty(LabelSide.LABEL_SIDE);
+            return element.getProperty(LabelSide.LABEL_SIDE);
         }
     }
 
     /**
-     * Adapter for {@link KPort}s.
+     * Adapter for {@link ElkPort}s.
      */
-    private static final class KPortAdapter extends AbstractKGraphElementAdapter<KPort>
-            implements PortAdapter<KPort> {
+    private static final class ElkPortAdapter extends AbstractElkGraphElementAdapter<ElkPort>
+            implements PortAdapter<ElkPort> {
         
         /** Cached list of label adapters. */
         private List<LabelAdapter<?>> labelAdapters = null;
@@ -399,7 +393,7 @@ public final class KGraphAdapters {
          * 
          * @param port the port to adapt.
          */
-        private KPortAdapter(final KPort port) {
+        private ElkPortAdapter(final ElkPort port) {
             super(port);
         }
 
@@ -408,7 +402,7 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public PortSide getSide() {
-            return layout.getProperty(CoreOptions.PORT_SIDE);
+            return element.getProperty(CoreOptions.PORT_SIDE);
         }
 
         /**
@@ -417,8 +411,8 @@ public final class KGraphAdapters {
         public List<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
-                for (KLabel l : element.getLabels()) {
-                    labelAdapters.add(new KLabelAdapter(l));
+                for (ElkLabel l : element.getLabels()) {
+                    labelAdapters.add(new ElkLabelAdapter(l));
                 }
             }
             return labelAdapters;
@@ -429,12 +423,9 @@ public final class KGraphAdapters {
          */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             if (incomingEdgeAdapters == null) {
-                // This overestimates the required list size
-                incomingEdgeAdapters = Lists.newArrayListWithCapacity(element.getEdges().size());
-                for (KEdge e : element.getEdges()) {
-                    if (e.getTarget().equals(element)) {
-                        incomingEdgeAdapters.add(new KEdgeAdapter(e));
-                    }
+                incomingEdgeAdapters = Lists.newArrayListWithCapacity(element.getIncomingEdges().size());
+                for (ElkEdge e : element.getIncomingEdges()) {
+                    incomingEdgeAdapters.add(new ElkEdgeAdapter(e));
                 }
             }
             return incomingEdgeAdapters;
@@ -445,11 +436,9 @@ public final class KGraphAdapters {
          */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
             if (outgoingEdgeAdapters == null) {
-                outgoingEdgeAdapters = Lists.newArrayListWithCapacity(element.getEdges().size());
-                for (KEdge e : element.getEdges()) {
-                    if (e.getSource().equals(element)) {
-                        outgoingEdgeAdapters.add(new KEdgeAdapter(e));
-                    }
+                outgoingEdgeAdapters = Lists.newArrayListWithCapacity(element.getOutgoingEdges().size());
+                for (ElkEdge e : element.getOutgoingEdges()) {
+                    outgoingEdgeAdapters.add(new ElkEdgeAdapter(e));
                 }
             }
             return outgoingEdgeAdapters;
@@ -459,17 +448,19 @@ public final class KGraphAdapters {
          * {@inheritDoc}
          */
         public boolean hasCompoundConnections() {
-            KNode node = element.getNode();
+            ElkNode node = element.getParent();
             
-            for (KEdge edge : element.getEdges()) {
-                if (edge.getSource() == node) {
-                    // check if the edge's target is a descendant of its source node
-                    if (ElkUtil.isDescendant(edge.getTarget(), node)) {
+            for (ElkEdge edge : element.getOutgoingEdges()) {
+                for (ElkConnectableShape target : edge.getTargets()) {
+                    if (ElkGraphUtil.isDescendant(ElkGraphUtil.connectableShapeToNode(target), node)) {
                         return true;
                     }
-                } else {
-                    // check if the edge's source is a descendant of its source node
-                    if (ElkUtil.isDescendant(edge.getSource(), node)) {
+                }
+            }
+            
+            for (ElkEdge edge : element.getIncomingEdges()) {
+                for (ElkConnectableShape source : edge.getSources()) {
+                    if (ElkGraphUtil.isDescendant(ElkGraphUtil.connectableShapeToNode(source), node)) {
                         return true;
                     }
                 }
@@ -480,12 +471,12 @@ public final class KGraphAdapters {
     }
 
     /**
-     * Adapter for {@link KEdge}s.
+     * Adapter for {@link ElkEdge}s.
      */
-    private static final class KEdgeAdapter implements EdgeAdapter<KEdge> {
+    private static final class ElkEdgeAdapter implements EdgeAdapter<ElkEdge> {
         
         /** The wrapped edge. */
-        private KEdge element;
+        private ElkEdge element;
         /** Cached list of label adapters. */
         private List<LabelAdapter<?>> labelAdapters = null;
 
@@ -496,7 +487,7 @@ public final class KGraphAdapters {
          * @param edge
          *            the edge to adapt.
          */
-        private KEdgeAdapter(final KEdge edge) {
+        private ElkEdgeAdapter(final ElkEdge edge) {
             this.element = edge;
         }
 
@@ -506,8 +497,8 @@ public final class KGraphAdapters {
         public Iterable<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
-                for (KLabel l : element.getLabels()) {
-                    labelAdapters.add(new KLabelAdapter(l));
+                for (ElkLabel l : element.getLabels()) {
+                    labelAdapters.add(new ElkLabelAdapter(l));
                 }
             }
             return labelAdapters;
@@ -524,16 +515,15 @@ public final class KGraphAdapters {
      * A comparator for ports. Ports are sorted by side (north, east, south, west) in clockwise order,
      * beginning at the top left corner.
      */
-    public static class PortComparator implements Comparator<KPort> {
+    public static class PortComparator implements Comparator<ElkPort> {
+        
         /**
          * {@inheritDoc}
          */
-        public int compare(final KPort port1, final KPort port2) {
-            KShapeLayout layout1 = port1.getData(KShapeLayout.class);
-            KShapeLayout layout2 = port2.getData(KShapeLayout.class);
+        public int compare(final ElkPort port1, final ElkPort port2) {
             int ordinalDifference =
-                    layout1.getProperty(CoreOptions.PORT_SIDE).ordinal()
-                            - layout2.getProperty(CoreOptions.PORT_SIDE).ordinal();
+                    port1.getProperty(CoreOptions.PORT_SIDE).ordinal()
+                            - port2.getProperty(CoreOptions.PORT_SIDE).ordinal();
 
             // Sort by side first
             if (ordinalDifference != 0) {
@@ -541,8 +531,8 @@ public final class KGraphAdapters {
             }
 
             // In case of equal sides, sort by port index property
-            Integer index1 = layout1.getProperty(CoreOptions.PORT_INDEX);
-            Integer index2 = layout2.getProperty(CoreOptions.PORT_INDEX);
+            Integer index1 = port1.getProperty(CoreOptions.PORT_INDEX);
+            Integer index2 = port2.getProperty(CoreOptions.PORT_INDEX);
             if (index1 != null && index2 != null) {
                 int indexDifference = index1 - index2;
                 if (indexDifference != 0) {
@@ -551,27 +541,28 @@ public final class KGraphAdapters {
             }
 
             // In case of equal index, sort by position
-            switch (layout1.getProperty(CoreOptions.PORT_SIDE)) {
+            switch (port1.getProperty(CoreOptions.PORT_SIDE)) {
             case NORTH:
                 // Compare x coordinates
-                return Double.compare(layout1.getXpos(), layout2.getXpos());
+                return Double.compare(port1.getX(), port2.getX());
 
             case EAST:
                 // Compare y coordinates
-                return Double.compare(layout1.getYpos(), layout2.getYpos());
+                return Double.compare(port1.getY(), port2.getY());
 
             case SOUTH:
                 // Compare x coordinates in reversed order
-                return Double.compare(layout2.getXpos(), layout1.getXpos());
+                return Double.compare(port2.getX(), port1.getX());
 
             case WEST:
                 // Compare y coordinates in reversed order
-                return Double.compare(layout2.getYpos(), layout1.getYpos());
+                return Double.compare(port2.getY(), port1.getY());
 
             default:
                 // Port sides should not be undefined
                 throw new IllegalStateException("Port side is undefined");
             }
         }
+        
     }
 }

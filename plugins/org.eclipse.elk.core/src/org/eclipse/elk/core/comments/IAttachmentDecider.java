@@ -12,7 +12,7 @@ package org.eclipse.elk.core.comments;
 
 import java.util.Map;
 
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 
 /**
  * An attachment decider has the final say on which graph element to attach a comment to, if any. The
@@ -31,7 +31,7 @@ public interface IAttachmentDecider {
      * @return the selected attachment target, or {@code null} if the comment should be left
      *         unattached.
      */
-    KGraphElement makeAttachmentDecision(
-            Map<KGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics);
+    ElkGraphElement makeAttachmentDecision(
+            Map<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics);
     
 }

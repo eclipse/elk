@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core;
 
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 
 /**
  * Descriptor of an issue found while validating the structure or the configuration of a graph.
@@ -40,7 +40,7 @@ public class GraphIssue {
     }
 
     /** The graph element to which the issue applies. */
-    private final KGraphElement element;
+    private final ElkGraphElement element;
 
     /** A message to be shown to users. */
     private final String message;
@@ -58,7 +58,7 @@ public class GraphIssue {
      * @param severity
      *            The severity of the issue
      */
-    public GraphIssue(final KGraphElement element, final String message, final Severity severity) {
+    public GraphIssue(final ElkGraphElement element, final String message, final Severity severity) {
         if (message == null || severity == null) {
             throw new NullPointerException();
         }
@@ -70,7 +70,7 @@ public class GraphIssue {
     /**
      * The graph element to which the issue applies. May be {@code null}.
      */
-    public KGraphElement getElement() {
+    public ElkGraphElement getElement() {
         return element;
     }
 

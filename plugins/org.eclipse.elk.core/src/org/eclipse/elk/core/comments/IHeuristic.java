@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * An attachment heuristic that indicates how closely a comment is related to another graph element.
@@ -32,7 +32,7 @@ public interface IHeuristic {
      * 
      * <p>
      * Usually, the overall comment attachment will be based on the normalized value given by
-     * {@link #normalized(KNode, KGraphElement)} instead of on the raw value, but the raw value may
+     * {@link #normalized(ElkNode, ElkGraphElement)} instead of on the raw value, but the raw value may
      * be interesting for evaluation purposes. However, the raw value may well be equal to the
      * normalized value. An example are heuristics that conceptually return boolean values: a pair
      * of graph elements either is considered to be related ({@code 1}) or not ({@code 0}.
@@ -44,7 +44,7 @@ public interface IHeuristic {
      *            the graph element.
      * @return the raw heuristic result for the given comment and graph element.
      */
-    double raw(KNode comment, KGraphElement element);
+    double raw(ElkNode comment, ElkGraphElement element);
     
     /**
      * Computes the normalized heuristic value in {@code [0, 1]} (including the boundaries) for the
@@ -56,7 +56,7 @@ public interface IHeuristic {
      *            the graph element.
      * @return the normalized heuristic result for the given comment and graph element.
      */
-    double normalized(KNode comment, KGraphElement element);
+    double normalized(ElkNode comment, ElkGraphElement element);
     
     /**
      * Does any preprocessing necessary. This method is called before the first invocation of
@@ -72,7 +72,7 @@ public interface IHeuristic {
      *            level, but also on all sub levels. Implementations may choose to behave
      *            differently depending on this value.
      */
-    default void preprocess(KNode graph, boolean includeHierarchy) {
+    default void preprocess(ElkNode graph, boolean includeHierarchy) {
     }
     
     /**

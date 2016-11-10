@@ -14,10 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * A simple attachment target provider that returns all siblings of a comment as possible attachment
@@ -52,7 +51,7 @@ public class SiblingAttachmentTargetProvider implements IAttachmentTargetProvide
      * {@inheritDoc}
      */
     @Override
-    public List<KGraphElement> provideAttachmentTargetsFor(final KNode comment) {
+    public List<ElkGraphElement> provideAttachmentTargetsFor(final ElkNode comment) {
         if (comment.getParent() == null) {
             return Collections.emptyList();
         } else {
@@ -69,14 +68,13 @@ public class SiblingAttachmentTargetProvider implements IAttachmentTargetProvide
     // Utility Methods
     
     /**
-     * Checks if the given graph element is a {@link KNode} and marked as a comment node.
+     * Checks if the given graph element is a {@link ElkNode} and marked as a comment node.
      * 
      * @param graphElement the graph element to check.
      * @return {@code true} if it's a comment node.
      */
-    private boolean isCommentNode(final KGraphElement graphElement) {
-        KLayoutData layoutData = graphElement.getData(KLayoutData.class);
-        return graphElement instanceof KNode && layoutData.getProperty(CoreOptions.COMMENT_BOX);
+    private boolean isCommentNode(final ElkGraphElement graphElement) {
+        return graphElement instanceof ElkNode && graphElement.getProperty(CoreOptions.COMMENT_BOX);
     }
 
 }

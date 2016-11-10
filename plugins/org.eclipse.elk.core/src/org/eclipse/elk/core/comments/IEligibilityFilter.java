@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Determines if a given comment is eligible for attachment to a graph element. There are types of
@@ -38,11 +38,11 @@ public interface IEligibilityFilter {
      * @return {@code true} if the comment can be attached to graph elements, {@code false} if the
      *         comment is meant to be standalone.
      */
-    boolean eligibleForAttachment(KNode comment);
+    boolean eligibleForAttachment(ElkNode comment);
     
     /**
      * Does any preprocessing necessary. This method is called before the first invocation of
-     * {@link #eligibleForAttachment(KNode)} for a given graph.
+     * {@link #eligibleForAttachment(ElkNode)} for a given graph.
      * 
      * @implSpec The default implementation does nothing.
      * 
@@ -53,12 +53,12 @@ public interface IEligibilityFilter {
      *            level, but also on all sub levels. Implementations may choose to behave
      *            differently depending on this value.
      */
-    default void preprocess(KNode graph, boolean includeHierarchy) {
+    default void preprocess(ElkNode graph, boolean includeHierarchy) {
     }
     
     /**
      * Does any cleaning necessary to get the implementation ready for the next comment attachment
-     * run. This method is called after the last invocation of {@link #eligibleForAttachment(KNode)}
+     * run. This method is called after the last invocation of {@link #eligibleForAttachment(ElkNode)}
      * for a given graph.
      * 
      * @implSpec The default implementation does nothing.

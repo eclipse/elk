@@ -16,17 +16,16 @@ import java.util.Queue;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.collect.Lists;
 
@@ -34,6 +33,10 @@ import com.google.common.collect.Lists;
  * Performs layout on a graph with hierarchy by executing a layout algorithm on each level of the
  * hierarchy. This is done recursively from the leafs to the root of the nodes in the graph, using
  * size information from lower levels in the levels above.
+ * 
+ * <p>
+ * MIGRATE Extend the graph layout engine to offset edge coordinates properly
+ * </p> 
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
@@ -48,7 +51,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param layoutGraph top-level node of the graph to be laid out
      * @param progressMonitor monitor to which progress of the layout algorithms is reported
      */
-    public void layout(final KNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         int nodeCount = countNodesRecursively(layoutGraph, true);
         progressMonitor.begin("Recursive Graph Layout", nodeCount);
         
@@ -71,17 +74,15 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param progressMonitor monitor used to keep track of progress
      * @return list of self loops routed inside the node.
      */
-    protected List<KEdge> layoutRecursively(final KNode layoutNode,
+    protected List<ElkEdge> layoutRecursively(final ElkNode layoutNode,
             final IElkProgressMonitor progressMonitor) {
         
         if (progressMonitor.isCanceled()) {
             return Collections.emptyList();
         }
         
-        final KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
-        
         // Check if the node should be laid out at all
-        if (layoutNodeShapeLayout.getProperty(CoreOptions.NO_LAYOUT)) {
+        if (layoutNode.getProperty(CoreOptions.NO_LAYOUT)) {
             return Collections.emptyList();
         }
         
@@ -89,7 +90,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         final boolean hasChildren = !layoutNode.getChildren().isEmpty();
         
         // ...or if inside self loop processing is enabled and it actually has inside self loops
-        final List<KEdge> insideSelfLoops = gatherInsideSelfLoops(layoutNode);
+        final List<ElkEdge> insideSelfLoops = gatherInsideSelfLoops(layoutNode);
         final boolean hasInsideSelfLoops = !insideSelfLoops.isEmpty();
         
         if (hasChildren || hasInsideSelfLoops) {
@@ -109,40 +110,38 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             }
             
             // We collect inside self loops of children and post-process them later
-            List<KEdge> childrenInsideSelfLoops = Lists.newArrayList();
+            List<ElkEdge> childrenInsideSelfLoops = Lists.newArrayList();
             
             // if the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
             int nodeCount;
-            if (layoutNodeShapeLayout.getProperty(CoreOptions.HIERARCHY_HANDLING)
-                        == HierarchyHandling.INCLUDE_CHILDREN && (algorithmData.supportsFeature(GraphFeature.COMPOUND)
-                    || algorithmData.supportsFeature(GraphFeature.CLUSTERS))) {
+            if (layoutNode.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN
+                    && (algorithmData.supportsFeature(GraphFeature.COMPOUND)
+                            || algorithmData.supportsFeature(GraphFeature.CLUSTERS))) {
                 
                 // the layout algorithm will compute a layout for multiple levels of hierarchy under the current one
                 nodeCount = countNodesWithHierarchy(layoutNode);
                 
                 // Look for nodes that stop the hierarchy handling, evaluating the inheritance on the way
-                final Queue<KNode> kNodeQueue = Lists.newLinkedList();
+                final Queue<ElkNode> kNodeQueue = Lists.newLinkedList();
                 kNodeQueue.addAll(layoutNode.getChildren());
                 
                 while (!kNodeQueue.isEmpty()) {
-                    KNode knode = kNodeQueue.poll();
+                    ElkNode knode = kNodeQueue.poll();
                     // Persist the Hierarchy Handling in every case. (Won't hurt with nodes that are
                     // evaluated in the next recursion)
                     evaluateHierarchyHandlingInheritance(knode);
-                    final KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
-                    final boolean stopHierarchy = knodeLayout.getProperty(
-                            CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.SEPARATE_CHILDREN;
+                    final boolean stopHierarchy = knode.getProperty(CoreOptions.HIERARCHY_HANDLING)
+                            == HierarchyHandling.SEPARATE_CHILDREN;
 
                     if (stopHierarchy || !getAlgorithm(knode).equals(algorithmData)) {
                         // Hierarchical layout is stopped by explicitly disabling or switching
                         // algorithm. Separate recursive call is used for child nodes
-                        List<KEdge> childLayoutSelfLoops = layoutRecursively(knode, progressMonitor);
+                        List<ElkEdge> childLayoutSelfLoops = layoutRecursively(knode, progressMonitor);
                         childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                         // Explicitly disable hierarchical layout for the child node. Simplifies the
                         // handling of switching algorithms in the layouter.
-                        knodeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING,
-                                HierarchyHandling.SEPARATE_CHILDREN);
+                        knode.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.SEPARATE_CHILDREN);
 
                         // apply the LayoutOptions.SCALE_FACTOR if present
                         ElkUtil.applyConfiguredNodeScaling(knode);
@@ -156,8 +155,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             } else {
                 // layout each compound node contained in this node separately
                 nodeCount = layoutNode.getChildren().size();
-                for (KNode child : layoutNode.getChildren()) {
-                    List<KEdge> childLayoutSelfLoops = layoutRecursively(child, progressMonitor); 
+                for (ElkNode child : layoutNode.getChildren()) {
+                    List<ElkEdge> childLayoutSelfLoops = layoutRecursively(child, progressMonitor); 
                     childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                     
                     // apply the LayoutOptions.SCALE_FACTOR if present
@@ -171,9 +170,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             
             // Before running layout on our node, we need to exclude any inside self loops of children
             // from being laid out again
-            for (final KEdge selfLoop : childrenInsideSelfLoops) {
-                KEdgeLayout edgeLayout = selfLoop.getData(KEdgeLayout.class);
-                edgeLayout.setProperty(CoreOptions.NO_LAYOUT, true);
+            for (final ElkEdge selfLoop : childrenInsideSelfLoops) {
+                selfLoop.setProperty(CoreOptions.NO_LAYOUT, true);
             }
 
             // get an instance of the layout provider
@@ -208,9 +206,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param layoutNode node for which a layout provider is requested
      * @return a layout algorithm that fits the layout hints for the given node
      */
-    protected LayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
-        KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
-        String algorithmId = nodeLayout.getProperty(CoreOptions.ALGORITHM);
+    protected LayoutAlgorithmData getAlgorithm(final ElkNode layoutNode) {
+        String algorithmId = layoutNode.getProperty(CoreOptions.ALGORITHM);
         LayoutAlgorithmData result = LayoutMetaDataService.getInstance().getAlgorithmDataOrDefault(
                 algorithmId, getDefaultLayoutAlgorithmID());
         
@@ -241,17 +238,17 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param countAncestors if true, the nodes on the ancestors path are also counted
      * @return total number of child layout nodes
      */
-    protected int countNodesRecursively(final KNode layoutNode, final boolean countAncestors) {
+    protected int countNodesRecursively(final ElkNode layoutNode, final boolean countAncestors) {
         // count the content of the given node
         int count = layoutNode.getChildren().size();
-        for (KNode childNode : layoutNode.getChildren()) {
+        for (ElkNode childNode : layoutNode.getChildren()) {
             if (!childNode.getChildren().isEmpty()) {
                 count += countNodesRecursively(childNode, false);
             }
         }
         // count the ancestors path
         if (countAncestors) {
-            KNode parent = layoutNode.getParent();
+            ElkNode parent = layoutNode.getParent();
             while (parent != null) {
                 count += parent.getChildren().size();
                 parent = parent.getParent();
@@ -273,30 +270,26 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param layoutNode
      *            The current node which should be evaluated
      */
-    private void evaluateHierarchyHandlingInheritance(final KNode layoutNode) {
-        KLayoutData layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
+    private void evaluateHierarchyHandlingInheritance(final ElkNode layoutNode) {
         // Pre-process the hierarchy handling by replacing the deprecated LAYOUT_HIERARCHY
         // property with the new hierarchy handling property
-        boolean hasLayoutHierarchy = layoutNodeShapeLayout.getProperty(CoreOptions.LAYOUT_HIERARCHY);
+        boolean hasLayoutHierarchy = layoutNode.getProperty(CoreOptions.LAYOUT_HIERARCHY);
         if (hasLayoutHierarchy) {
-            layoutNodeShapeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING,
-                    HierarchyHandling.INCLUDE_CHILDREN);
+            layoutNode.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
         }
         
         // Pre-process the hierarchy handling to substitute inherited handling by the parent
         // value. If the root node is set to inherit, it is set to separate the children.
-        if (layoutNodeShapeLayout.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INHERIT) {
+        if (layoutNode.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INHERIT) {
             if (layoutNode.getParent() == null) {
                 // Set root node to separate children handling
-                layoutNodeShapeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING,
-                        HierarchyHandling.SEPARATE_CHILDREN);
+                layoutNode.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.SEPARATE_CHILDREN);
             } else {
                 // Set hierarchy handling to the value of the parent. 
                 // It is safe to assume that the parent has been handled before and is not set to
                 // INHERIT anymore.
-                HierarchyHandling parentHandling = layoutNode.getParent().getData(KShapeLayout.class)
-                        .getProperty(CoreOptions.HIERARCHY_HANDLING);
-                layoutNodeShapeLayout.setProperty(CoreOptions.HIERARCHY_HANDLING, parentHandling);
+                HierarchyHandling parentHandling = layoutNode.getParent().getProperty(CoreOptions.HIERARCHY_HANDLING);
+                layoutNode.setProperty(CoreOptions.HIERARCHY_HANDLING, parentHandling);
             }
         }
     }
@@ -310,11 +303,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      *            parent layout node to examine
      * @return total number of child layout nodes
      */
-    private int countNodesWithHierarchy(final KNode layoutNode) {
+    private int countNodesWithHierarchy(final ElkNode layoutNode) {
         // count the content of the given node
         int count = layoutNode.getChildren().size();
-        for (KNode childNode : layoutNode.getChildren()) {
-            if (childNode.getData(KShapeLayout.class).getProperty(CoreOptions.HIERARCHY_HANDLING) 
+        for (ElkNode childNode : layoutNode.getChildren()) {
+            if (childNode.getProperty(CoreOptions.HIERARCHY_HANDLING) 
                     != HierarchyHandling.SEPARATE_CHILDREN
                     && getAlgorithm(layoutNode).equals(getAlgorithm(childNode))) {
                 
@@ -342,16 +335,14 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      *            the node whose inside self loops to return.
      * @return possibly empty list of inside self loops.
      */
-    protected List<KEdge> gatherInsideSelfLoops(final KNode node) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        
-        if (nodeLayout.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
-            List<KEdge> insideSelfLoops = Lists.newArrayListWithCapacity(node.getOutgoingEdges().size());
+    protected List<ElkEdge> gatherInsideSelfLoops(final ElkNode node) {
+        if (node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
+            List<ElkEdge> insideSelfLoops = Lists.newArrayListWithCapacity(node.getOutgoingEdges().size());
             
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (edge.getTarget() == node) {
-                    final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                    if (edgeLayout.getProperty(CoreOptions.INSIDE_SELF_LOOPS_YO)) {
+            for (ElkEdge edge : node.getOutgoingEdges()) {
+                // MIGRATE Adapt to hyperedges and make error-safe
+                if (edge.getTargets().get(0) == node) {
+                    if (edge.getProperty(CoreOptions.INSIDE_SELF_LOOPS_YO)) {
                         insideSelfLoops.add(edge);
                     }
                 }
@@ -372,38 +363,24 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param insideSelfLoops
      *            list of inside self loops to post-process.
      */
-    protected void postProcessInsideSelfLoops(final List<KEdge> insideSelfLoops) {
-        for (final KEdge selfLoop : insideSelfLoops) {
-            final KNode node = selfLoop.getSource();
-            final KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            final KEdgeLayout edgeLayout = selfLoop.getData(KEdgeLayout.class);
+    protected void postProcessInsideSelfLoops(final List<ElkEdge> insideSelfLoops) {
+        for (final ElkEdge selfLoop : insideSelfLoops) {
+            // MIGRATE Adapt to hyperedges and make error-safe
+            final ElkConnectableShape node = selfLoop.getSources().get(0);
             
-            final float xOffset = nodeLayout.getXpos();
-            final float yOffset = nodeLayout.getYpos();
+            final double xOffset = node.getX();
+            final double yOffset = node.getY();
             
             // Offset the edge coordinates by the node's position
-            applyOffset(edgeLayout.getSourcePoint(), xOffset, yOffset);
-            applyOffset(edgeLayout.getTargetPoint(), xOffset, yOffset);
+            // MIGRATE Adapt to hyperedges. Also, what about multiple edge sections?
+            ElkEdgeSection section = selfLoop.getSections().get(0);
+            section.setStartLocation(section.getStartX() + xOffset, section.getStartY() + yOffset);
+            section.setEndLocation(section.getEndX() + xOffset, section.getEndY() + yOffset);
             
-            for (final KPoint bend : edgeLayout.getBendPoints()) {
-                applyOffset(bend, xOffset, yOffset);
+            for (final ElkBendPoint bend : section.getBendPoints()) {
+                bend.set(bend.getX() + xOffset, bend.getY() + yOffset);
             }
         }
-    }
-    
-    /**
-     * Offsets a point by the given amount.
-     * 
-     * @param point
-     *            point to offset.
-     * @param xOffset
-     *            horizontal offset.
-     * @param yOffset
-     *            vertical offset.
-     */
-    protected void applyOffset(final KPoint point, final float xOffset, final float yOffset) {
-        point.setX(point.getX() + xOffset);
-        point.setY(point.getY() + yOffset);
     }
 
 }

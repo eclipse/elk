@@ -12,17 +12,13 @@ package org.eclipse.elk.core;
 
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KLabeledGraphElement;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
@@ -51,10 +47,10 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     public static final IProperty<LayoutConfigurator> ADD_LAYOUT_CONFIG =
             new Property<LayoutConfigurator>("org.eclipse.elk.addLayoutConfig");
     
-    private final Map<KGraphElement, MapPropertyHolder> elementOptionMap = Maps.newHashMap();
-    private final Map<Class<? extends KGraphElement>, MapPropertyHolder> classOptionMap = Maps.newHashMap();
+    private final Map<ElkGraphElement, MapPropertyHolder> elementOptionMap = Maps.newHashMap();
+    private final Map<Class<? extends ElkGraphElement>, MapPropertyHolder> classOptionMap = Maps.newHashMap();
     private boolean clearLayout = false;
-    private Predicate<Pair<KGraphElement, IProperty<?>>> optionFilter;
+    private Predicate<Pair<ElkGraphElement, IProperty<?>>> optionFilter;
     
     /**
      * Whether to clear the layout of each graph element before the new configuration is applied.
@@ -80,7 +76,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * 
      * @return {@code this}
      */
-    public LayoutConfigurator setFilter(final Predicate<Pair<KGraphElement, IProperty<?>>> filter) {
+    public LayoutConfigurator setFilter(final Predicate<Pair<ElkGraphElement, IProperty<?>>> filter) {
         this.optionFilter = filter;
         return this;
     }
@@ -89,7 +85,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * Add and return a property holder for the given element. If such a property holder is
      * already present, the previous instance is returned.
      */
-    public IPropertyHolder configure(final KGraphElement element) {
+    public IPropertyHolder configure(final ElkGraphElement element) {
         MapPropertyHolder result = elementOptionMap.get(element);
         if (result == null) {
             result = new MapPropertyHolder();
@@ -101,7 +97,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     /**
      * Return the stored property holder for the given element, or {@code null} if none is present.
      */
-    public IPropertyHolder getProperties(final KGraphElement element) {
+    public IPropertyHolder getProperties(final ElkGraphElement element) {
         return elementOptionMap.get(element);
     }
     
@@ -113,7 +109,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * as argument. Such options are overridden if a more specific type is configured as well,
      * for instance {@code KNode.class}.
      */
-    public IPropertyHolder configure(final Class<? extends KGraphElement> elementClass) {
+    public IPropertyHolder configure(final Class<? extends ElkGraphElement> elementClass) {
         MapPropertyHolder result = classOptionMap.get(elementClass);
         if (result == null) {
             result = new MapPropertyHolder();
@@ -125,17 +121,15 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     /**
      * Return the stored property holder for the given element class, or {@code null} if none is present.
      */
-    public IPropertyHolder getProperties(final Class<? extends KGraphElement> elementClass) {
+    public IPropertyHolder getProperties(final Class<? extends ElkGraphElement> elementClass) {
         return classOptionMap.get(elementClass);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void visit(final KGraphElement element) {
-        KLayoutData layout = element instanceof KEdge
-                ? element.getData(KEdgeLayout.class) : element.getData(KShapeLayout.class);
+    public void visit(final ElkGraphElement element) {
         if (clearLayout) {
-            layout.getProperties().clear();
+            element.getProperties().clear();
         }
         MapPropertyHolder classProperties = findClassOptions(element);
         MapPropertyHolder elementProperties = elementOptionMap.get(element);
@@ -143,23 +137,23 @@ public class LayoutConfigurator implements IGraphElementVisitor {
             if (classProperties != null) {
                 for (Map.Entry<IProperty<?>, Object> entry : classProperties.getAllProperties().entrySet()) {
                     if (optionFilter.apply(Pair.of(element, entry.getKey()))) {
-                        layout.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
+                        element.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
                     }
                 }
             }
             if (elementProperties != null) {
                 for (Map.Entry<IProperty<?>, Object> entry : elementProperties.getAllProperties().entrySet()) {
                     if (optionFilter.apply(Pair.of(element, entry.getKey()))) {
-                        layout.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
+                        element.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
                     }
                 }
             }
         } else {
             if (classProperties != null) {
-                layout.copyProperties(classProperties);
+                element.copyProperties(classProperties);
             }
             if (elementProperties != null) {
-                layout.copyProperties(elementProperties);
+                element.copyProperties(elementProperties);
             }
         }
     }
@@ -172,21 +166,21 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * 
      * @return the most specific {@link MapPropertyHolder} fitting the passed {@code element}'s type.
      */
-    private MapPropertyHolder findClassOptions(final KGraphElement element) {
+    private MapPropertyHolder findClassOptions(final ElkGraphElement element) {
         MapPropertyHolder needle = null;
 
         // most general
-        needle = getPropertyHolderOrDefault(element, KGraphElement.class, needle);
+        needle = getPropertyHolderOrDefault(element, ElkGraphElement.class, needle);
         
-        needle = getPropertyHolderOrDefault(element, KLabel.class, needle);
+        needle = getPropertyHolderOrDefault(element, ElkLabel.class, needle);
         
         // labeled elements
-        needle = getPropertyHolderOrDefault(element, KLabeledGraphElement.class, needle);
+        needle = getPropertyHolderOrDefault(element, ElkGraphElement.class, needle);
 
         // most specific
-        needle = getPropertyHolderOrDefault(element, KNode.class, needle);
-        needle = getPropertyHolderOrDefault(element, KPort.class, needle);
-        needle = getPropertyHolderOrDefault(element, KEdge.class, needle);
+        needle = getPropertyHolderOrDefault(element, ElkNode.class, needle);
+        needle = getPropertyHolderOrDefault(element, ElkPort.class, needle);
+        needle = getPropertyHolderOrDefault(element, ElkEdge.class, needle);
         
         return needle;
     }
@@ -195,8 +189,9 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * Checks if the {@link #classOptionMap} contains an entry for the passed {@code clazz} 
      * and returns it. If not, it returns the {@code old} value.
      */
-    private MapPropertyHolder getPropertyHolderOrDefault(final KGraphElement element, final Class<?> clazz,
+    private MapPropertyHolder getPropertyHolderOrDefault(final ElkGraphElement element, final Class<?> clazz,
             final MapPropertyHolder old) {
+        
         if (clazz.isAssignableFrom(element.getClass())) {
             MapPropertyHolder holder = classOptionMap.get(clazz);
             if (holder != null) {
@@ -212,7 +207,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * @return {@code this}
      */
     public LayoutConfigurator overrideWith(final LayoutConfigurator other) {
-        for (Map.Entry<KGraphElement, MapPropertyHolder> entry : other.elementOptionMap.entrySet()) {
+        for (Map.Entry<ElkGraphElement, MapPropertyHolder> entry : other.elementOptionMap.entrySet()) {
             MapPropertyHolder thisHolder = this.elementOptionMap.get(entry.getKey());
             if (thisHolder == null) {
                 thisHolder = new MapPropertyHolder();
@@ -220,7 +215,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
             }
             thisHolder.copyProperties(entry.getValue());
         }
-        for (Map.Entry<Class<? extends KGraphElement>, MapPropertyHolder> entry : other.classOptionMap.entrySet()) {
+        for (Map.Entry<Class<? extends ElkGraphElement>, MapPropertyHolder> entry : other.classOptionMap.entrySet()) {
             MapPropertyHolder thisHolder = this.classOptionMap.get(entry.getKey());
             if (thisHolder == null) {
                 thisHolder = new MapPropertyHolder();

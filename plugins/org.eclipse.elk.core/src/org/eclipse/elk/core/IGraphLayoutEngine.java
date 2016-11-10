@@ -11,7 +11,7 @@
 package org.eclipse.elk.core;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * A graph layout engine is able to perform automatic layout on a graph or parts of it.
@@ -34,7 +34,7 @@ public interface IGraphLayoutEngine {
      * @throws UnsupportedConfigurationException
      *             if the layout configuration included in the graph is inconsistent or incompatible
      */
-    void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor);
+    void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor);
 
     /**
      * Returns the ID of the layout algorithm used by this layout engine if no algorithm is explicitly set in the graph.

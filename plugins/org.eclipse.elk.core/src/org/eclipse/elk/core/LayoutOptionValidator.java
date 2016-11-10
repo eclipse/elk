@@ -17,12 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IValidatingGraphElementVisitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
 
 /**
@@ -38,11 +34,8 @@ public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void visit(final KGraphElement element) {
-        KLayoutData layoutData = element instanceof KEdge
-                ? element.getData(KEdgeLayout.class)
-                : element.getData(KShapeLayout.class);
-        for (Map.Entry<IProperty<?>, Object> entry : layoutData.getProperties()) {
+    public void visit(final ElkGraphElement element) {
+        for (Map.Entry<IProperty<?>, Object> entry : element.getProperties()) {
             issues.addAll(checkProperty((IProperty<Object>) entry.getKey(), entry.getValue(), element));
         }
     }
@@ -51,7 +44,7 @@ public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
      * Check the lower and upper bounds of the given property.
      */
     public List<GraphIssue> checkProperty(final IProperty<Object> property, final Object value,
-            final KGraphElement element) {
+            final ElkGraphElement element) {
         String optionName = null;
         if (property instanceof LayoutOptionData) {
             LayoutOptionData optionData = (LayoutOptionData) property;

@@ -12,7 +12,7 @@ package org.eclipse.elk.core.comments;
 
 import java.awt.geom.Rectangle2D;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Determines if a comment is eligible for attachment based on its size. Use the methods named
@@ -79,7 +79,7 @@ public class SizeEligibilityFilter implements IEligibilityFilter {
      * {@inheritDoc}
      */
     @Override
-    public boolean eligibleForAttachment(final KNode comment) {
+    public boolean eligibleForAttachment(final ElkNode comment) {
         Rectangle2D.Double bounds = boundsProvider.boundsFor(comment);
         return bounds.height * bounds.width <= maxArea;
     }

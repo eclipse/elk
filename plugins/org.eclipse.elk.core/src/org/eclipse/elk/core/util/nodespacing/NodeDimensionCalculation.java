@@ -19,12 +19,12 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
  * 
  * @author uru
  */
-public final class KimlNodeDimensionCalculation {
+public final class NodeDimensionCalculation {
 
     /**
      * Private constructor - utility class.
      */
-    private KimlNodeDimensionCalculation() {
+    private NodeDimensionCalculation() {
     }
 
     /**

@@ -21,7 +21,7 @@ import org.eclipse.elk.graph.properties.IProperty;
 
 /**
  * A set of generic interfaces that provide access to graph structures. Some generic algorithms provided
- * by KIML work with these interfaces to be usable for any layout algorithm, regardless what kind of
+ * by ELK work with these interfaces to be usable for any layout algorithm, regardless what kind of
  * specialized graph structure it uses internally.
  * 
  * @author uru
@@ -100,6 +100,9 @@ public interface GraphAdapters {
 
     /**
      * Adapter for graph element, provides children of the graph.
+     * 
+     * @param <T>
+     *            the type of the underlying graph element.
      */
     public interface GraphAdapter<T> extends GraphElementAdapter<T> {
         
@@ -111,6 +114,9 @@ public interface GraphAdapters {
 
     /**
      * Adapter for a node, provides labels, ports, and insets.
+     * 
+     * @param <T>
+     *            the type of the underlying graph element.
      */
     public interface NodeAdapter<T> extends GraphElementAdapter<T> {
         
@@ -125,12 +131,12 @@ public interface GraphAdapters {
         Iterable<PortAdapter<?>> getPorts();
 
         /**
-         * @return a collection of the port's incoming edges wrapped in an adapter.
+         * @return a collection of the node's incoming edges wrapped in an adapter.
          */
         Iterable<EdgeAdapter<?>> getIncomingEdges();
 
         /**
-         * @return a collection of the port's outgoing edges wrapped in an adapter.
+         * @return a collection of the node's outgoing edges wrapped in an adapter.
          */
         Iterable<EdgeAdapter<?>> getOutgoingEdges();
 
@@ -192,6 +198,9 @@ public interface GraphAdapters {
 
     /**
      * Adapter for a port element, provides access to the port's side, margin, and labels.
+     * 
+     * @param <T>
+     *            the type of the underlying graph element.
      */
     public interface PortAdapter<T> extends GraphElementAdapter<T> {
         
@@ -241,6 +250,9 @@ public interface GraphAdapters {
 
     /**
      * Adapter for a label.
+     * 
+     * @param <T>
+     *            the type of the underlying graph element.
      */
     public interface LabelAdapter<T> extends GraphElementAdapter<T> {
         
@@ -252,6 +264,9 @@ public interface GraphAdapters {
 
     /**
      * Adapter for an edge.
+     * 
+     * @param <T>
+     *            the type of the underlying graph element.
      */
     public interface EdgeAdapter<T> {
         

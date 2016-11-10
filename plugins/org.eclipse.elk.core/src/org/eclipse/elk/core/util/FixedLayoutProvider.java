@@ -10,21 +10,24 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+import java.util.ListIterator;
+
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.FixedLayouterOptions;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphFactory;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * A layout provider that sets fixed positions for all elements. These positions are taken
@@ -36,6 +39,10 @@ import org.eclipse.elk.graph.KPort;
  *   <li>Apply a layout imported from somewhere else, e.g. the original layout that was
  *     manually created in another modeling tool.</li>
  * </ul>
+ * 
+ * <p>
+ * MIGRATE The fixed layout provider does not support hyperedges yet.
+ * </p>
  *
  * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
  * @kieler.design proposed by msp
@@ -50,109 +57,106 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Fixed Layout", 1);
-        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        EdgeRouting edgeRouting = parentLayout.getProperty(CoreOptions.EDGE_ROUTING);
-        float maxx = 0, maxy = 0;
+        EdgeRouting edgeRouting = layoutNode.getProperty(CoreOptions.EDGE_ROUTING);
+        double maxx = 0, maxy = 0;
         
-        for (KNode node : layoutNode.getChildren()) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        for (ElkNode node : layoutNode.getChildren()) {
             // set the fixed position of the node, or leave it as it is
-            KVector pos = nodeLayout.getProperty(FixedLayouterOptions.POSITION);
+            KVector pos = node.getProperty(FixedLayouterOptions.POSITION);
             if (pos != null) {
-                nodeLayout.applyVector(pos);
+                node.setLocation(pos.x, pos.y);
+                
                 // set the fixed size of the node
                 // TODO Think about whether this makes sense with the new size constraint options.
-                if (nodeLayout.getProperty(FixedLayouterOptions.NODE_SIZE_CONSTRAINTS).contains(
+                if (node.getProperty(FixedLayouterOptions.NODE_SIZE_CONSTRAINTS).contains(
                         SizeConstraint.MINIMUM_SIZE)) {
                     
-                    KVector minSize = nodeLayout.getProperty(FixedLayouterOptions.NODE_SIZE_MINIMUM);
-                    float width, height;
+                    KVector minSize = node.getProperty(FixedLayouterOptions.NODE_SIZE_MINIMUM);
+                    double width, height;
                     if (minSize == null) {
-                        width = nodeLayout.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_WIDTH);
-                        height = nodeLayout.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_HEIGHT);
+                        width = node.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_WIDTH);
+                        height = node.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_HEIGHT);
                     } else {
-                        width = (float) minSize.x;
-                        height = (float) minSize.y; 
+                        width = minSize.x;
+                        height = minSize.y; 
                     }
                     if (width > 0 && height > 0) {
                         ElkUtil.resizeNode(node, width, height, true, true);
                     }
                 }
             }
-            maxx = Math.max(maxx, nodeLayout.getXpos() + nodeLayout.getWidth());
-            maxy = Math.max(maxy, nodeLayout.getYpos() + nodeLayout.getHeight());
+            maxx = Math.max(maxx, node.getX() + node.getWidth());
+            maxy = Math.max(maxy, node.getY() + node.getHeight());
             
             // set the fixed position of the node labels, or leave them as they are
-            for (KLabel label : node.getLabels()) {
-                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                pos = labelLayout.getProperty(FixedLayouterOptions.POSITION);
+            for (ElkLabel label : node.getLabels()) {
+                pos = label.getProperty(FixedLayouterOptions.POSITION);
                 if (pos != null) {
-                    labelLayout.applyVector(pos);
+                    label.setLocation(pos.x, pos.y);
                 }
-                maxx = Math.max(maxx, nodeLayout.getXpos() + labelLayout.getXpos()
-                        + labelLayout.getWidth());
-                maxy = Math.max(maxy, nodeLayout.getYpos() + labelLayout.getYpos()
-                        + labelLayout.getHeight());
+                maxx = Math.max(maxx, node.getX() + label.getX() + label.getWidth());
+                maxy = Math.max(maxy, node.getY() + label.getY() + label.getHeight());
             }
                 
             // set the fixed position of the ports, or leave them as they are
-            for (KPort port : node.getPorts()) {
-                KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                pos = portLayout.getProperty(FixedLayouterOptions.POSITION);
+            for (ElkPort port : node.getPorts()) {
+                pos = port.getProperty(FixedLayouterOptions.POSITION);
                 if (pos != null) {
-                    portLayout.applyVector(pos);
+                    port.setLocation(pos.x, pos.y);
                 }
-                float portx = nodeLayout.getXpos() + portLayout.getXpos();
-                float porty = nodeLayout.getYpos() + portLayout.getYpos();
-                maxx = Math.max(maxx, portx + portLayout.getWidth());
-                maxy = Math.max(maxy, porty + portLayout.getHeight());
+                
+                double portx = node.getX() + port.getX();
+                double porty = node.getY() + port.getY();
+                maxx = Math.max(maxx, portx + port.getWidth());
+                maxy = Math.max(maxy, porty + port.getHeight());
                 
                 // set the fixed position of the port labels, or leave them as they are
-                for (KLabel label : port.getLabels()) {
-                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                    pos = labelLayout.getProperty(FixedLayouterOptions.POSITION);
+                for (ElkLabel label : port.getLabels()) {
+                    pos = label.getProperty(FixedLayouterOptions.POSITION);
                     if (pos != null) {
-                        labelLayout.applyVector(pos);
+                        label.setLocation(pos.x, pos.y);
                     }
-                    maxx = Math.max(maxx, portx + labelLayout.getXpos() + labelLayout.getWidth());
-                    maxy = Math.max(maxy, porty + labelLayout.getYpos() + labelLayout.getHeight());
+                    maxx = Math.max(maxx, portx + label.getX() + label.getWidth());
+                    maxy = Math.max(maxy, porty + label.getY() + label.getHeight());
                 }
             }
             
             // set fixed routing for the connected edges, or leave them as they are
-            for (KEdge edge : node.getOutgoingEdges()) {
+            for (ElkEdge edge : node.getOutgoingEdges()) {
                 KVector maxv = processEdge(edge, edgeRouting);
-                maxx = Math.max(maxx, (float) maxv.x);
-                maxy = Math.max(maxy, (float) maxv.y);
+                maxx = Math.max(maxx, maxv.x);
+                maxy = Math.max(maxy, maxv.y);
             }
-            for (KEdge edge : node.getIncomingEdges()) {
-                if (edge.getSource().getParent() != layoutNode) {
+            
+            for (ElkEdge edge : node.getIncomingEdges()) {
+                // MIGRATE How about hyperedges?
+                if (ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)) != layoutNode) {
                     KVector maxv = processEdge(edge, edgeRouting);
-                    maxx = Math.max(maxx, (float) maxv.x);
-                    maxy = Math.max(maxy, (float) maxv.y);
+                    maxx = Math.max(maxx, maxv.x);
+                    maxy = Math.max(maxy, maxv.y);
                 }
             }
         }
         
         // if orthogonal routing is selected, determine the junction points
         if (edgeRouting == EdgeRouting.ORTHOGONAL) {
-            for (KNode node : layoutNode.getChildren()) {
-                for (KEdge edge : node.getOutgoingEdges()) {
+            for (ElkNode node : layoutNode.getChildren()) {
+                for (ElkEdge edge : node.getOutgoingEdges()) {
                     generateJunctionPoints(edge);
                 }  
             }
         }
         
         // set size of the parent node
-        Float borderSpacing = parentLayout.getProperty(FixedLayouterOptions.SPACING_BORDER);
+        Float borderSpacing = layoutNode.getProperty(FixedLayouterOptions.SPACING_BORDER);
         if (borderSpacing == null || borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
-        KInsets insets = parentLayout.getInsets();
-        float newWidth = maxx + borderSpacing + insets.getLeft() + insets.getRight();
-        float newHeight = maxy + borderSpacing + insets.getTop() + insets.getBottom();
+        ElkInsets insets = layoutNode.getProperty(FixedLayouterOptions.INSETS);
+        double newWidth = maxx + borderSpacing + insets.getLeft() + insets.getRight();
+        double newHeight = maxy + borderSpacing + insets.getTop() + insets.getBottom();
         ElkUtil.resizeNode(layoutNode, newWidth, newHeight, true, true);
         progressMonitor.done();
     }
@@ -163,34 +167,52 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
      * @param edge an edge
      * @param edgeRouting the global edge routing setting
      */
-    private KVector processEdge(final KEdge edge, final EdgeRouting edgeRouting) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        boolean sameHierarchy = edge.getSource().getParent() == edge.getTarget().getParent();
+    private KVector processEdge(final ElkEdge edge, final EdgeRouting edgeRouting) {
+        // MIGRATE Does this properly support hyperedges?
+        ElkNode sourceParent = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)).getParent();
+        ElkNode targetParent = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0)).getParent();
+        boolean sameHierarchy = sourceParent == targetParent;
+        
         KVector maxv = new KVector();
-        KVectorChain bendPoints = edgeLayout.getProperty(FixedLayouterOptions.BEND_POINTS);
+        KVectorChain bendPoints = edge.getProperty(FixedLayouterOptions.BEND_POINTS);
+        
         // we need at least two bend points, since the source point and target point must be included
         if (bendPoints != null && bendPoints.size() >= 2) {
-            edgeLayout.applyVectorChain(bendPoints);
+            if (edge.getSections().isEmpty()) {
+                // We need an edge section to apply the bend points to
+                ElkEdgeSection edgeSection = ElkGraphFactory.eINSTANCE.createElkEdgeSection();
+                edge.getSections().add(edgeSection);
+            } else if (edge.getSections().size() > 1) {
+                // We can only apply bend points to a single edge section, so throw away all except for the last one
+                ListIterator<ElkEdgeSection> sections = edge.getSections().listIterator();
+                while (sections.hasNext()) {
+                    sections.remove();
+                }
+            }
+            
+            ElkUtil.applyVectorChain(bendPoints, edge.getSections().get(0));
         }
         
         // determine maximal coordinates
         if (sameHierarchy) {
-            for (KPoint point : edgeLayout.getBendPoints()) {
-                maxv.x = Math.max(maxv.x, point.getX());
-                maxv.y = Math.max(maxv.y, point.getY());
+            for (ElkEdgeSection edgeSection : edge.getSections()) {
+                for (ElkBendPoint point : edgeSection.getBendPoints()) {
+                    maxv.x = Math.max(maxv.x, point.getX());
+                    maxv.y = Math.max(maxv.y, point.getY());
+                }
             }
         }
         
         // set the fixed position of the edge labels, or leave them as they are
-        for (KLabel label : edge.getLabels()) {
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            KVector pos = labelLayout.getProperty(FixedLayouterOptions.POSITION);
+        for (ElkLabel label : edge.getLabels()) {
+            KVector pos = label.getProperty(FixedLayouterOptions.POSITION);
             if (pos != null) {
-                labelLayout.applyVector(pos);
+                label.setLocation(pos.x, pos.y);
             }
+            
             if (sameHierarchy) {
-                maxv.x = Math.max(maxv.x, labelLayout.getXpos() + labelLayout.getWidth());
-                maxv.y = Math.max(maxv.y, labelLayout.getYpos() + labelLayout.getHeight());
+                maxv.x = Math.max(maxv.x, label.getX() + label.getWidth());
+                maxv.y = Math.max(maxv.y, label.getY() + label.getHeight());
             }
         }
         
@@ -199,18 +221,17 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * Determine if given edge has junction points and add appropriate layout option if necessary.
+     * 
      * @param edge the edge to determine junction points of
      */
-    private void generateJunctionPoints(final KEdge edge) {
-     // Note: if the edge coordinates are not modified, the junction points are also ignored
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+    private void generateJunctionPoints(final ElkEdge edge) {
+        // Note: if the edge coordinates are not modified, the junction points are also ignored
         KVectorChain junctionPoints = ElkUtil.determineJunctionPoints(edge);
         if (junctionPoints.isEmpty()) {
-            edgeLayout.setProperty(CoreOptions.JUNCTION_POINTS, null);
+            edge.setProperty(CoreOptions.JUNCTION_POINTS, null);
         } else {
-            edgeLayout.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
+            edge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
         }
-        
     }
     
 }

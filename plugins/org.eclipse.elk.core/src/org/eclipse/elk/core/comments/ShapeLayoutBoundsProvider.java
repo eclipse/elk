@@ -13,8 +13,7 @@ package org.eclipse.elk.core.comments;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * An {@link IBoundsProvider} that simply returns the bounds defined in the node's shape layout.
@@ -25,16 +24,8 @@ public class ShapeLayoutBoundsProvider implements IBoundsProvider {
      * {@inheritDoc}
      */
     @Override
-    public Double boundsFor(final KNode node) {
-        KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
-        
-        if (shapeLayout == null) {
-            return null;
-        } else {
-            return new Rectangle2D.Double(
-                    shapeLayout.getXpos(), shapeLayout.getYpos(),
-                    shapeLayout.getWidth(), shapeLayout.getHeight());
-        }
+    public Double boundsFor(final ElkNode node) {
+        return new Rectangle2D.Double(node.getX(), node.getY(), node.getWidth(), node.getHeight());
     }
 
 }

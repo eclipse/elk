@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 
 /**
  * A graph element visitor is applied to all elements of a graph.
@@ -20,6 +20,6 @@ public interface IGraphElementVisitor {
     /**
      * Visit the given graph element.
      */
-    void visit(KGraphElement element);
+    void visit(ElkGraphElement element);
 
 }

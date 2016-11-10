@@ -13,7 +13,7 @@ package org.eclipse.elk.core.comments;
 import java.util.List;
 import java.util.function.Function;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 public class TextPrefixFilter implements IEligibilityFilter {
     
     /** Function that provides the text for comments. */
-    private Function<KNode, String> commentTextProvider = null;
+    private Function<ElkNode, String> commentTextProvider = null;
     /** List of prefixes. */
     private List<String> prefixes = Lists.newArrayList();
     /**
@@ -51,7 +51,7 @@ public class TextPrefixFilter implements IEligibilityFilter {
      *            function to be used to retrieve comment texts.
      * @return this object for method chaining.
      */
-    public TextPrefixFilter withCommentTextProvider(final Function<KNode, String> f) {
+    public TextPrefixFilter withCommentTextProvider(final Function<ElkNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Comment text function cannot be null.");
         }
@@ -135,7 +135,7 @@ public class TextPrefixFilter implements IEligibilityFilter {
      * {@inheritDoc}
      */
     @Override
-    public void preprocess(final KNode graph, final boolean includeHierarchy) {
+    public void preprocess(final ElkNode graph, final boolean includeHierarchy) {
         checkConfiguration();
     }
 
@@ -143,7 +143,7 @@ public class TextPrefixFilter implements IEligibilityFilter {
      * {@inheritDoc}
      */
     @Override
-    public boolean eligibleForAttachment(final KNode comment) {
+    public boolean eligibleForAttachment(final ElkNode comment) {
         String commentText = commentTextProvider.apply(comment);
 
         if (!Strings.isNullOrEmpty(commentText)) {

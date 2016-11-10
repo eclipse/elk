@@ -12,26 +12,26 @@ package org.eclipse.elk.core.util.selection;
 
 import java.util.Set;
 
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.emf.common.util.AbstractTreeIterator;
 
 /**
- * This class can be used to implement Iterators for selections. The SelectionIterator is used in
- * {@link de.cau.cs.kieler.kiml.util.KimlUtil} to get the {@link KGraphElement KGraphElements}
- * connected to a selected edge.
+ * This class can be used to implement Iterators for selections. The {@link SelectionIterator} is used in
+ * {@link ElkUtil} to get the {@link ElkGraphElement graph elements} connected to a selected edge.
  * 
  * @see DefaultSelectionIterator
  */
-public abstract class SelectionIterator extends AbstractTreeIterator<KGraphElement> {
+public abstract class SelectionIterator extends AbstractTreeIterator<ElkGraphElement> {
 
     private static final long serialVersionUID = 478793714459586388L;
 
     /**
      * The list of already visited ports. Used to break infinite loops.
      */
-    protected Set<KPort> visited; // SUPPRESS CHECKSTYLE VisibilityModifier
+    protected Set<ElkPort> visited; // SUPPRESS CHECKSTYLE VisibilityModifier
 
     /**
      * Creates a {@link SelectionIterator} which needs to be configured afterwards by adding the set
@@ -40,18 +40,18 @@ public abstract class SelectionIterator extends AbstractTreeIterator<KGraphEleme
      * @param edge
      *            The object to iterate from
      */
-    public SelectionIterator(final KEdge edge) {
+    public SelectionIterator(final ElkEdge edge) {
         super(edge, false);
     }
 
     /**
-     * Attach a set of {@link KPort KPorts} to the iterator to be used as a set of visited ports.
+     * Attach a set of {@link ElkPortt ports} to the iterator to be used as a set of visited ports.
      * Can be used to share a set of nodes across multiple iterators (target and source iterator).
      * 
      * @param visitedSet
      *            The set of nodes to be used as visited set.
      */
-    public void attachVisitedSet(final Set<KPort> visitedSet) {
+    public void attachVisitedSet(final Set<ElkPort> visitedSet) {
         this.visited = visitedSet;
     }
 }

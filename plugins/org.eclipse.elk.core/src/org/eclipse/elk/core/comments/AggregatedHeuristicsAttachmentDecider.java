@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 
 /**
  * Selects the attachment target with the best aggregated heuristic result. The attachment heuristic
@@ -117,13 +117,13 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
      * {@inheritDoc}
      */
     @Override
-    public KGraphElement makeAttachmentDecision(
-            final Map<KGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics) {
+    public ElkGraphElement makeAttachmentDecision(
+            final Map<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics) {
         
         double max = Double.NEGATIVE_INFINITY;
-        KGraphElement maxElement = null;
+        ElkGraphElement maxElement = null;
         
-        for (Map.Entry<KGraphElement, Map<Class<? extends IHeuristic>, Double>> entry
+        for (Map.Entry<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> entry
                 : normalizedHeuristics.entrySet()) {
             
             double aggregate = aggregator.applyAsDouble(entry.getValue().values());

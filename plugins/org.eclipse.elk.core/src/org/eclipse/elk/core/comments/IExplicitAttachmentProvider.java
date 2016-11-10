@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Knows which graph elements comments were explicitly attached to by the user. This of course only
@@ -32,7 +32,7 @@ import org.eclipse.elk.graph.KNode;
 public interface IExplicitAttachmentProvider {
     
     /**
-     * Finds and returns the {@link KGraphElement} the given comment was explicitly attached to by
+     * Finds and returns the {@link ElkGraphElement} the given comment was explicitly attached to by
      * the user, if any.
      * 
      * @param comment
@@ -41,11 +41,11 @@ public interface IExplicitAttachmentProvider {
      *         none. If the graph element is not {@code null}, it must be in the same hierarchy
      *         level as the comment node.
      */
-    KGraphElement findExplicitAttachment(KNode comment);
+    ElkGraphElement findExplicitAttachment(ElkNode comment);
     
     /**
      * Does any preprocessing necessary. This method is called before the first invocation of
-     * {@link #findExplicitAttachment(KNode)} for a given graph.
+     * {@link #findExplicitAttachment(ElkNode)} for a given graph.
      * 
      * @implSpec
      * The default implementation does nothing.
@@ -57,7 +57,7 @@ public interface IExplicitAttachmentProvider {
      *            level, but also on all sub levels. Implementations may choose to behave
      *            differently depending on this value.
      */
-    default void preprocess(KNode graph, boolean includeHierarchy) {
+    default void preprocess(ElkNode graph, boolean includeHierarchy) {
     }
     
     /**

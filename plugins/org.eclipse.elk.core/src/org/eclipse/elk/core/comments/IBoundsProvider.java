@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.Map;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.collect.Maps;
 
@@ -53,11 +53,11 @@ public interface IBoundsProvider {
      *            the node whose bounds to retrieve.
      * @return the node's bounds, or {@code null} if the provider was unable to retrieve the bounds.
      */
-    Rectangle2D.Double boundsFor(KNode node);
+    Rectangle2D.Double boundsFor(ElkNode node);
     
     /**
      * Does any preprocessing necessary. This method is called before the first invocation of
-     * {@link #boundsFor(KNode)} for a given graph.
+     * {@link #boundsFor(ElkNode)} for a given graph.
      * 
      * @implSpec
      * The default implementation does nothing.
@@ -69,12 +69,12 @@ public interface IBoundsProvider {
      *            level, but also on all sub levels. Implementations may choose to behave
      *            differently depending on this value.
      */
-    default void preprocess(KNode graph, boolean includeHierarchy) {
+    default void preprocess(ElkNode graph, boolean includeHierarchy) {
     }
     
     /**
      * Does any cleaning necessary to get the implementation ready for the next comment attachment
-     * run. This method is called after the last invocation of {@link #boundsFor(KNode)} for a given
+     * run. This method is called after the last invocation of {@link #boundsFor(ElkNode)} for a given
      * graph.
      * 
      * @implSpec The default implementation does nothing.
@@ -91,10 +91,10 @@ public interface IBoundsProvider {
         return new IBoundsProvider() {
             
             /** Cache for bounds. */
-            private final Map<KNode, Rectangle2D.Double> boundsCache = Maps.newHashMap();
+            private final Map<ElkNode, Rectangle2D.Double> boundsCache = Maps.newHashMap();
             
             @Override
-            public Double boundsFor(final KNode node) {
+            public Double boundsFor(final ElkNode node) {
                 // The cache may actually map a node to null if the bounds provider was unable to
                 // retrieve bounds for the node
                 if (boundsCache.containsKey(node)) {
@@ -107,7 +107,7 @@ public interface IBoundsProvider {
             }
             
             @Override
-            public void preprocess(final KNode graph, final boolean includeHierarchy) {
+            public void preprocess(final ElkNode graph, final boolean includeHierarchy) {
                 // Forward to wrapped provider
                 IBoundsProvider.this.preprocess(graph, includeHierarchy);
             }

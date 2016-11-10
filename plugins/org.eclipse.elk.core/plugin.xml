@@ -12,15 +12,6 @@
 <?eclipse version="3.2"?>
 <plugin>
    
-   <extension
-         point="org.eclipse.emf.ecore.generated_package">
-      <package
-            class="org.eclipse.elk.core.klayoutdata.KLayoutDataPackage"
-            genModel="model/klayoutdata.genmodel"
-            uri="http://elk.eclipse.org/KLayoutData">
-      </package>
-   </extension>
-   
    <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
    <extension
          point="org.eclipse.elk.core.layoutProviders">

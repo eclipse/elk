@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Provides a basic and configurable implementation of a normalized heuristic. Clients have to
- * implement {@link #raw(KNode, KGraphElement)}, the rest is done by this implementation. The actual
+ * implement {@link #raw(ElkNode, ElkGraphElement)}, the rest is done by this implementation. The actual
  * normalization is controlled through {@link NormalizationFunction}.
  * 
  * <p>
@@ -120,7 +120,7 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
      * {@inheritDoc}
      */
     @Override
-    public double normalized(final KNode comment, final KGraphElement element) {
+    public double normalized(final ElkNode comment, final ElkGraphElement element) {
         double rawValue = raw(comment, element);
         
         switch (normalizationFunction) {

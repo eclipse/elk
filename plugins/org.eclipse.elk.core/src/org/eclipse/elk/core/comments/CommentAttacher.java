@@ -15,13 +15,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -313,23 +312,23 @@ public final class CommentAttacher {
      * @return collection of all edges created to attach comments to nodes. These may need to be
      *         processed further by the caller.
      */
-    public Collection<KEdge> attachComments(final KNode graph) {
+    public Collection<ElkEdge> attachComments(final ElkNode graph) {
         // Do necessary preprocessing
         preprocess(graph);
         
         // We keep track of all comment->graph element pairs we find
-        Collection<Pair<KNode, KGraphElement>> explicitAttachments = Lists.newArrayList();
-        Collection<Pair<KNode, KGraphElement>> heuristicAttachments = Lists.newArrayList();
+        Collection<Pair<ElkNode, ElkGraphElement>> explicitAttachments = Lists.newArrayList();
+        Collection<Pair<ElkNode, ElkGraphElement>> heuristicAttachments = Lists.newArrayList();
         
         // Iterate over all nodes we should iterate over
-        Queue<KNode> processingQueue = Lists.newLinkedList(graph.getChildren());
+        Queue<ElkNode> processingQueue = Lists.newLinkedList(graph.getChildren());
         while (!processingQueue.isEmpty()) {
-            KNode node = processingQueue.poll();
+            ElkNode node = processingQueue.poll();
             
             // Only comments need to be processed
             if (isComment(node)) {
                 // Find explicit attachment
-                KGraphElement explicitAttachment =
+                ElkGraphElement explicitAttachment =
                         explicitAttachmentProvider.findExplicitAttachment(node);
                 
                 if (explicitAttachment != null) {
@@ -341,7 +340,7 @@ public final class CommentAttacher {
                     
                     // We don't even bother calculating the heuristics if they are disabled by explicit
                     // attachments anyway. If that's not the case, let's roll!
-                    KGraphElement heuristicAttachment = findHeuristicAttachment(node);
+                    ElkGraphElement heuristicAttachment = findHeuristicAttachment(node);
                     
                     if (heuristicAttachment != null) {
                         heuristicAttachments.add(Pair.of(node, heuristicAttachment));
@@ -359,7 +358,7 @@ public final class CommentAttacher {
         cleanup();
         
         // Turn the attachments into edges and return them
-        Collection<KEdge> createdEdges = edgeifyFoundAttachments(
+        Collection<ElkEdge> createdEdges = edgeifyFoundAttachments(
                 explicitAttachments, heuristicAttachments);
         return createdEdges;
     }
@@ -370,7 +369,7 @@ public final class CommentAttacher {
      * @param graph
      *            the graph to attach comments on.
      */
-    private void preprocess(final KNode graph) {
+    private void preprocess(final ElkNode graph) {
         explicitAttachmentProvider.preprocess(graph, includeHierarchy);
         boundsProvider.preprocess(graph, includeHierarchy);
         targetProvider.preprocess(graph, includeHierarchy);
@@ -385,7 +384,7 @@ public final class CommentAttacher {
      *            the comment to check.
      * @return {@code true} if the comment may be attached to things.
      */
-    private boolean isEligibleForHeuristicAttachment(final KNode comment) {
+    private boolean isEligibleForHeuristicAttachment(final ElkNode comment) {
         return eligibilityFilters.stream().allMatch((f) -> f.eligibleForAttachment(comment));
     }
     
@@ -398,23 +397,23 @@ public final class CommentAttacher {
      * @return the graph element the comment is to be attached to, or {@code null} if there isn't
      *         any.
      */
-    private KGraphElement findHeuristicAttachment(final KNode comment) {
+    private ElkGraphElement findHeuristicAttachment(final ElkNode comment) {
         // If there are no heuristics, return nothing...
         if (heuristics.isEmpty()) {
             return null;
         }
         
         // Collect attachment target candidates
-        List<KGraphElement> candidates = targetProvider.provideAttachmentTargetsFor(comment);
+        List<ElkGraphElement> candidates = targetProvider.provideAttachmentTargetsFor(comment);
         if (candidates == null || candidates.isEmpty()) {
             return null;
         }
         
         // Collect the heuristic results in this map, indexed by attachment target, then indexed by
         // the heuristic
-        Map<KGraphElement, Map<Class<? extends IHeuristic>, Double>> results = Maps.newHashMap();
+        Map<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> results = Maps.newHashMap();
         
-        for (KGraphElement candidate : candidates) {
+        for (ElkGraphElement candidate : candidates) {
             Map<Class<? extends IHeuristic>, Double> candidateResults = Maps.newHashMap();
             results.put(candidate, candidateResults);
             
@@ -442,11 +441,11 @@ public final class CommentAttacher {
      *            collection of heuristic attachments from comment nodes to graph elements.
      * @return collection of created edges.
      */
-    private Collection<KEdge> edgeifyFoundAttachments(
-            final Collection<Pair<KNode, KGraphElement>> explicitAttachments,
-            final Collection<Pair<KNode, KGraphElement>> heuristicAttachments) {
+    private Collection<ElkEdge> edgeifyFoundAttachments(
+            final Collection<Pair<ElkNode, ElkGraphElement>> explicitAttachments,
+            final Collection<Pair<ElkNode, ElkGraphElement>> heuristicAttachments) {
         
-        Collection<KEdge> createdEdges = Lists.newArrayListWithCapacity(
+        Collection<ElkEdge> createdEdges = Lists.newArrayListWithCapacity(
                 explicitAttachments.size() + heuristicAttachments.size());
         
         // Explicit attachments
@@ -470,23 +469,22 @@ public final class CommentAttacher {
      *            collection of attachments from comment nodes to graph elements.
      * @return collection of created edges.
      */
-    private Collection<KEdge> edgeifyFoundAttachments(
-            final Collection<Pair<KNode, KGraphElement>> attachments) {
+    private Collection<ElkEdge> edgeifyFoundAttachments(final Collection<Pair<ElkNode, ElkGraphElement>> attachments) {
+        Collection<ElkEdge> createdEdges = Lists.newArrayListWithCapacity(attachments.size());
         
-        Collection<KEdge> createdEdges = Lists.newArrayListWithCapacity(attachments.size());
-        
-        for (Pair<KNode, KGraphElement> attachment : attachments) {
+        for (Pair<ElkNode, ElkGraphElement> attachment : attachments) {
             // We currently only allow nodes as attachment targets
-            if (!(attachment.getSecond() instanceof KNode)) {
+            if (!(attachment.getSecond() instanceof ElkNode)) {
                 continue;
             }
             
-            KNode comment = attachment.getFirst();
-            KNode target = (KNode) attachment.getSecond();
+            ElkNode comment = attachment.getFirst();
+            ElkNode target = (ElkNode) attachment.getSecond();
             
-            KEdge edge = ElkUtil.createInitializedEdge();
-            edge.setSource(comment);
-            edge.setTarget(target);
+            // MIGRATE We may have to check where best to put the edge here
+            ElkEdge edge = ElkGraphUtil.createEdge(comment.getParent());
+            edge.getSources().add(comment);
+            edge.getTargets().add(target);
             
             createdEdges.add(edge);
         }
@@ -516,9 +514,8 @@ public final class CommentAttacher {
      *            the node to check.
      * @return {@code true} if the node is a comment.
      */
-    public static boolean isComment(final KNode node) {
-        KLayoutData layoutData = node.getData(KLayoutData.class);
-        return layoutData.getProperty(CoreOptions.COMMENT_BOX);
+    public static boolean isComment(final ElkNode node) {
+        return node.getProperty(CoreOptions.COMMENT_BOX);
     }
     
 }

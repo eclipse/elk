@@ -18,8 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -63,9 +63,9 @@ import com.google.common.collect.Maps;
 public class NodeReferenceHeuristic implements IHeuristic {
     
     /** Function used to retrieve a comment's text. */
-    private Function<KNode, String> commentTextFunction = null;
+    private Function<ElkNode, String> commentTextFunction = null;
     /** Function used to retrieve a node's name. */
-    private Function<KNode, String> nodeNameFunction = null;
+    private Function<ElkNode, String> nodeNameFunction = null;
     /** The bounds provider to use. */
     private IBoundsProvider boundsProvider = new ShapeLayoutBoundsProvider();
     /** The maixmum distance attached comments may be away from each other. */
@@ -73,7 +73,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
     /** Whether to use fuzzy mode when looking for occurrences of a node's name in a comment's text. */
     private boolean fuzzy = false;
     /** The comment-node attachments we've found during preprocessing. */
-    private Map<KNode, KNode> foundAttachments = Maps.newHashMap();
+    private Map<ElkNode, ElkNode> foundAttachments = Maps.newHashMap();
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      *            the function to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withCommentTextProvider(final Function<KNode, String> f) {
+    public NodeReferenceHeuristic withCommentTextProvider(final Function<ElkNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Comment text function cannot be null.");
         }
@@ -111,7 +111,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      *            the function to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withNodeNameProvider(final Function<KNode, String> f) {
+    public NodeReferenceHeuristic withNodeNameProvider(final Function<ElkNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Node name function cannot be null.");
         }
@@ -198,14 +198,14 @@ public class NodeReferenceHeuristic implements IHeuristic {
      * {@inheritDoc}
      */
     @Override
-    public void preprocess(final KNode graph, final boolean includeHierarchy) {
+    public void preprocess(final ElkNode graph, final boolean includeHierarchy) {
         checkConfiguration();
         
         // Build up maps of comment texts and node names
-        List<Pair<KNode, String>> commentTexts = Lists.newArrayList();
-        List<Pair<KNode, String>> nodeNames = Lists.newArrayList();
+        List<Pair<ElkNode, String>> commentTexts = Lists.newArrayList();
+        List<Pair<ElkNode, String>> nodeNames = Lists.newArrayList();
         
-        for (KNode node : graph.getChildren()) {
+        for (ElkNode node : graph.getChildren()) {
             if (CommentAttacher.isComment(node)) {
                 String commentText = commentTextFunction.apply(node);
                 
@@ -243,7 +243,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      * {@inheritDoc}
      */
     @Override
-    public double raw(final KNode comment, final KGraphElement element) {
+    public double raw(final ElkNode comment, final ElkGraphElement element) {
         // Simply lookup the comment-node pair in our map
         return foundAttachments.get(comment) == element ? 1 : 0;
     }
@@ -252,7 +252,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      * {@inheritDoc}
      */
     @Override
-    public double normalized(final KNode comment, final KGraphElement element) {
+    public double normalized(final ElkNode comment, final ElkGraphElement element) {
         return raw(comment, element);
     }
     
@@ -277,12 +277,12 @@ public class NodeReferenceHeuristic implements IHeuristic {
      *            list of pairs of nodes and their names. The name is expected to not be
      *            {@code null}.
      */
-    private void goFindMatches(final List<Pair<KNode, String>> commentTexts,
-            final List<Pair<KNode, String>> nodeNames) {
+    private void goFindMatches(final List<Pair<ElkNode, String>> commentTexts,
+            final List<Pair<ElkNode, String>> nodeNames) {
         
         // Produce regular expression patterns for all node names
-        List<Pair<KNode, Pattern>> nodeRegexps = Lists.newArrayListWithCapacity(nodeNames.size());
-        for (Pair<KNode, String> nodeNamePair : nodeNames) {
+        List<Pair<ElkNode, Pattern>> nodeRegexps = Lists.newArrayListWithCapacity(nodeNames.size());
+        for (Pair<ElkNode, String> nodeNamePair : nodeNames) {
             Pattern regexp = fuzzy
                     ? fuzzyRegexpFor(nodeNamePair.getSecond())
                     : strictRegexpFor(nodeNamePair.getSecond());
@@ -290,10 +290,10 @@ public class NodeReferenceHeuristic implements IHeuristic {
         }
         
         // Check each pair of comment and node
-        for (Pair<KNode, String> commentTextPair : commentTexts) {
-            KNode foundNode = null;
+        for (Pair<ElkNode, String> commentTextPair : commentTexts) {
+            ElkNode foundNode = null;
             
-            for (Pair<KNode, Pattern> nodeRegexpPair : nodeRegexps) {
+            for (Pair<ElkNode, Pattern> nodeRegexpPair : nodeRegexps) {
                 Matcher matcher = nodeRegexpPair.getSecond().matcher(commentTextPair.getSecond());
                 
                 if (matcher.find()) {
@@ -403,12 +403,12 @@ public class NodeReferenceHeuristic implements IHeuristic {
     
     /**
      * Returns a map that maps comments to nodes they were attached to by this heuristic. The returned
-     * map is meaningful only if it is called between calls to {@link #preprocess(KNode, boolean)} and
+     * map is meaningful only if it is called between calls to {@link #preprocess(ElkNode, boolean)} and
      * {@link #cleanup()}. Comments that are not attached to anything don't appear in the map.
      * 
      * @return mapping of comments to nodes.
      */
-    public Map<KNode, KNode> getAttachments() {
+    public Map<ElkNode, ElkNode> getAttachments() {
         return foundAttachments;
     }
 

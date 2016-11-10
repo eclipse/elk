@@ -10,21 +10,30 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+import java.util.ListIterator;
 import java.util.Random;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.options.RandomLayouterOptions;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphFactory;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * Layout provider that computes random layouts. Can be useful to demonstrate the difference
  * between a good layout and an extremely bad one.
+ * 
+ * <p>
+ * MIGRATE The random layout provider does not support hyperedges yet.
+ * 
+ * For that to work, the {@link #randomize(ElkEdge, Random, double, double)} method needs to be extended.
+ * </p>
  *
  * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
  * @kieler.design proposed by msp
@@ -41,17 +50,17 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Random Layout", 1);
+        
         if (parentNode.getChildren().isEmpty()) {
             progressMonitor.done();
             return;
         }
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         
         // initialize random seed
         Random random;
-        Integer randomSeed = parentLayout.getProperty(RandomLayouterOptions.RANDOM_SEED);
+        Integer randomSeed = parentNode.getProperty(RandomLayouterOptions.RANDOM_SEED);
         if (randomSeed != null && randomSeed != 0) {
             random = new Random(randomSeed);
         } else {
@@ -59,17 +68,17 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         }
         
         // get aspect ratio
-        Float aspectRatio = parentLayout.getProperty(RandomLayouterOptions.ASPECT_RATIO);
+        Float aspectRatio = parentNode.getProperty(RandomLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }
         
         // get spacing values
-        Float spacing = parentLayout.getProperty(RandomLayouterOptions.SPACING_NODE);
+        Float spacing = parentNode.getProperty(RandomLayouterOptions.SPACING_NODE);
         if (spacing == null || spacing < 0) {
             spacing = DEF_SPACING;
         }
-        Float offset = parentLayout.getProperty(RandomLayouterOptions.SPACING_BORDER);
+        Float offset = parentNode.getProperty(RandomLayouterOptions.SPACING_BORDER);
         if (offset == null || offset < 0) {
             offset = DEF_SPACING;
         }
@@ -89,49 +98,49 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
      * @param spacing desired object spacing
      * @param offset offset to the border
      */
-    private void randomize(final KNode parent, final Random random, final float aspectRatio,
-            final float spacing, final float offset) {
+    private void randomize(final ElkNode parent, final Random random, final double aspectRatio,
+            final double spacing, final double offset) {
+        
         // determine width and height of the drawing and count the number of edges
-        float nodesArea = 0.0f, maxWidth = 0.0f, maxHeight = 0.0f;
+        double nodesArea = 0.0f, maxWidth = 0.0f, maxHeight = 0.0f;
         int m = 1;
-        for (KNode node : parent.getChildren()) {
+        for (ElkNode node : parent.getChildren()) {
             m += node.getOutgoingEdges().size();
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            float width = nodeLayout.getWidth();
+            
+            double width = node.getWidth();
             maxWidth = Math.max(maxWidth, width);
-            float height = nodeLayout.getHeight();
+            double height = node.getHeight();
             maxHeight = Math.max(maxHeight, height);
+            
             nodesArea += width * height;
         }
         int n = parent.getChildren().size();
+        
         // a heuristic formula that determines an area in which nodes are randomly distributed
-        float drawArea = nodesArea + 2 * spacing * spacing * m * n;
-        float areaSqrt = (float) Math.sqrt(drawArea);
-        float drawWidth = Math.max(areaSqrt * aspectRatio, maxWidth);
-        float drawHeight = Math.max(areaSqrt / aspectRatio, maxHeight);
+        double drawArea = nodesArea + 2 * spacing * spacing * m * n;
+        double areaSqrt = (double) Math.sqrt(drawArea);
+        double drawWidth = Math.max(areaSqrt * aspectRatio, maxWidth);
+        double drawHeight = Math.max(areaSqrt / aspectRatio, maxHeight);
         
         // randomize node positions
-        for (KNode node : parent.getChildren()) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            float x = offset + random.nextFloat() * (drawWidth - nodeLayout.getWidth());
-            float y = offset + random.nextFloat() * (drawHeight - nodeLayout.getHeight());
-            nodeLayout.setPos(x, y);
+        for (ElkNode node : parent.getChildren()) {
+            double x = offset + random.nextDouble() * (drawWidth - node.getWidth());
+            double y = offset + random.nextDouble() * (drawHeight - node.getHeight());
+            node.setLocation(x, y);
         }
         
         // randomize edge positions
-        float totalWidth = drawWidth + 2 * offset;
-        float totalHeight = drawHeight + 2 * offset;
-        for (KNode source : parent.getChildren()) {
-            for (KEdge edge : source.getOutgoingEdges()) {
-                KNode target = edge.getTarget();
-                if (source.getParent() == target.getParent()) {
-                    randomize(edge, source, target, random, totalWidth, totalHeight);
+        double totalWidth = drawWidth + 2 * offset;
+        double totalHeight = drawHeight + 2 * offset;
+        for (ElkNode source : parent.getChildren()) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(source)) {
+                if (!edge.isHierarchical()) {
+                    randomize(edge, random, totalWidth, totalHeight);
                 }
             }
         }
         
-        KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getInsets();
+        ElkInsets insets = parent.getProperty(RandomLayouterOptions.INSETS);
         totalWidth += insets.getLeft() + insets.getRight();
         totalHeight += insets.getTop() + insets.getBottom();
         ElkUtil.resizeNode(parent, totalWidth, totalHeight, false, true);
@@ -141,7 +150,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
     private static final int MAX_BENDS = 5;
     /** a factor for the distance between source and target node, determines how much edge
      *  bend point may deviate from the straight line between those nodes. */
-    private static final float RAND_FACT = 0.2f;
+    private static final double RAND_FACT = 0.2f;
     
     /**
      * Randomize the given edge by adding bend points in the area between the source and target node.
@@ -153,115 +162,130 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
      * @param drawWidth the total width of the drawing
      * @param drawHeight the total Height of the drawing
      */
-    private void randomize(final KEdge edge, final KNode source, final KNode target,
-            final Random random, final float drawWidth, final float drawHeight) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+    private void randomize(final ElkEdge edge, final Random random, final double drawWidth, final double drawHeight) {
+        // Determine source coordinate
+        ElkConnectableShape sourceShape = edge.getSources().get(0);
+        double sourceX = sourceShape.getX();
+        double sourceY = sourceShape.getY();
+        double sourceWidth = sourceShape.getWidth() / 2;
+        double sourceHeight = sourceShape.getHeight() / 2;
         
-        // determine position and size of source element
-        KShapeLayout sourceLayout = source.getData(KShapeLayout.class);
-        float sourceX = sourceLayout.getXpos();
-        float sourceY = sourceLayout.getYpos();
-        float sourceWidth = sourceLayout.getWidth() / 2;
-        float sourceHeight = sourceLayout.getHeight() / 2;
-        if (edge.getSourcePort() != null) {
-            KShapeLayout portLayout = edge.getSourcePort().getData(KShapeLayout.class);
-            sourceWidth = portLayout.getWidth() / 2;
-            sourceHeight = portLayout.getHeight() / 2;
-            sourceX += portLayout.getXpos();
-            sourceY += portLayout.getYpos();
+        if (sourceShape instanceof ElkPort) {
+            ElkPort sourcePort = (ElkPort) sourceShape;
+            sourceX += sourcePort.getParent().getX();
+            sourceX += sourcePort.getParent().getX();
         }
+        
         sourceX += sourceWidth;
         sourceY += sourceHeight;
         
-        // determine position and size of target element
-        KShapeLayout targetLayout = target.getData(KShapeLayout.class);
-        float targetX = targetLayout.getXpos();
-        float targetY = targetLayout.getYpos();
-        float targetWidth = targetLayout.getWidth() / 2;
-        float targetHeight = targetLayout.getHeight() / 2;
-        if (edge.getTargetPort() != null) {
-            KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
-            targetWidth = portLayout.getWidth() / 2;
-            targetHeight = portLayout.getHeight() / 2;
-            targetX += portLayout.getXpos();
-            targetY += portLayout.getYpos();
+        // Determine target coordinate
+        ElkConnectableShape targetShape = edge.getSources().get(0);
+        double targetX = targetShape.getX();
+        double targetY = targetShape.getY();
+        double targetWidth = targetShape.getWidth() / 2;
+        double targetHeight = targetShape.getHeight() / 2;
+        
+        if (targetShape instanceof ElkPort) {
+            ElkPort targetPort = (ElkPort) targetShape;
+            targetX += targetPort.getParent().getX();
+            targetX += targetPort.getParent().getX();
         }
+        
         targetX += targetWidth;
         targetY += targetHeight;
         
+        // Ensure that the edge has a single edge section
+        if (edge.getSections().isEmpty()) {
+            // We need an edge section to apply the bend points to
+            ElkEdgeSection edgeSection = ElkGraphFactory.eINSTANCE.createElkEdgeSection();
+            edge.getSections().add(edgeSection);
+        } else if (edge.getSections().size() > 1) {
+            // We can only apply bend points to a single edge section, so throw away all except for the last one
+            ListIterator<ElkEdgeSection> sections = edge.getSections().listIterator();
+            while (sections.hasNext()) {
+                sections.remove();
+            }
+        }
+        
+        ElkEdgeSection edgeSection = edge.getSections().get(0);
+        
         // set the source point onto the border of the source element
-        float sourcePX = targetX;
+        double sourcePX = targetX;
         if (targetX > sourceX + sourceWidth) {
             sourcePX = sourceX + sourceWidth;
         } else if (targetX < sourceX - sourceWidth) {
             sourcePX = sourceX - sourceWidth;
         }
-        float sourcePY = targetY;
+        
+        double sourcePY = targetY;
         if (targetY > sourceY + sourceHeight) {
             sourcePY = sourceY + sourceHeight;
         } else if (targetY < sourceY - sourceHeight) {
             sourcePY = sourceY - sourceHeight;
         }
+        
         if (sourcePX > sourceX - sourceWidth && sourcePX < sourceX + sourceWidth
                 && sourcePY > sourceY - sourceHeight && sourcePY < sourceY + sourceHeight) {
             sourcePX = sourceX + sourceWidth;
         }
-        KPoint sourcePoint = edgeLayout.getSourcePoint();
-        sourcePoint.setPos(sourcePX, sourcePY);
+        
+        edgeSection.setStartLocation(sourcePX, sourcePY);
         
         // set the target point onto the border of the target element
-        float targetPX = sourceX;
+        double targetPX = sourceX;
         if (sourceX > targetX + targetWidth) {
             targetPX = targetX + targetWidth;
         } else if (sourceX < targetX - targetWidth) {
             targetPX = targetX - targetWidth;
         }
-        float targetPY = sourceY;
+        
+        double targetPY = sourceY;
         if (sourceY > targetY + targetHeight) {
             targetPY = targetY + targetHeight;
         } else if (sourceY < targetY - targetHeight) {
             targetPY = targetY - targetHeight;
         }
+        
         if (targetPX > targetX - targetWidth && targetPX < targetX + targetWidth
                 && targetPY > targetY - targetHeight && targetPY < targetY + targetHeight) {
             targetPY = targetY + targetHeight;
         }
-        KPoint targetPoint = edgeLayout.getTargetPoint();
-        targetPoint.setPos(targetPX, targetPY);
+        
+        edgeSection.setEndLocation(targetPX, targetPY);
         
         // add a random number of bend points
-        edgeLayout.getBendPoints().clear();
+        edgeSection.getBendPoints().clear();
         int bendsNum = random.nextInt(MAX_BENDS);
-        if (source == target) {
+        if (sourceShape == targetShape) {
             bendsNum++;
         }
-        float xdiff = targetPX - sourcePX;
-        float ydiff = targetPY - sourcePY;
-        float totalDist = (float) Math.sqrt(xdiff * xdiff + ydiff * ydiff);
-        float maxRand = totalDist * RAND_FACT;
-        float xincr = xdiff / (bendsNum + 1);
-        float yincr = ydiff / (bendsNum + 1);
-        float x = sourcePX, y = sourcePY;
+        double xdiff = targetPX - sourcePX;
+        double ydiff = targetPY - sourcePY;
+        double totalDist = (double) Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+        double maxRand = totalDist * RAND_FACT;
+        double xincr = xdiff / (bendsNum + 1);
+        double yincr = ydiff / (bendsNum + 1);
+        double x = sourcePX, y = sourcePY;
         for (int i = 0; i < bendsNum; i++) {
             // determine coordinates that deviate from the straight connection by a random amount
             x += xincr;
             y += yincr;
-            float randx = x + random.nextFloat() * maxRand - maxRand / 2;
+            double randx = x + random.nextFloat() * maxRand - maxRand / 2;
             if (randx < 0) {
                 randx = 1;
             } else if (randx > drawWidth) {
                 randx = drawWidth - 1;
             }
-            float randy = y + random.nextFloat() * maxRand - maxRand / 2;
+            double randy = y + random.nextFloat() * maxRand - maxRand / 2;
             if (randy < 0) {
                 randy = 1;
             } else if (randy > drawHeight) {
                 randy = drawHeight - 1;
             }
-            KPoint bendPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-            bendPoint.setX(randx);
-            bendPoint.setY(randy);
-            edgeLayout.getBendPoints().add(bendPoint);
+            ElkBendPoint bendPoint = ElkGraphFactory.eINSTANCE.createElkBendPoint();
+            bendPoint.set(randx, randy);
+            edgeSection.getBendPoints().add(bendPoint);
         }
     }
 

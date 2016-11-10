@@ -12,8 +12,8 @@ package org.eclipse.elk.core.comments;
 
 import java.util.List;
 
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Returns all graph elements that are possible attachment targets for a given comment. Most clients
@@ -44,11 +44,11 @@ public interface IAttachmentTargetProvider {
      * @return attachment targets for the comment. All attachment targets need to be siblings of the
      *         comment node.
      */
-    List<KGraphElement> provideAttachmentTargetsFor(KNode comment);
+    List<ElkGraphElement> provideAttachmentTargetsFor(ElkNode comment);
     
     /**
      * Does any preprocessing necessary. This method is called before the first invocation of
-     * {@link #provideAttachmentTargetsFor(KNode)} for a given graph.
+     * {@link #provideAttachmentTargetsFor(ElkNode)} for a given graph.
      * 
      * @implSpec
      * The default implementation does nothing.
@@ -60,12 +60,12 @@ public interface IAttachmentTargetProvider {
      *            level, but also on all sub levels. Implementations may choose to behave
      *            differently depending on this value.
      */
-    default void preprocess(KNode graph, boolean includeHierarchy) {
+    default void preprocess(ElkNode graph, boolean includeHierarchy) {
     }
     
     /**
      * Does any cleaning necessary to get the implementation ready for the next comment attachment run.
-     * This method is called after the last invocation of {@link #provideAttachmentTargetsFor(KNode)} for
+     * This method is called after the last invocation of {@link #provideAttachmentTargetsFor(ElkNode)} for
      * a given graph.
      * 
      * @implSpec

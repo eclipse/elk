@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.elk.core.util.IDataObject;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdgeSection;
 
 /**
  * A chain of vectors. Can be used to describe polylines or similar constructs.

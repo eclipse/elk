@@ -12,8 +12,8 @@ package org.eclipse.elk.core.comments;
 
 import java.awt.geom.Rectangle2D;
 
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * A heuristic based on the distance between nodes. Use the methods named {@code withXXX} to
@@ -86,9 +86,9 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
      * {@inheritDoc}
      */
     @Override
-    public double raw(final KNode comment, final KGraphElement element) {
-        if (element instanceof KNode) {
-            KNode node = (KNode) element;
+    public double raw(final ElkNode comment, final ElkGraphElement element) {
+        if (element instanceof ElkNode) {
+            ElkNode node = (ElkNode) element;
             
             Rectangle2D.Double commentBounds = boundsProvider.boundsFor(comment);
             Rectangle2D.Double nodeBounds = boundsProvider.boundsFor(node);

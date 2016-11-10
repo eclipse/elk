@@ -16,13 +16,12 @@ import java.util.Map;
 
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.util.internal.LayoutOptionProxy;
 import org.eclipse.elk.graph.EMapPropertyHolder;
-import org.eclipse.elk.graph.KGraphData;
-import org.eclipse.elk.graph.KGraphPackage;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.PersistentEntry;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkGraphPackage;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPersistentEntry;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.emf.common.util.AbstractTreeIterator;
@@ -36,7 +35,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 /**
- * Utilites for interacting with graphs based on metadata from the extension services.
+ * Utilities for interacting with graphs based on metadata from the extension services.
  */
 public final class GraphDataUtil {
     
@@ -45,70 +44,68 @@ public final class GraphDataUtil {
     /**
      * Set a layout option using a serialized key / value pair.
      * 
-     * @param graphData the graph data instance to modify
+     * @param graphElement the graph data instance to modify
      * @param id the layout option identifier
      * @param value the value for the layout option
      */
-    public static void setOption(final KGraphData graphData, final String id,
-            final String value) {
+    public static void setOption(final ElkGraphElement graphElement, final String id, final String value) {
         LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(id);
         if (optionData != null) {
             Object obj = optionData.parseValue(value);
             if (obj != null) {
-                graphData.setProperty(optionData, obj);
+                graphElement.setProperty(optionData, obj);
             }
         }
     }
     
     /**
-     * Calls {@link #loadDataElements(KNode, boolean, IProperty...)} with {@code clearProperties} set to
-     * {@code false}.
+     * Calls {@link #loadDataElements(ElkNode, Predicate, boolean, IProperty...)} with the
+     * {@link #PREDICATE_ALL_PROPERTY_HOLDERS} predicate and with {@code clearProperties} set to {@code false}.
      * 
      * @param graph
      *            the root element of the graph to load elements of.
      * @param knownProps
      *            a set of additional properties that are known, hence should be parsed properly
      */
-    public static void loadDataElements(final KNode graph, final IProperty<?>... knownProps) {
-        loadDataElements(graph, PREDICATE_IS_KLAYOUTDATA, false, knownProps);
+    public static void loadDataElements(final ElkNode graph, final IProperty<?>... knownProps) {
+        loadDataElements(graph, PREDICATE_ALL_PROPERTY_HOLDERS, false, knownProps);
     }
     
     /**
-     * Loads all {@link org.eclipse.elk.graph.properties.IProperty IProperty} of
-     * {@link KLayoutData} elements of a KGraph by deserializing {@link PersistentEntry} tuples.
-     * Values are parsed using layout option data obtained from the {@link LayoutMetaDataService}.
-     * Options that cannot be resolved immediately (e.g. because the extension points have not been
-     * read yet) are stored as {@link LayoutOptionProxy}.
+     * Loads all {@link org.eclipse.elk.graph.properties.IProperty IProperty} of all elements of an ELK graph by
+     * deserializing {@link ElkPersistentEntry} tuples. Values are parsed using layout option data obtained from
+     * the {@link LayoutMetaDataService}. Options that cannot be resolved immediately (e.g. because the extension
+     * points have not been read yet) are stored as {@link LayoutOptionProxy}.
      * 
      * @param graph
      *            the root element of the graph to load elements of.
      * @param clearProperties
      *            {@code true} if the properties of a property holder should be cleared before
      *            repopulating them based on persistent entries. Required if the removal of a
-     *            persistent entry should result in the removal of the correspondind property. This
+     *            persistent entry should result in the removal of the corresponding property. This
      *            is for example the case in our Xtext-based KGT editor.
      * @param knownProps
      *            a set of additional properties that are known, hence should be parsed properly
      */
-    public static void loadDataElements(final KNode graph, final boolean clearProperties,
+    public static void loadDataElements(final ElkNode graph, final boolean clearProperties,
             final IProperty<?>... knownProps) {
         
-        loadDataElements(graph, PREDICATE_IS_KLAYOUTDATA, clearProperties, knownProps);
+        loadDataElements(graph, PREDICATE_ALL_PROPERTY_HOLDERS, clearProperties, knownProps);
     }
 
     /**
-     * A predicate returning true if the passed element is an instance 
-     * of {@link IPropertyHolder}.
+     * A predicate which always returns {@code true}. That causes all property holders to have their data
+     * elements loaded.
      */
-    public static final Predicate<EMapPropertyHolder> PREDICATE_IS_KLAYOUTDATA =
+    public static final Predicate<EMapPropertyHolder> PREDICATE_ALL_PROPERTY_HOLDERS =
             new Predicate<EMapPropertyHolder>() {
                 public boolean apply(final EMapPropertyHolder input) {
-                    return input instanceof KLayoutData;
+                    return true;
                 }
             };
             
     /**
-     * Calls {@link #loadDataElements(KNode, Predicate, boolean, IProperty...)} with
+     * Calls {@link #loadDataElements(ElkNode, Predicate, boolean, IProperty...)} with
      * {@code clearProperties} set to {@code false}.
      * 
      * @param graph
@@ -121,8 +118,8 @@ public final class GraphDataUtil {
      * 
      * @return the graph itself
      */
-    public static KNode loadDataElements(final KNode graph,
-            final Predicate<EMapPropertyHolder> handledTypes, final IProperty<?>... knownProps) {
+    public static ElkNode loadDataElements(final ElkNode graph, final Predicate<EMapPropertyHolder> handledTypes,
+            final IProperty<?>... knownProps) {
 
         return loadDataElements(graph, handledTypes, false, knownProps);
     }
@@ -130,11 +127,12 @@ public final class GraphDataUtil {
     /**
      * A tree iterator that skips properties of {@link EMapPropertyHolder}s. For an explanation of
      * why this is necessary, see the implementation of
-     * {@link ElkUtil#loadDataElements(KNode, Predicate, boolean, IProperty...)}.
+     * {@link GraphDataUtil#loadDataElements(ElkNode, Predicate, boolean, IProperty...)}.
      * 
      * @author cds
      */
     private static class PropertiesSkippingTreeIterator extends AbstractTreeIterator<EObject> {
+        
         /** Bogus serial version ID. */
         private static final long serialVersionUID = 1L;
 
@@ -157,7 +155,7 @@ public final class GraphDataUtil {
                         // We include everything but properties (layout options)
                         if (eStructuralFeature.getContainerClass().equals(EMapPropertyHolder.class)) {
                             return eStructuralFeature.getFeatureID()
-                                    != KGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES;
+                                    != ElkGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES;
                         } else {
                             return true;
                         }
@@ -167,12 +165,13 @@ public final class GraphDataUtil {
             
             return iterator;
         }
+        
     }
     
     /**
      * Loads all {@link org.eclipse.elk.graph.properties.IProperty IProperty} of elements
      * that pass the test performed by the {@code handledTypes} predicate of a KGraph by
-     * deserializing {@link PersistentEntry} tuples. Values are parsed using layout option data
+     * deserializing {@link ElkPersistentEntry} tuples. Values are parsed using layout option data
      * obtained from the {@link LayoutMetaDataService}. Options that cannot be resolved immediately
      * (e.g. because the extension points have not been read yet) are stored as
      * {@link LayoutOptionProxy}.
@@ -192,9 +191,8 @@ public final class GraphDataUtil {
      * 
      * @return the graph itself
      */
-    public static KNode loadDataElements(final KNode graph,
-            final Predicate<EMapPropertyHolder> handledTypes, final boolean clearProperties,
-            final IProperty<?>... knownProps) {
+    public static ElkNode loadDataElements(final ElkNode graph, final Predicate<EMapPropertyHolder> handledTypes,
+            final boolean clearProperties, final IProperty<?>... knownProps) {
 
         Map<String, IProperty<?>> knowPropsMap = Maps.newHashMap();
         for (IProperty<?> p : knownProps) {
@@ -222,7 +220,7 @@ public final class GraphDataUtil {
                     holder.getProperties().clear();
                 }
                 
-                for (PersistentEntry persistentEntry : holder.getPersistentEntries()) {
+                for (ElkPersistentEntry persistentEntry : holder.getPersistentEntries()) {
                     loadDataElement(dataService, holder, persistentEntry.getKey(),
                             persistentEntry.getValue(), knowPropsMap);
                 }
@@ -253,6 +251,7 @@ public final class GraphDataUtil {
      */
     public static void loadDataElement(final LayoutMetaDataService dataService,
             final IPropertyHolder propertyHolder, final String id, final String value) {
+        
         Map<String, IProperty<?>> empty = Collections.emptyMap();
         loadDataElement(dataService, propertyHolder, id, value, empty);
     }
