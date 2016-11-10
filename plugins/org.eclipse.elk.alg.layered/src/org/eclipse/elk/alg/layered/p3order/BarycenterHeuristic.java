@@ -17,10 +17,12 @@ import java.util.ListIterator;
 import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic.BarycenterState;
-import org.eclipse.elk.alg.layered.p3order.constraints.IConstraintResolver;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.properties.PortType;
+
+import com.google.common.collect.Lists;
 
 /**
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
@@ -36,34 +38,33 @@ import org.eclipse.elk.alg.layered.properties.InternalProperties;
 public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 
     /** the array of port ranks. */
-    private final float[] portRanks;
+    private float[] portRanks;
     /** the random number generator. */
     private final Random random;
     /** the constraint resolver for ordering constraints. */
-    private final IConstraintResolver constraintResolver;
+    private ForsterConstraintResolver constraintResolver;
     /** the barycenter values of every node in the graph, indexed by layer.id and node.id. */
-    private final BarycenterState[][] barycenterState;
+    private BarycenterState[][] barycenterState;
+    /** The Barycenter PortDistributor is used to ask for the port ranks.*/
+    private final AbstractBarycenterPortDistributor portDistributor;
 
     /**
-     * Constructs a Barycenter heuristic for crossing minimization between two layers.
+     * Constructs a Barycenter heuristic for crossing minimization.
      * 
-     * @param barycenterState
-     *            the barycenter values of every node in the graph, indexed by layer.id and node.id.
      * @param constraintResolver
      *            the constraint resolver
-     * @param graphRandom
+     * @param random
      *            the random number generator
-     * @param portRanks
-     *            the array of port ranks
+     * @param portDistributor
+     *            calculates the port ranks for the barycenter heuristic.
+     * @param graph
+     *            current node order
      */
-    public BarycenterHeuristic(final BarycenterState[][] barycenterState, 
-            final IConstraintResolver constraintResolver,
-            final Random graphRandom, 
-            final float[] portRanks) {
-        this.barycenterState = barycenterState;
+    public BarycenterHeuristic(final ForsterConstraintResolver constraintResolver, final Random random,
+            final AbstractBarycenterPortDistributor portDistributor, final LNode[][] graph) {
         this.constraintResolver = constraintResolver;
-        this.random = graphRandom;
-        this.portRanks = portRanks;
+        this.random = random;
+        this.portDistributor = portDistributor;
     }
 
     /**
@@ -167,7 +168,7 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
             }
         }
     }
-
+    
     /**
      * Calculate the barycenters of the given node groups.
      * 
@@ -297,6 +298,12 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
             this.node = node;
         }
 
+        @Override
+        public String toString() {
+            return "BarycenterState [node=" + node + ", summedWeight=" + summedWeight + ", degree=" + degree
+                    + ", barycenter=" + barycenter + ", visited=" + visited + "]";
+        }
+
     }
     
     /**
@@ -315,4 +322,82 @@ public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic
                 }
                 return 0;
         };
+
+    @Override
+    public boolean minimizeCrossings(final LNode[][] order, final int freeLayerIndex,
+            final boolean forwardSweep, final boolean isFirstSweep) {
+        if (!isFirstLayer(order, freeLayerIndex, forwardSweep)) {
+            LNode[] fixedLayer = order[freeLayerIndex - changeIndex(forwardSweep)];
+            portDistributor.calculatePortRanks(fixedLayer, portTypeFor(forwardSweep));
+        }
+
+        LNode firstNodeInLayer = order[freeLayerIndex][0];
+        boolean preOrdered = !isFirstSweep || isExternalPortDummy(firstNodeInLayer);
+
+        List<LNode> nodes = Lists.newArrayList(order[freeLayerIndex]);
+        minimizeCrossings(nodes, preOrdered, false, forwardSweep);
+        // apply the new ordering
+        int index = 0;
+        for (LNode nodeGroup : nodes) {
+                order[freeLayerIndex][index++] = nodeGroup;
+        }
+
+        return false; // Does not always improve.
+    }
+
+    @Override
+    public boolean setFirstLayerOrder(final LNode[][] order, final boolean isForwardSweep) {
+        int startIndex = startIndex(isForwardSweep, order.length);
+        List<LNode> nodes = Lists.newArrayList(
+                order[startIndex]);
+        minimizeCrossings(nodes, false, true, isForwardSweep);
+        int index = 0;
+        for (LNode nodeGroup : nodes) {
+                order[startIndex][index++] = nodeGroup;
+        }
+
+        return false; // Does not always improve
+    }
+
+    private boolean isExternalPortDummy(final LNode firstNode) {
+        return firstNode.getType() == NodeType.EXTERNAL_PORT;
+    }
+
+    private int changeIndex(final boolean dir) {
+        return dir ? 1 : -1;
+    }
+
+    private PortType portTypeFor(final boolean direction) {
+        return direction ? PortType.OUTPUT : PortType.INPUT;
+    }
+
+    private int startIndex(final boolean dir, final int length) {
+        return dir ? 0 : Math.max(0, length - 1);
+    }
+
+    private boolean isFirstLayer(final LNode[][] nodeOrder, final int currentIndex,
+            final boolean forwardSweep) {
+        return currentIndex == startIndex(forwardSweep, nodeOrder.length);
+    }
+
+    @Override
+    public boolean alwaysImproves() {
+        return false;
+    }
+
+    @Override
+    public boolean isDeterministic() {
+        return false;
+    }
+
+    @Override
+    public void initAfterTraversal() {
+        barycenterState = constraintResolver.getBarycenterStates();
+        portRanks = portDistributor.getPortRanks();
+    }
+
+    @Override
+    public void initAtLayerLevel(final int l, final LNode[][] nodeOrder) {
+        nodeOrder[l][0].getLayer().id = l;
+    }
 }

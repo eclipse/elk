@@ -496,6 +496,7 @@ output option junctionPoints: KVectorChain {
 		depends on the chosen layout algorithm and edge routing style. The points are put into
 		the vector chain with no specific order."
 	targets edges
+	default = new KVectorChain()
 	legacyIds de.cau.cs.kieler.junctionPoints
 }
 

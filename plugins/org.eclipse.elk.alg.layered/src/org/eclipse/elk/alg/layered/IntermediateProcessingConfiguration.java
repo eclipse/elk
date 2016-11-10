@@ -77,6 +77,15 @@ public final class IntermediateProcessingConfiguration {
         
         /** The number of intermediate processing slots defined in here. */
         public static final int SLOT_COUNT = AFTER_PHASE_5.ordinal() + 1;
+
+        /**
+         * This is used to prevent hierarchical processors after phase 4.
+         * 
+         * @return whether all processors in this area will always be non-topological.
+         */
+        public boolean nonTopological() {
+            return this == BEFORE_PHASE_5 || this == AFTER_PHASE_5;
+        }
     }
     
     
@@ -192,7 +201,6 @@ public final class IntermediateProcessingConfiguration {
      */
     public IntermediateProcessingConfiguration addBeforePhase5(
             final IntermediateProcessorStrategy processor) {
-        
         strategy.get(Slot.BEFORE_PHASE_5.ordinal()).add(processor);
         return this;
     }

@@ -8,20 +8,13 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
-
-import java.util.Iterator;
-import java.util.Map;
+package org.eclipse.elk.alg.layered.p3order.counting;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.PortSide;
-
-import com.google.common.collect.Maps;
 
 /**
  * Counts all crossings caused by the ordering of north/south ports and between north/south edges
@@ -31,61 +24,32 @@ import com.google.common.collect.Maps;
  */
 public class NorthSouthEdgeAllCrossingsCounter {
 
-    private final Map<LNode, Integer> nodePositions;
-    private final Map<LPort, Integer> portPositions;
-    private final Map<LNode, Integer> northCardinalities;
-    private final Map<LNode, Integer> southCardinalities;
-    private final LNode[] layer;
+    private int[] nodePositions;
+    private final int[] portPositions;
+    private int[] northCardinalities;
+    private int[] southCardinalities;
+    private LNode[] layer;
     private LNode currentOriginNode;
     private int numberOfNorthSouthEdges;
     private int numberOfLongEdgeDummies;
     private boolean northOfCurrentOriginNode = true;
-    private final boolean usesOrthogonalCounter;
 
     /**
      * Creates counter.
      * 
-     * @param layer
-     *            The current order of the nodes.
+     * @param portPositions
+     *            An array the length of all ports in the graph.
      */
-    public NorthSouthEdgeAllCrossingsCounter(final LNode[] layer) {
-        this.layer = layer;
-        nodePositions = Maps.newHashMap();
-        portPositions = Maps.newHashMap();
-        northCardinalities = Maps.newHashMap();
-        southCardinalities = Maps.newHashMap();
-        usesOrthogonalCounter =
-                layer[0].getGraph().getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
-        initPositionsAndCardinalities();
-    }
-
-    private void initPositionsAndCardinalities() {
-        int nodeId = 0;
-        for (LNode element : layer) {
-            LNode node = element;
-
-            if (!isLongEdgeDummy(node)) {
-                nodePositions.put(node, nodeId++);
-            }
-
-            setPortPositionsAndCardinalitiesFor(node, northCardinalities, PortSide.NORTH);
-            setPortPositionsAndCardinalitiesFor(node, southCardinalities, PortSide.SOUTH);
-        }
-    }
-
-    private void setPortPositionsAndCardinalitiesFor(final LNode node,
-            final Map<LNode, Integer> cardinalities, final PortSide side) {
-        Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
-        int portId = 0;
-        for (LPort port : ports) {
-            portPositions.put(port, portId++);
-        }
-        cardinalities.put(node, portId);
+    public NorthSouthEdgeAllCrossingsCounter(final int[] portPositions) {
+        this.portPositions = portPositions;
     }
 
     /**
-     * <p>Counts all crossings caused by the ordering of north/south ports and between north/south
-     * edges and long-edge dummies. Assume the following layout:</p>
+     * <p>
+     * Counts all crossings caused by the ordering of north/south ports and between north/south
+     * edges and long-edge dummies. Assume the following layout:
+     * </p>
+     * 
      * <pre>
      *       *---*
      *       |
@@ -96,7 +60,10 @@ public class NorthSouthEdgeAllCrossingsCounter {
      *  |_____|
      * </pre>
      * 
-     * <p>This can be viewed as a matrix:</p>
+     * <p>
+     * This can be viewed as a matrix:
+     * </p>
+     * 
      * <pre>
      *   0 1 2 
      * 0  |  *
@@ -104,26 +71,61 @@ public class NorthSouthEdgeAllCrossingsCounter {
      * 2 x
      * </pre>
      * 
-     * <p>Thereby node the eastern edge of node x causes crossings with north/south edges of all nodes
-     * which are to the right and above it. For western edges this is the same to the left and
-     * below.</p>
+     * <p>
+     * Thereby the eastern edge of node x causes crossings with north/south edges of all nodes which
+     * are to the right and above it. For western edges this is the same to the left and below.
+     * </p>
      * 
+     * @param nodes
+     *            The current order of the nodes.
      * @return number of crossings
      */
-    public int countCrossings() {
+    public int countCrossings(final LNode[] nodes) {
+        initialize(nodes);
+
         int crossings = 0;
         for (LNode node : layer) {
             crossings += getLongEdgeDummyCrossings(node);
-            if (fixedPortOrderOn(node)) {
-                if (hasPortOnSide(node, PortSide.NORTH)) {
-                    crossings += getCrossingsOnSide(node, PortSide.NORTH);
-                }
-                if (hasPortOnSide(node, PortSide.SOUTH)) {
-                    crossings += getCrossingsOnSide(node, PortSide.SOUTH);
-                }
+            if (hasPortOnSide(node, PortSide.NORTH)) {
+                crossings += getCrossingsOnSide(node, PortSide.NORTH);
+            }
+            if (hasPortOnSide(node, PortSide.SOUTH)) {
+                crossings += getCrossingsOnSide(node, PortSide.SOUTH);
             }
         }
         return crossings;
+    }
+
+    private void initialize(final LNode[] nodes) {
+        layer = nodes;
+        nodePositions = new int[layer.length];
+        northCardinalities = new int[layer.length];
+        southCardinalities = new int[layer.length];
+        initPositionsAndCardinalities();
+    }
+
+    private void initPositionsAndCardinalities() {
+        int nodeId = 0;
+        for (LNode element : layer) {
+            LNode node = element;
+    
+            if (!isLongEdgeDummy(node)) {
+                nodePositions[node.id] = nodeId++;
+            }
+    
+            setPortPositionsAndCardinalitiesFor(node, northCardinalities, PortSide.NORTH);
+            setPortPositionsAndCardinalitiesFor(node, southCardinalities, PortSide.SOUTH);
+        }
+    }
+
+    private void setPortPositionsAndCardinalitiesFor(final LNode node, final int[] cardinalities,
+            final PortSide side) {
+        Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, side);
+        int portId = 0;
+        for (LPort port : ports) {
+            portPositions[port.id] = portId++;
+        }
+        cardinalities[node.id] = portId;
     }
 
     /**
@@ -188,8 +190,8 @@ public class NorthSouthEdgeAllCrossingsCounter {
 
     private int getCrossingsOnSide(final LNode node, final PortSide side) {
         int crossings = 0;
-        Iterable<LPort> southPorts = node.getPorts(side);
-        for (LPort port : southPorts) {
+        Iterable<LPort> ports = node.getPortSideView(side);
+        for (LPort port : ports) {
             if (hasConnectedEdge(port)) {
                 LNode northSouthDummy = getConnectedNorthSouthDummy(port);
                 if (hasPortOnSide(northSouthDummy, PortSide.EAST)) {
@@ -207,26 +209,21 @@ public class NorthSouthEdgeAllCrossingsCounter {
         return getConnectedNorthSouthDummy(port) != null;
     }
 
-    private int numberOfWesternCrossings(final LNode node, final LPort port,
-            final LNode northSouthDummy, final PortSide side) {
-        int factor = usesOrthogonalCounter ? 1 : northSouthDummy.getPorts().get(0).getDegree();
+    private int numberOfWesternCrossings(final LNode node, final LPort port, final LNode northSouthDummy,
+            final PortSide side) {
+        int factor = northSouthDummy.getPortSideView(PortSide.WEST).get(0).getDegree();
         return factor * Math.min(positionOf(port), nearnessBetween(node, northSouthDummy));
     }
 
-    private int numberOfEasternCrossings(final LNode node, final LPort port,
-            final LNode northSouthDummy, final PortSide side) {
-        int factor = usesOrthogonalCounter ? 1 : northSouthDummy.getPorts().get(0).getDegree();
-        return factor
-                * Math.min(cardinalityOnSide(node, side) - 1 - positionOf(port),
+    private int numberOfEasternCrossings(final LNode node, final LPort port, final LNode northSouthDummy,
+            final PortSide side) {
+        int factor = northSouthDummy.getPortSideView(PortSide.EAST).get(0).getDegree();
+        return factor * Math.min(cardinalityOnSide(node, side) - 1 - positionOf(port),
                 nearnessBetween(node, northSouthDummy));
     }
 
-    private boolean fixedPortOrderOn(final LNode node) {
-        return node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
-    }
-
     private boolean hasPortOnSide(final LNode node, final PortSide side) {
-        return getPortIteratorForSide(node, side).hasNext();
+        return node.getPortSideView(side).iterator().hasNext();
     }
 
     private LNode getConnectedNorthSouthDummy(final LPort port) {
@@ -242,9 +239,9 @@ public class NorthSouthEdgeAllCrossingsCounter {
     private Integer cardinalityOnSide(final LNode node, final PortSide side) {
         switch (side) {
         case NORTH:
-            return northCardinalities.get(node);
+            return northCardinalities[node.id];
         case SOUTH:
-            return southCardinalities.get(node);
+            return southCardinalities[node.id];
         default:
         }
         assert false : "Cardinality for port side " + side + " has not been collected!";
@@ -252,11 +249,11 @@ public class NorthSouthEdgeAllCrossingsCounter {
     }
 
     private int positionOf(final LNode node) {
-        return nodePositions.get(node);
+        return nodePositions[node.id];
     }
 
     private int positionOf(final LPort port) {
-        return portPositions.get(port);
+        return portPositions[port.id];
     }
 
     private PortSide getSideOf(final LNode northSouthDummy) {
@@ -266,27 +263,9 @@ public class NorthSouthEdgeAllCrossingsCounter {
     private LPort originPortOf(final LNode node) {
         LPort port = node.getPorts().get(0);
         LPort origin = (LPort) port.getProperty(InternalProperties.ORIGIN);
+        // port.getProperty(InternalProperties.)
         return origin;
     }
 
-    private Iterator<LPort> getPortIteratorForSide(final LNode node, final PortSide side) {
-        return node.getPorts(side).iterator();
-    }
-
-    /**
-     * Whenever the order of two nodes are switched this counter needs to be notified.
-     * 
-     * @param nodeOne
-     *            first node.
-     * @param nodeTwo
-     *            second node.
-     */
-    public void notifyNodeSwitch(final LNode nodeOne, final LNode nodeTwo) {
-        if (nodePositions.containsKey(nodeOne) && nodePositions.containsKey(nodeTwo)) {
-            int formerPositionOfOne = nodePositions.get(nodeOne);
-            nodePositions.put(nodeOne, nodePositions.get(nodeTwo));
-            nodePositions.put(nodeTwo, formerPositionOfOne);
-        }
-    }
-
 }
+

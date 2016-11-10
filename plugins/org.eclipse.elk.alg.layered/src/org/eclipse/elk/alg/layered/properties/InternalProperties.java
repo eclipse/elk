@@ -66,7 +66,7 @@ public final class InternalProperties {
      */
     public static final IProperty<List<ILayoutProcessor>> PROCESSORS =
             new Property<List<ILayoutProcessor>>("processors");
-
+    
     /**
      * Whether the original node an LNode was created from was a compound node or not. This might
      * influence certain layout decisions, such as where to place inside port labels so that they

@@ -113,6 +113,7 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.junctionPoints
 	supports org.eclipse.elk.edge.thickness
 	supports org.eclipse.elk.edgeLabels.placement
+    supports org.eclipse.elk.alg.layered.crossingMinimization.hierarchicalSweepiness
     supports org.eclipse.elk.port.index
     supports org.eclipse.elk.commentBox
     supports org.eclipse.elk.hypernode
@@ -266,8 +267,19 @@ group crossingMinimization {
         default = CrossingMinimizationStrategy.LAYER_SWEEP
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.crossMin
+    } 
+    
+    option hierarchicalSweepiness: float {
+        label "Hierarchical Sweepiness"
+        description "How likely it is to use cross-hierarchy (1) vs bottom-up (-1)."  
+        default = 0.1f
+        targets parents 
     }
     
+    /** 
+     * Greedy switch type is not used internally, here we use the CrossMinType enum defined in the
+     * LayerSweep class. This is only used for user interaction.
+     */
     advanced option greedySwitch: GreedySwitchType {
         label "Greedy Switch Crossing Minimization"
         description "Greedy Switch strategy for crossing minimization."

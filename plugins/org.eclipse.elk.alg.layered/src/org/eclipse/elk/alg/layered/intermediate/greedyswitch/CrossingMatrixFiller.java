@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.SwitchDecider.CrossingCountSide;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 
 /**
  * This class manages the crossing matrix and fills it on demand. It needs to be reinitialized for
@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
  * 
  * @author alan
  */
-public class CrossingMatrixFiller {
+public final class CrossingMatrixFiller {
     private final boolean[][] isCrossingMatrixFilled;
     private final int[][] crossingMatrix;
     private final BetweenLayerEdgeTwoNodeCrossingsCounter inBetweenLayerCrossingCounter;
@@ -31,18 +31,17 @@ public class CrossingMatrixFiller {
     /**
      * Constructs class which manages the crossing matrix.
      */
-    public CrossingMatrixFiller(final GreedySwitchType greedyType, final LNode[][] graph,
+    public CrossingMatrixFiller(final CrossMinType greedySwitchType, final LNode[][] graph,
             final int freeLayerIndex, final CrossingCountSide direction) {
         
         this.direction = direction;
-        oneSided = greedyType.isOneSided();
+        oneSided = greedySwitchType == CrossMinType.ONE_SIDED_GREEDY_SWITCH;
 
         LNode[] freeLayer = graph[freeLayerIndex];
         isCrossingMatrixFilled = new boolean[freeLayer.length][freeLayer.length];
         crossingMatrix = new int[freeLayer.length][freeLayer.length];
 
-        inBetweenLayerCrossingCounter =
-                new BetweenLayerEdgeTwoNodeCrossingsCounter(graph, freeLayerIndex);
+        inBetweenLayerCrossingCounter = new BetweenLayerEdgeTwoNodeCrossingsCounter(graph, freeLayerIndex);
     }
 
     /**
@@ -75,5 +74,4 @@ public class CrossingMatrixFiller {
         crossingMatrix[lowerNode.id][upperNode.id] =
                 inBetweenLayerCrossingCounter.getLowerUpperCrossings();
     }
-
 }

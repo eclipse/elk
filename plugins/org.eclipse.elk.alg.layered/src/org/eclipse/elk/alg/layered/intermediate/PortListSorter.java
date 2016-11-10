@@ -123,6 +123,7 @@ public final class PortListSorter implements ILayoutProcessor {
                 if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     // We need to sort the port list accordingly
                     Collections.sort(node.getPorts(), portComparator);
+                    node.cachePortSides();
                 }
             }
         }
