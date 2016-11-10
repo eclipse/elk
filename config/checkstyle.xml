@@ -15,7 +15,7 @@
 
 <module name="Checker">
   <property name="severity" value="warning" />
-  
+
   <module name="SuppressionCommentFilter">
     <property name="offCommentFormat" value="CHECKSTYLEOFF ([\w\|]+)" />
     <property name="onCommentFormat" value="CHECKSTYLEON ([\w\|]+)" />
@@ -197,7 +197,7 @@
           chsch: removed CLASS_DEF & ENUM_DEF
           as the checks introduced with https://github.com/checkstyle/checkstyle/issues/1242
           do IMO not reduce ambiguity but increase them, at least on the first glance
-          
+
           default setting is:
           <property name="tokens" value="METHOD_DEF, VARIABLE_DEF, ANNOTATION_FIELD_DEF, INTERFACE_DEF, CTOR_DEF, CLASS_DEF, ENUM_DEF" />
        -->
