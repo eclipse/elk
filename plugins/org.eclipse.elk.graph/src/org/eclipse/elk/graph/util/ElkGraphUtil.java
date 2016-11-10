@@ -242,6 +242,25 @@ public final class ElkGraphUtil {
         return false;
     }
     
+    /**
+     * Returns the node that belongs to the given connectable shape. That is, if the shape is a node, that itself is
+     * returned. If it is a port, the port's parent node is returned. This method may well return {@code null} if the
+     * connectable shape is a port that does not belong to a node.
+     * 
+     * @param connectableShape the shape whose node to return.
+     * @return the node that belongs to the shape.
+     */
+    public static ElkNode connectableShapeToNode(final ElkConnectableShape connectableShape) {
+        if (connectableShape instanceof ElkNode) {
+            return (ElkNode) connectableShape;
+        } else if (connectableShape instanceof ElkPort) {
+            return ((ElkPort) connectableShape).getParent();
+        } else {
+            // In case the meta model is changed in the distant future...
+            throw new UnsupportedOperationException("Only support nodes and ports.");
+        }
+    }
+    
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////
