@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.util;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,19 +23,30 @@ import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 /**
- * Utility methods that make using the ElkGraph data structure a bit easier. The class offers different types of
- * methods described below.
+ * Utility methods that make using the ElkGraph data structure a bit easier and thereby make ELK great again! The
+ * class offers different types of methods described below.
  * 
  * 
  * <h2>Factory Methods</h2>
  * 
- * <p>While {@link ElkGraphFactory} offers methods that simply create new model objects, the factory methods offered
- * by this class are designed to make creating a graph programmatically as easy as possible. This includes
- * automatically setting containments and may at some point also include applying sensible defaults, where
- * applicable.</p>
+ * <p>While {@link ElkGraphFactory} offers methods that simply create new model objects, the factory methods
+ * offered by this class are designed to make creating a graph programmatically as easy as possible. This
+ * includes automatically setting containments and may at some point also include applying sensible defaults,
+ * where applicable. The latter is why using these methods instead of factory methods is usually a good
+ * idea.</p>
  * 
- * TODO: More documentation about what's in here. Also, much of the class is specified, but not implemented yet.
+ * 
+ * <h2>Convenience Methods</h2>
+ * 
+ * <p>This class offers quite a few convenience methods, including easy iteration over end points of an edge
+ * or edges incident to a node, a way to find the node a connectable shape represents, as well as ways to
+ * interact with a graph's structure.</p>
+ * 
+ * TODO: More documentation about what's in here.
  */
 public final class ElkGraphUtil {
     
@@ -177,6 +189,7 @@ public final class ElkGraphUtil {
      * 
      * @param edge the edge to update the containment of.
      * @throws NullPointerException if {@code edge} is {@code null}.
+     * @throws IllegalArgumentException if {@code edge} does not have at least one source or target.
      */
     public static void updateContainment(final ElkEdge edge) {
         Objects.requireNonNull(edge, "edge cannot be null");
@@ -187,17 +200,83 @@ public final class ElkGraphUtil {
     /**
      * Finds the node the given edge should best be contained in given the edge's sources and targets. This is usually
      * the first common ancestor of all sources and targets. Finding this containment requires all sources and targets
-     * to be contained in the same graph model. If that is not the case, this method will return {@code null}.
+     * to be contained in the same graph model. If that is not the case, this method will return {@code null}. If the
+     * edge is not connected to anything, an exception is thrown. If the edge is connected to only one shape, that
+     * shape's parent is returned.
      * 
      * @param edge the edge to find the best containment for.
      * @return the best containing node, or {@code null} if none could be found.
      * @throws NullPointerException if {@code edge} is {@code null}.
+     * @throws IllegalArgumentException if {@code edge} does not have at least one source or target.
      */
     public static ElkNode findBestEdgeContainment(final ElkEdge edge) {
         Objects.requireNonNull(edge, "edge cannot be null");
         
-        // TODO Implement
-        return null;
+        /* We start with corner cases: an edge which is not connected to anything and an edge which is connected to
+         * just one shape.
+         */
+        
+        switch (edge.getSources().size() + edge.getTargets().size()) {
+        case 0:
+            // We need at least one to work with
+            throw new IllegalArgumentException("The edge must have at least one source or target.");
+            
+        case 1:
+            // Return the parent of the only incident thing
+            if (edge.getSources().isEmpty()) {
+                return connectableShapeToNode(edge.getTargets().get(0)).getParent();
+            } else {
+                return connectableShapeToNode(edge.getSources().get(0)).getParent();
+            }
+        }
+        
+        /* From now on we know that the edge has at least two incident shapes. We now check the simple common cases
+         * first before moving on to the more complex general case. The most common cases are that the edge is not a
+         * hyperedge and one of the following is true:
+         *   1. The edge's source and target have the same parent node. In this case, the containment is that parent
+         *      node.
+         *   2. The source is the target's parent (or the other way around). In that case, the source or the target
+         *      is the containment, respectively.
+         */
+        
+        if (edge.getSources().size() == 1 && edge.getTargets().size() == 1) {
+            ElkNode sourceNode = connectableShapeToNode(edge.getSources().get(0));
+            ElkNode targetNode = connectableShapeToNode(edge.getTargets().get(0));
+            
+            if (sourceNode.getParent() == targetNode.getParent()) {
+                return sourceNode.getParent();
+            } else if (sourceNode == targetNode.getParent()) {
+                return sourceNode;
+            } else if (targetNode == sourceNode.getParent()) {
+                return targetNode;
+            }
+        }
+        
+        /* Finally, the most general case. We go through all incident shapes and keep track of the highest common
+         * ancestor we have found so far. For each node we process, we check if it is a descendant of the current
+         * highest common ancestor. Note how we allow the highest common ancestor to be one of the incident nodes
+         * itself. In that case, all nodes encountered so far have been contained in that node.
+         */
+        
+        Iterator<ElkConnectableShape> incidentShapes = allIncidentShapes(edge).iterator();
+        ElkNode commonAncestor = connectableShapeToNode(incidentShapes.next());
+        
+        while (incidentShapes.hasNext()) {
+            ElkNode incidentNode = connectableShapeToNode(incidentShapes.next());
+            
+            // Check if the current common ancester is not an ancestor to the new node, in which case we need to act
+            if (!isDescendant(incidentNode, commonAncestor)) {
+                if (incidentNode.getParent() == commonAncestor.getParent()) {
+                    // The two nodes are siblings, the common ancestor is their parent
+                    commonAncestor = incidentNode.getParent();
+                } else if (isDescendant(commonAncestor, incidentNode)) {
+                    // The new node is the ancestor of everyone we've processed so far
+                    commonAncestor = incidentNode;
+                }
+            }
+        }
+        
+        return commonAncestor;
     }
     
     // TODO Add methods to create edge sections.
@@ -207,17 +286,61 @@ public final class ElkGraphUtil {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Convenience
     
-    // TODO: Should the return type really be an edge, or an iterable?
-    public static List<ElkEdge> allIncomingEdges(final ElkNode node) {
-        return null;
+    /**
+     * Returns an iterable which contains all edges incoming to a node, whether directly connected or
+     * through a port.
+     * 
+     * @param node the node whose incoming edges to gather.
+     * @return iterable with all incoming edges.
+     */
+    public static Iterable<ElkEdge> allIncomingEdges(final ElkNode node) {
+        List<Iterable<ElkEdge>> incomingEdgeIterables = Lists.newArrayListWithCapacity(1 + node.getPorts().size());
+        
+        incomingEdgeIterables.add(node.getIncomingEdges());
+        for (ElkPort port : node.getPorts()) {
+            incomingEdgeIterables.add(port.getIncomingEdges());
+        }
+        
+        return Iterables.concat(incomingEdgeIterables);
     }
     
-    public static List<ElkEdge> allOutgoingEdges(final ElkNode node) {
-        return null;
+    /**
+     * Returns an iterable which contains all edges outgoing from a node, whether directly connected or
+     * through a port.
+     * 
+     * @param node the node whose outgoing edges to gather.
+     * @return iterable with all outgoing edges.
+     */
+    public static Iterable<ElkEdge> allOutgoingEdges(final ElkNode node) {
+        List<Iterable<ElkEdge>> outgoingEdgeIterables = Lists.newArrayListWithCapacity(1 + node.getPorts().size());
+        
+        outgoingEdgeIterables.add(node.getOutgoingEdges());
+        for (ElkPort port : node.getPorts()) {
+            outgoingEdgeIterables.add(port.getOutgoingEdges());
+        }
+        
+        return Iterables.concat(outgoingEdgeIterables);
     }
     
-    public static List<ElkEdgeSection> allIncidentSections(final ElkEdgeSection section) {
-        return null;
+    /**
+     * Returns an iterable which contains all connectable shapes the given edge is incident to.
+     * 
+     * @param edge the edge whose end points to return.
+     * @return iterable with all incident shapes.
+     */
+    public static Iterable<ElkConnectableShape> allIncidentShapes(final ElkEdge edge) {
+        return Iterables.concat(edge.getSources(), edge.getTargets());
+    }
+    
+    /**
+     * Gathers all edge sections incident to a given edge section, regardless of whether the sections are
+     * incoming or outgoing.
+     * 
+     * @param section the section whose incident sections to gather.
+     * @return iterable over all incident sections.
+     */
+    public static Iterable<ElkEdgeSection> allIncidentSections(final ElkEdgeSection section) {
+        return Iterables.concat(section.getIncomingSections(), section.getOutgoingSections());
     }
 
     /**

@@ -19,7 +19,7 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkGraphPackage;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
@@ -221,17 +221,11 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
         
         for (ElkConnectableShape incidentShape : incidentShapes) {
             // Compute representing node
-            ElkNode representingNode = null;
-            
-            if (incidentShape instanceof ElkNode) {
-                representingNode = ((ElkNode) incidentShape).getParent();
-            } else if (incidentShape instanceof ElkPort) {
-                representingNode = ((ElkPort) incidentShape).getParent().getParent();
-            }
+            ElkNode shapeNode = ElkGraphUtil.connectableShapeToNode(incidentShape);
             
             if (commonRepresentingNode == null) {
-                commonRepresentingNode = representingNode;
-            } else if (commonRepresentingNode != representingNode) {
+                commonRepresentingNode = shapeNode.getParent();
+            } else if (commonRepresentingNode != shapeNode.getParent()) {
                 // Different hierarchy levels
                 return true;
             }
