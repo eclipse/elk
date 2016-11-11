@@ -12,6 +12,8 @@ package org.eclipse.elk.graph.util;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import org.eclipse.elk.graph.ElkConnectableShape;
@@ -252,10 +254,15 @@ public final class ElkGraphUtil {
             }
         }
         
-        /* Finally, the most general case. We go through all incident shapes and keep track of the highest common
-         * ancestor we have found so far. For each node we process, we check if it is a descendant of the current
-         * highest common ancestor. Note how we allow the highest common ancestor to be one of the incident nodes
-         * itself. In that case, all nodes encountered so far have been contained in that node.
+        /* Finally, the most general case. We go through all incident shapes and keep track of the highest
+         * common ancestor we have found so far. For each new node we process, we distinguish three cases:
+         *   1. It is the common ancestor itself or one of the common ancestor's descendants. In this case,
+         *      nothing needs to be done.
+         *   2. It is a sibling of the common ancestor. In this case, the common ancestor is the new node's
+         *      parent.
+         *   3. The common ancestor is either a descendant of the new shape or the two are not related in
+         *      any way. In this case, we simply traverse down the ancestor hierarchy of both nodes and
+         *      set the common ancestor to the lowest common ancestor of the two that we find.
          */
         
         Iterator<ElkConnectableShape> incidentShapes = allIncidentShapes(edge).iterator();
@@ -264,15 +271,53 @@ public final class ElkGraphUtil {
         while (incidentShapes.hasNext()) {
             ElkNode incidentNode = connectableShapeToNode(incidentShapes.next());
             
-            // Check if the current common ancester is not an ancestor to the new node, in which case we need to act
-            if (!isDescendant(incidentNode, commonAncestor)) {
+            // Check if the current common ancestor is not an ancestor to the new node, in which case we need to act
+            if (incidentNode != commonAncestor && !isDescendant(incidentNode, commonAncestor)) {
                 if (incidentNode.getParent() == commonAncestor.getParent()) {
                     // The two nodes are siblings, the common ancestor is their parent
                     commonAncestor = incidentNode.getParent();
-                } else if (isDescendant(commonAncestor, incidentNode)) {
-                    // The new node is the ancestor of everyone we've processed so far
-                    commonAncestor = incidentNode;
+                } else {
+                    commonAncestor = findLowestCommonAncestor(commonAncestor, incidentNode);
+                    
+                    if (commonAncestor == null) {
+                        // The nodes are not part of the same graph. Abort.
+                        return null;
+                    }
                 }
+            }
+        }
+        
+        return commonAncestor;
+    }
+    
+    /**
+     * Returns the lowest common ancestor of the given two nodes. If the two nodes are not part of the same graph
+     * (that is, their root nodes differ), there is no common ancestor.
+     * 
+     * @param node1 the first node.
+     * @param node2 the second node.
+     * @return the lowest common ancestor or {@code null} if there is none.
+     */
+    public static ElkNode findLowestCommonAncestor(final ElkNode node1, final ElkNode node2) {
+        // Retrieve iterators over the node ancestors
+        List<ElkNode> ancestors1 = Lists.newArrayList(new AncestorIterator(node1, true));
+        ListIterator<ElkNode> iterator1 = ancestors1.listIterator(ancestors1.size());
+
+        List<ElkNode> ancestors2 = Lists.newArrayList(new AncestorIterator(node2, true));
+        ListIterator<ElkNode> iterator2 = ancestors2.listIterator(ancestors2.size());
+        
+        // Traverse the ancestor hierarchies from the end as longs as the elements we find are the same
+        ElkNode commonAncestor = null;
+        
+        while (iterator1.hasPrevious() && iterator2.hasPrevious()) {
+            ElkNode ancestor1 = iterator1.previous();
+            ElkNode ancestor2 = iterator2.previous();
+            
+            if (ancestor1 == ancestor2) {
+                commonAncestor = ancestor1;
+            } else {
+                // The ancestral lines differ; no need to continue
+                break;
             }
         }
         
@@ -394,6 +439,52 @@ public final class ElkGraphUtil {
      */
     private ElkGraphUtil() {
         // Nothing to do here...
+    }
+    
+    
+    /**
+     * An iterator which, given a starting node, walks up the ancestor tree. The iteration can either start with the
+     * node itself or with its parent.
+     */
+    private static class AncestorIterator implements Iterator<ElkNode> {
+        
+        /** The next node we will return. */
+        private ElkNode nextNode;
+        
+        
+        /**
+         * Creates a new iterator.
+         * 
+         * @param startNode the node whose ancestors we want to travel along.
+         * @param includeNode {@code true} if {@code startNode} should be the first thing we return, {@code false}
+         *                    if its parent should be the first thing.
+         */
+        AncestorIterator(final ElkNode startNode, final boolean includeNode) {
+            nextNode = includeNode ? startNode : startNode.getParent();
+        }
+        
+
+        /* (non-Javadoc)
+         * @see java.util.Iterator#hasNext()
+         */
+        @Override
+        public boolean hasNext() {
+            return nextNode != null;
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.Iterator#next()
+         */
+        @Override
+        public ElkNode next() {
+            if (nextNode == null) {
+                throw new NoSuchElementException("There is no more element.");
+            }
+            ElkNode next = nextNode;
+            nextNode = nextNode.getParent();
+            return next;
+        }
+        
     }
     
 }
