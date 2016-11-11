@@ -327,6 +327,12 @@
             pattern="org\.eclipse\.elk\.conn\..*"/>
       </workingSet>
       <workingSet
+          name="ELK Tests">
+        <predicate
+            xsi:type="predicates:NamePredicate"
+            pattern="org\.eclipse\.elk\..*\.test"/>
+      </workingSet>
+      <workingSet
           name="ELK Stuff">
         <predicate
             xsi:type="predicates:AndPredicate">
