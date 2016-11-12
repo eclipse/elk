@@ -33,5 +33,5 @@ algorithm Draw2D(Draw2DLayoutProvider) {
 	supports org.eclipse.elk.spacing.border = 16
 	supports org.eclipse.elk.direction = Direction.RIGHT
 	supports org.eclipse.elk.nodeSize.constraints
-	supports org.eclipse.elk.insets
+    supports org.eclipse.elk.insets
 }
