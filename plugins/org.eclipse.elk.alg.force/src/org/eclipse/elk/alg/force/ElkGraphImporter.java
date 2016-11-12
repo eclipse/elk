@@ -19,15 +19,16 @@ import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.alg.force.properties.InternalProperties;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.UnsupportedGraphException;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * Manages the transformation of KGraphs to FGraphs.
@@ -36,7 +37,7 @@ import org.eclipse.elk.graph.KNode;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class KGraphImporter implements IGraphImporter<KNode> {
+public class ElkGraphImporter implements IGraphImporter<ElkNode> {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Transformation KGraph -> FGraph
@@ -44,19 +45,18 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     /**
      * {@inheritDoc}
      */
-    public FGraph importGraph(final KNode kgraph) {
+    public FGraph importGraph(final ElkNode kgraph) {
         FGraph fgraph = new FGraph();
         
         // copy the properties of the KGraph to the force graph
-        KShapeLayout sourceShapeLayout = kgraph.getData(KShapeLayout.class);
-        fgraph.copyProperties(sourceShapeLayout);
+        fgraph.copyProperties(kgraph);
         // TODO Find another way to do this kind of bounds checking
 //        fgraph.checkProperties(Properties.SPACING, Properties.ASPECT_RATIO, Properties.TEMPERATURE,
 //                Properties.ITERATIONS, Properties.REPULSION);
         fgraph.setProperty(InternalProperties.ORIGIN, kgraph);
                 
         // keep a list of created nodes in the force graph
-        Map<KNode, FNode> elemMap = new HashMap<KNode, FNode>();
+        Map<ElkNode, FNode> elemMap = new HashMap<ElkNode, FNode>();
         
         // transform everything
         transformNodes(kgraph, fgraph, elemMap);
@@ -73,33 +73,29 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      * @param elemMap the element map that maps the original {@code KGraph} elements to the
      *                transformed {@code FGraph} elements.
      */
-    private void transformNodes(final KNode parentNode, final FGraph fgraph,
-            final Map<KNode, FNode> elemMap) {
+    private void transformNodes(final ElkNode parentNode, final FGraph fgraph, final Map<ElkNode, FNode> elemMap) {
         int index = 0;
-        for (KNode knode : parentNode.getChildren()) {
-            // add a new node to the force graph, copying its size
-            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            
+        for (ElkNode knode : parentNode.getChildren()) {
             String label = "";
             if (!knode.getLabels().isEmpty()) {
                 label = knode.getLabels().get(0).getText();
             }
             FNode newNode = new FNode(label);
-            newNode.copyProperties(nodeLayout);
+            newNode.copyProperties(knode);
             newNode.setProperty(InternalProperties.ORIGIN, knode);
             
             newNode.id = index++;
-            newNode.getPosition().x = nodeLayout.getXpos() + nodeLayout.getWidth() / 2;
-            newNode.getPosition().y = nodeLayout.getYpos() + nodeLayout.getHeight() / 2;
-            newNode.getSize().x = Math.max(nodeLayout.getWidth(), 1);
-            newNode.getSize().y = Math.max(nodeLayout.getHeight(), 1);
+            newNode.getPosition().x = knode.getX() + knode.getWidth() / 2;
+            newNode.getPosition().y = knode.getY() + knode.getHeight() / 2;
+            newNode.getSize().x = Math.max(knode.getWidth(), 1);
+            newNode.getSize().y = Math.max(knode.getHeight(), 1);
             
             fgraph.getNodes().add(newNode);
             
             elemMap.put(knode, newNode);
             
             // port constraints cannot be undefined
-            PortConstraints portConstraints = nodeLayout.getProperty(ForceOptions.PORT_CONSTRAINTS);
+            PortConstraints portConstraints = knode.getProperty(ForceOptions.PORT_CONSTRAINTS);
             if (portConstraints == PortConstraints.UNDEFINED) {
                 portConstraints = PortConstraints.FREE;
             }
@@ -116,35 +112,35 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      * @param elemMap the element map that maps the original {@code KGraph} elements to the
      *                transformed {@code FGraph} elements.
      */
-    private void transformEdges(final KNode parentNode, final FGraph fgraph,
-            final Map<KNode, FNode> elemMap) {
-        for (KNode knode : parentNode.getChildren()) {
-            for (KEdge kedge : knode.getOutgoingEdges()) {
+    private void transformEdges(final ElkNode parentNode, final FGraph fgraph, final Map<ElkNode, FNode> elemMap) {
+        for (ElkNode knode : parentNode.getChildren()) {
+            for (ElkEdge kedge : knode.getOutgoingEdges()) {
+                // We don't support hyperedges
+                if (kedge.isHyperedge()) {
+                    throw new UnsupportedGraphException("Graph must not contain hyperedges.");
+                }
+                
                 // exclude edges that pass hierarchy bounds as well as self-loops
-                if (kedge.getTarget().getParent() == parentNode && knode != kedge.getTarget()) {
-                    KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                    
+                if (kedge.isHierarchical() && knode != ElkGraphUtil.connectableShapeToNode(kedge.getTargets().get(0))) {
                     // create a force edge
                     FEdge newEdge = new FEdge();
-                    newEdge.copyProperties(edgeLayout);
+                    newEdge.copyProperties(kedge);
                     // TODO
 //                    newEdge.checkProperties(Properties.LABEL_SPACING, Properties.REPULSIVE_POWER);
                     newEdge.setProperty(InternalProperties.ORIGIN, kedge);
                     
                     newEdge.setSource(elemMap.get(knode));
-                    newEdge.setTarget(elemMap.get(kedge.getTarget()));
+                    newEdge.setTarget(elemMap.get(ElkGraphUtil.connectableShapeToNode(kedge.getTargets().get(0))));
                     
                     fgraph.getEdges().add(newEdge);
                     
                     // transform the edge's labels
-                    for (KLabel klabel : kedge.getLabels()) {
-                        KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
-                        
+                    for (ElkLabel klabel : kedge.getLabels()) {
                         FLabel newLabel = new FLabel(newEdge, klabel.getText());
                         newLabel.setProperty(InternalProperties.ORIGIN, klabel);
                         
-                        newLabel.getSize().x = Math.max(labelLayout.getWidth(), 1);
-                        newLabel.getSize().y = Math.max(labelLayout.getHeight(), 1);
+                        newLabel.getSize().x = Math.max(klabel.getWidth(), 1);
+                        newLabel.getSize().y = Math.max(klabel.getHeight(), 1);
                         newLabel.refreshPosition();
                         
                         fgraph.getLabels().add(newLabel);
@@ -161,10 +157,9 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      * {@inheritDoc}
      */
     public void applyLayout(final FGraph fgraph) {
-        KNode kgraph = (KNode) fgraph.getProperty(InternalProperties.ORIGIN);
+        ElkNode kgraph = (ElkNode) fgraph.getProperty(InternalProperties.ORIGIN);
         
         // determine the border spacing, which influences the offset
-        KShapeLayout parentLayout = kgraph.getData(KShapeLayout.class);
         float borderSpacing = fgraph.getProperty(ForceOptions.SPACING_BORDER);
         if (borderSpacing < 0) {
             borderSpacing = ForceOptions.SPACING_BORDER.getDefault();
@@ -172,8 +167,11 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         }
         
         // calculate the offset from border spacing and node distribution
-        double minXPos = Integer.MAX_VALUE, minYPos = Integer.MAX_VALUE,
-                maxXPos = Integer.MIN_VALUE, maxYPos = Integer.MIN_VALUE;
+        double minXPos = Integer.MAX_VALUE;
+        double minYPos = Integer.MAX_VALUE;
+        double maxXPos = Integer.MIN_VALUE;
+        double maxYPos = Integer.MIN_VALUE;
+        
         for (FNode node : fgraph.getNodes()) {
             KVector pos = node.getPosition();
             KVector size = node.getSize();
@@ -182,45 +180,46 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             maxXPos = Math.max(maxXPos, pos.x + size.x / 2);
             maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
         }
-        KVector offset = new KVector(borderSpacing - minXPos, borderSpacing - minYPos);
+        
+        ElkInsets insets = kgraph.getProperty(ForceOptions.INSETS);
+        KVector offset = new KVector(
+                insets.getLeft() + borderSpacing - minXPos,
+                insets.getTop() + borderSpacing - minYPos);
         
         // process the nodes
         for (FNode fnode : fgraph.getNodes()) {
             Object object = fnode.getProperty(InternalProperties.ORIGIN);
             
-            if (object instanceof KNode) {
+            if (object instanceof ElkNode) {
                 // set the node position
-                KNode knode = (KNode) object;
-                KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+                ElkNode knode = (ElkNode) object;
                 KVector nodePos = fnode.getPosition().add(offset);
-                nodeLayout.setXpos((float) nodePos.x - nodeLayout.getWidth() / 2);
-                nodeLayout.setYpos((float) nodePos.y - nodeLayout.getHeight() / 2);
+                knode.setLocation(nodePos.x - knode.getWidth() / 2, nodePos.y - knode.getHeight() / 2);
             }
         }
         
         // process the edges
         for (FEdge fedge : fgraph.getEdges()) {
-            KEdge kedge = (KEdge) fedge.getProperty(InternalProperties.ORIGIN);
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            edgeLayout.getBendPoints().clear();
-            edgeLayout.getSourcePoint().applyVector(fedge.getSourcePoint());
-            edgeLayout.getTargetPoint().applyVector(fedge.getTargetPoint());
+            ElkEdge kedge = (ElkEdge) fedge.getProperty(InternalProperties.ORIGIN);
+            ElkEdgeSection kedgeSection = ElkGraphUtil.firstEdgeSection(kedge, true, true);
+            
+            KVector startLocation = fedge.getSourcePoint();
+            kedgeSection.setStartLocation(startLocation.x, startLocation.y);
+            
+            KVector endLocation = fedge.getTargetPoint();
+            kedgeSection.setEndLocation(endLocation.x, endLocation.y);
         }
         
         // process the labels
         for (FLabel flabel : fgraph.getLabels()) {
-            KLabel klabel = (KLabel) flabel.getProperty(InternalProperties.ORIGIN);
-            KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+            ElkLabel klabel = (ElkLabel) flabel.getProperty(InternalProperties.ORIGIN);
             KVector labelPos = flabel.getPosition().add(offset);
-            klabelLayout.applyVector(labelPos);
+            klabel.setLocation(labelPos.x, labelPos.y);
         }
         
         // set up the parent node
-        KInsets insets = parentLayout.getInsets();
-        float width = (float) (maxXPos - minXPos) + 2 * borderSpacing
-                + insets.getLeft() + insets.getRight();
-        float height = (float) (maxYPos - minYPos) + 2 * borderSpacing
-                + insets.getTop() + insets.getBottom();
+        double width = maxXPos - minXPos + 2 * borderSpacing + insets.getLeft() + insets.getRight();
+        double height = maxYPos - minYPos + 2 * borderSpacing + insets.getTop() + insets.getBottom();
         ElkUtil.resizeNode(kgraph, width, height, false, true);
     }
     

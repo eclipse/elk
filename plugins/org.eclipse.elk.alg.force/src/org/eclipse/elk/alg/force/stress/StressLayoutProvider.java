@@ -15,13 +15,12 @@ import java.util.List;
 import org.eclipse.elk.alg.force.ComponentsProcessor;
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
 import org.eclipse.elk.alg.force.IGraphImporter;
-import org.eclipse.elk.alg.force.KGraphImporter;
+import org.eclipse.elk.alg.force.ElkGraphImporter;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.properties.StressOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Layout provider for stress-minimizing layouts. 
@@ -39,16 +38,16 @@ public class StressLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("ELK Stress", 1);
 
         // calculate initial coordinates
-        if (!layoutGraph.getData(KLayoutData.class).getProperty(StressOptions.INTERACTIVE)) {
+        if (!layoutGraph.getProperty(StressOptions.INTERACTIVE)) {
             new ForceLayoutProvider().layout(layoutGraph, progressMonitor.subTask(1));
         }
         
         // transform the input graph
-        IGraphImporter<KNode> graphImporter = new KGraphImporter();
+        IGraphImporter<ElkNode> graphImporter = new ElkGraphImporter();
         FGraph fgraph = graphImporter.importGraph(layoutGraph);
 
         // split the input graph into components

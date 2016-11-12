@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Layout provider for the force layout algorithms.
@@ -42,11 +42,11 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("ELK Force", 1);
         
         // transform the input graph
-        IGraphImporter<KNode> graphImporter = new KGraphImporter();
+        IGraphImporter<ElkNode> graphImporter = new ElkGraphImporter();
         FGraph fgraph = graphImporter.importGraph(kgraph);
 
         // set special properties for the layered graph
@@ -78,7 +78,7 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
      * @param fgraph a new force graph
      * @param parent the original parent node
      */
-    private void setOptions(final FGraph fgraph, final KNode parent) {
+    private void setOptions(final FGraph fgraph, final ElkNode parent) {
         // set the random number generator based on the random seed option
         Integer randomSeed = fgraph.getProperty(ForceOptions.RANDOM_SEED);
         if (randomSeed != null) {

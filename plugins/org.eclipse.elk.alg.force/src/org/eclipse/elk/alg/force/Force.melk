@@ -40,6 +40,7 @@ algorithm force(ForceLayoutProvider) {
     supports org.eclipse.elk.aspectRatio = 1.6f
     supports org.eclipse.elk.randomSeed = 1
     supports org.eclipse.elk.separateConnectedComponents = true
+    supports org.eclipse.elk.insets
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.portConstraints
     supports model
