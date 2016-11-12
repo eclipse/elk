@@ -29,29 +29,25 @@ import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.klayoutdata.impl.KEdgeLayoutImpl;
-import org.eclipse.elk.core.klayoutdata.impl.KShapeLayoutImpl;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Maybe;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KGraphFactory;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.transaction.impl.InternalTransactionalEditingDomain;
@@ -167,11 +163,13 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     }
 
     /**
-     * Returns the DiagramEditor represented by (or wrapped in) the given IWorkbenchPart
+     * If the workbench part is a diagram editor, returns that. Otherwise, returns {@code null}. This is more or less
+     * just a fancy cast.
      *
-     * May be null
+     * @param workbenchPart the workbench part to check.
+     * @return the workbench part as a diagram editor, or {@code null}.
      */
-    protected DiagramEditor getDiagramEditor(IWorkbenchPart workbenchPart) {
+    protected DiagramEditor getDiagramEditor(final IWorkbenchPart workbenchPart) {
         if (workbenchPart instanceof DiagramEditor) {
             return (DiagramEditor) workbenchPart;
         }
@@ -294,6 +292,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      */
     protected LayoutMapping buildLayoutGraph(final IGraphicalEditPart layoutRootPart,
             final List<ShapeNodeEditPart> selection, final IWorkbenchPart workbenchPart) {
+        
         LayoutMapping mapping = new LayoutMapping(workbenchPart);
         mapping.setProperty(CONNECTIONS, new LinkedList<ConnectionEditPart>());
         mapping.setParentElement(layoutRootPart);
@@ -301,26 +300,24 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
         // find the diagram edit part
         mapping.setProperty(DIAGRAM_EDIT_PART, getDiagramEditPart(layoutRootPart));
 
-        KNode topNode;
+        ElkNode topNode;
         if (layoutRootPart instanceof ShapeNodeEditPart) {
             // start with a specific node as root for layout
             topNode = createNode(mapping, (ShapeNodeEditPart) layoutRootPart, null, null, null);
         } else {
             // start with the whole diagram as root for layout
-            topNode = ElkUtil.createInitializedNode();
-            KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
+            topNode = ElkGraphUtil.createGraph();
             Rectangle rootBounds = layoutRootPart.getFigure().getBounds();
             if (layoutRootPart instanceof DiagramEditPart) {
                 String labelText = ((DiagramEditPart) layoutRootPart).getDiagramView().getName();
                 if (labelText.length() > 0) {
-                    KLabel label = ElkUtil.createInitializedLabel(topNode);
+                    ElkLabel label = ElkGraphUtil.createLabel(topNode);
                     label.setText(labelText);
                 }
             } else {
-                shapeLayout.setPos(rootBounds.x, rootBounds.y);
+                topNode.setLocation(rootBounds.x, rootBounds.y);
             }
-            shapeLayout.setSize(rootBounds.width, rootBounds.height);
-            shapeLayout.resetModificationFlag();
+            topNode.setDimensions(rootBounds.width, rootBounds.height);
             mapping.getGraphMap().put(topNode, layoutRootPart);
         }
         mapping.setLayoutGraph(topNode);
@@ -329,12 +326,11 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
             // layout only the selected elements
             double minx = Integer.MAX_VALUE;
             double miny = Integer.MAX_VALUE;
-            Maybe<KInsets> kinsets = new Maybe<KInsets>();
+            Maybe<ElkInsets> kinsets = new Maybe<>();
             for (ShapeNodeEditPart editPart : selection) {
-                KNode node = createNode(mapping, editPart, layoutRootPart, topNode, kinsets);
-                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-                minx = Math.min(minx, nodeLayout.getXpos());
-                miny = Math.min(miny, nodeLayout.getYpos());
+                ElkNode node = createNode(mapping, editPart, layoutRootPart, topNode, kinsets);
+                minx = Math.min(minx, node.getX());
+                miny = Math.min(miny, node.getY());
                 buildLayoutGraphRecursively(mapping, editPart, node, editPart);
             }
             mapping.setProperty(COORDINATE_OFFSET, new KVector(minx, miny));
@@ -367,14 +363,12 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                 applyLayout(mapping, animationTime);
                 return;
             }
-            ZoomManager zoomManager = ((RenderedDiagramRootEditPart) diagramEditPart.getRoot())
-                    .getZoomManager();
-            KNode parentNode = mapping.getLayoutGraph();
-            KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+            ZoomManager zoomManager = ((RenderedDiagramRootEditPart) diagramEditPart.getRoot()).getZoomManager();
+            ElkNode parentNode = mapping.getLayoutGraph();
             Dimension available = zoomManager.getViewport().getClientArea().getSize();
-            float desiredWidth = parentLayout.getWidth();
+            double desiredWidth = parentNode.getWidth();
             double scaleX = Math.min(available.width / desiredWidth, zoomManager.getMaxZoom());
-            float desiredHeight = parentLayout.getHeight();
+            double desiredHeight = parentNode.getHeight();
             double scaleY = Math.min(available.height / desiredHeight, zoomManager.getMaxZoom());
             final double scale = Math.min(scaleX, scaleY);
             final double oldScale = zoomManager.getZoom();
@@ -440,9 +434,9 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      *            parent node
      * @return number of children and grandchildren in the given parent
      */
-    protected static int countNodes(final KNode node) {
+    protected static int countNodes(final ElkNode node) {
         int count = 0;
-        for (KNode child : node.getChildren()) {
+        for (ElkNode child : node.getChildren()) {
             count += countNodes(child) + 1;
         }
         return count;
@@ -478,13 +472,14 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     protected void transferLayout(final LayoutMapping mapping) {
         // create a new request to change the layout
         ApplyLayoutRequest applyLayoutRequest = new ApplyLayoutRequest();
-        for (Entry<KGraphElement, Object> entry : mapping.getGraphMap().entrySet()) {
+        for (Entry<ElkGraphElement, Object> entry : mapping.getGraphMap().entrySet()) {
             if (!(entry.getValue() instanceof DiagramEditPart)) {
                 applyLayoutRequest.addElement(entry.getKey(), (IGraphicalEditPart) entry.getValue());
             }
         }
-        KShapeLayout graphLayout = mapping.getLayoutGraph().getData(KShapeLayout.class);
-        applyLayoutRequest.setUpperBound(graphLayout.getWidth(), graphLayout.getHeight());
+        
+        ElkNode layoutGraph = mapping.getLayoutGraph();
+        applyLayoutRequest.setUpperBound(layoutGraph.getWidth(), layoutGraph.getHeight());
         
         // correct the layout by adding the offset determined from the selection
         KVector offset = mapping.getProperty(COORDINATE_OFFSET);
@@ -494,8 +489,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
 
         // check the validity of the editing domain to catch cases where it is disposed
         DiagramEditPart diagramEditPart = mapping.getProperty(DIAGRAM_EDIT_PART);
-        if (((InternalTransactionalEditingDomain) diagramEditPart.getEditingDomain())
-                .getChangeRecorder() != null) {
+        if (((InternalTransactionalEditingDomain) diagramEditPart.getEditingDomain()).getChangeRecorder() != null) {
             // retrieve a command for the request; the command is created by GmfLayoutEditPolicy
             Command applyLayoutCommand = diagramEditPart.getCommand(applyLayoutRequest);
             mapping.setProperty(LAYOUT_COMMAND, applyLayoutCommand);
@@ -508,19 +502,18 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param parentNode the parent node
      * @param offset the offset to add
      */
-    protected static void addOffset(final KNode parentNode, final KVector offset) {
+    protected static void addOffset(final ElkNode parentNode, final KVector offset) {
         // correct the offset with the minimal computed coordinates
         double minx = Integer.MAX_VALUE;
         double miny = Integer.MAX_VALUE;
-        for (KNode child : parentNode.getChildren()) {
-            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
-            minx = Math.min(minx, nodeLayout.getXpos());
-            miny = Math.min(miny, nodeLayout.getYpos());
+        for (ElkNode child : parentNode.getChildren()) {
+            minx = Math.min(minx, child.getX());
+            miny = Math.min(miny, child.getY());
         }
         
         // add the corrected offset
         offset.add(-minx, -miny);
-        ElkUtil.translate(parentNode, (float) offset.x, (float) offset.y);
+        ElkUtil.translate(parentNode, offset.x, offset.y);
     }
 
     /**
@@ -573,10 +566,10 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param currentEditPart
      *            the currently analyzed edit part
      */
-    protected void buildLayoutGraphRecursively(final LayoutMapping mapping,
-            final IGraphicalEditPart parentEditPart, final KNode parentLayoutNode,
-            final IGraphicalEditPart currentEditPart) {
-        Maybe<KInsets> kinsets = new Maybe<KInsets>();
+    protected void buildLayoutGraphRecursively(final LayoutMapping mapping, final IGraphicalEditPart parentEditPart,
+            final ElkNode parentLayoutNode, final IGraphicalEditPart currentEditPart) {
+        
+        Maybe<ElkInsets> kinsets = new Maybe<ElkInsets>();
 
         // iterate through the children of the element
         for (Object obj : currentEditPart.getChildren()) {
@@ -593,27 +586,25 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
             if (obj instanceof AbstractBorderItemEditPart) {
                 AbstractBorderItemEditPart borderItem = (AbstractBorderItemEditPart) obj;
                 if (editPartFilter.filter(borderItem)) {
-                    createPort(mapping, borderItem, parentEditPart,
-                            parentLayoutNode);
+                    createPort(mapping, borderItem, parentEditPart, parentLayoutNode);
                 }
 
             // process a compartment, which may contain other elements
             } else if (obj instanceof ResizableCompartmentEditPart
                     && ((CompartmentEditPart) obj).getChildren().size() > 0) {
+                
                 CompartmentEditPart compartment = (CompartmentEditPart) obj;
                 if (editPartFilter.filter(compartment)) {
                     boolean compExp = true;
                     IFigure compartmentFigure = compartment.getFigure();
                     if (compartmentFigure instanceof ResizableCompartmentFigure) {
-                        ResizableCompartmentFigure resizCompFigure = 
-                                (ResizableCompartmentFigure) compartmentFigure;
+                        ResizableCompartmentFigure resizCompFigure = (ResizableCompartmentFigure) compartmentFigure;
                         // check whether the compartment is collapsed
                         compExp = resizCompFigure.isExpanded();
                     }
 
                     if (compExp) {
-                        buildLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode,
-                                compartment);
+                        buildLayoutGraphRecursively(mapping, parentEditPart, parentLayoutNode, compartment);
                     }
                 }
 
@@ -621,8 +612,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
             } else if (obj instanceof ShapeNodeEditPart) {
                 ShapeNodeEditPart childNodeEditPart = (ShapeNodeEditPart) obj;
                 if (editPartFilter.filter(childNodeEditPart)) {
-                    KNode node = createNode(mapping, childNodeEditPart, parentEditPart,
-                            parentLayoutNode, kinsets);
+                    ElkNode node = createNode(mapping, childNodeEditPart, parentEditPart, parentLayoutNode, kinsets);
                     // process the child as new current edit part
                     buildLayoutGraphRecursively(mapping, childNodeEditPart, node, childNodeEditPart);
                 }
@@ -643,50 +633,47 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      *            the node edit part
      * @param parentEditPart
      *            the parent node edit part that contains the current node
-     * @param parentKNode
+     * @param parentElkNode
      *            the corresponding parent layout node
-     * @param kinsets
+     * @param elkinsets
      *            reference parameter for insets; the insets are calculated if this has not been
      *            done before
      * @return the created node
      */
-    protected KNode createNode(final LayoutMapping mapping, final ShapeNodeEditPart nodeEditPart,
-            final IGraphicalEditPart parentEditPart, final KNode parentKNode, final Maybe<KInsets> kinsets) {
+    protected ElkNode createNode(final LayoutMapping mapping, final ShapeNodeEditPart nodeEditPart,
+            final IGraphicalEditPart parentEditPart, final ElkNode parentElkNode, final Maybe<ElkInsets> elkinsets) {
+        
         IFigure nodeFigure = nodeEditPart.getFigure();
-        KNode childLayoutNode = ElkUtil.createInitializedNode();
+        ElkNode childLayoutNode = ElkGraphUtil.createNode(parentElkNode);
 
         // set location and size
         Rectangle childBounds = getAbsoluteBounds(nodeFigure);
         Rectangle containerBounds = getAbsoluteBounds(nodeFigure.getParent());
-        KShapeLayout nodeLayout = childLayoutNode.getData(KShapeLayout.class);
-        nodeLayout.setXpos(childBounds.x - containerBounds.x);
-        nodeLayout.setYpos(childBounds.y - containerBounds.y);
-        nodeLayout.setSize(childBounds.width, childBounds.height);
-        // the modification flag must initially be false
-        ((KShapeLayoutImpl) nodeLayout).resetModificationFlag();
+        childLayoutNode.setX(childBounds.x - containerBounds.x);
+        childLayoutNode.setY(childBounds.y - containerBounds.y);
+        childLayoutNode.setDimensions(childBounds.width, childBounds.height);
+        
+        // We would set the modified flag to false here, but that doesn't exist anymore
         
         // determine minimal size of the node
         try {
             Dimension minSize = nodeFigure.getMinimumSize();
-            nodeLayout.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(minSize.width, minSize.height));
+            childLayoutNode.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(minSize.width, minSize.height));
         } catch (SWTException exception) {
             // getMinimumSize() can cause this exception when fonts are disposed for some reason;
             // ignore exception and leave the default minimal size
         }
 
-        if (parentKNode != null) {
+        if (parentElkNode != null) {
             // set insets if not yet defined
-            if (kinsets.get() == null) {
-                KInsets ki = parentKNode.getData(KShapeLayout.class).getInsets();
+            if (elkinsets.get() == null) {
                 Insets insets = calcSpecificInsets(parentEditPart.getFigure(), nodeFigure);
-                ki.setLeft(insets.left);
-                ki.setTop(insets.top);
-                ki.setRight(insets.right);
-                ki.setBottom(insets.bottom);
-                kinsets.set(ki);
+                ElkInsets ei = new ElkInsets(insets.top, insets.right, insets.bottom, insets.left);
+                childLayoutNode.setProperty(CoreOptions.INSETS, ei);
+                elkinsets.set(ei);
             }
     
-            parentKNode.getChildren().add(childLayoutNode);
+            parentElkNode.getChildren().add(childLayoutNode);
         }
         mapping.getGraphMap().put(childLayoutNode, nodeEditPart);
 
@@ -756,25 +743,24 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      *            the port edit part
      * @param nodeEditPart
      *            the parent node edit part
-     * @param knode
+     * @param elknode
      *            the corresponding layout node
      * @return the created port
      */
-    protected KPort createPort(final LayoutMapping mapping, final AbstractBorderItemEditPart portEditPart,
-            final IGraphicalEditPart nodeEditPart, final KNode knode) {
-        KPort port = ElkUtil.createInitializedPort();
-        port.setNode(knode);
+    protected ElkPort createPort(final LayoutMapping mapping, final AbstractBorderItemEditPart portEditPart,
+            final IGraphicalEditPart nodeEditPart, final ElkNode elknode) {
+        
+        ElkPort port = ElkGraphUtil.createPort(elknode);
 
         // set the port's layout, relative to the node position
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
         Rectangle portBounds = getAbsoluteBounds(portEditPart.getFigure());
         Rectangle nodeBounds = getAbsoluteBounds(nodeEditPart.getFigure());
-        float xpos = portBounds.x - nodeBounds.x;
-        float ypos = portBounds.y - nodeBounds.y;
-        portLayout.setPos(xpos, ypos);
-        portLayout.setSize(portBounds.width, portBounds.height);
-        // the modification flag must initially be false
-        ((KShapeLayoutImpl) portLayout).resetModificationFlag();
+        double xpos = portBounds.x - nodeBounds.x;
+        double ypos = portBounds.y - nodeBounds.y;
+        port.setLocation(xpos, ypos);
+        port.setDimensions(portBounds.width, portBounds.height);
+        
+        // We would set the modified flag to false here, but that doesn't exist anymore
 
         mapping.getGraphMap().put(port, portEditPart);
 
@@ -791,27 +777,27 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                 } else if (labelFigure instanceof Label) {
                     text = ((Label) labelFigure).getText();
                 }
+                
                 if (text != null) {
-                    KLabel portLabel = ElkUtil.createInitializedLabel(port);
+                    ElkLabel portLabel = ElkGraphUtil.createLabel(port);
                     portLabel.setText(text);
                     mapping.getGraphMap().put(portLabel, (IGraphicalEditPart) portChildObj);
+                    
                     // set the port label's layout
-                    KShapeLayout labelLayout = portLabel.getData(KShapeLayout.class);
                     Rectangle labelBounds = getAbsoluteBounds(labelFigure);
-                    labelLayout.setXpos(labelBounds.x - portBounds.x);
-                    labelLayout.setYpos(labelBounds.y - portBounds.y);
+                    portLabel.setLocation(labelBounds.x - portBounds.x, labelBounds.y - portBounds.y);
                     try {
                         Dimension size = labelFigure.getPreferredSize();
-                        labelLayout.setWidth(size.width);
-                        labelLayout.setHeight(size.height);
+                        portLabel.setDimensions(size.width, size.height);
                     } catch (SWTException exception) {
                         // ignore exception and leave the label size to (0, 0)
                     }
-                    // the modification flag must initially be false
-                    ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
+                    
+                    // We would set the modified flag to false here, but that doesn't exist anymore
                 }
             }
         }
+        
         return port;
     }
 
@@ -824,15 +810,17 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      *            the label edit part
      * @param nodeEditPart
      *            the parent node edit part
-     * @param knode
+     * @param elknode
      *            the layout node for which the label is set
      * @return the created label
      */
-    protected KLabel createNodeLabel(final LayoutMapping mapping, final IGraphicalEditPart labelEditPart,
-            final IGraphicalEditPart nodeEditPart, final KNode knode) {
+    protected ElkLabel createNodeLabel(final LayoutMapping mapping, final IGraphicalEditPart labelEditPart,
+            final IGraphicalEditPart nodeEditPart, final ElkNode elknode) {
+        
         IFigure labelFigure = labelEditPart.getFigure();
         String text = null;
         Font font = null;
+        
         if (labelFigure instanceof WrappingLabel) {
             WrappingLabel wrappingLabel = (WrappingLabel) labelFigure;
             text = wrappingLabel.getText();
@@ -842,27 +830,28 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
             text = label.getText();
             font = label.getFont();
         }
+        
         if (text != null) {
-            KLabel label = ElkUtil.createInitializedLabel(knode);
+            ElkLabel label = ElkGraphUtil.createLabel(elknode);
             label.setText(text);
             mapping.getGraphMap().put(label, labelEditPart);
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
             Rectangle labelBounds = getAbsoluteBounds(labelFigure);
             Rectangle nodeBounds = getAbsoluteBounds(nodeEditPart.getFigure());
-            labelLayout.setXpos(labelBounds.x - nodeBounds.x);
-            labelLayout.setYpos(labelBounds.y - nodeBounds.y);
+            label.setLocation(labelBounds.x - nodeBounds.x, labelBounds.y - nodeBounds.y);
+            
             try {
                 Dimension size = labelFigure.getPreferredSize();
-                labelLayout.setSize(size.width, size.height);
+                label.setDimensions(size.width, size.height);
                 if (font != null && !font.isDisposed()) {
-                    labelLayout.setProperty(CoreOptions.FONT_NAME, font.getFontData()[0].getName());
-                    labelLayout.setProperty(CoreOptions.FONT_SIZE, font.getFontData()[0].getHeight());
+                    label.setProperty(CoreOptions.FONT_NAME, font.getFontData()[0].getName());
+                    label.setProperty(CoreOptions.FONT_SIZE, font.getFontData()[0].getHeight());
                 }
             } catch (SWTException exception) {
                 // ignore exception and leave the label size to (0, 0)
             }
-            // the modification flag must initially be false
-            ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
+            
+            // We would set the modified flag to false here, but that doesn't exist anymore
+            
             return label;
         }
         return null;
@@ -897,11 +886,12 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      *            the layout mapping
      */
     protected void processConnections(final LayoutMapping mapping) {
-        Map<EReference, KEdge> reference2EdgeMap = new HashMap<EReference, KEdge>();
+        Map<EReference, ElkEdge> reference2EdgeMap = new HashMap<>();
+        
         for (ConnectionEditPart connection : mapping.getProperty(CONNECTIONS)) {
             boolean isOppositeEdge = false;
             EdgeLabelPlacement edgeLabelPlacement = EdgeLabelPlacement.UNDEFINED;
-            KEdge edge;
+            ElkEdge edge;
 
             // Check whether the edge belongs to an Ecore reference, which may have opposites.
             // This is required for the layout of Ecore diagrams, since the bend points of
@@ -914,17 +904,17 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                     edgeLabelPlacement = EdgeLabelPlacement.TAIL;
                     isOppositeEdge = true;
                 } else {
-                    edge = ElkUtil.createInitializedEdge();
+                    edge = ElkGraphUtil.createEdge(null);
                     reference2EdgeMap.put(reference, edge);
                 }
             } else {
-                edge = ElkUtil.createInitializedEdge();
+                edge = ElkGraphUtil.createEdge(null);
             }
 
-            BiMap<Object, KGraphElement> inverseGraphMap = mapping.getGraphMap().inverse();
+            BiMap<Object, ElkGraphElement> inverseGraphMap = mapping.getGraphMap().inverse();
 
             // find a proper source node and source port
-            KGraphElement sourceElem;
+            ElkGraphElement sourceElem;
             EditPart sourceObj = connection.getSource();
             if (sourceObj instanceof ConnectionEditPart) {
                 sourceElem = inverseGraphMap.get(((ConnectionEditPart) sourceObj).getSource());
@@ -934,19 +924,23 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
             } else {
                 sourceElem = inverseGraphMap.get(sourceObj);
             }
-            KNode sourceNode = null;
-            KPort sourcePort = null;
-            if (sourceElem instanceof KNode) {
-                sourceNode = (KNode) sourceElem;
-            } else if (sourceElem instanceof KPort) {
-                sourcePort = (KPort) sourceElem;
-                sourceNode = sourcePort.getNode();
+            
+            ElkConnectableShape sourceShape = null;
+            ElkPort sourcePort = null;
+            ElkNode sourceNode = null;
+            if (sourceElem instanceof ElkNode) {
+                sourceNode = (ElkNode) sourceElem;
+                sourceShape = sourceNode;
+            } else if (sourceElem instanceof ElkPort) {
+                sourcePort = (ElkPort) sourceElem;
+                sourceNode = sourcePort.getParent();
+                sourceShape = sourcePort;
             } else {
                 continue;
             }
 
             // find a proper target node and target port
-            KGraphElement targetElem;
+            ElkGraphElement targetElem;
             EditPart targetObj = connection.getTarget();
             if (targetObj instanceof ConnectionEditPart) {
                 targetElem = inverseGraphMap.get(((ConnectionEditPart) targetObj).getTarget());
@@ -956,41 +950,39 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
             } else {
                 targetElem = inverseGraphMap.get(targetObj);
             }
-            KNode targetNode = null;
-            KPort targetPort = null;
-            if (targetElem instanceof KNode) {
-                targetNode = (KNode) targetElem;
-            } else if (targetElem instanceof KPort) {
-                targetPort = (KPort) targetElem;
-                targetNode = targetPort.getNode();
+            
+            ElkConnectableShape targetShape = null;
+            ElkNode targetNode = null;
+            ElkPort targetPort = null;
+            if (targetElem instanceof ElkNode) {
+                targetNode = (ElkNode) targetElem;
+                targetShape = targetNode;
+            } else if (targetElem instanceof ElkPort) {
+                targetPort = (ElkPort) targetElem;
+                targetNode = targetPort.getParent();
+                targetShape = targetPort;
             } else {
                 continue;
             }
 
             // calculate offset for edge and label coordinates
+            ElkNode edgeContainment = ElkGraphUtil.findLowestCommonAncestor(sourceNode, targetNode);
+            
             KVector offset = new KVector();
-            if (ElkUtil.isDescendant(targetNode, sourceNode)) {
-                ElkUtil.toAbsolute(offset, sourceNode);
-            } else {
-                ElkUtil.toAbsolute(offset, sourceNode.getParent());
-            }
+            ElkUtil.toAbsolute(offset, edgeContainment);
 
             if (!isOppositeEdge) {
                 // set source and target
-                edge.setSource(sourceNode);
-                if (sourcePort != null) {
-                    edge.setSourcePort(sourcePort);
-                }
-                edge.setTarget(targetNode);
-                if (targetPort != null) {
-                    edge.setTargetPort(targetPort);
-                }
+                edge.getSources().add(sourceShape);
+                edge.getTargets().add(targetShape);
+                
+                // now that source and target are set, put the edge into the graph
+                edgeContainment.getContainedEdges().add(edge);
 
                 mapping.getGraphMap().put(edge, connection);
 
                 // store the current coordinates of the edge
-                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                setEdgeLayout(edgeLayout, connection, offset);
+                setEdgeLayout(edge, connection, offset);
             }
 
             // process edge labels
@@ -1001,37 +993,37 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     /**
      * Stores the layout information of the given connection edit part into an edge layout.
      * 
-     * @param edgeLayout
+     * @param edge
      *            an edge layout
      * @param connection
      *            a connection edit part
      * @param offset
      *            offset to be subtracted from coordinates
      */
-    protected void setEdgeLayout(final KEdgeLayout edgeLayout, final ConnectionEditPart connection,
-            final KVector offset) {
+    protected void setEdgeLayout(final ElkEdge edge, final ConnectionEditPart connection, final KVector offset) {
         Connection figure = connection.getConnectionFigure();
         PointList pointList = figure.getPoints();
+        
+        // our edge will have exactly one edge section
+        ElkEdgeSection edgeSection = ElkGraphUtil.createEdgeSection(edge);
 
-        KPoint sourcePoint = edgeLayout.getSourcePoint();
+        // source point
         Point firstPoint = pointList.getPoint(0);
-        sourcePoint.setX(firstPoint.x - (float) offset.x);
-        sourcePoint.setY(firstPoint.y - (float) offset.y);
+        edgeSection.setStartX(firstPoint.x - offset.x);
+        edgeSection.setStartY(firstPoint.y - offset.y);
 
+        // bend points
         for (int i = 1; i < pointList.size() - 1; i++) {
             Point point = pointList.getPoint(i);
-            KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-            kpoint.setX(point.x - (float) offset.x);
-            kpoint.setY(point.y - (float) offset.y);
-            edgeLayout.getBendPoints().add(kpoint);
+            ElkGraphUtil.createBendPoint(edgeSection, point.x - offset.x, point.y - offset.y);
         }
-        KPoint targetPoint = edgeLayout.getTargetPoint();
-        Point lastPoint = pointList.getPoint(pointList.size() - 1);
-        targetPoint.setX(lastPoint.x - (float) offset.x);
-        targetPoint.setY(lastPoint.y - (float) offset.y);
         
-        // the modification flag must initially be false
-        ((KEdgeLayoutImpl) edgeLayout).resetModificationFlag();
+        // target point
+        Point lastPoint = pointList.getPoint(pointList.size() - 1);
+        edgeSection.setEndX(lastPoint.x - offset.x);
+        edgeSection.setEndY(lastPoint.y - offset.y);
+        
+        // We would set the modified flag to false here, but that doesn't exist anymore
     }
 
     /**
@@ -1050,7 +1042,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      *            the offset for coordinates
      */
     protected void processEdgeLabels(final LayoutMapping mapping, final ConnectionEditPart connection,
-            final KEdge edge, final EdgeLabelPlacement placement, final KVector offset) {
+            final ElkEdge edge, final EdgeLabelPlacement placement, final KVector offset) {
         /*
          * ars: source and target is exchanged when defining it in the gmfgen file. So if Emma sets
          * a label to be placed as target on a connection, then the label will show up next to the
@@ -1095,50 +1087,42 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
                 }
                 
                 if (labelText != null && labelText.length() > 0) {
-                    KLabel label = ElkUtil.createInitializedLabel(edge);
-                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                    ElkLabel label = ElkGraphUtil.createLabel(edge);
                     if (placement == EdgeLabelPlacement.UNDEFINED) {
                         switch (labelEditPart.getKeyPoint()) {
                         case ConnectionLocator.SOURCE:
-                            labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
-                                    EdgeLabelPlacement.HEAD);
+                            label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.HEAD);
                             break;
                         case ConnectionLocator.MIDDLE:
-                            labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
-                                    EdgeLabelPlacement.CENTER);
+                            label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER);
                             break;
                         case ConnectionLocator.TARGET:
-                            labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
-                                    EdgeLabelPlacement.TAIL);
+                            label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.TAIL);
                             break;
                         }
                     } else {
-                        labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
-                                placement);
+                        label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, placement);
                     }
                     Font font = labelFigure.getFont();
                     if (font != null && !font.isDisposed()) {
-                        labelLayout.setProperty(CoreOptions.FONT_NAME,
-                                font.getFontData()[0].getName());
-                        labelLayout.setProperty(CoreOptions.FONT_SIZE,
-                                font.getFontData()[0].getHeight());
+                        label.setProperty(CoreOptions.FONT_NAME, font.getFontData()[0].getName());
+                        label.setProperty(CoreOptions.FONT_SIZE, font.getFontData()[0].getHeight());
                     }
-                    labelLayout.setXpos(labelBounds.x - (float) offset.x);
-                    labelLayout.setYpos(labelBounds.y - (float) offset.y);
+                    label.setLocation(labelBounds.x - offset.x, labelBounds.y - offset.y);
                     if (iconBounds != null) {
-                        labelLayout.setWidth(labelBounds.width + iconBounds.width);
+                        label.setWidth(labelBounds.width + iconBounds.width);
                     } else {
-                        labelLayout.setWidth(labelBounds.width);
+                        label.setWidth(labelBounds.width);
                     }
-                    labelLayout.setHeight(labelBounds.height);
-                    ((KShapeLayoutImpl) labelLayout).resetModificationFlag();
+                    label.setHeight(labelBounds.height);
+                    
+                    // We would set the modified flag to false here, but that doesn't exist anymore
+                    
                     label.setText(labelText);
                     mapping.getGraphMap().put(label, labelEditPart);
                 } else {
                     // add the label to the mapping anyway so it is reset to its reference location
-                    KLabel label = KGraphFactory.eINSTANCE.createKLabel();
-                    KShapeLayout labelLayout = KLayoutDataFactory.eINSTANCE.createKShapeLayout();
-                    label.getData().add(labelLayout);
+                    ElkLabel label = ElkGraphUtil.createLabel(null);
                     mapping.getGraphMap().put(label, labelEditPart);
                 }
             }

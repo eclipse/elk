@@ -395,29 +395,9 @@ public final class ElkUtil {
             }
         }
     }
-
-    /**
-     * Determines whether the given child node is a descendant of the parent node. This method does
-     * not regard a node as its own descendant.
-     * 
-     * @param child a child node
-     * @param parent a parent node
-     * @return {@code true} if {@code child} is a direct or indirect child of {@code parent}.
-     */
-    public static boolean isDescendant(final ElkNode child, final ElkNode parent) {
-        ElkNode current = child;
-        while (current.getParent() != null) {
-            current = current.getParent();
-            if (current == parent) {
-                return true;
-            }
-        }
-        return false;
-    }
     
     /**
-     * Converts the given relative point to an absolute location. The insets of the parent node
-     * are included in this calculation.
+     * Converts the given relative point to an absolute location.
      * 
      * @param point a relative point
      * @param parent the parent node to which the point is relative to
@@ -426,10 +406,6 @@ public final class ElkUtil {
     public static KVector toAbsolute(final KVector point, final ElkNode parent) {
         ElkNode node = parent;
         while (node != null) {
-            // MIGRATE Insets used to be interesting here, investigate possible problems
-//            KInsets insets = nodeLayout.getInsets();
-//            point.add(nodeLayout.getXpos() + insets.getLeft(),
-//                    nodeLayout.getYpos() + insets.getTop());
             point.add(node.getX(), node.getY());
             node = node.getParent();
         }
@@ -437,8 +413,7 @@ public final class ElkUtil {
     }
     
     /**
-     * Converts the given absolute point to a relative location. The insets of the parent node
-     * are included in this calculation.
+     * Converts the given absolute point to a relative location.
      * 
      * @param point an absolute point
      * @param parent the parent node to which the point shall be made relative to
@@ -447,10 +422,6 @@ public final class ElkUtil {
     public static KVector toRelative(final KVector point, final ElkNode parent) {
         ElkNode node = parent;
         while (node != null) {
-            // MIGRATE Insets used to be interesting here, investigate possible problems
-//            KInsets insets = nodeLayout.getInsets();
-//            point.add(-nodeLayout.getXpos() - insets.getLeft(),
-//                        -nodeLayout.getYpos() - insets.getTop());
             point.add(-node.getX(), -node.getY());
             node = node.getParent();
         }

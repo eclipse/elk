@@ -16,6 +16,7 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -187,6 +188,96 @@ public final class ElkGraphUtil {
     }
     
     /**
+     * Creates a new edge section and adds it to the given edge.
+     * 
+     * @param edge the edge to add the new section to. May be {@code null}, in which case the new edge section is
+     *             not added to anything.
+     * @return the new edge section.
+     */
+    public static ElkEdgeSection createEdgeSection(final ElkEdge edge) {
+        ElkEdgeSection section = ElkGraphFactory.eINSTANCE.createElkEdgeSection();
+        
+        if (edge != null) {
+            edge.getSections().add(section);
+        }
+        
+        return section;
+    }
+    
+    /**
+     * Returns the edge's first edge section or creates one if there is none.
+     * 
+     * @param edge the edge whose first edge section to retrieve.
+     * @param resetSection {@code true} if all bend points should be removed and the location reset on the section
+     *                     before it is returned.
+     * @param removeOtherSections {@code true} if all the other edge sections, if any, should be removed.
+     * @return the first edge section.
+     */
+    public static ElkEdgeSection firstEdgeSection(final ElkEdge edge, final boolean resetSection,
+            final boolean removeOtherSections) {
+        
+        if (edge.getSections().isEmpty()) {
+            // Create and return a new section
+            return createEdgeSection(edge);
+        } else {
+            // Retrieve the first section
+            ElkEdgeSection section = edge.getSections().get(0);
+            
+            if (resetSection) {
+                section.getBendPoints().clear();
+                section.setStartLocation(0, 0);
+                section.setEndLocation(0, 0);
+            }
+            
+            if (removeOtherSections) {
+                List<ElkEdgeSection> sections = edge.getSections();
+                while (sections.size() > 1) {
+                    sections.remove(sections.size() - 1);
+                }
+            }
+            
+            return section;
+        }
+    }
+    
+    /**
+     * Creates a new bend point and adds it to the given edge section.
+     * 
+     * @param edgeSection the edge section to add the bend point to. May be {@code null}, in which case the new
+     *                    bend point is not added to anything.
+     * @return the new bend point.
+     */
+    public static ElkBendPoint createBendPoint(final ElkEdgeSection edgeSection) {
+        return createBendPoint(edgeSection, 0, 0);
+    }
+    
+    /**
+     * Creates a new bend point with the given coordinates and adds it to the given edge section.
+     * 
+     * @param edgeSection the edge section to add the bend point to. May be {@code null}, in which case the new
+     *                    bend point is not added to anything.
+     * @param x the bend point's x coordinate.
+     * @param y the bend point's y coordinate.
+     * @return the new bend point.
+     */
+    public static ElkBendPoint createBendPoint(final ElkEdgeSection edgeSection, final double x, final double y) {
+        ElkBendPoint bendPoint = ElkGraphFactory.eINSTANCE.createElkBendPoint();
+        
+        bendPoint.set(x, y);
+        
+        if (edgeSection != null) {
+            edgeSection.getBendPoints().add(bendPoint);
+        }
+        
+        return bendPoint;
+    }
+    
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Edge Containment
+    
+    /**
      * Changes an edge's containment to the one returned by {@link #findBestEdgeContainment(ElkEdge)}.
      * 
      * @param edge the edge to update the containment of.
@@ -323,8 +414,6 @@ public final class ElkGraphUtil {
         
         return commonAncestor;
     }
-    
-    // TODO Add methods to create edge sections.
     
     
     

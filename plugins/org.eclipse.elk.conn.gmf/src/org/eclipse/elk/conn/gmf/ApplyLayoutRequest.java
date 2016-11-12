@@ -13,9 +13,8 @@ package org.eclipse.elk.conn.gmf;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.Request;
 
@@ -32,14 +31,13 @@ public class ApplyLayoutRequest extends Request {
     public static final String REQ_APPLY_LAYOUT = "apply layout";
     
     /** list of layout graph elements and the corresponding edit parts. */
-    private List<Pair<KGraphElement, GraphicalEditPart>> mappingList
-            = new LinkedList<Pair<KGraphElement, GraphicalEditPart>>();
+    private List<Pair<ElkGraphElement, GraphicalEditPart>> mappingList = new LinkedList<>();
     /** the upper bound for horizontal coordinates. */
-    private float boundx = Float.MAX_VALUE;
+    private double boundx = Float.MAX_VALUE;
     /** the upper bound for vertical coordinates. */
-    private float boundy = Float.MAX_VALUE;
+    private double boundy = Float.MAX_VALUE;
     /** the scale factor for all coordinates. */
-    private float scale = 1.0f;
+    private double scale = 1.0f;
     
     /**
      * Creates a request to apply layout.
@@ -55,10 +53,11 @@ public class ApplyLayoutRequest extends Request {
      * @param element graph element with layout data
      * @param editPart the corresponding edit part
      */
-    public void addElement(final KGraphElement element, final GraphicalEditPart editPart) {
-        if (element.getData(KLayoutData.class).isModified()) {
-            mappingList.add(new Pair<KGraphElement, GraphicalEditPart>(element, editPart));
-        }
+    public void addElement(final ElkGraphElement element, final GraphicalEditPart editPart) {
+        // Back in the old days (Pepperidge Farm remembers...), an element was added to the mappingList only if
+        // its layout information had been modified. For the moment, we have removed the modified flag from graph
+        // elements. If they return, this would be a place to check for them.
+        mappingList.add(new Pair<ElkGraphElement, GraphicalEditPart>(element, editPart));
     }
     
     /**
@@ -66,7 +65,7 @@ public class ApplyLayoutRequest extends Request {
      * 
      * @return a list with graph elements and corresponding edit parts
      */
-    public List<Pair<KGraphElement, GraphicalEditPart>> getElements() {
+    public List<Pair<ElkGraphElement, GraphicalEditPart>> getElements() {
         return mappingList;
     }
     
@@ -76,7 +75,7 @@ public class ApplyLayoutRequest extends Request {
      * @param x the upper bound for horizontal coordinates
      * @param y the upper bound for vertical coordinates
      */
-    public void setUpperBound(final float x, final float y) {
+    public void setUpperBound(final double x, final double y) {
         this.boundx = x;
         this.boundy = y;
     }
@@ -86,7 +85,7 @@ public class ApplyLayoutRequest extends Request {
      * 
      * @return the x bound
      */
-    public float getXBound() {
+    public double getXBound() {
         return boundx;
     }
     
@@ -95,7 +94,7 @@ public class ApplyLayoutRequest extends Request {
      * 
      * @return the y bound
      */
-    public float getYBound() {
+    public double getYBound() {
         return boundy;
     }
     
@@ -104,7 +103,7 @@ public class ApplyLayoutRequest extends Request {
      * 
      * @return the scale factor
      */
-    public float getScale() {
+    public double getScale() {
         return scale;
     }
     
@@ -113,7 +112,7 @@ public class ApplyLayoutRequest extends Request {
      * 
      * @param thescale the scale factor
      */
-    public void setScale(final float thescale) {
+    public void setScale(final double thescale) {
         this.scale = thescale;
     }
     

@@ -24,16 +24,14 @@ import org.eclipse.draw2d.graph.DirectedGraphLayout;
 import org.eclipse.draw2d.graph.Edge;
 import org.eclipse.draw2d.graph.Node;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * Layout provider that uses the layout algorithm shipped with Draw2D. Either the
@@ -67,12 +65,12 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode layoutNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Draw2D Directed Graph layout", 1);
         
         DirectedGraph graph = buildDraw2dGraph(layoutNode);
-        DirectedGraphLayout draw2dLayout = compoundMode ? new CompoundDirectedGraphLayout()
-                : new DirectedGraphLayout();
+        DirectedGraphLayout draw2dLayout 
+                = compoundMode ? new CompoundDirectedGraphLayout() : new DirectedGraphLayout();
         draw2dLayout.visit(graph);
         applyLayout(layoutNode, graph);
         
@@ -86,22 +84,21 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      * @return a graph that contains the children of the given parent
      */
     @SuppressWarnings("unchecked")
-    private DirectedGraph buildDraw2dGraph(final KNode layoutNode) {
+    private DirectedGraph buildDraw2dGraph(final ElkNode layoutNode) {
         DirectedGraph graph = new DirectedGraph();
         
         // set layout options for the graph
-        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
-        float minSpacing = parentLayout.getProperty(Draw2DOptions.SPACING_NODE);
+        float minSpacing = layoutNode.getProperty(Draw2DOptions.SPACING_NODE);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
         graph.setDefaultPadding(new Insets((int) minSpacing));
-        float borderSpacing = parentLayout.getProperty(Draw2DOptions.SPACING_BORDER);
+        float borderSpacing = layoutNode.getProperty(Draw2DOptions.SPACING_BORDER);
         if (borderSpacing < 0) {
             borderSpacing = DEF_MIN_SPACING;
         }
         graph.setMargin(new Insets((int) borderSpacing));
-        Direction layoutDirection = parentLayout.getProperty(Draw2DOptions.DIRECTION);
+        Direction layoutDirection = layoutNode.getProperty(Draw2DOptions.DIRECTION);
         switch (layoutDirection) {
         case UP:
         case DOWN:
@@ -113,22 +110,26 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         }
         
         // add nodes to the graph
-        Map<KNode, Node> nodeMap = new HashMap<KNode, Node>();
-        for (KNode knode : layoutNode.getChildren()) {
-            Node draw2dNode = new Node(knode);
-            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            ElkUtil.resizeNode(knode);
-            draw2dNode.width = (int) nodeLayout.getWidth();
-            draw2dNode.height = (int) nodeLayout.getHeight();
-            nodeMap.put(knode, draw2dNode);
+        Map<ElkNode, Node> nodeMap = new HashMap<>();
+        for (ElkNode elknode : layoutNode.getChildren()) {
+            Node draw2dNode = new Node(elknode);
+            ElkUtil.resizeNode(elknode);
+            draw2dNode.width = (int) elknode.getWidth();
+            draw2dNode.height = (int) elknode.getHeight();
+            nodeMap.put(elknode, draw2dNode);
             graph.nodes.add(draw2dNode);
         }
         
         // add edges to the graph
-        for (KNode source : layoutNode.getChildren()) {
+        for (ElkNode source : layoutNode.getChildren()) {
             Node draw2dSource = nodeMap.get(source);
-            for (KEdge kedge : source.getOutgoingEdges()) {
-                KNode target = kedge.getTarget();
+            for (ElkEdge kedge : source.getOutgoingEdges()) {
+                // we don't support hyperedges
+                if (kedge.isHyperedge()) {
+                    continue;
+                }
+                
+                ElkNode target = ElkGraphUtil.connectableShapeToNode(kedge.getTargets().get(0));
                 Node draw2dTarget = nodeMap.get(target);
                 if (draw2dTarget != null && draw2dTarget != draw2dSource) {
                     Edge draw2dEdge = new Edge(kedge, draw2dSource, draw2dTarget);
@@ -146,46 +147,46 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
      * @param parentNode the parent layout node
      * @param graph the Draw2D graph
      */
-    private void applyLayout(final KNode parentNode, final DirectedGraph graph) {
+    private void applyLayout(final ElkNode parentNode, final DirectedGraph graph) {
         // apply node layouts
+        // MIGRATE The original code does not apply parent node insets to the child node coordinates, but it should?
         for (int i = 0; i < graph.nodes.size(); i++) {
             Node node = graph.nodes.getNode(i);
-            if (node.data instanceof KNode) {
-                KNode knode = (KNode) node.data;
-                KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-                nodeLayout.setPos(node.x, node.y);
+            if (node.data instanceof ElkNode) {
+                ElkNode knode = (ElkNode) node.data;
+                knode.setLocation(node.x, node.y);
             }
         }
         
         // apply edge layouts
         for (int i = 0; i < graph.edges.size(); i++) {
             Edge edge = graph.edges.getEdge(i);
-            if (edge.data instanceof KEdge) {
-                KEdge kedge = (KEdge) edge.data;
-                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                edgeLayout.getBendPoints().clear();
+            if (edge.data instanceof ElkEdge) {
+                ElkEdge kedge = (ElkEdge) edge.data;
+                ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kedge, true, true);
                 PointList pointList = edge.getPoints();
-                KPoint sourcekPoint = edgeLayout.getSourcePoint();
-                Point sourcePoint = pointList.getFirstPoint();
-                sourcekPoint.setPos(sourcePoint.x, sourcePoint.y);
+                
+                // Start point
+                Point startPoint = pointList.getFirstPoint();
+                edgeSection.setStartLocation(startPoint.x, startPoint.y);
+                
+                // Bend points
                 for (int j = 1; j < pointList.size() - 1; j++) {
                     Point point = pointList.getPoint(j);
-                    KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                    kpoint.setPos(point.x, point.y);
-                    edgeLayout.getBendPoints().add(kpoint);
+                    ElkGraphUtil.createBendPoint(edgeSection, point.x, point.y);
                 }
-                KPoint targetkPoint = edgeLayout.getTargetPoint();
-                Point targetPoint = pointList.getLastPoint();
-                targetkPoint.setPos(targetPoint.x, targetPoint.y);
+                
+                // End point
+                Point endPoint = pointList.getFirstPoint();
+                edgeSection.setStartLocation(endPoint.x, endPoint.y);
             }
         }
         
         // apply parent node layout
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-        KInsets insets = parentLayout.getInsets();
+        ElkInsets insets = parentNode.getProperty(Draw2DOptions.INSETS);
         Dimension layoutSize = graph.getLayoutSize();
-        float width = insets.getLeft() + layoutSize.width + insets.getRight();
-        float height = insets.getTop() + layoutSize.height + insets.getBottom();
+        double width = insets.getLeft() + layoutSize.width + insets.getRight();
+        double height = insets.getTop() + layoutSize.height + insets.getBottom();
         ElkUtil.resizeNode(parentNode, width, height, false, true);
     }
 

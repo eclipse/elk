@@ -22,25 +22,24 @@ import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KLabeledGraphElement;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.ElkShape;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.gef.GraphicalEditPart;
@@ -75,7 +74,7 @@ import org.eclipse.gmf.runtime.notation.View;
 public class GmfLayoutEditPolicy extends AbstractEditPolicy {
 
     /** map of edge layouts to existing point lists. */
-    private Map<KEdgeLayout, PointList> pointListMap = new HashMap<KEdgeLayout, PointList>();
+    private Map<ElkEdgeSection, PointList> pointListMap = new HashMap<>();
 
     /**
      * {@inheritDoc}
@@ -96,23 +95,19 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 IGraphicalEditPart hostEditPart = (IGraphicalEditPart) getHost();
                 GmfLayoutCommand command = new GmfLayoutCommand(hostEditPart.getEditingDomain(),
                         "Automatic Layout", new EObjectAdapter((View) hostEditPart.getModel()));
-                float scale = layoutRequest.getScale();
+                double scale = layoutRequest.getScale();
 
                 // retrieve layout data from the request and compute layout data for the command
-                for (Pair<KGraphElement, GraphicalEditPart> layoutPair : layoutRequest
-                        .getElements()) {
-                    if (layoutPair.getFirst() instanceof KNode) {
-                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(),
-                                scale);
-                    } else if (layoutPair.getFirst() instanceof KPort) {
-                        addShapeLayout(command, layoutPair.getFirst(), layoutPair.getSecond(),
-                                scale);
-                    } else if (layoutPair.getFirst() instanceof KEdge) {
-                        addEdgeLayout(command, (KEdge) layoutPair.getFirst(),
+                for (Pair<ElkGraphElement, GraphicalEditPart> layoutPair : layoutRequest.getElements()) {
+                    if (layoutPair.getFirst() instanceof ElkNode) {
+                        addShapeLayout(command, (ElkShape) layoutPair.getFirst(), layoutPair.getSecond(), scale);
+                    } else if (layoutPair.getFirst() instanceof ElkPort) {
+                        addShapeLayout(command, (ElkPort) layoutPair.getFirst(), layoutPair.getSecond(), scale);
+                    } else if (layoutPair.getFirst() instanceof ElkEdge) {
+                        addEdgeLayout(command, (ElkEdge) layoutPair.getFirst(),
                                 (ConnectionEditPart) layoutPair.getSecond(), scale);
-                    } else if (layoutPair.getFirst() instanceof KLabel) {
-                        addLabelLayout(command, (KLabel) layoutPair.getFirst(),
-                                layoutPair.getSecond(), scale);
+                    } else if (layoutPair.getFirst() instanceof ElkLabel) {
+                        addLabelLayout(command, (ElkLabel) layoutPair.getFirst(), layoutPair.getSecond(), scale);
                     }
                 }
 
@@ -134,39 +129,37 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * 
      * @param command
      *            command to which a shape layout shall be added
-     * @param kgraphElement
+     * @param elkShape
      *            graph element with layout data
      * @param editPart
      *            edit part to which layout is applied
      * @param scale
      *            scale factor for coordinates
      */
-    private void addShapeLayout(final GmfLayoutCommand command, final KGraphElement kgraphElement,
-            final GraphicalEditPart editPart, final float scale) {
-        KShapeLayout layoutData = kgraphElement.getData(KShapeLayout.class);
+    private void addShapeLayout(final GmfLayoutCommand command, final ElkShape elkShape,
+            final GraphicalEditPart editPart, final double scale) {
+        
         View view = (View) editPart.getModel();
 
         // check whether the location has changed
-        Point newLocation = new Point((int) (layoutData.getXpos() * scale),
-                (int) (layoutData.getYpos() * scale));
-        Object oldx = ViewUtil.getStructuralFeatureValue(view,
-                NotationPackage.eINSTANCE.getLocation_X());
-        Object oldy = ViewUtil.getStructuralFeatureValue(view,
-                NotationPackage.eINSTANCE.getLocation_Y());
-        if (oldx != null && oldy != null && newLocation.x == (Integer) oldx
-                && newLocation.y == (Integer) oldy) {
+        Point newLocation = new Point((int) (elkShape.getX() * scale), (int) (elkShape.getY() * scale));
+        Object oldx = ViewUtil.getStructuralFeatureValue(view, NotationPackage.eINSTANCE.getLocation_X());
+        Object oldy = ViewUtil.getStructuralFeatureValue(view, NotationPackage.eINSTANCE.getLocation_Y());
+        
+        if (oldx != null && oldy != null && newLocation.x == (Integer) oldx && newLocation.y == (Integer) oldy) {
             newLocation = null;
         }
 
         // check whether the size has changed
-        Dimension newSize = new Dimension((int) (layoutData.getWidth() * scale),
-                (int) (layoutData.getHeight() * scale));
-        Object oldWidth = ViewUtil.getStructuralFeatureValue(view,
-                NotationPackage.eINSTANCE.getSize_Width());
-        Object oldHeight = ViewUtil.getStructuralFeatureValue(view,
-                NotationPackage.eINSTANCE.getSize_Height());
+        Dimension newSize = new Dimension(
+                (int) (elkShape.getWidth() * scale),
+                (int) (elkShape.getHeight() * scale));
+        Object oldWidth = ViewUtil.getStructuralFeatureValue(view, NotationPackage.eINSTANCE.getSize_Width());
+        Object oldHeight = ViewUtil.getStructuralFeatureValue(view, NotationPackage.eINSTANCE.getSize_Height());
+        
         if (oldWidth != null && oldHeight != null && newSize.width == (Integer) oldWidth
                 && newSize.height == (Integer) oldHeight) {
+            
             newSize = null;
         }
 
@@ -180,15 +173,16 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * 
      * @param command
      *            command to which an edge layout shall be added
-     * @param kedge
+     * @param elkEdge
      *            edge with layout data
      * @param connectionEditPart
      *            edit part to which layout is applied
      * @param scale
      *            scale factor for coordinates
      */
-    private void addEdgeLayout(final GmfLayoutCommand command, final KEdge kedge,
+    private void addEdgeLayout(final GmfLayoutCommand command, final ElkEdge elkEdge,
             final ConnectionEditPart connectionEditPart, final double scale) {
+        
         if (connectionEditPart.getSource() != null && connectionEditPart.getTarget() != null) {
             // create source terminal identifier
             INodeEditPart sourceEditPart = (INodeEditPart) connectionEditPart.getSource();
@@ -197,9 +191,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 // if the edge source is a connection, don't consider the source point
                 sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure());
             } else {
-                KVector sourceRel = getRelativeSourcePoint(kedge);
-                sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure(), new PrecisionPoint(
-                        sourceRel.x, sourceRel.y));
+                KVector sourceRel = getRelativeSourcePoint(elkEdge);
+                sourceAnchor = new SlidableAnchor(sourceEditPart.getFigure(),
+                        new PrecisionPoint(sourceRel.x, sourceRel.y));
             }
             String sourceTerminal = sourceEditPart.mapConnectionAnchorToTerminal(sourceAnchor);
 
@@ -210,13 +204,13 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 // if the edge target is a connection, don't consider the target point
                 targetAnchor = new SlidableAnchor(targetEditPart.getFigure());
             } else {
-                KVector targetRel = getRelativeTargetPoint(kedge);
-                targetAnchor = new SlidableAnchor(targetEditPart.getFigure(), new PrecisionPoint(
-                        targetRel.x, targetRel.y));
+                KVector targetRel = getRelativeTargetPoint(elkEdge);
+                targetAnchor = new SlidableAnchor(targetEditPart.getFigure(),
+                        new PrecisionPoint(targetRel.x, targetRel.y));
             }
             String targetTerminal = targetEditPart.mapConnectionAnchorToTerminal(targetAnchor);
 
-            PointList bendPoints = getBendPoints(kedge, connectionEditPart.getFigure(), scale);
+            PointList bendPoints = getBendPoints(elkEdge, connectionEditPart.getFigure(), scale);
 
             // check whether the connection is a note attachment to an edge, then remove bend points
             if (sourceEditPart instanceof ConnectionEditPart
@@ -227,16 +221,11 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
             }
             
             // retrieve junction points and transform them to absolute coordinates
-            KVectorChain junctionPoints = kedge.getData(KEdgeLayout.class)
-                    .getProperty(CoreOptions.JUNCTION_POINTS);
+            KVectorChain junctionPoints = elkEdge.getProperty(CoreOptions.JUNCTION_POINTS);
             String serializedJP = null;
             if (junctionPoints != null) {
-                KNode referenceNode = kedge.getSource();
-                if (!ElkUtil.isDescendant(kedge.getTarget(), referenceNode)) {
-                    referenceNode = referenceNode.getParent();
-                }
                 for (KVector point : junctionPoints) {
-                    ElkUtil.toAbsolute(point, referenceNode);
+                    ElkUtil.toAbsolute(point, elkEdge.getContainingNode());
                 }
                 serializedJP = junctionPoints.toString();
             }
@@ -247,57 +236,58 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
     }
 
     /**
-     * Create a vector that contains the relative position of the source point to the corresponding
-     * source node or port.
+     * Create a vector that contains the relative position of the source point to the corresponding source node or
+     * port.
      * 
      * @param edge
      *            an edge
      * @return the relative source point
      */
-    private KVector getRelativeSourcePoint(final KEdge edge) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        KNode sourceNode = edge.getSource();
-        KNode targetNode = edge.getTarget();
-        KPoint sourcePoint = edgeLayout.getSourcePoint();
-        KVector sourceRel = sourcePoint.createVector();
-        KShapeLayout sourceLayout = sourceNode.getData(KShapeLayout.class);
-
-        if (ElkUtil.isDescendant(targetNode, sourceNode)) {
-            // the target node is contained in the source node
-            translateDescendantPoint(sourceRel, sourceLayout);
-        } else {
-            sourceRel.add(-sourceLayout.getXpos(), -sourceLayout.getYpos());
-        }
-
-        if (edge.getSourcePort() != null) {
+    private KVector getRelativeSourcePoint(final ElkEdge edge) {
+        // The edge should have exactly one source shape
+        ElkConnectableShape sourceShape = edge.getSources().get(0);
+        
+        // The edge should have one edge section after layout
+        ElkEdgeSection edgeSection = edge.getSections().get(0);
+        KVector sourcePoint = new KVector(edgeSection.getStartX(), edgeSection.getStartY());
+        
+        // We will now make the source point absolute, and then relative to the source node
+        ElkUtil.toAbsolute(sourcePoint, edge.getContainingNode());
+        ElkUtil.toRelative(sourcePoint, ElkGraphUtil.connectableShapeToNode(sourceShape));
+        
+        // The end result will be coordinates between 0 and 1, with 0 being at the left / top or the source shape and
+        // 1 being at the right / bottom
+        if (sourceShape instanceof ElkPort) {
+            ElkPort sourcePort = (ElkPort) sourceShape;
+            
             // calculate the relative position to the port size
-            KShapeLayout portLayout = edge.getSourcePort().getData(KShapeLayout.class);
-            if (portLayout.getWidth() <= 0) {
-                sourceRel.x = 0;
+            if (sourcePort.getWidth() <= 0) {
+                sourcePoint.x = 0;
             } else {
-                sourceRel.x = (sourceRel.x - portLayout.getXpos()) / portLayout.getWidth();
+                sourcePoint.x = (sourcePoint.x - sourcePort.getX()) / sourcePort.getWidth();
             }
-            if (portLayout.getHeight() <= 0) {
-                sourceRel.y = 0;
+            
+            if (sourcePort.getHeight() <= 0) {
+                sourcePoint.y = 0;
             } else {
-                sourceRel.y = (sourceRel.y - portLayout.getYpos()) / portLayout.getHeight();
+                sourcePoint.y = (sourcePoint.y - sourcePort.getY()) / sourcePort.getHeight();
             }
         } else {
             // calculate the relative position to the node size
-            if (sourceLayout.getWidth() <= 0) {
-                sourceRel.x = 0;
+            if (sourceShape.getWidth() <= 0) {
+                sourcePoint.x = 0;
             } else {
-                sourceRel.x /= sourceLayout.getWidth();
+                sourcePoint.x /= sourceShape.getWidth();
             }
-            if (sourceLayout.getHeight() <= 0) {
-                sourceRel.y = 0;
+            if (sourceShape.getHeight() <= 0) {
+                sourcePoint.y = 0;
             } else {
-                sourceRel.y /= sourceLayout.getHeight();
+                sourcePoint.y /= sourceShape.getHeight();
             }
         }
 
         // check the bound of the relative position
-        return sourceRel.bound(0, 0, 1, 1);
+        return sourcePoint.bound(0, 0, 1, 1);
     }
 
     /**
@@ -308,74 +298,51 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      *            an edge
      * @return the relative target point
      */
-    private KVector getRelativeTargetPoint(final KEdge edge) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        KNode sourceNode = edge.getSource(), targetNode = edge.getTarget();
-        KPoint targetPoint = edgeLayout.getTargetPoint();
-        KVector targetRel = targetPoint.createVector();
-        KShapeLayout targetLayout = targetNode.getData(KShapeLayout.class);
-
-        if (ElkUtil.isDescendant(targetNode, sourceNode)) {
-            // the target node is contained in the source node
-            if (sourceNode != targetNode.getParent()) {
-                ElkUtil.toAbsolute(targetRel, sourceNode);
-                ElkUtil.toRelative(targetRel, targetNode.getParent());
-            }
-            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
-        } else if (sourceNode.getParent() != targetNode.getParent()) {
-            // the reference point of the target is different from the source
-            ElkUtil.toAbsolute(targetRel, sourceNode.getParent());
-            ElkUtil.toRelative(targetRel, targetNode.getParent());
-            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
-        } else {
-            // source and target have the same reference point
-            targetRel.add(-targetLayout.getXpos(), -targetLayout.getYpos());
-        }
-
-        if (edge.getTargetPort() != null) {
+    private KVector getRelativeTargetPoint(final ElkEdge edge) {
+        // The edge should have exactly one source shape
+        ElkConnectableShape targetShape = edge.getTargets().get(0);
+        
+        // The edge should have one edge section after layout
+        ElkEdgeSection edgeSection = edge.getSections().get(0);
+        KVector targetPoint = new KVector(edgeSection.getEndX(), edgeSection.getEndY());
+        
+        // We will now make the source point absolute, and then relative to the source node
+        ElkUtil.toAbsolute(targetPoint, edge.getContainingNode());
+        ElkUtil.toRelative(targetPoint, ElkGraphUtil.connectableShapeToNode(targetShape));
+        
+        // The end result will be coordinates between 0 and 1, with 0 being at the left / top or the source shape and
+        // 1 being at the right / bottom
+        if (targetShape instanceof ElkPort) {
+            ElkPort targetPort = (ElkPort) targetShape;
+            
             // calculate the relative position to the port size
-            KShapeLayout portLayout = edge.getTargetPort().getData(KShapeLayout.class);
-            if (portLayout.getWidth() <= 0) {
-                targetRel.x = 0;
+            if (targetPort.getWidth() <= 0) {
+                targetPoint.x = 0;
             } else {
-                targetRel.x = (targetRel.x - portLayout.getXpos()) / portLayout.getWidth();
+                targetPoint.x = (targetPoint.x - targetPort.getX()) / targetPort.getWidth();
             }
-            if (portLayout.getHeight() <= 0) {
-                targetRel.y = 0;
+            
+            if (targetPort.getHeight() <= 0) {
+                targetPoint.y = 0;
             } else {
-                targetRel.y = (targetRel.y - portLayout.getYpos()) / portLayout.getHeight();
+                targetPoint.y = (targetPoint.y - targetPort.getY()) / targetPort.getHeight();
             }
         } else {
             // calculate the relative position to the node size
-            if (targetLayout.getWidth() <= 0) {
-                targetRel.x = 0;
+            if (targetShape.getWidth() <= 0) {
+                targetPoint.x = 0;
             } else {
-                targetRel.x /= targetLayout.getWidth();
+                targetPoint.x /= targetShape.getWidth();
             }
-            if (targetLayout.getHeight() <= 0) {
-                targetRel.y = 0;
+            if (targetShape.getHeight() <= 0) {
+                targetPoint.y = 0;
             } else {
-                targetRel.y /= targetLayout.getHeight();
+                targetPoint.y /= targetShape.getHeight();
             }
         }
 
         // check the bound of the relative position
-        return targetRel.bound(0, 0, 1, 1);
-    }
-
-    /**
-     * Adds the necessary insets of the layout to the given point.
-     * 
-     * @param point
-     *            the point to translate.
-     * @param layout
-     *            layout of the node the point is relative to.
-     */
-    private void translateDescendantPoint(final KVector point, final KShapeLayout layout) {
-        // in this case the edge points are given without the source insets, so add them
-        KInsets insets = layout.getInsets();
-        point.x += insets.getLeft();
-        point.y += insets.getTop();
+        return targetPoint.bound(0, 0, 1, 1);
     }
 
     /** see LabelViewConstants.TARGET_LOCATION. */
@@ -397,65 +364,64 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param scale
      *            scale factor for coordinates
      */
-    private void addLabelLayout(final GmfLayoutCommand command, final KLabel klabel,
+    private void addLabelLayout(final GmfLayoutCommand command, final ElkLabel klabel,
             final GraphicalEditPart labelEditPart, final double scale) {
-        KLabeledGraphElement parent = klabel.getParent();
-        KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
+        
+        ElkGraphElement parent = klabel.getParent();
+        
         // node and port labels are processed separately
-        if (parent instanceof KNode || parent instanceof KPort) {
+        if (parent instanceof ElkNode || parent instanceof ElkPort) {
             View view = (View) labelEditPart.getModel();
-            int xpos = (int) (labelLayout.getXpos() * scale);
-            int ypos = (int) (labelLayout.getYpos() * scale);
-            Object oldx = ViewUtil.getStructuralFeatureValue(view,
-                    NotationPackage.eINSTANCE.getLocation_X());
-            Object oldy = ViewUtil.getStructuralFeatureValue(view,
-                    NotationPackage.eINSTANCE.getLocation_Y());
+            int xpos = (int) (klabel.getX() * scale);
+            int ypos = (int) (klabel.getY() * scale);
+            Object oldx = ViewUtil.getStructuralFeatureValue(view, NotationPackage.eINSTANCE.getLocation_X());
+            Object oldy = ViewUtil.getStructuralFeatureValue(view, NotationPackage.eINSTANCE.getLocation_Y());
+            
             if (oldx == null || oldy == null || xpos != (Integer) oldx || ypos != (Integer) oldy) {
                 command.addShapeLayout(view, new Point(xpos, ypos), null);
             }
             return;
-        }
-
-        // calculate direct new location of the label
-        Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
-        targetBounds.x = (int) (labelLayout.getXpos() * scale);
-        targetBounds.y = (int) (labelLayout.getYpos() * scale);
-
-        ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
-        PointList bendPoints = getBendPoints((KEdge) parent, connectionEditPart.getFigure(), scale);
-        EObject modelElement = connectionEditPart.getNotationView().getElement();
-        EdgeLabelPlacement labelPlacement = labelLayout
-                .getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-        // for labels of the opposite reference of an ecore reference,
-        // the list of bend points must be reversed
-        if (modelElement instanceof EReference && labelPlacement == EdgeLabelPlacement.TAIL) {
-            bendPoints = bendPoints.getCopy();
-            bendPoints.reverse();
-        }
-
-        // get the referencePoint for the label
-        int fromEnd, keyPoint = ConnectionLocator.MIDDLE;
-        if (labelEditPart instanceof LabelEditPart) {
-            keyPoint = ((LabelEditPart) labelEditPart).getKeyPoint();
-        }
-        switch (keyPoint) {
-        case ConnectionLocator.SOURCE:
-            fromEnd = SOURCE_LOCATION;
-            break;
-        case ConnectionLocator.TARGET:
-            fromEnd = TARGET_LOCATION;
-            break;
-        default:
-            fromEnd = MIDDLE_LOCATION;
-            break;
-        }
-        Point refPoint = PointListUtilities.calculatePointRelativeToLine(bendPoints, 0, fromEnd,
-                true);
-
-        // get the new relative location
-        Point normalPoint = offsetFromRelativeCoordinate(targetBounds, bendPoints, refPoint);
-        if (normalPoint != null) {
-            command.addShapeLayout((View) labelEditPart.getModel(), normalPoint, null);
+        } else if (parent instanceof ElkEdge) {
+            // calculate direct new location of the label
+            Rectangle targetBounds = new Rectangle(labelEditPart.getFigure().getBounds());
+            targetBounds.x = (int) (klabel.getX() * scale);
+            targetBounds.y = (int) (klabel.getY() * scale);
+            
+            ConnectionEditPart connectionEditPart = (ConnectionEditPart) labelEditPart.getParent();
+            PointList bendPoints = getBendPoints((ElkEdge) parent, connectionEditPart.getFigure(), scale);
+            EObject modelElement = connectionEditPart.getNotationView().getElement();
+            EdgeLabelPlacement labelPlacement = klabel.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+            
+            // for labels of the opposite reference of an ecore reference,
+            // the list of bend points must be reversed
+            if (modelElement instanceof EReference && labelPlacement == EdgeLabelPlacement.TAIL) {
+                bendPoints = bendPoints.getCopy();
+                bendPoints.reverse();
+            }
+            
+            // get the referencePoint for the label
+            int fromEnd, keyPoint = ConnectionLocator.MIDDLE;
+            if (labelEditPart instanceof LabelEditPart) {
+                keyPoint = ((LabelEditPart) labelEditPart).getKeyPoint();
+            }
+            switch (keyPoint) {
+            case ConnectionLocator.SOURCE:
+                fromEnd = SOURCE_LOCATION;
+                break;
+            case ConnectionLocator.TARGET:
+                fromEnd = TARGET_LOCATION;
+                break;
+            default:
+                fromEnd = MIDDLE_LOCATION;
+                break;
+            }
+            Point refPoint = PointListUtilities.calculatePointRelativeToLine(bendPoints, 0, fromEnd, true);
+            
+            // get the new relative location
+            Point normalPoint = offsetFromRelativeCoordinate(targetBounds, bendPoints, refPoint);
+            if (normalPoint != null) {
+                command.addShapeLayout((View) labelEditPart.getModel(), normalPoint, null);
+            }
         }
     }
 
@@ -471,15 +437,16 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
      * @param scale
      *            scale factor for coordinates
      */
-    private PointList getBendPoints(final KEdge edge, final IFigure edgeFigure, final double scale) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        PointList pointList = pointListMap.get(edgeLayout);
+    private PointList getBendPoints(final ElkEdge edge, final IFigure edgeFigure, final double scale) {
+        // This assumes that the edge has at least one edge section, which by this point it should
+        ElkEdgeSection edgeSection = edge.getSections().get(0);
+        PointList pointList = pointListMap.get(edgeSection);
         if (pointList == null) {
-            KVectorChain bendPoints = edgeLayout.createVectorChain();
+            KVectorChain bendPoints = ElkUtil.createVectorChain(edgeSection);
 
             // for connections that support splines the control points are passed without change
-            boolean approx = handleSplineConnection(edgeFigure,
-                    edgeLayout.getProperty(CoreOptions.EDGE_ROUTING));
+            boolean approx = handleSplineConnection(edgeFigure, edge.getProperty(CoreOptions.EDGE_ROUTING));
+            
             // in other cases an approximation is used
             if (approx && bendPoints.size() >= 1) {
                 bendPoints = ElkMath.approximateBezierSpline(bendPoints);
@@ -491,7 +458,7 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                 pointList.addPoint((int) bendPoint.x, (int) bendPoint.y);
             }
 
-            pointListMap.put(edgeLayout, pointList);
+            pointListMap.put(edgeSection, pointList);
         }
         return pointList;
     }
