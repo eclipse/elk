@@ -17,28 +17,26 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KLabeledGraphElement;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.EditPart;
@@ -169,13 +167,12 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
         }
         mapping.setParentElement(rootElement);
 
-        KNode topNode;
+        ElkNode topNode;
         if (rootElement instanceof Diagram) {
-            topNode = ElkUtil.createInitializedNode();
-            KShapeLayout shapeLayout = topNode.getData(KShapeLayout.class);
+            topNode = ElkGraphUtil.createGraph();
             GraphicsAlgorithm ga = rootElement.getGraphicsAlgorithm();
-            shapeLayout.setPos(ga.getX(), ga.getY());
-            shapeLayout.setSize(ga.getWidth(), ga.getHeight());
+            topNode.setLocation(ga.getX(), ga.getY());
+            topNode.setDimensions(ga.getWidth(), ga.getHeight());
             mapping.getGraphMap().put(topNode, rootElement);
         } else {
             topNode = createNode(mapping, null, rootElement);
@@ -187,10 +184,9 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
             double minx = Integer.MAX_VALUE;
             double miny = Integer.MAX_VALUE;
             for (Shape shape : selectedElements) {
-                KNode node = createNode(mapping, topNode, shape);
-                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-                minx = Math.min(minx, nodeLayout.getXpos());
-                miny = Math.min(miny, nodeLayout.getYpos());
+                ElkNode node = createNode(mapping, topNode, shape);
+                minx = Math.min(minx, node.getX());
+                miny = Math.min(miny, node.getY());
                 if (shape instanceof ContainerShape) {
                     buildLayoutGraphRecursively(mapping, (ContainerShape) shape, node);
                 }
@@ -262,12 +258,11 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
                     .getConfigurationProvider().getDiagramContainer().getGraphicalViewer();
             ZoomManager zoomManager = ((ScalableRootEditPartAnimated) viewer.getRootEditPart())
                     .getZoomManager();
-            KNode parentNode = mapping.getLayoutGraph();
-            KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+            ElkNode parentNode = mapping.getLayoutGraph();
             Dimension available = zoomManager.getViewport().getClientArea().getSize();
-            float desiredWidth = parentLayout.getWidth();
+            double desiredWidth = parentNode.getWidth();
             double scaleX = Math.min(available.width / desiredWidth, zoomManager.getMaxZoom());
-            float desiredHeight = parentLayout.getHeight();
+            double desiredHeight = parentNode.getHeight();
             double scaleY = Math.min(available.height / desiredHeight, zoomManager.getMaxZoom());
             final double scale = Math.min(scaleX, scaleY);
             final double oldScale = zoomManager.getZoom();
@@ -301,7 +296,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
         DiagramEditor diagramEditor = (DiagramEditor) mapping.getWorkbenchPart();
         GraphitiLayoutCommand command = new GraphitiLayoutCommand(diagramEditor.getEditingDomain(),
                 diagramEditor.getDiagramTypeProvider().getFeatureProvider(), this);
-        for (Entry<KGraphElement, Object> entry : mapping.getGraphMap().entrySet()) {
+        for (Entry<ElkGraphElement, Object> entry : mapping.getGraphMap().entrySet()) {
             command.add(entry.getKey(), (PictogramElement) entry.getValue());
         }
         mapping.setProperty(LAYOUT_COMMAND, command);
@@ -319,19 +314,18 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param parentNode the parent node
      * @param offset the offset to add
      */
-    protected static void addOffset(final KNode parentNode, final KVector offset) {
+    protected static void addOffset(final ElkNode parentNode, final KVector offset) {
         // correct the offset with the minimal computed coordinates
         double minx = Integer.MAX_VALUE;
         double miny = Integer.MAX_VALUE;
-        for (KNode child : parentNode.getChildren()) {
-            KShapeLayout nodeLayout = child.getData(KShapeLayout.class);
-            minx = Math.min(minx, nodeLayout.getXpos());
-            miny = Math.min(miny, nodeLayout.getYpos());
+        for (ElkNode child : parentNode.getChildren()) {
+            minx = Math.min(minx, child.getX());
+            miny = Math.min(miny, child.getY());
         }
         
         // add the corrected offset
         offset.add(-minx, -miny);
-        ElkUtil.translate(parentNode, (float) offset.x, (float) offset.y);
+        ElkUtil.translate(parentNode, offset.x, offset.y);
     }
 
     /**
@@ -358,10 +352,11 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param parentNode the corresponding KNode
      */
     protected void buildLayoutGraphRecursively(final LayoutMapping mapping,
-            final ContainerShape parentElement, final KNode parentNode) {
+            final ContainerShape parentElement, final ElkNode parentNode) {
+        
         for (Shape shape : parentElement.getChildren()) {
             if (graphElemIndicator.isNodeShape(shape)) {
-                KNode node = createNode(mapping, parentNode, shape);
+                ElkNode node = createNode(mapping, parentNode, shape);
                 if (shape instanceof ContainerShape) {
                     // process the children of the container shape
                     buildLayoutGraphRecursively(mapping, (ContainerShape) shape, node);
@@ -378,35 +373,33 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param shape the shape for a new node
      * @return the new layout node
      */
-    protected KNode createNode(final LayoutMapping mapping, final KNode parentNode, final Shape shape) {
-        KNode childNode = ElkUtil.createInitializedNode();
-        childNode.setParent(parentNode);
+    protected ElkNode createNode(final LayoutMapping mapping, final ElkNode parentNode, final Shape shape) {
+        ElkNode childNode = ElkGraphUtil.createNode(parentNode);
 
         // set the node's layout, considering margins and insets
-        KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
-        computeInsets(nodeLayout.getInsets(), shape);
+        ElkInsets insets = computeInsets(shape);
+        if (insets != null) {
+            childNode.setProperty(CoreOptions.INSETS, insets);
+        }
+        
         Margins nodeMargins = computeMargins(shape);
-        nodeLayout.setProperty(CoreOptions.MARGINS, nodeMargins);
+        childNode.setProperty(CoreOptions.MARGINS, nodeMargins);
+        
         GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
         if (parentNode == null) {
-            nodeLayout.setPos(nodeGa.getX() + (float) nodeMargins.left,
-                    nodeGa.getY() + (float) nodeMargins.top);
+            childNode.setLocation(nodeGa.getX() + nodeMargins.left, nodeGa.getY() + nodeMargins.top);
         } else {
-            KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-            Margins parentMargins = parentLayout.getProperty(CoreOptions.MARGINS);
-            KInsets parentInsets = parentLayout.getInsets();
-            nodeLayout.setPos(nodeGa.getX() + (float) (nodeMargins.left - parentMargins.left)
-                    - parentInsets.getLeft(),
-                    nodeGa.getY() + (float) (nodeMargins.top - parentMargins.top)
-                    - parentInsets.getTop());
+            Margins parentMargins = parentNode.getProperty(CoreOptions.MARGINS);
+            childNode.setLocation(nodeGa.getX() + nodeMargins.left - parentMargins.left,
+                    nodeGa.getY() + nodeMargins.top - parentMargins.top);
         }
-        nodeLayout.setSize(nodeGa.getWidth() - (float) (nodeMargins.left - nodeMargins.right),
-                nodeGa.getHeight() - (float) (nodeMargins.top - nodeMargins.bottom));
-        // the modification flag must initially be false
-        nodeLayout.resetModificationFlag();
+        childNode.setDimensions(nodeGa.getWidth() - nodeMargins.left - nodeMargins.right,
+                nodeGa.getHeight() - nodeMargins.top - nodeMargins.bottom);
+        
+        // the modification flag would have been reset here, but that doesn't exist anymore
 
         // this very minimal size configuration should be corrected in subclasses
-        nodeLayout.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(MIN_SIZE, MIN_SIZE));
+        childNode.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(MIN_SIZE, MIN_SIZE));
 
         mapping.getGraphMap().put(childNode, shape);
 
@@ -414,7 +407,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
             // find a label for the container shape
             for (Shape child : ((ContainerShape) shape).getChildren()) {
                 if (graphElemIndicator.isNodeLabel(child)) {
-                    createLabel(childNode, child, (float) -nodeMargins.left, (float) -nodeMargins.top);
+                    createLabel(childNode, child, -nodeMargins.left, -nodeMargins.top);
                 }
             }
         }
@@ -462,12 +455,14 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
     /**
      * Determine the insets of a node. Insets are areas inside the visible part of a pictogram
      * element that must not be covered by contained child nodes. The default implementation
-     * retains the default insets (left=0, right=0, top=0, bottom=0). Subclasses may override this.
+     * returns {@code null}. Subclasses may override this.
      * 
      * @param insets the insets where computed values shall be stored
      * @param pictogramElement a pictogram element
+     * @return insets or {@code null}.
      */
-    protected void computeInsets(final KInsets insets, final PictogramElement pictogramElement) {
+    protected ElkInsets computeInsets(final PictogramElement pictogramElement) {
+        return null;
     }
 
     /**
@@ -478,11 +473,8 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param bra the anchor
      * @return the new layout port
      */
-    protected KPort createPort(final LayoutMapping mapping,
-            final KNode parentNode, final BoxRelativeAnchor bra) {
-        KPort port = ElkUtil.createInitializedPort();
-        port.setNode(parentNode);
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+    protected ElkPort createPort(final LayoutMapping mapping, final ElkNode parentNode, final BoxRelativeAnchor bra) {
+        ElkPort port = ElkGraphUtil.createPort(parentNode);
 
         GraphicsAlgorithm referencedGa = bra.getReferencedGraphicsAlgorithm();
         if (referencedGa == null) {
@@ -495,18 +487,18 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
 
         double parentWidth = referencedGa.getWidth();
         double parentHeight = referencedGa.getHeight();
-        float xPos = (float) (relWidth * parentWidth);
-        float yPos = (float) (relHeight * parentHeight);
+        double xPos = relWidth * parentWidth;
+        double yPos = relHeight * parentHeight;
         
         GraphicsAlgorithm portGa = bra.getGraphicsAlgorithm(); 
         if (portGa != null) {
             xPos += portGa.getX();
             yPos += portGa.getY();
-            portLayout.setSize(portGa.getWidth(), portGa.getHeight());
+            port.setDimensions(portGa.getWidth(), portGa.getHeight());
         }
-        portLayout.setPos(xPos, yPos);
-        // the modification flag must initially be false
-        portLayout.resetModificationFlag();
+        port.setLocation(xPos, yPos);
+        
+        // the modification flag would have been reset here, but that doesn't exist anymore
         
         return port;
     }
@@ -519,25 +511,22 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param fpa the anchor
      * @return the new layout port
      */
-    protected KPort createPort(final LayoutMapping mapping, final KNode parentNode,
-            final FixPointAnchor fpa) {
-        KPort port = ElkUtil.createInitializedPort();
-        port.setNode(parentNode);
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
+    protected ElkPort createPort(final LayoutMapping mapping, final ElkNode parentNode, final FixPointAnchor fpa) {
+        ElkPort port = ElkGraphUtil.createPort(parentNode);
         mapping.getGraphMap().put(port, fpa);
         
-        float xPos = fpa.getLocation().getX();
-        float yPos = fpa.getLocation().getY();
+        double xPos = fpa.getLocation().getX();
+        double yPos = fpa.getLocation().getY();
 
         GraphicsAlgorithm portGa = fpa.getGraphicsAlgorithm(); 
         if (portGa != null) {
             xPos += portGa.getX();
             yPos += portGa.getY();
-            portLayout.setSize(portGa.getWidth(), portGa.getHeight());
+            port.setDimensions(portGa.getWidth(), portGa.getHeight());
         }
-        portLayout.setPos(xPos, yPos);
-        // the modification flag must initially be false
-        portLayout.resetModificationFlag();
+        port.setLocation(xPos, yPos);
+        
+        // the modification flag would have been reset here, but that doesn't exist anymore
         
         return port;
     }
@@ -551,10 +540,10 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param offsety the y coordinate offset
      * @return a new label
      */
-    protected KLabel createLabel(final KLabeledGraphElement element, final Shape shape,
-            final float offsetx, final float offsety) {
-        KLabel label = ElkUtil.createInitializedLabel(element);
-        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+    protected ElkLabel createLabel(final ElkGraphElement element, final Shape shape,
+            final double offsetx, final double offsety) {
+        
+        ElkLabel label = ElkGraphUtil.createLabel(element);
         
         GraphicsAlgorithm ga = shape.getGraphicsAlgorithm();
         int xpos = ga.getX(), ypos = ga.getY();
@@ -574,6 +563,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
             } catch (SWTException exception) {
                 // ignore exception
             }
+            
             if (textSize != null) {
                 if (textSize.getWidth() < width) {
                     int diff = width - textSize.getWidth();
@@ -589,6 +579,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
                     }
                     width -= diff;
                 }
+                
                 if (textSize.getHeight() < height) {
                     int diff = height - textSize.getHeight();
                     switch (gaService.getVerticalAlignment(abstractText, true)) {
@@ -606,11 +597,11 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
             }
         }
         
-        labelLayout.setPos(xpos + offsetx, ypos + offsety);
-        labelLayout.setSize(width, height);
+        label.setLocation(xpos + offsetx, ypos + offsety);
+        label.setDimensions(width, height);
         
-        // the modification flag must initially be false
-        labelLayout.resetModificationFlag();
+        // the modification flag would have been reset here, but that doesn't exist anymore
+        
         return label;
     }
 
@@ -628,57 +619,39 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      *            a pictogram connection
      * @return the new layout edge
      */
-    protected KEdge createEdge(final LayoutMapping mapping, final Connection connection) {
-        BiMap<Object, KGraphElement> inverseGraphMap = mapping.getGraphMap().inverse();
+    protected ElkEdge createEdge(final LayoutMapping mapping, final Connection connection) {
+        BiMap<Object, ElkGraphElement> inverseGraphMap = mapping.getGraphMap().inverse();
 
-        // set target node and port
-        KNode targetNode;
+        // set target
         Anchor targetAnchor = connection.getEnd();
-        KPort targetPort = (KPort) inverseGraphMap.get(targetAnchor);
-        if (targetPort != null) {
-            targetNode = targetPort.getNode();
-        } else {
-            targetNode = (KNode) inverseGraphMap.get(targetAnchor.getParent());
-        }
-        if (targetNode == null) {
+        ElkConnectableShape targetShape = (ElkConnectableShape) inverseGraphMap.get(targetAnchor);
+        if (targetShape == null) {
             return null;
         }
 
-        // set source node and port
-        KNode sourceNode;
+        // set source
         Anchor sourceAnchor = connection.getStart();
-        KPort sourcePort = (KPort) inverseGraphMap.get(sourceAnchor);
-        if (sourcePort != null) {
-            sourceNode = sourcePort.getNode();
-        } else {
-            sourceNode = (KNode) inverseGraphMap.get(sourceAnchor.getParent());
-        }
-        if (sourceNode == null) {
+        ElkConnectableShape sourceShape = (ElkConnectableShape) inverseGraphMap.get(sourceAnchor);
+        if (sourceShape == null) {
             return null;
         }
         
-        KEdge edge = ElkUtil.createInitializedEdge();
-        edge.setTarget(targetNode);
-        edge.setTargetPort(targetPort);
-        edge.setSource(sourceNode);
-        edge.setSourcePort(sourcePort);
+        ElkEdge edge = ElkGraphUtil.createSimpleEdge(sourceShape, targetShape);
 
         // calculate offset for bend points and labels
-        KNode referenceNode = sourceNode;
-        if (!ElkUtil.isDescendant(targetNode, sourceNode)) {
-            referenceNode = sourceNode.getParent();
-        }
+        ElkNode referenceNode = edge.getContainingNode();
         KVector offset = new KVector();
         ElkUtil.toAbsolute(offset, referenceNode);
 
         // set source and target point
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        KVector sourcePoint = calculateAnchorEnds(sourceNode, sourcePort,
-                referenceNode);
-        edgeLayout.getSourcePoint().applyVector(sourcePoint);
-        KVector targetPoint = calculateAnchorEnds(targetNode, targetPort,
-                referenceNode);
-        edgeLayout.getTargetPoint().applyVector(targetPoint);
+        ElkEdgeSection edgeSection = ElkGraphUtil.createEdgeSection(edge);
+        
+        KVector sourcePoint = calculateAnchorEnds(sourceShape, referenceNode);
+        edgeSection.setStartLocation(sourcePoint.x, sourcePoint.y);
+        
+        KVector targetPoint = calculateAnchorEnds(targetShape, referenceNode);
+        edgeSection.setEndLocation(targetPoint.x, targetPoint.y);
+        
         // set bend points for the new edge
         KVectorChain allPoints = new KVectorChain();
         allPoints.add(sourcePoint);
@@ -687,14 +660,12 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
                 KVector v = new KVector(point.getX(), point.getY());
                 v.sub(offset);
                 allPoints.add(v);
-                KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-                kpoint.applyVector(v);
-                edgeLayout.getBendPoints().add(kpoint);
+                ElkGraphUtil.createBendPoint(edgeSection, v.x, v.y);
             }
         }
         allPoints.add(targetPoint);
-        // the modification flag must initially be false
-        edgeLayout.resetModificationFlag();
+        
+        // the modification flag would have been reset here, but that doesn't exist anymore
 
         mapping.getGraphMap().put(edge, connection);
 
@@ -717,13 +688,13 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param allPoints the connection points, including end points and bend points
      * @return the new label
      */
-    protected KLabel createEdgeLabel(final LayoutMapping mapping, final KEdge parentEdge,
+    protected ElkLabel createEdgeLabel(final LayoutMapping mapping, final ElkEdge parentEdge,
             final ConnectionDecorator decorator, final KVectorChain allPoints) {
-        KLabel label = ElkUtil.createInitializedLabel(parentEdge);
+        
+        ElkLabel label = ElkGraphUtil.createLabel(parentEdge);
         mapping.getGraphMap().put(label, decorator);
 
         // set label placement
-        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
         EdgeLabelPlacement placement = EdgeLabelPlacement.CENTER;
         if (decorator.isLocationRelative()) {
             if (decorator.getLocation() >= HEAD_LOCATION) {
@@ -732,7 +703,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
                 placement = EdgeLabelPlacement.TAIL;
             }
         }
-        labelLayout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, placement);
+        label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, placement);
 
         // set label position
         KVector labelPos;
@@ -745,7 +716,7 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
         GraphicsAlgorithm ga = decorator.getGraphicsAlgorithm();
         labelPos.x += ga.getX();
         labelPos.y += ga.getY();
-        labelLayout.applyVector(labelPos);
+        label.setLocation(labelPos.x, labelPos.y);
 
         if (ga instanceof AbstractText) {
             AbstractText text = (AbstractText) ga;
@@ -763,43 +734,40 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
                     // ignore exception
                 }
                 if (textSize != null) {
-                    labelLayout.setSize(textSize.getWidth(), textSize.getHeight());
+                    label.setDimensions(textSize.getWidth(), textSize.getHeight());
                 }
             }
         }
-
-        // the modification flag must initially be false
-        labelLayout.resetModificationFlag();
+        
+        // the modification flag would have been reset here, but that doesn't exist anymore
+        
         return label;
     }
 
     /**
      * Returns an end point for an anchor.
      * 
-     * @param node
-     *            the node that owns the anchor
-     * @param port
-     *            the port that represents the anchor, or {@code null}
+     * @param shape
+     *            the connectable shape that owns the anchor
      * @param referenceNode
      *            the parent node to which edge points are relative, or {@code null}
      * @return the position of the anchor, relative to the reference node
      */
-    public KVector calculateAnchorEnds(final KNode node, final KPort port,
-            final KNode referenceNode) {
+    public KVector calculateAnchorEnds(final ElkConnectableShape shape, final ElkNode referenceNode) {
+        ElkNode node = ElkGraphUtil.connectableShapeToNode(shape);
+        
         KVector pos = new KVector();
-        if (port != null) {
+        if (shape instanceof ElkPort) {
             // the anchor end is represented by a port (box-relative anchor or fix-point anchor)
-            KShapeLayout portLayout = port.getData(KShapeLayout.class);
-            pos.x = portLayout.getXpos() + portLayout.getWidth() / 2;
-            pos.y = portLayout.getYpos() + portLayout.getHeight() / 2;
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            pos.x += nodeLayout.getXpos();
-            pos.y += nodeLayout.getYpos();
+            pos.x = shape.getX() + shape.getWidth() / 2;
+            pos.y = shape.getY() + shape.getHeight() / 2;
+            
+            pos.x += node.getX();
+            pos.y += node.getY();
         } else {
             // the anchor end is determined by a chopbox anchor
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            pos.x = nodeLayout.getWidth() / 2 + nodeLayout.getXpos();
-            pos.y = nodeLayout.getHeight() / 2 + nodeLayout.getYpos();
+            pos.x = node.getWidth() / 2 + node.getX();
+            pos.y = node.getHeight() / 2 + node.getY();
         }
         ElkUtil.toAbsolute(pos, node.getParent());
         if (referenceNode != null) {

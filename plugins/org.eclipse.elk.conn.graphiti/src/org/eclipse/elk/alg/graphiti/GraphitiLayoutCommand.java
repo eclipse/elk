@@ -15,25 +15,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.klayoutdata.impl.KEdgeLayoutImpl;
-import org.eclipse.elk.core.klayoutdata.impl.KShapeLayoutImpl;
+import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.math.ElkMath;
-import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -57,13 +52,11 @@ import org.eclipse.graphiti.services.Graphiti;
 public class GraphitiLayoutCommand extends RecordingCommand {
     
     /** list of graph elements and pictogram elements to layout. */
-    private final List<Pair<KGraphElement, PictogramElement>> elements =
-            new LinkedList<Pair<KGraphElement, PictogramElement>>();
+    private final List<Pair<ElkGraphElement, PictogramElement>> elements = new LinkedList<>();
     /** the feature provider for layout support. */
     private final IFeatureProvider featureProvider;
-    /** map of edge layouts to corresponding vector chains. */
-    private final Map<KEdgeLayout, KVectorChain> bendpointsMap =
-            new HashMap<KEdgeLayout, KVectorChain>();
+    /** map of edges to corresponding vector chains. */
+    private final Map<ElkEdge, KVectorChain> bendpointsMap = new HashMap<>();
     /** the layout manager for which this command was created. */
     private final GraphitiDiagramLayoutConnector layoutManager;
 
@@ -75,6 +68,7 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      */
     public GraphitiLayoutCommand(final TransactionalEditingDomain domain,
             final IFeatureProvider thefeatureProvider, final GraphitiDiagramLayoutConnector manager) {
+        
         super(domain, "Automatic Layout");
         this.featureProvider = thefeatureProvider;
         this.layoutManager = manager;
@@ -95,21 +89,9 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param graphElement an element of the layout graph
      * @param pictogramElement the corresponding pictogram element
      */
-    public void add(final KGraphElement graphElement,
-            final PictogramElement pictogramElement) {
-        boolean modified = false;
-        if (graphElement instanceof KEdge) {
-            KEdgeLayoutImpl edgeLayout = graphElement.getData(KEdgeLayoutImpl.class);
-            modified = edgeLayout.isModified();
-        } else {
-            KShapeLayoutImpl shapeLayout = graphElement.getData(KShapeLayoutImpl.class);
-            modified = shapeLayout.isModified();
-        }
-        
-        if (modified) {
-            elements.add(new Pair<KGraphElement, PictogramElement>(graphElement,
-                    pictogramElement));
-        }
+    public void add(final ElkGraphElement graphElement, final PictogramElement pictogramElement) {
+        // At this point, we marked the graph elements as having been modified, which is not possible anymore
+        elements.add(new Pair<ElkGraphElement, PictogramElement>(graphElement, pictogramElement));
     }
 
     /**
@@ -117,17 +99,16 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      */
     @Override
     protected void doExecute() {
-        for (Pair<KGraphElement, PictogramElement> entry : elements) {
-            KGraphElement element = entry.getFirst();
-            if (element instanceof KPort) {
-                applyPortLayout((KPort) element, entry.getSecond());
-            } else if (element instanceof KNode) {
-                applyNodeLayout((KNode) element, entry.getSecond());
-            } else if (element instanceof KEdge) {
-                applyEdgeLayout((KEdge) element, entry.getSecond());
-            } else if (element instanceof KLabel
-                    && ((KLabel) element).eContainer() instanceof KEdge) {
-                applyEdgeLabelLayout((KLabel) element, entry.getSecond());
+        for (Pair<ElkGraphElement, PictogramElement> entry : elements) {
+            ElkGraphElement element = entry.getFirst();
+            if (element instanceof ElkPort) {
+                applyPortLayout((ElkPort) element, entry.getSecond());
+            } else if (element instanceof ElkNode) {
+                applyNodeLayout((ElkNode) element, entry.getSecond());
+            } else if (element instanceof ElkEdge) {
+                applyEdgeLayout((ElkEdge) element, entry.getSecond());
+            } else if (element instanceof ElkLabel && ((ElkLabel) element).eContainer() instanceof ElkEdge) {
+                applyEdgeLabelLayout((ElkLabel) element, entry.getSecond());
             }
         }
         bendpointsMap.clear();
@@ -136,12 +117,11 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /**
      * Apply layout for a port.
      * 
-     * @param kport a port
+     * @param elkport a port
      * @param pelem the corresponding pictogram element
      */
-    protected void applyPortLayout(final KPort kport, final PictogramElement pelem) {
-        KShapeLayout shapeLayout = kport.getData(KShapeLayout.class);
-        applyPortLayout(shapeLayout.getXpos(), shapeLayout.getYpos(), pelem, kport.getNode());
+    protected void applyPortLayout(final ElkPort elkport, final PictogramElement pelem) {
+        applyPortLayout(elkport.getX(), elkport.getY(), pelem, elkport.getParent());
     }
     
     /**
@@ -150,31 +130,31 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param xpos x position of the port
      * @param ypos y position of the port
      * @param pelem the pictogram element
-     * @param knode the node to which the port is connected
+     * @param elknode the node to which the port is connected
      */
     protected void applyPortLayout(final double xpos, final double ypos,
-            final PictogramElement pelem, final KNode knode) {
+            final PictogramElement pelem, final ElkNode elknode) {
+        
         int offsetx = 0, offsety = 0;
         if (pelem.getGraphicsAlgorithm() != null) {
             offsetx = pelem.getGraphicsAlgorithm().getX();
             offsety = pelem.getGraphicsAlgorithm().getY();
         }
+        
         if (pelem instanceof BoxRelativeAnchor) {
             BoxRelativeAnchor anchor = (BoxRelativeAnchor) pelem;
             
-            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            double relWidth = (xpos - offsetx) / nodeLayout.getWidth();
+            double relWidth = (xpos - offsetx) / elknode.getWidth();
             if (relWidth < 0) {
                 relWidth = 0;
-            }
-            if (relWidth > 1) {
+            } else if (relWidth > 1) {
                 relWidth = 1;
             }
-            double relHeight = (ypos - offsety) / nodeLayout.getHeight();
+            
+            double relHeight = (ypos - offsety) / elknode.getHeight();
             if (relHeight < 0) {
                 relHeight = 0;
-            }
-            if (relHeight > 1) {
+            } else if (relHeight > 1) {
                 relHeight = 1;
             }
 
@@ -193,46 +173,29 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /**
      * Apply layout for a node.
      * 
-     * @param knode a node
+     * @param elknode a node
      * @param pelem the corresponding pictogram element
      */
-    protected void applyNodeLayout(final KNode knode, final PictogramElement pelem) {
-        KShapeLayout shapeLayout = knode.getData(KShapeLayout.class);
+    protected void applyNodeLayout(final ElkNode elknode, final PictogramElement pelem) {
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
-        float xpos = shapeLayout.getXpos();
-        float ypos = shapeLayout.getYpos();
-        if (knode.getParent() != null) {
-            KShapeLayout parentLayout = knode.getParent().getData(KShapeLayout.class);
-            KInsets parentInsets = parentLayout.getInsets();
-            Margins parentMargins = parentLayout.getProperty(CoreOptions.MARGINS);
-            xpos += parentMargins.left + parentInsets.getLeft();
-            ypos += parentMargins.top + parentInsets.getTop();
-        }
         
-        float width = shapeLayout.getWidth();
-        float height = shapeLayout.getHeight();
-        Margins nodeMargins = shapeLayout.getProperty(CoreOptions.MARGINS);
-        xpos -= nodeMargins.left;
-        ypos -= nodeMargins.top;
-        width += nodeMargins.left + nodeMargins.right;
-        height += nodeMargins.top + nodeMargins.bottom;
+        ga.setX(Math.round((float) elknode.getX()));
+        ga.setY(Math.round((float) elknode.getY()));
+        ga.setWidth(Math.round((float) elknode.getWidth()));
+        ga.setHeight(Math.round((float) elknode.getHeight()));
         
-        ga.setX(Math.round(xpos));
-        ga.setY(Math.round(ypos));
-        ga.setWidth(Math.round(width));
-        ga.setHeight(Math.round(height));
         featureProvider.layoutIfPossible(new LayoutContext(pelem));
     }
 
     /**
      * Apply layout for an edge.
      * 
-     * @param kedge an edge
+     * @param elkedge an edge
      * @param pelem the corresponding pictogram element
      */
-    protected void applyEdgeLayout(final KEdge kedge, final PictogramElement pelem) {
+    protected void applyEdgeLayout(final ElkEdge elkedge, final PictogramElement pelem) {
         // create bend points for the edge
-        KVectorChain bendPoints = getBendPoints(kedge);
+        KVectorChain bendPoints = getBendPoints(elkedge);
 
         if (pelem instanceof FreeFormConnection) {
             FreeFormConnection connection = (FreeFormConnection) pelem;
@@ -254,32 +217,24 @@ public class GraphitiLayoutCommand extends RecordingCommand {
                 pointList.remove(pointList.size() - 1);
             }
             
+            ElkEdgeSection edgeSection = elkedge.getSections().get(0);
+            
             // set source anchor position, if not already set via a port
-            if (kedge.getSourcePort() == null) {
-                KNode source = kedge.getSource();
-                KPoint sourcePoint = kedge.getData(KEdgeLayout.class).getSourcePoint();
-                float xpos = sourcePoint.getX(), ypos = sourcePoint.getY();
-                if (ElkUtil.isDescendant(kedge.getTarget(), source)) {
-                    KInsets insets = source.getData(KShapeLayout.class).getInsets();
-                    xpos += insets.getLeft();
-                    ypos += insets.getTop();
-                } else {
-                    KShapeLayout sourceLayout = source.getData(KShapeLayout.class);
-                    xpos -= sourceLayout.getXpos();
-                    ypos -= sourceLayout.getYpos();
-                }
-                applyPortLayout(xpos, ypos, connection.getStart(), source);
+            if (!(elkedge.getSources().get(0) instanceof ElkPort)) {
+                ElkNode source = ElkGraphUtil.connectableShapeToNode(elkedge.getSources().get(0));
+                KVector sourcePoint = new KVector(edgeSection.getStartX(), edgeSection.getStartY());
+                
+                ElkUtil.toAbsolute(sourcePoint, elkedge.getContainingNode());
+                ElkUtil.toRelative(sourcePoint, source);
+                applyPortLayout(sourcePoint.x, sourcePoint.y, connection.getEnd(), source);
             }
             
             // set target anchor position, if not already set via a port
-            if (kedge.getTargetPort() == null) {
-                KNode target = kedge.getTarget();
-                KVector targetPoint = kedge.getData(KEdgeLayout.class).getTargetPoint().createVector();
-                KNode referenceNode = kedge.getSource();
-                if (!ElkUtil.isDescendant(target, referenceNode)) {
-                    referenceNode = referenceNode.getParent();
-                }
-                ElkUtil.toAbsolute(targetPoint, referenceNode);
+            if (!(elkedge.getTargets().get(0) instanceof ElkPort)) {
+                ElkNode target = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
+                KVector targetPoint = new KVector(edgeSection.getEndX(), edgeSection.getEndY());
+                
+                ElkUtil.toAbsolute(targetPoint, elkedge.getContainingNode());
                 ElkUtil.toRelative(targetPoint, target);
                 applyPortLayout(targetPoint.x, targetPoint.y, connection.getEnd(), target);
             }
@@ -292,38 +247,27 @@ public class GraphitiLayoutCommand extends RecordingCommand {
      * @param edge a layout edge
      * @return the bend points for the edge
      */
-    public KVectorChain getBendPoints(final KEdge edge) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        KVectorChain bendPoints = bendpointsMap.get(edgeLayout);
+    public KVectorChain getBendPoints(final ElkEdge edge) {
+        KVectorChain bendPoints = bendpointsMap.get(edge);
         if (bendPoints == null) {
             // determine the offset for all bend points
-            KNode parent = edge.getSource();
-            if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
-                parent = parent.getParent();
-            }
             KVector offset = new KVector();
-            ElkUtil.toAbsolute(offset, parent);
-
-            // gather the bend points of the edge
-            bendPoints = new KVectorChain();
-            KPoint sourcePoint = edgeLayout.getSourcePoint();
-            bendPoints.add(sourcePoint.getX() + offset.x, sourcePoint.getY() + offset.y);
-            for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-                bendPoints.add(bendPoint.getX() + offset.x, bendPoint.getY() + offset.y);
-            }
-            KPoint targetPoint = edgeLayout.getTargetPoint();
-            bendPoints.add(targetPoint.getX() + offset.x, targetPoint.getY() + offset.y);
-
+            ElkUtil.toAbsolute(offset, edge.getContainingNode());
+            
+            // we expect the edge to have an edge section
+            ElkEdgeSection edgeSection = edge.getSections().get(0);
+            bendPoints = ElkUtil.createVectorChain(edgeSection);
+            bendPoints.offset(offset);
+            
             // transform spline control points into approximated bend points
-            EdgeRouting edgeRouting = edgeLayout.getProperty(CoreOptions.EDGE_ROUTING);
-            if (edgeRouting == EdgeRouting.SPLINES
-                    && edgeLayout.getBendPoints().size() >= 1) {
+            EdgeRouting edgeRouting = edge.getProperty(CoreOptions.EDGE_ROUTING);
+            if (edgeRouting == EdgeRouting.SPLINES && edgeSection.getBendPoints().size() >= 1) {
                 bendPoints = ElkMath.approximateBezierSpline(bendPoints);
             }
             
             bendPoints.removeFirst();
             bendPoints.removeLast();
-            bendpointsMap.put(edgeLayout, bendPoints);
+            bendpointsMap.put(edge, bendPoints);
         }
         return bendPoints;
     }
@@ -331,22 +275,19 @@ public class GraphitiLayoutCommand extends RecordingCommand {
     /**
      * Apply layout for an edge label.
      * 
-     * @param klabel an edge label
+     * @param elklabel an edge label
      * @param pelem the corresponding pictogram element
      */
-    protected void applyEdgeLabelLayout(final KLabel klabel,
-            final PictogramElement pelem) {
+    protected void applyEdgeLabelLayout(final ElkLabel elklabel, final PictogramElement pelem) {
         GraphicsAlgorithm ga = pelem.getGraphicsAlgorithm();
         ConnectionDecorator decorator = (ConnectionDecorator) pelem;
-        KEdge kedge = (KEdge) klabel.eContainer();
+        ElkEdge elkedge = (ElkEdge) elklabel.eContainer();
 
         // get vector chain for the bend points of the edge
-        KVectorChain bendPoints = new KVectorChain(getBendPoints(kedge));
-        KVector sourcePoint = layoutManager.calculateAnchorEnds(kedge.getSource(),
-                kedge.getSourcePort(), null);
+        KVectorChain bendPoints = new KVectorChain(getBendPoints(elkedge));
+        KVector sourcePoint = layoutManager.calculateAnchorEnds(elkedge.getSources().get(0), null);
         bendPoints.addFirst(sourcePoint);
-        KVector targetPoint = layoutManager.calculateAnchorEnds(kedge.getTarget(),
-                kedge.getTargetPort(), null);
+        KVector targetPoint = layoutManager.calculateAnchorEnds(elkedge.getTargets().get(0), null);
         bendPoints.addLast(targetPoint);
 
         // calculate reference point for the label
@@ -358,13 +299,8 @@ public class GraphitiLayoutCommand extends RecordingCommand {
             referencePoint = bendPoints.pointOnLine(decorator.getLocation());
         }
         
-        KShapeLayout shapeLayout = klabel.getData(KShapeLayout.class);
-        KVector position = shapeLayout.createVector();
-        KNode parent = kedge.getSource();
-        if (!ElkUtil.isDescendant(kedge.getTarget(), parent)) {
-            parent = parent.getParent();
-        }
-        ElkUtil.toAbsolute(position, parent);
+        KVector position = new KVector(elklabel.getX(), elklabel.getY());
+        ElkUtil.toAbsolute(position, elkedge.getContainingNode());
         ga.setX((int) Math.round(position.x - referencePoint.x));
         ga.setY((int) Math.round(position.y - referencePoint.y));
     }
