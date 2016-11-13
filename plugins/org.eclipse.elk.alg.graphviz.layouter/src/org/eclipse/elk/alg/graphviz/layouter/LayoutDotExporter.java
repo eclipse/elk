@@ -30,10 +30,9 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.HierarchyHandling;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphData;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.collect.Iterables;
 
@@ -46,19 +45,19 @@ public class LayoutDotExporter extends DotExporter {
      * {@inheritDoc}
      */
     @Override
-    public void transform(final IDotTransformationData<KNode, GraphvizModel> transData) {
-        KShapeLayout parentLayout = transData.getSourceGraph().getData(KShapeLayout.class);
+    public void transform(final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+        ElkNode sourceGraph = transData.getSourceGraph();
         Command command = transData.getProperty(COMMAND);
         transData.setProperty(USE_EDGE_IDS, true);
         transData.setProperty(HIERARCHY,
-                parentLayout.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN
+                sourceGraph.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN
                 && (command == Command.DOT || command == Command.FDP));
-        transData.setProperty(TRANSFORM_NODE_LAYOUT, parentLayout.getProperty(CoreOptions.INTERACTIVE));
+        transData.setProperty(TRANSFORM_NODE_LAYOUT, sourceGraph.getProperty(CoreOptions.INTERACTIVE));
         transData.setProperty(TRANSFORM_EDGE_LAYOUT, false);
         transData.setProperty(TRANSFORM_NODE_LABELS, false);
-        transData.setProperty(ADAPT_PORT_POSITIONS, parentLayout.getProperty(
+        transData.setProperty(ADAPT_PORT_POSITIONS, sourceGraph.getProperty(
                 GraphvizMetaDataProvider.ADAPT_PORT_POSITIONS));
-        transData.setProperty(BORDER_SPACING, parentLayout.getProperty(CoreOptions.SPACING_BORDER));
+        transData.setProperty(BORDER_SPACING, sourceGraph.getProperty(CoreOptions.SPACING_BORDER));
         super.transform(transData);
     }
     
@@ -69,9 +68,8 @@ public class LayoutDotExporter extends DotExporter {
      * {@inheritDoc}
      */
     @Override
-    protected void setGraphAttributes(final List<Statement> statements,
-            final KGraphData parentLayout,
-            final IDotTransformationData<KNode, GraphvizModel> transData) {
+    protected void setGraphAttributes(final List<Statement> statements, final ElkNode parentNode,
+            final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         
         Command command = transData.getProperty(COMMAND);
         AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
@@ -83,7 +81,7 @@ public class LayoutDotExporter extends DotExporter {
         List<Attribute> edgeAttrs = setGeneralEdgeAttributes(statements);
 
         // set minimal spacing
-        Float spacing = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+        Float spacing = parentNode.getProperty(CoreOptions.SPACING_NODE);
         if (spacing == null || spacing < 0) {
             switch (command) {
             case CIRCO:
@@ -102,10 +100,10 @@ public class LayoutDotExporter extends DotExporter {
         switch (command) {
         case DOT:
             graphAttrs.add(createAttribute(Attributes.NODESEP, spacing / DPI));
-            float rankSepFactor = parentLayout.getProperty(GraphvizMetaDataProvider.LAYER_SPACING_FACTOR);
+            float rankSepFactor = parentNode.getProperty(GraphvizMetaDataProvider.LAYER_SPACING_FACTOR);
             graphAttrs.add(createAttribute(Attributes.RANKSEP, rankSepFactor * spacing / DPI));
             // set layout direction
-            switch (parentLayout.getProperty(CoreOptions.DIRECTION)) {
+            switch (parentNode.getProperty(CoreOptions.DIRECTION)) {
             case UP:
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "BT"));
                 break;
@@ -119,7 +117,7 @@ public class LayoutDotExporter extends DotExporter {
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "TB"));
             }
             // set iterations limit
-            Float iterationsFactor = parentLayout.getProperty(GraphvizMetaDataProvider.ITERATIONS_FACTOR);
+            Float iterationsFactor = parentNode.getProperty(GraphvizMetaDataProvider.ITERATIONS_FACTOR);
             if (iterationsFactor != null && iterationsFactor > 0) {
                 graphAttrs.add(createAttribute(Attributes.CROSSMIN_LIMIT, iterationsFactor));
                 if (iterationsFactor < 1) {
@@ -128,7 +126,7 @@ public class LayoutDotExporter extends DotExporter {
                 }
             }
             // enable compound mode
-            if (parentLayout.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN) {
+            if (parentNode.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN) {
                 graphAttrs.add(createAttribute(Attributes.COMPOUND, "true"));
             }
             break;
@@ -144,7 +142,7 @@ public class LayoutDotExporter extends DotExporter {
         case NEATO:
             edgeAttrs.add(createAttribute(Attributes.EDGELEN, spacing / DPI));
             // configure initial placement of nodes
-            Integer seed = parentLayout.getProperty(CoreOptions.RANDOM_SEED);
+            Integer seed = parentNode.getProperty(CoreOptions.RANDOM_SEED);
             if (seed == null) {
                 seed = 1;
             } else if (seed == 0) {
@@ -154,12 +152,12 @@ public class LayoutDotExporter extends DotExporter {
             }
             graphAttrs.add(createAttribute(Attributes.START, "random" + seed));
             // set epsilon value
-            Float epsilon = parentLayout.getProperty(GraphvizMetaDataProvider.EPSILON);
+            Float epsilon = parentNode.getProperty(GraphvizMetaDataProvider.EPSILON);
             if (epsilon != null && epsilon > 0) {
                 graphAttrs.add(createAttribute(Attributes.EPSILON, epsilon));
             }
             // set distance model
-            NeatoModel model = parentLayout.getProperty(GraphvizMetaDataProvider.NEATO_MODEL);
+            NeatoModel model = parentNode.getProperty(GraphvizMetaDataProvider.NEATO_MODEL);
             if (model != NeatoModel.SHORTPATH) {
                 graphAttrs.add(createAttribute(Attributes.NEATO_MODEL, model.literal()));
             }
@@ -172,7 +170,7 @@ public class LayoutDotExporter extends DotExporter {
 
         if (command == Command.NEATO || command == Command.FDP) {
             // set maximum number of iterations
-            Integer maxiter = parentLayout.getProperty(GraphvizMetaDataProvider.MAXITER);
+            Integer maxiter = parentNode.getProperty(GraphvizMetaDataProvider.MAXITER);
             if (maxiter != null && maxiter > 0) {
                 graphAttrs.add(createAttribute(Attributes.MAXITER, maxiter));
             }
@@ -180,21 +178,21 @@ public class LayoutDotExporter extends DotExporter {
 
         if (command != Command.DOT) {
             // enable or disable node overlap avoidance
-            OverlapMode mode = parentLayout.getProperty(GraphvizMetaDataProvider.OVERLAP_MODE);
+            OverlapMode mode = parentNode.getProperty(GraphvizMetaDataProvider.OVERLAP_MODE);
             if (mode != OverlapMode.NONE) {
                 graphAttrs.add(createAttribute(Attributes.OVERLAP, mode.literal()));
                 graphAttrs.add(createAttribute(Attributes.SEP, "\"+" + Math.round(spacing / 2)
                         + "\""));
             }
             // enable or disable connected component packing
-            Boolean pack = parentLayout.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
+            Boolean pack = parentNode.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
             if (command == Command.TWOPI || pack != null && pack.booleanValue()) {
                 graphAttrs.add(createAttribute(Attributes.PACK, spacing.intValue()));
             }
         }
 
         // configure edge routing
-        EdgeRouting edgeRouting = parentLayout.getProperty(CoreOptions.EDGE_ROUTING);
+        EdgeRouting edgeRouting = parentNode.getProperty(CoreOptions.EDGE_ROUTING);
         String splineMode;
         switch (edgeRouting) {
         case POLYLINE:
@@ -210,7 +208,7 @@ public class LayoutDotExporter extends DotExporter {
         graphAttrs.add(createAttribute(Attributes.SPLINES, splineMode));
 
         // enable edge concentration
-        if (parentLayout.getProperty(GraphvizMetaDataProvider.CONCENTRATE)) {
+        if (parentNode.getProperty(GraphvizMetaDataProvider.CONCENTRATE)) {
             graphAttrs.add(createAttribute(Attributes.CONCENTRATE, "true"));
         }
     }
@@ -219,20 +217,18 @@ public class LayoutDotExporter extends DotExporter {
      * {@inheritDoc}
      */
     @Override
-    protected void setEdgeLabels(final KEdge kedge, final List<Attribute> attributes, final boolean isVertical) {
+    protected void setEdgeLabels(final ElkEdge kedge, final List<Attribute> attributes, final boolean isVertical) {
         super.setEdgeLabels(kedge, attributes, isVertical);
         // set label distance and angle
-        if (Iterables.any(kedge.getLabels(), (KLabel label) -> {
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            EdgeLabelPlacement elp = labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+        if (Iterables.any(kedge.getLabels(), (ElkLabel label) -> {
+            EdgeLabelPlacement elp = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
             return elp == EdgeLabelPlacement.HEAD || elp == EdgeLabelPlacement.TAIL;
         })) {
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            float distance = edgeLayout.getProperty(GraphvizMetaDataProvider.LABEL_DISTANCE);
+            float distance = kedge.getProperty(GraphvizMetaDataProvider.LABEL_DISTANCE);
             if (distance >= 0.0f) {
                 attributes.add(createAttribute(Attributes.LABELDISTANCE, distance));
             }
-            float angle = edgeLayout.getProperty(GraphvizMetaDataProvider.LABEL_ANGLE);
+            float angle = kedge.getProperty(GraphvizMetaDataProvider.LABEL_ANGLE);
             attributes.add(createAttribute(Attributes.LABELANGLE, angle));
         }
     }

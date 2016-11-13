@@ -29,11 +29,10 @@ import org.eclipse.elk.alg.graphviz.layouter.preferences.GraphvizLayouterPrefere
 import org.eclipse.elk.alg.graphviz.layouter.util.ForkedOutputStream;
 import org.eclipse.elk.alg.graphviz.layouter.util.ForwardingInputStream;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.xtext.resource.SaveOptions;
@@ -111,7 +110,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
         if (command == Command.INVALID) {
             throw new IllegalStateException("The Graphviz layout provider is not initialized.");
         }
@@ -121,7 +120,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             progressMonitor.done();
             return;
         }
-        boolean debugMode = parentNode.getData(KShapeLayout.class).getProperty(CoreOptions.DEBUG_MODE);
+        boolean debugMode = parentNode.getProperty(CoreOptions.DEBUG_MODE);
         myCallNo = ++serialCallNo;
 
         // start the graphviz process, or retrieve the previously used process
@@ -134,8 +133,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         DotExporter dotExporter = new LayoutDotExporter();
 
         // translate the KGraph to Graphviz and write to the process
-        IDotTransformationData<KNode, GraphvizModel> transData
-                = new DotTransformationData<KNode, GraphvizModel>();
+        IDotTransformationData<ElkNode, GraphvizModel> transData = new DotTransformationData<ElkNode, GraphvizModel>();
         transData.setSourceGraph(parentNode);
         transData.setProperty(DotExporter.COMMAND, command);
         
@@ -150,9 +148,8 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             transData.getTargetGraphs().set(0, graphvizOutput);
             dotExporter.transferLayout(transData);
         } finally {
-            boolean reuseProcess =
-                    GraphvizLayouterPreferenceStoreAccess.getUISaveBoolean(
-                            PREF_GRAPHVIZ_REUSE_PROCESS, REUSE_PROCESS_DEFAULT);
+            boolean reuseProcess = GraphvizLayouterPreferenceStoreAccess.getUISaveBoolean(
+                    PREF_GRAPHVIZ_REUSE_PROCESS, REUSE_PROCESS_DEFAULT);
             graphvizTool.cleanup(reuseProcess ? Cleanup.NORMAL : Cleanup.STOP);
             progressMonitor.done();
         }
