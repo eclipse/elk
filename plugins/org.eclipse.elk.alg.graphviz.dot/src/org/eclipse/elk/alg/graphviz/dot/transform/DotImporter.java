@@ -28,26 +28,25 @@ import org.eclipse.elk.alg.graphviz.dot.dot.NodeStatement;
 import org.eclipse.elk.alg.graphviz.dot.dot.Statement;
 import org.eclipse.elk.alg.graphviz.dot.dot.Subgraph;
 import org.eclipse.elk.alg.graphviz.dot.dot.util.DotSwitch;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import com.google.common.collect.Maps;
@@ -62,24 +61,19 @@ import com.google.common.collect.Maps;
 public class DotImporter {
     
     /** map of Graphviz node identifiers to their KNode instances. */
-    private static final IProperty<Map<String, KNode>> NODE_ID_MAP
-            = new Property<Map<String, KNode>>("nodeIdMap");
+    private static final IProperty<Map<String, ElkNode>> NODE_ID_MAP = new Property<>("nodeIdMap");
     /** map of Graphviz port identifiers to their KPort instances. */
-    private static final IProperty<Map<Pair<KNode, String>, KPort>> PORT_ID_MAP
-            = new Property<Map<Pair<KNode, String>, KPort>>("portIdMap");
+    private static final IProperty<Map<Pair<ElkNode, String>, ElkPort>> PORT_ID_MAP = new Property<>("portIdMap");
     /** original Graphviz statements attached to graph elements. */
-    private static final IProperty<Statement> PROP_STATEMENT
-            = new Property<Statement>("dotTransformer.statement");
+    private static final IProperty<Statement> PROP_STATEMENT = new Property<>("dotTransformer.statement");
     /** original Graphviz identifiers attached to graph elements. */
-    private static final IProperty<String> PROP_ID = new Property<String>("dotTransformer.name");
+    private static final IProperty<String> PROP_ID = new Property<>("dotTransformer.name");
     /** original Graphviz graph attached to parent nodes. */
-    private static final IProperty<Graph> PROP_GRAPH = new Property<Graph>("dotTransformer.graph");
+    private static final IProperty<Graph> PROP_GRAPH = new Property<>("dotTransformer.graph");
     /** default node width to apply for all nodes. */
-    private static final IProperty<Float> PROP_DEF_WIDTH = new Property<Float>(
-            "dotTransformer.defWidth");
+    private static final IProperty<Float> PROP_DEF_WIDTH = new Property<>("dotTransformer.defWidth");
     /** default node height to apply for all nodes. */
-    private static final IProperty<Float> PROP_DEF_HEIGHT = new Property<Float>(
-            "dotTransformer.defHeight");
+    private static final IProperty<Float> PROP_DEF_HEIGHT = new Property<>("dotTransformer.defHeight");
     
     /**
      * Transform the GraphViz model into a KGraph.
@@ -88,17 +82,16 @@ public class DotImporter {
      *            the transformation data instance that holds the source graph and is enriched with
      *            the new target graphs
      */
-    public void transform(final IDotTransformationData<GraphvizModel, KNode> transData) {
+    public void transform(final IDotTransformationData<GraphvizModel, ElkNode> transData) {
         for (Graph graph : transData.getSourceGraph().getGraphs()) {
-            KNode parent = ElkUtil.createInitializedNode();
-            Map<String, KNode> nodeIdMap = Maps.newHashMap();
+            ElkNode parent = ElkGraphUtil.createGraph();
+            Map<String, ElkNode> nodeIdMap = Maps.newHashMap();
             transData.setProperty(NODE_ID_MAP, nodeIdMap);
-            Map<Pair<KNode, String>, KPort> portIdMap = Maps.newHashMap();
+            Map<Pair<ElkNode, String>, ElkPort> portIdMap = Maps.newHashMap();
             transData.setProperty(PORT_ID_MAP, portIdMap);
-            transform(graph.getStatements(), parent, transData, new MapPropertyHolder(),
-                    new MapPropertyHolder());
+            transform(graph.getStatements(), parent, transData, new MapPropertyHolder(), new MapPropertyHolder());
             transData.getTargetGraphs().add(parent);
-            parent.getData(KShapeLayout.class).setProperty(PROP_GRAPH, graph);
+            parent.setProperty(PROP_GRAPH, graph);
         }
     }
 
@@ -109,10 +102,9 @@ public class DotImporter {
      * @param transData
      *            the transformation data instance
      */
-    public void transferLayout(final IDotTransformationData<GraphvizModel, KNode> transData) {
-        for (KNode layoutNode : transData.getTargetGraphs()) {
-            applyLayout(layoutNode, new KVector(),
-                    layoutNode.getData(KShapeLayout.class).getProperty(PROP_GRAPH));
+    public void transferLayout(final IDotTransformationData<GraphvizModel, ElkNode> transData) {
+        for (ElkNode layoutNode : transData.getTargetGraphs()) {
+            applyLayout(layoutNode, new KVector(), layoutNode.getProperty(PROP_GRAPH));
         }
     }
     
@@ -133,11 +125,10 @@ public class DotImporter {
      * @param edgeProps
      *            properties that are applied to all edges
      */
-    private void transform(final List<Statement> statements, final KNode parent,
-            final IDotTransformationData<GraphvizModel, KNode> transData,
+    private void transform(final List<Statement> statements, final ElkNode parent,
+            final IDotTransformationData<GraphvizModel, ElkNode> transData,
             final IPropertyHolder nodeProps, final IPropertyHolder edgeProps) {
         
-        final KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
         DotSwitch<Object> statementSwitch = new DotSwitch<Object>() {
 
             public Object caseNodeStatement(final NodeStatement statement) {
@@ -151,25 +142,24 @@ public class DotImporter {
             }
 
             public Object caseSubgraph(final Subgraph subgraph) {
-                KNode subKNode = parent;
+                ElkNode subElkNode = parent;
                 if (subgraph.getName() != null && subgraph.getName().startsWith("cluster")) {
-                    subKNode = transformNode(subgraph.getName(), parent, transData);
-                    KShapeLayout nodeLayout = subKNode.getData(KShapeLayout.class);
-                    if (nodeLayout.getProperty(PROP_STATEMENT) != null) {
+                    subElkNode = transformNode(subgraph.getName(), parent, transData);
+                    if (subElkNode.getProperty(PROP_STATEMENT) != null) {
                         transData.log("Discarding cluster subgraph \"" + subgraph.getName()
                                 + "\" since its id is already used.");
                         return null;
                     } else {
                         // the subgraph inherits all settings of its parent
-                        nodeLayout.copyProperties(parentLayout);
-                        nodeLayout.setProperty(PROP_STATEMENT, subgraph);
+                        subElkNode.copyProperties(parent);
+                        subElkNode.setProperty(PROP_STATEMENT, subgraph);
                     }
                 }
                 MapPropertyHolder subNodeProps = new MapPropertyHolder();
                 subNodeProps.copyProperties(nodeProps);
                 MapPropertyHolder subEdgeProps = new MapPropertyHolder();
                 subEdgeProps.copyProperties(edgeProps);
-                transform(subgraph.getStatements(), subKNode, transData, subNodeProps, subEdgeProps);
+                transform(subgraph.getStatements(), subElkNode, transData, subNodeProps, subEdgeProps);
                 return null;
             }
 
@@ -196,7 +186,7 @@ public class DotImporter {
 
             public Object caseAttribute(final Attribute attribute) {
                 if (Attributes.MARGIN.equals(attribute.getName())) {
-                    KInsets insets = parentLayout.getInsets();
+                    ElkInsets insets = parent.getProperty(CoreOptions.INSETS);
                     if (attribute.getValue().indexOf(',') >= 0) {
                         KVector value = new KVector();
                         try {
@@ -222,7 +212,7 @@ public class DotImporter {
                         }
                     }
                 } else {
-                    transformAttribute(parentLayout, attribute, transData);
+                    transformAttribute(parent, attribute, transData);
                 }
                 return null;
             }
@@ -241,7 +231,8 @@ public class DotImporter {
      * @param transData transformation data
      */
     private void transformAttribute(final IPropertyHolder target, final Attribute attribute,
-            final IDotTransformationData<GraphvizModel, KNode> transData) {
+            final IDotTransformationData<GraphvizModel, ElkNode> transData) {
+        
         String name = attribute.getName();
         String value = trimValue(attribute);
         try {
@@ -324,24 +315,24 @@ public class DotImporter {
      * @param transData the transformation data instance
      * @param defaultProps default values for node options
      */
-    private void transformNode(final NodeStatement statement, final KNode parent,
-            final IDotTransformationData<GraphvizModel, KNode> transData,
+    private void transformNode(final NodeStatement statement, final ElkNode parent,
+            final IDotTransformationData<GraphvizModel, ElkNode> transData,
             final IPropertyHolder defaultProps) {
-        KNode knode = transformNode(statement.getNode().getName(), parent, transData);
-        KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-        if (nodeLayout.getProperty(PROP_STATEMENT) != null) {
+        
+        ElkNode elknode = transformNode(statement.getNode().getName(), parent, transData);
+        if (elknode.getProperty(PROP_STATEMENT) != null) {
             transData.log("Discarding node \"" + statement.getNode().getName()
                     + "\" since its id is already used.");
         } else {
-            nodeLayout.copyProperties(defaultProps);
-            nodeLayout.setProperty(PROP_STATEMENT, statement);
+            elknode.copyProperties(defaultProps);
+            elknode.setProperty(PROP_STATEMENT, statement);
             Float defWidth = defaultProps.getProperty(PROP_DEF_WIDTH);
             if (defWidth != null) {
-                nodeLayout.setWidth(defWidth);
+                elknode.setWidth(defWidth);
             }
             Float defHeight = defaultProps.getProperty(PROP_DEF_HEIGHT);
             if (defHeight != null) {
-                nodeLayout.setHeight(defHeight);
+                elknode.setHeight(defHeight);
             }
             
             // evaluate attributes for the new node
@@ -349,21 +340,18 @@ public class DotImporter {
                 String value = trimValue(attr);
                 try {
                     if (Attributes.LABEL.equals(attr.getName())) {
-                        KLabel label = ElkUtil.createInitializedLabel(knode);
-                        label.setText(value);
+                        ElkGraphUtil.createLabel(value, elknode);
                     } else if (Attributes.POS.equals(attr.getName())) {
                         KVector pos = new KVector();
                         pos.parse(value);
                         pos.scale(DotExporter.DPI);
-                        nodeLayout.applyVector(pos);
+                        elknode.setLocation(pos.x, pos.y);
                     } else if (Attributes.WIDTH.equals(attr.getName())) {
-                        nodeLayout.setWidth(Float.parseFloat(value)
-                                * DotExporter.DPI);
+                        elknode.setWidth(Float.parseFloat(value) * DotExporter.DPI);
                     } else if (Attributes.HEIGHT.equals(attr.getName())) {
-                        nodeLayout.setHeight(Float.parseFloat(value)
-                                * DotExporter.DPI);
+                        elknode.setHeight(Float.parseFloat(value) * DotExporter.DPI);
                     } else {
-                        transformAttribute(nodeLayout, attr, transData);
+                        transformAttribute(elknode, attr, transData);
                     }
                 } catch (NumberFormatException exception) {
                     transData.log("Discarding attribute \"" + attr.getName()
@@ -389,22 +377,21 @@ public class DotImporter {
      * @param transData the transformation data instance
      * @return a KNode instance
      */
-    private KNode transformNode(final String nodeId, final KNode parent,
-            final IDotTransformationData<GraphvizModel, KNode> transData) {
-        Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
-        KNode knode = nodeIdMap.get(nodeId);
-        if (knode == null) {
-            knode = ElkUtil.createInitializedNode();
-            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            nodeLayout.setWidth(DEF_WIDTH);
-            nodeLayout.setHeight(DEF_WIDTH);
-            knode.setParent(parent);
+    private ElkNode transformNode(final String nodeId, final ElkNode parent,
+            final IDotTransformationData<GraphvizModel, ElkNode> transData) {
+        
+        Map<String, ElkNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
+        ElkNode elknode = nodeIdMap.get(nodeId);
+        if (elknode == null) {
+            elknode = ElkGraphUtil.createNode(parent);
+            elknode.setWidth(DEF_WIDTH);
+            elknode.setHeight(DEF_WIDTH);
             if (nodeId != null) {
-                nodeIdMap.put(nodeId, knode);
-                nodeLayout.setProperty(PROP_ID, nodeId);
+                nodeIdMap.put(nodeId, elknode);
+                elknode.setProperty(PROP_ID, nodeId);
             }
         }
-        return knode;
+        return elknode;
     }
     
     /**
@@ -415,19 +402,19 @@ public class DotImporter {
      * @param transData the transformation data instance
      * @return a KPort instance
      */
-    private KPort transformPort(final String portId, final KNode node,
-            final IDotTransformationData<GraphvizModel, KNode> transData) {
-        Map<Pair<KNode, String>, KPort> portIdMap = transData.getProperty(PORT_ID_MAP);
-        Pair<KNode, String> key = new Pair<KNode, String>(node, portId);
-        KPort kport = portIdMap.get(key);
-        if (kport == null) {
-            kport = ElkUtil.createInitializedPort();
-            kport.setNode(node);
+    private ElkPort transformPort(final String portId, final ElkNode node,
+            final IDotTransformationData<GraphvizModel, ElkNode> transData) {
+        
+        Map<Pair<ElkNode, String>, ElkPort> portIdMap = transData.getProperty(PORT_ID_MAP);
+        Pair<ElkNode, String> key = new Pair<>(node, portId);
+        ElkPort elkport = portIdMap.get(key);
+        if (elkport == null) {
+            elkport = ElkGraphUtil.createPort(node);
             if (portId != null) {
-                portIdMap.put(key, kport);
+                portIdMap.put(key, elkport);
             }
         }
-        return kport;
+        return elkport;
     }
     
     /**
@@ -438,12 +425,13 @@ public class DotImporter {
      * @param transData the transformation data instance
      * @param defaultProps default values for edge options
      */
-    private void transformEdge(final EdgeStatement statement, final KNode parent,
-            final IDotTransformationData<GraphvizModel, KNode> transData,
+    private void transformEdge(final EdgeStatement statement, final ElkNode parent,
+            final IDotTransformationData<GraphvizModel, ElkNode> transData,
             final IPropertyHolder defaultProps) {
+        
         String sourceName = statement.getSourceNode().getName();
-        KNode source = transformNode(sourceName, parent, transData);
-        KPort sourcePort = null;
+        ElkNode source = transformNode(sourceName, parent, transData);
+        ElkPort sourcePort = null;
         if (statement.getSourceNode().getPort() != null) {
             String portName = statement.getSourceNode().getPort().getCompass_pt();
             if (portName == null) {
@@ -454,13 +442,14 @@ public class DotImporter {
         ListIterator<EdgeTarget> targetIter = statement.getEdgeTargets().listIterator();
         while (targetIter.hasNext()) {
             EdgeTarget edgeTarget = targetIter.next();
-            KEdge kedge = ElkUtil.createInitializedEdge();
-            kedge.setSource(source);
+            ElkEdge elkedge = ElkGraphUtil.createEdge(null);
             if (sourcePort != null) {
-                kedge.setSourcePort(sourcePort);
+                elkedge.getSources().add(sourcePort);
+            } else {
+                elkedge.getSources().add(source);
             }
-            KNode target;
-            KPort targetPort = null;
+            ElkNode target;
+            ElkPort targetPort = null;
             Node edgeTargetNode = edgeTarget.getTargetnode();
             String targetName;
             if (edgeTargetNode == null) {
@@ -477,16 +466,17 @@ public class DotImporter {
                     targetPort = transformPort(portName, target, transData);
                 }
             }
-            kedge.setTarget(target);
+            
             if (targetPort != null) {
-                kedge.setTargetPort(targetPort);
+                elkedge.getTargets().add(targetPort);
+            } else {
+                elkedge.getTargets().add(target);
             }
             
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            edgeLayout.copyProperties(defaultProps);
+            elkedge.copyProperties(defaultProps);
             if (targetIter.previousIndex() == 0) {
                 // this is the first target - just store the edge statement
-                edgeLayout.setProperty(PROP_STATEMENT, statement);
+                elkedge.setProperty(PROP_STATEMENT, statement);
             } else {
                 // the edge statement has more that one target - create a copy
                 EdgeStatement newStatement = DotFactory.eINSTANCE.createEdgeStatement();
@@ -498,29 +488,23 @@ public class DotImporter {
                 for (Attribute attr : statement.getAttributes()) {
                     newStatement.getAttributes().add(EcoreUtil.copy(attr));
                 }
-                edgeLayout.setProperty(PROP_STATEMENT, newStatement);
+                elkedge.setProperty(PROP_STATEMENT, newStatement);
             }
             
             // evaluate attributes for the new edge
             for (Attribute attr : statement.getAttributes()) {
                 String value = trimValue(attr);
                 if (Attributes.LABEL.equals(attr.getName())) {
-                    KLabel label = ElkUtil.createInitializedLabel(kedge);
-                    label.setText(value);
-                    label.getData(KShapeLayout.class).setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
-                            EdgeLabelPlacement.CENTER);
+                    ElkLabel label = ElkGraphUtil.createLabel(value, elkedge);
+                    label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER);
                 } else if (Attributes.HEADLABEL.equals(attr.getName())) {
-                    KLabel label = ElkUtil.createInitializedLabel(kedge);
-                    label.setText(value);
-                    label.getData(KShapeLayout.class).setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
-                            EdgeLabelPlacement.HEAD);
+                    ElkLabel label = ElkGraphUtil.createLabel(value, elkedge);
+                    label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.HEAD);
                 } else if (Attributes.TAILLABEL.equals(attr.getName())) {
-                    KLabel label = ElkUtil.createInitializedLabel(kedge);
-                    label.setText(value);
-                    label.getData(KShapeLayout.class).setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
-                            EdgeLabelPlacement.TAIL);
+                    ElkLabel label = ElkGraphUtil.createLabel(value, elkedge);
+                    label.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.TAIL);
                 } else {
-                    transformAttribute(edgeLayout, attr, transData);
+                    transformAttribute(elkedge, attr, transData);
                 }
             }
             
@@ -541,15 +525,14 @@ public class DotImporter {
      * @param offset the node's offset in the graph
      * @param graph the Graphviz graph
      */
-    private void applyLayout(final KNode parent, final KVector offset, final Graph graph) {
-        for (KNode knode : parent.getChildren()) {
-            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            Statement statement = nodeLayout.getProperty(PROP_STATEMENT);
+    private void applyLayout(final ElkNode parent, final KVector offset, final Graph graph) {
+        for (ElkNode elknode : parent.getChildren()) {
+            Statement statement = elknode.getProperty(PROP_STATEMENT);
             if (statement == null) {
                 // the node was only declared implicitly - create an explicit declaration
                 NodeStatement stm = DotFactory.eINSTANCE.createNodeStatement();
                 Node node = DotFactory.eINSTANCE.createNode();
-                node.setName(nodeLayout.getProperty(PROP_ID));
+                node.setName(elknode.getProperty(PROP_ID));
                 stm.setNode(node);
                 graph.getStatements().add(stm);
                 statement = stm;
@@ -558,39 +541,35 @@ public class DotImporter {
                 List<Attribute> attributes = ((NodeStatement) statement).getAttributes();
                 // transfer node position
                 removeAttributes(attributes, Attributes.POS);
-                double xpos = nodeLayout.getXpos() + nodeLayout.getWidth() / 2 + offset.x;
-                double ypos = nodeLayout.getYpos() + nodeLayout.getHeight() / 2 + offset.y;
+                double xpos = elknode.getX() + elknode.getWidth() / 2 + offset.x;
+                double ypos = elknode.getY() + elknode.getHeight() / 2 + offset.y;
                 String posString = "\"" + Double.toString(xpos) + "," + Double.toString(ypos) + "\"";
                 attributes.add(DotExporter.createAttribute(Attributes.POS, posString));
                 // transfer node size
                 removeAttributes(attributes, Attributes.WIDTH);
-                attributes.add(DotExporter.createAttribute(Attributes.WIDTH,
-                        nodeLayout.getWidth() / DotExporter.DPI));
+                attributes.add(DotExporter.createAttribute(Attributes.WIDTH, elknode.getWidth() / DotExporter.DPI));
                 removeAttributes(attributes, Attributes.HEIGHT);
-                attributes.add(DotExporter.createAttribute(Attributes.HEIGHT,
-                        nodeLayout.getHeight() / DotExporter.DPI));
+                attributes.add(DotExporter.createAttribute(Attributes.HEIGHT, elknode.getHeight() / DotExporter.DPI));
             } else if (statement instanceof Subgraph) {
-                applyLayout(knode, new KVector(offset).add(nodeLayout.getXpos(),
-                        nodeLayout.getYpos()), graph);
+                applyLayout(elknode, new KVector(offset).add(elknode.getX(), elknode.getY()), graph);
             }
             
-            for (KEdge kedge : knode.getOutgoingEdges()) {
-                applyLayout(kedge, offset, graph);
+            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+                applyLayout(elkedge, offset, graph);
             }
         }
         
         // transfer graph size to bounding box
         List<Statement> statements;
-        KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        Statement graphStm = parentLayout.getProperty(PROP_STATEMENT);
+        Statement graphStm = parent.getProperty(PROP_STATEMENT);
         if (graphStm instanceof Subgraph) {
             statements = ((Subgraph) graphStm).getStatements();
         } else {
             statements = graph.getStatements();
         }
         removeGraphAttributes(statements, Attributes.BOUNDINGBOX);
-        String bbString = "\"0,0," + Float.toString(parentLayout.getWidth())
-                + "," + Float.toString(parentLayout.getHeight()) + "\"";
+        String bbString = "\"0,0," + Double.toString(parent.getWidth())
+                + "," + Double.toString(parent.getHeight()) + "\"";
         statements.add(DotExporter.createAttribute(
                 Attributes.BOUNDINGBOX, bbString));
     }
@@ -602,9 +581,8 @@ public class DotImporter {
      * @param offset its offset in the graph
      * @param graph the Graphviz graph
      */
-    private void applyLayout(final KEdge edge, final KVector offset, final Graph graph) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        EdgeStatement edgeStatement = (EdgeStatement) edgeLayout.getProperty(PROP_STATEMENT);
+    private void applyLayout(final ElkEdge edge, final KVector offset, final Graph graph) {
+        EdgeStatement edgeStatement = (EdgeStatement) edge.getProperty(PROP_STATEMENT);
         if (edgeStatement.eContainer() == null) {
             // this can happen when an edge with multiple target declarations was found
             graph.getStatements().add(edgeStatement);
@@ -613,27 +591,29 @@ public class DotImporter {
         // transfer edge bend points and source / target points
         List<Attribute> attributes = edgeStatement.getAttributes();
         removeAttributes(attributes, Attributes.POS);
-        StringBuilder bendpointString = new StringBuilder("\"");
-        KVectorChain vectorChain = edgeLayout.createVectorChain();
-        ListIterator<KVector> chainIter = vectorChain.listIterator();
-        while (chainIter.hasNext()) {
-            KVector point = chainIter.next().add(offset);
-            bendpointString.append(point.x);
-            bendpointString.append(',');
-            bendpointString.append(point.y);
-            if (chainIter.hasNext()) {
-                bendpointString.append(' ');
+        
+        if (!edge.getSections().isEmpty()) {
+            StringBuilder bendpointString = new StringBuilder("\"");
+            KVectorChain vectorChain = ElkUtil.createVectorChain(edge.getSections().get(0));
+            ListIterator<KVector> chainIter = vectorChain.listIterator();
+            while (chainIter.hasNext()) {
+                KVector point = chainIter.next().add(offset);
+                bendpointString.append(point.x);
+                bendpointString.append(',');
+                bendpointString.append(point.y);
+                if (chainIter.hasNext()) {
+                    bendpointString.append(' ');
+                }
             }
+            bendpointString.append('\"');
+            attributes.add(DotExporter.createAttribute(Attributes.POS,
+                    bendpointString.toString()));
         }
-        bendpointString.append('\"');
-        attributes.add(DotExporter.createAttribute(Attributes.POS,
-                bendpointString.toString()));
         
         // transfer label positions
-        for (KLabel label : edge.getLabels()) {
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+        for (ElkLabel label : edge.getLabels()) {
             String attrKey = null;
-            switch (labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)) {
+            switch (label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT)) {
             case CENTER:
                 attrKey = Attributes.LABELPOS;
                 break;
@@ -646,8 +626,8 @@ public class DotImporter {
             }
             if (attrKey != null) {
                 removeAttributes(attributes, attrKey);
-                double xpos = labelLayout.getXpos() + labelLayout.getWidth() / 2 + offset.x;
-                double ypos = labelLayout.getYpos() + labelLayout.getHeight() / 2 + offset.y;
+                double xpos = label.getX() + label.getWidth() / 2 + offset.x;
+                double ypos = label.getY() + label.getHeight() / 2 + offset.y;
                 String posString = "\"" + Double.toString(xpos)
                         + "," + Double.toString(ypos) + "\"";
                 attributes.add(DotExporter.createAttribute(attrKey, posString));

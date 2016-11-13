@@ -31,27 +31,26 @@ import org.eclipse.elk.alg.graphviz.dot.dot.Node;
 import org.eclipse.elk.alg.graphviz.dot.dot.NodeStatement;
 import org.eclipse.elk.alg.graphviz.dot.dot.Statement;
 import org.eclipse.elk.alg.graphviz.dot.dot.Subgraph;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.UnsupportedGraphException;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphData;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -108,36 +107,32 @@ public class DotExporter {
     private static final String ATTRIBUTE_DELIM = "\", \t\n\r";
 
     /** maps each identifier of a graph element to the instance of the element. */
-    private static final IProperty<BiMap<String, KGraphElement>> GRAPH_ELEMS
-            = new Property<BiMap<String, KGraphElement>>("dotExporter.graphElemMap");
+    private static final IProperty<BiMap<String, ElkGraphElement>> GRAPH_ELEMS =
+            new Property<>("dotExporter.graphElemMap");
     /** indicates whether splines are used. */
-    protected static final IProperty<Boolean> USE_SPLINES = new Property<Boolean>(
-            "dotExporter.useSplines", false);
+    protected static final IProperty<Boolean> USE_SPLINES = new Property<>("dotExporter.useSplines", false);
     /** the next node identifier to use. */
-    private static final IProperty<Integer> NEXT_NODE_ID = new Property<Integer>(
-            "dotExporter.nextNodeId", 1);
+    private static final IProperty<Integer> NEXT_NODE_ID = new Property<>("dotExporter.nextNodeId", 1);
     /** the next edge identifier to use. */
-    private static final IProperty<Integer> NEXT_EDGE_ID = new Property<Integer>(
-            "dotExporter.nextEdgeId", 1);
+    private static final IProperty<Integer> NEXT_EDGE_ID = new Property<>("dotExporter.nextEdgeId", 1);
     /** cluster dummy node identifier attached to a node. */
-    private static final IProperty<String> CLUSTER_DUMMY = new Property<String>(
-            "dotExporter.clusterDummy");
+    private static final IProperty<String> CLUSTER_DUMMY = new Property<>("dotExporter.clusterDummy");
 
     /**
      * Transforms the KGraph instance to a Dot instance using the given command.
      * 
      * @param transData the transformation data instance
      */
-    public void transform(final IDotTransformationData<KNode, GraphvizModel> transData) {
-        BiMap<String, KGraphElement> graphElems = HashBiMap.create();
+    public void transform(final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+        BiMap<String, ElkGraphElement> graphElems = HashBiMap.create();
         transData.setProperty(GRAPH_ELEMS, graphElems);
-        KNode kgraph = transData.getSourceGraph();
+        ElkNode elkgraph = transData.getSourceGraph();
         GraphvizModel graphvizModel = DotFactory.eINSTANCE.createGraphvizModel();
         Graph graph = DotFactory.eINSTANCE.createGraph();
         graph.setType(GraphType.DIGRAPH);
         graphvizModel.getGraphs().add(graph);
-        transformNodes(kgraph, graph.getStatements(), new KVector(), transData);
-        transformEdges(kgraph, graph.getStatements(), transData);
+        transformNodes(elkgraph, graph.getStatements(), new KVector(), transData);
+        transformEdges(elkgraph, graph.getStatements(), transData);
         transData.getTargetGraphs().add(graphvizModel);
     }
 
@@ -148,7 +143,7 @@ public class DotExporter {
      * 
      * @param transData the transformation data instance
      */
-    public void transferLayout(final IDotTransformationData<KNode, GraphvizModel> transData) {
+    public void transferLayout(final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         float borderSpacing = transData.getProperty(BORDER_SPACING);
         if (borderSpacing < 0) {
             borderSpacing = DEF_SPACING_SMALL / 2;
@@ -181,18 +176,17 @@ public class DotExporter {
      * @param offset offset of the parent node in the whole graph
      * @param transData transformation data
      */
-    private void transformNodes(final KNode parent, final List<Statement> statements,
-            final KVector offset, final IDotTransformationData<KNode, GraphvizModel> transData) {
-        KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
+    private void transformNodes(final ElkNode parent, final List<Statement> statements,
+            final KVector offset, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+        
         // set attributes for the whole graph
-        setGraphAttributes(statements, parentLayout, transData);
+        setGraphAttributes(statements, parent, transData);
 
         // create nodes and subgraphs
         boolean hierarchy = transData.getProperty(HIERARCHY);
         boolean transformNodeLayout = transData.getProperty(TRANSFORM_NODE_LAYOUT);
         boolean transformNodeLabels = transData.getProperty(TRANSFORM_NODE_LABELS);
-        for (KNode childNode : parent.getChildren()) {
-            KShapeLayout nodeLayout = childNode.getData(KShapeLayout.class);
+        for (ElkNode childNode : parent.getChildren()) {
             NodeStatement nodeStatement = DotFactory.eINSTANCE.createNodeStatement();
             List<Attribute> attributes = nodeStatement.getAttributes();
             String nodeID;
@@ -202,11 +196,14 @@ public class DotExporter {
                 Subgraph subgraph = DotFactory.eINSTANCE.createSubgraph();
                 subgraph.setName(clusterNodeID);
                 statements.add(subgraph);
+                
                 // transform child nodes recursively
-                double subgraphx = nodeLayout.getXpos() + nodeLayout.getInsets().getLeft();
-                double subgraphy = nodeLayout.getYpos() + nodeLayout.getInsets().getTop();
+                ElkInsets insets = childNode.getProperty(CoreOptions.INSETS);
+                double subgraphx = childNode.getX() + insets.getLeft();
+                double subgraphy = childNode.getY() + insets.getTop();
                 transformNodes(childNode, subgraph.getStatements(),
                         new KVector(offset).add(subgraphx, subgraphy), transData);
+                
                 // create a dummy node for compound edges
                 nodeID = getNodeID(childNode, NodeType.DUMMY, transData);
                 attributes.add(createAttribute(Attributes.STYLE, "invis"));
@@ -217,21 +214,22 @@ public class DotExporter {
                 nodeID = getNodeID(childNode, NodeType.NODE, transData);
                 // set width and height
                 ElkUtil.resizeNode(childNode);
-                if (nodeLayout.getWidth() > 0) {
-                    attributes.add(createAttribute(Attributes.WIDTH, nodeLayout.getWidth() / DPI));
+                if (childNode.getWidth() > 0) {
+                    attributes.add(createAttribute(Attributes.WIDTH, childNode.getWidth() / DPI));
                 }
-                if (nodeLayout.getHeight() > 0) {
-                    attributes.add(createAttribute(Attributes.HEIGHT, nodeLayout.getHeight() / DPI));
+                if (childNode.getHeight() > 0) {
+                    attributes.add(createAttribute(Attributes.HEIGHT, childNode.getHeight() / DPI));
                 }
                 if (transformNodeLabels && !childNode.getLabels().isEmpty()
                         && childNode.getLabels().get(0).getText().length() > 0) {
+                    
                     attributes.add(createAttribute(Attributes.LABEL, createString(
                             childNode.getLabels().get(0).getText())));
                 }
                 // add node position if interactive layout is chosen
-                if (transformNodeLayout && (nodeLayout.getXpos() != 0 || nodeLayout.getYpos() != 0)) {
-                    double xpos = (nodeLayout.getXpos() + nodeLayout.getWidth() / 2 + offset.x);
-                    double ypos = (nodeLayout.getYpos() + nodeLayout.getHeight() / 2 + offset.y);
+                if (transformNodeLayout && (childNode.getX() != 0 || childNode.getY() != 0)) {
+                    double xpos = (childNode.getX() + childNode.getWidth() / 2 + offset.x);
+                    double ypos = (childNode.getY() + childNode.getHeight() / 2 + offset.y);
                     String posString = "\"" + Double.toString(xpos)
                             + "," + Double.toString(ypos) + "\"";
                     attributes.add(createAttribute(Attributes.POS, posString));
@@ -251,33 +249,39 @@ public class DotExporter {
      * @param statements the list to which new statements are added
      * @param transData transformation data
      */
-    private void transformEdges(final KNode parent, final List<Statement> statements,
-            final IDotTransformationData<KNode, GraphvizModel> transData) {
+    private void transformEdges(final ElkNode parent, final List<Statement> statements,
+            final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+        
         boolean hierarchy = transData.getProperty(HIERARCHY);
         boolean transformEdgeLayout = transData.getProperty(TRANSFORM_EDGE_LAYOUT);
-        KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-        Direction direction = parentLayout.getProperty(CoreOptions.DIRECTION);
+        Direction direction = parent.getProperty(CoreOptions.DIRECTION);
         boolean vertical = direction == Direction.DOWN || direction == Direction.UP
                 || direction == Direction.UNDEFINED;
-        LinkedList<KNode> nodes = new LinkedList<KNode>(parent.getChildren());
-        BiMap<KGraphElement, String> nodeIds = transData.getProperty(GRAPH_ELEMS).inverse();
+        LinkedList<ElkNode> nodes = new LinkedList<>(parent.getChildren());
+        BiMap<ElkGraphElement, String> nodeIds = transData.getProperty(GRAPH_ELEMS).inverse();
         
         while (!nodes.isEmpty()) {
-            KNode source = nodes.removeFirst();
-            for (KEdge edge : source.getOutgoingEdges()) {
-                KNode target = edge.getTarget();
+            ElkNode source = nodes.removeFirst();
+            for (ElkEdge edge : source.getOutgoingEdges()) {
+                // We don't support hyperedges
+                if (edge.isHyperedge()) {
+                    throw new UnsupportedGraphException("Hyperedges are not supported.");
+                }
+                
+                ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
+                
                 // cross-hierarchy edges are considered only if hierarchy mode is active
                 if (source.getParent() == target.getParent()
                         || hierarchy && isInsideGraph(target, transData.getSourceGraph())) {
+                    
                     EdgeStatement edgeStatement = DotFactory.eINSTANCE.createEdgeStatement();
                     List<Attribute> attributes = edgeStatement.getAttributes();
+                    
                     // set source node or cluster
                     Node sourceNode = DotFactory.eINSTANCE.createNode();
                     if (hierarchy && !source.getChildren().isEmpty()) {
-                        sourceNode.setName(source.getData(KShapeLayout.class)
-                                .getProperty(CLUSTER_DUMMY));
-                        attributes.add(createAttribute(Attributes.LTAIL,
-                                nodeIds.get(source)));
+                        sourceNode.setName(source.getProperty(CLUSTER_DUMMY));
+                        attributes.add(createAttribute(Attributes.LTAIL, nodeIds.get(source)));
                     } else {
                         sourceNode.setName(nodeIds.get(source));
                     }
@@ -286,10 +290,8 @@ public class DotExporter {
                     EdgeTarget edgeTarget = DotFactory.eINSTANCE.createEdgeTarget();
                     Node targetNode = DotFactory.eINSTANCE.createNode();
                     if (hierarchy && !target.getChildren().isEmpty()) {
-                        targetNode.setName(target.getData(KShapeLayout.class)
-                                .getProperty(CLUSTER_DUMMY));
-                        attributes.add(createAttribute(Attributes.LHEAD,
-                                nodeIds.get(target)));
+                        targetNode.setName(target.getProperty(CLUSTER_DUMMY));
+                        attributes.add(createAttribute(Attributes.LHEAD, nodeIds.get(target)));
                     } else {
                         targetNode.setName(nodeIds.get(target));
                     }
@@ -305,30 +307,28 @@ public class DotExporter {
                         attributes.add(createAttribute(Attributes.COMMENT, "\"" + edgeID + "\""));
                     }
                     
-                    // include edge routing for full export
-                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                    KPoint sourcePoint = edgeLayout.getSourcePoint();
-                    KPoint targetPoint = edgeLayout.getTargetPoint();
-                    if (transformEdgeLayout && (edgeLayout.getBendPoints().size() > 0
-                            || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
-                            || targetPoint.getX() != 0 || targetPoint.getY() != 0)) {
-                        KNode referenceNode = source;
-                        if (!ElkUtil.isDescendant(target, source)) {
-                            referenceNode = source.getParent();
-                        }
-                        StringBuilder pos = new StringBuilder();
-                        Iterator<KVector> pointIter = edgeLayout.createVectorChain().iterator();
-                        while (pointIter.hasNext()) {
-                            KVector point = pointIter.next();
-                            ElkUtil.toAbsolute(point, referenceNode);
-                            pos.append(point.x);
-                            pos.append(",");
-                            pos.append(point.y);
-                            if (pointIter.hasNext()) {
-                                pos.append(" ");
+                    // include edge routing for full export, if there is one
+                    if (!edge.getSections().isEmpty()) {
+                        ElkEdgeSection edgeSection = edge.getSections().get(0);
+                        
+                        if (transformEdgeLayout && (edgeSection.getBendPoints().size() > 0
+                                || edgeSection.getStartX() != 0 || edgeSection.getStartY() != 0
+                                || edgeSection.getEndX() != 0 || edgeSection.getEndY() != 0)) {
+                            
+                            StringBuilder pos = new StringBuilder();
+                            Iterator<KVector> pointIter = ElkUtil.createVectorChain(edgeSection).iterator();
+                            while (pointIter.hasNext()) {
+                                KVector point = pointIter.next();
+                                ElkUtil.toAbsolute(point, edge.getContainingNode());
+                                pos.append(point.x);
+                                pos.append(",");
+                                pos.append(point.y);
+                                if (pointIter.hasNext()) {
+                                    pos.append(" ");
+                                }
                             }
+                            attributes.add(createAttribute(Attributes.POS, "\"" + pos + "\""));
                         }
-                        attributes.add(createAttribute(Attributes.POS, "\"" + pos + "\""));
                     }
                     
                     statements.add(edgeStatement);
@@ -347,8 +347,8 @@ public class DotExporter {
      * @param root the root node
      * @return true if the node is in the layout graph
      */
-    private boolean isInsideGraph(final KNode node, final KNode root) {
-        KNode n = node;
+    private boolean isInsideGraph(final ElkNode node, final ElkNode root) {
+        ElkNode n = node;
         do {
             if (n == root) {
                 return true;
@@ -363,14 +363,13 @@ public class DotExporter {
      * 
      * @param statements
      *            the statement list for adding attributes
-     * @param parentLayout
-     *            the layout data for the parent node
+     * @param parentNode
+     *            the parent node
      * @param transData
      *            transformation data
      */
-    protected void setGraphAttributes(final List<Statement> statements,
-            final KGraphData parentLayout,
-            final IDotTransformationData<KNode, GraphvizModel> transData) {
+    protected void setGraphAttributes(final List<Statement> statements, final ElkNode parentNode,
+            final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         // Implement in subclasses
     }
 
@@ -450,18 +449,32 @@ public class DotExporter {
     }
 
     /**
+     * Create an attribute with given name and float value for the Dot graph.
+     * 
+     * @param name name of the attribute
+     * @param value value of the attribute
+     * @return instance of a Dot attribute
+     */
+    public static Attribute createAttribute(final String name, final double value) {
+        Attribute attribute = DotFactory.eINSTANCE.createAttribute();
+        attribute.setName(name);
+        attribute.setValue("\"" + value + "\"");
+        return attribute;
+    }
+
+    /**
      * Set edge labels for the given edge.
      * 
-     * @param kedge edge whose labels shall be set
+     * @param elkedge edge whose labels shall be set
      * @param attributes edge attribute list to which the labels are added
      * @param isVertical indicates whether vertical layout direction is active
      */
-    protected void setEdgeLabels(final KEdge kedge, final List<Attribute> attributes,
+    protected void setEdgeLabels(final ElkEdge elkedge, final List<Attribute> attributes,
             final boolean isVertical) {
-        if (kedge.getLabels().isEmpty()) {
+        
+        if (elkedge.getLabels().isEmpty()) {
             return;
         }
-        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         // as Graphviz only supports positioning of one label per label placement, all labels
         // are stacked to one big label as workaround
         StringBuilder midLabel = new StringBuilder(), headLabel = new StringBuilder(),
@@ -469,10 +482,9 @@ public class DotExporter {
         String fontName = null;
         int fontSize = 0;
         boolean isCenterFontName = false, isCenterFontSize = false;
-        for (KLabel label : kedge.getLabels()) {
+        for (ElkLabel label : elkedge.getLabels()) {
             StringBuilder buffer = midLabel;
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            EdgeLabelPlacement placement = labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+            EdgeLabelPlacement placement = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
             boolean takeFontName = false, takeFontSize = false;
             switch (placement) {
             case HEAD:
@@ -497,12 +509,11 @@ public class DotExporter {
             }
             buffer.append(label.getText());
             if (takeFontName) {
-                fontName = labelLayout.getProperty(CoreOptions.FONT_NAME);
+                fontName = label.getProperty(CoreOptions.FONT_NAME);
             }
             if (takeFontSize) {
-                fontSize = labelLayout.getProperty(CoreOptions.FONT_SIZE);
-                // increase the font size to let Graphviz prepare more room for
-                // the label
+                fontSize = label.getProperty(CoreOptions.FONT_SIZE);
+                // increase the font size to let Graphviz prepare more room for the label
                 if (fontSize > 0) {
                     fontSize *= FONT_SIZE_MULT;
                 }
@@ -512,7 +523,7 @@ public class DotExporter {
         // set mid label: if empty, it is filled with a dummy string to avoid
         // edge overlapping
         if (midLabel.length() > 0) {
-            float labelSpacing = edgeLayout.getProperty(CoreOptions.SPACING_LABEL);
+            float labelSpacing = elkedge.getProperty(CoreOptions.SPACING_LABEL);
             if (labelSpacing < 1) {
                 labelSpacing = 0f;
             }
@@ -584,8 +595,9 @@ public class DotExporter {
      * @param transData transformation data
      * @return a unique string used to identify the node
      */
-    private String getNodeID(final KNode node, final NodeType type,
-            final IDotTransformationData<KNode, GraphvizModel> transData) {
+    private String getNodeID(final ElkNode node, final NodeType type,
+            final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+        
         int id = transData.getProperty(NEXT_NODE_ID);
         transData.setProperty(NEXT_NODE_ID, id + 1);
         String idstring = null;
@@ -600,7 +612,7 @@ public class DotExporter {
             break;
         case DUMMY:
             idstring = "dummy" + id;
-            node.getData(KShapeLayout.class).setProperty(CLUSTER_DUMMY, idstring);
+            node.setProperty(CLUSTER_DUMMY, idstring);
             break;
         }
         return idstring;
@@ -613,8 +625,7 @@ public class DotExporter {
      * @param transData transformation data
      * @return a unique string used to identify the edge
      */
-    private String getEdgeID(final KEdge edge,
-            final IDotTransformationData<KNode, GraphvizModel> transData) {
+    private String getEdgeID(final ElkEdge edge, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         int id = transData.getProperty(NEXT_EDGE_ID);
         transData.setProperty(NEXT_EDGE_ID, id + 1);
         String idstring = "edge" + id;
@@ -633,9 +644,9 @@ public class DotExporter {
      * @param baseOffset offset to be added to edge and subgraph coordinates
      * @param transData transformation data
      */
-    private void applyLayout(final KNode parentNode, final List<Statement> statements,
-            final KVector baseOffset, final float borderSpacing,
-            final IDotTransformationData<KNode, GraphvizModel> transData) {
+    private void applyLayout(final ElkNode parentNode, final List<Statement> statements, final KVector baseOffset,
+            final float borderSpacing, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+        
         // process attributes: determine bounding box of the parent node
         float spacing = borderSpacing;
         KVector nodeOffset = new KVector();
@@ -652,29 +663,24 @@ public class DotExporter {
                                 double bottomy = Double.parseDouble(tokenizer.nextToken());
                                 double rightx = Double.parseDouble(tokenizer.nextToken());
                                 double topy = Double.parseDouble(tokenizer.nextToken());
+                                
                                 // set parent node attributes
-                                KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
-                                KInsets insets = parentLayout.getInsets();
-                                float width = (float) (rightx - leftx) + insets.getLeft()
-                                        + insets.getRight();
-                                float height = (float) (bottomy - topy) + insets.getTop()
-                                        + insets.getBottom();
+                                ElkInsets insets = parentNode.getProperty(CoreOptions.INSETS);
+                                double width = rightx - leftx + insets.getLeft() + insets.getRight();
+                                double height = bottomy - topy + insets.getTop() + insets.getBottom();
                                 if (parentNode == transData.getSourceGraph()) {
                                     width += 2 * spacing;
                                     height += 2 * spacing;
                                     baseOffset.add(-leftx, -topy);
                                 } else {
-                                    parentLayout.setXpos((float) (baseOffset.x + leftx
-                                            - insets.getLeft() + spacing));
-                                    parentLayout.setYpos((float) (baseOffset.y + topy
-                                            - insets.getTop() + spacing));
+                                    parentNode.setX(baseOffset.x + leftx - insets.getLeft() + spacing);
+                                    parentNode.setY(baseOffset.y + topy - insets.getTop() + spacing);
                                     spacing = 0;
                                     nodeOffset.x = -(baseOffset.x + leftx);
                                     nodeOffset.y = -(baseOffset.y + topy);
                                 }
                                 ElkUtil.resizeNode(parentNode, width, height, false, true);
-                                parentLayout.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS,
-                                        SizeConstraint.fixed());
+                                parentNode.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
                                 break attr_loop;
                             } catch (NumberFormatException exception) {
                                 // ignore exception
@@ -693,11 +699,10 @@ public class DotExporter {
                 applyNodeLayout((NodeStatement) statement, nodeOffset, spacing, transData);
             } else if (statement instanceof Subgraph) {
                 Subgraph subgraph = (Subgraph) statement;
-                KNode knode = (KNode) transData.getProperty(GRAPH_ELEMS).get(subgraph.getName());
-                applyLayout(knode, subgraph.getStatements(), baseOffset, spacing, transData);
-                KShapeLayout subGraphLayout = knode.getData(KShapeLayout.class);
-                subGraphLayout.setXpos(subGraphLayout.getXpos() + (float) nodeOffset.x);
-                subGraphLayout.setYpos(subGraphLayout.getYpos() + (float) nodeOffset.y);
+                ElkNode elknode = (ElkNode) transData.getProperty(GRAPH_ELEMS).get(subgraph.getName());
+                applyLayout(elknode, subgraph.getStatements(), baseOffset, spacing, transData);
+                elknode.setX(elknode.getX() + nodeOffset.x);
+                elknode.setY(elknode.getY() + nodeOffset.y);
             }
         }
     }
@@ -711,29 +716,30 @@ public class DotExporter {
      * @param transData transformation data
      */
     private void applyNodeLayout(final NodeStatement nodeStatement, final KVector offset,
-            final float spacing, final IDotTransformationData<KNode, GraphvizModel> transData) {
-        KNode knode = (KNode) transData.getProperty(GRAPH_ELEMS).get(
-                nodeStatement.getNode().getName());
-        if (knode == null) {
+            final float spacing, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+        
+        ElkNode elknode = (ElkNode) transData.getProperty(GRAPH_ELEMS).get(nodeStatement.getNode().getName());
+        if (elknode == null) {
             return;
         }
-        KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-        float xpos = 0.0f, ypos = 0.0f, width = 0.0f, height = 0.0f;
+        
+        double xpos = 0.0;
+        double ypos = 0.0;
+        double width = 0.0;
+        double height = 0.0f;
         for (Attribute attribute : nodeStatement.getAttributes()) {
             try {
                 if (attribute.getName().equals(Attributes.POS)) {
                     KVector pos = new KVector();
                     pos.parse((attribute.getValue()));
-                    xpos = (float) (pos.x + offset.x + spacing);
-                    ypos = (float) (pos.y + offset.y + spacing);
+                    xpos = pos.x + offset.x + spacing;
+                    ypos = pos.y + offset.y + spacing;
                 } else if (attribute.getName().equals(Attributes.WIDTH)) {
-                    StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
-                            ATTRIBUTE_DELIM);
-                    width = Float.parseFloat(tokenizer.nextToken()) * DPI;
+                    StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(), ATTRIBUTE_DELIM);
+                    width = Double.parseDouble(tokenizer.nextToken()) * DPI;
                 } else if (attribute.getName().equals(Attributes.HEIGHT)) {
-                    StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(),
-                            ATTRIBUTE_DELIM);
-                    height = Float.parseFloat(tokenizer.nextToken()) * DPI;
+                    StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(), ATTRIBUTE_DELIM);
+                    height = Double.parseDouble(tokenizer.nextToken()) * DPI;
                 }
             } catch (NumberFormatException exception) {
                 // ignore exception
@@ -743,8 +749,8 @@ public class DotExporter {
                 // ignore exception
             }
         }
-        nodeLayout.setXpos(xpos - width / 2);
-        nodeLayout.setYpos(ypos - height / 2);
+        elknode.setX(xpos - width / 2);
+        elknode.setY(ypos - height / 2);
     }
     
     /**
@@ -755,31 +761,27 @@ public class DotExporter {
      * @param transData transformation data
      */
     private void applyEdgeLayout(final EdgeStatement edgeStatement, final KVector edgeOffset,
-            final IDotTransformationData<KNode, GraphvizModel> transData) {
+            final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+        
         float borderSpacing = transData.getProperty(BORDER_SPACING);
         Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
-        KEdge kedge = (KEdge) transData.getProperty(GRAPH_ELEMS).get(
-                attributeMap.get(Attributes.COMMENT));
-        if (kedge == null) {
+        ElkEdge elkedge = (ElkEdge) transData.getProperty(GRAPH_ELEMS).get(attributeMap.get(Attributes.COMMENT));
+        if (elkedge == null) {
             return;
         }
-        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-        List<KPoint> edgePoints = edgeLayout.getBendPoints();
-        edgePoints.clear();
+        
+        ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(elkedge, true, true);
         String posString = attributeMap.get(Attributes.POS);
         if (posString == null) {
             posString = "";
         }
         
-        KNode referenceNode = kedge.getSource();
-        if (!ElkUtil.isDescendant(kedge.getTarget(), referenceNode)) {
-            referenceNode = referenceNode.getParent();
-        }
+        ElkNode referenceNode = elkedge.getContainingNode();
         KVector reference = new KVector();
         while (referenceNode != null && referenceNode != transData.getSourceGraph()) {
-            KShapeLayout nodeLayout = referenceNode.getData(KShapeLayout.class);
-            reference.x += nodeLayout.getXpos() + nodeLayout.getInsets().getLeft();
-            reference.y += nodeLayout.getYpos() + nodeLayout.getInsets().getTop();
+            ElkInsets insets = referenceNode.getProperty(CoreOptions.INSETS);
+            reference.x += referenceNode.getX() + insets.getLeft();
+            reference.y += referenceNode.getY() + insets.getTop();
             referenceNode = referenceNode.getParent();
         }
         KVector offset = edgeOffset.clone().sub(reference);
@@ -791,18 +793,16 @@ public class DotExporter {
         KVector sourcePoint = endpoints.getFirst();
         KVector targetPoint = endpoints.getSecond();
         if (!splines.isEmpty()) {
-            KLayoutDataFactory layoutDataFactory = KLayoutDataFactory.eINSTANCE;
-            
             // the first point in the list is the start point, if no arrowhead is given
             if (sourcePoint == null) {
                 List<KVector> points = splines.get(0);
                 if (!points.isEmpty()) {
                     sourcePoint = points.remove(0);
                 } else {
-                    KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
+                    ElkNode sourceNode = ElkGraphUtil.connectableShapeToNode(elkedge.getSources().get(0));
                     sourcePoint = new KVector();
-                    sourcePoint.x = sourceLayout.getXpos() + sourceLayout.getWidth() / 2;
-                    sourcePoint.y = sourceLayout.getYpos() + sourceLayout.getHeight() / 2;
+                    sourcePoint.x = sourceNode.getX() + sourceNode.getWidth() / 2;
+                    sourcePoint.y = sourceNode.getY() + sourceNode.getHeight() / 2;
                 }
             }
             
@@ -812,108 +812,108 @@ public class DotExporter {
                 if (!points.isEmpty()) {
                     targetPoint = points.remove(points.size() - 1);
                 } else {
-                    KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
+                    ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
                     targetPoint = new KVector();
-                    targetPoint.x = targetLayout.getXpos() + targetLayout.getWidth() / 2;
-                    targetPoint.y = targetLayout.getYpos() + targetLayout.getHeight() / 2;
+                    targetPoint.x = targetNode.getX() + targetNode.getWidth() / 2;
+                    targetPoint.y = targetNode.getY() + targetNode.getHeight() / 2;
                 }
             }
             
             // add all other control points to the edge
             for (KVectorChain points : splines) {
                 for (KVector point : points) {
-                    KPoint controlPoint = layoutDataFactory.createKPoint();
-                    controlPoint.applyVector(point);
-                    edgePoints.add(controlPoint);
+                    ElkGraphUtil.createBendPoint(edgeSection, point.x, point.y);
                 }
             }
-            edgeLayout.getSourcePoint().applyVector(sourcePoint);
-            edgeLayout.getTargetPoint().applyVector(targetPoint);
+            edgeSection.setStartLocation(sourcePoint.x, sourcePoint.y);
+            edgeSection.setEndLocation(targetPoint.x, targetPoint.y);
             
             // set source and target port positions accordingly
             boolean adaptPortPositions = transData.getProperty(ADAPT_PORT_POSITIONS);
-            if (adaptPortPositions && (kedge.getSourcePort() != null || kedge.getTargetPort() != null)) {
-                referenceNode = kedge.getSource();
-                if (!ElkUtil.isDescendant(kedge.getTarget(), referenceNode)) {
-                    referenceNode = referenceNode.getParent();
-                }
-                if (kedge.getSourcePort() != null) {
+            if (adaptPortPositions
+                    && (elkedge.getSources().get(0) instanceof ElkPort
+                            || elkedge.getTargets().get(0) instanceof ElkPort)) {
+                
+                referenceNode = elkedge.getContainingNode();
+                
+                if (elkedge.getSources().get(0) instanceof ElkPort) {
+                    ElkPort sourcePort = (ElkPort) elkedge.getSources().get(0);
+                    ElkNode sourceNode = sourcePort.getParent();
+                    
                     ElkUtil.toAbsolute(sourcePoint, referenceNode);
-                    ElkUtil.toRelative(sourcePoint, kedge.getSource().getParent());
-                    KShapeLayout portLayout = kedge.getSourcePort().getData(KShapeLayout.class);
-                    KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
-                    portLayout.setXpos((float) sourcePoint.x - sourceLayout.getXpos()
-                            - portLayout.getWidth() / 2);
-                    portLayout.setYpos((float) sourcePoint.y - sourceLayout.getYpos()
-                            - portLayout.getHeight() / 2);
+                    ElkUtil.toRelative(sourcePoint, sourceNode);
+                    
+                    sourcePort.setX((float) sourcePoint.x - sourceNode.getX() - sourcePort.getWidth() / 2);
+                    sourcePort.setY((float) sourcePoint.y - sourceNode.getY() - sourcePort.getHeight() / 2);
                 }
-                if (kedge.getTargetPort() != null) {
+                
+                if (elkedge.getTargets().get(0) instanceof ElkPort) {
+                    ElkPort targetPort = (ElkPort) elkedge.getTargets().get(0);
+                    ElkNode targetNode = targetPort.getParent();
+                    
                     ElkUtil.toAbsolute(targetPoint, referenceNode);
-                    ElkUtil.toRelative(targetPoint, kedge.getTarget().getParent());
-                    KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
-                    KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
-                    portLayout.setXpos((float) targetPoint.x - targetLayout.getXpos()
-                            - portLayout.getWidth() / 2);
-                    portLayout.setYpos((float) targetPoint.y - targetLayout.getYpos()
-                            - portLayout.getHeight() / 2);
+                    ElkUtil.toRelative(targetPoint, targetNode);
+                    
+                    targetPort.setX(targetPoint.x - targetNode.getX() - targetPort.getWidth() / 2);
+                    targetPort.setY(targetPoint.y - targetNode.getY() - targetPort.getHeight() / 2);
                 }
             }
         }
         
         if (transData.getProperty(USE_SPLINES)) {
-            edgeLayout.setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+            elkedge.setProperty(CoreOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
         }
 
         // process the edge labels
         String labelPos = attributeMap.get(Attributes.LABELPOS);
         if (labelPos != null) {
-            applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.CENTER, offset);
+            applyEdgeLabelPos(elkedge, labelPos, EdgeLabelPlacement.CENTER, offset);
         }
         labelPos = attributeMap.get(Attributes.HEADLP);
         if (labelPos != null) {
-            applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.HEAD, offset);
+            applyEdgeLabelPos(elkedge, labelPos, EdgeLabelPlacement.HEAD, offset);
         }
         labelPos = attributeMap.get(Attributes.TAILLP);
         if (labelPos != null) {
-            applyEdgeLabelPos(kedge, labelPos, EdgeLabelPlacement.TAIL, offset);
+            applyEdgeLabelPos(elkedge, labelPos, EdgeLabelPlacement.TAIL, offset);
         }
     }
 
     /**
      * Applies the edge label positions for the given edge.
      * 
-     * @param kedge edge for which labels are processed
+     * @param elkedge edge for which labels are processed
      * @param posString string with label position
      * @param placement label placement to choose
      * @param offsetx x offset added to positions
      * @param offsety y offset added to positions
      */
-    private void applyEdgeLabelPos(final KEdge kedge, final String posString,
+    private void applyEdgeLabelPos(final ElkEdge elkedge, final String posString,
             final EdgeLabelPlacement placement, final KVector offset) {
-        float combinedWidth = 0.0f, combinedHeight = 0.0f;
-        for (KLabel label : kedge.getLabels()) {
-            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-            EdgeLabelPlacement elp = labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-            if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED
-                    && placement == EdgeLabelPlacement.CENTER) {
-                combinedWidth = Math.max(combinedWidth, labelLayout.getWidth());
-                combinedHeight += labelLayout.getHeight();
+        
+        double combinedWidth = 0.0;
+        double combinedHeight = 0.0;
+        for (ElkLabel label : elkedge.getLabels()) {
+            EdgeLabelPlacement elp = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+            if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED && placement == EdgeLabelPlacement.CENTER) {
+                combinedWidth = Math.max(combinedWidth, label.getWidth());
+                combinedHeight += label.getHeight();
             }
         }
         try {
             KVector pos = new KVector();
             pos.parse(posString);
-            float xpos = (float) (pos.x - combinedWidth / 2 + offset.x);
-            float ypos = (float) (pos.y - combinedHeight / 2 + offset.y);
-            for (KLabel label : kedge.getLabels()) {
-                KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                EdgeLabelPlacement elp = labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-                if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED
-                        && placement == EdgeLabelPlacement.CENTER) {
-                    float xoffset = (combinedWidth - labelLayout.getWidth()) / 2;
-                    labelLayout.setXpos(xpos + xoffset);
-                    labelLayout.setYpos(ypos);
-                    ypos += labelLayout.getHeight();
+            
+            double xpos = pos.x - combinedWidth / 2 + offset.x;
+            double ypos = pos.y - combinedHeight / 2 + offset.y;
+            
+            for (ElkLabel label : elkedge.getLabels()) {
+                EdgeLabelPlacement elp = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+                if (elp == placement || elp == EdgeLabelPlacement.UNDEFINED && placement == EdgeLabelPlacement.CENTER) {
+                    double xoffset = (combinedWidth - label.getWidth()) / 2;
+                    label.setX(xpos + xoffset);
+                    label.setY(ypos);
+                    ypos += label.getHeight();
                 }
             }
         } catch (IllegalArgumentException exception) {
