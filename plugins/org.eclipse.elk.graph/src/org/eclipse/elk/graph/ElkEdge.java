@@ -35,6 +35,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.elk.graph.ElkEdge#getSections <em>Sections</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.ElkEdge#isHyperedge <em>Hyperedge</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.ElkEdge#isHierarchical <em>Hierarchical</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.ElkEdge#isSelfloop <em>Selfloop</em>}</li>
  * </ul>
  *
  * @see org.eclipse.elk.graph.ElkGraphPackage#getElkEdge()
@@ -133,7 +134,7 @@ public interface ElkEdge extends ElkGraphElement {
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
-     * Whether this edge is a hyperedge or not. It is considered to be a hyperedge if it has at most one source and at most one target. The result is only meaningful if the node has at least one source and one target.
+     * Whether this edge is a hyperedge or not. It is considered to not be a hyperedge if it has at most one source and at most one target. The result is only meaningful if the node has at least one source and one target.
      * 
      * <p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.</p>
      * <!-- end-model-doc -->
@@ -159,5 +160,21 @@ public interface ElkEdge extends ElkGraphElement {
      * @generated
      */
     boolean isHierarchical();
+
+    /**
+     * Returns the value of the '<em><b>Selfloop</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Whether the edge is a self loop or not. It is a self loop if all of its sources and targets are the same node (or its ports). This is only meaningful if the edge connects at least two end points.
+     * 
+     * <p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.</p>
+     * <!-- end-model-doc -->
+     * @return the value of the '<em>Selfloop</em>' attribute.
+     * @see org.eclipse.elk.graph.ElkGraphPackage#getElkEdge_Selfloop()
+     * @model transient="true" changeable="false" volatile="true"
+     * @generated
+     */
+    boolean isSelfloop();
 
 } // ElkEdge

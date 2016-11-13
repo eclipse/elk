@@ -10,10 +10,7 @@
  */
 package org.eclipse.elk.graph.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -45,6 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeImpl#getSections <em>Sections</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeImpl#isHyperedge <em>Hyperedge</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeImpl#isHierarchical <em>Hierarchical</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeImpl#isSelfloop <em>Selfloop</em>}</li>
  * </ul>
  *
  * @generated
@@ -99,6 +97,16 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
      * @ordered
      */
     protected static final boolean HIERARCHICAL_EDEFAULT = false;
+
+    /**
+     * The default value of the '{@link #isSelfloop() <em>Selfloop</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #isSelfloop()
+     * @generated
+     * @ordered
+     */
+    protected static final boolean SELFLOOP_EDEFAULT = false;
 
     /**
      * <!-- begin-user-doc -->
@@ -202,7 +210,7 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
      * @generated NOT
      */
     public boolean isHyperedge() {
-        return getSources().size() <= 1 && getTargets().size() <= 1;
+        return !(getSources().size() <= 1 && getTargets().size() <= 1);
     }
 
     /**
@@ -215,11 +223,7 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
         // graph. If they are, we're a simple edge. If they are not, we're a hyperedge.
         ElkNode commonRepresentingNode = null;
         
-        List<ElkConnectableShape> incidentShapes = new ArrayList<>(getSources().size() + getTargets().size());
-        incidentShapes.addAll(getSources());
-        incidentShapes.addAll(getTargets());
-        
-        for (ElkConnectableShape incidentShape : incidentShapes) {
+        for (ElkConnectableShape incidentShape : ElkGraphUtil.allIncidentShapes(this)) {
             // Compute representing node
             ElkNode shapeNode = ElkGraphUtil.connectableShapeToNode(incidentShape);
             
@@ -232,6 +236,30 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
         }
         
         return false;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public boolean isSelfloop() {
+        // We're basically iterating over all sources and targets and check whether they all belong to the same node
+        ElkNode commonNode = null;
+        
+        for (ElkConnectableShape incidentShape : ElkGraphUtil.allIncidentShapes(this)) {
+            // Compute representing node
+            ElkNode shapeNode = ElkGraphUtil.connectableShapeToNode(incidentShape);
+            
+            if (commonNode == null) {
+                commonNode = shapeNode;
+            } else if (commonNode != shapeNode) {
+                // Not a self loop
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     /**
@@ -311,6 +339,8 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
                 return isHyperedge();
             case ElkGraphPackage.ELK_EDGE__HIERARCHICAL:
                 return isHierarchical();
+            case ElkGraphPackage.ELK_EDGE__SELFLOOP:
+                return isSelfloop();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -387,6 +417,8 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
                 return isHyperedge() != HYPEREDGE_EDEFAULT;
             case ElkGraphPackage.ELK_EDGE__HIERARCHICAL:
                 return isHierarchical() != HIERARCHICAL_EDEFAULT;
+            case ElkGraphPackage.ELK_EDGE__SELFLOOP:
+                return isSelfloop() != SELFLOOP_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }
