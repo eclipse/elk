@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.Assert;
 
 import com.google.common.collect.Iterators;
@@ -32,43 +29,22 @@ public final class GraphTestUtils {
      * 
      * @return a parent node that contains graph elements
      */
-    public static KNode createSimpleGraph() {
+    public static ElkNode createSimpleGraph() {
         // create parent node
-        KNode parentNode = ElkUtil.createInitializedNode();
+        ElkNode parentNode = ElkGraphUtil.createGraph();
 
-        // create child nodes
-        KNode childNode1 = ElkUtil.createInitializedNode();
-        // This automatically adds the child to the list of its parent's
-        // children.
-        childNode1.setParent(parentNode);
-        KLabel nodeLabel1 = ElkUtil.createInitializedLabel(childNode1);
-        nodeLabel1.setText("node1");
-        KNode childNode2 = ElkUtil.createInitializedNode();
-        childNode2.setParent(parentNode);
-        KLabel nodeLabel2 = ElkUtil.createInitializedLabel(childNode2);
-        nodeLabel2.setText("node2");
+        // create child nodes with labels
+        ElkNode childNode1 = ElkGraphUtil.createNode(parentNode);
+        ElkGraphUtil.createLabel("node1", childNode1);
+        ElkNode childNode2 = ElkGraphUtil.createNode(parentNode);
+        ElkGraphUtil.createLabel("node2", childNode2);
 
         // create ports (optional)
-        KPort port1 = ElkUtil.createInitializedPort();
-        // This automatically adds the port to the node's list of ports.
-        port1.setNode(childNode1);
-        KPort port2 = ElkUtil.createInitializedPort();
-        port2.setNode(childNode2);
+        ElkPort port1 = ElkGraphUtil.createPort(childNode1);
+        ElkPort port2 = ElkGraphUtil.createPort(childNode2);
 
-        // create edges
-        KEdge edge1 = ElkUtil.createInitializedEdge();
-        // This automatically adds the edge to the node's list of outgoing
-        // edges.
-        edge1.setSource(childNode1);
-        // This automatically adds the edge to the node's list of incoming
-        // edges.
-        edge1.setTarget(childNode2);
-        // As our ports do not distinguish between incoming and outgoing edges,
-        // the edges must be added manually to their list of edges.
-        edge1.setSourcePort(port1);
-        port1.getEdges().add(edge1);
-        edge1.setTargetPort(port2);
-        port2.getEdges().add(edge1);
+        // create a simple edge
+        ElkGraphUtil.createSimpleEdge(port1, port2);
 
         return parentNode;
     }
@@ -76,19 +52,17 @@ public final class GraphTestUtils {
     /**
      * @return a hierarchical graph composed of two {@link #createSimpleGraph()}s.
      */
-    public static KNode createHierarchicalGraph() {
+    public static ElkNode createHierarchicalGraph() {
         // create parent node
-        KNode parentNode = ElkUtil.createInitializedNode();
+        ElkNode parentNode = ElkGraphUtil.createGraph();
 
-        KNode child1 = createSimpleGraph();
+        ElkNode child1 = createSimpleGraph();
         child1.setParent(parentNode);
-        KLabel nodeLabel1 = ElkUtil.createInitializedLabel(child1);
-        nodeLabel1.setText("child1");
+        ElkGraphUtil.createLabel("child1", child1);
 
-        KNode child2 = createSimpleGraph();
+        ElkNode child2 = createSimpleGraph();
         child2.setParent(parentNode);
-        KLabel nodeLabel2 = ElkUtil.createInitializedLabel(child2);
-        nodeLabel2.setText("child2");
+        ElkGraphUtil.createLabel("child2", child2);
 
         return parentNode;
     }
@@ -100,11 +74,10 @@ public final class GraphTestUtils {
      * @param parentNode
      *            root node of a graph.
      */
-    public static void checkNodeCoordinates(final KNode parentNode) {
-        Iterators.filter(parentNode.eAllContents(), KNode.class).forEachRemaining(node -> {
-            KShapeLayout shapeLayout = node.getData(KShapeLayout.class);
-            Assert.assertTrue(shapeLayout.getXpos() > 0);
-            Assert.assertTrue(shapeLayout.getYpos() > 0);
+    public static void checkNodeCoordinates(final ElkNode parentNode) {
+        Iterators.filter(parentNode.eAllContents(), ElkNode.class).forEachRemaining(node -> {
+            Assert.assertTrue(node.getX() > 0);
+            Assert.assertTrue(node.getY() > 0);
         });
     }
 }

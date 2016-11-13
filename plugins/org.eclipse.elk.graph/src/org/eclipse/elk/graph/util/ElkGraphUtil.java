@@ -112,6 +112,19 @@ public final class ElkGraphUtil {
         
         return label;
     }
+
+    /**
+     * Creates a new label with the given text for the given graph element.
+     *
+     * @param text the label's text.
+     * @param parent the parent element. May be {@code null}, in which case the new label is not added to anything.
+     * @return the new label.
+     */
+    public static ElkLabel createLabel(final String text, final ElkGraphElement parent) {
+        ElkLabel label = createLabel(parent);
+        label.setText(text);
+        return label;
+    }
     
     /**
      * Creates a new edge contained in the given node, but not connecting anything yet. Note that the containing

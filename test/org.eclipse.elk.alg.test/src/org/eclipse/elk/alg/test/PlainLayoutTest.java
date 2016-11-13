@@ -13,12 +13,10 @@ package org.eclipse.elk.alg.test;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.junit.Test;
 
 import com.google.common.collect.Iterators;
@@ -34,14 +32,13 @@ public class PlainLayoutTest {
      */
     @Test
     public void testPlainLayout() {
-
         // create a hierarchical KGraph for layout
-        KNode parentNode = GraphTestUtils.createHierarchicalGraph();
+        ElkNode parentNode = GraphTestUtils.createHierarchicalGraph();
 
         // configure every hierarchical node to use ELK Layered (which would also be the default) 
-        getAllKNodes(parentNode).forEachRemaining(node -> {
+        getAllElkNodes(parentNode).forEachRemaining(node -> {
             if (!node.getChildren().isEmpty()) {
-                node.getData(KLayoutData.class).setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
+                node.setProperty(CoreOptions.ALGORITHM, LayeredOptions.ALGORITHM_ID);
             }
         });
 
@@ -68,20 +65,19 @@ public class PlainLayoutTest {
      * @param progressMonitor
      *            progress monitor for the layout run
      */
-    private void printLayoutInfo(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
+    private void printLayoutInfo(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
         // print execution time of the algorithm run
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
         System.out.println("Execution time: " + progressMonitor.getExecutionTime() * 1000 + " ms");
 
         // print position of each node
-        getAllKNodes(parentNode).forEachRemaining(node -> {
-            KShapeLayout childLayout = node.getData(KShapeLayout.class);
-            System.out.println(node.getLabels().get(0).getText() + ": x = " + childLayout.getXpos() + ", y = "
-                    + childLayout.getYpos());
+        getAllElkNodes(parentNode).forEachRemaining(node -> {
+            System.out.println(node.getLabels().get(0).getText() + ": x = " + node.getX() + ", y = "
+                    + node.getY());
         });
     }
     
-    private UnmodifiableIterator<KNode> getAllKNodes(final KNode parentNode) {
-        return Iterators.filter(parentNode.eAllContents(), KNode.class);
+    private UnmodifiableIterator<ElkNode> getAllElkNodes(final ElkNode parentNode) {
+        return Iterators.filter(parentNode.eAllContents(), ElkNode.class);
     }
 }
