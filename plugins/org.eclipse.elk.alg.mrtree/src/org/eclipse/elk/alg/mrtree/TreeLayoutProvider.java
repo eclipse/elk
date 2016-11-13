@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Layout provider to connect the tree layouter to the Eclipse based layout services and orchestrate
@@ -41,9 +41,9 @@ public class TreeLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
         // build tGraph
-        IGraphImporter<KNode> graphImporter = new KGraphImporter();
+        IGraphImporter<ElkNode> graphImporter = new ElkGraphImporter();
         TGraph tGraph = graphImporter.importGraph(kgraph);
 
         // split the input graph into components

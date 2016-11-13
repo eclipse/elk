@@ -15,7 +15,7 @@ import org.eclipse.elk.alg.mrtree.graph.TGraph;
 /**
  * Interface for importer classes for graph structure. Graph importers
  * should usually subclass
- * {@link org.eclipse.elk.alg.mrtree.KGraphImporter KGraphImporter}
+ * {@link org.eclipse.elk.alg.mrtree.ElkGraphImporter KGraphImporter}
  * instead of implementing this interface directly.
  * 
  * <p>Graph importers are encouraged to set the {@link MrTreeOptions#GRAPH_PROPERTIES}
