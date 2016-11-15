@@ -21,7 +21,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.nodespacing.KimlNodeDimensionCalculation;
+import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 
 /**
@@ -61,7 +61,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
         // ports are considered during margin calculation.
         // Setting this to false would consider end labels in the margin calculation of the corresponding
         // dummy node instead of the originally connected port.
-        KimlNodeDimensionCalculation.calculateNodeMargins(LGraphAdapters.adapt(layeredGraph, true));
+        NodeDimensionCalculation.calculateNodeMargins(LGraphAdapters.adapt(layeredGraph, true));
 
         // Iterate through the layers to additionally handle comments
         double spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE).doubleValue();

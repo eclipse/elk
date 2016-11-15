@@ -514,17 +514,17 @@ public final class LGraphUtil {
      * @param side the side on the node for the given port
      * @return the offset on the side
      */
-    static float calcPortOffset(final LPort port, final PortSide side) {
+    static double calcPortOffset(final LPort port, final PortSide side) {
         LNode node = port.getNode();
         switch (side) {
         case NORTH:
-            return (float) -(port.getPosition().y + port.getSize().y);
+            return -(port.getPosition().y + port.getSize().y);
         case EAST:
-            return (float) (port.getPosition().x - node.getSize().x);
+            return port.getPosition().x - node.getSize().x;
         case SOUTH:
-            return (float) (port.getPosition().y - node.getSize().y);
+            return port.getPosition().y - node.getSize().y;
         case WEST:
-            return (float) -(port.getPosition().x + port.getSize().x);
+            return -(port.getPosition().x + port.getSize().x);
         }
         return 0;
     }
@@ -879,7 +879,7 @@ public final class LGraphUtil {
         KVector portPosition = new KVector(portDummy.getPosition());
         portPosition.x += portDummy.getSize().x / 2.0;
         portPosition.y += portDummy.getSize().y / 2.0;
-        float portOffset = portDummy.getProperty(LayeredOptions.PORT_BORDER_OFFSET);
+        double portOffset = portDummy.getProperty(LayeredOptions.PORT_BORDER_OFFSET);
         
         // Get some properties of the graph
         KVector graphSize = graph.getSize();

@@ -11,34 +11,34 @@
 package org.eclipse.elk.alg.layered.graph.transform;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Manages the transformation of KGraphs to LayeredGraphs. Sets the
+ * Manages the transformation of ELK Graphs to LayeredGraphs. Sets the
  * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions#GRAPH_PROPERTIES GRAPH_PROPERTIES}
  * property on imported graphs.
  * 
  * @author msp
  * @author cds
- * @see KGraphImporter
- * @see KGraphLayoutTransferrer
+ * @see ElkGraphImporter
+ * @see ElkGraphLayoutTransferrer
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public class KGraphTransformer implements IGraphTransformer<KNode> {
+public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
     
     /**
      * {@inheritDoc}
      */
-    public LGraph importGraph(final KNode graph) {
-        return new KGraphImporter().importGraph(graph);
+    public LGraph importGraph(final ElkNode graph) {
+        return new ElkGraphImporter().importGraph(graph);
     }
     
     /**
      * {@inheritDoc}
      */
     public void applyLayout(final LGraph layeredGraph) {
-        new KGraphLayoutTransferrer().applyLayout(layeredGraph);
+        new ElkGraphLayoutTransferrer().applyLayout(layeredGraph);
     }
     
 }

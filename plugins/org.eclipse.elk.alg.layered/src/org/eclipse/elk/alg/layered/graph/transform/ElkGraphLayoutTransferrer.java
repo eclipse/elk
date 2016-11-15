@@ -24,9 +24,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkInsets;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeRouting;
@@ -35,19 +33,21 @@ import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;
 
 /**
- * Implements the graph layout application aspect of {@link KGraphTransformer}.
+ * Implements the graph layout application aspect of {@link ElkGraphTransformer}.
  * 
  * @author cds
  */
-class KGraphLayoutTransferrer {
+class ElkGraphLayoutTransferrer {
 
     /**
      * Applies the layout information contained in the given LGraph to the KGraph elements it was
@@ -58,12 +58,12 @@ class KGraphLayoutTransferrer {
      */
     public void applyLayout(final LGraph lgraph) {
         Object graphOrigin = lgraph.getProperty(InternalProperties.ORIGIN);
-        if (!(graphOrigin instanceof KNode)) {
+        if (!(graphOrigin instanceof ElkNode)) {
             return;
         }
         
-        // The KNode that represents this graph in the original KGraph
-        KNode parentKNode = (KNode) graphOrigin;
+        // The ElkNode that represents this graph in the original ElkGraph
+        ElkNode parentElkNode = (ElkNode) graphOrigin;
         
         // The LNode that represents this graph in the upper hierarchy level, if any
         LNode parentLNode = (LNode) lgraph.getProperty(InternalProperties.PARENT_LNODE);
@@ -72,26 +72,28 @@ class KGraphLayoutTransferrer {
         KVector offset = new KVector(lgraph.getOffset());
         
         // Adjust offset (and with it the positions), if requested
-        KShapeLayout parentLayout = parentKNode.getData(KShapeLayout.class);
         LInsets lInsets = lgraph.getInsets();
-        KInsets kInsets = parentLayout.getInsets();
         
         // We may need to apply increased top/left insets
-        final EnumSet<SizeOptions> sizeOptions = parentLayout.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
+        final EnumSet<SizeOptions> sizeOptions = parentElkNode.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
         KVector additionalInsets = new KVector();
+        
+        // MIGRATE I believe this will become the only case since the ElkGraph doesn't know about insets?
         if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_INSETS)) {
-            additionalInsets.x = lInsets.left - kInsets.getLeft();
-            additionalInsets.y = lInsets.top - kInsets.getTop();
+            additionalInsets.x = lInsets.left;
+            additionalInsets.y = lInsets.top;
             offset.x += additionalInsets.x;
             offset.y += additionalInsets.y;
         }
         
         // Set node insets, if requested
         if (sizeOptions.contains(SizeOptions.COMPUTE_INSETS)) {
-            kInsets.setBottom((float) lInsets.bottom);
-            kInsets.setTop((float) lInsets.top);
-            kInsets.setLeft((float) lInsets.left);
-            kInsets.setRight((float) lInsets.right);
+            ElkInsets elkInsets = parentElkNode.getProperty(LayeredOptions.INSETS);
+            
+            elkInsets.setBottom(lInsets.bottom);
+            elkInsets.setTop(lInsets.top);
+            elkInsets.setLeft(lInsets.left);
+            elkInsets.setRight(lInsets.right);
         }
 
         // Along the way, we collect the list of edges to be processed later
@@ -101,16 +103,14 @@ class KGraphLayoutTransferrer {
         for (LNode lnode : lgraph.getLayerlessNodes()) {
             Object origin = lnode.getProperty(InternalProperties.ORIGIN);
 
-            if (origin instanceof KNode) {
+            if (origin instanceof ElkNode) {
                 applyNodeLayout(lnode, offset);
-            } else if (origin instanceof KPort && parentLNode == null) {
-                
+            } else if (origin instanceof ElkPort && parentLNode == null) {
                 // It's an external port. Set its position if it hasn't already been done before
-                KPort kport = (KPort) origin;
-                KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+                ElkPort elkport = (ElkPort) origin;
                 KVector portPosition = LGraphUtil.getExternalPortPosition(lgraph, lnode,
-                        portLayout.getWidth(), portLayout.getHeight());
-                portLayout.applyVector(portPosition);
+                        elkport.getWidth(), elkport.getHeight());
+                elkport.setLocation(portPosition.x, portPosition.y);
             }
 
             // Collect edges, except if they go into a nested subgraph (those edges need to be
@@ -133,7 +133,7 @@ class KGraphLayoutTransferrer {
         }
         
         // Iterate through all edges
-        EdgeRouting routing = parentLayout.getProperty(LayeredOptions.EDGE_ROUTING);
+        EdgeRouting routing = parentElkNode.getProperty(LayeredOptions.EDGE_ROUTING);
         for (LEdge ledge : edgeList) {
             applyEdgeLayout(ledge, routing, offset, additionalInsets);
         }
@@ -159,54 +159,49 @@ class KGraphLayoutTransferrer {
      *            offset to add to coordinates.
      */
     private void applyNodeLayout(final LNode lnode, final KVector offset) {
-        final KNode knode = (KNode) lnode.getProperty(InternalProperties.ORIGIN);
+        final ElkNode elknode = (ElkNode) lnode.getProperty(InternalProperties.ORIGIN);
         
         // Set the node position
-        KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-        nodeLayout.setXpos((float) (lnode.getPosition().x + offset.x));
-        nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
+        elknode.setX(lnode.getPosition().x + offset.x);
+        elknode.setY(lnode.getPosition().y + offset.y);
         
         // Set the node size, if necessary
-        if (!nodeLayout.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS).isEmpty()
+        if (!elknode.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS).isEmpty()
                 || lnode.getProperty(InternalProperties.NESTED_LGRAPH) != null) {
-            nodeLayout.setWidth((float) lnode.getSize().x);
-            nodeLayout.setHeight((float) lnode.getSize().y);
+            
+            elknode.setWidth(lnode.getSize().x);
+            elknode.setHeight(lnode.getSize().y);
         }
 
         // Set port positions
         for (LPort lport : lnode.getPorts()) {
             Object origin = lport.getProperty(InternalProperties.ORIGIN);
-            if (origin instanceof KPort) {
-                KPort kport = (KPort) origin;
-                KShapeLayout portLayout = kport.getData(KShapeLayout.class);
-                portLayout.applyVector(lport.getPosition());
-                portLayout.setProperty(LayeredOptions.PORT_SIDE, lport.getSide());
+            if (origin instanceof ElkPort) {
+                ElkPort elkport = (ElkPort) origin;
+                elkport.setLocation(lport.getPosition().x, lport.getPosition().y);
+                elkport.setProperty(LayeredOptions.PORT_SIDE, lport.getSide());
             }
         }
         
         // Set node label positions, if they were not fixed
         // (that is at least one of the node or the label has a node label placement set)
-        final boolean nodeHasLabelPlacement =
-                !lnode.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT).isEmpty();
+        final boolean nodeHasLabelPlacement = !lnode.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT).isEmpty();
         
         for (LLabel llabel : lnode.getLabels()) {
-            if (nodeHasLabelPlacement
-                    || !llabel.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT).isEmpty()) {
-                KLabel klabel = (KLabel) llabel.getProperty(InternalProperties.ORIGIN);
-                KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                klabelLayout.applyVector(llabel.getPosition());
+            if (nodeHasLabelPlacement || !llabel.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT).isEmpty()) {
+                ElkLabel elklabel = (ElkLabel) llabel.getProperty(InternalProperties.ORIGIN);
+                elklabel.setLocation(llabel.getPosition().x, llabel.getPosition().y);
             }
         }
         
         // Set port label positions, if they were not fixed
         if (lnode.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT) != PortLabelPlacement.FIXED) {
             for (LPort lport : lnode.getPorts()) {
-                for (LLabel label : lport.getLabels()) {
-                    KLabel klabel = (KLabel) label.getProperty(InternalProperties.ORIGIN);
-                    KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                    klabelLayout.setWidth((float) label.getSize().x);
-                    klabelLayout.setHeight((float) label.getSize().y);
-                    klabelLayout.applyVector(label.getPosition());
+                for (LLabel llabel : lport.getLabels()) {
+                    ElkLabel elklabel = (ElkLabel) llabel.getProperty(InternalProperties.ORIGIN);
+                    elklabel.setWidth(llabel.getSize().x);
+                    elklabel.setHeight(llabel.getSize().y);
+                    elklabel.setLocation(llabel.getPosition().x, llabel.getPosition().y);
                 }
             }
         }
@@ -229,17 +224,16 @@ class KGraphLayoutTransferrer {
     private void applyEdgeLayout(final LEdge ledge, final EdgeRouting routing, final KVector offset,
             final KVector additionalInsets) {
 
-        KEdge kedge = (KEdge) ledge.getProperty(InternalProperties.ORIGIN);
+        ElkEdge elkedge = (ElkEdge) ledge.getProperty(InternalProperties.ORIGIN);
         
         // Only the orthogonal edge routing algorithm supports self-loops. Thus, leave self-loops
         // untouched if another routing algorithm is selected.
-        if (kedge == null) {
+        if (elkedge == null) {
             return;
         } else if (ledge.isSelfLoop() && routing != EdgeRouting.ORTHOGONAL && routing != EdgeRouting.SPLINES) {
             return;
         }
         
-        KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
         KVectorChain bendPoints = ledge.getBendPoints();
         KVector edgeOffset = offset;
 
@@ -278,33 +272,36 @@ class KGraphLayoutTransferrer {
 
         // Translate the bend points by the offset and apply the bend points
         bendPoints.offset(edgeOffset);
-        edgeLayout.applyVectorChain(bendPoints);
+        
+        // Give the edge a proper edge section to store routing information
+        ElkEdgeSection elkedgeSection = ElkGraphUtil.firstEdgeSection(elkedge, true, true);
+        ElkUtil.applyVectorChain(bendPoints, elkedgeSection);
 
         // Apply layout to labels
-        for (LLabel label : ledge.getLabels()) {
-            KLabel klabel = (KLabel) label.getProperty(InternalProperties.ORIGIN);
-            KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-            klabelLayout.setWidth((float) label.getSize().x);
-            klabelLayout.setHeight((float) label.getSize().y);
-            klabelLayout.applyVector(label.getPosition().add(edgeOffset));
+        for (LLabel llabel : ledge.getLabels()) {
+            ElkLabel elklabel = (ElkLabel) llabel.getProperty(InternalProperties.ORIGIN);
+            elklabel.setWidth(llabel.getSize().x);
+            elklabel.setHeight(llabel.getSize().y);
+            elklabel.setLocation(llabel.getPosition().x + edgeOffset.x,
+                                 llabel.getPosition().y + edgeOffset.y);
         }
         
         // Copy junction points
         KVectorChain junctionPoints = ledge.getProperty(LayeredOptions.JUNCTION_POINTS);
         if (junctionPoints != null) {
             junctionPoints.offset(edgeOffset);
-            edgeLayout.setProperty(LayeredOptions.JUNCTION_POINTS, junctionPoints);
+            elkedge.setProperty(LayeredOptions.JUNCTION_POINTS, junctionPoints);
         } else {
-            edgeLayout.setProperty(LayeredOptions.JUNCTION_POINTS, null);
+            elkedge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
         }
 
         // Mark the edge with information about its routing
         if (routing == EdgeRouting.SPLINES) {
             // SPLINES means that bend points shall be interpreted as control points for splines
-            edgeLayout.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
+            elkedge.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.SPLINES);
         } else {
             // null means that bend points shall be interpreted as bend points
-            edgeLayout.setProperty(LayeredOptions.EDGE_ROUTING, null);
+            elkedge.setProperty(LayeredOptions.EDGE_ROUTING, null);
         }
     }
 
@@ -315,30 +312,29 @@ class KGraphLayoutTransferrer {
      *            the edge that has the layout information.
      */
     private void applyParentNodeLayout(final LGraph lgraph) {
-        KNode knode = (KNode) lgraph.getProperty(InternalProperties.ORIGIN);
-        KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
+        ElkNode elknode = (ElkNode) lgraph.getProperty(InternalProperties.ORIGIN);
         
         KVector actualGraphSize = lgraph.getActualSize();
-        knodeLayout.setProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
+        elknode.setProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
 
         if (lgraph.getProperty(InternalProperties.PARENT_LNODE) == null) {
             Set<GraphProperties> graphProps = lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES);
             
             if (graphProps.contains(GraphProperties.EXTERNAL_PORTS)) {
                 // Ports have positions assigned, the graph's size is final
-                knodeLayout.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+                elknode.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
                 ElkUtil.resizeNode(
-                        knode,
-                        (float) actualGraphSize.x,
-                        (float) actualGraphSize.y,
+                        elknode,
+                        actualGraphSize.x,
+                        actualGraphSize.y,
                         false,
                         true);
             } else {
                 // Ports have not been positioned yet - leave this for next layouter
                 ElkUtil.resizeNode(
-                        knode,
-                        (float) actualGraphSize.x,
-                        (float) actualGraphSize.y,
+                        elknode,
+                        actualGraphSize.x,
+                        actualGraphSize.y,
                         true,
                         true);
             }

@@ -40,7 +40,7 @@ public final class CLNode extends CNode {
      * to the ratio of incoming to outgoing {@link de.cau.cs.kieler.klay.layered.graph.LEdge LEdge}
      * s. {@link NodeType#EXTERNAL_PORT external port dummy nodes} are never locked to keep the
      * graph size minimal. They are later reset to the border position by the
-     * {@link de.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer
+     * {@link ElkGraphLayoutTransferrer.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer
      * KGraphLayoutTransferrer}
      * 
      * @param lNode
@@ -110,7 +110,7 @@ public final class CLNode extends CNode {
      * is 0. This works because {@link de.cau.cs.kieler.klay.layered.graph.LGraphUtil
      * LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
      * LGraphUtil.getExternalPortPosition} is called in
-     * {@link de.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
+     * {@link ElkGraphLayoutTransferrer.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
      * KGraphLayoutTransferrer.applyLayout} and resets the position of the
      * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border
      * spacing being used.
@@ -131,7 +131,7 @@ public final class CLNode extends CNode {
      * is 0. This works because {@link de.cau.cs.kieler.klay.layered.graph.LGraphUtil
      * LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
      * LGraphUtil.getExternalPortPosition} is called in
-     * {@link de.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
+     * {@link ElkGraphLayoutTransferrer.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
      * KGraphLayoutTransferrer.applyLayout} and resets the position of the
      * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border
      * spacing being used.

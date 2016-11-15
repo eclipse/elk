@@ -626,7 +626,7 @@ group port {
 		legacyIds de.cau.cs.kieler.portSide
 	}
 	
-	programmatic option borderOffset: float {
+	programmatic option borderOffset: double {
 		label "Port Border Offset"
 		description
 			"The offset of ports on the node border. With a positive offset the port is moved outside

@@ -17,12 +17,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -48,35 +46,27 @@ public class NGraph {
      */
     public void writeDebugGraph(final String filePath) {
         
-        KNode root = ElkUtil.createInitializedNode();
-        root.getData(KLayoutData.class).setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
-        Map<NNode, KNode> nodeMap = Maps.newHashMap();
+        ElkNode elkGraph = ElkGraphUtil.createGraph();
+        elkGraph.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
+        Map<NNode, ElkNode> nodeMap = Maps.newHashMap();
         
         for (NNode nNode : nodes) {
-            KNode kNode = ElkUtil.createInitializedNode();
-            root.getChildren().add(kNode);
-            nodeMap.put(nNode, kNode);
+            ElkNode elkNode = ElkGraphUtil.createNode(elkGraph);
+            nodeMap.put(nNode, elkNode);
             
-            KLabel label = ElkUtil.createInitializedLabel(kNode);
-            label.setText(nNode.type + " " + nNode.layer);
+            ElkGraphUtil.createLabel(nNode.type + " " + nNode.layer, elkNode);
         }
 
-        
         for (NNode nNode : nodes) {
             for (NEdge nEdge : nNode.getOutgoingEdges()) {
-                KEdge kEdge = ElkUtil.createInitializedEdge();
-                kEdge.setSource(nodeMap.get(nEdge.source));
-                kEdge.setTarget(nodeMap.get(nEdge.target));
-                
-                KLabel label = ElkUtil.createInitializedLabel(kEdge);
-                label.setText(nEdge.weight + " " + nEdge.delta);
-                        
+                ElkEdge elkEdge = ElkGraphUtil.createSimpleEdge(nodeMap.get(nEdge.source), nodeMap.get(nEdge.target));
+                ElkGraphUtil.createLabel(nEdge.weight + " " + nEdge.delta, elkEdge);
             }
         }
         
         ResourceSet rs = new ResourceSetImpl();
         Resource r = rs.createResource(URI.createFileURI(filePath));
-        r.getContents().add(root);
+        r.getContents().add(elkGraph);
         try {
             r.save(Collections.emptyMap());
         } catch (IOException e) {

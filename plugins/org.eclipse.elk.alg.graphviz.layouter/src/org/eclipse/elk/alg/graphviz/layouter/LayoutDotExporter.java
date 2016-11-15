@@ -24,8 +24,6 @@ import org.eclipse.elk.alg.graphviz.dot.transform.DotExporter;
 import org.eclipse.elk.alg.graphviz.dot.transform.IDotTransformationData;
 import org.eclipse.elk.alg.graphviz.dot.transform.NeatoModel;
 import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.EdgeRouting;

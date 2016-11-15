@@ -12,13 +12,12 @@ package org.eclipse.elk.alg.layered;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.transform.IGraphTransformer;
-import org.eclipse.elk.alg.layered.graph.transform.KGraphTransformer;
+import org.eclipse.elk.alg.layered.graph.transform.ElkGraphTransformer;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
@@ -46,23 +45,18 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode elkgraph, final IElkProgressMonitor progressMonitor) {
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
         // LGraph instance, even though the IGraphImporter interface would allow null as a return
         // value)
-        IGraphTransformer<KNode> graphImporter = new KGraphTransformer();
-        LGraph layeredGraph = graphImporter.importGraph(kgraph);
+        IGraphTransformer<ElkNode> graphImporter = new ElkGraphTransformer();
+        LGraph layeredGraph = graphImporter.importGraph(elkgraph);
 
         // Check if hierarchy handling for a compound graph is requested
-        KShapeLayout kgraphLayout = kgraph.getData(KShapeLayout.class);
-        if (kgraphLayout.getProperty(LayeredOptions.HIERARCHY_HANDLING) 
-                == HierarchyHandling.INCLUDE_CHILDREN) {
-
+        if (elkgraph.getProperty(LayeredOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN) {
             // Layout for all hierarchy levels is requested
             klayLayered.doCompoundLayout(layeredGraph, progressMonitor);
-            
         } else {
-            
             // Only the top-level graph is processed
             klayLayered.doLayout(layeredGraph, progressMonitor);
         }
@@ -84,15 +78,15 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      * 
      * <p><strong>Note:</strong> This method does not apply the layout back to the original KGraph!</p>
      * 
-     * @param kgraph the KGraph to be used for the layout test run.
+     * @param elkgraph the KGraph to be used for the layout test run.
      * @return an initialized test execution state
      */
-    public KlayLayered.TestExecutionState startLayoutTest(final KNode kgraph) {
+    public KlayLayered.TestExecutionState startLayoutTest(final ElkNode elkgraph) {
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
         // LGraph instance, even though the IGraphImporter interface would allow null as a return
         // value)
-        IGraphTransformer<KNode> graphImporter = new KGraphTransformer();
-        LGraph layeredGraph = graphImporter.importGraph(kgraph);
+        IGraphTransformer<ElkNode> graphImporter = new ElkGraphTransformer();
+        LGraph layeredGraph = graphImporter.importGraph(elkgraph);
         
         // Prepare a layout test and return the test execution state
         return klayLayered.prepareLayoutTest(layeredGraph);

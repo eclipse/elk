@@ -35,6 +35,6 @@ public interface ILayoutPhase extends ILayoutProcessor {
      *              properties of the graph.
      * @return intermediate processing configuration. May be {@code null}.
      */
-    IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(final LGraph graph);
+    IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(LGraph graph);
     
 }

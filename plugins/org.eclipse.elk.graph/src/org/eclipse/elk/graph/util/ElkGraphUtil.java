@@ -470,6 +470,16 @@ public final class ElkGraphUtil {
     }
     
     /**
+     * Returns an iterable which contains all edges the given connectable shape is incident to.
+     * 
+     * @param shape the connectable shape whose incident edges to return.
+     * @return iterable with all incident edges.
+     */
+    public static Iterable<ElkEdge> allIncidentEdges(final ElkConnectableShape shape) {
+        return Iterables.concat(shape.getIncomingEdges(), shape.getOutgoingEdges());
+    }
+    
+    /**
      * Returns an iterable which contains all connectable shapes the given edge is incident to.
      * 
      * @param edge the edge whose end points to return.
@@ -528,6 +538,21 @@ public final class ElkGraphUtil {
         } else {
             // In case the meta model is changed in the distant future...
             throw new UnsupportedOperationException("Only support nodes and ports.");
+        }
+    }
+    
+    /**
+     * Returns the port that belongs to the given connectable shape, if any. That is, if the shape is a port, that
+     * itself is returned. If it is not, {@code null} is returned.
+     * 
+     * @param connectableShape the shape whose port to return.
+     * @return the port that belongs to the shape or {@code null}.
+     */
+    public static ElkPort connectableShapeToPort(final ElkConnectableShape connectableShape) {
+        if (connectableShape instanceof ElkPort) {
+            return (ElkPort) connectableShape;
+        } else {
+            return null;
         }
     }
     
