@@ -1171,7 +1171,21 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                     final double centerYPos = ((targetAnchor.y + sourceAnchor.y) / 2)
                             + (targetAnchor.y - sourceAnchor.y) * (0.4 * degreeDiff);
                     
-                    edge.getBendPoints().addAll(new KVector(centerXPos, centerYPos));
+
+                    // If the target is a smaller node in a layer with bigger nodes, add a control point at
+                    // the start of the target layer
+                    if (targetAnchor.x > endXPos) {
+                        edge.getBendPoints().add(targetStraightCP);
+                    }
+
+                    // Add the center control point for the edge
+                    edge.getBendPoints().add(new KVector(centerXPos, centerYPos));
+
+                    // If the source is a smaller node in a layer with bigger nodes, add a control point at
+                    // the end of the source layer
+                    if (sourceAnchor.x < startXPos) {
+                        edge.getBendPoints().add(sourceStraightCP);
+                    }
                 } else if (normalSource) {
                     // If leaving a normal source, add the straight part of the target dummy.
                     // This mostly prevents intersections with big nodes in the same layer as the target 
