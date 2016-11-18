@@ -866,13 +866,22 @@ public interface ElkGraphPackage extends EPackage {
     int ELK_EDGE__SELFLOOP = ELK_GRAPH_ELEMENT_FEATURE_COUNT + 6;
 
     /**
+     * The feature id for the '<em><b>Connected</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ELK_EDGE__CONNECTED = ELK_GRAPH_ELEMENT_FEATURE_COUNT + 7;
+
+    /**
      * The number of structural features of the '<em>Elk Edge</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int ELK_EDGE_FEATURE_COUNT = ELK_GRAPH_ELEMENT_FEATURE_COUNT + 7;
+    int ELK_EDGE_FEATURE_COUNT = ELK_GRAPH_ELEMENT_FEATURE_COUNT + 8;
 
     /**
      * The meta object id for the '{@link org.eclipse.elk.graph.impl.ElkBendPointImpl <em>Elk Bend Point</em>}' class.
@@ -1490,6 +1499,17 @@ public interface ElkGraphPackage extends EPackage {
     EAttribute getElkEdge_Selfloop();
 
     /**
+     * Returns the meta object for the attribute '{@link org.eclipse.elk.graph.ElkEdge#isConnected <em>Connected</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Connected</em>'.
+     * @see org.eclipse.elk.graph.ElkEdge#isConnected()
+     * @see #getElkEdge()
+     * @generated
+     */
+    EAttribute getElkEdge_Connected();
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.elk.graph.ElkBendPoint <em>Elk Bend Point</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -2029,6 +2049,14 @@ public interface ElkGraphPackage extends EPackage {
          * @generated
          */
         EAttribute ELK_EDGE__SELFLOOP = eINSTANCE.getElkEdge_Selfloop();
+
+        /**
+         * The meta object literal for the '<em><b>Connected</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute ELK_EDGE__CONNECTED = eINSTANCE.getElkEdge_Connected();
 
         /**
          * The meta object literal for the '{@link org.eclipse.elk.graph.impl.ElkBendPointImpl <em>Elk Bend Point</em>}' class.

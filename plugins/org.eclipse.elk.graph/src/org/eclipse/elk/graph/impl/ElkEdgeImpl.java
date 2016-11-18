@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeImpl#isHyperedge <em>Hyperedge</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeImpl#isHierarchical <em>Hierarchical</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeImpl#isSelfloop <em>Selfloop</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeImpl#isConnected <em>Connected</em>}</li>
  * </ul>
  *
  * @generated
@@ -107,6 +108,16 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
      * @ordered
      */
     protected static final boolean SELFLOOP_EDEFAULT = false;
+
+    /**
+     * The default value of the '{@link #isConnected() <em>Connected</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #isConnected()
+     * @generated
+     * @ordered
+     */
+    protected static final boolean CONNECTED_EDEFAULT = false;
 
     /**
      * <!-- begin-user-doc -->
@@ -265,6 +276,15 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public boolean isConnected() {
+        return !getSources().isEmpty() && !getTargets().isEmpty();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @generated
      */
     @SuppressWarnings("unchecked")
@@ -341,6 +361,8 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
                 return isHierarchical();
             case ElkGraphPackage.ELK_EDGE__SELFLOOP:
                 return isSelfloop();
+            case ElkGraphPackage.ELK_EDGE__CONNECTED:
+                return isConnected();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -419,6 +441,8 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
                 return isHierarchical() != HIERARCHICAL_EDEFAULT;
             case ElkGraphPackage.ELK_EDGE__SELFLOOP:
                 return isSelfloop() != SELFLOOP_EDEFAULT;
+            case ElkGraphPackage.ELK_EDGE__CONNECTED:
+                return isConnected() != CONNECTED_EDEFAULT;
         }
         return super.eIsSet(featureID);
     }

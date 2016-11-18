@@ -249,6 +249,12 @@
         <details key="documentation" value="Whether the edge is a self loop or not. It is a self loop if all of its sources and targets are the same node (or its ports). This is only meaningful if the edge connects at least two end points.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="connected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        changeable="false" volatile="true" transient="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Whether the edge has at least one source and one target.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ElkBendPoint">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

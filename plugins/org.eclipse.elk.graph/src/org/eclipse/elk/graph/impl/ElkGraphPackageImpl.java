@@ -517,6 +517,15 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
      * <!-- end-user-doc -->
      * @generated
      */
+    public EAttribute getElkEdge_Connected() {
+        return (EAttribute)elkEdgeEClass.getEStructuralFeatures().get(7);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getElkBendPoint() {
         return elkBendPointEClass;
     }
@@ -771,6 +780,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         createEAttribute(elkEdgeEClass, ELK_EDGE__HYPEREDGE);
         createEAttribute(elkEdgeEClass, ELK_EDGE__HIERARCHICAL);
         createEAttribute(elkEdgeEClass, ELK_EDGE__SELFLOOP);
+        createEAttribute(elkEdgeEClass, ELK_EDGE__CONNECTED);
 
         elkBendPointEClass = createEClass(ELK_BEND_POINT);
         createEAttribute(elkBendPointEClass, ELK_BEND_POINT__X);
@@ -925,6 +935,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         initEAttribute(getElkEdge_Hyperedge(), ecorePackage.getEBoolean(), "hyperedge", null, 0, 1, ElkEdge.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getElkEdge_Hierarchical(), ecorePackage.getEBoolean(), "hierarchical", null, 0, 1, ElkEdge.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getElkEdge_Selfloop(), ecorePackage.getEBoolean(), "selfloop", null, 0, 1, ElkEdge.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getElkEdge_Connected(), ecorePackage.getEBoolean(), "connected", null, 0, 1, ElkEdge.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(elkBendPointEClass, ElkBendPoint.class, "ElkBendPoint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getElkBendPoint_X(), ecorePackage.getEDouble(), "x", "0.0", 1, 1, ElkBendPoint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

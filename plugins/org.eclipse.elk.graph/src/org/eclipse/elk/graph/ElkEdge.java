@@ -36,6 +36,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.elk.graph.ElkEdge#isHyperedge <em>Hyperedge</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.ElkEdge#isHierarchical <em>Hierarchical</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.ElkEdge#isSelfloop <em>Selfloop</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.ElkEdge#isConnected <em>Connected</em>}</li>
  * </ul>
  *
  * @see org.eclipse.elk.graph.ElkGraphPackage#getElkEdge()
@@ -176,5 +177,21 @@ public interface ElkEdge extends ElkGraphElement {
      * @generated
      */
     boolean isSelfloop();
+
+    /**
+     * Returns the value of the '<em><b>Connected</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * <!-- begin-model-doc -->
+     * Whether the edge has at least one source and one target.
+     * 
+     * <p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.</p>
+     * <!-- end-model-doc -->
+     * @return the value of the '<em>Connected</em>' attribute.
+     * @see org.eclipse.elk.graph.ElkGraphPackage#getElkEdge_Connected()
+     * @model transient="true" changeable="false" volatile="true"
+     * @generated
+     */
+    boolean isConnected();
 
 } // ElkEdge
