@@ -13,8 +13,8 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -31,7 +31,8 @@ import org.eclipse.elk.core.options.PortSide;
  */
 public class SwitchDecider {
     private final LNode[] freeLayer;
-    private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
+    private final InLayerEdgeTwoNodeCrossingCounter inLayerCounterLeft;
+    private final InLayerEdgeTwoNodeCrossingCounter inLayerCounterRight;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final CrossingMatrixFiller crossingMatrixFiller;
 
@@ -55,7 +56,8 @@ public class SwitchDecider {
         }
         freeLayer = graph[freeLayerIndex];
 
-        inLayerCounter = new InLayerEdgeTwoNodeCrossingCounter(freeLayer);
+        inLayerCounterLeft = new InLayerEdgeTwoNodeCrossingCounter(freeLayerIndex, graph, PortSide.WEST);
+        inLayerCounterRight = new InLayerEdgeTwoNodeCrossingCounter(freeLayerIndex, graph, PortSide.EAST);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
     }
 
@@ -66,7 +68,8 @@ public class SwitchDecider {
      *            a node
      */
     public final void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
-        inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
+        inLayerCounterLeft.notifyOfSwitch(upperNode, lowerNode);
+        inLayerCounterRight.notifyOfSwitch(upperNode, lowerNode);
     }
 
     /**
@@ -82,16 +85,17 @@ public class SwitchDecider {
         LNode upperNode = freeLayer[upperNodeIndex];
         LNode lowerNode = freeLayer[lowerNodeIndex];
 
-        inLayerCounter.countCrossingsBetweenNodes(upperNode, lowerNode);
+        inLayerCounterLeft.countCrossingsBetweenNodes(upperNode, lowerNode);
+        inLayerCounterRight.countCrossingsBetweenNodes(upperNode, lowerNode);
         northSouthCounter.countCrossings(upperNode, lowerNode);
 
         int upperLowerCrossings =
                 crossingMatrixFiller.getCrossingMatrixEntry(upperNode, lowerNode)
-                        + inLayerCounter.getUpperLowerCrossings()
+                        + inLayerCounterLeft.getUpperLowerCrossings() + inLayerCounterRight.getUpperLowerCrossings()
                         + northSouthCounter.getUpperLowerCrossings();
         int lowerUpperCrossings =
                 crossingMatrixFiller.getCrossingMatrixEntry(lowerNode, upperNode)
-                        + inLayerCounter.getLowerUpperCrossings()
+                        + inLayerCounterRight.getLowerUpperCrossings()
                         + northSouthCounter.getLowerUpperCrossings();
 
         return upperLowerCrossings > lowerUpperCrossings;
