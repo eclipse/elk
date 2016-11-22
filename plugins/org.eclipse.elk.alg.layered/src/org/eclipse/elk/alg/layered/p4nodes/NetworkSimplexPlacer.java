@@ -78,7 +78,8 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
      */
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
-     
+        progressMonitor.begin("Network simplex node placement", 1);
+        
         final Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         
         final Map<LNode, NNode> nodeMap = Maps.newHashMap();
@@ -227,6 +228,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
 
         }
         
+        progressMonitor.done();
     }
     
     /**

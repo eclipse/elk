@@ -52,7 +52,7 @@ final class Execution {
     public static Execution fromProgressMonitor(final IElkProgressMonitor monitor) {
         Execution execution = new Execution();
         
-        execution.name = monitor.getTaskName();
+        execution.name = monitor.getTaskName() != null ? monitor.getTaskName() : "Unnamed";
         execution.executionTimeIncludingChildren = monitor.getExecutionTime();
         execution.parent = null;
         
