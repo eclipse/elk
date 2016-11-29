@@ -52,7 +52,9 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -60,7 +62,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Inject;
@@ -720,11 +721,15 @@ public class DiagramLayoutEngine {
         for (int i = 0; i < visitors.length; i++) {
             visitors[i].visit(graph);
         }
-        Iterator<ElkGraphElement> allElements = Iterators.filter(graph.eAllContents(), ElkGraphElement.class);
+        Iterator<EObject> allElements = ElkGraphUtil.propertiesSkippingIteratorFor(graph, true);
         while (allElements.hasNext()) {
-            ElkGraphElement element = allElements.next();
-            for (int i = 0; i < visitors.length; i++) {
-                visitors[i].visit(element);
+            EObject nextElement = allElements.next();
+            
+            if (nextElement instanceof ElkGraphElement) {
+                ElkGraphElement graphElement = (ElkGraphElement) nextElement;
+                for (int i = 0; i < visitors.length; i++) {
+                    visitors[i].visit(graphElement);
+                }
             }
         }
         
@@ -742,6 +747,7 @@ public class DiagramLayoutEngine {
                 }
             }
         }
+        
         if (allIssues != null) {
             StringBuilder message = new StringBuilder();
             for (GraphIssue issue : allIssues) {

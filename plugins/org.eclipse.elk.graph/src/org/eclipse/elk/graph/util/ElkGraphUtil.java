@@ -10,21 +10,29 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.util;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import org.eclipse.elk.graph.EMapPropertyHolder;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkGraphFactory;
+import org.eclipse.elk.graph.ElkGraphPackage;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.emf.common.util.AbstractTreeIterator;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureFilter;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureIteratorImpl;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -554,6 +562,64 @@ public final class ElkGraphUtil {
         } else {
             return null;
         }
+    }
+    
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Iteration
+    
+    /**
+     * A tree iterator that skips properties of {@link EMapPropertyHolder}s.
+     */
+    private static class PropertiesSkippingTreeIterator extends AbstractTreeIterator<EObject> {
+        /** Bogus serial version ID. */
+        private static final long serialVersionUID = 1L;
+        
+        
+        /**
+         * {@inheritDoc}.
+         */
+        PropertiesSkippingTreeIterator(final Object object, final boolean includeRoot) {
+            super(object, includeRoot);
+        }
+        
+        
+        @Override
+        protected Iterator<EObject> getChildren(final Object object) {
+            // We know that the object is an EObject; get an iterator over its content
+            Iterator<EObject> iterator = ((EObject) object).eContents().iterator();
+            
+            // The iterator will usually be a FeatureIteratorImpl that we can set a feature filter on
+            if (iterator instanceof FeatureIteratorImpl) {
+                ((FeatureIteratorImpl<EObject>) iterator).filter(new FeatureFilter() {
+                    public boolean isIncluded(final EStructuralFeature eStructuralFeature) {
+                        // We include everything but properties (layout options)
+                        if (eStructuralFeature.getContainerClass().equals(EMapPropertyHolder.class)) {
+                            return eStructuralFeature.getFeatureID()
+                                    != ElkGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES;
+                        } else {
+                            return true;
+                        }
+                    }
+                });
+            }
+            
+            return iterator;
+        }
+    }
+    
+    /**
+     * Returns an iterator over the EMF tree rooted at the given object which skips properties. This is usually useful
+     * for iterating over an ELK graph while modifying the properties of elements, which would otherwise be prone to
+     * throwing {@link ConcurrentModificationException}s.
+     * 
+     * @param root the EMF tree's root.
+     * @param includeRoot {@code true} if the first returned element should be the tree's root itself.
+     * @return the requested iterator.
+     */
+    public static Iterator<EObject> propertiesSkippingIteratorFor(final EObject root, final boolean includeRoot) {
+        return new PropertiesSkippingTreeIterator(root, includeRoot);
     }
     
     
