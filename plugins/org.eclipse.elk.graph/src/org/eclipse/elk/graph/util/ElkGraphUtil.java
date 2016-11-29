@@ -531,6 +531,37 @@ public final class ElkGraphUtil {
     }
     
     /**
+     * Returns the node that represents the graph the given element is part of. The method can return {@code null}.
+     * This either indicates that the given element is itself the root node of a graph, or that the element is part
+     * of an invalid graph structure.
+     * 
+     * @param element the element whose graph to return.
+     * @return the graph that contains the element, or {@code null} if such a graph could not be found.
+     */
+    public static ElkNode containingGraph(final ElkGraphElement element) {
+        ElkGraphElement current = element;
+        
+        while (current != null) {
+            if (current instanceof ElkEdge) {
+                // Edges have a direct reference to their containing graph
+                return ((ElkEdge) current).getContainingNode();
+            } else if (current instanceof ElkNode) {
+                // A node's container is its graph
+                return ((ElkNode) current).getParent();
+            } else if (current.eContainer() instanceof ElkGraphElement) {
+                // Walk up the hierarchy
+                current = (ElkGraphElement) current.eContainer();
+            } else {
+                // Something's wrong
+                return null;
+            }
+        }
+        
+        // --> current is null
+        return null;
+    }
+    
+    /**
      * Returns the node that belongs to the given connectable shape. That is, if the shape is a node, that itself is
      * returned. If it is a port, the port's parent node is returned. This method may well return {@code null} if the
      * connectable shape is a port that does not belong to a node.
