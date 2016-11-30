@@ -13,10 +13,13 @@ package org.eclipse.elk.alg.layered.intermediate.greedyswitch;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.Pair;
 
 /**
  * This class decides whether two neighboring nodes should be switched. There are two variants:
@@ -26,14 +29,16 @@ import org.eclipse.elk.core.options.PortSide;
  * <li>TwoSided – The faithless way: The decider checks if a switch would reduce crossings on both
  * sides of the layer whose nodes are to be switched.
  * </ul>
- * 
- * @author alan
  */
-public class SwitchDecider {
+public final class SwitchDecider {
     private final LNode[] freeLayer;
-    private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
+    private final CrossingsCounter leftInLayerCounter;
+    private final CrossingsCounter rightInLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
     private final CrossingMatrixFiller crossingMatrixFiller;
+    private GraphInfoHolder graphData;
+    private CrossingsCounter parentCrossCounter;
+    private boolean countCrossingsCausedByPortSwitch;
 
     /**
      * Creates SwitchDecider.
@@ -44,35 +49,75 @@ public class SwitchDecider {
      *            The graph as LNode[][]
      * @param crossingMatrixFiller
      *            the crossing matrix filler
+     * @param portPositions
+     *            port position array
+     * @param oneSided
+     *            whether greedy mode is one sided or two-sided (not one-sided)
+     * @param graphData
+     *            collected graphData
      */
     public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
-            final CrossingMatrixFiller crossingMatrixFiller) {
-        
+            final CrossingMatrixFiller crossingMatrixFiller, final int[] portPositions,
+            final GraphInfoHolder graphData, final boolean oneSided) {
         this.crossingMatrixFiller = crossingMatrixFiller;
+        this.graphData = graphData;
         if (freeLayerIndex >= graph.length) {
-            throw new IndexOutOfBoundsException(
-                    "Greedy SwitchDecider: Free layer layer not in graph.");
+            throw new IndexOutOfBoundsException("Greedy SwitchDecider: Free layer not in graph.");
         }
         freeLayer = graph[freeLayerIndex];
 
-        inLayerCounter = new InLayerEdgeTwoNodeCrossingCounter(freeLayer);
+        leftInLayerCounter = new CrossingsCounter(portPositions);
+        leftInLayerCounter.initPortPositionsForInLayerCrossings(freeLayer, PortSide.WEST);
+        rightInLayerCounter = new CrossingsCounter(portPositions);
+        rightInLayerCounter.initPortPositionsForInLayerCrossings(freeLayer, PortSide.EAST);
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
+        countCrossingsCausedByPortSwitch = !oneSided && graphData.hasParent() && !graphData.dontSweepInto()
+                && freeLayer[0].getType() == NodeType.EXTERNAL_PORT;
+        if (countCrossingsCausedByPortSwitch) {
+            initParentCrossingsCounters(freeLayerIndex, graph.length);
+        }
+    }
+
+    private void initParentCrossingsCounters(final int freeLayerIndex, final int length) {
+        GraphInfoHolder parentGraphData = graphData.parentGraphData();
+        LNode[][] parentNodeOrder = parentGraphData.currentNodeOrder();
+        int[] portPos = parentGraphData.portPositions();
+        parentCrossCounter = new CrossingsCounter(portPos);
+        int parentNodeLayerPos = graphData.parent().getLayer().id;
+        LNode[] leftLayer = parentNodeLayerPos > 0 ? parentNodeOrder[parentNodeLayerPos - 1] : new LNode[0];
+        LNode[] middleLayer = parentNodeOrder[parentNodeLayerPos];
+        LNode[] rightLayer = parentNodeLayerPos < parentNodeOrder.length - 1 ? parentNodeOrder[parentNodeLayerPos + 1]
+                : new LNode[0];
+        boolean rightMostLayer = freeLayerIndex == length - 1;
+        if (rightMostLayer) {
+            parentCrossCounter.initForCountingBetween(middleLayer, rightLayer);
+        } else {
+            parentCrossCounter.initForCountingBetween(leftLayer, middleLayer);
+        }
     }
 
     /**
+     * Notifies in-layer counter of node switch for efficiency reasons.
+     * 
      * @param upperNode
      *            a node
      * @param lowerNode
      *            a node
      */
-    public final void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
-        inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
+    public void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
+        leftInLayerCounter.switchNodes(upperNode, lowerNode, PortSide.WEST);
+        rightInLayerCounter.switchNodes(upperNode, lowerNode, PortSide.EAST);
+        if (countCrossingsCausedByPortSwitch) {
+            LPort upperPort = (LPort) upperNode.getProperty(InternalProperties.ORIGIN);
+            LPort lowerPort = (LPort) lowerNode.getProperty(InternalProperties.ORIGIN);
+            parentCrossCounter.switchPorts(upperPort, lowerPort);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public final boolean doesSwitchReduceCrossings(final int upperNodeIndex,
+    public boolean doesSwitchReduceCrossings(final int upperNodeIndex,
             final int lowerNodeIndex) {
         
         if (constraintsPreventSwitch(upperNodeIndex, lowerNodeIndex)) {
@@ -81,18 +126,29 @@ public class SwitchDecider {
 
         LNode upperNode = freeLayer[upperNodeIndex];
         LNode lowerNode = freeLayer[lowerNodeIndex];
-
-        inLayerCounter.countCrossingsBetweenNodes(upperNode, lowerNode);
+        
+        Pair<Integer, Integer> leftInlayer =
+                leftInLayerCounter.countInLayerCrossingsBetweenNodesInBothOrders(upperNode, lowerNode, PortSide.WEST);
+        Pair<Integer, Integer> rightInlayer =
+                rightInLayerCounter.countInLayerCrossingsBetweenNodesInBothOrders(upperNode, lowerNode, PortSide.EAST);
         northSouthCounter.countCrossings(upperNode, lowerNode);
-
         int upperLowerCrossings =
                 crossingMatrixFiller.getCrossingMatrixEntry(upperNode, lowerNode)
-                        + inLayerCounter.getUpperLowerCrossings()
+                        + leftInlayer.getFirst() + rightInlayer.getFirst()
                         + northSouthCounter.getUpperLowerCrossings();
         int lowerUpperCrossings =
                 crossingMatrixFiller.getCrossingMatrixEntry(lowerNode, upperNode)
-                        + inLayerCounter.getLowerUpperCrossings()
+                        + leftInlayer.getSecond() + rightInlayer.getSecond()
                         + northSouthCounter.getLowerUpperCrossings();
+
+        if (countCrossingsCausedByPortSwitch) {
+            LPort upperPort = (LPort) upperNode.getProperty(InternalProperties.ORIGIN);
+            LPort lowerPort = (LPort) lowerNode.getProperty(InternalProperties.ORIGIN);
+            Pair<Integer, Integer> crossingNumbers =
+                    parentCrossCounter.countCrossingsBetweenPortsInBothOrders(upperPort, lowerPort);
+            upperLowerCrossings += crossingNumbers.getFirst();
+            lowerUpperCrossings += crossingNumbers.getSecond();
+        }
 
         return upperLowerCrossings > lowerUpperCrossings;
     }
@@ -151,7 +207,7 @@ public class SwitchDecider {
     }
 
     private boolean hasEdgesOnSide(final LNode node, final PortSide side) {
-        Iterable<LPort> ports = node.getPorts(side);
+        Iterable<LPort> ports = node.getPortSideView(side);
         for (LPort port : ports) {
             if (port.getProperty(InternalProperties.PORT_DUMMY) != null
                     || port.getConnectedEdges().iterator().hasNext()) {
@@ -191,4 +247,5 @@ public class SwitchDecider {
         /** Consider crossings to the east of the free layer. */
         EAST
     }
+
 }

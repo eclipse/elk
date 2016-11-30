@@ -17,18 +17,18 @@ import java.util.Map;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Calculates the number of crossings for edges incident to two nodes.
- *
- * @author alan
+ * Calculates the number of crossings for edges incident to two nodes. In the case where there is
+ * free port order and two edges go into one port, this crossing counter can in some cases count to
+ * few crossings. See the ignored test in the test class.
  */
-public class BetweenLayerEdgeTwoNodeCrossingsCounter {
+public final class BetweenLayerEdgeTwoNodeCrossingsCounter {
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
     private AdjacencyList upperAdjacencies;
@@ -48,8 +48,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
      * @param freeLayerIndex
      *            Index of free layer.
      */
-    public BetweenLayerEdgeTwoNodeCrossingsCounter(final LNode[][] currentNodeOrder,
-            final int freeLayerIndex) {
+    public BetweenLayerEdgeTwoNodeCrossingsCounter(final LNode[][] currentNodeOrder, final int freeLayerIndex) {
         portPositions = Maps.newHashMap();
         easternAdjacencies = Maps.newHashMap();
         westernAdjacencies = Maps.newHashMap();
@@ -78,21 +77,11 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
     private void setPortPositionsForLayer(final int layerIndex, final PortSide portSide) {
         int portId = 0;
         for (LNode node : currentNodeOrder[layerIndex]) {
-            Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, portSide);
+            Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, portSide);
             for (LPort port : ports) {
-                portPositions.put(port, portId);
-                if (portOrderIsFixed(node)) {
-                    portId++;
-                }
-            }
-            if (!portOrderIsFixed(node)) {
-                portId++;
+                portPositions.put(port, portId++);
             }
         }
-    }
-
-    private boolean portOrderIsFixed(final LNode neighbourToUpperNode) {
-        return neighbourToUpperNode.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed();
     }
 
     /**
@@ -241,9 +230,6 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
      * actually delete the entries in the adjacency list. Instead we use currentIndex, currentSize
      * and currentCardinality (in the inner class) to show the current state of the list. Use
      * reset() to reset to the original state.
-     * 
-     * @author alan
-     *
      */
     private class AdjacencyList {
         private final LNode node;
@@ -252,8 +238,8 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
         private int size;
         private int currentSize;
         private int currentIndex;
-
-        public AdjacencyList(final LNode node, final PortSide side) {
+        
+        AdjacencyList(final LNode node, final PortSide side) {
             this.node = node;
             this.side = side;
             adjacencyList = Lists.newArrayList();
@@ -267,7 +253,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
         }
 
         private void iterateTroughEdgesCollectingAdjacencies() {
-            Iterable<LPort> ports = PortIterable.inNorthSouthEastWestOrder(node, side);
+            Iterable<LPort> ports = CrossMinUtil.inNorthSouthEastWestOrder(node, side);
             for (LPort port : ports) {
                 List<LEdge> edges = getEdgesConnectedTo(port);
                 for (LEdge edge : edges) {
@@ -362,9 +348,6 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
 
         /**
          * Adjacency containing only the position and number of ports with the same position.
-         * 
-         * @author alan
-         *
          */
         private class Adjacency implements Comparable<Adjacency> {
             /** The position of the port. */
@@ -374,7 +357,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
             /** The current number of adjacencies with the same position. */
             private int currentCardinality;
 
-            public Adjacency(final int adjacentPortPosition, final LPort port) {
+            Adjacency(final int adjacentPortPosition, final LPort port) {
                 position = adjacentPortPosition;
                 cardinality = 1;
                 currentCardinality = 1;
@@ -384,6 +367,7 @@ public class BetweenLayerEdgeTwoNodeCrossingsCounter {
                 currentCardinality = cardinality;
             }
 
+            @Override
             public int compareTo(final Adjacency o) {
                 return (position < o.position) ? -1 : ((position == o.position) ? 0 : 1);
             }
