@@ -204,6 +204,15 @@ public final class LEdge extends LGraphElement {
         
         return this.source.getNode() != null && this.source.getNode() == this.target.getNode();
     }
+    
+    /**
+     * @return {@code true} if this edge is not a self loop, the source node and target node of this edge 
+     *         reside in the same layer.
+     * @see #isSelfLoop()
+     */
+    public boolean isInLayerEdge() {
+        return !isSelfLoop() && (source.getNode().getLayer() == target.getNode().getLayer());
+    }
 
     /**
      * Returns the list of bend points, with coordinates relative to the {@code LayeredGraph}'s
