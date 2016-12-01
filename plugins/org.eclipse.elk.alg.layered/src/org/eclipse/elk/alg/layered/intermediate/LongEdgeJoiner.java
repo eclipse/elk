@@ -45,8 +45,9 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *     <dd>nodes are placed</dd>
  *     <dd>edges are routed.</dd>
  *   <dt>Postconditions:</dt>
- *     <dd>there are no dummy nodes of type
- *     {@link NodeType#LONG_EDGE}.</dd>
+ *     <dd>there are no dummy nodes of type {@link NodeType#LONG_EDGE} in the graph's layers.</dd>
+ *     <dd>the dummy nodes' {@link LNode#getLayer() layer} fields 
+ *         have <strong>not</strong> been set to {@code null} though.</dd>
  *   <dt>Slots:</dt>
  *     <dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
@@ -123,7 +124,7 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
             LEdge survivingEdge = inputPortEdges.get(0);
             LEdge droppedEdge = outputPortEdges.get(0);
             
-            // The surviging edge's target needs to be set to the old target of the dropped edge.
+            // The surviving edge's target needs to be set to the old target of the dropped edge.
             // However, this doesn't replace the dropped edge with the surviving edge in the list of
             // incoming edges of the (new) target port, but instead appends the surviving edge. That in
             // turn messes with the implicit assumption that edges with the same index on input and
