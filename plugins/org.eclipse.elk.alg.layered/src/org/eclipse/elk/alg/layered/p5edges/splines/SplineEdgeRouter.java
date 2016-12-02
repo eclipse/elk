@@ -1207,8 +1207,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     private boolean isNormalNode(final LNode node) {
         NodeType nt = node.getType();
         return nt == NodeType.NORMAL 
-            || nt == NodeType.BIG_NODE 
-            || nt == NodeType.BREAKING_POINT;
+            || nt == NodeType.BIG_NODE;
     }
 
     /**
@@ -1225,8 +1224,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         return nt == NodeType.NORMAL 
             || nt == NodeType.NORTH_SOUTH_PORT 
             || nt == NodeType.EXTERNAL_PORT 
-            || nt == NodeType.BIG_NODE 
-            || nt == NodeType.BREAKING_POINT;
+            || nt == NodeType.BIG_NODE;
     }
     
     /**
