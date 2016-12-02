@@ -48,10 +48,21 @@ algorithm layered(LayeredLayoutProvider) {
 	category org.eclipse.elk.layered
 	features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
 	preview images/layered.png
-	supports org.eclipse.elk.spacing.node = 20
+	// general spacings
 	supports org.eclipse.elk.spacing.border = 12
-	supports org.eclipse.elk.spacing.port
-	supports org.eclipse.elk.spacing.^label
+	supports org.eclipse.elk.spacing.edgeEdge
+	supports org.eclipse.elk.spacing.edgeLabel
+	supports org.eclipse.elk.spacing.edgeNode
+	supports org.eclipse.elk.spacing.labelLabel
+	supports org.eclipse.elk.spacing.labelPort
+	supports org.eclipse.elk.spacing.labelNode
+	supports org.eclipse.elk.spacing.nodeNode = 20
+	supports org.eclipse.elk.spacing.portPort
+	// layer-based spacings
+    supports org.eclipse.elk.alg.layered.spacing.edgeEdgeBetweenLayers
+    supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
+    supports org.eclipse.elk.alg.layered.spacing.nodeNodeBetweenLayers
+	// other options
 	supports org.eclipse.elk.insets
 	supports org.eclipse.elk.priority = 0
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
@@ -386,7 +397,38 @@ group edgeRouting {
  * ------------------------*/
 group spacing {
 
-    advanced option edgeNodeSpacingFactor: float {
+    option edgeNodeBetweenLayers: float {
+        label "Edge Node Between Layers Spacing"
+        description 
+            "The spacing to be preserved between nodes and edges that are routed next to the node's layer. 
+             For the spacing between nodes and edges that cross the node's layer 'spacing.edgeNode' is used."
+        default = 10
+        lowerBound = 0f
+        targets parents
+    }
+    
+    option edgeEdgeBetweenLayers: float {
+        label "Edge Edge Between Layer Spacing"
+        description 
+            "Spacing to be preserved between pairs of edges that are routed between the same pair of layers. 
+             Note that 'spacing.edgeEdge' is used for the spacing between pairs of edges crossing the same layer."
+        default = 10
+        lowerBound = 0f
+        targets parents
+    }
+
+    option nodeNodeBetweenLayers: float {
+        label "Node Node Between Layers Spacing"
+        description 
+            "The spacing to be preserved between any pair of nodes of two adjacent layers. 
+             Note that 'spacing.nodeNode' is used for the spacing between nodes within the layer itself."
+        default = 20
+        lowerBound = 0f
+        targets parents
+    }
+    
+
+    deprecated advanced option edgeNodeSpacingFactor: float {
         label "Edge Node Spacing Factor"
         description
             "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
@@ -397,7 +439,7 @@ group spacing {
         legacyIds de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor
     }
     
-    advanced option edgeSpacingFactor: float {
+    deprecated advanced option edgeSpacingFactor: float {
         label "Edge Spacing Factor"
         description
             "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
@@ -408,7 +450,7 @@ group spacing {
         legacyIds de.cau.cs.kieler.klay.layered.edgeSpacingFactor
     }
     
-    advanced option inLayerSpacingFactor: float {
+    deprecated advanced option inLayerSpacingFactor: float {
         label "In-layer Spacing Factor"
         description
             "Factor by which the usual spacing is multiplied to determine the in-layer spacing between

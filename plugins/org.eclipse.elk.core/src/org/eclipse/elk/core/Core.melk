@@ -109,7 +109,7 @@ algorithm box(BoxLayoutProvider) {
 	description "Algorithm for packing of unconnected boxes, i.e. graphs without edges."
     metadataClass core.options.BoxLayouterOptions 
 	preview images/box_layout.png
-	supports org.eclipse.elk.spacing.node = 15
+	supports org.eclipse.elk.spacing.nodeNode = 15
 	supports org.eclipse.elk.spacing.border = 15
 	supports priority = 0
 	supports expandNodes
@@ -145,7 +145,7 @@ algorithm random(RandomLayoutProvider) {
 	preview images/random.png
 	supports insets
 	supports randomSeed = 0
-	supports org.eclipse.elk.spacing.node = 15
+	supports org.eclipse.elk.spacing.nodeNode = 15
 	supports org.eclipse.elk.spacing.border = 15
 	supports aspectRatio = 1.6f
 }
@@ -258,7 +258,7 @@ advanced option interactive: boolean {
 
 // --- SPACING
 group spacing {
-	option border: float {
+	deprecated option border: float {
 		label "Border Spacing"
 		description
 			"Spacing of the content of a parent node to its inner border. The inner border is the node
@@ -269,34 +269,110 @@ group spacing {
 		legacyIds de.cau.cs.kieler.borderSpacing
 	}
 	
-	option ^label: float {
-		label "Label Spacing"
-		description "Determines the amount of space to be left around labels."
-		default = 0
+	// TODO should we have default values here?! Or maybe better only for the 
+	// specific algorithm since most of these options are not supported by the majority of the algorithms.
+	
+	option componentComponent: float {
+	    label "Components Spacing"
+	    description 
+	       "Spacing to be preserved between pairs of connected components. 
+            This option is only relevant if 'separateConnectedComponents' is activated."
+        default = 12f
         lowerBound = 0f
-		targets edges, nodes
-		legacyIds de.cau.cs.kieler.labelSpacing
+        targets parents
+        legacyIds de.cau.cs.kieler.borderSpacing
 	}
 	
-	option node: float {
-		label "Node Spacing"
-		description
-			"Overall spacing between elements. This is mostly interpreted as the minimal distance
-			between each two nodes and may also influence the spacing between edges."
-		default = 20
+	option edgeEdge: float {
+	    label "Edge Spacing"
+	    description 
+	       "Spacing to be preserved between any two edges. Note that while this can somewhat easily be satisfied 
+            for the segments of orthogonally drawn edges, it is harder for general polylines or splines."
+        default = 10
         lowerBound = 0f
-		targets parents
-		legacyIds de.cau.cs.kieler.spacing
+        targets parents
 	}
 	
-	option port: float {
-		label "Port Spacing"
-		description "Spacing between ports of a given node."
-		default = 10
+	option edgeLabel: float {
+	    label "Edge Label Spacing"
+	    description
+	       "The minimal distance to be preserved between a label and the edge it is associated with.
+            Note that the placement of a label is influenced by the 'edgelabels.placement' option."
+        default = 5
         lowerBound = 0f
-		targets parents, nodes
-		legacyIds de.cau.cs.kieler.portSpacing
+        targets parents
 	}
+	
+	option edgeNode: float {
+        label "Edge Node Spacing"
+        description
+            "Spacing to be preserved between nodes and edges."
+        default = 10
+        lowerBound = 0f
+        targets parents   
+	}
+	
+	option labelLabel: float {
+	    label "Label Spacing"
+        description 
+            "Determines the amount of space to be left between two labels 
+             of the same graph element."
+        default = 0
+        lowerBound = 0f
+        targets parents
+        legacyIds de.cau.cs.kieler.labelSpacing
+	}
+	
+	option labelNode: float {
+	    label "Label Node Spacing"
+	    description 
+	       "Spacing to be preserved between labels and the border of node they are associated with. 
+            Note that the placement of a label is influenced by the 'nodelabels.placement' option."
+	    default = 5
+	    lowerBound = 0f
+	    targets parents
+	    legacyIds de.cau.cs.kieler.labelSpacing
+	}
+	
+	option labelPort: float {
+	    label "Label Port Spacing"
+	    description 
+	       "Spacing to be preserved between labels and the ports they are associated with. 
+            Note that the placement of a label is influenced by the 'portlabels.placement' option."
+        default = 5
+        lowerBound = 0f
+        targets parents
+	}
+	
+	option nodeNode: float {
+        label "Node Spacing"
+        description "The minimal distance to be preserved between each two nodes."
+        default = 20
+        lowerBound = 0f
+        targets parents
+        legacyIds de.cau.cs.kieler.spacing
+	}
+	
+	option portPort: float {
+        label "Port Spacing"
+        description "Spacing between pairs of ports of the same node."
+        default = 10
+        lowerBound = 0f
+        targets parents, nodes
+        legacyIds de.cau.cs.kieler.portSpacing
+	}
+	
+	// TODO 
+	// check where to actually specify the portPort distance ... I mean we could have the port override it
+	// instead of this property
+	advanced option individualOverride: Object {
+	    label "Individual Spacing Override"
+	    description 
+	       "In general spacing values apply to the children of the hierarchical node 
+            (possibly the root node) for which the values are actually specified. Hereby,
+            the children include ports, edges, and labels. "
+	    targets nodes, edges, ports, labels
+	} 
 	
 	advanced option portSurrounding: Spacing.Margins {
 		label "Additional Port Space"
