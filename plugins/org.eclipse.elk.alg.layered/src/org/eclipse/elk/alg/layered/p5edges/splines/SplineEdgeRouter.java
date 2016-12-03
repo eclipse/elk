@@ -1282,8 +1282,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                 rightPorts.add(singlePort);
             }
 
-            double yMinPosOfTarget = Double.MAX_VALUE;
-            double yMaxPosOfTarget = Double.MIN_VALUE;
+            double yMinPosOfTarget = Double.POSITIVE_INFINITY;
+            double yMaxPosOfTarget = Double.NEGATIVE_INFINITY;
             
             for (final Pair<SideToProcess, LEdge> pair : edges) {
                 final SideToProcess side = pair.getFirst();
