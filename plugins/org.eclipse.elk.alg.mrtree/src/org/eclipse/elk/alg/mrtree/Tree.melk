@@ -31,10 +31,10 @@ algorithm mrTree(TreeLayoutProvider) {
     category org.eclipse.elk.tree
     features disconnected
     preview images/tree.png
-    supports org.eclipse.elk.spacing.node = 20
+    supports org.eclipse.elk.spacing.nodeNode = 20
     supports org.eclipse.elk.spacing.border = 20
     supports org.eclipse.elk.aspectRatio = 1.6f
-    supports org.eclipse.elk.insets
+    supports org.eclipse.elk.padding
     supports org.eclipse.elk.priority = 1
     supports org.eclipse.elk.separateConnectedComponents = true
     supports org.eclipse.elk.direction = Direction.DOWN

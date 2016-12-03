@@ -89,7 +89,7 @@ public class NodePlacer implements ILayoutPhase {
         progressMonitor.begin("Processor order nodes", 2);
 
         /** set the spacing according to the user inputs */
-        spacing = tGraph.getProperty(MrTreeOptions.SPACING_NODE).doubleValue();
+        spacing = tGraph.getProperty(MrTreeOptions.SPACING_NODE_NODE).doubleValue();
 
         /** find the root node of this component */
         LinkedList<TNode> roots = new LinkedList<TNode>();

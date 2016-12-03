@@ -269,9 +269,6 @@ group spacing {
 		legacyIds de.cau.cs.kieler.borderSpacing
 	}
 	
-	// TODO should we have default values here?! Or maybe better only for the 
-	// specific algorithm since most of these options are not supported by the majority of the algorithms.
-	
 	option componentComponent: float {
 	    label "Components Spacing"
 	    description 
@@ -362,9 +359,6 @@ group spacing {
         legacyIds de.cau.cs.kieler.portSpacing
 	}
 	
-	// TODO 
-	// check where to actually specify the portPort distance ... I mean we could have the port override it
-	// instead of this property
 	advanced option individualOverride: Object {
 	    label "Individual Spacing Override"
 	    description 

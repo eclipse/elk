@@ -208,7 +208,7 @@ public class ComponentsProcessor {
         }
         maxRowWidth = Math.max(maxRowWidth,
                 (float) Math.sqrt(totalArea) * result.getProperty(MrTreeOptions.ASPECT_RATIO));
-        double spacing = result.getProperty(MrTreeOptions.SPACING_NODE).doubleValue();
+        double spacing = result.getProperty(MrTreeOptions.SPACING_NODE_NODE).doubleValue();
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;

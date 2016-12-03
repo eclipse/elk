@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
 import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -152,7 +152,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         // check border spacing and update if necessary
         float borderSpacing = tGraph.getProperty(MrTreeOptions.SPACING_BORDER);
         if (borderSpacing < 0) {
-            borderSpacing = MrTreeOptions.SPACING_NODE.getDefault();
+            borderSpacing = MrTreeOptions.SPACING_NODE_NODE.getDefault();
             tGraph.setProperty(MrTreeOptions.SPACING_BORDER, borderSpacing);
         }
 
@@ -170,10 +170,10 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
         }
         
-        ElkInsets insets = elkgraph.getProperty(MrTreeOptions.INSETS);
+        ElkPadding padding = elkgraph.getProperty(MrTreeOptions.PADDING);
         KVector offset = new KVector(
-                insets.getLeft() + borderSpacing - minXPos,
-                insets.getTop() + borderSpacing - minYPos);
+                padding.getLeft() + borderSpacing - minXPos,
+                padding.getTop() + borderSpacing - minYPos);
 
         // process the nodes
         for (TNode tNode : tGraph.getNodes()) {
@@ -210,8 +210,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         }
 
         // set up the graph
-        double width = maxXPos - minXPos + 2 * borderSpacing + insets.getLeft() + insets.getRight();
-        double height = maxYPos - minYPos + 2 * borderSpacing + insets.getTop() + insets.getBottom();
+        double width = maxXPos - minXPos + 2 * borderSpacing + padding.getLeft() + padding.getRight();
+        double height = maxYPos - minYPos + 2 * borderSpacing + padding.getTop() + padding.getBottom();
         ElkUtil.resizeNode(elkgraph, width, height, false, false);
     }
     

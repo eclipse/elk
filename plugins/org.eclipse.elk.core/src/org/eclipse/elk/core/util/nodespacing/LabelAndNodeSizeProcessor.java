@@ -68,7 +68,7 @@ public class LabelAndNodeSizeProcessor {
      * {@inheritDoc}
      */
     public void process(final GraphAdapter<?> layeredGraph) {
-        final double labelSpacing = layeredGraph.getProperty(CoreOptions.SPACING_LABEL).doubleValue();
+        final double labelSpacing = layeredGraph.getProperty(CoreOptions.SPACING_LABEL_NODE).doubleValue();
 
         // Iterate over all the graph's nodes
         for (final NodeAdapter<?> node : layeredGraph.getNodes()) {
@@ -80,7 +80,7 @@ public class LabelAndNodeSizeProcessor {
              */
             final NodeData data = new NodeData(node);
             data.labelSpacing = labelSpacing;
-            data.portSpacing = node.getProperty(CoreOptions.SPACING_PORT).doubleValue();
+            data.portSpacing = node.getProperty(CoreOptions.SPACING_PORT_PORT).doubleValue();
             data.nodeLabelInsets = node.getProperty(CoreOptions.NODE_LABELS_INSETS);
 
             /*

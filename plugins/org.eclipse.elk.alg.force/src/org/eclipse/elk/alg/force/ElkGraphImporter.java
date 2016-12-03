@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.properties.ForceOptions;
 import org.eclipse.elk.alg.force.properties.InternalProperties;
 import org.eclipse.elk.core.UnsupportedGraphException;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -159,13 +159,6 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
     public void applyLayout(final FGraph fgraph) {
         ElkNode kgraph = (ElkNode) fgraph.getProperty(InternalProperties.ORIGIN);
         
-        // determine the border spacing, which influences the offset
-        float borderSpacing = fgraph.getProperty(ForceOptions.SPACING_BORDER);
-        if (borderSpacing < 0) {
-            borderSpacing = ForceOptions.SPACING_BORDER.getDefault();
-            fgraph.setProperty(ForceOptions.SPACING_BORDER, borderSpacing);
-        }
-        
         // calculate the offset from border spacing and node distribution
         double minXPos = Integer.MAX_VALUE;
         double minYPos = Integer.MAX_VALUE;
@@ -181,11 +174,9 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
         }
         
-        ElkInsets insets = kgraph.getProperty(ForceOptions.INSETS);
-        KVector offset = new KVector(
-                insets.getLeft() + borderSpacing - minXPos,
-                insets.getTop() + borderSpacing - minYPos);
-        
+        ElkPadding insets = kgraph.getProperty(ForceOptions.PADDING);
+        KVector offset = new KVector(insets.getLeft() - minXPos, insets.getTop() - minYPos);
+
         // process the nodes
         for (FNode fnode : fgraph.getNodes()) {
             Object object = fnode.getProperty(InternalProperties.ORIGIN);
@@ -218,8 +209,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         }
         
         // set up the parent node
-        double width = maxXPos - minXPos + 2 * borderSpacing + insets.getLeft() + insets.getRight();
-        double height = maxYPos - minYPos + 2 * borderSpacing + insets.getTop() + insets.getBottom();
+        double width = maxXPos - minXPos + insets.getLeft() + insets.getRight();
+        double height = maxYPos - minYPos + insets.getTop() + insets.getBottom();
         ElkUtil.resizeNode(kgraph, width, height, false, true);
     }
     

@@ -28,7 +28,7 @@ import org.eclipse.elk.alg.graphviz.dot.dot.NodeStatement;
 import org.eclipse.elk.alg.graphviz.dot.dot.Statement;
 import org.eclipse.elk.alg.graphviz.dot.dot.Subgraph;
 import org.eclipse.elk.alg.graphviz.dot.dot.util.DotSwitch;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -186,15 +186,15 @@ public class DotImporter {
 
             public Object caseAttribute(final Attribute attribute) {
                 if (Attributes.MARGIN.equals(attribute.getName())) {
-                    ElkInsets insets = parent.getProperty(CoreOptions.INSETS);
+                    ElkPadding padding = parent.getProperty(CoreOptions.PADDING);
                     if (attribute.getValue().indexOf(',') >= 0) {
                         KVector value = new KVector();
                         try {
                             value.parse(attribute.getValue());
-                            insets.setLeft((float) value.x);
-                            insets.setRight((float) value.x);
-                            insets.setTop((float) value.y);
-                            insets.setBottom((float) value.y);
+                            padding.setLeft((float) value.x);
+                            padding.setRight((float) value.x);
+                            padding.setTop((float) value.y);
+                            padding.setBottom((float) value.y);
                         } catch (IllegalArgumentException exception) {
                             transData.log("Discarding attribute \"" + attribute.getName()
                                     + "\" since its value could not be parsed correctly.");
@@ -202,10 +202,10 @@ public class DotImporter {
                     } else {
                         try {
                             float value = Float.parseFloat(trimValue(attribute));
-                            insets.setLeft(value);
-                            insets.setRight(value);
-                            insets.setTop(value);
-                            insets.setBottom(value);
+                            padding.setLeft(value);
+                            padding.setRight(value);
+                            padding.setTop(value);
+                            padding.setBottom(value);
                         } catch (NumberFormatException exception) {
                             transData.log("Discarding attribute \"" + attribute.getName()
                                     + "\" since its value could not be parsed correctly.");
@@ -255,7 +255,7 @@ public class DotImporter {
                 target.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS,
                         fixedSize ? SizeConstraint.fixed() : EnumSet.of(SizeConstraint.MINIMUM_SIZE));
             } else if (Attributes.NODESEP.equals(name)) {
-                target.setProperty(CoreOptions.SPACING_NODE, Float.valueOf(value));
+                target.setProperty(CoreOptions.SPACING_NODE_NODE, Float.valueOf(value));
             } else if (Attributes.PACK.equals(name)) {
                 target.setProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS, Boolean.valueOf(value));
             } else if (Attributes.PAD.equals(name)) {

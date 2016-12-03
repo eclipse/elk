@@ -20,7 +20,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.BoxLayouterOptions;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -93,7 +93,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Box layout", 2);
         
         // set option for minimal spacing
-        Float objSpacing = layoutNode.getProperty(BoxLayouterOptions.SPACING_NODE);
+        Float objSpacing = layoutNode.getProperty(BoxLayouterOptions.SPACING_NODE_NODE);
         if (objSpacing == null || objSpacing < 0) {
             objSpacing = DEF_SPACING;
         }
@@ -189,7 +189,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     private void placeBoxes(final List<ElkNode> sortedBoxes, final ElkNode parentNode,
             final double objSpacing, final double borderSpacing, final boolean expandNodes) {
         
-        ElkInsets insets = parentNode.getProperty(CoreOptions.INSETS);
+        ElkPadding insets = parentNode.getProperty(CoreOptions.PADDING);
         
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
         double minWidth, minHeight;
@@ -349,7 +349,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     private void placeBoxesGrouping(final ElkNode parentNode,
             final float objSpacing, final float borderSpacing, final boolean expandNodes) {
         
-        ElkInsets insets = parentNode.getProperty(CoreOptions.INSETS);
+        ElkPadding insets = parentNode.getProperty(CoreOptions.PADDING);
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
         double minWidth, minHeight;
         if (minSize == null) {

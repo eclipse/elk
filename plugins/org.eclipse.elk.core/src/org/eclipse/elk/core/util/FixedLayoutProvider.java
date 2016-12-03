@@ -13,7 +13,7 @@ package org.eclipse.elk.core.util;
 import java.util.ListIterator;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -154,7 +154,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         if (borderSpacing == null || borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
-        ElkInsets insets = layoutNode.getProperty(FixedLayouterOptions.INSETS);
+        ElkPadding insets = layoutNode.getProperty(FixedLayouterOptions.PADDING);
         double newWidth = maxx + borderSpacing + insets.getLeft() + insets.getRight();
         double newHeight = maxy + borderSpacing + insets.getTop() + insets.getBottom();
         ElkUtil.resizeNode(layoutNode, newWidth, newHeight, true, true);

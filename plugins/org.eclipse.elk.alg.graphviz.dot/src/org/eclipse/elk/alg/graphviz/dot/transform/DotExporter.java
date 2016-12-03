@@ -32,7 +32,7 @@ import org.eclipse.elk.alg.graphviz.dot.dot.NodeStatement;
 import org.eclipse.elk.alg.graphviz.dot.dot.Statement;
 import org.eclipse.elk.alg.graphviz.dot.dot.Subgraph;
 import org.eclipse.elk.core.UnsupportedGraphException;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -198,9 +198,9 @@ public class DotExporter {
                 statements.add(subgraph);
                 
                 // transform child nodes recursively
-                ElkInsets insets = childNode.getProperty(CoreOptions.INSETS);
-                double subgraphx = childNode.getX() + insets.getLeft();
-                double subgraphy = childNode.getY() + insets.getTop();
+                ElkPadding padding = childNode.getProperty(CoreOptions.PADDING);
+                double subgraphx = childNode.getX() + padding.getLeft();
+                double subgraphy = childNode.getY() + padding.getTop();
                 transformNodes(childNode, subgraph.getStatements(),
                         new KVector(offset).add(subgraphx, subgraphy), transData);
                 
@@ -523,7 +523,7 @@ public class DotExporter {
         // set mid label: if empty, it is filled with a dummy string to avoid
         // edge overlapping
         if (midLabel.length() > 0) {
-            float labelSpacing = elkedge.getProperty(CoreOptions.SPACING_LABEL);
+            float labelSpacing = elkedge.getProperty(CoreOptions.SPACING_EDGE_LABEL);
             if (labelSpacing < 1) {
                 labelSpacing = 0f;
             }
@@ -665,16 +665,16 @@ public class DotExporter {
                                 double topy = Double.parseDouble(tokenizer.nextToken());
                                 
                                 // set parent node attributes
-                                ElkInsets insets = parentNode.getProperty(CoreOptions.INSETS);
-                                double width = rightx - leftx + insets.getLeft() + insets.getRight();
-                                double height = bottomy - topy + insets.getTop() + insets.getBottom();
+                                ElkPadding padding = parentNode.getProperty(CoreOptions.PADDING);
+                                double width = rightx - leftx + padding.getLeft() + padding.getRight();
+                                double height = bottomy - topy + padding.getTop() + padding.getBottom();
                                 if (parentNode == transData.getSourceGraph()) {
                                     width += 2 * spacing;
                                     height += 2 * spacing;
                                     baseOffset.add(-leftx, -topy);
                                 } else {
-                                    parentNode.setX(baseOffset.x + leftx - insets.getLeft() + spacing);
-                                    parentNode.setY(baseOffset.y + topy - insets.getTop() + spacing);
+                                    parentNode.setX(baseOffset.x + leftx - padding.getLeft() + spacing);
+                                    parentNode.setY(baseOffset.y + topy - padding.getTop() + spacing);
                                     spacing = 0;
                                     nodeOffset.x = -(baseOffset.x + leftx);
                                     nodeOffset.y = -(baseOffset.y + topy);
@@ -779,9 +779,9 @@ public class DotExporter {
         ElkNode referenceNode = elkedge.getContainingNode();
         KVector reference = new KVector();
         while (referenceNode != null && referenceNode != transData.getSourceGraph()) {
-            ElkInsets insets = referenceNode.getProperty(CoreOptions.INSETS);
-            reference.x += referenceNode.getX() + insets.getLeft();
-            reference.y += referenceNode.getY() + insets.getTop();
+            ElkPadding padding = referenceNode.getProperty(CoreOptions.PADDING);
+            reference.x += referenceNode.getX() + padding.getLeft();
+            reference.y += referenceNode.getY() + padding.getTop();
             referenceNode = referenceNode.getParent();
         }
         KVector offset = edgeOffset.clone().sub(reference);

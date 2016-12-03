@@ -14,7 +14,7 @@ import java.util.ListIterator;
 import java.util.Random;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.RandomLayouterOptions;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkConnectableShape;
@@ -74,7 +74,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         }
         
         // get spacing values
-        Float spacing = parentNode.getProperty(RandomLayouterOptions.SPACING_NODE);
+        Float spacing = parentNode.getProperty(RandomLayouterOptions.SPACING_NODE_NODE);
         if (spacing == null || spacing < 0) {
             spacing = DEF_SPACING;
         }
@@ -140,7 +140,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        ElkInsets insets = parent.getProperty(RandomLayouterOptions.INSETS);
+        ElkPadding insets = parent.getProperty(RandomLayouterOptions.PADDING);
         totalWidth += insets.getLeft() + insets.getRight();
         totalHeight += insets.getTop() + insets.getBottom();
         ElkUtil.resizeNode(parent, totalWidth, totalHeight, false, true);

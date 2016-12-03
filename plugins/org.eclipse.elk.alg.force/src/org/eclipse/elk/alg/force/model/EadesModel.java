@@ -30,7 +30,7 @@ public final class EadesModel extends AbstractForceModel {
     /** the maximal number of iterations after which the model stops. */
     private int maxIterations = ForceOptions.ITERATIONS.getDefault();
     /** the spring length that determines the optimal distance of connected nodes. */
-    private double springLength = ForceOptions.SPACING_NODE.getDefault();
+    private double springLength = ForceOptions.SPACING_NODE_NODE.getDefault();
     /** additional factor for repulsive forces. */
     private double repulsionFactor = ForceOptions.REPULSION.getDefault();
     
@@ -41,7 +41,7 @@ public final class EadesModel extends AbstractForceModel {
     protected void initialize(final FGraph graph) {
         super.initialize(graph);
         maxIterations = graph.getProperty(ForceOptions.ITERATIONS);
-        springLength = graph.getProperty(ForceOptions.SPACING_NODE).doubleValue();
+        springLength = graph.getProperty(ForceOptions.SPACING_NODE_NODE).doubleValue();
         repulsionFactor = graph.getProperty(ForceOptions.REPULSION).doubleValue();
     }
     

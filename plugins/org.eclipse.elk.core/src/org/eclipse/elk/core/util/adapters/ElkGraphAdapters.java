@@ -13,7 +13,7 @@ package org.eclipse.elk.core.util.adapters;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
@@ -156,7 +156,7 @@ public final class ElkGraphAdapters {
          * {@inheritDoc}
          */
         public Insets getInsets() {
-            ElkInsets elkInsets = element.getProperty(CoreOptions.INSETS);
+            ElkPadding elkInsets = element.getProperty(CoreOptions.PADDING);
             if (elkInsets == null) {
                 return new Insets();
             } else {
@@ -172,8 +172,8 @@ public final class ElkGraphAdapters {
          * {@inheritDoc}
          */
         public void setInsets(final Insets insets) {
-            element.setProperty(CoreOptions.INSETS,
-                    new ElkInsets(insets.top, insets.right, insets.bottom, insets.left));
+            element.setProperty(CoreOptions.PADDING,
+                    new ElkPadding(insets.top, insets.right, insets.bottom, insets.left));
         }
 
         /**

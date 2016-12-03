@@ -57,7 +57,7 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
             totalHeight += v.getSize().y;
         }
         double area = totalWidth * totalHeight;
-        double c = graph.getProperty(ForceOptions.SPACING_NODE) * SPACING_FACTOR;
+        double c = graph.getProperty(ForceOptions.SPACING_NODE_NODE) * SPACING_FACTOR;
         k = Math.sqrt(area / (2 * n)) * c;
     }
 

@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.force
 import org.eclipse.elk.alg.force.ForceLayoutProvider
 import org.eclipse.elk.alg.force.model.ForceModelStrategy
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.math.ElkPadding
 
 /**
  * Declarations for the ELK Force layout algorithm.
@@ -34,13 +35,12 @@ algorithm force(ForceLayoutProvider) {
     features multi_edges, edge_labels
     preview images/force.png
     supports org.eclipse.elk.priority = 1
-    supports org.eclipse.elk.spacing.node = 80
-    supports org.eclipse.elk.spacing.border = 50
-    supports org.eclipse.elk.spacing.^label = 5
+    supports org.eclipse.elk.spacing.nodeNode = 80
+    supports org.eclipse.elk.spacing.edgeLabel = 5
     supports org.eclipse.elk.aspectRatio = 1.6f
     supports org.eclipse.elk.randomSeed = 1
     supports org.eclipse.elk.separateConnectedComponents = true
-    supports org.eclipse.elk.insets
+    supports org.eclipse.elk.padding = new ElkPadding(50)
     supports org.eclipse.elk.interactive
     supports org.eclipse.elk.portConstraints
     supports model
