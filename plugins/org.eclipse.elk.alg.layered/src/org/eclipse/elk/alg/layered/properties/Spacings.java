@@ -76,13 +76,13 @@ public final class Spacings {
      */
     public Spacings(final LGraph graph) {
 
-        nodeSpacing = graph.getProperty(LayeredOptions.SPACING_NODE);
+        nodeSpacing = graph.getProperty(LayeredOptions.SPACING_NODE_NODE);
         inLayerSpacingFactor = graph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
         edgeEdgeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
         edgeNodeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.SPACING_EDGE_NODE_SPACING_FACTOR);
-        portSpacing = graph.getProperty(LayeredOptions.SPACING_PORT);
-        externalPortSpacing = graph.getProperty(LayeredOptions.SPACING_PORT);
-        labelSpacing = graph.getProperty(LayeredOptions.SPACING_LABEL);
+        portSpacing = graph.getProperty(LayeredOptions.SPACING_PORT_PORT);
+        externalPortSpacing = graph.getProperty(LayeredOptions.SPACING_PORT_PORT);
+        labelSpacing = graph.getProperty(LayeredOptions.SPACING_LABEL_NODE);
 
         // pre calculate the spacings between pairs of node types
         int n = NodeType.values().length;

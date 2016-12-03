@@ -52,7 +52,7 @@ public final class CommentPostprocessor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Comment post-processing", 1);
-        double spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
+        double spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
         
         for (Layer layer : layeredGraph) {
             List<LNode> boxes = Lists.newArrayList();

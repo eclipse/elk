@@ -149,7 +149,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // First step to consider the real size of nodes: Initialize the dummy size with the spacing
         // properties
         dummySize =
-                layeredGraph.getProperty(LayeredOptions.SPACING_NODE)
+                layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE)
                         * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
 
         // Compute the minimum nodes size (of the real nodes). We're going to use this value in the

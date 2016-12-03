@@ -94,11 +94,11 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         
         // Place components in each group
         KVector offset = new KVector();
-        float spacing = 2 * firstComponent.getProperty(LayeredOptions.SPACING_NODE);
+        float componentSpacing = firstComponent.getProperty(LayeredOptions.SPACING_COMPONENT_COMPONENT);
         
         for (ComponentGroup group : componentGroups) {
             // Place the components
-            KVector groupSize = placeComponents(group, spacing);
+            KVector groupSize = placeComponents(group, componentSpacing);
             offsetGraphs(group.getComponents(), offset.x, offset.y);
             
             // Compute the new offset
@@ -108,8 +108,8 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         
         // Set the graph's new size (the component group sizes include additional spacing
         // on the right and bottom sides which we need to subtract at this point)
-        target.getSize().x = offset.x - spacing;
-        target.getSize().y = offset.y - spacing;
+        target.getSize().x = offset.x - componentSpacing;
+        target.getSize().y = offset.y - componentSpacing;
         
         // if compaction is desired, do so!cing;
         if (firstComponent.getProperty(LayeredOptions.COMPACTION_CONNECTED_COMPONENTS)
@@ -123,7 +123,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
             }
 
             ComponentsCompactor compactor = new ComponentsCompactor();
-            compactor.compact(components, target.getSize(), spacing);
+            compactor.compact(components, target.getSize(), componentSpacing);
 
             // the compaction algorithm places components absolutely,
             // therefore we have to use the final drawing's offset

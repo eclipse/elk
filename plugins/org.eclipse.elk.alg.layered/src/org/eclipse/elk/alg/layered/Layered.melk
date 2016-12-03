@@ -50,6 +50,7 @@ algorithm layered(LayeredLayoutProvider) {
 	preview images/layered.png
 	// general spacings
 	supports org.eclipse.elk.spacing.border = 12
+	supports org.eclipse.elk.spacing.componentComponent
 	supports org.eclipse.elk.spacing.edgeEdge
 	supports org.eclipse.elk.spacing.edgeLabel
 	supports org.eclipse.elk.spacing.edgeNode
@@ -63,7 +64,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.nodeNodeBetweenLayers
 	// other options
-	supports org.eclipse.elk.insets
+	supports org.eclipse.elk.padding
 	supports org.eclipse.elk.priority = 0
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
 	supports org.eclipse.elk.port.borderOffset = 0

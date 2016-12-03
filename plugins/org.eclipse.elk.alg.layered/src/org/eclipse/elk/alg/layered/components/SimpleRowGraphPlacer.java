@@ -37,9 +37,6 @@ import org.eclipse.elk.core.math.KVector;
  */
 final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
     
-    /** Factor for spacing between components. */
-    private static final float SPACING_FACTOR = 1.6f;
-
     /**
      * {@inheritDoc}
      */
@@ -99,16 +96,16 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         }
         maxRowWidth = Math.max(maxRowWidth, (float) Math.sqrt(totalArea)
                 * target.getProperty(LayeredOptions.ASPECT_RATIO));
-        double spacing = SPACING_FACTOR * target.getProperty(LayeredOptions.SPACING_NODE);
+        double componentSpacing = target.getProperty(LayeredOptions.SPACING_COMPONENT_COMPONENT);
 
         // place nodes iteratively into rows
-        double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;
+        double xpos = 0, ypos = 0, highestBox = 0, broadestRow = componentSpacing;
         for (LGraph graph : components) {
             KVector size = graph.getSize();
             if (xpos + size.x > maxRowWidth) {
                 // place the graph into the next row
                 xpos = 0;
-                ypos += highestBox + spacing;
+                ypos += highestBox + componentSpacing;
                 highestBox = 0;
             }
             KVector offset = graph.getOffset();
@@ -116,18 +113,16 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
             offset.reset();
             broadestRow = Math.max(broadestRow, xpos + size.x);
             highestBox = Math.max(highestBox, size.y);
-            xpos += size.x + spacing;
+            xpos += size.x + componentSpacing;
         }
         
         target.getSize().x = broadestRow;
         target.getSize().y = ypos + highestBox;
         
-        double regularSpacing = target.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
-
         // if compaction is desired, do so!
         if (firstComponent.getProperty(LayeredOptions.COMPACTION_CONNECTED_COMPONENTS)) {
             ComponentsCompactor compactor = new ComponentsCompactor();
-            compactor.compact(components, target.getSize(), regularSpacing);
+            compactor.compact(components, target.getSize(), componentSpacing);
 
             // the compaction algorithm places components absolutely,
             // therefore we have to use the final drawing's offset

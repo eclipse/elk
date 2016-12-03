@@ -73,7 +73,7 @@ public class SausageFolding implements ILayoutProcessor {
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Sausage Folding", 1);
         
-        spacing = graph.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
+        spacing = graph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
         inLayerSpacing = spacing * graph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
 
         // determine the maximal dimensions of layers

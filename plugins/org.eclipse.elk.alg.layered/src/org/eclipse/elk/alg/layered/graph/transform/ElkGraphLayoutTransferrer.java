@@ -24,7 +24,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeRouting;
@@ -88,12 +88,12 @@ class ElkGraphLayoutTransferrer {
         
         // Set node insets, if requested
         if (sizeOptions.contains(SizeOptions.COMPUTE_INSETS)) {
-            ElkInsets elkInsets = parentElkNode.getProperty(LayeredOptions.INSETS);
+            ElkPadding padding = parentElkNode.getProperty(LayeredOptions.PADDING);
             
-            elkInsets.setBottom(lInsets.bottom);
-            elkInsets.setTop(lInsets.top);
-            elkInsets.setLeft(lInsets.left);
-            elkInsets.setRight(lInsets.right);
+            padding.setBottom(lInsets.bottom);
+            padding.setTop(lInsets.top);
+            padding.setLeft(lInsets.left);
+            padding.setRight(lInsets.right);
         }
 
         // Along the way, we collect the list of edges to be processed later

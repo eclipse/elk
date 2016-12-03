@@ -148,7 +148,7 @@ public class BigNodesSplitter implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE).doubleValue();
+        spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
         direction = layeredGraph.getProperty(LayeredOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();

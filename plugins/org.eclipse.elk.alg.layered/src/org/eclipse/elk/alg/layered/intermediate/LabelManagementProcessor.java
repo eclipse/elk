@@ -63,7 +63,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         // set on the graph, but let's be sure anyway
         ILabelManager labelManager = layeredGraph.getProperty(LabelManagementOptions.LABEL_MANAGER);
         if (labelManager != null) {
-            double labelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_LABEL).doubleValue();
+            double labelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_LABEL).doubleValue();
 
             // Iterate over all layers and call our nifty code
             for (Layer layer : layeredGraph) {
