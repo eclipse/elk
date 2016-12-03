@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -18,24 +23,22 @@ import org.eclipse.elk.alg.layered.components.ComponentsProcessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPostprocessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPreprocessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LInsets;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.ContentAlignment;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
 
 /**
  * The main entry point into KLay Layered. KLay Layered is a layout algorithm after the layered
@@ -168,14 +171,13 @@ public final class KlayLayered {
         if (theMonitor == null) {
             theMonitor = new BasicProgressMonitor(0);
         }
-        theMonitor.begin("Layered layout", 3); // SUPPRESS CHECKSTYLE MagicNumber
-        
+        theMonitor.begin("Layered layout", 2); // SUPPRESS CHECKSTYLE MagicNumber
+
         // Preprocess the compound graph by splitting cross-hierarchy edges
         compoundGraphPreprocessor.process(lgraph, theMonitor.subTask(1));
 
-        // Apply the layout algorithm recursively
-        recursiveLayout(lgraph, theMonitor.subTask(1));
-        
+        hierarchicalLayout(lgraph, theMonitor.subTask(1));
+
         // Postprocess the compound graph by combining split cross-hierarchy edges
         compoundGraphPostprocessor.process(lgraph, theMonitor.subTask(1));
 
@@ -183,38 +185,113 @@ public final class KlayLayered {
     }
     
     /**
-     * Do a recursive compound graph layout.
+     * Processors can be marked as operating on the full hierarchy using
+     * {@link ILayoutProcessor#operatesOnFullHierarchy()}.
      * 
-     * @param lgraph the graph
-     * @param monitor a progress monitor to show progress information
+     * All graphs are collected using a breadth first search and this list is reversed, so that for each graph, all
+     * following graphs are on the same hierarchy level or higher, i.e. closer to the parent graph. Each graph then has
+     * a unique configuration of ELK Layered, which is comprised of a sequence of processors. The processors can vary
+     * depending on the characteristics of each graph. The list of graphs and their algorithms is then traversed. If a
+     * processor is not hierarchical it is simply executed. If it it is hierarchical and this graph is not the root
+     * graph, this processor is skipped and the algorithm is paused until the processor has been executed on the root
+     * graph. Then the algorithm is continued, starting with the level lowest in the hierarchy, i.e. furthest away from
+     * the root graph.
      */
-    private void recursiveLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
-        monitor.begin("Recursive layout", 2);
-        
-        if (!lgraph.getLayerlessNodes().isEmpty()) {
-            // Process all contained nested graphs recursively
-            float workPerSubgraph = 1.0f / lgraph.getLayerlessNodes().size();
-            for (LNode node : lgraph.getLayerlessNodes()) {
-                LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
-                if (nestedGraph != null) {
-                    recursiveLayout(nestedGraph, monitor.subTask(workPerSubgraph));
-                    graphLayoutToNode(node, nestedGraph);
+    private void hierarchicalLayout(final LGraph lgraph, final IElkProgressMonitor monitor) {
+        // Perform a reversed breadth first search: The graphs in the lowest hierarchy come first.
+        Collection<LGraph> graphs = collectAllGraphsBottomUp(lgraph);
+
+        // Get list of processors for each graph, since they can be different.
+        // Iterators are used, so that processing of a graph can be paused and continued easily.
+        int work = 0;
+        List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphsAndAlgorithms = new ArrayList<>();
+        for (LGraph g : graphs) {
+            graphConfigurator.prepareGraphForLayout(g);
+            List<ILayoutProcessor> processors = g.getProperty(InternalProperties.PROCESSORS);
+            work += processors.size();
+            Iterator<ILayoutProcessor> algorithm = processors.iterator();
+            graphsAndAlgorithms.add(Pair.of(g, algorithm));
+        }
+
+        monitor.begin("Recursive Hierarchical layout", work);
+
+        // When the root graph has finished layout, the layout is complete.
+        Iterator<ILayoutProcessor> rootProcessors = getProcessorsForRootGraph(graphsAndAlgorithms);
+        while (rootProcessors.hasNext()) {
+            // Layout from bottom up
+            for (Pair<LGraph, Iterator<ILayoutProcessor>> graphAndAlgorithm : graphsAndAlgorithms) {
+                Iterator<ILayoutProcessor> processors = graphAndAlgorithm.getSecond();
+                LGraph graph = graphAndAlgorithm.getFirst();
+
+                while (processors.hasNext()) {
+                    ILayoutProcessor processor = processors.next();
+                    if (!processor.operatesOnFullHierarchy()) {
+                        processor.process(graph, monitor.subTask(1));
+                    } else if (isRoot(graph)) {
+                        // If processor operates on the full hierarchy, it must be executed on the
+                        // root.
+                        processor.process(graph, monitor.subTask(1));
+                        // Continue operation with the graph at the bottom of the hierarchy
+                        break;
+                    } else { // operates on full hierarchy and is not root graph
+                        // skip this processor and pause execution until root graph has processed.
+                        break;
+                    }
                 }
             }
-            
-            // Update the modules depending on user options
-            graphConfigurator.prepareGraphForLayout(lgraph);
-    
-            // Perform the layout algorithm
-            layout(lgraph, monitor);
         }
-        
-        // Resize the resulting graph, according to minimal size constraints and such
-        resizeGraph(lgraph);
 
         monitor.done();
     }
     
+    /**
+     * Implements a breadth first search in compound graphs with reversed order. This way the
+     * innermost graphs are first in the list, followed by one level further up, etc.
+     * 
+     * @param root
+     *            the root graph
+     * @return Graphs in breadth first search in compound graphs in reverse order.
+     */
+    private Collection<LGraph> collectAllGraphsBottomUp(final LGraph root) {
+        Deque<LGraph> collectedGraphs = new ArrayDeque<>();
+        Deque<LGraph> continueSearchingTheseGraphs = new ArrayDeque<>();
+        collectedGraphs.push(root);
+        continueSearchingTheseGraphs.push(root);
+
+        while (!continueSearchingTheseGraphs.isEmpty()) {
+            LGraph nextGraph = continueSearchingTheseGraphs.pop();
+            for (LNode node : nextGraph.getLayerlessNodes()) {
+                if (hasNestedGraph(node)) {
+                    LGraph nestedGraph = nestedGraphOf(node);
+                    collectedGraphs.push(nestedGraph);
+                    continueSearchingTheseGraphs.push(nestedGraph);
+                }
+            }
+        }
+        return collectedGraphs;
+    }
+
+    private Iterator<ILayoutProcessor> getProcessorsForRootGraph(
+            final List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphsAndAlgorithms) {
+        return graphsAndAlgorithms.get(graphsAndAlgorithms.size() - 1).getSecond();
+    }
+
+    private boolean isRoot(final LGraph graph) {
+        return parentNodeOf(graph) == null;
+    }
+
+    private LNode parentNodeOf(final LGraph graph) {
+        return graph.getProperty(InternalProperties.PARENT_LNODE);
+    }
+
+    private LGraph nestedGraphOf(final LNode node) {
+        return node.getProperty(InternalProperties.NESTED_LGRAPH);
+    }
+
+    private boolean hasNestedGraph(final LNode node) {
+        return nestedGraphOf(node) != null;
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Layout Testing
     
@@ -583,7 +660,7 @@ public final class KlayLayered {
                     PortSide extPortSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
                     if (extPortSide == PortSide.EAST) {
                         node.getPosition().x += newSize.x - oldSize.x;
-                    } else  if (extPortSide == PortSide.SOUTH) {
+                    } else if (extPortSide == PortSide.SOUTH) {
                         node.getPosition().y += newSize.y - oldSize.y;
                     }
                 }
@@ -596,42 +673,4 @@ public final class KlayLayered {
         lgraph.getSize().y = newSize.y - insets.top - insets.bottom;
     }
     
-    /**
-     * Transfer the layout of the given graph to the given associated node.
-     * 
-     * @param node a compound node
-     * @param lgraph the graph nested in the compound node
-     */
-    private void graphLayoutToNode(final LNode node, final LGraph lgraph) {
-        // Process external ports
-        for (LNode childNode : lgraph.getLayerlessNodes()) {
-            Object origin = childNode.getProperty(InternalProperties.ORIGIN);
-            if (origin instanceof LPort) {
-                LPort port = (LPort) origin;
-                KVector portPosition = LGraphUtil.getExternalPortPosition(lgraph, childNode,
-                        port.getSize().x, port.getSize().y);
-                port.getPosition().x = portPosition.x;
-                port.getPosition().y = portPosition.y;
-                port.setSide(childNode.getProperty(InternalProperties.EXT_PORT_SIDE));
-            }
-        }
-        
-        // Setup the parent node
-        KVector actualGraphSize = lgraph.getActualSize();
-        if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
-                GraphProperties.EXTERNAL_PORTS)) {
-            
-            // Ports have positions assigned
-            node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
-            node.getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
-                    .add(GraphProperties.NON_FREE_PORTS);
-            LGraphUtil.resizeNode(node, actualGraphSize, false, true);
-        } else {
-            // Ports have not been positioned yet - leave this for next layouter
-            LGraphUtil.resizeNode(node, actualGraphSize, true, true);
-        }
-        
-        node.getInsets().copy(lgraph.getInsets());
-    }
-
 }

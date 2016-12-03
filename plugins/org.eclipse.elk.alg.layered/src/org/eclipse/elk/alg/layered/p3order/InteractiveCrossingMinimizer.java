@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -20,10 +21,11 @@ import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
@@ -80,8 +82,11 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Interactive crossing minimization", 1);
-        
+        LNode[][] nodeOrder = layeredGraph.toNodeArray();
+        AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(nodeOrder.length);
+        IInitializable.init(Arrays.asList(portDistributor), nodeOrder);
         int portCount = 0;
+        int layerIndex = 0;
         for (Layer layer : layeredGraph) {
             // determine a horizontal position for edge bend points comparison
             double horizPos = 0;
@@ -135,11 +140,9 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
                     return compare;
                 }
             });
+            portDistributor.distributePortsWhileSweeping(nodeOrder, layerIndex, true);
+            layerIndex++;
         }
-
-        // Distribute the ports of all nodes with free port constraints
-        AbstractPortDistributor portDistributor = new NodeRelativePortDistributor(new float[portCount]);
-        portDistributor.distributePorts(layeredGraph.toNodeArray());
         
         monitor.done();
     }

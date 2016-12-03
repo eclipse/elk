@@ -12,12 +12,13 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
-import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchProcessor;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
+import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 
 /**
- * Definition of available intermediate layout processors for the layered layouter. This enumeration
- * also serves as a factory for intermediate layout processors.
- * 
+ * Definition of available intermediate layout processors for the layered layouter. This enumeration also serves as a
+ * factory for intermediate layout processors.
+ *
  * @author cds
  * @author ima
  * @kieler.design 2012-08-10 chsch grh
@@ -91,11 +92,10 @@ public enum IntermediateProcessorStrategy {
     NORTH_SOUTH_PORT_PREPROCESSOR,
 
     // Before Phase 4
-
-    /** Greedy switch crossing reduction. */
-    GREEDY_SWITCH,
-    /** Distributes ports after crossing minimization. Used by the layer sweep crossing minimizer. */
-    PORT_DISTRIBUTER,
+    /** Hierachical one-sided greedy switch crossing reduction. */
+    ONE_SIDED_GREEDY_SWITCH,
+    /** Hierachical two-sided greedy switch crossing reduction. */
+    TWO_SIDED_GREEDY_SWITCH,
     /** Unhide self loops after phase 3. */
     SPLINE_SELF_LOOP_POSITIONER,
     /** Compacts looong sausages. This is a hidden feature. */
@@ -145,6 +145,8 @@ public enum IntermediateProcessorStrategy {
     HORIZONTAL_COMPACTOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
+    /** In hierarchical graphs, maps a child graph to its parent node. */
+    HIERARCHICAL_NODE_RESIZER,
     /** Mirrors the graph to perform a right-to-left drawing. */
     LEFT_DIR_POSTPROCESSOR,
     /** Transposes the graph to perform a top-bottom drawing. */
@@ -191,8 +193,14 @@ public enum IntermediateProcessorStrategy {
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
 
-        case GREEDY_SWITCH:
-            return new GreedySwitchProcessor();
+        case ONE_SIDED_GREEDY_SWITCH:
+            return new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
+            
+        case TWO_SIDED_GREEDY_SWITCH:
+            return new LayerSweepCrossingMinimizer(CrossMinType.TWO_SIDED_GREEDY_SWITCH);
+
+        case HIERARCHICAL_NODE_RESIZER:
+            return new HierarchicalNodeResizingProcessor();
 
         case HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR:
             return new HierarchicalPortConstraintProcessor();
@@ -278,9 +286,6 @@ public enum IntermediateProcessorStrategy {
 
         case PARTITION_PREPROCESSOR:
             return new PartitionPreprocessor();
-
-        case PORT_DISTRIBUTER:
-            return new PortDistributionProcessor();
 
         case PORT_LIST_SORTER:
             return new PortListSorter();
