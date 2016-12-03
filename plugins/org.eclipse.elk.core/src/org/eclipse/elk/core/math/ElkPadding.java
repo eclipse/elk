@@ -16,7 +16,7 @@ import org.eclipse.elk.core.util.IDataObject;
  * Represents insets of a graphical object. Insets are space to be left to the object's borders when placing things
  * within the object.
  */
-public class ElkInsets implements IDataObject, Cloneable {
+public class ElkPadding implements IDataObject, Cloneable {
     
     /** Serialization version ID. */
     private static final long serialVersionUID = -8033455628103978553L;
@@ -37,7 +37,7 @@ public class ElkInsets implements IDataObject, Cloneable {
     /**
      * Create new empty insets.
      */
-    public ElkInsets() {
+    public ElkPadding() {
         // This space intentionally left blank
     }
     
@@ -49,10 +49,18 @@ public class ElkInsets implements IDataObject, Cloneable {
      * @param bottom bottom insets.
      * @param left left insets.
      */
-    public ElkInsets(final double top, final double right, final double bottom, final double left) {
+    public ElkPadding(final double top, final double right, final double bottom, final double left) {
         setInsets(top, right, bottom, left);
     }
     
+    /**
+     * Create new insets initialized to the given values.
+     * 
+     * @param any inset value for every side.
+     */
+    public ElkPadding(final double any) {
+        this(any, any, any, any);
+    }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Accessors
@@ -148,8 +156,8 @@ public class ElkInsets implements IDataObject, Cloneable {
      * @see java.lang.Object#clone()
      */
     @Override
-    public ElkInsets clone() {
-        return new ElkInsets(top, right, bottom, left);
+    public ElkPadding clone() {
+        return new ElkPadding(top, right, bottom, left);
     }
     
     
