@@ -64,8 +64,8 @@ import com.google.common.collect.Lists;
  */
 public class SausageFolding implements ILayoutProcessor {
 
-    private double spacing = 0;
-    private double inLayerSpacing = 0;
+    private double hSpacing = 0;
+    private double vSpacing = 0;
 
     /**
      * {@inheritDoc}
@@ -73,8 +73,8 @@ public class SausageFolding implements ILayoutProcessor {
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Sausage Folding", 1);
         
-        spacing = graph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
-        inLayerSpacing = spacing * graph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
+        vSpacing = graph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
+        hSpacing = graph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS).doubleValue();;
 
         // determine the maximal dimensions of layers
         double maxHeight = determineMaximalHeight(graph); // sum of heights of nodes in the layer
@@ -204,10 +204,10 @@ public class SausageFolding implements ILayoutProcessor {
         for (Layer l : graph.getLayers()) {
             double lH = 0;
             for (LNode n : l.getNodes()) {
-                lH += n.getSize().y + n.getMargin().bottom + n.getMargin().top + inLayerSpacing;
+                lH += n.getSize().y + n.getMargin().bottom + n.getMargin().top + vSpacing;
             }
             // layers cannot be empty
-            lH -= inLayerSpacing;
+            lH -= vSpacing;
 
             maxH = Math.max(maxH, lH);
         }
@@ -220,7 +220,7 @@ public class SausageFolding implements ILayoutProcessor {
 
         for (Layer l : graph.getLayers()) {
             for (LNode n : l.getNodes()) {
-                double nW = n.getSize().x + n.getMargin().right + n.getMargin().left + spacing;
+                double nW = n.getSize().x + n.getMargin().right + n.getMargin().left + hSpacing;
                 maxW = Math.max(maxW, nW);
             }
 

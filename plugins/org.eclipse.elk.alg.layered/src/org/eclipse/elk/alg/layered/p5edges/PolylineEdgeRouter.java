@@ -169,7 +169,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     
     /** the minimal vertical difference for creating bend points. */
     private static final double MIN_VERT_DIFF = 1.0;
-    /** factor for layer spacing. */
+    /** factor for spacing apart layers between which edges are routed. */
     private static final double LAYER_SPACE_FAC = 0.4;
 
     /** Set of already created junction points, to avoid multiple points at the same position. */
@@ -192,8 +192,8 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Polyline edge routing", 1);
         
-        final float nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE);
-        final float edgeSpaceFac = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
+        final float nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
+        final float edgeSpaceFac = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
         
         double xpos = 0.0;
         double layerSpacing = 0.0;

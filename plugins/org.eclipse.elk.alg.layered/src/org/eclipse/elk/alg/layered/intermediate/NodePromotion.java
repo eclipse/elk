@@ -221,11 +221,9 @@ public class NodePromotion implements ILayoutProcessor {
         // The sizes (in pixels) are approximated, because the layering isn't finite in this phase
         // and there might some more changes about where which edge and node might end up at last.
         // Calculate approximative addition of space for a node.
-        nodeSizeAffix =
-                masterGraph.getProperty(LayeredOptions.SPACING_NODE_NODE)
-                        * masterGraph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
+        nodeSizeAffix = masterGraph.getProperty(LayeredOptions.SPACING_NODE_NODE);
         // And calculate an approximative size of a dummy node inside the graph.
-        dummySize = nodeSizeAffix * masterGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
+        dummySize = masterGraph.getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
 
         maxHeight = masterGraph.getLayers().size();
         int layerID = maxHeight - 1;

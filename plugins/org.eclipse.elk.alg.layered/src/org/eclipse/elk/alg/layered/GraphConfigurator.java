@@ -91,11 +91,10 @@ final class GraphConfigurator {
 //        lgraph.checkProperties(InternalProperties.SPACING, InternalProperties.BORDER_SPACING,
 //                Properties.THOROUGHNESS, InternalProperties.ASPECT_RATIO);
         
-        float spacing = lgraph.getProperty(LayeredOptions.SPACING_NODE_NODE);
-        if (lgraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR) * spacing < MIN_EDGE_SPACING) {
-            // Edge spacing is determined by the product of object spacing and edge spacing factor.
+        float edgeSpacing = lgraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE);
+        if (edgeSpacing < MIN_EDGE_SPACING) {
             // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
-            lgraph.setProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR, MIN_EDGE_SPACING / spacing);
+            lgraph.setProperty(LayeredOptions.SPACING_EDGE_EDGE, MIN_EDGE_SPACING);
         }
         
         Direction direction = lgraph.getProperty(LayeredOptions.DIRECTION);

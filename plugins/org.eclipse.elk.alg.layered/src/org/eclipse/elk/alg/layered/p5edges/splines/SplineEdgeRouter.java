@@ -68,7 +68,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     /** An edge is drawn as a straight line if the y-difference of source/target is lower than this. */
     private static final double MAX_VERTICAL_DIFF_FOR_STRAIGHT = 0.2;
     /** X-difference between two vertical segments. May be overwritten. */
-    private double edgeSpacing = SplinesMath.THREE;
+    private double hEdgeSpacing = SplinesMath.THREE;
     /** Avoiding magic number problems. */
     private static final double ONE_HALF = 0.5;
     /** Default dimension of an edge-spline. */
@@ -135,8 +135,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Spline edge routing", 1);
         // Retrieve some generic values
-        final float nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE);
-        edgeSpacing = nodeSpacing * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
+        final float hNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
+        hEdgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
         
         // Find out if splines should be routed thoroughly or sloppy
         final boolean sloppyRouting = layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING);
@@ -242,11 +242,11 @@ public final class SplineEdgeRouter implements ILayoutPhase {
 
                     // Determine where next layer should start based on the maximal vertical span of edges
                     // between the two layers
-                    double layerSpacing = sloppyLayerSpacingFactor * (edgeSpacing / nodeSpacing) * maxVertDiff;
+                    double layerSpacing = sloppyLayerSpacingFactor * (hEdgeSpacing / hNodeSpacing) * maxVertDiff;
 
                     // At least have minimal node spacing if all edges are straight
-                    if (layerSpacing < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
-                        layerSpacing = nodeSpacing;
+                    if (layerSpacing < hNodeSpacing && !externalLeftLayer && !externalRightLayer) {
+                        layerSpacing = hNodeSpacing;
                     }
 
                     rightLayersPosition += layerSpacing;
@@ -261,18 +261,18 @@ public final class SplineEdgeRouter implements ILayoutPhase {
 
                     if (maxRank > 0) {
                         // The space between each pair of edge segments, and between nodes and edges
-                        double increment = (maxRank + 1) * edgeSpacing;
+                        double increment = (maxRank + 1) * hEdgeSpacing;
 
                         // If we are between two layers, make sure their minimal spacing is preserved
-                        if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
-                            increment = nodeSpacing;
+                        if (increment < hNodeSpacing && !externalLeftLayer && !externalRightLayer) {
+                            increment = hNodeSpacing;
                         }
                         rightLayersPosition += increment;
                     } else if (!(externalLeftLayer || externalRightLayer || layerOnlyContainsDummies(leftLayer)
                             || layerOnlyContainsDummies(rightLayer))) {
                         // If all edges are straight, use the usual spacing
                         // (except when we are between two layers where both only contains dummy nodes)
-                        rightLayersPosition += nodeSpacing;
+                        rightLayersPosition += hNodeSpacing;
                     }
                 }
                 
@@ -319,7 +319,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                     maxRank = Math.max(maxRank, edge.rank);
                 }
                 if (maxRank >= 0) {
-                    xpos += (maxRank + 2) * edgeSpacing;
+                    xpos += (maxRank + 2) * hEdgeSpacing;
                 }
             }
             leftLayer = rightLayer;
@@ -1103,7 +1103,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             final double endXPos, final boolean sloppyRouting) {
         // the center position is the same for all edges but depends on sloppiness of the routing
         final double centerXPos = sloppyRouting ? (startXPos + endXPos) / 2
-                : startXPos + (hyperEdge.rank + 1) * edgeSpacing;
+                : startXPos + (hyperEdge.rank + 1) * hEdgeSpacing;
        
         for (final LEdge edge : hyperEdge.edges) {
             final KVector targetAnchor = edge.getTarget().getAbsoluteAnchor();

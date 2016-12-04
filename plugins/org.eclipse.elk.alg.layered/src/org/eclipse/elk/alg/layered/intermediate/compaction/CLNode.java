@@ -50,9 +50,8 @@ public final class CLNode extends CNode {
      */
     public CLNode(final LNode lNode, final LGraph layeredGraph) {
         // getting the spacing properties
-        horizontalSpacing = (double) layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE);
-        verticalSpacing = horizontalSpacing
-                        * layeredGraph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
+        horizontalSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS).doubleValue();
+        verticalSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
         
         // calculating the necessary hitbox dimensions
         this.lNode = lNode;

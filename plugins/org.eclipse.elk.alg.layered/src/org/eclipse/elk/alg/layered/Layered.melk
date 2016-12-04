@@ -59,6 +59,7 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.spacing.labelNode
 	supports org.eclipse.elk.spacing.nodeNode = 20
 	supports org.eclipse.elk.spacing.portPort
+	supports org.eclipse.elk.spacing.individualOverride
 	// layer-based spacings
     supports org.eclipse.elk.alg.layered.spacing.edgeEdgeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
@@ -90,8 +91,6 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.portAlignment.south
 	supports org.eclipse.elk.portAlignment.west
 	supports org.eclipse.elk.portAlignment.east
-	supports org.eclipse.elk.alg.layered.spacing.edgeNodeSpacingFactor
-    supports org.eclipse.elk.alg.layered.spacing.edgeSpacingFactor
 	supports unnecessaryBendpoints
 	supports org.eclipse.elk.alg.layered.layering.strategy
 	supports org.eclipse.elk.alg.layered.layering.nodePromotion.strategy
@@ -108,7 +107,6 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
 	supports edgeLabelSideSelection
 	supports feedbackEdges
-	supports org.eclipse.elk.alg.layered.spacing.inLayerSpacingFactor
 	supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
 	supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
 	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopPlacement

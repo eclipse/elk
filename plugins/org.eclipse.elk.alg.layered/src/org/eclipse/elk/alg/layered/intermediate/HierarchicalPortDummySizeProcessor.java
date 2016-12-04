@@ -64,9 +64,12 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
         List<LNode> southernDummies = Lists.newArrayList();
         
         // Calculate the width difference (this assumes CENTER node alignment)
-        double normalSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
-        double smallSpacing = normalSpacing * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
-        double delta = smallSpacing * 2;
+        //  The idea behind this is that ports are stacked on top of each other at the center of the 
+        //  node. By iteratively increasing their size by twice the edgeEdge spacing between layers, 
+        //  vertical edge segments are spaced by that amount since the edge's anchor will either 
+        //  be the very first or very last point of the port.
+        double edgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
+        double delta = edgeSpacing * 2;
         
         // Iterate through the layers
         for (Layer layer : layeredGraph) {

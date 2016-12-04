@@ -123,9 +123,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
         widthCurrent = 0;
         widthUp = 0;
         // initialize the dummy size with the spacing properties
-        dummySize =
-                layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE)
-                        * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
+        dummySize = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE).doubleValue();
         // Sort the nodes at beginning, since the rank will not change.
         // The list is sorted in descending order by the rank.
         // It has to be computed first

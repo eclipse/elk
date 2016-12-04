@@ -839,9 +839,8 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      */
     private static IPropertyHolder createExternalPortProperties(final LGraph graph) {
         IPropertyHolder propertyHolder = new MapPropertyHolder();
-        // TODO nodeNode the correct spacing?
-        double offset = graph.getProperty(LayeredOptions.SPACING_NODE_NODE)
-                * graph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR) / 2;
+        // FIXME No idea why ...
+        double offset = graph.getProperty(LayeredOptions.SPACING_EDGE_EDGE) / 2;
         propertyHolder.setProperty(LayeredOptions.PORT_BORDER_OFFSET, offset);
         return propertyHolder;
     }
