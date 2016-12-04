@@ -30,34 +30,34 @@ public enum SizeOptions {
     DEFAULT_MINIMUM_SIZE,
     
     /**
-     * If this option is set and insets are computed by the algorithm, the minimum size plus the
-     * computed insets are a lower bound on the node size. If this option is not set, the minimum size
-     * will be applied to the node's whole size regardless of any computed insets. Note that,
+     * If this option is set and padding are computed by the algorithm, the minimum size plus the
+     * computed padding are a lower bound on the node size. If this option is not set, the minimum size
+     * will be applied to the node's whole size regardless of any computed padding. Note that,
      * depending on the algorithm, this option may only apply to non-hierarchical nodes. This option
      * only makes sense if the {@link SizeConstraint#MINIMUM_SIZE} constraint is set.
      */
-    MINIMUM_SIZE_ACCOUNTS_FOR_INSETS,
+    MINIMUM_SIZE_ACCOUNTS_FOR_PADDING,
     
     /**
-     * With this option set, the insets of nodes will be computed and returned as part of the
+     * With this option set, the padding of nodes will be computed and returned as part of the
      * algorithm's result. If port labels or node labels are placed, they may influence the size of
-     * the insets. Note that, depending on the algorithm, this option may only apply to
+     * the padding. Note that, depending on the algorithm, this option may only apply to
      * non-hierarchical nodes. This option is independent of the size constraint set on a node.
-     * This options is also independent from {@link #APPLY_INSETS}. If both are set, one has to deal
-     * with the effectively doubled insets.
+     * This options is also independent from {@link #APPLY_ADDITIONAL_PADDING}. If both are set, one has to deal
+     * with the effectively doubled padding.
      */
-    COMPUTE_INSETS,
+    COMPUTE_PADDING,
     
     /**
-     * Applies any additional insets computed by the layout algorithm directly to the positions of
+     * Applies any additional padding computed by the layout algorithm directly to the positions of
      * child nodes. While a drawing framework could ask the layout algorithm to return the computed
-     * insets and not apply them directly, not all drawing frameworks work this way. With this option
-     * set, insets set on a graph passed to the layout algorithm are still taken into consideration, but
-     * any additional insets are directly applied to the position of child nodes. This options is
-     * independent from {@link #COMPUTE_INSETS}. If both are set, one has to deal with the effectively
-     * doubled insets.
+     * padding and not apply them directly, not all drawing frameworks work this way. With this option
+     * set, padding set on a graph passed to the layout algorithm are still taken into consideration, but
+     * any additional padding are directly applied to the position of child nodes. This options is
+     * independent from {@link #COMPUTE_PADDING}. If both are set, one has to deal with the effectively
+     * doubled padding.
      */
-    APPLY_ADDITIONAL_INSETS;
+    APPLY_ADDITIONAL_PADDING;
     
     
     /**

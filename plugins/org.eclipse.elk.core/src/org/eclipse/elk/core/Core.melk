@@ -21,6 +21,7 @@ import org.eclipse.elk.core.util.RandomLayoutProvider
 import org.eclipse.elk.core.util.nodespacing.Spacing
 import org.eclipse.elk.core.util.BoxLayoutProvider.PackingMode
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.util.IndividualSpacings
 
 // Sort based on normal - advanced - programmatic - global - output and within the groups alphabetically
 // If different types are within a group, move the group to the first category 
@@ -359,7 +360,7 @@ group spacing {
         legacyIds de.cau.cs.kieler.portSpacing
 	}
 	
-	advanced option individualOverride: Object {
+	advanced option individualOverride: IndividualSpacings {
 	    label "Individual Spacing Override"
 	    description 
 	       "In general spacing values apply to the children of the hierarchical node 
