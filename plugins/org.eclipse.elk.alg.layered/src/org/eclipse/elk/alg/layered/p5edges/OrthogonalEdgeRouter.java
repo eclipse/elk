@@ -214,12 +214,17 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         
         // Retrieve some generic values
         Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
+        double nodeNodeSpacing =
+                layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS).doubleValue();
+        double edgeEdgeSpacing =
+                layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS).doubleValue();
+        double edgeNodeSpacing =
+                layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS).doubleValue();
         boolean debug = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST,
-                spacings.edgeEdgeSpacing, debug ? "phase5" : null);
+                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST, edgeEdgeSpacing, debug ? "phase5" : null);
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer leftLayer = null;
@@ -245,7 +250,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             }
             
             // Route edges between the two layers
-            double startPos = leftLayer == null ? xpos : xpos + spacings.edgeNodeSpacing;
+            double startPos = leftLayer == null ? xpos : xpos + edgeNodeSpacing;
             slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
                     rightLayerNodes, startPos);
             
@@ -257,19 +262,19 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             if (slotsCount > 0) {
                 // The space between each pair of edge segments, and between nodes and edges
                 double increment =
-                        spacings.edgeNodeSpacing + (slotsCount - 1) * spacings.edgeEdgeSpacing;
+                        edgeNodeSpacing + (slotsCount - 1) * edgeEdgeSpacing;
                 if (rightLayer != null) {
-                    increment += spacings.edgeNodeSpacing;
+                    increment += edgeNodeSpacing;
                 }
                 
                 // If we are between two layers, make sure their minimal spacing is preserved
-                if (increment < spacings.nodeNodeSpacing && !isLeftLayerExternal && !isRightLayerExternal) {
-                    increment = spacings.nodeNodeSpacing;
+                if (increment < nodeNodeSpacing && !isLeftLayerExternal && !isRightLayerExternal) {
+                    increment = nodeNodeSpacing;
                 }
                 xpos += increment;
             } else if (!isLeftLayerExternal && !isRightLayerExternal) {
                 // If all edges are straight, use the usual spacing 
-                xpos += spacings.nodeNodeSpacing;
+                xpos += nodeNodeSpacing;
             }
             
             leftLayer = rightLayer;

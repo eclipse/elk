@@ -428,8 +428,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      */
     private void assignAscendingCoordinates(final LNode[] dummies, final LGraph graph) {
         // Find the edge distance
-        float edgeSpacing = graph.getProperty(LayeredOptions.SPACING_NODE_NODE)
-                * graph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
+        float edgeSpacing = graph.getProperty(LayeredOptions.SPACING_EDGE_EDGE).floatValue();
         
         // Now, iterate over the array, remembering the last assigned position. If we find a
         // position that is less than or equal to the last position, assign a new position of
@@ -467,7 +466,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         // Find some routing parameters
         double nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
-        double edgeSpacing = nodeSpacing * layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
+        double edgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE).doubleValue();
         boolean debug = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
         
         // Assemble the northern and southern hierarchical port dummies and the nodes they are

@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.properties;
 
+import java.util.Map;
+import java.util.function.Function;
+
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.core.util.IndividualSpacings;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
+ * FIXME 
  * Container class for a variety of spacing values that are either specified in the general
  * {@link LayeredOptions} class or KLay Layered's dedicated {@link LayeredOptions} class.
  * 
@@ -30,63 +38,25 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 public final class Spacings {
 
     // SUPPRESS CHECKSTYLE NEXT 40 VisibilityModifier
-    /**
-     * The horizontal spacing to be preserved between adjacent nodes. Multiply this value by
-     * {@link #inLayerSpacingFactor} to get the vertical spacing value.
-     */
-    public final float nodeSpacing;
-    /**
-     * The horizontal spacing to be preserved between adjacent edge segments. Multiply this value by
-     * {@link #inLayerSpacingFactor} to get the vertical spacing value.
-     */
-    public final float edgeEdgeSpacing;
-    /**
-     * The horizontal spacing to be preserved between a node and an adjacent edge segment. Multiply
-     * this value by {@link #inLayerSpacingFactor} to get the vertical spacing value.
-     */
-    public final float edgeNodeSpacing;
-    /**
-     * The minimal spacing to be preserved between any pair of ports.
-     */
-    public final float portSpacing;
-    /**
-     * The minimal horizontal spacing to be preserved between external port dummies marked by the
-     * {@link NodeType#EXTERNAL_PORT} flag. Multiply by {@link #inLayerSpacingFactor} to get the 
-     * vertical spacing.
-     */
-    public final float externalPortSpacing;
-    /**
-     * The minimal spacing to be preserved between labels.
-     */
-    public final float labelSpacing;
-
-    /**
-     * A factor influencing all vertical spacing values. 
-     */
-    public final float inLayerSpacingFactor;
-
-    /**
-     * Pre calculated spacing values between any pair of {@link NodeType}s.
-     */
-    private final float[][] nodeTypeSpacings;
+    
+    private LGraph graph;
+    
+    private  IProperty<Float>[][] nodeTypeSpacingOptionsHorizontal;
+    private  IProperty<Float>[][] nodeTypeSpacingOptionsVertical;
+    
     
     /**
      * @param graph
      *            the {@link LGraph} for which to record the spacing values.
      */
+    @SuppressWarnings("unchecked")
     public Spacings(final LGraph graph) {
-
-        nodeSpacing = graph.getProperty(LayeredOptions.SPACING_NODE_NODE);
-        inLayerSpacingFactor = graph.getProperty(LayeredOptions.SPACING_IN_LAYER_SPACING_FACTOR);
-        edgeEdgeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.SPACING_EDGE_SPACING_FACTOR);
-        edgeNodeSpacing = nodeSpacing * graph.getProperty(LayeredOptions.SPACING_EDGE_NODE_SPACING_FACTOR);
-        portSpacing = graph.getProperty(LayeredOptions.SPACING_PORT_PORT);
-        externalPortSpacing = graph.getProperty(LayeredOptions.SPACING_PORT_PORT);
-        labelSpacing = graph.getProperty(LayeredOptions.SPACING_LABEL_NODE);
+        this.graph = graph;
 
         // pre calculate the spacings between pairs of node types
         int n = NodeType.values().length;
-        nodeTypeSpacings = new float[n][n];
+        nodeTypeSpacingOptionsHorizontal = new IProperty[n][n];
+        nodeTypeSpacingOptionsVertical = new IProperty[n][n];
         precalculateNodeTypeSpacings();
     }
     
@@ -95,51 +65,90 @@ public final class Spacings {
         // sort them based on expected frequency
         
         // normal
-        nodeTypeSpacing(NodeType.NORMAL, nodeSpacing);
-        nodeTypeSpacing(NodeType.NORMAL, NodeType.LONG_EDGE, edgeNodeSpacing);
-        nodeTypeSpacing(NodeType.NORMAL, NodeType.NORTH_SOUTH_PORT, edgeNodeSpacing);
-        nodeTypeSpacing(NodeType.NORMAL, NodeType.EXTERNAL_PORT, externalPortSpacing);
-        nodeTypeSpacing(NodeType.NORMAL, NodeType.LABEL, edgeNodeSpacing);
-        nodeTypeSpacing(NodeType.NORMAL, NodeType.BIG_NODE, edgeNodeSpacing);
-
+        nodeTypeSpacing(NodeType.NORMAL, 
+                LayeredOptions.SPACING_NODE_NODE,
+                LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.LONG_EDGE,
+                LayeredOptions.SPACING_EDGE_NODE,
+                LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.NORTH_SOUTH_PORT,
+                LayeredOptions.SPACING_EDGE_NODE);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.EXTERNAL_PORT,
+                LayeredOptions.SPACING_EDGE_NODE); // TODO
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.LABEL,
+                LayeredOptions.SPACING_LABEL_NODE);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.BIG_NODE,
+                LayeredOptions.SPACING_NODE_NODE,
+                LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
+        
         // longedge
-        nodeTypeSpacing(NodeType.LONG_EDGE, edgeEdgeSpacing);
-        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.NORTH_SOUTH_PORT, edgeEdgeSpacing);
-        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.EXTERNAL_PORT, externalPortSpacing);
-        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.LABEL, labelSpacing);
-        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.BIG_NODE, edgeNodeSpacing);
+        nodeTypeSpacing(NodeType.LONG_EDGE, 
+                LayeredOptions.SPACING_EDGE_EDGE,
+                LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
+        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.NORTH_SOUTH_PORT, 
+                LayeredOptions.SPACING_EDGE_EDGE);
+        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.EXTERNAL_PORT, 
+                LayeredOptions.SPACING_EDGE_EDGE); // TODO
+        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.LABEL, 
+                LayeredOptions.SPACING_EDGE_LABEL);
+        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.BIG_NODE, 
+                LayeredOptions.SPACING_EDGE_NODE,
+                LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);  
 
         // northsouth
-        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, edgeEdgeSpacing);
-        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.EXTERNAL_PORT, externalPortSpacing);
-        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.LABEL, labelSpacing);
-        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.BIG_NODE, edgeNodeSpacing);
+        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, 
+                LayeredOptions.SPACING_EDGE_EDGE);
+        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.EXTERNAL_PORT, 
+                LayeredOptions.SPACING_EDGE_EDGE); // TODO
+        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.LABEL, 
+                LayeredOptions.SPACING_LABEL_NODE);
+        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.BIG_NODE, 
+                LayeredOptions.SPACING_EDGE_NODE);
 
         // external
-        nodeTypeSpacing(NodeType.EXTERNAL_PORT, externalPortSpacing);
-        nodeTypeSpacing(NodeType.EXTERNAL_PORT, NodeType.LABEL, externalPortSpacing);
-        nodeTypeSpacing(NodeType.EXTERNAL_PORT, NodeType.BIG_NODE, externalPortSpacing);
-
+        nodeTypeSpacing(NodeType.EXTERNAL_PORT, 
+                LayeredOptions.SPACING_PORT_PORT);
+        nodeTypeSpacing(NodeType.EXTERNAL_PORT, NodeType.LABEL, 
+                LayeredOptions.SPACING_LABEL_PORT);
+        nodeTypeSpacing(NodeType.EXTERNAL_PORT, NodeType.BIG_NODE, 
+                LayeredOptions.SPACING_PORT_PORT); // actually shouldnt exist
+        
         // label
-        nodeTypeSpacing(NodeType.LABEL, labelSpacing);
-        nodeTypeSpacing(NodeType.LABEL, NodeType.BIG_NODE, labelSpacing);
-
+        nodeTypeSpacing(NodeType.LABEL, 
+                LayeredOptions.SPACING_LABEL_NODE);
+        nodeTypeSpacing(NodeType.LABEL, NodeType.BIG_NODE, 
+                LayeredOptions.SPACING_LABEL_NODE);
+        
         // bignode
-        nodeTypeSpacing(NodeType.BIG_NODE, nodeSpacing);
-    }
-    
-    private void nodeTypeSpacing(final NodeType nt, final float spacing) {
-        nodeTypeSpacings[nt.ordinal()][nt.ordinal()] = spacing;
-    }
-    
-    private  void nodeTypeSpacing(final NodeType n1, final NodeType n2, final float spacing) {
-        nodeTypeSpacings[n1.ordinal()][n2.ordinal()] = spacing;
-        nodeTypeSpacings[n2.ordinal()][n1.ordinal()] = spacing;
+        nodeTypeSpacing(NodeType.BIG_NODE, 
+                LayeredOptions.SPACING_NODE_NODE,
+                LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
     }
 
-    // ----------------------------------------------------------------------------------
-    // Regular, a.k.a. horizontal spacings
-    // ----------------------------------------------------------------------------------
+    private void nodeTypeSpacing(final NodeType nt, final IProperty<Float> spacing) {
+        nodeTypeSpacingOptionsVertical[nt.ordinal()][nt.ordinal()] = spacing;
+    }
+
+    private void nodeTypeSpacing(final NodeType nt, final IProperty<Float> spacingVert,
+            final IProperty<Float> spacingHorz) {
+        nodeTypeSpacingOptionsVertical[nt.ordinal()][nt.ordinal()] = spacingVert;
+
+        nodeTypeSpacingOptionsHorizontal[nt.ordinal()][nt.ordinal()] = spacingHorz;
+    }
+
+    private void nodeTypeSpacing(final NodeType n1, final NodeType n2, final IProperty<Float> spacing) {
+        nodeTypeSpacingOptionsVertical[n1.ordinal()][n2.ordinal()] = spacing;
+        nodeTypeSpacingOptionsVertical[n2.ordinal()][n1.ordinal()] = spacing;
+    }
+
+    private void nodeTypeSpacing(final NodeType n1, final NodeType n2, final IProperty<Float> spacingVert,
+            final IProperty<Float> spacingHorz) {
+        nodeTypeSpacingOptionsVertical[n1.ordinal()][n2.ordinal()] = spacingVert;
+        nodeTypeSpacingOptionsVertical[n2.ordinal()][n1.ordinal()] = spacingVert;
+
+        nodeTypeSpacingOptionsHorizontal[n1.ordinal()][n2.ordinal()] = spacingHorz;
+        nodeTypeSpacingOptionsHorizontal[n2.ordinal()][n1.ordinal()] = spacingHorz;
+    }
 
     /**
      * @param e1
@@ -164,44 +173,78 @@ public final class Spacings {
      * @return the spacing to be preserved between {@code n1} and {@code n2}
      */
     public float getHorizontalSpacing(final LNode n1, final LNode n2) {
-        return getHorizontalSpacing(n1.getType(), n2.getType());
+        return getLocalSpacing(n1, n2, nodeTypeSpacingOptionsHorizontal);
     }
-
+    
     /**
-     * @param t1
-     *            the type of one node
-     * @param t2
-     *            the type of the other node
-     * @return the horizontal spacing value according to the two passed node types.
+     * @param nt1
+     *            a node type
+     * @param nt2
+     *            another node type
+     * @return the spacing to be preserved between {@code nt1} and {@code nt2}
      */
-    public float getHorizontalSpacing(final NodeType t1, final NodeType t2) {
-        return nodeTypeSpacings[t1.ordinal()][t2.ordinal()];
+    public float getHorizontalSpacing(final NodeType nt1, final NodeType nt2) {
+        return getLocalSpacing(nt1, nt2, nodeTypeSpacingOptionsHorizontal);
     }
-
-    // ----------------------------------------------------------------------------------
-    // Vertical spacings
-    // ----------------------------------------------------------------------------------
-
+    
     /**
      * @param n1
      *            a node
      * @param n2
      *            another node
-     * @return the vertical spacing to be preserved between {@code n1} and {@code n2}
+     * @return the spacing to be preserved between {@code n1} and {@code n2}
      */
     public float getVerticalSpacing(final LNode n1, final LNode n2) {
-        return getHorizontalSpacing(n1, n2) * inLayerSpacingFactor;
+        return getLocalSpacing(n1, n2, nodeTypeSpacingOptionsVertical);
     }
 
     /**
-     * @param t1
-     *            a node type
-     * @param t2
-     *            another node type
-     * @return the vertical spacing to be preserved between node type {@code t1} and {@code t2}
+     * @param nt1
+     *            a node
+     * @param nt2
+     *            another node
+     * @return the spacing to be preserved between {@code n1} and {@code n2}
      */
-    public float getVerticalSpacing(final NodeType t1, final NodeType t2) {
-        return getHorizontalSpacing(t1, t2) * inLayerSpacingFactor;
+    public float getVerticalSpacing(final NodeType nt1, final NodeType nt2) {
+        return getLocalSpacing(nt1, nt2, nodeTypeSpacingOptionsVertical);
+    }
+
+    private float getLocalSpacing(final LNode n1, final LNode n2, final IProperty<Float>[][] nodeTypeSpacingMapping) {
+        NodeType t1 = n1.getType();
+        NodeType t2 = n2.getType();
+        IProperty<Float> layoutOption = nodeTypeSpacingMapping[t1.ordinal()][t2.ordinal()];
+
+        // get the spacing value for the first node
+        Float s1 = getIndividualOrDefault(n1, layoutOption); 
+        Float s2 = getIndividualOrDefault(n2, layoutOption);
+        
+        return Math.max(s1, s2);
+    }
+
+    private float getLocalSpacing(final NodeType nt1, final NodeType nt2,
+            final IProperty<Float>[][] nodeTypeSpacingMapping) {
+        IProperty<Float> layoutOption = nodeTypeSpacingMapping[nt1.ordinal()][nt2.ordinal()];
+        return graph.getProperty(layoutOption);
+    }
+
+    /**
+     * @param node
+     * @param layoutOption
+     */
+    private float getIndividualOrDefault(final LNode node, final IProperty<Float> layoutOption) {
+        Float s1 = null;
+        // check for individual value
+        if (node.getAllProperties().containsKey(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
+            IPropertyHolder is1 = node.getProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE);
+            if (is1.getAllProperties().containsKey(layoutOption)) {
+                s1 = is1.getProperty(layoutOption);
+            }
+        }
+        // use the common value
+        if (s1 == null) {
+            s1 = graph.getProperty(layoutOption);
+        }
+        return s1;
     }
 
     /**

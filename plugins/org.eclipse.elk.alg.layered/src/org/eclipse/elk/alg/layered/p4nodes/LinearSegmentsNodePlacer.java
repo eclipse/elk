@@ -565,7 +565,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
                 // Calculate how much space to leave between the linear segment and the last
                 // node of the given layer
-                float spacing = spacings.edgeEdgeSpacing * spacings.inLayerSpacingFactor;
+                float spacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE);
                 if (nodeCount[layerIndex] > 0) {
                     if (recentNodeType[layerIndex] != null) {
                         spacing = spacings.getVerticalSpacing(recentNodeType[layerIndex], nodeType);
@@ -777,7 +777,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     private boolean mergeRegions(final LGraph layeredGraph) {
         
         boolean changed = false;
-        double threshold = OVERLAP_DETECT * spacings.nodeSpacing * spacings.inLayerSpacingFactor;
+        double nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
+        double threshold = OVERLAP_DETECT * nodeSpacing;
         for (Layer layer : layeredGraph) {
             Iterator<LNode> nodeIter = layer.getNodes().iterator();
 

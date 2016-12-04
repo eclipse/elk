@@ -270,7 +270,7 @@ public class BKCompactor implements ICompactor {
                     // They are not part of the same class. Compute how the two classes can be compacted
                     // later. Hence we determine a minimal required space between the two classes 
                     // relative two the two class sinks.
-                    double spacing = spacings.nodeSpacing;
+                    double spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
                     
                     ClassNode sinkNode = getOrCreateClassNode(bal.sink[root.id], bal);
                     ClassNode neighborSink = getOrCreateClassNode(bal.sink[neighborRoot.id], bal);

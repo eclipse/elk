@@ -60,6 +60,7 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.spacing.nodeNode = 20
 	supports org.eclipse.elk.spacing.portPort
 	supports org.eclipse.elk.spacing.individualOverride
+	   documentation "Most parts of the algorithm do not support this yet."
 	// layer-based spacings
     supports org.eclipse.elk.alg.layered.spacing.edgeEdgeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
