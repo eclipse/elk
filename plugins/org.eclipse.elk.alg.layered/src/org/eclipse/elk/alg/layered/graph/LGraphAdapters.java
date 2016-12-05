@@ -131,17 +131,7 @@ public final class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
-            // FIXME why? there was a renaming going on here ... I guess shouldnt be necessary anymore!
-            // handle some special cases
-            if (prop.equals(LayeredOptions.SPACING_NODE_NODE)) {
-                // cast is ok, as both properties are Floats
-                return (P) element.getProperty(LayeredOptions.SPACING_NODE_NODE);
-            } else if (prop.equals(LayeredOptions.PORT_BORDER_OFFSET)) {
-                return (P) element.getProperty(LayeredOptions.PORT_BORDER_OFFSET);
-            }
-
             return element.getProperty(prop);
         }
 

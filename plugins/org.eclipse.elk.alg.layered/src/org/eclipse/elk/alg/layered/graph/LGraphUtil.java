@@ -630,7 +630,8 @@ public final class LGraphUtil {
             
             // if port coordinates are (0,0), we default to port offset 0 to make the common case
             // frustration-free
-            if (port.getProperty(LayeredOptions.PORT_BORDER_OFFSET) == null && portSide != PortSide.UNDEFINED
+            if (!port.getAllProperties().containsKey(LayeredOptions.PORT_BORDER_OFFSET)
+                    && portSide != PortSide.UNDEFINED
                     && (port.getPosition().x != 0 || port.getPosition().y != 0)) {
                 port.setProperty(LayeredOptions.PORT_BORDER_OFFSET, calcPortOffset(port, portSide));
             }

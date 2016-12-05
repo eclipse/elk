@@ -440,8 +440,8 @@ class ElkGraphImporter {
         }
         
         // If we don't have a port offset, infer one
-        Double portOffset = elkport.getProperty(LayeredOptions.PORT_BORDER_OFFSET);
-        if (portOffset == null) {
+        if (!elkport.getAllProperties().containsKey(LayeredOptions.PORT_BORDER_OFFSET)) {
+            double portOffset;
             // if port coordinates are (0,0), we default to port offset 0 to make the common case frustration-free
             if (elkport.getX() == 0.0 && elkport.getY() == 0.0) {
                 portOffset = 0.0;
