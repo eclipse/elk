@@ -174,8 +174,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
             maxYPos = Math.max(maxYPos, pos.y + size.y / 2);
         }
         
-        ElkPadding insets = kgraph.getProperty(ForceOptions.PADDING);
-        KVector offset = new KVector(insets.getLeft() - minXPos, insets.getTop() - minYPos);
+        ElkPadding padding = kgraph.getProperty(ForceOptions.PADDING);
+        KVector offset = new KVector(padding.getLeft() - minXPos, padding.getTop() - minYPos);
 
         // process the nodes
         for (FNode fnode : fgraph.getNodes()) {
@@ -209,8 +209,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         }
         
         // set up the parent node
-        double width = maxXPos - minXPos + insets.getLeft() + insets.getRight();
-        double height = maxYPos - minYPos + insets.getTop() + insets.getBottom();
+        double width = maxXPos - minXPos + padding.getLeft() + padding.getRight();
+        double height = maxYPos - minYPos + padding.getTop() + padding.getBottom();
         ElkUtil.resizeNode(kgraph, width, height, false, true);
     }
     

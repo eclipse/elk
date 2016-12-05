@@ -357,7 +357,7 @@ public final class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public ElkPadding getInsets() {
+        public ElkPadding getPadding() {
             LInsets linsets = element.getInsets();
             return new ElkPadding(linsets.top, linsets.right, linsets.bottom, linsets.left);
         }
@@ -365,7 +365,7 @@ public final class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public void setInsets(final ElkPadding insets) {
+        public void setPadding(final ElkPadding insets) {
             element.getInsets().left = insets.left;
             element.getInsets().top = insets.top;
             element.getInsets().right = insets.right;

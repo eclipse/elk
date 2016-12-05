@@ -176,7 +176,7 @@ public final class ElkUtil {
 
     /**
      * Sets the size of a given node, depending on the minimal size, the number of ports
-     * on each side, the insets, and the label.
+     * on each side and the label.
      * 
      * @param node the node that shall be resized
      * @return a vector holding the width and height resizing ratio, or {@code null} if the size

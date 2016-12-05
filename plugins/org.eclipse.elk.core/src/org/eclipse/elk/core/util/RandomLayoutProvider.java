@@ -124,9 +124,9 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             }
         }
         
-        ElkPadding insets = parent.getProperty(RandomLayouterOptions.PADDING);
-        totalWidth += insets.getLeft() + insets.getRight();
-        totalHeight += insets.getTop() + insets.getBottom();
+        ElkPadding padding = parent.getProperty(RandomLayouterOptions.PADDING);
+        totalWidth += padding.getLeft() + padding.getRight();
+        totalHeight += padding.getTop() + padding.getBottom();
         ElkUtil.resizeNode(parent, totalWidth, totalHeight, false, true);
     }
     

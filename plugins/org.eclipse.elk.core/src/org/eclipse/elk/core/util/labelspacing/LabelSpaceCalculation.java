@@ -36,53 +36,53 @@ public final class LabelSpaceCalculation {
     /**
      * Calculates the space required to accommodate the node labels (if any) and sets
      * {@link #requiredNodeLabelSpace} as well as {@link #nodeLabelsBoundingBox}. If inside labels are
-     * placed at the top or at the bottom, the top or bottom insets are set. If it is centered
-     * vertically, the left or right insets are set if the labels are horizontally aligned leftwards
-     * or rightwards. If they are centered in both directions, no insets are set. If they are placed
-     * outside the node, no insets are set.
+     * placed at the top or at the bottom, the top or bottom padding are set. If it is centered
+     * vertically, the left or right padding are set if the labels are horizontally aligned leftwards
+     * or rightwards. If they are centered in both directions, no padding are set. If they are placed
+     * outside the node, no padding are set.
      * 
      * @param node
      *            the node whose labels are to be placed.
      * @param labelSpacing
      *            the default label spacing.
-     * @return the adjusted insets.
+     * @return the adjusted padding.
      */
     public static ElkPadding calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
             final double labelSpacing) {
 
-        ElkPadding nodeLabelInsets = node.getProperty(CoreOptions.NODE_LABELS_PADDING);
+        ElkPadding nodeLabelPadding = node.getProperty(CoreOptions.NODE_LABELS_PADDING);
 
-        return calculateRequiredNodeLabelSpace(node, labelSpacing, nodeLabelInsets,
-                new HashMap<LabelLocation, LabelGroup>(), new ElkPadding(node.getInsets()));
+        return calculateRequiredNodeLabelSpace(node, labelSpacing, nodeLabelPadding,
+                new HashMap<LabelLocation, LabelGroup>(), new ElkPadding(node.getPadding()));
     }
 
     /**
      * Calculates the space required to accommodate the node labels (if any) and sets
      * {@link #requiredNodeLabelSpace} as well as {@link #nodeLabelsBoundingBox}. If inside labels are
-     * placed at the top or at the bottom, the top or bottom insets are set. If it is centered
-     * vertically, the left or right insets are set if the labels are horizontally aligned leftwards
-     * or rightwards. If they are centered in both directions, no insets are set. If they are placed
-     * outside the node, no insets are set.
+     * placed at the top or at the bottom, the top or bottom padding are set. If it is centered
+     * vertically, the left or right padding are set if the labels are horizontally aligned leftwards
+     * or rightwards. If they are centered in both directions, no padding are set. If they are placed
+     * outside the node, no padding are set.
      * 
      * @param node
      *            the node whose labels are to be placed.
      * @param labelSpacing
      *            the default label spacing.
-     * @param nodeLabelInsets
-     *            the additional insets for node labels on this node
+     * @param nodeLabelPadding
+     *            the additional padding for node labels on this node
      * @param labelGroupsBoundingBoxes
      *            map of locations to corresponding bounding boxes.
-     * @param insets
-     *            the insets to adjust.
-     * @return the adjusted insets.
+     * @param padding
+     *            the padding to adjust.
+     * @return the adjusted padding.
      */
     public static ElkPadding calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
-            final double labelSpacing, final ElkPadding nodeLabelInsets,
-            final Map<LabelLocation, LabelGroup> labelGroupsBoundingBoxes, final ElkPadding insets) {
+            final double labelSpacing, final ElkPadding nodeLabelPadding,
+            final Map<LabelLocation, LabelGroup> labelGroupsBoundingBoxes, final ElkPadding padding) {
 
         // Check if there are any labels
         if (!node.getLabels().iterator().hasNext()) {
-            return insets;
+            return padding;
         }
         
         // Retrieve the node's label placement policy
@@ -109,7 +109,7 @@ public final class LabelSpaceCalculation {
             boundingBox.height += label.getSize().y + labelSpacing;
         }
         
-        // We need to count different label placement boxes towards different kinds of insets, depending on whether
+        // We need to count different label placement boxes towards different kinds of padding, depending on whether
         // or not H_PRIORITY is set on the node itself (see H_PRIORITY documentation)
         boolean hPrio = nodeLabelPlacement.contains(NodeLabelPlacement.H_PRIORITY);
         
@@ -124,73 +124,73 @@ public final class LabelSpaceCalculation {
             switch (entry.getKey()) {
             case IN_T_L:
                 if (hPrio) {
-                    insets.left = Math.max(
-                            insets.left,
-                            boundingBox.width + labelSpacing + nodeLabelInsets.left);
+                    padding.left = Math.max(
+                            padding.left,
+                            boundingBox.width + labelSpacing + nodeLabelPadding.left);
                 } else {
-                    insets.top = Math.max(
-                            insets.top,
-                            boundingBox.height + labelSpacing + nodeLabelInsets.top);
+                    padding.top = Math.max(
+                            padding.top,
+                            boundingBox.height + labelSpacing + nodeLabelPadding.top);
                 }
                 break;
                 
             case IN_T_C:
-                insets.top = Math.max(
-                        insets.top,
-                        boundingBox.height + labelSpacing + nodeLabelInsets.top);
+                padding.top = Math.max(
+                        padding.top,
+                        boundingBox.height + labelSpacing + nodeLabelPadding.top);
                 break;
                 
             case IN_T_R:
                 if (hPrio) {
-                    insets.right = Math.max(
-                            insets.right,
-                            boundingBox.width + labelSpacing + nodeLabelInsets.right);
+                    padding.right = Math.max(
+                            padding.right,
+                            boundingBox.width + labelSpacing + nodeLabelPadding.right);
                 } else {
-                    insets.top = Math.max(
-                            insets.top,
-                            boundingBox.height + labelSpacing + nodeLabelInsets.top);
+                    padding.top = Math.max(
+                            padding.top,
+                            boundingBox.height + labelSpacing + nodeLabelPadding.top);
                 }
                 break;
                 
             case IN_C_L:
-                insets.left = Math.max(
-                        insets.left,
-                        boundingBox.width + labelSpacing + nodeLabelInsets.left);
+                padding.left = Math.max(
+                        padding.left,
+                        boundingBox.width + labelSpacing + nodeLabelPadding.left);
                 break;
                 
             case IN_C_R:
-                insets.right = Math.max(
-                        insets.right,
-                        boundingBox.width + labelSpacing + nodeLabelInsets.right);
+                padding.right = Math.max(
+                        padding.right,
+                        boundingBox.width + labelSpacing + nodeLabelPadding.right);
                 break;
                 
             case IN_B_L:
                 if (hPrio) {
-                    insets.left = Math.max(
-                            insets.left,
-                            boundingBox.width + labelSpacing + nodeLabelInsets.left);
+                    padding.left = Math.max(
+                            padding.left,
+                            boundingBox.width + labelSpacing + nodeLabelPadding.left);
                 } else {
-                    insets.bottom = Math.max(
-                            insets.bottom,
-                            boundingBox.height + labelSpacing + nodeLabelInsets.bottom);
+                    padding.bottom = Math.max(
+                            padding.bottom,
+                            boundingBox.height + labelSpacing + nodeLabelPadding.bottom);
                 }
                 break;
                 
             case IN_B_C:
-                insets.bottom = Math.max(
-                        insets.bottom,
-                        boundingBox.height + labelSpacing + nodeLabelInsets.bottom);
+                padding.bottom = Math.max(
+                        padding.bottom,
+                        boundingBox.height + labelSpacing + nodeLabelPadding.bottom);
                 break;
                 
             case IN_B_R:
                 if (hPrio) {
-                    insets.right = Math.max(
-                            insets.right,
-                            boundingBox.width + labelSpacing + nodeLabelInsets.right);
+                    padding.right = Math.max(
+                            padding.right,
+                            boundingBox.width + labelSpacing + nodeLabelPadding.right);
                 } else {
-                    insets.bottom = Math.max(
-                            insets.bottom,
-                            boundingBox.height + labelSpacing + nodeLabelInsets.bottom);
+                    padding.bottom = Math.max(
+                            padding.bottom,
+                            boundingBox.height + labelSpacing + nodeLabelPadding.bottom);
                 }
                 break;
                 
@@ -199,14 +199,14 @@ public final class LabelSpaceCalculation {
             }
         }
 
-        // Add node label insets that aren't set yet
+        // Add node label padding that aren't set yet
         // This happens if e.g. a top inset is set but no top label is present
-        insets.top    = Math.max(insets.top, nodeLabelInsets.top);
-        insets.left   = Math.max(insets.left, nodeLabelInsets.left);
-        insets.right  = Math.max(insets.right, nodeLabelInsets.right);
-        insets.bottom = Math.max(insets.bottom, nodeLabelInsets.bottom);
+        padding.top    = Math.max(padding.top, nodeLabelPadding.top);
+        padding.left   = Math.max(padding.left, nodeLabelPadding.left);
+        padding.right  = Math.max(padding.right, nodeLabelPadding.right);
+        padding.bottom = Math.max(padding.bottom, nodeLabelPadding.bottom);
 
-        return insets;
+        return padding;
     }
 
     /**

@@ -34,7 +34,7 @@ public interface GraphAdapters {
      * 
      * <h2>Remark</h2>
      * <p>When using these adapters keep in mind to explicitly use the <emph>set</emph>
-     * methods, e.g. for insets. Some API's (e.g. the {@link KVector}) allow to directly set their
+     * methods, e.g. for padding. Some API's (e.g. the {@link KVector}) allow to directly set their
      * values, for instance {@code node.getPosition().x = 3}. However, as {@code node.getPosition()}
      * most likely returns an intermediate object, this change will never be applied to the original
      * graph's element.</p>
@@ -54,7 +54,7 @@ public interface GraphAdapters {
          * @param size
          *            the new size to be set for the graph element.
          */
-        void setSize(final KVector size);
+        void setSize(KVector size);
 
         /**
          * @return the current position of the graph element.
@@ -65,7 +65,7 @@ public interface GraphAdapters {
          * @param pos
          *            the new position of the graph element.
          */
-        void setPosition(final KVector pos);
+        void setPosition(KVector pos);
 
         /**
          * @param prop
@@ -76,7 +76,7 @@ public interface GraphAdapters {
          * @see org.eclipse.elk.core.options.CoreOptions
          * 
          */
-        <P> P getProperty(final IProperty<P> prop);
+        <P> P getProperty(IProperty<P> prop);
 
         /**
          * Returns the volatile ID for this element that can be used arbitrarily by layout
@@ -95,7 +95,7 @@ public interface GraphAdapters {
          * @param volatileId
          *            the new ID.
          */
-        void setVolatileId(final int volatileId);
+        void setVolatileId(int volatileId);
     }
 
     /**
@@ -113,7 +113,7 @@ public interface GraphAdapters {
     }
 
     /**
-     * Adapter for a node, provides labels, ports, and insets.
+     * Adapter for a node, provides labels, ports, and padding.
      * 
      * @param <T>
      *            the type of the underlying graph element.
@@ -156,7 +156,7 @@ public interface GraphAdapters {
          *            an implementation of {@link Comparator} for the type of the implementing graph
          *            adapter. Note that the comparator must support the correct type, e.g. KPort.
          */
-        void sortPortList(final Comparator<?> comparator);
+        void sortPortList(Comparator<?> comparator);
 
         /**
          * Whether the node an is a compound node or not, i.e if it has child nodes. This might
@@ -168,18 +168,18 @@ public interface GraphAdapters {
         boolean isCompoundNode();
 
         /**
-         * Returns the node's insets. The insets describe the area inside the node that is used by
+         * Returns the node's padding. The padding describe the area inside the node that is used by
          * ports, port labels, and node labels.
          * 
-         * @return the node's insets.
+         * @return the node's padding.
          */
-        ElkPadding getInsets();
+        ElkPadding getPadding();
 
         /**
-         * @param insets
-         *            sets the new insets of this node.
+         * @param padding
+         *            sets the new padding of this node.
          */
-        void setInsets(final ElkPadding insets);
+        void setPadding(ElkPadding padding);
 
         /**
          * Returns the node's margin. The margin is the space around the node that is to be reserved
@@ -226,7 +226,7 @@ public interface GraphAdapters {
          * @param margin
          *            the new margin to be set.
          */
-        void setMargin(final ElkMargin margin);
+        void setMargin(ElkMargin margin);
 
         /**
          * @return a collection of the port's incoming edges wrapped in an adapter.

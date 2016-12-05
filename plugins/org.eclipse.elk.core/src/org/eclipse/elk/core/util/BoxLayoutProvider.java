@@ -43,7 +43,7 @@ import com.google.common.collect.Lists;
  * </p>
  * 
  * <p>
- * MIGRATE The code needs to be changed to apply insets to the coordinates immediately. 
+ * MIGRATE The code needs to be changed to apply padding to the coordinates immediately. 
  * </p>
  * 
  * <p>
@@ -180,8 +180,6 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     private void placeBoxes(final List<ElkNode> sortedBoxes, final ElkNode parentNode,
             final double objSpacing, final ElkPadding padding, final boolean expandNodes) {
         
-        ElkPadding insets = parentNode.getProperty(CoreOptions.PADDING);
-        
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
         double minWidth, minHeight;
         if (minSize == null) {
@@ -191,8 +189,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             minWidth = (float) minSize.x;
             minHeight = (float) minSize.y; 
         }
-        minWidth = Math.max(minWidth - insets.getLeft() - insets.getRight(), 0);
-        minHeight = Math.max(minHeight - insets.getTop() - insets.getBottom(), 0);
+        minWidth = Math.max(minWidth - padding.getLeft() - padding.getRight(), 0);
+        minHeight = Math.max(minHeight - padding.getTop() - padding.getBottom(), 0);
         
         Float aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
@@ -204,8 +202,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                 expandNodes, aspectRatio);
 
         // adjust parent size
-        double width = insets.getLeft() + (float) parentSize.x + insets.getRight();
-        double height = insets.getTop() + (float) parentSize.y + insets.getBottom();
+        double width = padding.getLeft() + (float) parentSize.x + padding.getRight();
+        double height = padding.getTop() + (float) parentSize.y + padding.getBottom();
         ElkUtil.resizeNode(parentNode, width, height, false, true);
     }
 
@@ -340,7 +338,6 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     private void placeBoxesGrouping(final ElkNode parentNode,
             final float objSpacing, final ElkPadding padding, final boolean expandNodes) {
         
-        ElkPadding insets = parentNode.getProperty(CoreOptions.PADDING);
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
         double minWidth, minHeight;
         if (minSize == null) {
@@ -350,8 +347,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             minWidth = (float) minSize.x;
             minHeight = (float) minSize.y; 
         }
-        minWidth = Math.max(minWidth - insets.getLeft() - insets.getRight(), 0);
-        minHeight = Math.max(minHeight - insets.getTop() - insets.getBottom(), 0);
+        minWidth = Math.max(minWidth - padding.getLeft() - padding.getRight(), 0);
+        minHeight = Math.max(minHeight - padding.getTop() - padding.getBottom(), 0);
         
         Float aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
@@ -391,8 +388,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         parentSize.add(padding.getHorizontal(), padding.getVertical());
         
         // adjust parent size
-        double width = insets.getLeft() + parentSize.x + insets.getRight();
-        double height = insets.getTop() + parentSize.y + insets.getBottom();
+        double width = padding.getLeft() + parentSize.x + padding.getRight();
+        double height = padding.getTop() + parentSize.y + padding.getBottom();
         ElkUtil.resizeNode(parentNode, width, height, false, true);
     }
     

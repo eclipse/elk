@@ -103,8 +103,8 @@ public class LabelAndNodeSizeProcessor {
 
             /*
              * PHASE 2 (DYNAMIC DONALD):
-             * CALCULATE INSETS We know the sides the ports will be placed at and we know where node
-             * labels are to be placed. Calculate the node's insets accordingly. Also compute the
+             * CALCULATE PADDING We know the sides the ports will be placed at and we know where node
+             * labels are to be placed. Calculate the node's padding accordingly. Also compute the
              * amount of space the node labels will need if stacked vertically. Note that we don't
              * have to know the final position of ports and of node labels to calculate all this
              * stuff.
@@ -117,7 +117,7 @@ public class LabelAndNodeSizeProcessor {
 
             /*
              * PHASE 3 (DANGEROUS DUCKLING):
-             * RESIZE NODE If the node has labels, the node insets might have to be adjusted to
+             * RESIZE NODE If the node has labels, the node padding might have to be adjusted to
              * reserve space for them, which is what this phase does.
              */
             resizeNode(data);
@@ -138,19 +138,19 @@ public class LabelAndNodeSizeProcessor {
 
             /*
              * CLEANUP (THANKSGIVING):
-             * SET NODE INSETS Set the node insets to include space required for port and node
+             * SET NODE PADDING Set the node padding to include space required for port and node
              * labels. If the labels were not taken into account when calculating the node's size,
-             * this may result in insets that, taken together, are larger than the node's actual
+             * this may result in padding that, taken together, are larger than the node's actual
              * size.
              */
-            final ElkPadding nodeInsets = new ElkPadding(node.getInsets());
-            nodeInsets.left = data.requiredNodeLabelSpace.left + data.requiredPortLabelSpace.left;
-            nodeInsets.right =
+            final ElkPadding nodePadding = new ElkPadding(node.getPadding());
+            nodePadding.left = data.requiredNodeLabelSpace.left + data.requiredPortLabelSpace.left;
+            nodePadding.right =
                     data.requiredNodeLabelSpace.right + data.requiredPortLabelSpace.right;
-            nodeInsets.top = data.requiredNodeLabelSpace.top + data.requiredPortLabelSpace.top;
-            nodeInsets.bottom =
+            nodePadding.top = data.requiredNodeLabelSpace.top + data.requiredPortLabelSpace.top;
+            nodePadding.bottom =
                     data.requiredNodeLabelSpace.bottom + data.requiredPortLabelSpace.bottom;
-            node.setInsets(nodeInsets);
+            node.setPadding(nodePadding);
         }
     }
 
@@ -481,7 +481,7 @@ public class LabelAndNodeSizeProcessor {
     }
 
     // /////////////////////////////////////////////////////////////////////////////
-    // INSETS CALCULATION
+    // PADDING CALCULATION
 
     /**
      * Calculates the space required to accommodate all port labels and sets
@@ -492,7 +492,7 @@ public class LabelAndNodeSizeProcessor {
      * </p>
      *
      * @param data
-     *            the data containing the node whose insets to calculate and to set.
+     *            the data containing the node whose padding to calculate and to set.
      */
     private void calculateRequiredPortLabelSpace(final NodeData data) {
         // Iterate over the ports and look at their margins
@@ -620,7 +620,7 @@ public class LabelAndNodeSizeProcessor {
                 }
             }
 
-            // We might have to take the insets into account
+            // We might have to take the padding into account
             if (sizeOptions.contains(SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_PADDING)) {
                 if (minWidth > 0) {
                     nodeSize.x =
@@ -741,13 +741,13 @@ public class LabelAndNodeSizeProcessor {
         sumWidthOutsideTop    -= labelSpacing;
         sumWidthOutsideBottom -= labelSpacing;
         
-        //add missing label spacing and label insets (only if not zero)
+        //add missing label spacing and label padding (only if not zero)
         double additionalSpacing = labelSpacing 
                 + data.nodeLabelPadding.left + data.nodeLabelPadding.right;
         sumWidthInsideTop    += sumWidthInsideTop    != 0 ? additionalSpacing : 0;
         sumWidthInsideCenter += sumWidthInsideCenter != 0 ? additionalSpacing : 0;
         sumWidthInsideBottom += sumWidthInsideBottom != 0 ? additionalSpacing : 0;
-        // label insets are not added here because they are already part of requiredNodeLabelSpace
+        // label padding are not added here because they are already part of requiredNodeLabelSpace
         double minHeightInside =
                 data.requiredNodeLabelSpace.top
                 + maxHeightInsideCenter
@@ -1510,7 +1510,7 @@ public class LabelAndNodeSizeProcessor {
         private double labelSpacing;
 
         /**
-         * Insets for node labels placed inside the node.
+         * Padding for node labels placed inside the node.
          */
         private ElkPadding nodeLabelPadding;
 
@@ -1520,13 +1520,13 @@ public class LabelAndNodeSizeProcessor {
         private double portSpacing;
 
         /**
-         * Node insets required by port labels inside the node. This is always set, but not always
+         * Node padding required by port labels inside the node. This is always set, but not always
          * taken into account to calculate the node size.
          */
         private final ElkPadding requiredPortLabelSpace = new ElkPadding();
 
         /**
-         * Node insets required by node labels placed inside the node. This is always set, but not
+         * Node padding required by node labels placed inside the node. This is always set, but not
          * always taken into account to calculate the node size.
          */
         private final ElkPadding requiredNodeLabelSpace = new ElkPadding();
