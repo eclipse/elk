@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -25,7 +26,6 @@ import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -377,19 +377,19 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
         ElkNode childNode = ElkGraphUtil.createNode(parentNode);
 
         // set the node's layout, considering margins and insets
-        ElkInsets insets = computeInsets(shape);
-        if (insets != null) {
-            childNode.setProperty(CoreOptions.INSETS, insets);
+        ElkPadding padding = computePadding(shape);
+        if (padding != null) {
+            childNode.setProperty(CoreOptions.PADDING, padding);
         }
         
-        Margins nodeMargins = computeMargins(shape);
+        ElkMargin nodeMargins = computeMargins(shape);
         childNode.setProperty(CoreOptions.MARGINS, nodeMargins);
         
         GraphicsAlgorithm nodeGa = shape.getGraphicsAlgorithm();
         if (parentNode == null) {
             childNode.setLocation(nodeGa.getX() + nodeMargins.left, nodeGa.getY() + nodeMargins.top);
         } else {
-            Margins parentMargins = parentNode.getProperty(CoreOptions.MARGINS);
+            ElkMargin parentMargins = parentNode.getProperty(CoreOptions.MARGINS);
             childNode.setLocation(nodeGa.getX() + nodeMargins.left - parentMargins.left,
                     nodeGa.getY() + nodeMargins.top - parentMargins.top);
         }
@@ -437,10 +437,10 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @param pictogramElement a pictogram element
      * @return the margins for the given element
      */
-    protected Margins computeMargins(final PictogramElement pictogramElement) {
+    protected ElkMargin computeMargins(final PictogramElement pictogramElement) {
         GraphicsAlgorithm graphicsAlgorithm = pictogramElement.getGraphicsAlgorithm();
         GraphicsAlgorithm visibleGa = findVisibleGa(graphicsAlgorithm);
-        Margins margins = new Margins();
+        ElkMargin margins = new ElkMargin();
         while (visibleGa != null && visibleGa != graphicsAlgorithm) {
             margins.left += visibleGa.getX();
             margins.top += visibleGa.getY();
@@ -457,11 +457,10 @@ public class GraphitiDiagramLayoutConnector implements IDiagramLayoutConnector {
      * element that must not be covered by contained child nodes. The default implementation
      * returns {@code null}. Subclasses may override this.
      * 
-     * @param insets the insets where computed values shall be stored
      * @param pictogramElement a pictogram element
      * @return insets or {@code null}.
      */
-    protected ElkInsets computeInsets(final PictogramElement pictogramElement) {
+    protected ElkPadding computePadding(final PictogramElement pictogramElement) {
         return null;
     }
 

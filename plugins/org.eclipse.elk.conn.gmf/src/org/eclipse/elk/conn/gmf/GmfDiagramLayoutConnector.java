@@ -29,7 +29,7 @@ import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
@@ -326,7 +326,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
             // layout only the selected elements
             double minx = Integer.MAX_VALUE;
             double miny = Integer.MAX_VALUE;
-            Maybe<ElkInsets> kinsets = new Maybe<>();
+            Maybe<ElkPadding> kinsets = new Maybe<>();
             for (ShapeNodeEditPart editPart : selection) {
                 ElkNode node = createNode(mapping, editPart, layoutRootPart, topNode, kinsets);
                 minx = Math.min(minx, node.getX());
@@ -569,7 +569,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     protected void buildLayoutGraphRecursively(final LayoutMapping mapping, final IGraphicalEditPart parentEditPart,
             final ElkNode parentLayoutNode, final IGraphicalEditPart currentEditPart) {
         
-        Maybe<ElkInsets> kinsets = new Maybe<ElkInsets>();
+        Maybe<ElkPadding> kinsets = new Maybe<ElkPadding>();
 
         // iterate through the children of the element
         for (Object obj : currentEditPart.getChildren()) {
@@ -641,7 +641,7 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
      * @return the created node
      */
     protected ElkNode createNode(final LayoutMapping mapping, final ShapeNodeEditPart nodeEditPart,
-            final IGraphicalEditPart parentEditPart, final ElkNode parentElkNode, final Maybe<ElkInsets> elkinsets) {
+            final IGraphicalEditPart parentEditPart, final ElkNode parentElkNode, final Maybe<ElkPadding> elkinsets) {
         
         IFigure nodeFigure = nodeEditPart.getFigure();
         ElkNode childLayoutNode = ElkGraphUtil.createNode(parentElkNode);
@@ -668,8 +668,8 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
             // set insets if not yet defined
             if (elkinsets.get() == null) {
                 Insets insets = calcSpecificInsets(parentEditPart.getFigure(), nodeFigure);
-                ElkInsets ei = new ElkInsets(insets.top, insets.right, insets.bottom, insets.left);
-                childLayoutNode.setProperty(CoreOptions.INSETS, ei);
+                ElkPadding ei = new ElkPadding(insets.top, insets.right, insets.bottom, insets.left);
+                childLayoutNode.setProperty(CoreOptions.PADDING, ei);
                 elkinsets.set(ei);
             }
     

@@ -24,7 +24,7 @@ import org.eclipse.draw2d.graph.DirectedGraphLayout;
 import org.eclipse.draw2d.graph.Edge;
 import org.eclipse.draw2d.graph.Node;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -88,16 +88,14 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         DirectedGraph graph = new DirectedGraph();
         
         // set layout options for the graph
-        float minSpacing = layoutNode.getProperty(Draw2DOptions.SPACING_NODE);
+        float minSpacing = layoutNode.getProperty(Draw2DOptions.SPACING_NODE_NODE);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
         graph.setDefaultPadding(new Insets((int) minSpacing));
-        float borderSpacing = layoutNode.getProperty(Draw2DOptions.SPACING_BORDER);
-        if (borderSpacing < 0) {
-            borderSpacing = DEF_MIN_SPACING;
-        }
-        graph.setMargin(new Insets((int) borderSpacing));
+        
+        ElkPadding padding = layoutNode.getProperty(Draw2DOptions.PADDING);
+        graph.setMargin(new Insets((int) padding.top, (int) padding.left, (int) padding.bottom, (int) padding.right));
         Direction layoutDirection = layoutNode.getProperty(Draw2DOptions.DIRECTION);
         switch (layoutDirection) {
         case UP:
@@ -183,7 +181,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         }
         
         // apply parent node layout
-        ElkInsets insets = parentNode.getProperty(Draw2DOptions.INSETS);
+        ElkPadding insets = parentNode.getProperty(Draw2DOptions.PADDING);
         Dimension layoutSize = graph.getLayoutSize();
         double width = insets.getLeft() + layoutSize.width + insets.getRight();
         double height = insets.getTop() + layoutSize.height + insets.getBottom();

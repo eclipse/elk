@@ -11,6 +11,7 @@
 package org.eclipse.elk.conn.gmf.layouter
 
 import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.math.ElkPadding
 
 /**
  * Layout algorithms contributed by GMF / GEF.
@@ -29,9 +30,8 @@ algorithm Draw2D(Draw2DLayoutProvider) {
 	category org.eclipse.elk.layered
 	features multi_edges
 	preview images/draw2d.png
-	supports org.eclipse.elk.spacing.node = 16
-	supports org.eclipse.elk.spacing.border = 16
+	supports org.eclipse.elk.spacing.nodeNode = 16
+	supports org.eclipse.elk.padding = new ElkPadding(16)
 	supports org.eclipse.elk.direction = Direction.RIGHT
 	supports org.eclipse.elk.nodeSize.constraints
-    supports org.eclipse.elk.insets
 }
