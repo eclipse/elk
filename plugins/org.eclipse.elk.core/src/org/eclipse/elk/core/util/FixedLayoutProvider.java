@@ -50,9 +50,6 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  */
 public class FixedLayoutProvider extends AbstractLayoutProvider {
 
-    /** default value for border spacing. */
-    private static final float DEF_BORDER_SPACING = 15.0f;
-    
     /**
      * {@inheritDoc}
      */
@@ -150,13 +147,9 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         }
         
         // set size of the parent node
-        Float borderSpacing = layoutNode.getProperty(FixedLayouterOptions.SPACING_BORDER);
-        if (borderSpacing == null || borderSpacing < 0) {
-            borderSpacing = DEF_BORDER_SPACING;
-        }
-        ElkPadding insets = layoutNode.getProperty(FixedLayouterOptions.PADDING);
-        double newWidth = maxx + borderSpacing + insets.getLeft() + insets.getRight();
-        double newHeight = maxy + borderSpacing + insets.getTop() + insets.getBottom();
+        ElkPadding padding = layoutNode.getProperty(FixedLayouterOptions.PADDING);
+        double newWidth = maxx + padding.getLeft() + padding.getRight();
+        double newHeight = maxy + padding.getTop() + padding.getBottom();
         ElkUtil.resizeNode(layoutNode, newWidth, newHeight, true, true);
         progressMonitor.done();
     }

@@ -41,11 +41,6 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  */
 public class RandomLayoutProvider extends AbstractLayoutProvider {
     
-    /** default value for aspect ratio. */
-    private static final float DEF_ASPECT_RATIO = 1.6f;
-    /** default value for object spacing. */
-    private static final float DEF_SPACING = 15.0f;
-    
     /**
      * {@inheritDoc}
      */
@@ -67,24 +62,13 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
             random = new Random();
         }
         
-        // get aspect ratio
-        Float aspectRatio = parentNode.getProperty(RandomLayouterOptions.ASPECT_RATIO);
-        if (aspectRatio == null || aspectRatio <= 0) {
-            aspectRatio = DEF_ASPECT_RATIO;
-        }
-        
-        // get spacing values
-        Float spacing = parentNode.getProperty(RandomLayouterOptions.SPACING_NODE_NODE);
-        if (spacing == null || spacing < 0) {
-            spacing = DEF_SPACING;
-        }
-        Float offset = parentNode.getProperty(RandomLayouterOptions.SPACING_BORDER);
-        if (offset == null || offset < 0) {
-            offset = DEF_SPACING;
-        }
+        // retrieve some layout option values
+        float aspectRatio = parentNode.getProperty(RandomLayouterOptions.ASPECT_RATIO).floatValue();
+        float spacing = parentNode.getProperty(RandomLayouterOptions.SPACING_NODE_NODE).floatValue();
+        ElkPadding padding = parentNode.getProperty(RandomLayouterOptions.PADDING);
         
         // randomize the layout
-        randomize(parentNode, random, aspectRatio, spacing, offset);
+        randomize(parentNode, random, aspectRatio, spacing, padding);
 
         progressMonitor.done();
     }
@@ -99,7 +83,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
      * @param offset offset to the border
      */
     private void randomize(final ElkNode parent, final Random random, final double aspectRatio,
-            final double spacing, final double offset) {
+            final double spacing, final ElkPadding padding) {
         
         // determine width and height of the drawing and count the number of edges
         double nodesArea = 0.0f, maxWidth = 0.0f, maxHeight = 0.0f;
@@ -124,14 +108,14 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         
         // randomize node positions
         for (ElkNode node : parent.getChildren()) {
-            double x = offset + random.nextDouble() * (drawWidth - node.getWidth());
-            double y = offset + random.nextDouble() * (drawHeight - node.getHeight());
+            double x = padding.getLeft() + random.nextDouble() * (drawWidth - node.getWidth());
+            double y = padding.getLeft() + random.nextDouble() * (drawHeight - node.getHeight());
             node.setLocation(x, y);
         }
         
         // randomize edge positions
-        double totalWidth = drawWidth + 2 * offset;
-        double totalHeight = drawHeight + 2 * offset;
+        double totalWidth = drawWidth + padding.getHorizontal();
+        double totalHeight = drawHeight + padding.getVertical();
         for (ElkNode source : parent.getChildren()) {
             for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(source)) {
                 if (!edge.isHierarchical()) {

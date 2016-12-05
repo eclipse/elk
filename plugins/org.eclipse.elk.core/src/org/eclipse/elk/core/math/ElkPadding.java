@@ -13,7 +13,7 @@ package org.eclipse.elk.core.math;
 import org.eclipse.elk.core.util.IDataObject;
 
 /**
- * Represents insets of a graphical object. Insets are space to be left to the object's borders when placing things
+ * Represents padding of a graphical object. padding are space to be left to the object's borders when placing things
  * within the object.
  */
 public class ElkPadding implements IDataObject, Cloneable {
@@ -21,13 +21,13 @@ public class ElkPadding implements IDataObject, Cloneable {
     /** Serialization version ID. */
     private static final long serialVersionUID = -8033455628103978553L;
     
-    /** Top insets. */
+    /** Top padding. */
     private double top = 0.0;
-    /** Bottom insets. */
+    /** Bottom padding. */
     private double bottom = 0.0;
-    /** Left insets. */
+    /** Left padding. */
     private double left = 0.0;
-    /** Right insets. */
+    /** Right padding. */
     private double right = 0.0;
     
     
@@ -35,26 +35,26 @@ public class ElkPadding implements IDataObject, Cloneable {
     // Constructors
     
     /**
-     * Create new empty insets.
+     * Create new empty padding.
      */
     public ElkPadding() {
         // This space intentionally left blank
     }
     
     /**
-     * Create new insets initialized to the given values.
+     * Create new padding initialized to the given values.
      * 
-     * @param top top insets.
-     * @param right right insets.
-     * @param bottom bottom insets.
-     * @param left left insets.
+     * @param top top padding.
+     * @param right right padding.
+     * @param bottom bottom padding.
+     * @param left left padding.
      */
     public ElkPadding(final double top, final double right, final double bottom, final double left) {
-        setInsets(top, right, bottom, left);
+        setPadding(top, right, bottom, left);
     }
     
     /**
-     * Create new insets initialized to the given values.
+     * Create new padding initialized to the given values.
      * 
      * @param any inset value for every side.
      */
@@ -66,14 +66,17 @@ public class ElkPadding implements IDataObject, Cloneable {
     // Accessors
     
     /**
-     * Set all inset values at once.
+     * Set all padding values at once.
      * 
-     * @param newTop top insets.
-     * @param newRight right insets.
-     * @param newBottom bottom insets.
-     * @param newLeft left insets.
+     * @param newTop top padding.
+     * @param newRight right padding.
+     * @param newBottom bottom padding.
+     * @param newLeft left padding.
      */
-    public void setInsets(final double newTop, final double newRight, final double newBottom, final double newLeft) {
+    public void setPadding(final double newTop, final double newRight, final double newBottom, final double newLeft) {
+        if (newTop < 0 || newRight < 0 || newBottom < 0 || newLeft < 0) {
+            throw new IllegalArgumentException("Negative padding value not allowed");
+        }
         this.top = newTop;
         this.bottom = newBottom;
         this.left = newLeft;
@@ -81,61 +84,74 @@ public class ElkPadding implements IDataObject, Cloneable {
     }
     
     /**
-     * Returns the top insets.
+     * Returns the top padding.
      */
     public double getTop() {
         return top;
     }
 
     /**
-     * Sets the top insets.
+     * Sets the top padding.
      */
     public void setTop(final double top) {
         this.top = top;
     }
 
     /**
-     * Returns the bottom insets.
+     * Returns the bottom padding.
      */
     public double getBottom() {
         return bottom;
     }
 
     /**
-     * Sets the bottom insets.
+     * Sets the bottom padding.
      */
     public void setBottom(final double bottom) {
         this.bottom = bottom;
     }
 
     /**
-     * Returns the left insets.
+     * Returns the left padding.
      */
     public double getLeft() {
         return left;
     }
 
     /**
-     * Sets the left insets.
+     * Sets the left padding.
      */
     public void setLeft(final double left) {
         this.left = left;
     }
 
     /**
-     * Returns the right insets.
+     * Returns the right padding.
      */
     public double getRight() {
         return right;
     }
 
     /**
-     * Sets the right insets.
+     * Sets the right padding.
      */
     public void setRight(final double right) {
         this.right = right;
     }
     
+    /**
+     * @return the combined horizontal padding, i.e. {@link #getLeft()} + {@link #getRight()}.  
+     */
+    public double getHorizontal() {
+        return this.getLeft() + this.getRight();
+    }
+    
+    /**
+     * @return the combined vertical padding, i.e. {@link #getTop()} + {@link #getBottom()}.  
+     */
+    public double getVertical() {
+        return this.getTop() + this.getBottom();
+    }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Things

@@ -80,8 +80,6 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         GROUP_INC,       
     }
     
-    /** default value for spacing between boxes. */
-    private static final float DEF_SPACING = 15.0f;
     /** default value for aspect ratio. */
     public static final float DEF_ASPECT_RATIO = 1.3f;
 
@@ -93,16 +91,9 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         progressMonitor.begin("Box layout", 2);
         
         // set option for minimal spacing
-        Float objSpacing = layoutNode.getProperty(BoxLayouterOptions.SPACING_NODE_NODE);
-        if (objSpacing == null || objSpacing < 0) {
-            objSpacing = DEF_SPACING;
-        }
-        
+        float objSpacing = layoutNode.getProperty(BoxLayouterOptions.SPACING_NODE_NODE).floatValue();
         // set option for border spacing
-        Float borderSpacing = layoutNode.getProperty(BoxLayouterOptions.SPACING_BORDER);
-        if (borderSpacing == null || borderSpacing < 0) {
-            borderSpacing = DEF_SPACING;
-        }
+        ElkPadding padding = layoutNode.getProperty(BoxLayouterOptions.PADDING);
         
         // set expand nodes option
         boolean expandNodes = layoutNode.getProperty(BoxLayouterOptions.EXPAND_NODES);
@@ -116,12 +107,12 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             // sort boxes according to priority and position or size
             List<ElkNode> sortedBoxes = sort(layoutNode, interactive);
             // place boxes on the plane
-            placeBoxes(sortedBoxes, layoutNode, objSpacing, borderSpacing, expandNodes);
+            placeBoxes(sortedBoxes, layoutNode, objSpacing, padding, expandNodes);
             break;
 
         default: // any of the groups
             // the method takes care of sorting the boxes itself
-            placeBoxesGrouping(layoutNode, objSpacing, borderSpacing, expandNodes);
+            placeBoxesGrouping(layoutNode, objSpacing, padding, expandNodes);
         }
 
         progressMonitor.done();
@@ -187,7 +178,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * @param expandNodes if true, the nodes are expanded to fill their parent
      */
     private void placeBoxes(final List<ElkNode> sortedBoxes, final ElkNode parentNode,
-            final double objSpacing, final double borderSpacing, final boolean expandNodes) {
+            final double objSpacing, final ElkPadding padding, final boolean expandNodes) {
         
         ElkPadding insets = parentNode.getProperty(CoreOptions.PADDING);
         
@@ -209,7 +200,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         }
 
         // do place the boxes
-        KVector parentSize = placeBoxes(sortedBoxes, objSpacing, borderSpacing, minWidth, minHeight,
+        KVector parentSize = placeBoxes(sortedBoxes, objSpacing, padding, minWidth, minHeight,
                 expandNodes, aspectRatio);
 
         // adjust parent size
@@ -231,7 +222,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * @return the bounding box of the resulting layout
      */
     private KVector placeBoxes(final List<ElkNode> sortedBoxes, final double minSpacing,
-            final double borderSpacing, final double minTotalWidth, final double minTotalHeight,
+            final ElkPadding padding, final double minTotalWidth, final double minTotalHeight,
             final boolean expandNodes, final double aspectRatio) {
         
         // determine the maximal row width by the maximal box width and the total area
@@ -254,13 +245,13 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
 
         // calculate the required row width w to achieve the desired aspect ratio,
         //  i.e.:  w*h=area s.t. w/h=dar  ->  w=sqrt(area * dar) 
-        maxRowWidth = (float) Math.max(maxRowWidth, Math.sqrt(totalArea * aspectRatio)) + borderSpacing;
+        maxRowWidth = (float) Math.max(maxRowWidth, Math.sqrt(totalArea * aspectRatio)) + padding.getLeft();
 
         // place nodes iteratively into rows
-        double xpos = borderSpacing;
-        double ypos = borderSpacing;
+        double xpos = padding.getLeft();
+        double ypos = padding.getTop();
         double highestBox = 0.0f;
-        double broadestRow = 2 * borderSpacing;
+        double broadestRow = padding.getHorizontal();
         LinkedList<Integer> rowIndices = new LinkedList<>();
         rowIndices.add(Integer.valueOf(0));
         LinkedList<Double> rowHeights = new LinkedList<>();
@@ -275,18 +266,18 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                     rowHeights.addLast(Double.valueOf(highestBox));
                     rowIndices.addLast(Integer.valueOf(boxIter.previousIndex()));
                 }
-                xpos = borderSpacing;
+                xpos = padding.getLeft();
                 ypos += highestBox + minSpacing;
                 highestBox = 0.0f;
-                broadestRow = Math.max(broadestRow, 2 * borderSpacing + width);
+                broadestRow = Math.max(broadestRow, padding.getHorizontal() + width);
             }
             box.setLocation(xpos, ypos);
-            broadestRow = Math.max(broadestRow, xpos + width + borderSpacing);
+            broadestRow = Math.max(broadestRow, xpos + width + padding.getRight());
             highestBox = Math.max(highestBox, height);
             xpos += width + minSpacing;
         }
         broadestRow = Math.max(broadestRow, minTotalWidth);
-        double totalHeight = ypos + highestBox + borderSpacing;
+        double totalHeight = ypos + highestBox + padding.getBottom();
         if (totalHeight < minTotalHeight) {
             highestBox += minTotalHeight - totalHeight;
             totalHeight = minTotalHeight;
@@ -294,7 +285,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
 
         // expand nodes if required
         if (expandNodes) {
-            xpos = borderSpacing;
+            xpos = padding.getLeft();
             boxIter = sortedBoxes.listIterator();
             rowIndices.addLast(Integer.valueOf(sortedBoxes.size()));
             ListIterator<Integer> rowIndexIter = rowIndices.listIterator();
@@ -304,14 +295,14 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             double rowHeight = 0.0f;
             while (boxIter.hasNext()) {
                 if (boxIter.nextIndex() == nextRowIndex) {
-                    xpos = borderSpacing;
+                    xpos = padding.getLeft();
                     rowHeight = rowHeightIter.next();
                     nextRowIndex = rowIndexIter.next();
                 }
                 ElkNode box = boxIter.next();
                 box.setHeight(rowHeight);
                 if (boxIter.nextIndex() == nextRowIndex) {
-                    double newWidth = broadestRow - xpos - borderSpacing;
+                    double newWidth = broadestRow - xpos - padding.getRight();
                     double oldWidth = box.getWidth();
                     box.setWidth(newWidth);
                     ElkUtil.translate(box, (newWidth - oldWidth) / 2, 0.0);
@@ -347,7 +338,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * @param expandNodes if true, the nodes are expanded to fill their parent
      */
     private void placeBoxesGrouping(final ElkNode parentNode,
-            final float objSpacing, final float borderSpacing, final boolean expandNodes) {
+            final float objSpacing, final ElkPadding padding, final boolean expandNodes) {
         
         ElkPadding insets = parentNode.getProperty(CoreOptions.PADDING);
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
@@ -392,12 +383,12 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         
         Group finalGroup = new Group(toBePlaced);
         // do final packing of the 'out-most' boxes
-        KVector parentSize = placeInnerBoxes(finalGroup, objSpacing, borderSpacing, minWidth, minHeight,
+        KVector parentSize = placeInnerBoxes(finalGroup, objSpacing, padding, minWidth, minHeight,
                 expandNodes, aspectRatio);
 
         // account for border spacing
-        finalGroup.translate(borderSpacing, borderSpacing);
-        parentSize.add(2 * borderSpacing, 2 * borderSpacing);
+        finalGroup.translate(padding.getLeft(), padding.getTop());
+        parentSize.add(padding.getHorizontal(), padding.getVertical());
         
         // adjust parent size
         double width = insets.getLeft() + parentSize.x + insets.getRight();
@@ -418,7 +409,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
      * @return the bounding box of the resulting layout
      */
     private KVector placeInnerBoxes(final Group group, final double minSpacing,
-            final double borderSpacing, final double minTotalWidth, final double minTotalHeight,
+            final ElkPadding padding, final double minTotalWidth, final double minTotalHeight,
             final boolean expandNodes, final double aspectRatio) {
         // determine the maximal row width by the maximal box width and the total area
         double maxRowWidth = 0.0f;
@@ -443,13 +434,13 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
 
         // calculate the required row width w to achieve the desired aspect ratio,
         //  i.e.:  w*h=area s.t. w/h=dar  ->  w=sqrt(area * dar) 
-        maxRowWidth = (double) Math.max(maxRowWidth, Math.sqrt(totalArea * aspectRatio)) + borderSpacing;
+        maxRowWidth = (double) Math.max(maxRowWidth, Math.sqrt(totalArea * aspectRatio)) + padding.getLeft();
         
         // place nodes iteratively into rows
-        double xpos = borderSpacing;
-        double ypos = borderSpacing;
+        double xpos = padding.getLeft();
+        double ypos = padding.getTop();
         double highestBox = 0.0f;
-        double broadestRow = 2 * borderSpacing;
+        double broadestRow = padding.getHorizontal();
         LinkedList<Integer> rowIndices = new LinkedList<Integer>();
         rowIndices.add(Integer.valueOf(0));
         LinkedList<Double> rowHeights = new LinkedList<>();
@@ -468,14 +459,14 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                     group.right.add(last);
                     bottoms.clear();
                 }
-                xpos = borderSpacing;
+                xpos = padding.getLeft();
                 ypos += highestBox + minSpacing;
                 highestBox = 0.0f;
-                broadestRow = Math.max(broadestRow, 2 * borderSpacing + width);
+                broadestRow = Math.max(broadestRow, padding.getHorizontal() + width);
             }
             bottoms.add(box);
             box.translate(xpos, ypos);
-            broadestRow = Math.max(broadestRow, xpos + width + borderSpacing);
+            broadestRow = Math.max(broadestRow, xpos + width + padding.getRight());
             highestBox = Math.max(highestBox, height);
             xpos += width + minSpacing;
             last = box;
@@ -483,7 +474,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         group.bottom.addAll(bottoms);
         group.right.add(bottoms.get(bottoms.size() - 1));
         broadestRow = Math.max(broadestRow, minTotalWidth);
-        double totalHeight = ypos + highestBox + borderSpacing;
+        double totalHeight = ypos + highestBox + padding.getBottom();
         if (totalHeight < minTotalHeight) {
             highestBox += minTotalHeight - totalHeight;
             totalHeight = minTotalHeight;
@@ -491,7 +482,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
 
         // expand nodes if required
         if (expandNodes) {
-            xpos = borderSpacing;
+            xpos = padding.getLeft();
             boxIter = group.groups.listIterator();
             rowIndices.addLast(Integer.valueOf(group.groups.size()));
             ListIterator<Integer> rowIndexIter = rowIndices.listIterator();
@@ -501,14 +492,14 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             double rowHeight = 0.0f;
             while (boxIter.hasNext()) {
                 if (boxIter.nextIndex() == nextRowIndex) {
-                    xpos = borderSpacing;
+                    xpos = padding.getLeft();
                     rowHeight = rowHeightIter.next();
                     nextRowIndex = rowIndexIter.next();
                 }
                 Group box = boxIter.next();
                 box.setHeight(rowHeight);
                 if (boxIter.nextIndex() == nextRowIndex) {
-                    double newWidth = broadestRow - xpos - borderSpacing;
+                    double newWidth = broadestRow - xpos - padding.getRight();
                     double oldWidth = box.getWidth();
                     box.setWidth(newWidth);
                     box.translateInnerNodes((newWidth - oldWidth) / 2, 0.0f);
@@ -574,8 +565,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                     Group innerGroup = new Group(maybeGroup);
                     // TODO there may be a better choice for the inner aspect ratio
                     double innerAspectRatio = boxToBeat.getWidth() / boxToBeat.getHeight();
-                    KVector groupSize = placeInnerBoxes(innerGroup, objSpacing, 0, minWidth, minHeight, expandNodes,
-                            innerAspectRatio);
+                    KVector groupSize = placeInnerBoxes(innerGroup, objSpacing, new ElkPadding(), minWidth, minHeight,
+                            expandNodes, innerAspectRatio);
                     innerGroup.size.reset().add(groupSize);
                     
                     boxToBeat = innerGroup;
@@ -634,8 +625,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                 // TODO there's probably a better strategy to select this aspect ratio
                 double innerAspectRatio = box.getWidth() / box.getHeight();
 
-                KVector groupSize =
-                        placeInnerBoxes(innerGroup, objSpacing, 0, minWidth, minHeight, expandNodes, innerAspectRatio);
+                KVector groupSize = placeInnerBoxes(innerGroup, objSpacing, new ElkPadding(), minWidth, minHeight,
+                        expandNodes, innerAspectRatio);
                 innerGroup.size.reset().add(groupSize);
                 
                 // now start over
@@ -687,8 +678,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                 double innerAspectRatio = g.getWidth() / g.getHeight();
                 
                 // place the nodes in the group
-                KVector groupSize = placeInnerBoxes(merged, objSpacing, 0, minWidth, minHeight, expandNodes,
-                        innerAspectRatio);
+                KVector groupSize = placeInnerBoxes(merged, objSpacing, new ElkPadding(), minWidth, minHeight,
+                        expandNodes, innerAspectRatio);
                 merged.size.reset().add(groupSize);
 
                 // reset
