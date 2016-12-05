@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing;
+package org.eclipse.elk.core.math;
 
 import org.eclipse.elk.core.util.IDataObject;
 
@@ -25,24 +25,13 @@ public abstract class Spacing implements IDataObject, Cloneable {
     /** The serial version UID. */
     private static final long serialVersionUID = 4358555478195088364L;
 
-    /**
-     * The inset from the top.
-     */
+    /** The spacing from the top. */
     public double top = 0.0;
-
-    /**
-     * The inset from the bottom.
-     */
+    /** The spacing from the bottom. */
     public double bottom = 0.0;
-
-    /**
-     * The inset from the left.
-     */
+    /** The spacing from the left. */
     public double left = 0.0;
-
-    /**
-     * The inset from the right.
-     */
+    /** The spacing from the right. */
     public double right = 0.0;
 
     // CHECKSTYLEON VisibilityModifier
@@ -50,48 +39,116 @@ public abstract class Spacing implements IDataObject, Cloneable {
     /**
      * Creates a new instance with all fields set to {@code 0.0}.
      */
-    protected Spacing() {
-
-    }
+    protected Spacing() { }
 
     /**
      * Creates a new instance initialized with the given values.
      * 
      * @param top
-     *            the inset from the top.
-     * @param left
-     *            the inset from the left.
-     * @param bottom
-     *            the inset from the bottom.
+     *            the spacing from the top.
      * @param right
-     *            the inset from the right.
+     *            the spacing from the right.
+     * @param bottom
+     *            the spacing from the bottom.
+     * @param left
+     *            the spacing from the left.
      */
-    protected Spacing(final double top, final double left, final double bottom, final double right) {
-        this.top = top;
-        this.left = left;
-        this.bottom = bottom;
-        this.right = right;
+    protected Spacing(final double top, final double right, final double bottom, final double left) {
+        set(top, right, bottom, left);
     }
 
     /**
-     * Sets all four insets at once.
+     * Sets all four spacings at once.
      * 
      * @param newTop
-     *            the inset from the top.
+     *            the spacing from the top.
      * @param newLeft
-     *            the inset from the left.
+     *            the spacing from the left.
      * @param newBottom
-     *            the inset from the bottom.
+     *            the spacing from the bottom.
      * @param newRight
-     *            the inset from the right.
+     *            the spacing from the right.
      */
-    public void set(final double newTop, final double newLeft, final double newBottom,
-            final double newRight) {
+    public void set(final double newTop, final double newRight, final double newBottom,
+            final double newLeft) {
+        if (newTop < 0 || newRight < 0 || newBottom < 0 || newLeft < 0) {
+            throw new IllegalArgumentException("Negative padding value not allowed");
+        }
         this.top = newTop;
-        this.left = newLeft;
-        this.bottom = newBottom;
         this.right = newRight;
+        this.bottom = newBottom;
+        this.left = newLeft;
     }
+    
+    /**
+     * @return the top
+     */
+    public double getTop() {
+        return top;
+    }
+    
+    /**
+     * @param top the top to set
+     */
+    public void setTop(final double top) {
+        this.top = top;
+    }
+    
+    /**
+     * @return the right
+     */
+    public double getRight() {
+        return right;
+    }
+    
+    /**
+     * @param right the right to set
+     */
+    public void setRight(final double right) {
+        this.right = right;
+    }
+    
+    /**
+     * @return the bottom
+     */
+    public double getBottom() {
+        return bottom;
+    }
+    
+    /**
+     * @param bottom the bottom to set
+     */
+    public void setBottom(final double bottom) {
+        this.bottom = bottom;
+    }
+    
+    /**
+     * @return the left
+     */
+    public double getLeft() {
+        return left;
+    }
+    
+    /**
+     * @param left the left to set
+     */
+    public void setLeft(final double left) {
+        this.left = left;
+    }
+    
+    /** 
+     * @return the combined horizontal padding, i.e. {@link #getLeft()} + {@link #getRight()}.   
+     */ 
+    public double getHorizontal() { 
+        return this.getLeft() + this.getRight(); 
+    } 
+     
+    /** 
+     * @return the combined vertical padding, i.e. {@link #getTop()} + {@link #getBottom()}.   
+     */ 
+    public double getVertical() { 
+        return this.getTop() + this.getBottom(); 
+    } 
 
     /**
      * {@inheritDoc}
@@ -100,7 +157,6 @@ public abstract class Spacing implements IDataObject, Cloneable {
     public boolean equals(final Object obj) {
         if (obj instanceof Spacing) {
             Spacing other = (Spacing) obj;
-
             return this.top == other.top && this.bottom == other.bottom && this.left == other.left
                     && this.right == other.right;
         } else {
@@ -193,10 +249,10 @@ public abstract class Spacing implements IDataObject, Cloneable {
     }
 
     /**
-     * Copy insets values from another double valued insets.
+     * Copy spacings values from another double valued spacings.
      * 
      * @param other
-     *            another insets
+     *            another spacings
      * @return this instance.
      */
     public Spacing copy(final Spacing other) {
@@ -221,95 +277,5 @@ public abstract class Spacing implements IDataObject, Cloneable {
         }
     }
     // GWTExcludeEnd
-
-    /**
-     * Stores the insets of an element. The insets are spacings from the border of an element to
-     * other internal elements.
-     * 
-     * @author uru
-     */
-    public static final class Insets extends Spacing {
-
-        /** The serial version UID. */
-        private static final long serialVersionUID = -2159860709896900657L;
-
-        /**
-         * Creates a new instance with all fields set to {@code 0.0}.
-         */
-        public Insets() {
-            super();
-        }
-
-        /**
-         * Creates a new instance with all fields set to the value of {@code other}.
-         * 
-         * @param other
-         *            insets object from which to copy the values.
-         */
-        public Insets(final Insets other) {
-            super(other.top, other.left, other.bottom, other.right);
-        }
-
-        /**
-         * Creates a new instance initialized with the given values.
-         * 
-         * @param top
-         *            the inset from the top.
-         * @param left
-         *            the inset from the left.
-         * @param bottom
-         *            the inset from the bottom.
-         * @param right
-         *            the inset from the right.
-         */
-        public Insets(final double top, final double left, final double bottom, final double right) {
-            super(top, left, bottom, right);
-        }
-    }
-
-    /**
-     * Stores the margins of an element. The margin is the area around the border of an element that
-     * has to be kept free of any other elements.
-     * 
-     * @author uru
-     */
-    public static final class Margins extends Spacing {
-
-        /** The serial version UID. */
-        private static final long serialVersionUID = 7465583871643915474L;
-
-        /**
-         * Creates a new instance with all fields set to {@code 0.0}.
-         */
-        public Margins() {
-            super();
-        }
-
-        /**
-         * Creates a new instance with all fields set to the value of {@code other}.
-         * 
-         * @param other
-         *            margins object from which to copy the values.
-         */
-        public Margins(final Margins other) {
-            super(other.top, other.left, other.bottom, other.right);
-        }
-
-        /**
-         * Creates a new instance initialized with the given values.
-         * 
-         * @param top
-         *            the margin from the top.
-         * @param left
-         *            the margin from the left.
-         * @param bottom
-         *            the margin from the bottom.
-         * @param right
-         *            the margin from the right.
-         */
-        public Margins(final double top, final double left, final double bottom, final double right) {
-            super(top, left, bottom, right);
-        }
-    }
 
 }

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util.nodespacing;
 
+import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 
 /**
  * Sets the node margins. Node margins are influenced by both port positions and sizes
@@ -209,7 +209,7 @@ public final class NodeMarginCalculator  {
         }
         
         // Reset the margin
-        Margins margin = new Margins(node.getMargin());
+        ElkMargin margin = new ElkMargin(node.getMargin());
         margin.top = node.getPosition().y - boundingBox.y;
         margin.bottom = boundingBox.y + boundingBox.height - (node.getPosition().y + node.getSize().y);
         margin.left = node.getPosition().x - boundingBox.x;

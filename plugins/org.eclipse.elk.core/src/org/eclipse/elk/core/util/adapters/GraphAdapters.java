@@ -12,11 +12,11 @@ package org.eclipse.elk.core.util.adapters;
 
 import java.util.Comparator;
 
+import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Insets;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 import org.eclipse.elk.graph.properties.IProperty;
 
 /**
@@ -173,13 +173,13 @@ public interface GraphAdapters {
          * 
          * @return the node's insets.
          */
-        Insets getInsets();
+        ElkPadding getInsets();
 
         /**
          * @param insets
          *            sets the new insets of this node.
          */
-        void setInsets(final Insets insets);
+        void setInsets(final ElkPadding insets);
 
         /**
          * Returns the node's margin. The margin is the space around the node that is to be reserved
@@ -187,13 +187,13 @@ public interface GraphAdapters {
          * 
          * @return the node's margin.
          */
-        Margins getMargin();
+        ElkMargin getMargin();
 
         /**
          * @param margin
          *            the new margin to be set.
          */
-        void setMargin(final Margins margin);
+        void setMargin(final ElkMargin margin);
     }
 
     /**
@@ -220,13 +220,13 @@ public interface GraphAdapters {
          * 
          * @return the ports's margin.
          */
-        Margins getMargin();
+        ElkMargin getMargin();
 
         /**
          * @param margin
          *            the new margin to be set.
          */
-        void setMargin(final Margins margin);
+        void setMargin(final ElkMargin margin);
 
         /**
          * @return a collection of the port's incoming edges wrapped in an adapter.

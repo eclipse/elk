@@ -12,16 +12,16 @@ package org.eclipse.elk
 
 import java.util.EnumSet
 import org.eclipse.elk.core.^labels.ILabelManager
+import org.eclipse.elk.core.math.ElkMargin
+import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.math.KVector
 import org.eclipse.elk.core.math.KVectorChain
 import org.eclipse.elk.core.util.BoxLayoutProvider
+import org.eclipse.elk.core.util.BoxLayoutProvider.PackingMode
 import org.eclipse.elk.core.util.ExclusiveBounds
 import org.eclipse.elk.core.util.FixedLayoutProvider
-import org.eclipse.elk.core.util.RandomLayoutProvider
-import org.eclipse.elk.core.util.nodespacing.Spacing
-import org.eclipse.elk.core.util.BoxLayoutProvider.PackingMode
-import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.util.IndividualSpacings
+import org.eclipse.elk.core.util.RandomLayoutProvider
 
 // Sort based on normal - advanced - programmatic - global - output and within the groups alphabetically
 // If different types are within a group, move the group to the first category 
@@ -134,7 +134,7 @@ group box {
              If SIMPLE is not required (neither priorities are used nor the interactive mode),
              GROUP_DEC can improve the packing and decrease the area. 
              GROUP_MIXED and GROUP_INC may, in very specific scenarios, work better."
-        default = BoxLayoutProvider$PackingMode.SIMPLE
+        default = BoxLayoutProvider.PackingMode.SIMPLE
         targets parents
     }
 }
@@ -360,7 +360,7 @@ group spacing {
 	    targets nodes, edges, ports, labels
 	} 
 	
-	advanced option portSurrounding: Spacing.Margins {
+	advanced option portSurrounding: ElkMargin {
 		label "Additional Port Space"
 		description
 			"Additional space around the sets of ports on each node side. For each side of a node,
@@ -407,10 +407,10 @@ group partitioning {
 // --- NODE LABELS
 group nodeLabels {
 
-	advanced option insets: Spacing.Insets {
-		label "Node Label Insets"	
-		description "Define insets for node labels that are placed inside of a node."
-		default = new Spacing.Insets(0, 0, 0, 0) 
+	advanced option padding: ElkPadding {
+		label "Node Label Padding"	
+		description "Define padding for node labels that are placed inside of a node."
+		default = new ElkPadding() 
 		targets nodes
 		legacyIds de.cau.cs.kieler.nodeLabelInset
 	}
@@ -535,7 +535,7 @@ group nodeSize {
 			"Options modifying the behavior of the size constraints set on a node. Each member of the
 			set specifies something that should be taken into account when calculating node sizes.
 			The empty set corresponds to no further modifications."
-		default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.APPLY_ADDITIONAL_INSETS)
+		default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.APPLY_ADDITIONAL_PADDING)
 		targets nodes
 	}
 	 
@@ -631,14 +631,14 @@ programmatic option labelManager: ILabelManager {
 	targets parents, labels
 }
 
-programmatic option margins: Spacing.Margins {
+programmatic option margins: ElkMargin {
 	label "Margins"
 	description
 		"Margins define additional space around the actual bounds of a graph element. For instance,
 		ports or labels being placed on the outside of a node's border might introduce such a
 		margin. The margin is used to guarantee non-overlap of other graph elements with those
 		ports or labels."
-	default = new Spacing.Margins
+	default = new ElkMargin()
 	targets nodes
 	legacyIds de.cau.cs.kieler.margins
 }

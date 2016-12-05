@@ -13,6 +13,7 @@ package org.eclipse.elk.core.util.adapters;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -24,8 +25,6 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Insets;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkGraphElement;
@@ -155,34 +154,30 @@ public final class ElkGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Insets getInsets() {
-            ElkPadding elkInsets = element.getProperty(CoreOptions.PADDING);
-            if (elkInsets == null) {
-                return new Insets();
+        public ElkPadding getInsets() {
+            ElkPadding elkPadding = element.getProperty(CoreOptions.PADDING);
+            if (elkPadding == null) {
+                return new ElkPadding();
             } else {
-                return new Insets(
-                        elkInsets.getTop(),
-                        elkInsets.getLeft(),
-                        elkInsets.getBottom(),
-                        elkInsets.getRight());
+                return new ElkPadding(elkPadding);
             }
         }
 
         /**
          * {@inheritDoc}
          */
-        public void setInsets(final Insets insets) {
+        public void setInsets(final ElkPadding padding) {
             element.setProperty(CoreOptions.PADDING,
-                    new ElkPadding(insets.top, insets.right, insets.bottom, insets.left));
+                    new ElkPadding(padding));
         }
 
         /**
          * {@inheritDoc}
          */
-        public Margins getMargin() {
-            Margins margins = element.getProperty(CoreOptions.MARGINS);
+        public ElkMargin getMargin() {
+            ElkMargin margins = element.getProperty(CoreOptions.MARGINS);
             if (margins == null) {
-                margins = new Margins();
+                margins = new ElkMargin();
             }
             return margins;
         }
@@ -190,9 +185,9 @@ public final class ElkGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public void setMargin(final Margins margin) {
+        public void setMargin(final ElkMargin margin) {
             // analog to the insets case, we copy the margins object here
-            Margins newMargin = new Margins(margin); 
+            ElkMargin newMargin = new ElkMargin(margin); 
             element.setProperty(CoreOptions.MARGINS, newMargin);
         }
         

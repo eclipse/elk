@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.nodespacing.Rectangle;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Insets;
 
 /**
  * Utility class for node label space calculation.
@@ -47,13 +47,13 @@ public final class LabelSpaceCalculation {
      *            the default label spacing.
      * @return the adjusted insets.
      */
-    public static Insets calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
+    public static ElkPadding calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
             final double labelSpacing) {
 
-        Insets nodeLabelInsets = node.getProperty(CoreOptions.NODE_LABELS_INSETS);
+        ElkPadding nodeLabelInsets = node.getProperty(CoreOptions.NODE_LABELS_PADDING);
 
         return calculateRequiredNodeLabelSpace(node, labelSpacing, nodeLabelInsets,
-                new HashMap<LabelLocation, LabelGroup>(), new Insets(node.getInsets()));
+                new HashMap<LabelLocation, LabelGroup>(), new ElkPadding(node.getInsets()));
     }
 
     /**
@@ -76,9 +76,9 @@ public final class LabelSpaceCalculation {
      *            the insets to adjust.
      * @return the adjusted insets.
      */
-    public static Insets calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
-            final double labelSpacing, final Insets nodeLabelInsets,
-            final Map<LabelLocation, LabelGroup> labelGroupsBoundingBoxes, final Insets insets) {
+    public static ElkPadding calculateRequiredNodeLabelSpace(final NodeAdapter<?> node,
+            final double labelSpacing, final ElkPadding nodeLabelInsets,
+            final Map<LabelLocation, LabelGroup> labelGroupsBoundingBoxes, final ElkPadding insets) {
 
         // Check if there are any labels
         if (!node.getLabels().iterator().hasNext()) {
