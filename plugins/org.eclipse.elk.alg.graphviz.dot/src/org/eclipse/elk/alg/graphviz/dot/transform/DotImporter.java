@@ -262,9 +262,10 @@ public class DotImporter {
                 if (value.indexOf(',') >= 0) {
                     KVector pad = new KVector();
                     pad.parse(value);
-                    target.setProperty(CoreOptions.SPACING_BORDER, (float) (pad.x + pad.y) / 2);
+                    ElkPadding padding = new ElkPadding(pad.x / 2, pad.y / 2);
+                    target.setProperty(CoreOptions.PADDING, padding);
                 } else {
-                    target.setProperty(CoreOptions.SPACING_BORDER, Float.valueOf(value));
+                    target.setProperty(CoreOptions.PADDING, new ElkPadding(Float.valueOf(value)));
                 }
             } else if (Attributes.RANKDIR.equals(name)) {
                 if (value.equals("TB")) {

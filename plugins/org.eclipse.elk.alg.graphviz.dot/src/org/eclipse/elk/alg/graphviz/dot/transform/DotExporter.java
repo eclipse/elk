@@ -97,9 +97,9 @@ public class DotExporter {
     /** whether to adapt port positions to edge end points. */
     public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
             "dotExporter.adaptPortPositions", false);
-    /** border spacing applied in {@link #transferLayout(IDotTransformationData)}. */
-    public static final IProperty<Float> BORDER_SPACING = new Property<Float>(
-            "dotExporter.borderSpacing", DEF_SPACING_SMALL / 2);
+    /** padding applied in {@link #transferLayout(IDotTransformationData)}. */
+    public static final IProperty<ElkPadding> PADDING = new Property<ElkPadding>(
+            "dotExporter.padding", new ElkPadding(DEF_SPACING_SMALL / 2));
     
     /** default multiplier for font sizes. */
     private static final double FONT_SIZE_MULT = 1.4;
@@ -144,20 +144,16 @@ public class DotExporter {
      * @param transData the transformation data instance
      */
     public void transferLayout(final IDotTransformationData<ElkNode, GraphvizModel> transData) {
-        float borderSpacing = transData.getProperty(BORDER_SPACING);
-        if (borderSpacing < 0) {
-            borderSpacing = DEF_SPACING_SMALL / 2;
-            transData.setProperty(BORDER_SPACING, borderSpacing);
-        }
+        ElkPadding padding = transData.getProperty(PADDING);
         Graph graph = transData.getTargetGraphs().get(0).getGraphs().get(0);
         
         // process nodes and subgraphs
         KVector baseOffset = new KVector();
-        applyLayout(transData.getSourceGraph(), graph.getStatements(), baseOffset, borderSpacing, transData);
+        applyLayout(transData.getSourceGraph(), graph.getStatements(), baseOffset, padding, transData);
         
         // finally process the edges
         LinkedList<Statement> statements = new LinkedList<Statement>(graph.getStatements());
-        KVector edgeOffset = baseOffset.add(borderSpacing, borderSpacing);
+        KVector edgeOffset = baseOffset.add(padding.getLeft(), padding.getTop());
         while (!statements.isEmpty()) {
             Statement statement = statements.removeFirst();
             if (statement instanceof EdgeStatement) {
@@ -645,10 +641,10 @@ public class DotExporter {
      * @param transData transformation data
      */
     private void applyLayout(final ElkNode parentNode, final List<Statement> statements, final KVector baseOffset,
-            final float borderSpacing, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+            final ElkPadding padding, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         
         // process attributes: determine bounding box of the parent node
-        float spacing = borderSpacing;
+        ElkPadding outerPadding = padding;
         KVector nodeOffset = new KVector();
         attr_loop: for (Statement statement : statements) {
             if (statement instanceof AttributeStatement) {
@@ -665,17 +661,19 @@ public class DotExporter {
                                 double topy = Double.parseDouble(tokenizer.nextToken());
                                 
                                 // set parent node attributes
-                                ElkPadding padding = parentNode.getProperty(CoreOptions.PADDING);
-                                double width = rightx - leftx + padding.getLeft() + padding.getRight();
-                                double height = bottomy - topy + padding.getTop() + padding.getBottom();
+                                ElkPadding innerPadding = parentNode.getProperty(CoreOptions.PADDING);
+                                double width = rightx - leftx + innerPadding.getLeft() + innerPadding.getRight();
+                                double height = bottomy - topy + innerPadding.getTop() + innerPadding.getBottom();
                                 if (parentNode == transData.getSourceGraph()) {
-                                    width += 2 * spacing;
-                                    height += 2 * spacing;
+                                    width += outerPadding.getHorizontal();
+                                    height += outerPadding.getVertical();
                                     baseOffset.add(-leftx, -topy);
                                 } else {
-                                    parentNode.setX(baseOffset.x + leftx - padding.getLeft() + spacing);
-                                    parentNode.setY(baseOffset.y + topy - padding.getTop() + spacing);
-                                    spacing = 0;
+                                    parentNode.setX(
+                                            baseOffset.x + leftx - innerPadding.getLeft() + outerPadding.getLeft());
+                                    parentNode.setY(
+                                            baseOffset.y + topy - innerPadding.getTop() + outerPadding.getTop());
+                                    outerPadding = new ElkPadding();
                                     nodeOffset.x = -(baseOffset.x + leftx);
                                     nodeOffset.y = -(baseOffset.y + topy);
                                 }
@@ -696,11 +694,11 @@ public class DotExporter {
         // process nodes and subgraphs to collect all offset data
         for (Statement statement : statements) {
             if (statement instanceof NodeStatement) {
-                applyNodeLayout((NodeStatement) statement, nodeOffset, spacing, transData);
+                applyNodeLayout((NodeStatement) statement, nodeOffset, outerPadding, transData);
             } else if (statement instanceof Subgraph) {
                 Subgraph subgraph = (Subgraph) statement;
                 ElkNode elknode = (ElkNode) transData.getProperty(GRAPH_ELEMS).get(subgraph.getName());
-                applyLayout(elknode, subgraph.getStatements(), baseOffset, spacing, transData);
+                applyLayout(elknode, subgraph.getStatements(), baseOffset, outerPadding, transData);
                 elknode.setX(elknode.getX() + nodeOffset.x);
                 elknode.setY(elknode.getY() + nodeOffset.y);
             }
@@ -716,7 +714,7 @@ public class DotExporter {
      * @param transData transformation data
      */
     private void applyNodeLayout(final NodeStatement nodeStatement, final KVector offset,
-            final float spacing, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+            final ElkPadding padding, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         
         ElkNode elknode = (ElkNode) transData.getProperty(GRAPH_ELEMS).get(nodeStatement.getNode().getName());
         if (elknode == null) {
@@ -732,8 +730,8 @@ public class DotExporter {
                 if (attribute.getName().equals(Attributes.POS)) {
                     KVector pos = new KVector();
                     pos.parse((attribute.getValue()));
-                    xpos = pos.x + offset.x + spacing;
-                    ypos = pos.y + offset.y + spacing;
+                    xpos = pos.x + offset.x + padding.getLeft();
+                    ypos = pos.y + offset.y + padding.getTop();
                 } else if (attribute.getName().equals(Attributes.WIDTH)) {
                     StringTokenizer tokenizer = new StringTokenizer(attribute.getValue(), ATTRIBUTE_DELIM);
                     width = Double.parseDouble(tokenizer.nextToken()) * DPI;
@@ -763,7 +761,6 @@ public class DotExporter {
     private void applyEdgeLayout(final EdgeStatement edgeStatement, final KVector edgeOffset,
             final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         
-        float borderSpacing = transData.getProperty(BORDER_SPACING);
         Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
         ElkEdge elkedge = (ElkEdge) transData.getProperty(GRAPH_ELEMS).get(attributeMap.get(Attributes.COMMENT));
         if (elkedge == null) {

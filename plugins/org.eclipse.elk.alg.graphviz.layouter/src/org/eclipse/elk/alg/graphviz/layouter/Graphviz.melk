@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.graphviz.dot.transform.OverlapMode
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.math.ElkPadding
 
 bundle {
 	label "Graphviz"
@@ -34,9 +35,9 @@ algorithm dot(GraphvizLayoutProvider#DOT) {
 	category org.eclipse.elk.layered
 	features self_loops, multi_edges, edge_labels, compound, clusters
 	preview  images/dot.png
+	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.direction = Direction.DOWN
 	supports org.eclipse.elk.spacing.nodeNode = 20
-	supports org.eclipse.elk.spacing.border = 10
 	supports org.eclipse.elk.spacing.edgeLabel
 	supports org.eclipse.elk.nodeSize.constraints
 	supports org.eclipse.elk.nodeSize.options
@@ -62,8 +63,8 @@ algorithm neato(GraphvizLayoutProvider#NEATO) {
 	category org.eclipse.elk.force
 	features self_loops, multi_edges, edge_labels
 	preview  images/neato.png
+	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.spacing.nodeNode = 40
-	supports org.eclipse.elk.spacing.border = 10
 	supports org.eclipse.elk.spacing.edgeLabel
 	supports org.eclipse.elk.nodeSize.constraints
 	supports org.eclipse.elk.nodeSize.options
@@ -92,8 +93,8 @@ algorithm fdp(GraphvizLayoutProvider#FDP) {
 	category org.eclipse.elk.force
 	features self_loops, multi_edges, edge_labels, clusters
 	preview  images/fdp.png
+	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.spacing.nodeNode = 40
-	supports org.eclipse.elk.spacing.border = 10
 	supports org.eclipse.elk.spacing.edgeLabel
 	supports org.eclipse.elk.nodeSize.constraints
 	supports org.eclipse.elk.nodeSize.options
@@ -120,8 +121,8 @@ algorithm twopi(GraphvizLayoutProvider#TWOPI) {
 	category org.eclipse.elk.tree
 	features self_loops, multi_edges, edge_labels
 	preview  images/twopi.png
+	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.spacing.nodeNode = 60
-	supports org.eclipse.elk.spacing.border = 10
 	supports org.eclipse.elk.spacing.edgeLabel
 	supports org.eclipse.elk.nodeSize.constraints
 	supports org.eclipse.elk.nodeSize.options
@@ -145,8 +146,8 @@ algorithm circo(GraphvizLayoutProvider#CIRCO) {
 	category org.eclipse.elk.circle
 	features self_loops, multi_edges, edge_labels
 	preview  images/circo.png
+	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.spacing.nodeNode = 40
-	supports org.eclipse.elk.spacing.border = 10
 	supports org.eclipse.elk.spacing.edgeLabel
 	supports org.eclipse.elk.nodeSize.constraints
 	supports org.eclipse.elk.nodeSize.options

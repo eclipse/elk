@@ -55,7 +55,7 @@ public class LayoutDotExporter extends DotExporter {
         transData.setProperty(TRANSFORM_NODE_LABELS, false);
         transData.setProperty(ADAPT_PORT_POSITIONS, sourceGraph.getProperty(
                 GraphvizMetaDataProvider.ADAPT_PORT_POSITIONS));
-        transData.setProperty(BORDER_SPACING, sourceGraph.getProperty(CoreOptions.SPACING_BORDER));
+        transData.setProperty(PADDING, sourceGraph.getProperty(CoreOptions.PADDING));
         super.transform(transData);
     }
     
