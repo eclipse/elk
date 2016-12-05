@@ -172,8 +172,9 @@ public class StressMajorization {
      * {@link StressOptions#ITERATION_LIMIT} is reached.
      */
     private boolean done(final int count, final double prevStress, final double curStress) {
-        return (((prevStress - curStress) / prevStress) < epsilon) 
-               || (count >= iterationLimit);
+        return prevStress == 0 
+            || (((prevStress - curStress) / prevStress) < epsilon) 
+            || (count >= iterationLimit);
     }
 
     /**

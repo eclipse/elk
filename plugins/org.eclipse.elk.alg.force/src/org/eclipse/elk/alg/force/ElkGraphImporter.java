@@ -121,7 +121,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
                 }
                 
                 // exclude edges that pass hierarchy bounds as well as self-loops
-                if (kedge.isHierarchical() && knode != ElkGraphUtil.connectableShapeToNode(kedge.getTargets().get(0))) {
+                if (!kedge.isHierarchical() 
+                        && knode != ElkGraphUtil.connectableShapeToNode(kedge.getTargets().get(0))) {
                     // create a force edge
                     FEdge newEdge = new FEdge();
                     newEdge.copyProperties(kedge);
