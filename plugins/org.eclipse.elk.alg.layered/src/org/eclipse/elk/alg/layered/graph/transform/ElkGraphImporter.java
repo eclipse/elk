@@ -32,6 +32,7 @@ import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Direction;
@@ -323,6 +324,13 @@ class ElkGraphImporter {
         linsets.right = insets.right;
         linsets.top = insets.top;
         linsets.bottom = insets.bottom;
+        
+        // add the specified padding
+        ElkPadding padding = lgraph.getProperty(LayeredOptions.PADDING);
+        linsets.left += padding.getLeft();
+        linsets.right += padding.getRight();
+        linsets.top += padding.getTop();
+        linsets.bottom += padding.getBottom();
         
         return lgraph;
     }

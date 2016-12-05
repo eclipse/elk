@@ -336,7 +336,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     
     private void applyExternalPortPositions(final KVector topLeft, final KVector bottomRight) {
         
-        double borderSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_BORDER).doubleValue();
+        // FIXME apply insets here?
         
         for (CNode cNode : cGraph.cNodes) {
             if (cNode instanceof CLNode) {
@@ -344,17 +344,17 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                 if (lNode.getType() == NodeType.EXTERNAL_PORT) {
                     switch (lNode.getProperty(InternalProperties.EXT_PORT_SIDE)) {
                     case WEST:
-                        lNode.getPosition().x = topLeft.x - borderSpacing;
+                        lNode.getPosition().x = topLeft.x;
                         break;
                     case EAST:
-                        lNode.getPosition().x = bottomRight.x + borderSpacing
+                        lNode.getPosition().x = bottomRight.x
                                 - (lNode.getSize().x + lNode.getMargin().right); 
                         break;
                     case NORTH: 
-                        lNode.getPosition().y = topLeft.y - borderSpacing;
+                        lNode.getPosition().y = topLeft.y;
                         break;
                     case SOUTH:
-                        lNode.getPosition().y = bottomRight.y + borderSpacing
+                        lNode.getPosition().y = bottomRight.y
                                 - (lNode.getSize().y + lNode.getMargin().bottom);
                         break;
                     }

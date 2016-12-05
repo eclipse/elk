@@ -485,17 +485,6 @@ public final class KlayLayered {
     private void resizeGraph(final LGraph lgraph) {
         Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
         Set<SizeOptions> sizeOptions = lgraph.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
-        float borderSpacing = lgraph.getProperty(LayeredOptions.SPACING_BORDER);
-        
-        // add the border spacing to the graph size and graph offset
-        lgraph.getOffset().x += borderSpacing;
-        lgraph.getOffset().y += borderSpacing;
-        lgraph.getSize().x += 2 * borderSpacing;
-        lgraph.getSize().y += 2 * borderSpacing;
-        
-        // the graph size now contains the border spacing, so clear it in order to keep
-        // graph.getActualSize() working properly
-        lgraph.setProperty(LayeredOptions.SPACING_BORDER, 0f);
         
         KVector calculatedSize = lgraph.getActualSize();
         KVector adjustedSize = new KVector(calculatedSize);

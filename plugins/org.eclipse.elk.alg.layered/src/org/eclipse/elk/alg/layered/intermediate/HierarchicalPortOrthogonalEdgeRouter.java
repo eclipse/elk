@@ -249,11 +249,9 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         PortConstraints constraints = layeredGraph.getProperty(LayeredOptions.PORT_CONSTRAINTS);
         KVector graphSize = layeredGraph.getSize();
         LInsets graphInsets = layeredGraph.getInsets();
-        float borderSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_BORDER);
-        double graphWidth = graphSize.x + graphInsets.left + graphInsets.right + 2 * borderSpacing;
-        double northY = 0 - graphInsets.top - borderSpacing - layeredGraph.getOffset().y;
-        double southY = graphSize.y + graphInsets.top + graphInsets.bottom + 2 * borderSpacing
-                - layeredGraph.getOffset().y;
+        double graphWidth = graphSize.x + graphInsets.left + graphInsets.right;
+        double northY = 0 - graphInsets.top - layeredGraph.getOffset().y;
+        double southY = graphSize.y + graphInsets.top + graphInsets.bottom - layeredGraph.getOffset().y;
         
         // Lists of northern and southern external port dummies
         List<LNode> northernDummies = Lists.newArrayList();
@@ -677,7 +675,6 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         // Get some geometric values from the graph
         LInsets insets = graph.getInsets();
-        float borderSpacing = graph.getProperty(LayeredOptions.SPACING_BORDER);
         KVector offset = graph.getOffset();
         KVector graphActualSize = graph.getActualSize();
         
@@ -698,11 +695,11 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             // Set x coordinate
             switch (extPortSide) {
             case EAST:
-                nodePosition.x = graph.getSize().x + borderSpacing + insets.right - offset.x;
+                nodePosition.x = graph.getSize().x + insets.right - offset.x;
                 break;
             
             case WEST:
-                nodePosition.x = -offset.x - borderSpacing - insets.left;
+                nodePosition.x = -offset.x - insets.left;
                 break;
             }
             
@@ -746,11 +743,11 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             // Set y coordinate
             switch (extPortSide) {
             case NORTH:
-                nodePosition.y = -offset.y - borderSpacing - insets.top;
+                nodePosition.y = -offset.y - insets.top;
                 break;
             
             case SOUTH:
-                nodePosition.y = graph.getSize().y + borderSpacing + insets.bottom - offset.y;
+                nodePosition.y = graph.getSize().y + insets.bottom - offset.y;
                 break;
             }
         }

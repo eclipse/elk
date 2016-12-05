@@ -436,7 +436,7 @@ public final class LNode extends LShape {
     /**
      * Converts the position of this node from coordinates relative to the parent node's border to
      * coordinates relative to that node's content area. The content area is the parent node border
-     * minus insets minus border spacing minus offset.
+     * minus insets minus offset.
      * 
      * @param horizontal
      *            if {@code true}, the x coordinate will be translated.
@@ -449,16 +449,15 @@ public final class LNode extends LShape {
         LGraph thegraph = getGraph();
         
         LInsets graphInsets = thegraph.getInsets();
-        float borderSpacing = thegraph.getProperty(LayeredOptions.SPACING_BORDER);
         KVector offset = thegraph.getOffset();
         KVector pos = getPosition();
         
         if (horizontal) {
-            pos.x = pos.x - graphInsets.left - borderSpacing - offset.x;
+            pos.x = pos.x - graphInsets.left - offset.x;
         }
         
         if (vertical) {
-            pos.y = pos.y - graphInsets.top - borderSpacing - offset.y;
+            pos.y = pos.y - graphInsets.top - offset.y;
         }
     }
 

@@ -25,6 +25,7 @@ import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.math.ElkPadding
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -49,7 +50,6 @@ algorithm layered(LayeredLayoutProvider) {
 	features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
 	preview images/layered.png
 	// general spacings
-	supports org.eclipse.elk.spacing.border = 12
 	supports org.eclipse.elk.spacing.componentComponent
 	supports org.eclipse.elk.spacing.edgeEdge
 	supports org.eclipse.elk.spacing.edgeLabel
@@ -66,7 +66,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.nodeNodeBetweenLayers
 	// other options
-	supports org.eclipse.elk.padding
+	supports org.eclipse.elk.padding = new ElkPadding(12)
 	supports org.eclipse.elk.priority = 0
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
 	supports org.eclipse.elk.port.borderOffset = 0

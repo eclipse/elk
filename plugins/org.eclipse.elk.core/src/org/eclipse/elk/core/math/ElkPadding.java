@@ -54,7 +54,17 @@ public class ElkPadding implements IDataObject, Cloneable {
     }
     
     /**
-     * Create new padding initialized to the given values.
+     * Create new padding using the same padding for both sides of a common dimension.
+     * 
+     * @param leftRight value used for the left and right padding.
+     * @param topBottom value used for the top and bottom padding.
+     */
+    public ElkPadding(final double leftRight, final double topBottom) {
+        this(topBottom, leftRight, topBottom, leftRight);
+    }
+    
+    /**
+     * Create new padding using the same value for every side. 
      * 
      * @param any inset value for every side.
      */
