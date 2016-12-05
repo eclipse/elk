@@ -149,13 +149,6 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         // get the corresponding kGraph
         ElkNode elkgraph = (ElkNode) tGraph.getProperty(InternalProperties.ORIGIN);
 
-        // check border spacing and update if necessary
-        float borderSpacing = tGraph.getProperty(MrTreeOptions.SPACING_BORDER);
-        if (borderSpacing < 0) {
-            borderSpacing = MrTreeOptions.SPACING_NODE_NODE.getDefault();
-            tGraph.setProperty(MrTreeOptions.SPACING_BORDER, borderSpacing);
-        }
-
         // calculate the offset from border spacing and node distribution
         double minXPos = Integer.MAX_VALUE;
         double minYPos = Integer.MAX_VALUE;
@@ -171,9 +164,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         }
         
         ElkPadding padding = elkgraph.getProperty(MrTreeOptions.PADDING);
-        KVector offset = new KVector(
-                padding.getLeft() + borderSpacing - minXPos,
-                padding.getTop() + borderSpacing - minYPos);
+        KVector offset = new KVector(padding.getLeft() - minXPos, padding.getTop() - minYPos);
 
         // process the nodes
         for (TNode tNode : tGraph.getNodes()) {
@@ -210,8 +201,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         }
 
         // set up the graph
-        double width = maxXPos - minXPos + 2 * borderSpacing + padding.getLeft() + padding.getRight();
-        double height = maxYPos - minYPos + 2 * borderSpacing + padding.getTop() + padding.getBottom();
+        double width = maxXPos - minXPos + padding.getHorizontal();
+        double height = maxYPos - minYPos + padding.getVertical();
         ElkUtil.resizeNode(elkgraph, width, height, false, false);
     }
     
