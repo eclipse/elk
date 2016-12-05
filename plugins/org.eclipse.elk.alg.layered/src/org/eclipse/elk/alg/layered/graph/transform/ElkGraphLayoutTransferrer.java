@@ -79,7 +79,7 @@ class ElkGraphLayoutTransferrer {
         KVector additionalInsets = new KVector();
         
         // MIGRATE I believe this will become the only case since the ElkGraph doesn't know about insets?
-        if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_INSETS)) {
+        if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_PADDING)) {
             additionalInsets.x = lInsets.left;
             additionalInsets.y = lInsets.top;
             offset.x += additionalInsets.x;
@@ -87,7 +87,7 @@ class ElkGraphLayoutTransferrer {
         }
         
         // Set node insets, if requested
-        if (sizeOptions.contains(SizeOptions.COMPUTE_INSETS)) {
+        if (sizeOptions.contains(SizeOptions.COMPUTE_PADDING)) {
             ElkPadding padding = parentElkNode.getProperty(LayeredOptions.PADDING);
             
             padding.setBottom(lInsets.bottom);

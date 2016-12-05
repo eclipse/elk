@@ -47,7 +47,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     /**
      * The graph's effective insets. This already includes the insets set on the imported graph by the
      * client, as well as any space required for inside node labels. These are the effective insets
-     * returned to the client if {@link org.eclipse.elk.core.options.SizeOptions#COMPUTE_INSETS
+     * returned to the client if {@link org.eclipse.elk.core.options.SizeOptions#COMPUTE_PADDING
      * SizeOptions.COMPUTE_INSETS}
      * is active.
      */

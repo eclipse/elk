@@ -20,9 +20,9 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 
 /**
  * Sets the node margins. Node margins are influenced by both port positions and sizes
@@ -128,7 +128,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
      */
     private void processSelfLoops(final LNode node) {
         LInsets nodeMargin = node.getMargin();
-        Margins selfLoopMargin = node.getProperty(InternalProperties.SPLINE_SELF_LOOP_MARGINS);
+        ElkMargin selfLoopMargin = node.getProperty(InternalProperties.SPLINE_SELF_LOOP_MARGINS);
 
         nodeMargin.left = Math.max(nodeMargin.left, selfLoopMargin.left);
         nodeMargin.right = Math.max(nodeMargin.right, selfLoopMargin.right);

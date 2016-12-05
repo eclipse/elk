@@ -44,7 +44,6 @@ import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.core.util.labelspacing.LabelSpaceCalculation;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Insets;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -315,15 +314,15 @@ class ElkGraphImporter {
         
         // Adjust the insets to respect inside labels.
         float labelSpacing = lgraph.getProperty(LayeredOptions.SPACING_LABEL_NODE);
-        Insets insets = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
+        ElkPadding labelPadding = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
                 ElkGraphAdapters.adaptSingleNode(elkgraph), labelSpacing);
         
         // Copy the insets to the layered graph
         LInsets linsets = lgraph.getInsets();
-        linsets.left = insets.left;
-        linsets.right = insets.right;
-        linsets.top = insets.top;
-        linsets.bottom = insets.bottom;
+        linsets.left = labelPadding.left;
+        linsets.right = labelPadding.right;
+        linsets.top = labelPadding.top;
+        linsets.bottom = labelPadding.bottom;
         
         // add the specified padding
         ElkPadding padding = lgraph.getProperty(LayeredOptions.PADDING);

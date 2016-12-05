@@ -26,11 +26,11 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
+import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -356,8 +356,8 @@ public final class InternalProperties {
     /**
      * A node's property storing the margins of a node required for it's self loops.
      */
-    public static final IProperty<Margins> SPLINE_SELF_LOOP_MARGINS = new Property<Margins>(
-            "splineSelfLoopMargins", new Margins());
+    public static final IProperty<ElkMargin> SPLINE_SELF_LOOP_MARGINS = new Property<ElkMargin>(
+            "splineSelfLoopMargins", new ElkMargin());
 
     /**
      * Internal container for all possible spacing variations that we support.

@@ -14,10 +14,11 @@ import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LShape;
+import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 
 import com.google.common.collect.Iterables;
 
@@ -299,8 +300,8 @@ public final class Rectangle {
      * @param shape The shape the margins shall lay around.
      * @return A new {@link Margins} laying around the shape.
      */
-    public Margins toNodeMargins(final LShape shape) {
-        final Margins retVal =  new Margins();
+    public ElkMargin toNodeMargins(final LShape shape) {
+        final ElkMargin retVal =  new ElkMargin();
 
         final Rectangle shapeRectangle = new Rectangle(0, 0, shape.getSize().x, shape.getSize().y);
         retVal.top = Math.max(0.0, shapeRectangle.top - top);

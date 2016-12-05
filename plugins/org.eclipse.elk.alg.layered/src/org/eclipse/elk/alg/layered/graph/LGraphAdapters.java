@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
@@ -26,8 +28,6 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Insets;
-import org.eclipse.elk.core.util.nodespacing.Spacing.Margins;
 import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Lists;
@@ -133,6 +133,7 @@ public final class LGraphAdapters {
          */
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
+            // FIXME why? there was a renaming going on here ... I guess shouldnt be necessary anymore!
             // handle some special cases
             if (prop.equals(LayeredOptions.SPACING_NODE_NODE)) {
                 // cast is ok, as both properties are Floats
@@ -356,15 +357,15 @@ public final class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Insets getInsets() {
+        public ElkPadding getInsets() {
             LInsets linsets = element.getInsets();
-            return new Insets(linsets.top, linsets.left, linsets.bottom, linsets.right);
+            return new ElkPadding(linsets.top, linsets.right, linsets.bottom, linsets.left);
         }
 
         /**
          * {@inheritDoc}
          */
-        public void setInsets(final Insets insets) {
+        public void setInsets(final ElkPadding insets) {
             element.getInsets().left = insets.left;
             element.getInsets().top = insets.top;
             element.getInsets().right = insets.right;
@@ -374,15 +375,15 @@ public final class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Margins getMargin() {
+        public ElkMargin getMargin() {
             LInsets lmargins = element.getMargin();
-            return new Margins(lmargins.top, lmargins.left, lmargins.bottom, lmargins.right);
+            return new ElkMargin(lmargins.top, lmargins.right, lmargins.bottom, lmargins.left);
         }
 
         /**
          * {@inheritDoc}
          */
-        public void setMargin(final Margins margin) {
+        public void setMargin(final ElkMargin margin) {
             element.getMargin().left = margin.left;
             element.getMargin().top = margin.top;
             element.getMargin().right = margin.right;
@@ -444,15 +445,15 @@ public final class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
-        public Margins getMargin() {
+        public ElkMargin getMargin() {
             LInsets lmargins = element.getMargin();
-            return new Margins(lmargins.top, lmargins.left, lmargins.bottom, lmargins.right);
+            return new ElkMargin(lmargins.top, lmargins.right, lmargins.bottom, lmargins.left);
         }
 
         /**
          * {@inheritDoc}
          */
-        public void setMargin(final Margins margin) {
+        public void setMargin(final ElkMargin margin) {
             element.getMargin().left = margin.left;
             element.getMargin().top = margin.top;
             element.getMargin().right = margin.right;
