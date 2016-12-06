@@ -83,7 +83,7 @@ public final class ElkGraphAdapters {
     private abstract static class AbstractElkGraphElementAdapter<T extends ElkShape> implements
             GraphElementAdapter<T> {
         
-        private static final IProperty<Double> OFFSET_PROXY = new Property<>(CoreOptions.PORT_BORDER_OFFSET, 0.0);
+        private static final IProperty<Float> OFFSET_PROXY = new Property<>(CoreOptions.PORT_BORDER_OFFSET, 0.0f);
         
         // let the elements be accessed by extending classes
         // CHECKSTYLEOFF VisibilityModifier

@@ -688,7 +688,7 @@ group port {
 		legacyIds de.cau.cs.kieler.portSide
 	}
 	
-	programmatic option borderOffset: double {
+	programmatic option borderOffset: float {
 		label "Port Border Offset"
 		description
 			"The offset of ports on the node border. With a positive offset the port is moved outside
@@ -734,7 +734,7 @@ programmatic option scaleFactor: float {
 // --- INSIDE SELF LOOPS
 group insideSelfLoops {
 
-	programmatic option activate: boolean {
+	advanced option activate: boolean {
 		label "Activate Inside Self Loops" 
 		description
 			"Whether this node allows to route self loops inside of it instead of around it. If set to true,
@@ -745,7 +745,7 @@ group insideSelfLoops {
 		legacyIds de.cau.cs.kieler.selfLoopInside
 	}
 	
-	programmatic option yo: boolean {
+	advanced option yo: boolean {
 		label "Inside Self Loop"
 		description
 			"Whether a self loop should be routed inside a node instead of around that node."

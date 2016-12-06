@@ -633,7 +633,7 @@ public final class LGraphUtil {
             if (!port.getAllProperties().containsKey(LayeredOptions.PORT_BORDER_OFFSET)
                     && portSide != PortSide.UNDEFINED
                     && (port.getPosition().x != 0 || port.getPosition().y != 0)) {
-                port.setProperty(LayeredOptions.PORT_BORDER_OFFSET, calcPortOffset(port, portSide));
+                port.setProperty(LayeredOptions.PORT_BORDER_OFFSET, (float) calcPortOffset(port, portSide));
             }
         }
         

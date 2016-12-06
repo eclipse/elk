@@ -312,7 +312,7 @@ group nodePlacement {
         description "Strategy for node placement."
         default = NodePlacementStrategy.BRANDES_KOEPF
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.nodePlacement
+        legacyIds de.cau.cs.kieler.klay.layered.nodePlace
     }
     
     group bk {
