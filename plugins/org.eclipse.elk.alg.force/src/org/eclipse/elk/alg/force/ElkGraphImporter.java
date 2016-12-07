@@ -210,8 +210,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         }
         
         // set up the parent node
-        double width = maxXPos - minXPos + padding.getLeft() + padding.getRight();
-        double height = maxYPos - minYPos + padding.getTop() + padding.getBottom();
+        double width = (maxXPos - minXPos) + padding.getHorizontal();
+        double height = (maxYPos - minYPos) + padding.getVertical();
         ElkUtil.resizeNode(kgraph, width, height, false, true);
     }
     

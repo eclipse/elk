@@ -57,6 +57,10 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
                 return value;
             }
         }
+
+        // the reason for the side effect below is that if a default value has been returned 
+        // and the object is altered by the user, the user expects the altered object to be 
+        // the value of the property in case he asks for the property again
         
         // Retrieve the default value and memorize it for our property
         T defaultValue = property.getDefault();
