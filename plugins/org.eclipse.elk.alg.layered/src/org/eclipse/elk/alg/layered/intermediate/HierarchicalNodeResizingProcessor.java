@@ -24,6 +24,7 @@ import org.eclipse.elk.alg.layered.properties.ContentAlignment;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -135,18 +136,18 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
     private void resizeGraph(final LGraph lgraph) {
         Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
         Set<SizeOptions> sizeOptions = lgraph.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
-        float borderSpacing = lgraph.getProperty(LayeredOptions.SPACING_BORDER);
+        ElkPadding padding = lgraph.getProperty(LayeredOptions.PADDING);
 
         // add the border spacing to the graph size and graph offset
-        lgraph.getOffset().x += borderSpacing;
-        lgraph.getOffset().y += borderSpacing;
-        lgraph.getSize().x += 2 * borderSpacing;
-        lgraph.getSize().y += 2 * borderSpacing;
+        lgraph.getOffset().x += padding.getLeft();
+        lgraph.getOffset().y += padding.getTop();
+        lgraph.getSize().x += padding.getLeft() + padding.getRight();
+        lgraph.getSize().y += padding.getTop() + padding.getBottom();
 
-        // the graph size now contains the border spacing, so clear it in order to keep
-        // graph.getActualSize() working properly
-        lgraph.setProperty(LayeredOptions.SPACING_BORDER, 0f);
-
+        // getActualSize() used to take the border spacing (what is now included in the padding)
+        // into account, which is why by this point it had to be cleared since it had already
+        // been applied to the offset and the graph size. It currently does not take the padding
+        // into account anymore, but if it does, it needs to be cleared again
         KVector calculatedSize = lgraph.getActualSize();
         KVector adjustedSize = new KVector(calculatedSize);
 
