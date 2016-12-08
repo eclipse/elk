@@ -917,9 +917,9 @@ public class LabelAndNodeSizeProcessor {
         final KVector nodeSize = node.getSize();
 
         for (final PortAdapter<?> port : node.getPorts()) {
-            Float portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
+            Double portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             if (portOffset == null) {
-                portOffset = 0.0f;
+                portOffset = 0.0;
             }
 
             final KVector position = new KVector(port.getPosition());
@@ -955,9 +955,9 @@ public class LabelAndNodeSizeProcessor {
         // coordinate set to the node's current width; the same goes for the y coordinate of
         // southern ports
         for (final PortAdapter<?> port : node.getPorts()) {
-            Float portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
+            Double portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             if (portOffset == null) {
-                portOffset = 0.0f;
+                portOffset = 0.0;
             }
 
             switch (port.getSide()) {
@@ -1016,9 +1016,9 @@ public class LabelAndNodeSizeProcessor {
 
         // Arrange the ports
         for (final PortAdapter<?> port : data.node.getPorts()) {
-            Float portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
+            Double portOffset = port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
             if (portOffset == null) {
-                portOffset = 0.0f;
+                portOffset = 0.0;
             }
             final KVector portSize = port.getSize();
             final ElkMargin portMargins = port.getMargin();

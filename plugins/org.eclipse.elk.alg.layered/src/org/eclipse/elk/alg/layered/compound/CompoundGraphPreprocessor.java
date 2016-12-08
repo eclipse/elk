@@ -840,7 +840,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     private static IPropertyHolder createExternalPortProperties(final LGraph graph) {
         IPropertyHolder propertyHolder = new MapPropertyHolder();
         // FIXME No idea why ...
-        float offset = graph.getProperty(LayeredOptions.SPACING_EDGE_EDGE) / 2;
+        double offset = graph.getProperty(LayeredOptions.SPACING_EDGE_EDGE) / 2;
         propertyHolder.setProperty(LayeredOptions.PORT_BORDER_OFFSET, offset);
         return propertyHolder;
     }

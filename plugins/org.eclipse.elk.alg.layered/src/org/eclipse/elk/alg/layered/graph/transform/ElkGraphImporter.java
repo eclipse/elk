@@ -448,7 +448,7 @@ class ElkGraphImporter {
             } else {
                 portOffset = ElkUtil.calcPortOffset(elkport, portSide);
             }
-            elkport.setProperty(LayeredOptions.PORT_BORDER_OFFSET, (float) portOffset);
+            elkport.setProperty(LayeredOptions.PORT_BORDER_OFFSET, portOffset);
         }
         
         // Create the external port dummy node
