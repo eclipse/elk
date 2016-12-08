@@ -92,12 +92,13 @@ public final class LPort extends LShape {
     private final LInsets margin = new LInsets();
     /** this port's labels. */
     private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
+
     /** the edges going into the port. */
     private final List<LEdge> incomingEdges = Lists.newArrayListWithCapacity(4);
     /** the edges going out of the port. */
     private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
-    
-
+    /** All connected edges in a combined iterable. */
+    private Iterable<LEdge> connectedEdges = new CombineIter<LEdge>(incomingEdges, outgoingEdges);
     /**
      * Returns the node that owns this port.
      * 
@@ -244,9 +245,9 @@ public final class LPort extends LShape {
      * @return an iterable over all connected edges.
      */
     public Iterable<LEdge> getConnectedEdges() {
-        return Iterables.concat(incomingEdges, outgoingEdges);
+        return connectedEdges;
     }
-    
+
     /**
      * Returns an iterable over all the port's predecessor ports. Predecessor ports are source
      * ports of incoming edges of this port.
@@ -337,5 +338,43 @@ public final class LPort extends LShape {
             return "p_" + text;
         }
     }
+
+    /**
+     * Combines two Iterables. We use this instead of {@link com.google.common.collect.Iterables#concat} because it is
+     * faster.
+     * 
+     * @param <T>
+     */
+    private static class CombineIter<T> implements Iterable<T> {
+        private Iterable<T> firstIterable;
+        private Iterable<T> secondIterable;
     
+        CombineIter(final Iterable<T> firstIterable, final Iterable<T> secondIterable) {
+            this.firstIterable = firstIterable;
+            this.secondIterable = secondIterable;
+        }
+    
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                private Iterator<T> firstIterator = firstIterable.iterator();
+                private Iterator<T> secondIterator = secondIterable.iterator();
+    
+                @Override
+                public boolean hasNext() {
+                    return firstIterator.hasNext() || secondIterator.hasNext();
+                }
+    
+                @Override
+                public T next() {
+                    if (firstIterator.hasNext()) {
+                        return firstIterator.next();
+                    } else {
+                        return secondIterator.next();
+                    }
+                }
+            };
+        }
+    }
+
 }

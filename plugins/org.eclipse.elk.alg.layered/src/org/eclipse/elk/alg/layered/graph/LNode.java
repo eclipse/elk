@@ -11,21 +11,24 @@
 package org.eclipse.elk.alg.layered.graph;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * A node in a layered graph.
- *
+ * 
  * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
@@ -93,7 +96,11 @@ public final class LNode extends LShape {
     private final LInsets margin = new LInsets();
     /** the insets inside this node, usually reserved for port and label placement. */
     private final LInsets insets = new LInsets();
-    
+    /** Stores beginning and end indices of ports belonging to a side. */
+    private EnumMap<PortSide, Pair<Integer, Integer>> portSideIndices;
+    /** Stores whether port sides have been cached. */
+    private boolean portSidesCached = false;
+
     /**
      * Creates a node.
      * 
@@ -299,6 +306,32 @@ public final class LNode extends LShape {
     }
     
     /**
+     * Returns a sublist view for all ports of given side. WARNING: Use this only after port sides are fixed! This is
+     * currently the case after running the {@link org.eclipse.elk.alg.layered.intermediate.PortListSorter}.
+     * Non-structural changes to this list are reflected in the original list. A structural modification is any
+     * operation that adds or deletes one or more elements; merely setting the value of an element is not a structural
+     * modification. Sublist indices can be cached using {@link LNode#cachePortSides()}.
+     * 
+     * @param side
+     *            a port side
+     * @return an iterable for the ports of given side
+     */
+    public List<LPort> getPortSideView(final PortSide side) {
+        if (!portSidesCached) {
+            // If not explicitly cached, this will be repeated each time. However, this has the same complexity as
+            // filtering by side.
+            findPortIndices();
+        }
+        Pair<Integer, Integer> indices = portSideIndices.get(side);
+        if (indices == null) {
+            return Collections.emptyList();
+        } else {
+            // We must create a new sublist each time, because the order of the ports on one side can change.
+            return ports.subList(indices.getFirst(), indices.getSecond());
+        }
+    }
+
+    /**
      * Returns an iterable for all ports of a given type and side.
      * 
      * @param portType a port type.
@@ -483,6 +516,35 @@ public final class LNode extends LShape {
             // This shouldn't happen.
             return null;
         }
+    }
+
+    /**
+     * After port sides are fixed (after running the {@link org.eclipse.elk.alg.layered.intermediate.PortListSorter} the
+     * index region of ports for each side will stay constant. These are cached from the port list sorter using this
+     * method and a sublist view created.
+     */
+    public void cachePortSides() {
+        portSidesCached = true;
+        findPortIndices();
+    }
+
+    private void findPortIndices() {
+        portSideIndices = Maps.newEnumMap(PortSide.class);
+        int firstIndexForCurrentSide = 0;
+        PortSide currentSide = PortSide.NORTH;
+        int currentIndex = 0;
+        for (; currentIndex < ports.size(); currentIndex++) {
+            LPort port = ports.get(currentIndex);
+            if (port.getSide() != currentSide) {
+                if (firstIndexForCurrentSide != currentIndex) {
+                    portSideIndices.put(currentSide,
+                            Pair.of(firstIndexForCurrentSide, currentIndex));
+                }
+                currentSide = port.getSide();
+                firstIndexForCurrentSide = currentIndex;
+            }
+        }
+        portSideIndices.put(currentSide, Pair.of(firstIndexForCurrentSide, currentIndex));
     }
 
 }

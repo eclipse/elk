@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -106,7 +107,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         // create new dummy edges at hierarchy bounds and move the labels around accordingly
         transformHierarchyEdges(graph, null);
         moveLabelsAndRemoveOriginalEdges(graph);
-        
+
+        setSidesOfPortsToSidesOfDummyNodes();
+
         // Attach cross hierarchy map to the graph and cleanup
         graph.setProperty(InternalProperties.CROSS_HIERARCHY_MAP, crossHierarchyMap);
         crossHierarchyMap = null;
@@ -116,6 +119,27 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     }
     
     /**
+     * Ensures that for each dummy node the external port and vice versa is set. Since the side of the dummy node has
+     * also already been calculated, we set this fixed here. Therefore the compound node has a fixed side constraint,
+     * with some sides still set to UNDEFINED. This must be dealt with later.
+     */
+   private void setSidesOfPortsToSidesOfDummyNodes() {
+       for (Entry<LPort, LNode> e : dummyNodeMap.entrySet()) {
+           LPort externalPort = e.getKey();
+           LNode dummyNode = e.getValue();
+           dummyNode.setProperty(InternalProperties.ORIGIN, externalPort);
+           externalPort.setProperty(InternalProperties.PORT_DUMMY, dummyNode);
+           externalPort.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
+           externalPort.setSide(dummyNode.getProperty(InternalProperties.EXT_PORT_SIDE)); 
+           dummyNode.getProperty(InternalProperties.EXT_PORT_SIDE);
+           externalPort.getNode().setProperty(LayeredOptions.PORT_CONSTRAINTS,
+                   PortConstraints.FIXED_SIDE);
+           externalPort.getNode().getGraph().getProperty(InternalProperties.GRAPH_PROPERTIES)
+                   .add(GraphProperties.NON_FREE_PORTS); 
+       }
+   }
+
+   /**
      * Recursively transform cross-hierarchy edges into sequences of dummy ports and dummy edges.
      * 
      * @param graph

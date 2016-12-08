@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -29,17 +28,16 @@ import org.eclipse.elk.core.options.PortSide;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public final class NodeRelativePortDistributor extends AbstractPortDistributor {
-    
+public final class NodeRelativePortDistributor extends AbstractBarycenterPortDistributor {
+
     /**
-     * Constructs a node-relative port distributor with the given array of ranks.
-     * All ports are required to be assigned ids in the range of the given array.
+     * Constructs a node-relative port distributor.
      * 
-     * @param portRanks
-     *            The array of port ranks
+     * @param numLayers
+     *            The number of layers in the graph.
      */
-    public NodeRelativePortDistributor(final float[] portRanks) {
-        super(portRanks);
+    public NodeRelativePortDistributor(final int numLayers) {
+        super(numLayers);
     }
 
     /**
@@ -49,117 +47,61 @@ public final class NodeRelativePortDistributor extends AbstractPortDistributor {
     protected float calculatePortRanks(final LNode node, final float rankSum, final PortType type) {
         float[] portRanks = getPortRanks();
 
-        if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
-
-            switch (type) {
-            case INPUT: {
-                // Count the number of input ports, and additionally the north-side input ports
-                int inputCount = 0, northInputCount = 0;
-                for (LPort port : node.getPorts()) {
-                    if (!port.getIncomingEdges().isEmpty()) {
-                        inputCount++;
-                        if (port.getSide() == PortSide.NORTH) {
-                            northInputCount++;
-                        }
-                    }
-                }
-                
-                // Assign port ranks in the order north - west - south - east
-                float incr = 1.0f / (inputCount + 1);
-                float northPos = rankSum + northInputCount * incr;
-                float restPos = rankSum + 1 - incr;
-                for (LPort port : node.getPorts(PortType.INPUT)) {
-                    if (port.getSide() == PortSide.NORTH) {
-                        portRanks[port.id] = northPos;
-                        northPos -= incr;
-                    } else {
-                        portRanks[port.id] = restPos;
-                        restPos -= incr;
-                    }
-                }
-                break;
-            }
-                
-            case OUTPUT: {
-                // Count the number of output ports
-                int outputCount = 0;
-                for (LPort port : node.getPorts()) {
-                    if (!port.getOutgoingEdges().isEmpty()) {
-                        outputCount++;
-                    }
-                }
-
-                // Iterate output ports in their natural order, that is north - east - south - west
-                float incr = 1.0f / (outputCount + 1);
-                float pos = rankSum + incr;
-                for (LPort port : node.getPorts(PortType.OUTPUT)) {
-                    portRanks[port.id] = pos;
-                    pos += incr;
-                }
-                break;
-            }
-            
-            default:
-                // this means illegal input to the method
-                throw new IllegalArgumentException("Port type is undefined");
-            }
-            
-        } else {
-            for (LPort port : node.getPorts(type)) {
-                portRanks[port.id] = rankSum + getPortIncr(type, port.getSide());
-            }
-        }
-        
-        // the consumed rank is always 1
-        return 1;
-    }
-
-    private static final float INCR_ONE = 0.3f;
-    private static final float INCR_TWO = 0.5f;
-    private static final float INCR_THREE = 0.7f;
-    private static final float INCR_FOUR = 0.9f;
-
-    /**
-     * Return an increment value for the position of a port with given type and side.
-     * 
-     * @param type
-     *            the port type
-     * @param side
-     *            the port side
-     * @return a position increment for the port
-     */
-    private static float getPortIncr(final PortType type, final PortSide side) {
         switch (type) {
-        case INPUT:
-            switch (side) {
-            case NORTH:
-                return INCR_ONE;
-            case WEST:
-                return INCR_TWO;
-            case SOUTH:
-                return INCR_THREE;
-            case EAST:
-                return INCR_FOUR;
+        case INPUT: {
+            // Count the number of input ports, and additionally the north-side input ports
+            int inputCount = 0, northInputCount = 0;
+            for (LPort port : node.getPorts()) {
+                if (!port.getIncomingEdges().isEmpty()) {
+                    inputCount++;
+                    if (port.getSide() == PortSide.NORTH) {
+                        northInputCount++;
+                    }
+                }
+            }
+
+            // Assign port ranks in the order north - west - south - east
+            float incr = 1.0f / (inputCount + 1);
+            float northPos = rankSum + northInputCount * incr;
+            float restPos = rankSum + 1 - incr;
+            for (LPort port : node.getPorts(PortType.INPUT)) {
+                if (port.getSide() == PortSide.NORTH) {
+                    portRanks[port.id] = northPos;
+                    northPos -= incr;
+                } else {
+                    portRanks[port.id] = restPos;
+                    restPos -= incr;
+                }
             }
             break;
-        case OUTPUT:
-            switch (side) {
-            case NORTH:
-                return INCR_ONE;
-            case EAST:
-                return INCR_TWO;
-            case SOUTH:
-                return INCR_THREE;
-            case WEST:
-                return INCR_FOUR;
+        }
+
+        case OUTPUT: {
+            // Count the number of output ports
+            int outputCount = 0;
+            for (LPort port : node.getPorts()) {
+                if (!port.getOutgoingEdges().isEmpty()) {
+                    outputCount++;
+                }
+            }
+
+            // Iterate output ports in their natural order, that is north - east - south - west
+            float incr = 1.0f / (outputCount + 1);
+            float pos = rankSum + incr;
+            for (LPort port : node.getPorts(PortType.OUTPUT)) {
+                portRanks[port.id] = pos;
+                pos += incr;
             }
             break;
-            
+        }
+
         default:
             // this means illegal input to the method
             throw new IllegalArgumentException("Port type is undefined");
         }
-        return 0;
+        
+        // the consumed rank is always 1
+        return 1;
     }
 
 }

@@ -322,7 +322,8 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
             }
             
             // If the port's absolute anchor equals the bend point, we don't want to insert anything
-            if (absolutePortAnchor.x == bendPoint.x) {
+            // (unless the node represents an in-layer dummy)
+            if (absolutePortAnchor.x == bendPoint.x && !isInLayerDummy(node)) {
                 continue;
             }
             
@@ -428,8 +429,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
     private void addBendPoint(final LEdge edge, final KVector bendPoint, final boolean addJunctionPoint,
             final LPort currPort) {
         
-        // Only insert the bend point if necessary
-        if (!currPort.getAbsoluteAnchor().equals(bendPoint)) {
+        // Only insert the bend point if necessary,
+        // for in-layer edges we are extra save and add the bend point in any case
+        if (edge.isInLayerEdge() || !currPort.getAbsoluteAnchor().equals(bendPoint)) {
             if (edge.getSource() == currPort) {
                 edge.getBendPoints().add(0, new KVector(bendPoint));
             } else {
@@ -451,4 +453,19 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         }
     }
     
+    /**
+     * At this point a node is considered to be an in-layer dummy 
+     * if it is of type {@link NodeType#LONG_EDGE} and has an incident edge that is 
+     * an in-layer edge. 
+     */
+    private boolean isInLayerDummy(final LNode node) {
+        if (node.getType() == NodeType.LONG_EDGE) {
+            for (LEdge e : node.getConnectedEdges()) {
+                if (e.isInLayerEdge()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -21,8 +21,10 @@ import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.intermediate.NodePromotionStrategy;
 import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrategy;
+import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
+import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
@@ -172,15 +174,6 @@ final class GraphConfigurator {
                         IntermediateProcessingConfiguration.Slot.AFTER_PHASE_5));
     }
     
-    /**
-     * Returns the cycle breaker to use for the given graph depending on the property settings.
-     * 
-     * <p>If an instance of the requested implementation is already in the phase cache, that instance is
-     * used. Otherwise, a new instance is created and put in the phase cache.</p>
-     * 
-     * @param lgraph the graph to return the cycle breaker for.
-     * @return the cycle breaker to use.
-     */
     private ILayoutPhase cachedLayoutPhase(final ILayoutPhaseFactory factory) {
         ILayoutPhase layoutPhase = phaseCache.get(factory);
         
@@ -311,6 +304,15 @@ final class GraphConfigurator {
         // Introduce in-layer constraints to preserve the order of regular nodes
         if (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE)) {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
+        }
+
+        GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH);
+        if (greedySwitchType != GreedySwitchType.OFF && lgraph.getProperty(
+                        LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) != CrossingMinimizationStrategy.INTERACTIVE) {
+            IntermediateProcessorStrategy internalGreedyType = greedySwitchType == GreedySwitchType.ONE_SIDED
+                                    ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
+                                    : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
+            configuration.addBeforePhase4(internalGreedyType);
         }
 
         return configuration;

@@ -426,12 +426,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                         findAndAddSuccessor(edge, succeedingEdge);
 
                         // Check if edge is a startingEdge
-                        final NodeType sourceNodeType = edge.getSource().getNode().getType();
-                        if (sourceNodeType == NodeType.NORMAL 
-                                || sourceNodeType == NodeType.NORTH_SOUTH_PORT
-                                || sourceNodeType == NodeType.EXTERNAL_PORT
-                                || sourceNodeType == NodeType.BIG_NODE) {
-
+                        if (isQualifiedAsStartingNode(edge.getSource().getNode())) {
                             startingEdges.add(edge);
                         }
                         
@@ -478,12 +473,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                         findAndAddSuccessor(edge, succeedingEdge);
 
                         // Check if edge is a startingEdge
-                        final NodeType sourceNodeType = edge.getSource().getNode().getType();
-                        if (sourceNodeType == NodeType.NORMAL 
-                                || sourceNodeType == NodeType.NORTH_SOUTH_PORT
-                                || sourceNodeType == NodeType.EXTERNAL_PORT
-                                || sourceNodeType == NodeType.BIG_NODE) {
-
+                        if (isQualifiedAsStartingNode(edge.getSource().getNode())) {
                             startingEdges.add(edge);
                         }
                         
@@ -517,8 +507,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         final LNode targetNode = edge.getTarget().getNode();
         
         // if target node is a normal node there is no successor
-        if (targetNode.getType() == NodeType.NORMAL
-                || targetNode.getType() == NodeType.BIG_NODE) {
+        if (isNormalNode(targetNode)) {
             return;
         }
         
@@ -961,10 +950,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         final NodeType sourceNodeType = sourcePort.getNode().getType();
         
         // edge must be the first edge of a chain of edges
-        if (sourceNodeType != NodeType.NORMAL 
-                && sourceNodeType != NodeType.NORTH_SOUTH_PORT
-                && sourceNodeType != NodeType.EXTERNAL_PORT
-                && sourceNodeType != NodeType.BIG_NODE) {
+        if (!isQualifiedAsStartingNode(sourcePort.getNode())) {
             throw new IllegalArgumentException(
                     "The target node of the edge must be a normal node " + "or a northSouthPort.");
         }
@@ -1136,10 +1122,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
 
             // If using sloppy routing, only some bendpoints are needed at the start and end
             // First determine if this part of an edge is connected to a normal node
-            final boolean normalSource = edge.getSource().getNode().getType() == NodeType.NORMAL 
-                    || edge.getSource().getNode().getType() == NodeType.BIG_NODE;
-            final boolean normalTarget = edge.getTarget().getNode().getType() == NodeType.NORMAL
-                    || edge.getTarget().getNode().getType() == NodeType.BIG_NODE;
+            final boolean normalSource = isNormalNode(edge.getSource().getNode());
+            final boolean normalTarget = isNormalNode(edge.getTarget().getNode());
             
             if (!sloppyRouting || !(normalSource || normalTarget) || invertedTarget || invertedSource) {
                 // add the NubSpline control points to the edge, but in revered order!
@@ -1171,7 +1155,21 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                     final double centerYPos = ((targetAnchor.y + sourceAnchor.y) / 2)
                             + (targetAnchor.y - sourceAnchor.y) * (0.4 * degreeDiff);
                     
-                    edge.getBendPoints().addAll(new KVector(centerXPos, centerYPos));
+
+                    // If the target is a smaller node in a layer with bigger nodes, add a control point at
+                    // the start of the target layer
+                    if (targetAnchor.x > endXPos) {
+                        edge.getBendPoints().add(targetStraightCP);
+                    }
+
+                    // Add the center control point for the edge
+                    edge.getBendPoints().add(new KVector(centerXPos, centerYPos));
+
+                    // If the source is a smaller node in a layer with bigger nodes, add a control point at
+                    // the end of the source layer
+                    if (sourceAnchor.x < startXPos) {
+                        edge.getBendPoints().add(sourceStraightCP);
+                    }
                 } else if (normalSource) {
                     // If leaving a normal source, add the straight part of the target dummy.
                     // This mostly prevents intersections with big nodes in the same layer as the target 
@@ -1185,22 +1183,50 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     }
 
     /**
-     * Check if the layer contains only non-{@link NodeType#NORMAL} nodes.
-     * Big node dummies are considered to be 'normal' nodes here, as we regard the spacing during
-     * node splitting.
+     * Check whether for every node {@code n} of {@code layer} {@code !isNormalNode(n)} holds.
      * 
      * @param layer The layer to check.
      * @return {@code true}, if the layer only contains dummy nodes.
      */
     private boolean layerOnlyContainsDummies(final Layer layer) {
         for (final LNode n : layer.getNodes()) {
-            if (n.getType() == NodeType.NORMAL || n.getType() == NodeType.BIG_NODE) {
+            if (isNormalNode(n)) {
                 return false;
             }
         }
         return true;
     }
+    
+    /**
+     * Additionally to the {@link NodeType#NORMAL} nodes, we deem {@link NodeType#BIG_NODE} 
+     * and {@link NodeType#BREAKING_POINT} to be normal nodes.
+     * 
+     * @param node the node to test
+     * @return true if we consider {@code node} to be normal.
+     */
+    private boolean isNormalNode(final LNode node) {
+        NodeType nt = node.getType();
+        return nt == NodeType.NORMAL 
+            || nt == NodeType.BIG_NODE;
+    }
 
+    /**
+     * A node {@code n} qualifies as 'starting node' for a 'starting edge' if it is not a long edge dummy or label
+     * dummy. That is, any edge connected to {@code n} can potentially be the first segment of a chain of edges (i.e.
+     * long edge).
+     * 
+     * @param node
+     *            the node to test
+     * @return true if {@code node} qualifies as starting node.
+     */
+    private boolean isQualifiedAsStartingNode(final LNode node) {
+        NodeType nt = node.getType();
+        return nt == NodeType.NORMAL 
+            || nt == NodeType.NORTH_SOUTH_PORT 
+            || nt == NodeType.EXTERNAL_PORT 
+            || nt == NodeType.BIG_NODE;
+    }
+    
     /**
      * Splines only support 1:n directed hyperEdges. Also all ports on the n-side must lay on the same 
      * SideToProcess, looking from the single port. So in a left to right routing, it is not possible to
@@ -1256,8 +1282,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                 rightPorts.add(singlePort);
             }
 
-            double yMinPosOfTarget = Double.MAX_VALUE;
-            double yMaxPosOfTarget = Double.MIN_VALUE;
+            double yMinPosOfTarget = Double.POSITIVE_INFINITY;
+            double yMaxPosOfTarget = Double.NEGATIVE_INFINITY;
             
             for (final Pair<SideToProcess, LEdge> pair : edges) {
                 final SideToProcess side = pair.getFirst();

@@ -372,7 +372,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 annotations += annotationRef(Deprecated)
                 deprecated = true
             }
-            documentation = '''Property constant to access «support.option.label ?: support.option.name» from within the layout algorithm code.'''
+            documentation = 
+                support.option.description.trimLines 
+                + if (!support.documentation.nullOrEmpty) "\n<h3>Algorithm Specific Details</h3>\n" + support.documentation.trimLines else ""
+           
         ]
     }
     

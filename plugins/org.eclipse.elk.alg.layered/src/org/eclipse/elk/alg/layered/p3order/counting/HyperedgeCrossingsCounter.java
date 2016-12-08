@@ -20,7 +20,6 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -41,7 +40,7 @@ import com.google.common.collect.Sets;
  * 
  * @author msp
  */
-public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
+public class HyperedgeCrossingsCounter {
 
     /**
      * Port position array used for counting the number of edge crossings.
@@ -61,7 +60,6 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
      */
     public HyperedgeCrossingsCounter(final int[] inLayerEdgeCount,
             final boolean[] hasNorthSouthPorts, final int[] portPos) {
-        super(inLayerEdgeCount, hasNorthSouthPorts);
         this.portPos = portPos;
     }
     
@@ -153,12 +151,10 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
      * @return the number of edge crossings
      */
     // SUPPRESS CHECKSTYLE NEXT 1 MethodLength
-    @Override
     public int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer) {
         // Assign index values to the ports of the left layer
         int sourceCount = 0;
         for (LNode node : leftLayer) {
-            if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Assign index values in the order north - east - south - west
                 for (LPort port : node.getPorts()) {
                     int portEdges = 0;
@@ -171,28 +167,11 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
                         portPos[port.id] = sourceCount++;
                     }
                 }
-                
-            } else {
-                // All ports are assigned the same index value, since their order does not matter
-                int nodeEdges = 0;
-                for (LPort port : node.getPorts()) {
-                    for (LEdge edge : port.getOutgoingEdges()) {
-                        if (node.getLayer() != edge.getTarget().getNode().getLayer()) {
-                            nodeEdges++;
-                        }
-                    }
-                    portPos[port.id] = sourceCount;
-                }
-                if (nodeEdges > 0) {
-                    sourceCount++;
-                }
-            }
         }
         
         // Assign index values to the ports of the right layer
         int targetCount = 0;
         for (LNode node : rightLayer) {
-            if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Determine how many input ports there are on the north side
                 // (note that the standard port order is north - east - south - west)
                 int northInputPorts = 0;
@@ -231,21 +210,6 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
                 }
                 targetCount += otherInputPorts;
                 
-            } else {
-                // All ports are assigned the same index value, since their order does not matter
-                int nodeEdges = 0;
-                for (LPort port : node.getPorts()) {
-                    for (LEdge edge : port.getIncomingEdges()) {
-                        if (node.getLayer() != edge.getSource().getNode().getLayer()) {
-                            nodeEdges++;
-                        }
-                    }
-                    portPos[port.id] = targetCount;
-                }
-                if (nodeEdges > 0) {
-                    targetCount++;
-                }
-            }
         }
         
         // Gather hyperedges
@@ -417,3 +381,4 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
     }
 
 }
+
