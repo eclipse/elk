@@ -266,8 +266,8 @@ public final class ElkUtil {
             KVector minSize = node.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
             double minWidth, minHeight;
             if (minSize == null) {
-                minWidth = node.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
-                minHeight = node.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
+                minWidth = node.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
+                minHeight = node.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
             } else {
                 minWidth = minSize.x;
                 minHeight = minSize.y; 

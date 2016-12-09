@@ -73,8 +73,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                     KVector minSize = node.getProperty(FixedLayouterOptions.NODE_SIZE_MINIMUM);
                     double width, height;
                     if (minSize == null) {
-                        width = node.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_WIDTH);
-                        height = node.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_HEIGHT);
+                        width = node.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
+                        height = node.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
                     } else {
                         width = minSize.x;
                         height = minSize.y; 

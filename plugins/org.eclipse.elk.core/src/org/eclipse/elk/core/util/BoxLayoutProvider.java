@@ -183,8 +183,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
         double minWidth, minHeight;
         if (minSize == null) {
-            minWidth = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_WIDTH);
-            minHeight = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_HEIGHT);
+            minWidth = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
+            minHeight = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
         } else {
             minWidth = (float) minSize.x;
             minHeight = (float) minSize.y; 
@@ -341,8 +341,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
         double minWidth, minHeight;
         if (minSize == null) {
-            minWidth = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_WIDTH);
-            minHeight = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_HEIGHT);
+            minWidth = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
+            minHeight = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
         } else {
             minWidth = (float) minSize.x;
             minHeight = (float) minSize.y; 
