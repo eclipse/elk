@@ -135,7 +135,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Spline edge routing", 1);
         // Retrieve some generic values
-        final float hNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
+        final double hNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
         hEdgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
         
         // Find out if splines should be routed thoroughly or sloppy

@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.properties;
 
-import java.util.Map;
-import java.util.function.Function;
-
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.core.util.IndividualSpacings;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
-import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
  * FIXME 
@@ -41,8 +36,8 @@ public final class Spacings {
     
     private LGraph graph;
     
-    private  IProperty<Float>[][] nodeTypeSpacingOptionsHorizontal;
-    private  IProperty<Float>[][] nodeTypeSpacingOptionsVertical;
+    private  IProperty<Double>[][] nodeTypeSpacingOptionsHorizontal;
+    private  IProperty<Double>[][] nodeTypeSpacingOptionsVertical;
     
     
     /**
@@ -125,24 +120,24 @@ public final class Spacings {
                 LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
     }
 
-    private void nodeTypeSpacing(final NodeType nt, final IProperty<Float> spacing) {
+    private void nodeTypeSpacing(final NodeType nt, final IProperty<Double> spacing) {
         nodeTypeSpacingOptionsVertical[nt.ordinal()][nt.ordinal()] = spacing;
     }
 
-    private void nodeTypeSpacing(final NodeType nt, final IProperty<Float> spacingVert,
-            final IProperty<Float> spacingHorz) {
+    private void nodeTypeSpacing(final NodeType nt, final IProperty<Double> spacingVert,
+            final IProperty<Double> spacingHorz) {
         nodeTypeSpacingOptionsVertical[nt.ordinal()][nt.ordinal()] = spacingVert;
 
         nodeTypeSpacingOptionsHorizontal[nt.ordinal()][nt.ordinal()] = spacingHorz;
     }
 
-    private void nodeTypeSpacing(final NodeType n1, final NodeType n2, final IProperty<Float> spacing) {
+    private void nodeTypeSpacing(final NodeType n1, final NodeType n2, final IProperty<Double> spacing) {
         nodeTypeSpacingOptionsVertical[n1.ordinal()][n2.ordinal()] = spacing;
         nodeTypeSpacingOptionsVertical[n2.ordinal()][n1.ordinal()] = spacing;
     }
 
-    private void nodeTypeSpacing(final NodeType n1, final NodeType n2, final IProperty<Float> spacingVert,
-            final IProperty<Float> spacingHorz) {
+    private void nodeTypeSpacing(final NodeType n1, final NodeType n2, final IProperty<Double> spacingVert,
+            final IProperty<Double> spacingHorz) {
         nodeTypeSpacingOptionsVertical[n1.ordinal()][n2.ordinal()] = spacingVert;
         nodeTypeSpacingOptionsVertical[n2.ordinal()][n1.ordinal()] = spacingVert;
 
@@ -157,7 +152,7 @@ public final class Spacings {
      *            another graph element
      * @return the horizontal spacing to be preserved between {@code e1} and {@code e2}
      */
-    public float getHorizontalSpacing(final LGraphElement e1, final LGraphElement e2) {
+    public double getHorizontalSpacing(final LGraphElement e1, final LGraphElement e2) {
         if (e1 instanceof LNode && e2 instanceof LNode) {
             return getHorizontalSpacing((LNode) e1, (LNode) e2);
         }
@@ -172,7 +167,7 @@ public final class Spacings {
      *            another node
      * @return the spacing to be preserved between {@code n1} and {@code n2}
      */
-    public float getHorizontalSpacing(final LNode n1, final LNode n2) {
+    public double getHorizontalSpacing(final LNode n1, final LNode n2) {
         return getLocalSpacing(n1, n2, nodeTypeSpacingOptionsHorizontal);
     }
     
@@ -183,7 +178,7 @@ public final class Spacings {
      *            another node type
      * @return the spacing to be preserved between {@code nt1} and {@code nt2}
      */
-    public float getHorizontalSpacing(final NodeType nt1, final NodeType nt2) {
+    public double getHorizontalSpacing(final NodeType nt1, final NodeType nt2) {
         return getLocalSpacing(nt1, nt2, nodeTypeSpacingOptionsHorizontal);
     }
     
@@ -194,7 +189,7 @@ public final class Spacings {
      *            another node
      * @return the spacing to be preserved between {@code n1} and {@code n2}
      */
-    public float getVerticalSpacing(final LNode n1, final LNode n2) {
+    public double getVerticalSpacing(final LNode n1, final LNode n2) {
         return getLocalSpacing(n1, n2, nodeTypeSpacingOptionsVertical);
     }
 
@@ -205,34 +200,30 @@ public final class Spacings {
      *            another node
      * @return the spacing to be preserved between {@code n1} and {@code n2}
      */
-    public float getVerticalSpacing(final NodeType nt1, final NodeType nt2) {
+    public double getVerticalSpacing(final NodeType nt1, final NodeType nt2) {
         return getLocalSpacing(nt1, nt2, nodeTypeSpacingOptionsVertical);
     }
 
-    private float getLocalSpacing(final LNode n1, final LNode n2, final IProperty<Float>[][] nodeTypeSpacingMapping) {
+    private double getLocalSpacing(final LNode n1, final LNode n2, final IProperty<Double>[][] nodeTypeSpacingMapping) {
         NodeType t1 = n1.getType();
         NodeType t2 = n2.getType();
-        IProperty<Float> layoutOption = nodeTypeSpacingMapping[t1.ordinal()][t2.ordinal()];
+        IProperty<Double> layoutOption = nodeTypeSpacingMapping[t1.ordinal()][t2.ordinal()];
 
         // get the spacing value for the first node
-        Float s1 = getIndividualOrDefault(n1, layoutOption); 
-        Float s2 = getIndividualOrDefault(n2, layoutOption);
+        Double s1 = getIndividualOrDefault(n1, layoutOption); 
+        Double s2 = getIndividualOrDefault(n2, layoutOption);
         
         return Math.max(s1, s2);
     }
 
-    private float getLocalSpacing(final NodeType nt1, final NodeType nt2,
-            final IProperty<Float>[][] nodeTypeSpacingMapping) {
-        IProperty<Float> layoutOption = nodeTypeSpacingMapping[nt1.ordinal()][nt2.ordinal()];
+    private double getLocalSpacing(final NodeType nt1, final NodeType nt2,
+            final IProperty<Double>[][] nodeTypeSpacingMapping) {
+        IProperty<Double> layoutOption = nodeTypeSpacingMapping[nt1.ordinal()][nt2.ordinal()];
         return graph.getProperty(layoutOption);
     }
 
-    /**
-     * @param node
-     * @param layoutOption
-     */
-    private float getIndividualOrDefault(final LNode node, final IProperty<Float> layoutOption) {
-        Float s1 = null;
+    private double getIndividualOrDefault(final LNode node, final IProperty<Double> layoutOption) {
+        Double s1 = null;
         // check for individual value
         if (node.getAllProperties().containsKey(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
             IPropertyHolder is1 = node.getProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE);

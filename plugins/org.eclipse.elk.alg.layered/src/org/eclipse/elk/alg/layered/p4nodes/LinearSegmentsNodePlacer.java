@@ -565,7 +565,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
                 // Calculate how much space to leave between the linear segment and the last
                 // node of the given layer
-                float spacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE);
+                double spacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE);
                 if (nodeCount[layerIndex] > 0) {
                     if (recentNodeType[layerIndex] != null) {
                         spacing = spacings.getVerticalSpacing(recentNodeType[layerIndex], nodeType);
@@ -845,7 +845,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 // determine the amount by which the linear segment can be moved up without overlap
                 if (index > 0) {
                     LNode neighbor = node.getLayer().getNodes().get(index - 1);
-                    float spacing = spacings.getVerticalSpacing(node, neighbor);
+                    double spacing = spacings.getVerticalSpacing(node, neighbor);
                     roomAbove = node.getPosition().y - node.getMargin().top
                             - (neighbor.getPosition().y + neighbor.getSize().y
                                     + neighbor.getMargin().bottom + spacing);
@@ -858,7 +858,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 // overlap
                 if (index < node.getLayer().getNodes().size() - 1) {
                     LNode neighbor = node.getLayer().getNodes().get(index + 1);
-                    float spacing = spacings.getVerticalSpacing(node, neighbor);
+                    double spacing = spacings.getVerticalSpacing(node, neighbor);
                     roomBelow = neighbor.getPosition().y - neighbor.getMargin().top
                             - (node.getPosition().y + node.getSize().y
                                     + node.getMargin().bottom + spacing);

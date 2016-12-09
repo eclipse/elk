@@ -116,7 +116,7 @@ public final class NodeMarginCalculator  {
      * Calculates and assigns margins to all nodes.
      */
     public void process() {
-        float spacing = adapter.getProperty(CoreOptions.SPACING_LABEL_NODE);
+        double spacing = adapter.getProperty(CoreOptions.SPACING_LABEL_NODE);
 
         // Iterate through all nodes
         for (NodeAdapter<?> node : adapter.getNodes()) {

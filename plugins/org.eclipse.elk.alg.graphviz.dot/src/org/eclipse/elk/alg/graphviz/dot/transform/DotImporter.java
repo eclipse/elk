@@ -255,7 +255,7 @@ public class DotImporter {
                 target.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS,
                         fixedSize ? SizeConstraint.fixed() : EnumSet.of(SizeConstraint.MINIMUM_SIZE));
             } else if (Attributes.NODESEP.equals(name)) {
-                target.setProperty(CoreOptions.SPACING_NODE_NODE, Float.valueOf(value));
+                target.setProperty(CoreOptions.SPACING_NODE_NODE, Double.valueOf(value));
             } else if (Attributes.PACK.equals(name)) {
                 target.setProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS, Boolean.valueOf(value));
             } else if (Attributes.PAD.equals(name)) {

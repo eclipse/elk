@@ -261,92 +261,92 @@ advanced option interactive: boolean {
 // --- SPACING
 group spacing {
 	
-	option componentComponent: float {
+	option componentComponent: double {
 	    label "Components Spacing"
 	    description 
 	       "Spacing to be preserved between pairs of connected components. 
             This option is only relevant if 'separateConnectedComponents' is activated."
         default = 12f
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
         legacyIds de.cau.cs.kieler.borderSpacing
 	}
 	
-	option edgeEdge: float {
+	option edgeEdge: double {
 	    label "Edge Spacing"
 	    description 
 	       "Spacing to be preserved between any two edges. Note that while this can somewhat easily be satisfied 
             for the segments of orthogonally drawn edges, it is harder for general polylines or splines."
         default = 10
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
 	}
 	
-	option edgeLabel: float {
+	option edgeLabel: double {
 	    label "Edge Label Spacing"
 	    description
 	       "The minimal distance to be preserved between a label and the edge it is associated with.
             Note that the placement of a label is influenced by the 'edgelabels.placement' option."
         default = 5
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
 	}
 	
-	option edgeNode: float {
+	option edgeNode: double {
         label "Edge Node Spacing"
         description
             "Spacing to be preserved between nodes and edges."
         default = 10
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents   
 	}
 	
-	option labelLabel: float {
+	option labelLabel: double {
 	    label "Label Spacing"
         description 
             "Determines the amount of space to be left between two labels 
              of the same graph element."
         default = 0
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
         legacyIds de.cau.cs.kieler.labelSpacing
 	}
 	
-	option labelNode: float {
+	option labelNode: double {
 	    label "Label Node Spacing"
 	    description 
 	       "Spacing to be preserved between labels and the border of node they are associated with. 
             Note that the placement of a label is influenced by the 'nodelabels.placement' option."
 	    default = 5
-	    lowerBound = 0f
+	    lowerBound = 0.0
 	    targets parents
 	    legacyIds de.cau.cs.kieler.labelSpacing
 	}
 	
-	option labelPort: float {
+	option labelPort: double {
 	    label "Label Port Spacing"
 	    description 
 	       "Spacing to be preserved between labels and the ports they are associated with. 
             Note that the placement of a label is influenced by the 'portlabels.placement' option."
         default = 5
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
 	}
 	
-	option nodeNode: float {
+	option nodeNode: double {
         label "Node Spacing"
         description "The minimal distance to be preserved between each two nodes."
         default = 20
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
         legacyIds de.cau.cs.kieler.spacing
 	}
 	
-	option portPort: float {
+	option portPort: double {
         label "Port Spacing"
         description "Spacing between pairs of ports of the same node."
         default = 10
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents, nodes
         legacyIds de.cau.cs.kieler.portSpacing
 	}

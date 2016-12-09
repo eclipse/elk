@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
- *
+ * A property holder which can be used to define individual spacing overrides. The overrides are applied to the
+ * element this object is set on, which is done through the {@link CoreOptions#SPACING_INDIVIDUAL_OVERRIDE} property.
  */
 public class IndividualSpacings extends MapPropertyHolder {
 

@@ -68,11 +68,11 @@ import com.google.common.collect.HashBiMap;
 public class DotExporter {
 
     /** small default value for minimal spacing. */
-    public static final float DEF_SPACING_SMALL = 20.0f;
+    public static final double DEF_SPACING_SMALL = 20.0;
     /** large default value for minimal spacing. */
-    public static final float DEF_SPACING_LARGE = 40.0f;
+    public static final double DEF_SPACING_LARGE = 40.0;
     /** extra-large default value for minimal spacing. */
-    public static final float DEF_SPACING_XLARGE = 60.0f;
+    public static final double DEF_SPACING_XLARGE = 60.0;
     /** dots per inch specification, needed by Graphviz for some values. */
     public static final float DPI = 72.0f;
 
@@ -519,9 +519,9 @@ public class DotExporter {
         // set mid label: if empty, it is filled with a dummy string to avoid
         // edge overlapping
         if (midLabel.length() > 0) {
-            float labelSpacing = elkedge.getProperty(CoreOptions.SPACING_EDGE_LABEL);
+            double labelSpacing = elkedge.getProperty(CoreOptions.SPACING_EDGE_LABEL);
             if (labelSpacing < 1) {
-                labelSpacing = 0f;
+                labelSpacing = 0;
             }
             int charsToAdd = (int) labelSpacing - 1;
             for (int i = 0; i < charsToAdd; i++) {

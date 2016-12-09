@@ -313,7 +313,7 @@ class ElkGraphImporter {
                 EnumSet.noneOf(GraphProperties.class));
         
         // Adjust the insets to respect inside labels.
-        float labelSpacing = lgraph.getProperty(LayeredOptions.SPACING_LABEL_NODE);
+        double labelSpacing = lgraph.getProperty(LayeredOptions.SPACING_LABEL_NODE);
         ElkPadding labelPadding = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
                 ElkGraphAdapters.adaptSingleNode(elkgraph), labelSpacing);
         

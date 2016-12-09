@@ -80,7 +80,7 @@ final class GraphConfigurator {
     // Graph Preprocessing (Property Configuration)
 
     /** the minimal spacing between edges, so edges won't overlap. */
-    private static final float MIN_EDGE_SPACING = 2.0f;
+    private static final double MIN_EDGE_SPACING = 2.0;
 
     /**
      * Set special layout options for the layered graph.
@@ -93,7 +93,7 @@ final class GraphConfigurator {
 //        lgraph.checkProperties(InternalProperties.SPACING, InternalProperties.BORDER_SPACING,
 //                Properties.THOROUGHNESS, InternalProperties.ASPECT_RATIO);
         
-        float edgeSpacing = lgraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE);
+        double edgeSpacing = lgraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE);
         if (edgeSpacing < MIN_EDGE_SPACING) {
             // Make sure the resulting edge spacing is at least 2 in order to avoid overlapping edges.
             lgraph.setProperty(LayeredOptions.SPACING_EDGE_EDGE, MIN_EDGE_SPACING);

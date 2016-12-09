@@ -119,7 +119,7 @@ public final class InteractiveNodePlacer implements ILayoutPhase {
             }
             
             // If the node extends into nodes we already placed above, we need to move it down
-            float spacing = spacings.getVerticalSpacing(nodeType, prevNodeType);
+            double spacing = spacings.getVerticalSpacing(nodeType, prevNodeType);
             if (node.getPosition().y < minValidY + spacing + node.getMargin().top) {
                 node.getPosition().y = minValidY + spacing + node.getMargin().top;
             }

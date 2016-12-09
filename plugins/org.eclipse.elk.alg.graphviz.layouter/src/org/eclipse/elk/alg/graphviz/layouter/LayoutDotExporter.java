@@ -79,7 +79,7 @@ public class LayoutDotExporter extends DotExporter {
         List<Attribute> edgeAttrs = setGeneralEdgeAttributes(statements);
 
         // set minimal spacing
-        Float spacing = parentNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+        Double spacing = parentNode.getProperty(CoreOptions.SPACING_NODE_NODE);
         if (spacing == null || spacing < 0) {
             switch (command) {
             case CIRCO:

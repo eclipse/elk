@@ -409,33 +409,33 @@ group edgeRouting {
  * ------------------------*/
 group spacing {
 
-    option edgeNodeBetweenLayers: float {
+    option edgeNodeBetweenLayers: double {
         label "Edge Node Between Layers Spacing"
         description 
             "The spacing to be preserved between nodes and edges that are routed next to the node's layer. 
              For the spacing between nodes and edges that cross the node's layer 'spacing.edgeNode' is used."
         default = 10
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
     }
     
-    option edgeEdgeBetweenLayers: float {
+    option edgeEdgeBetweenLayers: double {
         label "Edge Edge Between Layer Spacing"
         description 
             "Spacing to be preserved between pairs of edges that are routed between the same pair of layers. 
              Note that 'spacing.edgeEdge' is used for the spacing between pairs of edges crossing the same layer."
         default = 10
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
     }
 
-    option nodeNodeBetweenLayers: float {
+    option nodeNodeBetweenLayers: double {
         label "Node Node Between Layers Spacing"
         description 
             "The spacing to be preserved between any pair of nodes of two adjacent layers. 
              Note that 'spacing.nodeNode' is used for the spacing between nodes within the layer itself."
         default = 20
-        lowerBound = 0f
+        lowerBound = 0.0
         targets parents
     }
     

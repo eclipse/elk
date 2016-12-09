@@ -48,7 +48,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
     /** parameter value for the compound version of the layout algorithm. */
     public static final String PARAM_COMPOUND = "Compound";
     /** default value for minimal spacing. */
-    private static final float DEF_MIN_SPACING = 16.0f;
+    private static final double DEF_MIN_SPACING = 16.0;
     
     /** indicates whether the compound graph version of the algorithm shall be used. */
     private boolean compoundMode = false;
@@ -88,7 +88,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         DirectedGraph graph = new DirectedGraph();
         
         // set layout options for the graph
-        float minSpacing = layoutNode.getProperty(Draw2DOptions.SPACING_NODE_NODE);
+        double minSpacing = layoutNode.getProperty(Draw2DOptions.SPACING_NODE_NODE);
         if (minSpacing < 0) {
             minSpacing = DEF_MIN_SPACING;
         }
