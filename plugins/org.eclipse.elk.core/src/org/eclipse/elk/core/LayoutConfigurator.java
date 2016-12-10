@@ -37,7 +37,7 @@ import com.google.common.collect.Maps;
 public class LayoutConfigurator implements IGraphElementVisitor {
     
     /**
-     * Property attached to the shape layout of the top-level {@link KNode} holding a reference
+     * Property attached to the shape layout of the top-level {@link ElkNode} holding a reference
      * to an additional layout configurator that shall be applied for the remaining iterations.
      * This is applicable only when multiple layout iterations are performed, e.g. for applying
      * different layout algorithms one after another. If only a single iteration is performed or

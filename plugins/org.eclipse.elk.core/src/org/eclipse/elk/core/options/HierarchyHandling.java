@@ -33,7 +33,7 @@ package org.eclipse.elk.core.options;
  * </p>
  * <p>
  * <i>Note:</i> Layout algorithms only need to differentiate between INCLUDE_CHILDREN and
- * SEPARATE_CHILDREN as the inheritance is evaluated by KIML.
+ * SEPARATE_CHILDREN as the inheritance is evaluated by ELK.
  * </p>
  */
 public enum HierarchyHandling {

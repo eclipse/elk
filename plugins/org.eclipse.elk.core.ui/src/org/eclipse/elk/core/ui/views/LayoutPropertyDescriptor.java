@@ -98,7 +98,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                         }
                         return null;
                     } catch (NumberFormatException exception) {
-                        return Messages.getString("kiml.ui.6");
+                        return Messages.getString("elk.ui.6");
                     }
                 }
             });
@@ -115,7 +115,7 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                         }
                         return null;
                     } catch (NumberFormatException exception) {
-                        return Messages.getString("kiml.ui.7");
+                        return Messages.getString("elk.ui.7");
                     }
                 }
             });
@@ -147,17 +147,17 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             switch (targets.iterator().next()) {
             case PARENTS:
                 if (elementTargets != null && elementTargets.contains(LayoutOptionData.Target.NODES)) {
-                    return Messages.getString("kiml.ui.74");
+                    return Messages.getString("elk.ui.74");
                 }
-                return Messages.getString("kiml.ui.73");
+                return Messages.getString("elk.ui.73");
             case NODES:
-                return Messages.getString("kiml.ui.75");
+                return Messages.getString("elk.ui.75");
             case EDGES:
-                return Messages.getString("kiml.ui.76");
+                return Messages.getString("elk.ui.76");
             case PORTS:
-                return Messages.getString("kiml.ui.77");
+                return Messages.getString("elk.ui.77");
             case LABELS:
-                return Messages.getString("kiml.ui.78");
+                return Messages.getString("elk.ui.78");
             }
         }
         return null;

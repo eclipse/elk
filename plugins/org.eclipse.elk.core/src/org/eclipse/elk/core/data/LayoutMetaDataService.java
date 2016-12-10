@@ -22,8 +22,8 @@ import org.eclipse.elk.core.util.Pair;
 import com.google.common.collect.Maps;
 
 /**
- * Singleton class for access to the KIML layout meta data. This class is used globally to retrieve meta data for
- * automatic layout through KIML, which is given through the {@code layoutProviders} extension point.
+ * Singleton class for access to the ELK layout meta data. This class is used globally to retrieve meta data for
+ * automatic layout through ELK, which is given through the {@code layoutProviders} extension point.
  * 
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu

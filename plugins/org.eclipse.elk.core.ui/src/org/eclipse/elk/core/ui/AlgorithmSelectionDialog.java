@@ -92,7 +92,7 @@ public class AlgorithmSelectionDialog extends Dialog {
     @Override
     protected void configureShell(final Shell shell) {
         super.configureShell(shell);
-        shell.setText(Messages.getString("kiml.ui.58")); //$NON-NLS-1$
+        shell.setText(Messages.getString("elk.ui.58")); //$NON-NLS-1$
     }
     
     /**
@@ -146,13 +146,13 @@ public class AlgorithmSelectionDialog extends Dialog {
         String name = layoutData.getName();
         if (name == null || name.length() == 0) {
             name = layoutData instanceof LayoutAlgorithmData
-                    ? Messages.getString("kiml.ui.61")
-                    : Messages.getString("kiml.ui.8");
+                    ? Messages.getString("elk.ui.61")
+                    : Messages.getString("elk.ui.8");
         }
         displayNameLabel.setText(name);
         String description = layoutData.getDescription();
         if (description == null || description.length() == 0) {
-            description = Messages.getString("kiml.ui.60");
+            description = Messages.getString("elk.ui.60");
         }
         descriptionLabel.setText(description);
         Image image = imageCache.get(layoutData);
@@ -212,7 +212,7 @@ public class AlgorithmSelectionDialog extends Dialog {
         
         // create filter text
         final Text filterText = new Text(composite, SWT.BORDER);
-        filterText.setText(Messages.getString("kiml.ui.59"));
+        filterText.setText(Messages.getString("elk.ui.59"));
         filterText.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
         filterText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_GRAY));
         

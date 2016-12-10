@@ -20,7 +20,7 @@ import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 
 /**
- * Utility methods used for the KIML UI.
+ * Utility methods used for the ELK UI.
  *
  * @author msp
  * @kieler.design proposed by msp

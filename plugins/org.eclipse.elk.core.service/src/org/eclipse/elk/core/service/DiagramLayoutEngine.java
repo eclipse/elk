@@ -105,9 +105,9 @@ public class DiagramLayoutEngine {
      * <pre>
      * DiagramLayoutEngine.Parameters params = new DiagramLayoutEngine.Parameters();
      * params.addLayoutRun().configure(KNode.class)
-     *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.algorithm.force");
+     *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.force");
      * params.addLayoutRun().setClearLayout(true).configure(KNode.class)
-     *         .setProperty(LayoutOptions.ALGORITHM, "de.cau.cs.kieler.kiml.libavoid");
+     *         .setProperty(LayoutOptions.ALGORITHM, "org.eclipse.elk.layered");
      * DiagramLayoutEngine.invokeLayout(workbenchPart, diagramPart, params);
      * </pre>
      * <b>Note:</b> By using the {@link LayoutConfigurator} approach as shown above, the Layout

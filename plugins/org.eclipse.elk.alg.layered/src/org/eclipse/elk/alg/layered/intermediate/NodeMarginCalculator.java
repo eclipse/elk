@@ -56,7 +56,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Node margin calculation", 1);
         
-        // calculate the margins using KIML's utility methods
+        // calculate the margins using ELK's utility methods
         // Use transparentNorthSouthEdges. This ensures that end labels of edges connected to north/south
         // ports are considered during margin calculation.
         // Setting this to false would consider end labels in the margin calculation of the corresponding

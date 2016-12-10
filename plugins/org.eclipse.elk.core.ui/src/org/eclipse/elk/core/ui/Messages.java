@@ -14,7 +14,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * String externalization class for the KIML UI plugin.
+ * String externalization class for the ELK UI plugin.
  * 
  * @author msp
  * @kieler.design proposed by msp

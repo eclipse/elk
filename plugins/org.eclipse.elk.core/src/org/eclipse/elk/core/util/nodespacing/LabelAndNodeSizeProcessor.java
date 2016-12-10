@@ -56,7 +56,7 @@ public class LabelAndNodeSizeProcessor {
      * {@link de.cau.cs.kieler.klay.layered.properties.InternalProperties#PORT_RATIO_OR_POSITION}
      * option. For further information see the documentation found there. We added this copy here to
      * allow a generic treatment of spacing calculations for graph elements. See the
-     * {@link de.cau.cs.kieler.kiml.util.nodespacing} package. [programmatically set]
+     * {@link org.eclipse.elk.core.util.nodespacing} package. [programmatically set]
      */
     public static final IProperty<Double> PORT_RATIO_OR_POSITION = new Property<Double>(
             "portRatioOrPosition", 0.0);

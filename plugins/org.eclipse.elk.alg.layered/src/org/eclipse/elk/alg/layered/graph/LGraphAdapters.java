@@ -34,7 +34,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Provides implementations of the {@link org.eclipse.elk.core.util.adapters.GraphAdapters
- * GraphAdapters} interfaces for the LGraph. The adapted graph can then be fed to KIML's node size
+ * GraphAdapters} interfaces for the LGraph. The adapted graph can then be fed to ELK's node size
  * calculation code, for example. To obtain an adapter for an {@link LGraph}, simply call
  * {@link #adapt(LGraph)}.
  * 

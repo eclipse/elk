@@ -95,7 +95,7 @@ public class LayoutOptionLabelProvider extends LabelProvider {
                         return algorithmData.getName() + " (" + bundleName + ")";
                     }
                 }
-                return Messages.getString("kiml.ui.8");
+                return Messages.getString("elk.ui.8");
             }
             break;
         case BOOLEAN:

@@ -239,7 +239,7 @@ public class LayoutPropertySource implements IPropertySource {
                     layoutConfig.setOptionValue(optionData.getId(), value.toString());
                 }
             };
-            ElkUiUtil.runModelChange(modelChange, layoutConfig.getEditingDomain(), Messages.getString("kiml.ui.11"));
+            ElkUiUtil.runModelChange(modelChange, layoutConfig.getEditingDomain(), Messages.getString("elk.ui.11"));
     
             // If the selected option can affect other options, refresh the whole layout view
             if (dependencyOptions.contains(id)) {
@@ -315,7 +315,7 @@ public class LayoutPropertySource implements IPropertySource {
                 layoutConfig.setOptionValue((String) id, null);
             }
         };
-        ElkUiUtil.runModelChange(modelChange, layoutConfig.getEditingDomain(), Messages.getString("kiml.ui.12"));
+        ElkUiUtil.runModelChange(modelChange, layoutConfig.getEditingDomain(), Messages.getString("elk.ui.12"));
         
         // if the selected option can affect other options, refresh the whole layout view
         if (dependencyOptions.contains(id)) {

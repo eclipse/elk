@@ -19,7 +19,7 @@ import org.eclipse.elk.core.ui.views.LayoutViewPart;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
- * Preference initializer for the KIML plugins.
+ * Preference initializer for the ELK plugins.
  *
  * @author msp
  * @kieler.design proposed by msp

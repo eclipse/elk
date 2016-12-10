@@ -20,22 +20,22 @@ public class GraphIssue {
     /** Enumeration of issue severities. */
     public static enum Severity {
         /** An error means the layout process is aborted and the error is reported to the user. */
-        ERROR,
+        ERROR("Error"),
         /** A graph with warnings but no errors can still be processed. */
-        WARNING;
+        WARNING("Warning");
+        
+        /** User-readable name of this severity. */
+        private final String userString;
+        
+        Severity(final String userString) {
+            this.userString = userString;
+        }
         
         /**
          * Returns a user-friendly string for this severity.
          */
         public String getUserString() {
-            switch (this) {
-                case ERROR:
-                    return "Error";
-                case WARNING:
-                    return "Warning";
-                default:
-                    throw new IllegalStateException("Missing case for " + this);
-            }
+            return userString;
         }
     }
 

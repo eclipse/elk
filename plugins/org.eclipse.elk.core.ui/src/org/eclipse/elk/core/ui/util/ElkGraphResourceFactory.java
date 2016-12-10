@@ -61,7 +61,7 @@ public class ElkGraphResourceFactory implements Resource.Factory {
             if (!this.getContents().isEmpty()) {
                 EObject o = this.getContents().get(0);
                 if (o instanceof ElkNode) {
-                    // parse persisted key-value pairs using KIML's layout data service
+                    // parse persisted key-value pairs using ELK's layout data service
                     GraphDataUtil.loadDataElements((ElkNode) o);
                 }
             }

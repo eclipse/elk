@@ -193,7 +193,7 @@ public interface GraphAdapters {
          * @param margin
          *            the new margin to be set.
          */
-        void setMargin(final ElkMargin margin);
+        void setMargin(ElkMargin margin);
     }
 
     /**
