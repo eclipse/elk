@@ -153,8 +153,8 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
 
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            float minWidth = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH);
-            float minHeight = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT);
+            double minWidth = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH);
+            double minHeight = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT);
 
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {

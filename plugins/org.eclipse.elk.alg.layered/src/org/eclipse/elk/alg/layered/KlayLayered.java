@@ -569,13 +569,13 @@ public final class KlayLayered {
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             KVector minSize = lgraph.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
-            float minWidth, minHeight;
+            double minWidth, minHeight;
             if (minSize == null) {
                 minWidth = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH);
                 minHeight = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT);
             } else {
-                minWidth = (float) minSize.x;
-                minHeight = (float) minSize.y;
+                minWidth = minSize.x;
+                minHeight = minSize.y;
             }
             
             // if minimum width or height are not set, maybe default to default values

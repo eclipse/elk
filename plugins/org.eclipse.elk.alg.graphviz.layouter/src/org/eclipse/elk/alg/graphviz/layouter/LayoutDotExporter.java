@@ -98,7 +98,7 @@ public class LayoutDotExporter extends DotExporter {
         switch (command) {
         case DOT:
             graphAttrs.add(createAttribute(Attributes.NODESEP, spacing / DPI));
-            float rankSepFactor = parentNode.getProperty(GraphvizMetaDataProvider.LAYER_SPACING_FACTOR);
+            double rankSepFactor = parentNode.getProperty(GraphvizMetaDataProvider.LAYER_SPACING_FACTOR);
             graphAttrs.add(createAttribute(Attributes.RANKSEP, rankSepFactor * spacing / DPI));
             // set layout direction
             switch (parentNode.getProperty(CoreOptions.DIRECTION)) {
@@ -115,11 +115,11 @@ public class LayoutDotExporter extends DotExporter {
                 graphAttrs.add(createAttribute(Attributes.RANKDIR, "TB"));
             }
             // set iterations limit
-            Float iterationsFactor = parentNode.getProperty(GraphvizMetaDataProvider.ITERATIONS_FACTOR);
+            Double iterationsFactor = parentNode.getProperty(GraphvizMetaDataProvider.ITERATIONS_FACTOR);
             if (iterationsFactor != null && iterationsFactor > 0) {
                 graphAttrs.add(createAttribute(Attributes.CROSSMIN_LIMIT, iterationsFactor));
                 if (iterationsFactor < 1) {
-                    float simplexLimit = iterationsFactor * NSLIMIT_BASE;
+                    double simplexLimit = iterationsFactor * NSLIMIT_BASE;
                     graphAttrs.add(createAttribute(Attributes.SIMPLEX_LIMIT, simplexLimit));
                 }
             }
@@ -150,7 +150,7 @@ public class LayoutDotExporter extends DotExporter {
             }
             graphAttrs.add(createAttribute(Attributes.START, "random" + seed));
             // set epsilon value
-            Float epsilon = parentNode.getProperty(GraphvizMetaDataProvider.EPSILON);
+            Double epsilon = parentNode.getProperty(GraphvizMetaDataProvider.EPSILON);
             if (epsilon != null && epsilon > 0) {
                 graphAttrs.add(createAttribute(Attributes.EPSILON, epsilon));
             }
@@ -222,11 +222,11 @@ public class LayoutDotExporter extends DotExporter {
             EdgeLabelPlacement elp = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
             return elp == EdgeLabelPlacement.HEAD || elp == EdgeLabelPlacement.TAIL;
         })) {
-            float distance = kedge.getProperty(GraphvizMetaDataProvider.LABEL_DISTANCE);
-            if (distance >= 0.0f) {
+            double distance = kedge.getProperty(GraphvizMetaDataProvider.LABEL_DISTANCE);
+            if (distance >= 0.0) {
                 attributes.add(createAttribute(Attributes.LABELDISTANCE, distance));
             }
-            float angle = kedge.getProperty(GraphvizMetaDataProvider.LABEL_ANGLE);
+            double angle = kedge.getProperty(GraphvizMetaDataProvider.LABEL_ANGLE);
             attributes.add(createAttribute(Attributes.LABELANGLE, angle));
         }
     }

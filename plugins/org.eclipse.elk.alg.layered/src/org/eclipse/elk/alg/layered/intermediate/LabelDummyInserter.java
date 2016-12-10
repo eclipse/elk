@@ -101,7 +101,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         LongEdgeSplitter.splitEdge(edge, dummyNode);
                         
                         // Set thickness of the edge and place ports at its center
-                        float thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
+                        double thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
                         if (thickness < 0) {
                             thickness = 0;
                             edge.setProperty(LayeredOptions.EDGE_THICKNESS, thickness);

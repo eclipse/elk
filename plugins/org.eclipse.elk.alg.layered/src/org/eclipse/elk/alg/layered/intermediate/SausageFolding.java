@@ -255,7 +255,7 @@ public class SausageFolding implements ILayoutProcessor {
             dummyNode.setLayer(nextLayer);
 
             // Set thickness of the edge
-            float thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
+            double thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
             if (thickness < 0) {
                 thickness = 0;
                 edge.setProperty(LayeredOptions.EDGE_THICKNESS, thickness);

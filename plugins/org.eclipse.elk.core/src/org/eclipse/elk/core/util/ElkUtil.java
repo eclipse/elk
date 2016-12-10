@@ -377,8 +377,8 @@ public final class ElkUtil {
      *            the node to be scaled
      */
     public static void applyConfiguredNodeScaling(final ElkNode node) {
-        final float scalingFactor = node.getProperty(CoreOptions.SCALE_FACTOR);
-        if (scalingFactor == 1f) {
+        final double scalingFactor = node.getProperty(CoreOptions.SCALE_FACTOR);
+        if (scalingFactor == 1) {
             return;
         }
 

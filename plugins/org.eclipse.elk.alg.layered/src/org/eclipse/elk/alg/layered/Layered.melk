@@ -281,10 +281,10 @@ group crossingMinimization {
         legacyIds de.cau.cs.kieler.klay.layered.crossMin
     } 
     
-    option hierarchicalSweepiness: float {
+    option hierarchicalSweepiness: double {
         label "Hierarchical Sweepiness"
         description "How likely it is to use cross-hierarchy (1) vs bottom-up (-1)."  
-        default = 0.1f
+        default = 0.1
         targets parents 
     }
     
@@ -356,10 +356,10 @@ group nodePlacement {
     
     group linearSegments {
         
-        advanced option deflectionDampening: float {
+        advanced option deflectionDampening: double {
             label "Linear Segments Deflection Dampening"
             description "Dampens the movement of nodes to keep the diagram from getting too large."
-            default = 0.3f
+            default = 0.3
             lowerBound = ExclusiveBounds.greaterThan(0)
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening
@@ -393,10 +393,10 @@ group edgeRouting {
         requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
     }
     
-    option sloppySplineLayerSpacing: float {
+    option sloppySplineLayerSpacing: double {
         label "Sloppy Spline Layer Spacing Factor"
         description "Spacing factor for routing area between layers when using sloppy spline routing."
-        default = 0.4f
+        default = 0.4
         targets parents
         requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
         requires sloppySplineRouting == true
@@ -440,29 +440,29 @@ group spacing {
     }
     
 
-    deprecated advanced option edgeNodeSpacingFactor: float {
+    deprecated advanced option edgeNodeSpacingFactor: double {
         label "Edge Node Spacing Factor"
         description
             "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
             an edge and a node."
-        default = 0.5f
+        default = 0.5
         lowerBound = ExclusiveBounds.greaterThan(0)
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor
     }
     
-    deprecated advanced option edgeSpacingFactor: float {
+    deprecated advanced option edgeSpacingFactor: double {
         label "Edge Spacing Factor"
         description
             "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
             edges."
-        default = 0.5f
+        default = 0.5
         lowerBound = ExclusiveBounds.greaterThan(0)
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.edgeSpacingFactor
     }
     
-    deprecated advanced option inLayerSpacingFactor: float {
+    deprecated advanced option inLayerSpacingFactor: double {
         label "In-layer Spacing Factor"
         description
             "Factor by which the usual spacing is multiplied to determine the in-layer spacing between

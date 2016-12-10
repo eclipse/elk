@@ -170,7 +170,7 @@ advanced option alignment: Alignment {
 	legacyIds de.cau.cs.kieler.animate
 }
 
-advanced option aspectRatio: float {
+advanced option aspectRatio: double {
 	label "Aspect Ratio"
 	description "The desired aspect ratio of the drawing, that is the quotient of width by height."
     lowerBound = ExclusiveBounds.greaterThan(0)
@@ -545,17 +545,17 @@ group nodeSize {
 		targets nodes
 	} 
 	
-	deprecated advanced option minWidth: float {
+	deprecated advanced option minWidth: double {
 		label "Minimum Width"
 		default = 0
-        lowerBound = 0f
+        lowerBound = 0.0
 		targets nodes
 	}
 	
-	deprecated advanced option minHeight: float {
+	deprecated advanced option minHeight: double {
 		label "Minimum Height"
 		default = 0 
-        lowerBound = 0f
+        lowerBound = 0.0
 		targets nodes
 	}
 }
@@ -716,7 +716,7 @@ group portLabels {
 	}
 }
 
-programmatic option scaleFactor: float {
+programmatic option scaleFactor: double {
 	label "Scale Factor"
 	description
 		"The scaling factor to be applied to the corresponding node in recursive layout. It causes
@@ -759,7 +759,7 @@ group insideSelfLoops {
 // --- EDGE
 group edge {
 	
-	programmatic option thickness: float {
+	programmatic option thickness: double {
 		label "Edge Thickness"
 		description
 			"The thickness of an edge. This is a hint on the line width used to draw an edge, possibly

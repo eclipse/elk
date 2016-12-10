@@ -60,8 +60,7 @@ public class LayerSweepTypeDecider implements IInitializable {
      * @return decision
      */
     public boolean useBottomUp() {
-        float boundary = graphData.lGraph()
-                .getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
+        double boundary = graphData.lGraph().getProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS);
         if (bottomUpForced(boundary) || rootNode() || fixedPortOrder() || fewerThanTwoInOutEdges()) {
             return true;
         }
@@ -180,7 +179,7 @@ public class LayerSweepTypeDecider implements IInitializable {
         return !graphData.hasParent();
     }
 
-    private boolean bottomUpForced(final float boundary) {
+    private boolean bottomUpForced(final double boundary) {
         return boundary < -1;
     }
 

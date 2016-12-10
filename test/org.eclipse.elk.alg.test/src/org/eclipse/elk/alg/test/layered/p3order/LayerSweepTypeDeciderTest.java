@@ -69,7 +69,7 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
 
         graph.id = 0;
         nestedGraph.id = 1;
-        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0.1f, graph);
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, 0.1, graph);
         GraphInfoHolder gd = new GraphInfoHolder(nestedGraph, CrossMinType.BARYCENTER,
                 Arrays.asList(new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null)));
         assertTrue(gd.dontSweepInto());
@@ -111,7 +111,7 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
         graph.id = 0;
         innerGraph.id = 1;
 
-        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f, graph);
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1.0, graph);
         GraphInfoHolder gd = new GraphInfoHolder(innerGraph, CrossMinType.BARYCENTER,
                 Arrays.asList(new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null)));
         LayerSweepTypeDecider td = new LayerSweepTypeDecider(gd);
@@ -147,7 +147,7 @@ public class LayerSweepTypeDeciderTest extends TestGraphCreator {
         graph.id = 0;
         innerGraph.id = 1;
 
-        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -0.1f, graph);
+        setOnAllGraphs(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -0.1, graph);
         GraphInfoHolder gd = new GraphInfoHolder(innerGraph, CrossMinType.BARYCENTER,
                 Arrays.asList(new GraphInfoHolder(graph, CrossMinType.BARYCENTER, null)));
         assertTrue(gd.dontSweepInto());

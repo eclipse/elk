@@ -62,7 +62,7 @@ public class LayerSweepHierarchicalTwoSidedGreedySwitchTest extends TestGraphCre
         eastWestEdgeFromTo(leftInnerNodesRight[1], leftInnerDummyNodes[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[0], leftInnerNodesRight[1]);
         eastWestEdgeFromTo(leftInnerNodesleft[1], leftInnerNodesRight[0]);
-        getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1f);
+        getGraph().setProperty(LayeredOptions.CROSSING_MINIMIZATION_HIERARCHICAL_SWEEPINESS, -1.0);
 
         List<LNode> expectedSameOrder = copyOfNodesInLayer(1);
 

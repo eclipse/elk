@@ -103,13 +103,13 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
                 }
             });
             return intEditor;
-        case FLOAT:
+        case DOUBLE:
             CellEditor floatEditor = new TextCellEditor(parent);
             floatEditor.setValidator(new ICellEditorValidator() {
                 public String isValid(final Object value) {
                     try {
-                        float f = Float.parseFloat((String) value);
-                        List<GraphIssue> issues = source.validatePropertyValue(optionData, f);
+                        double d = Double.parseDouble((String) value);
+                        List<GraphIssue> issues = source.validatePropertyValue(optionData, d);
                         if (issues != null && !issues.isEmpty()) {
                             return issues.get(0).getMessage();
                         }

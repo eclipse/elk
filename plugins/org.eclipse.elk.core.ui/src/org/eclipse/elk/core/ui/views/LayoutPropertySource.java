@@ -180,7 +180,7 @@ public class LayoutPropertySource implements IPropertySource {
         }
         switch (optionData.getType()) {
         case INT:
-        case FLOAT:           // TextCellEditor
+        case DOUBLE:           // TextCellEditor
             return value.toString();
         case BOOLEAN:         // ComboBoxCellEditor
             if (value instanceof Boolean) {

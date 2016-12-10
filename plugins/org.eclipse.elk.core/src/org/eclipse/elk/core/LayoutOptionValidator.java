@@ -91,8 +91,8 @@ public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
                 return value instanceof Boolean;
             case INT:
                 return value instanceof Integer;
-            case FLOAT:
-                return value instanceof Float;
+            case DOUBLE:
+                return value instanceof Double;
             case ENUMSET:
                 return value instanceof EnumSet<?>;
             default:

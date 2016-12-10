@@ -81,7 +81,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
     }
     
     /** default value for aspect ratio. */
-    public static final float DEF_ASPECT_RATIO = 1.3f;
+    public static final double DEF_ASPECT_RATIO = 1.3;
 
     /**
      * {@inheritDoc}
@@ -192,7 +192,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         minWidth = Math.max(minWidth - padding.getLeft() - padding.getRight(), 0);
         minHeight = Math.max(minHeight - padding.getTop() - padding.getBottom(), 0);
         
-        Float aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
+        Double aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }
@@ -350,7 +350,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         minWidth = Math.max(minWidth - padding.getLeft() - padding.getRight(), 0);
         minHeight = Math.max(minHeight - padding.getTop() - padding.getBottom(), 0);
         
-        Float aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
+        Double aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
             aspectRatio = DEF_ASPECT_RATIO;
         }

@@ -451,16 +451,16 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             JvmPrimitiveType: switch jvmType.identifier {
                 case boolean.name:  return "BOOLEAN"
                 case int.name:      return "INT"
-                case float.name:    return "FLOAT"
-                // TODO it may be better to prevent double from the start
-                case double.name:   return "FLOAT"
+                case double.name:    return "DOUBLE"
+                // TODO it may be better to prevent float from the start
+                case float.name:   return "DOUBLE"
             }
             
             JvmGenericType: switch jvmType.identifier {
                 case Boolean.canonicalName:   return "BOOLEAN"
                 case Integer.canonicalName:   return "INT"
-                case Float.canonicalName:     return "FLOAT"
-                case Double.canonicalName:    return "FLOAT"
+                case Double.canonicalName:     return "DOUBLE"
+                case Float.canonicalName:    return "DOUBLE"
                 case String.canonicalName:    return "STRING"
                 case EnumSet.canonicalName:   return "ENUMSET"
 //                case jvmType.hasSupertype(IDataObject): return "OBJECT"
@@ -490,20 +490,20 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             if (property.type.type instanceof JvmPrimitiveType) {
                 val primitiveType = property.type.type as JvmPrimitiveType;
                 
-                // Double and long need to be mapped to Float and Integer, respectively
-                if (primitiveType.simpleName == "double") {
-                    return typeRef(Float);
+                // Float and long need to be mapped to Double and Integer, respectively
+                if (primitiveType.simpleName == "float") {
+                    return typeRef(Double);
                 } else if (primitiveType.simpleName == "long") {
                     return typeRef(Integer);
                 }
             } else if (property.type.type instanceof JvmGenericType) {
                 val genericType = property.type.type as JvmGenericType;
                 
-                // Double and FLoat... same as above. Also, with EnumSets we want to have the type of the set's
+                // Double and Float... same as above. Also, with EnumSets we want to have the type of the set's
                 // content as the option type, not the EnumSet type itself. Finally, with Lists, we need to drop the
                 // generic type argument
-                if (genericType.identifier == "java.lang.Double") {
-                    return typeRef(Float);
+                if (genericType.identifier == "java.lang.Float") {
+                    return typeRef(Double);
                 } else if (genericType.identifier == "java.lang.Long") {
                     return typeRef(Integer);
                 } else if (genericType.identifier == "java.util.EnumSet") {

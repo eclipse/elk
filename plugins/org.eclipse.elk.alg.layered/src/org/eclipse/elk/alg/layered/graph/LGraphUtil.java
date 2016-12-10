@@ -1002,7 +1002,7 @@ public final class LGraphUtil {
     public static Direction getDirection(final LGraph graph) {
         Direction direction = graph.getProperty(LayeredOptions.DIRECTION);
         if (direction == Direction.UNDEFINED) {
-            float aspectRatio = graph.getProperty(LayeredOptions.ASPECT_RATIO);
+            double aspectRatio = graph.getProperty(LayeredOptions.ASPECT_RATIO);
             if (aspectRatio >= 1) {
                 // Default due to default value of the ASPECT_RATIO option for the algorithm
                 return Direction.RIGHT;

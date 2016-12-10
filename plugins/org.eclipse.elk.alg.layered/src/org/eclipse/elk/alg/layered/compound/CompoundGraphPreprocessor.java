@@ -752,7 +752,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
             externalPort.origEdges.add(origEdge);
             
             // merge the properties of the original edges
-            float thickness = Math.max(externalPort.newEdge.getProperty(LayeredOptions.EDGE_THICKNESS),
+            double thickness = Math.max(externalPort.newEdge.getProperty(LayeredOptions.EDGE_THICKNESS),
                     origEdge.getProperty(LayeredOptions.EDGE_THICKNESS));
             externalPort.newEdge.setProperty(LayeredOptions.EDGE_THICKNESS, thickness);
         }
@@ -826,7 +826,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         } else {
             // we create a new dummy node in any case, and since there is no port yet we have to
             // create one as well
-            float thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
+            double thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
             dummyNode = LGraphUtil.createExternalPortDummy(
                     createExternalPortProperties(graph),
                     parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS),

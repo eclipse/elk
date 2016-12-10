@@ -69,8 +69,8 @@ public class LayoutOptionLabelProvider extends LabelProvider {
             return registry.get(ElkUiPlugin.IMG_CHOICE);
         case INT:
             return registry.get(ElkUiPlugin.IMG_INT);
-        case FLOAT:
-            return registry.get(ElkUiPlugin.IMG_FLOAT);
+        case DOUBLE:
+            return registry.get(ElkUiPlugin.IMG_DOUBLE);
         default:
             return null;
         }

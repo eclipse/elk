@@ -30,8 +30,8 @@ public class ElkUiPlugin extends AbstractUIPlugin {
     
     /** Image ID for choice properties. */
     public static final String IMG_CHOICE = "obj16/prop_choice.gif";
-    /** Image ID for float properties. */
-    public static final String IMG_FLOAT = "obj16/prop_float.gif";
+    /** Image ID for double properties. */
+    public static final String IMG_DOUBLE = "obj16/prop_double.gif";
     /** Image ID for integer properties. */
     public static final String IMG_INT = "obj16/prop_int.gif";
     /** Image ID for text properties. */
@@ -67,7 +67,7 @@ public class ElkUiPlugin extends AbstractUIPlugin {
      */
     @Override
     protected void initializeImageRegistry(final ImageRegistry reg) {
-        for (String img : new String[] {IMG_CHOICE, IMG_FLOAT, IMG_INT, IMG_TEXT, IMG_TRUE, IMG_FALSE}) {
+        for (String img : new String[] {IMG_CHOICE, IMG_DOUBLE, IMG_INT, IMG_TEXT, IMG_TRUE, IMG_FALSE}) {
             reg.put(img, getImageDescriptor("icons/" + img));
         }
     }

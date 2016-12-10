@@ -140,8 +140,8 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         
         // Find out if splines should be routed thoroughly or sloppy
         final boolean sloppyRouting = layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING);
-        final float sloppyLayerSpacingFactor =
-                layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING);
+        final double sloppyLayerSpacingFactor = layeredGraph.getProperty(
+                LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING);
 
         double xpos = 0.0;
 

@@ -75,19 +75,19 @@ option repulsivePower: int {
     targets edges
 }
 
-option temperature: float {
+option temperature: double {
     label "FR Temperature"
     description "The temperature is used as a scaling factor for particle displacements."
-    default = 0.001f
+    default = 0.001
     lowerBound = ExclusiveBounds.greaterThan(0)
     targets parents
     requires model == ForceModelStrategy.FRUCHTERMAN_REINGOLD
 }
 
-option repulsion: float {
+option repulsion: double {
     label "Eades Repulsion"
     description "Factor for repulsive forces in Eades' model."
-    default = 5.0f
+    default = 5.0
     lowerBound = ExclusiveBounds.greaterThan(0)
     targets parents
     requires model == ForceModelStrategy.EADES

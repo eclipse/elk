@@ -180,7 +180,7 @@ advanced option concentrate: boolean {
 	targets parents
 }
 
-option epsilon: float {
+option epsilon: double {
 	label "Epsilon"
 	description
 		"Terminating condition. If the length squared of all energy gradients are less than
@@ -189,7 +189,7 @@ option epsilon: float {
 	targets parents
 }
 
-advanced option iterationsFactor: float {
+advanced option iterationsFactor: double {
 	label "Iterations Factor"
 	description
 		"Multiplicative scale factor for the maximal number of iterations used during crossing
@@ -198,22 +198,22 @@ advanced option iterationsFactor: float {
 	targets parents
 }
 
-option labelAngle: float {
+option labelAngle: double {
 	label "Label Angle"
 	description "Angle between head / tail positioned edge labels and the corresponding edge."
 	default = -25
 	targets edges
 }
 
-option labelDistance: float {
+option labelDistance: double {
 	label "Label Distance"
 	description "Distance of head / tail positioned edge labels to the source or target node."
 	default = 1
-    lowerBound = 0f
+    lowerBound = 0.0
 	targets edges
 }
 
-option layerSpacingFactor: float {
+option layerSpacingFactor: double {
 	label "Layer Spacing Factor"
 	description "Factor for the spacing of different layers (ranks)."
 	default = 1

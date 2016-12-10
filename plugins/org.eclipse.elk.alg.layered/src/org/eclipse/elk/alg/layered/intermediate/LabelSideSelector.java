@@ -113,7 +113,7 @@ public final class LabelSideSelector implements ILayoutProcessor {
                 if (lNode.getType() == NodeType.LABEL) {
                     if (lNode.getProperty(InternalProperties.LABEL_SIDE) == LabelSide.ABOVE) {
                         LEdge originEdge = (LEdge) lNode.getProperty(InternalProperties.ORIGIN);
-                        float thickness = originEdge.getProperty(LayeredOptions.EDGE_THICKNESS);
+                        double thickness = originEdge.getProperty(LayeredOptions.EDGE_THICKNESS);
                         double portPos = lNode.getSize().y - Math.ceil(thickness / 2);
                         for (LPort port : lNode.getPorts()) {
                             port.getPosition().y = portPos;

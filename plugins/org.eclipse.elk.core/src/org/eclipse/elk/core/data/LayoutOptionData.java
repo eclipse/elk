@@ -42,8 +42,8 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         INT,
         /** string type. */
         STRING,
-        /** float type. */
-        FLOAT,
+        /** double type. */
+        DOUBLE,
         /** enumeration type. */
         ENUM,
         /** enumeration set type. */
@@ -235,14 +235,14 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
             } catch (NumberFormatException exception) {
                 return null;
             }
-        case STRING:
-            return valueString;
-        case FLOAT:
+        case DOUBLE:
             try {
-                return Float.valueOf(valueString);
+                return Double.valueOf(valueString);
             } catch (NumberFormatException exception) {
                 return null;
             }
+        case STRING:
+            return valueString;
         case ENUM:
             checkEnumClass();
             return enumForString(valueString);
@@ -349,8 +349,8 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
             return Boolean.FALSE;
         case INT:
             return Integer.valueOf(0);
-        case FLOAT:
-            return Float.valueOf(0.0f);
+        case DOUBLE:
+            return Double.valueOf(0.0);
         case ENUM:
             checkEnumClass();
             Enum<?>[] enums = ((Class<Enum>) clazz).getEnumConstants();
