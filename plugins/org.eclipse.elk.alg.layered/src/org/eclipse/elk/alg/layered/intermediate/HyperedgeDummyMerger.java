@@ -87,8 +87,8 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
                     LPort lastNodeTarget = lastNode.getProperty(InternalProperties.LONG_EDGE_TARGET);
                     
                     // If at least one of the two nodes doesn't have the properties set, skip it
-                    boolean currNodePropertiesSet = currNodeSource != null || currNodeTarget != null;
-                    boolean lastNodePropertiesSet = lastNodeSource != null || lastNodeTarget != null;
+                    boolean currNodePropertiesSet = currNodeSource != null && currNodeTarget != null;
+                    boolean lastNodePropertiesSet = lastNodeSource != null && lastNodeTarget != null;
                     
                     // If the source or the target are identical, merge the current node
                     // into the last
