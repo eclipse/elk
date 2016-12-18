@@ -872,5 +872,23 @@ public final class ElkMath {
         v.scale(Math.min(xscale, yscale));
         return v;
     }
+    
+    /**
+     * Returns the signum function of the specified <tt>double</tt> value. The return value
+     * is -1 if the specified value is negative; 0 if the specified value is zero; and 1 if the
+     * specified value is positive. This is basically {@link Math#signum(double)} with an integer
+     * return value.
+     *
+     * @return the signum function of the specified <tt>double</tt> value.
+     */
+    public static int signum(final double x) {
+        if (x < 0) {
+            return -1;
+        }
+        if (x > 0) {
+            return 1;
+        }
+        return 0;
+    }
 
 }
