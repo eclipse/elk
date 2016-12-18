@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.core.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -793,18 +792,9 @@ public class DiagramLayoutEngine {
      * @param graph the parent node of the layout graph
      */
     protected URI getExportURI(final ElkNode graph) {
-        String path = System.getProperty("user.home");
-        if (path != null) {
-            if (path.endsWith(File.separator)) {
-                path += "tmp" + File.separator + "layout" + File.separator
-                        + Integer.toHexString(graph.hashCode()) + ".kgraph";
-            } else {
-                path += File.separator + "tmp" + File.separator + "layout" + File.separator
-                        + Integer.toHexString(graph.hashCode()) + ".kgraph";
-            }
-            return URI.createFileURI(path);
-        }
-        return null;
+        String path = ElkUtil.debugFolderPath("diagram_layout_engine")
+                + Integer.toHexString(graph.hashCode()) + ".elkg";
+        return URI.createFileURI(path);
     }
 
 }

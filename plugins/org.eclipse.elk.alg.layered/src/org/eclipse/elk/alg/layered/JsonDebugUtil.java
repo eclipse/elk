@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
@@ -22,9 +20,9 @@ import java.util.Map.Entry;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
 import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.Dependency;
 import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
@@ -45,8 +43,12 @@ import com.google.common.collect.Lists;
  */
 public final class JsonDebugUtil {
     
+    /** File extension for dot debug files. */
+    private static final String FILE_EXTENSION = ".json";
+    
     private static final String INDENT = "  ";
 
+    
     /**
      * Hidden constructor to avoid instantiation.
      */
@@ -65,7 +67,7 @@ public final class JsonDebugUtil {
      */
     public static void writeDebugGraph(final LGraph lgraph, final int slotIndex, final String name) {
         try {
-            Writer writer = createWriter(lgraph, slotIndex, name);
+            Writer writer = DebugUtil.createWriter(lgraph, slotIndex, name, FILE_EXTENSION);
             
             beginGraph(writer, lgraph);
             
@@ -94,7 +96,7 @@ public final class JsonDebugUtil {
             final List<LinearSegment> segmentList, final List<List<LinearSegment>> outgoingList) {
 
         try {
-            Writer writer = createWriter(layeredGraph);
+            Writer writer = DebugUtil.createWriter(layeredGraph, FILE_EXTENSION);
             
             beginGraph(writer, layeredGraph);
             beginChildNodeList(writer, 1);
@@ -165,7 +167,7 @@ public final class JsonDebugUtil {
             final List<HyperNode> hypernodes, final String debugPrefix, final String label) {
         
         try {
-            Writer writer = createWriter(layeredGraph, layerIndex, debugPrefix, label);
+            Writer writer = DebugUtil.createWriter(layeredGraph, layerIndex, debugPrefix, label, FILE_EXTENSION);
             beginGraph(writer, layeredGraph);
             beginChildNodeList(writer, 1);
 
@@ -700,103 +702,6 @@ public final class JsonDebugUtil {
             name += " [ DUMMY: " + node.getType().name() + " ]";
         }
         return name.replace("\"", "\\\"").replace("\n", "\\n");
-    }
-
-    /**
-     * Creates a writer for debug output.
-     * 
-     * @param layeredGraph
-     *            the layered graph.
-     * @return a file writer for debug output.
-     * @throws IOException
-     *             if creating the output file fails.
-     */
-    private static Writer createWriter(final LGraph layeredGraph) throws IOException {
-        String path = getDebugOutputPath();
-        new File(path).mkdirs();
-
-        String debugFileName = getDebugOutputFileBaseName(layeredGraph) + "linseg-dep";
-        return new FileWriter(new File(path + File.separator + debugFileName + ".dot"));
-    }
-    
-    /**
-     * Creates a writer for the given graph. The file name to be written to is assembled from the
-     * graph's hash code and the slot index.
-     * 
-     * @param graph
-     *            the graph to be written.
-     * @param slotIndex
-     *            the slot before whose execution the graph is written.
-     * @param name
-     *            the name the slot before whose execution the graph is written.
-     * @return file writer.
-     * @throws IOException
-     *             if anything goes wrong.
-     */
-    private static Writer createWriter(final LGraph graph, final int slotIndex, final String name)
-            throws IOException {
-
-        String path = getDebugOutputPath();
-        new File(path).mkdirs();
-
-        String debugFileName = getDebugOutputFileBaseName(graph) + "fulldebug-slot"
-                        + String.format("%1$02d", slotIndex) + "-" + name;
-        return new FileWriter(new File(path + File.separator + debugFileName + ".json"));
-    }
-    
-    /**
-     * Create a writer for debug output.
-     * 
-     * @param layeredGraph
-     *            the layered graph
-     * @param layerIndex
-     *            the currently processed layer's index
-     * @param debugPrefix
-     *            prefix of debug output files
-     * @param label
-     *            a label to append to the output files
-     * @return a file writer for debug output
-     * @throws IOException
-     *             if creating the output file fails
-     */
-    private static Writer createWriter(final LGraph layeredGraph, final int layerIndex,
-            final String debugPrefix, final String label) throws IOException {
-        String path = getDebugOutputPath();
-        new File(path).mkdirs();
-        
-        String debugFileName = getDebugOutputFileBaseName(layeredGraph)
-                + debugPrefix + "-l" + layerIndex + "-" + label;
-        return new FileWriter(new File(path + File.separator + debugFileName + ".json"));
-    }
-
-    /**
-     * Returns the path for debug output graphs.
-     * 
-     * @return the path for debug output graphs, without trailing separator.
-     */
-    private static String getDebugOutputPath() {
-        String path = System.getProperty("user.home");
-        if (path.endsWith(File.separator)) {
-            path += "tmp" + File.separator + "klay";
-        } else {
-            path += File.separator + "tmp" + File.separator + "klay";
-        }
-
-        return path;
-    }
-
-    /**
-     * Returns the beginning of the file name used for debug output graphs while layouting the given
-     * layered graph. This will look something like {@code "143293-"}.
-     * 
-     * @param graph
-     *            the graph to return the base debug file name for.
-     * @return the base debug file name for the given graph.
-     */
-    private static String getDebugOutputFileBaseName(final LGraph graph) {
-        return Integer.toString(graph.hashCode()
-                & ((1 << (Integer.SIZE / 2)) - 1))
-                + "-";
     }
 
 }

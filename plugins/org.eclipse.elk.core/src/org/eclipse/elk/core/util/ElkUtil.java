@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Set;
@@ -47,7 +48,7 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 
 /**
- * Utility methods for KGraphs and layout data.
+ * Utility methods for layout-related things.
  * 
  * @author msp
  * @author uru
@@ -602,23 +603,6 @@ public final class ElkUtil {
     }
     
     /**
-     * Returns the signum function of the specified <tt>double</tt> value. The return value
-     * is -1 if the specified value is negative; 0 if the specified value is zero; and 1 if the
-     * specified value is positive.
-     *
-     * @return the signum function of the specified <tt>double</tt> value.
-     */
-    private static int signum(final double x) {
-        if (x < 0) {
-            return -1;
-        }
-        if (x > 0) {
-            return 1;
-        }
-        return 0;
-    }
-    
-    /**
      * Get the edge points as an array of vectors. Note that this method requires the edge to have exactly one
      * edge section.
      * 
@@ -971,6 +955,46 @@ public final class ElkUtil {
         chain.add(new KVector(edgeSection.getEndX(), edgeSection.getEndY()));
         
         return chain;
+    }
+    
+    /**
+     * Returns a path where debug files can be stored. All debug folders end up in an ELK-specific folder placed
+     * inside the user's home folder. The returned path can either be that ELK-specific folder itself or a
+     * subfolder.
+     * 
+     * @param subfolder optional subfolder name. Can be {@code null} or empty, in which case the ELK-specific
+     *                  subfolder of the user's home folder is returned.
+     * @return debug folder path, including a trailing separator character. Can return {@code null} if the user's
+     *         home folder is not defined.
+     */
+    public static String debugFolderPath(final String subfolder) {
+        String userHome = System.getProperty("user.home");
+        
+        if (userHome != null) {
+            StringBuilder path = new StringBuilder(userHome);
+            
+            // Make sure we end the path with a separator character
+            if (path.charAt(path.length() - 1) != File.separatorChar) {
+                path.append(File.separatorChar);
+            }
+            
+            // The ELK debug directory
+            path.append("elk").append(File.separatorChar);
+            
+            // Append the subfolder name, if any
+            if (!Strings.isNullOrEmpty(subfolder)) {
+                path.append(subfolder);
+            }
+            
+            // Again, make sure we end with a separator
+            if (path.charAt(path.length() - 1) != File.separatorChar) {
+                path.append(File.separatorChar);
+            }
+            
+            return path.toString();
+        } else {
+            return null;
+        }
     }
     
 }
