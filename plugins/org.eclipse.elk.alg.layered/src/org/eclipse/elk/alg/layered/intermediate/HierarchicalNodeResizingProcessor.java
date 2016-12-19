@@ -118,7 +118,7 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
     // Graph Postprocessing (Size and External Ports)
 
     /**
-     * Sets the size of the given graph such that size constraints are adhered to. Furthermore, the border spacing is
+     * Sets the size of the given graph such that size constraints are adhered to. Furthermore, the padding is
      * added to the graph size and the graph offset. Afterwards, the border spacing property is reset to 0.
      *
      * <p>
@@ -136,13 +136,6 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
     private void resizeGraph(final LGraph lgraph) {
         Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
         Set<SizeOptions> sizeOptions = lgraph.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
-        ElkPadding padding = lgraph.getProperty(LayeredOptions.PADDING);
-
-        // add the border spacing to the graph size and graph offset
-        lgraph.getOffset().x += padding.getLeft();
-        lgraph.getOffset().y += padding.getTop();
-        lgraph.getSize().x += padding.getLeft() + padding.getRight();
-        lgraph.getSize().y += padding.getTop() + padding.getBottom();
 
         // getActualSize() used to take the border spacing (what is now included in the padding)
         // into account, which is why by this point it had to be cleared since it had already

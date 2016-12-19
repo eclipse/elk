@@ -314,23 +314,17 @@ class ElkGraphImporter {
         
         // Adjust the insets to respect inside labels.
         double labelSpacing = lgraph.getProperty(LayeredOptions.SPACING_LABEL_NODE);
-        ElkPadding labelPadding = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
+        ElkPadding padding = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
                 ElkGraphAdapters.adaptSingleNode(elkgraph), labelSpacing);
-        
-        // Copy the insets to the layered graph
+
+        // 'padding' already contains the node's padding that represents the elkgraph
+        // copy it to the lgraph ...
         LInsets linsets = lgraph.getInsets();
-        linsets.left = labelPadding.left;
-        linsets.right = labelPadding.right;
-        linsets.top = labelPadding.top;
-        linsets.bottom = labelPadding.bottom;
-        
-        // add the specified padding
-        ElkPadding padding = lgraph.getProperty(LayeredOptions.PADDING);
-        linsets.left += padding.getLeft();
-        linsets.right += padding.getRight();
-        linsets.top += padding.getTop();
-        linsets.bottom += padding.getBottom();
-        
+        linsets.left = padding.left;
+        linsets.right = padding.right;
+        linsets.top = padding.top;
+        linsets.bottom = padding.bottom;
+
         return lgraph;
     }
     
@@ -506,7 +500,7 @@ class ElkGraphImporter {
                 inputPortVote++;
             } else if (isSelfLoop && !isInsideSelfLoop) {
                 outputPortVote++;
-            } else if (targetNode.getParent() == elkgraph ||targetNode  == elkgraph) {
+            } else if (targetNode.getParent() == elkgraph || targetNode  == elkgraph) {
                 inputPortVote++;
             } else {
                 outputPortVote++;
@@ -524,7 +518,7 @@ class ElkGraphImporter {
                 outputPortVote++;
             } else if (isSelfLoop && !isInsideSelfLoop) {
                 inputPortVote++;
-            } else if (sourceNode.getParent() == elkgraph ||sourceNode  == elkgraph) {
+            } else if (sourceNode.getParent() == elkgraph || sourceNode  == elkgraph) {
                 outputPortVote++;
             } else {
                 inputPortVote++;
