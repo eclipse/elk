@@ -99,7 +99,8 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.alg.layered.layering.layerConstraint
 	supports org.eclipse.elk.alg.layered.cycleBreaking.strategy
 	supports org.eclipse.elk.alg.layered.crossingMinimization.strategy
-	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch
+	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.activationThreshold
+	supports org.eclipse.elk.alg.layered.crossingMinimization.greedySwitch.type
 	supports org.eclipse.elk.alg.layered.crossingMinimization.semiInteractive
 	supports mergeEdges
 	supports mergeHierarchyEdges
@@ -288,16 +289,28 @@ group crossingMinimization {
         targets parents 
     }
     
-    /** 
-     * Greedy switch type is not used internally, here we use the CrossMinType enum defined in the
-     * LayerSweep class. This is only used for user interaction.
-     */
-    advanced option greedySwitch: GreedySwitchType {
-        label "Greedy Switch Crossing Minimization"
-        description "Greedy Switch strategy for crossing minimization."
-        default = GreedySwitchType.TWO_SIDED
-        targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.greedySwitch
+    group greedySwitch {
+        
+        advanced option activationThreshold: int {
+            label "Greedy Switch Activation Threshold"
+            description 
+                "By default it is decided automatically if the greedy switch is activated or not. 
+                 The decision is based on whether the size of the input graph (without dummy nodes) 
+                 is smaller than the value of this option. A '0' enforces the activation."    
+            default = 40
+            targets parents
+            lowerBound = 0
+        } 
+        
+        advanced option type: GreedySwitchType {
+            label "Greedy Switch Crossing Minimization"
+            description 
+                "Greedy Switch strategy for crossing minimization. The greedy switch heuristic is executed 
+                 after the regular layer sweep as a post-processor."
+            default = GreedySwitchType.TWO_SIDED
+            targets parents
+            legacyIds de.cau.cs.kieler.klay.layered.greedySwitch
+        }        
     }
     
     advanced option semiInteractive: boolean {
