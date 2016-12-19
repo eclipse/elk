@@ -164,8 +164,15 @@ public final class BKNodePlacer implements ILayoutPhase {
 
         // Regard possible other layout options.
         debugMode = layeredGraph.getProperty(LayeredOptions.DEBUG_MODE);
-        produceBalancedLayout =
-                layeredGraph.getProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT) == FixedAlignment.BALANCED;
+
+        // a balanced layout is desired if
+        //  a) no specific alignment is set and straight edges are not desired
+        //  b) a balanced alignment is enforced
+        FixedAlignment align = layeredGraph.getProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT);
+        boolean favorStraightEdges = layeredGraph.getProperty(LayeredOptions.NODE_PLACEMENT_FAVOR_STRAIGHT_EDGES);
+        produceBalancedLayout = 
+                (align == FixedAlignment.NONE && !favorStraightEdges) 
+                || align == FixedAlignment.BALANCED;
 
         // Phase which marks type 1 conflicts, no difference between the directions so only
         // one run is required.

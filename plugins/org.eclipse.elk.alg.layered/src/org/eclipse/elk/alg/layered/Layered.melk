@@ -351,9 +351,12 @@ group nodePlacement {
     }
     
     option favorStraightEdges: boolean {
-        label "Favor Straight Edges"
-        description "Favor straight edges over a balanced node placement."
-        // the default is automatically determined based on the used 'edgeRouting'
+        label "Favor Straight Edges Over Balancing"
+        description 
+            "Favor straight edges over a balanced node placement.
+             The default behavior is determined automatically based on the used 'edgeRouting'.
+             For an orthogonal style it is set to true, for all other styles to false."
+        // no default, see description
         targets parents
         requires strategy == NodePlacementStrategy.NETWORK_SIMPLEX 
           // ||  strategy == NodePlacementStrategy.BRANDES_KOEPF
@@ -362,21 +365,25 @@ group nodePlacement {
     group bk {
         
         advanced option edgeStraightening: EdgeStraighteningStrategy {
-        	label "Edge Straightening"
+        	label "BK Edge Straightening"
         	description
         	    "Specifies whether the Brandes Koepf node placer tries to increase the number of straight edges
-                at the expense of diagram size."
+                 at the expense of diagram size.
+                 There is a subtle difference to the 'favorStraightEdges' option, which decides whether 
+                 a balanced placement of the nodes is desired, or not. In bk terms this means combining the four 
+                 alignments into a single balanced one, or not. This option on the other hand tries to straighten 
+                 additional edges during the creation of each of the four alignments."
         	default = EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS
         	targets parents
         	legacyIds de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy
         	requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.BRANDES_KOEPF
         }
         
-        // TODO Turn this into two layout options
         advanced option fixedAlignment: FixedAlignment {
-            label "Fixed Alignment"
+            label "BK Fixed Alignment"
             description
-                "Tells the BK node placer to use a certain alignment instead of taking the optimal result."
+                "Tells the BK node placer to use a certain alignment (out of its four) instead of the 
+                 one producing the smallest height, or the combination of all four."
             default = FixedAlignment.NONE
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.fixedAlignment
