@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p4nodes;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.alg.layered.ILayoutPhase;
@@ -29,8 +31,12 @@ import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.layered.properties.Spacings;
+import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -52,14 +58,64 @@ import com.google.common.collect.Maps;
  *   <li>Nodes: The position, height, margin, and spacing of a node are summed and ceiled.</li> 
  *   <li>Ports: A port's position is altered to the closest integer position.</li>
  * </ul>
+ * 
+ * <h2>Favor Straight Edges </h2>
+ * The way the auxiliary graph is built allows for symmetric optimal solutions 
+ * that may result in edge "stair-cases".
+ *  
+ * Consider the following example. n1 and n4 cannot be moved closer to each other 
+ * because of spacing restrictions. If the edge (n4,n3) is straight, several (vertical) positions 
+ * of n2 result in minimal edge length.  
+ * <pre>
+ *   __
+ *  |  |
+ *  |n1|--.   __
+ *  |__|  ^--|n2|--.   ____
+ *                 ^--|    | 
+ *   __               | n3 |
+ *  |n4|--------------|____|
+ * </pre>
+ * 
+ * With the {@link LayeredOptions#NODE_PLACEMENT_FAVOR_EDGE_STRAIGHTNESS} option set,
+ * we try to improve this by additionally reducing the number of bends, like this:
+ * <pre>
+ *   __
+ *  |  |      __
+ *  |n1|-----|n2|--.
+ *  |__|           |   ____
+ *                 ^--|    | 
+ *   __               | n3 |
+ *  |n4|--------------|____|
+ * </pre>
+ * 
+ * Additionally note that north/south ports are realized using dummy nodes within the same layer as the port's parent 
+ * node, and the dummy is <b>not</b> connected to the parent. Currently this is neglected when identifying paths are 
+ * to introduce the straightness dummies. In other words, vertical segments of north/south edges may be elongated 
+ * for straighter horizontal edges.
  */
 public class NetworkSimplexPlacer implements ILayoutPhase {
     
-    /** additional processor dependencies for graphs with hierarchical ports. */
+    /** Additional processor dependencies for graphs with hierarchical ports. */
     private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS =
         IntermediateProcessingConfiguration.createEmpty()
             .addBeforePhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
+    /** Internal property to associate dummy {@link NNode}s with {@link LEdge}s. */
+    private static final IProperty<NNode> EDGE_NNODE = new Property<>("nodePlace.ns.edgeNNode");
+    
+    /** The lGraph to be handled. */
+    private LGraph lGraph;
+    /**
+     * Number of nodes of the {@link #lGraph}. The field is uninitialized until {@link #buildAuxiliaryGraph()} has been
+     * called.
+     */
+    private int nodeCount;
+    /**
+     * Internal book keeping array for the case that {@link LayeredOptions#NODE_PLACEMENT_FAVOR_EDGE_STRAIGHTNESS} is
+     * used. Indexed by {@link LNode#id}.
+     */
+    private int[] nodeState;
+    
     /**
      * {@inheritDoc}
      */
@@ -80,16 +136,56 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Network simplex node placement", 1);
         
-        final Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
-        
-        final Map<LNode, NNode> nodeMap = Maps.newHashMap();
-        int nodeCnt = 0;
-        NGraph graph = new NGraph();
+        this.lGraph = layeredGraph;
         
         // -------------------------------
         // #1 transform nodes & edges
         // -------------------------------
-        for (Layer l : layeredGraph) {
+        NGraph nGraph = buildAuxiliaryGraph();
+        
+        // add something to straighten edges, if desired
+        if (layeredGraph.getProperty(LayeredOptions.NODE_PLACEMENT_FAVOR_STRAIGHT_EDGES)) {
+            insertStraighteningDummyNodes(nGraph);
+        }
+
+        // --------------------------------
+        // #2 execute the network simplex
+        // --------------------------------
+        // compared to {@link NetworkSimplexLayerer} a significantly larger iteration limit 
+        // is selected here because the node placement uses an auxiliary graph with
+        // larger node and edge count
+        int iterLimit = layeredGraph.getProperty(LayeredOptions.THOROUGHNESS) * nGraph.nodes.size();
+        
+        NetworkSimplex.forGraph(nGraph)
+            .withIterationLimit(iterLimit)
+            .withBalancing(false)
+            .execute(progressMonitor.subTask(1));
+
+        // --------------------------------
+        // #3 apply positions
+        // --------------------------------
+        for (NNode n : nGraph.nodes) {
+            if (n.origin != null) {
+                LNode lNode = (LNode) n.origin;
+                lNode.getPosition().y = n.layer + lNode.getMargin().top;
+            }
+        }
+        
+        progressMonitor.done();
+    }
+    
+    /**
+     * Builds the auxiliary graph on which the network simplex algorithm is run.
+     */
+    private NGraph buildAuxiliaryGraph() { // SUPPRESS CHECKSTYLE MethodLength
+        
+        final Spacings spacings = lGraph.getProperty(InternalProperties.SPACINGS);
+        final Map<LNode, NNode> nodeMap = Maps.newHashMap();
+        NGraph graph = new NGraph();
+        int nodeCnt = 0;
+        
+        // transform all nodes and add separating and order preserving edges
+        for (Layer l : lGraph) {
             
             LNode prevL = null;
             NNode prev = null;
@@ -127,8 +223,10 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
             }
         }
         
+        this.nodeCount = nodeCnt;
+        
         // "integerify" port positions
-        for (Layer l : layeredGraph) {
+        for (Layer l : lGraph) {
             for (LNode lNode : l) {
 
                 for (LPort p : lNode.getPorts()) {
@@ -143,18 +241,13 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
         }
         
         // convert the edges
-        for (Layer l : layeredGraph) {
-            for (LNode lNode : l) {
+        for (Layer l : lGraph.getLayers()) {
+            for (LNode lNode : l.getNodes()) {
                 
                 for (LEdge lEdge : lNode.getOutgoingEdges()) {
                     
-                    // no self loops
-                    if (lEdge.isSelfLoop()) {
-                        continue;
-                    }
-                    
-                    // no inlayer edges
-                    if (lEdge.getTarget().getNode().getLayer() == l) {
+                    // no self loops and in-layer edges
+                    if (!isHandledEdge(lEdge)) {
                         continue;
                     }
               
@@ -176,6 +269,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
 
                     // a dummy node
                     NNode dummy = NNode.of().create(graph);
+                    lEdge.setProperty(EDGE_NNODE, dummy);
                     
                     // an edge to the source 
                     NEdge leftEdge = new NEdge();
@@ -204,32 +298,47 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
             }
         }
         
-        // --------------------------------
-        // #2 execute the network simplex
-        // --------------------------------
-        // compared to {@link NetworkSimplexLayerer} a significantly larger iteration limit 
-        // is selected here because the node placement uses an auxiliary graph  
-        // larger node and edge count
-        int iterLimit = layeredGraph.getProperty(LayeredOptions.THOROUGHNESS) * nodeCnt;
         
-        NetworkSimplex.forGraph(graph)
-            .withIterationLimit(iterLimit)
-            .withBalancing(false)
-            .execute(progressMonitor.subTask(1));
-
-        // --------------------------------
-        // #3 apply positions
-        // --------------------------------
-        for (NNode n : graph.nodes) {
-            if (n.origin != null) {
-                LNode lNode = (LNode) n.origin;
-                lNode.getPosition().y = n.layer + lNode.getMargin().top;
+        // insert NEdges to keep north and south port edges short
+        for (Layer l : lGraph.getLayers()) {
+            for (LNode n : l.getNodes()) {
+                for (LPort sp : n.getPortSideView(PortSide.SOUTH)) {
+                    LNode other = sp.getProperty(InternalProperties.PORT_DUMMY);
+                    // if no edge was attached to the port, no dummy was created ...
+                    if (other != null) {
+                        NEdge nEdge = new NEdge();
+                        nEdge.delta = 0; // doesn't matter
+                        nEdge.weight = NORTH_SOUTH_EDGE_WEIGHT; 
+                        
+                        nEdge.source = nodeMap.get(n);
+                        nEdge.target = nodeMap.get(other);
+                        nEdge.source.getOutgoingEdges().add(nEdge);
+                        nEdge.target.getIncomingEdges().add(nEdge);
+                    }
+                }
+                
+                for (LPort sp : n.getPortSideView(PortSide.NORTH)) {
+                    LNode other = sp.getProperty(InternalProperties.PORT_DUMMY);
+                    // if no edge was attached to the port, no dummy was created ...
+                    if (other != null) {
+                        NEdge nEdge = new NEdge();
+                        nEdge.delta = 0; // doesn't matter
+                        nEdge.weight = NORTH_SOUTH_EDGE_WEIGHT;
+                        
+                        nEdge.source = nodeMap.get(other);
+                        nEdge.target = nodeMap.get(n);
+                        nEdge.source.getOutgoingEdges().add(nEdge);
+                        nEdge.target.getIncomingEdges().add(nEdge);
+                    }
+                }
             }
-
         }
         
-        progressMonitor.done();
+        return graph;
     }
+    
+    /** Smaller weight than default (1), since horizontal edges are more important. */
+    private static final double NORTH_SOUTH_EDGE_WEIGHT = 0.1f;
     
     /**
      * @return for the passed edge, the individual edge weight as specified by Gansner et al. The
@@ -253,5 +362,165 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
         }
         
         return priority * edgeTypeWeight;
+    }
+    
+    /**
+     * @return true if the edge is neither a self loop, nor an in-layer edge.
+     */
+    private boolean isHandledEdge(final LEdge edge) {
+        return !edge.isSelfLoop() 
+            && !(edge.getTarget().getNode().getLayer() == edge.getSource().getNode().getLayer());
+    }
+    
+    /**
+     * Inserts additional dummy nodes to handle the edge straightness case discussed in the class's javadoc.
+     * 
+     * Note that paths that end in leaf nodes are not considered here since 
+     * the built auxiliary graph should result in those paths being straight anyway.
+     */
+    private void insertStraighteningDummyNodes(final NGraph nGraph) {
+        // assign indexes
+        int index = 0;
+        nodeState = new int[nodeCount];
+        for (Layer l : lGraph.getLayers()) {
+            for (LNode n : l.getNodes()) {
+                n.id = index++;
+                // identify junction nodes
+                nodeState[n.id] = getNodeState(n);
+            }
+        }
+
+        // identify directed paths in the graph
+        final List<List<LEdge>> paths = identifyPaths();
+        
+        for (List<LEdge> path : paths) {
+            
+            Iterator<LEdge> pathIt = path.iterator();
+            if (!pathIt.hasNext()) {
+                continue;
+            }
+            
+            LEdge last = pathIt.next();
+            
+            while (pathIt.hasNext()) {
+                LEdge cur = pathIt.next();
+                
+                NNode one = cur.getProperty(EDGE_NNODE);
+                NNode two = last.getProperty(EDGE_NNODE);
+                
+                // a dummy node
+                NNode dummy = NNode.of().create(nGraph);
+                
+                // an edge to the source 
+                NEdge leftEdge = new NEdge();
+                leftEdge.weight = 1;
+                leftEdge.delta = 0;
+                
+                leftEdge.source = dummy;
+                leftEdge.target = one;
+                leftEdge.source.getOutgoingEdges().add(leftEdge);
+                leftEdge.target.getIncomingEdges().add(leftEdge);
+                
+                // an edge to the target
+                NEdge rightEdge = new NEdge();
+                rightEdge.weight = 1;
+                rightEdge.delta = 0;
+
+                rightEdge.source = dummy;
+                rightEdge.target = two;
+                rightEdge.source.getOutgoingEdges().add(rightEdge);
+                rightEdge.target.getIncomingEdges().add(rightEdge);
+                
+                last = cur;
+            }
+            
+        }
+    }
+    
+    private List<List<LEdge>> identifyPaths() {
+        
+        List<List<LEdge>> paths = Lists.newArrayList();
+        
+        for (Layer l: lGraph.getLayers()) {
+            
+            // now check every path starting at a junction
+            for (LNode n : l.getNodes()) {
+                if (nodeState[n.id] == JUNCTION) {
+                    for (LEdge e : n.getConnectedEdges()) {
+                        
+                        if (!isHandledEdge(e)) {
+                            continue;
+                        }
+                        
+                        LNode other = e.getOther(n);
+                        if (nodeState[other.id] != VISITED && nodeState[other.id] != JUNCTION) {
+                            // follow the path
+                            List<LEdge> seq = Lists.newArrayList(e);
+                            boolean valid = follow(other, n, seq);
+
+                            if (valid && seq.size() >= 2) {
+                                paths.add(seq);
+                            }
+
+                            nodeState[other.id] = VISITED;
+                        }
+                    }
+                }
+            }
+        }
+
+        return paths;
+    }
+    
+    private boolean follow(final LNode curr, final LNode prev, final List<LEdge> seq) {
+
+        // valid paths end in junctions
+        if (nodeState[curr.id] == JUNCTION) {
+            return true;
+        }
+        
+        for (LEdge incident : curr.getConnectedEdges()) {
+            if (!isHandledEdge(incident)) {
+                continue;
+            }
+            LNode otherOther = incident.getOther(curr);
+            if (otherOther != prev) { // don't look back!
+
+                seq.add(incident);
+
+                if (nodeState[otherOther.id] != VISITED) {
+                    return follow(otherOther, curr, seq);
+                }
+                
+                nodeState[otherOther.id] = VISITED;
+            }
+        }
+        
+        return false;
+    }
+    
+    /** Indicates that the node has not been visited yet. */
+    private static final int VISITED = -1;
+    /** Indicates that a node is neither a {@link #JUNCTION}, nor a {@link #LEAF}. */
+    private static final int OTHER = 0;
+    /** A junction has either an incoming degree larger than two, an outgoing degree larger than two, or both. */
+    private static final int JUNCTION = 2;
+    /** A leaf has exactly one incoming or outgoing edge. */
+    private static final int LEAF = 1;
+    
+    private static int getNodeState(final LNode node) {
+        int inco = 0;
+        int ouco = 0;
+        for (LPort p : node.getPorts()) {
+            inco += p.getIncomingEdges().size();
+            ouco += p.getOutgoingEdges().size();
+            if (inco > 1 || ouco > 1) {
+                return JUNCTION;
+            }
+        }
+        if (inco + ouco == 1) {
+            return LEAF;
+        }
+        return OTHER;
     }
 }

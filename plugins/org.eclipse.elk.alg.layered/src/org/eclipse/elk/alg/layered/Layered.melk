@@ -153,6 +153,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports edgeRouting.sloppySplineRouting
     supports edgeRouting.sloppySplineLayerSpacing
     supports layering.coffmanGraham.layerBound
+    supports nodePlacement.favorStraightEdges
+   
 }
 
 
@@ -348,6 +350,15 @@ group nodePlacement {
         legacyIds de.cau.cs.kieler.klay.layered.nodePlace
     }
     
+    option favorStraightEdges: boolean {
+        label "Favor Straight Edges"
+        description "Favor straight edges over a balanced node placement."
+        // the default is automatically determined based on the used 'edgeRouting'
+        targets parents
+        requires strategy == NodePlacementStrategy.NETWORK_SIMPLEX 
+          // ||  strategy == NodePlacementStrategy.BRANDES_KOEPF
+    }
+    
     group bk {
         
         advanced option edgeStraightening: EdgeStraighteningStrategy {
@@ -374,7 +385,6 @@ group nodePlacement {
         
     }
     
-    
     group linearSegments {
         
         advanced option deflectionDampening: double {
@@ -388,7 +398,6 @@ group nodePlacement {
         }
         
     }
-    
 }
 
 

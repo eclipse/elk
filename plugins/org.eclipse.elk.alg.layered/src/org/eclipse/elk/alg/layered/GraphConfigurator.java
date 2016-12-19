@@ -112,6 +112,12 @@ final class GraphConfigurator {
             lgraph.setProperty(InternalProperties.RANDOM, new Random(randomSeed));
         }
         
+        Boolean favorStraightness = lgraph.getProperty(LayeredOptions.NODE_PLACEMENT_FAVOR_STRAIGHT_EDGES);
+        if (favorStraightness == null) {
+            lgraph.setProperty(LayeredOptions.NODE_PLACEMENT_FAVOR_STRAIGHT_EDGES,
+                    lgraph.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL);
+        }
+        
         // pre-calculate spacing information
         Spacings spacings = new Spacings(lgraph);
         lgraph.setProperty(InternalProperties.SPACINGS, spacings);
