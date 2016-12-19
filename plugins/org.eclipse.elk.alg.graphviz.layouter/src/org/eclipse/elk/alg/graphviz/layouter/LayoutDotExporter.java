@@ -49,13 +49,12 @@ public class LayoutDotExporter extends DotExporter {
         transData.setProperty(USE_EDGE_IDS, true);
         transData.setProperty(HIERARCHY,
                 sourceGraph.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN
-                && (command == Command.DOT || command == Command.FDP));
+                        && command == Command.DOT);
         transData.setProperty(TRANSFORM_NODE_LAYOUT, sourceGraph.getProperty(CoreOptions.INTERACTIVE));
         transData.setProperty(TRANSFORM_EDGE_LAYOUT, false);
         transData.setProperty(TRANSFORM_NODE_LABELS, false);
         transData.setProperty(ADAPT_PORT_POSITIONS, sourceGraph.getProperty(
                 GraphvizMetaDataProvider.ADAPT_PORT_POSITIONS));
-        transData.setProperty(PADDING, sourceGraph.getProperty(CoreOptions.PADDING));
         super.transform(transData);
     }
     

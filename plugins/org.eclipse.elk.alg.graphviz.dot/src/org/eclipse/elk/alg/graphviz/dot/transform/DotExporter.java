@@ -97,9 +97,6 @@ public class DotExporter {
     /** whether to adapt port positions to edge end points. */
     public static final IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
             "dotExporter.adaptPortPositions", false);
-    /** padding applied in {@link #transferLayout(IDotTransformationData)}. */
-    public static final IProperty<ElkPadding> PADDING = new Property<ElkPadding>(
-            "dotExporter.padding", new ElkPadding(DEF_SPACING_SMALL / 2));
     
     /** default multiplier for font sizes. */
     private static final double FONT_SIZE_MULT = 1.4;
@@ -144,7 +141,7 @@ public class DotExporter {
      * @param transData the transformation data instance
      */
     public void transferLayout(final IDotTransformationData<ElkNode, GraphvizModel> transData) {
-        ElkPadding padding = transData.getProperty(PADDING);
+        ElkPadding padding = transData.getSourceGraph().getProperty(CoreOptions.PADDING);
         Graph graph = transData.getTargetGraphs().get(0).getGraphs().get(0);
         
         // process nodes and subgraphs
@@ -641,10 +638,10 @@ public class DotExporter {
      * @param transData transformation data
      */
     private void applyLayout(final ElkNode parentNode, final List<Statement> statements, final KVector baseOffset,
-            final ElkPadding padding, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
+            final ElkPadding outerPadding, final IDotTransformationData<ElkNode, GraphvizModel> transData) {
         
         // process attributes: determine bounding box of the parent node
-        ElkPadding outerPadding = padding;
+        ElkPadding padding = outerPadding;
         KVector nodeOffset = new KVector();
         attr_loop: for (Statement statement : statements) {
             if (statement instanceof AttributeStatement) {
@@ -659,21 +656,25 @@ public class DotExporter {
                                 double bottomy = Double.parseDouble(tokenizer.nextToken());
                                 double rightx = Double.parseDouble(tokenizer.nextToken());
                                 double topy = Double.parseDouble(tokenizer.nextToken());
-                                
                                 // set parent node attributes
-                                ElkPadding innerPadding = parentNode.getProperty(CoreOptions.PADDING);
-                                double width = rightx - leftx + innerPadding.getLeft() + innerPadding.getRight();
-                                double height = bottomy - topy + innerPadding.getTop() + innerPadding.getBottom();
+                                double width = rightx - leftx;
+                                double height = bottomy - topy;
+                                
                                 if (parentNode == transData.getSourceGraph()) {
-                                    width += outerPadding.getHorizontal();
-                                    height += outerPadding.getVertical();
+                                    // the root node, representing the drawing frame
+                                    width += padding.getHorizontal();
+                                    height += padding.getVertical();
                                     baseOffset.add(-leftx, -topy);
+                                    nodeOffset.add(-leftx, -topy);
                                 } else {
-                                    parentNode.setX(
-                                            baseOffset.x + leftx - innerPadding.getLeft() + outerPadding.getLeft());
-                                    parentNode.setY(
-                                            baseOffset.y + topy - innerPadding.getTop() + outerPadding.getTop());
-                                    outerPadding = new ElkPadding();
+                                    // a child or descendant of the root node 
+                                    parentNode.setX(baseOffset.x + leftx + padding.getLeft());
+                                    parentNode.setY(baseOffset.y + topy + padding.getTop());
+                                    
+                                    // since dot uses a 'compound' layout instead of laying out a hierarchical graph, 
+                                    // no padding is supported for children
+                                    padding = new ElkPadding();
+                                    // ... and the children's offset must be somewhat adjusted
                                     nodeOffset.x = -(baseOffset.x + leftx);
                                     nodeOffset.y = -(baseOffset.y + topy);
                                 }
@@ -694,11 +695,11 @@ public class DotExporter {
         // process nodes and subgraphs to collect all offset data
         for (Statement statement : statements) {
             if (statement instanceof NodeStatement) {
-                applyNodeLayout((NodeStatement) statement, nodeOffset, outerPadding, transData);
+                applyNodeLayout((NodeStatement) statement, nodeOffset, padding, transData);
             } else if (statement instanceof Subgraph) {
                 Subgraph subgraph = (Subgraph) statement;
                 ElkNode elknode = (ElkNode) transData.getProperty(GRAPH_ELEMS).get(subgraph.getName());
-                applyLayout(elknode, subgraph.getStatements(), baseOffset, outerPadding, transData);
+                applyLayout(elknode, subgraph.getStatements(), baseOffset, padding, transData);
                 elknode.setX(elknode.getX() + nodeOffset.x);
                 elknode.setY(elknode.getY() + nodeOffset.y);
             }
@@ -776,9 +777,10 @@ public class DotExporter {
         ElkNode referenceNode = elkedge.getContainingNode();
         KVector reference = new KVector();
         while (referenceNode != null && referenceNode != transData.getSourceGraph()) {
-            ElkPadding padding = referenceNode.getProperty(CoreOptions.PADDING);
-            reference.x += referenceNode.getX() + padding.getLeft();
-            reference.y += referenceNode.getY() + padding.getTop();
+            // Note: do _not_ apply padding here,
+            // it is already included in the the 'edgeOffset'
+            reference.x += referenceNode.getX();
+            reference.y += referenceNode.getY();
             referenceNode = referenceNode.getParent();
         }
         KVector offset = edgeOffset.clone().sub(reference);
