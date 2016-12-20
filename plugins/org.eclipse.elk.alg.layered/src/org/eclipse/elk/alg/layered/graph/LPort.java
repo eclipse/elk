@@ -89,7 +89,7 @@ public final class LPort extends LShape {
     /** the anchor point position. */
     private final KVector anchor = new KVector();
     /** the margin area around this port. */
-    private final LInsets margin = new LInsets();
+    private final LMargin margin = new LMargin();
     /** this port's labels. */
     private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
 
@@ -177,7 +177,7 @@ public final class LPort extends LShape {
      * 
      * @return the port's margin.
      */
-    public LInsets getMargin() {
+    public LMargin getMargin() {
         return margin;
     }
     

@@ -78,6 +78,7 @@ public final class LGraphAdapters {
     
     /**
      * Basic base class for adapters that adapt {@link LGraphElement}s.
+     * @param <T> type of the adapted element.
      */
     private abstract static class AbstractLShapeAdapter<T extends LShape> implements GraphElementAdapter<T> {
 
@@ -271,7 +272,7 @@ public final class LGraphAdapters {
          *            whether to simulate that edges are directly connected to north south ports
          *            instead of to north/south port dummies.
          */
-        public LNodeAdapter(final LNode element, final boolean transparentNorthSouthEdges) {
+        LNodeAdapter(final LNode element, final boolean transparentNorthSouthEdges) {
             super(element);
             this.transparentNorthSouthEdges = transparentNorthSouthEdges;
         }
@@ -348,25 +349,25 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public ElkPadding getPadding() {
-            LInsets linsets = element.getInsets();
-            return new ElkPadding(linsets.top, linsets.right, linsets.bottom, linsets.left);
+            LPadding lPadding = element.getPadding();
+            return new ElkPadding(lPadding.top, lPadding.right, lPadding.bottom, lPadding.left);
         }
 
         /**
          * {@inheritDoc}
          */
-        public void setPadding(final ElkPadding insets) {
-            element.getInsets().left = insets.left;
-            element.getInsets().top = insets.top;
-            element.getInsets().right = insets.right;
-            element.getInsets().bottom = insets.bottom;
+        public void setPadding(final ElkPadding padding) {
+            element.getPadding().left = padding.left;
+            element.getPadding().top = padding.top;
+            element.getPadding().right = padding.right;
+            element.getPadding().bottom = padding.bottom;
         }
 
         /**
          * {@inheritDoc}
          */
         public ElkMargin getMargin() {
-            LInsets lmargins = element.getMargin();
+            LMargin lmargins = element.getMargin();
             return new ElkMargin(lmargins.top, lmargins.right, lmargins.bottom, lmargins.left);
         }
 
@@ -406,7 +407,7 @@ public final class LGraphAdapters {
          *            whether to simulate that edges are directly connected to north south ports
          *            instead of to north/south port dummies.
          */
-        public LPortAdapter(final LPort element, final boolean transparentNorthSouthEdges) {
+        LPortAdapter(final LPort element, final boolean transparentNorthSouthEdges) {
             super(element);
             this.transparentNorthSouthEdges = transparentNorthSouthEdges;
         }
@@ -436,7 +437,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public ElkMargin getMargin() {
-            LInsets lmargins = element.getMargin();
+            LMargin lmargins = element.getMargin();
             return new ElkMargin(lmargins.top, lmargins.right, lmargins.bottom, lmargins.left);
         }
 
@@ -516,7 +517,7 @@ public final class LGraphAdapters {
          * @param element
          *            the label to be adapted.
          */
-        public LLabelAdapter(final LLabel element) {
+        LLabelAdapter(final LLabel element) {
             super(element);
         }
 
@@ -544,7 +545,7 @@ public final class LGraphAdapters {
          * @param edge
          *            the edge to adapt.
          */
-        public LEdgeAdapter(final LEdge edge) {
+        LEdgeAdapter(final LEdge edge) {
             this.element = edge;
         }
         

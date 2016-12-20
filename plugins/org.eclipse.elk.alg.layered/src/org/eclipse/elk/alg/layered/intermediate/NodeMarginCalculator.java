@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
@@ -83,7 +83,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
      * @param spacing the overall spacing value
      */
     private void processComments(final LNode node, final double spacing) {
-        LInsets margin = node.getMargin();
+        LMargin margin = node.getMargin();
 
         // Consider comment boxes that are put on top of the node
         List<LNode> topBoxes = node.getProperty(InternalProperties.TOP_COMMENTS);
@@ -127,7 +127,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
      * @param node a node
      */
     private void processSelfLoops(final LNode node) {
-        LInsets nodeMargin = node.getMargin();
+        LMargin nodeMargin = node.getMargin();
         ElkMargin selfLoopMargin = node.getProperty(InternalProperties.SPLINE_SELF_LOOP_MARGINS);
 
         nodeMargin.left = Math.max(nodeMargin.left, selfLoopMargin.left);

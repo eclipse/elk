@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.core.math;
 
-
 /**
  * Stores the padding of an element. The padding is spacings from the border of an element to
  * other internal elements.
  */
-public final class ElkPadding extends Spacing {
+public class ElkPadding extends Spacing {
 
     /** The serial version UID. */
     private static final long serialVersionUID = -2159860709896900657L;

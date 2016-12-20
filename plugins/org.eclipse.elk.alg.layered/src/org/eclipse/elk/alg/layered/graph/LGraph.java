@@ -38,25 +38,25 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     private static final long serialVersionUID = -8006835373897072852L;
     
     /**
-     * The total size of the drawing. The total size includes neither insets nor border spacing. If the
-     * actual size, including insets and border spacing, is required, this can be obtained by calling
+     * The total size of the drawing. The total size does not include padding. If the
+     * actual size, including padding, is required, this can be obtained by calling
      * {@link #getActualSize()}.
      */
     private final KVector size = new KVector();
     
     /**
-     * The graph's effective insets. This already includes the insets set on the imported graph by the
-     * client, as well as any space required for inside node labels. These are the effective insets
+     * The graph's effective padding. This already includes the padding set on the imported graph by the
+     * client, as well as any space required for inside node labels. These are the effective paddings
      * returned to the client if {@link org.eclipse.elk.core.options.SizeOptions#COMPUTE_PADDING
-     * SizeOptions.COMPUTE_INSETS}
+     * SizeOptions.COMPUTE_PADDING}
      * is active.
      */
-    private final LInsets insets = new LInsets(0, 0, 0, 0);
+    private final LPadding padding = new LPadding();
     
     /**
      * The offset that will be applied to all node positions. Adding the offset to the coordinates of
      * child nodes results in child node coordinates that are relative to the node's client area (which
-     * does not include the insets around it).
+     * does not include the padding around it).
      */
     private final KVector offset = new KVector();
     
@@ -86,7 +86,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
     
     /**
      * Returns the size of the graph, that is the bounding box that covers the
-     * whole drawing. The size does not include insets or anything. Modifying the
+     * whole drawing. The size does not include padding. Modifying the
      * returned value changes the size of the graph.
      * 
      * @return the size of the layered graph; modify to change the graph size.
@@ -105,19 +105,19 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      */
     public KVector getActualSize() {
         return new KVector(
-                size.x + insets.left + insets.right,
-                size.y + insets.top + insets.bottom);
+                size.x + padding.left + padding.right,
+                size.y + padding.top + padding.bottom);
     }
     
     /**
-     * Returns the insets of the graph. The insets determine the amount of space between
+     * Returns the padding of the graph. The padding determines the amount of space between
      * the content area and the graph's actual border. Modifying the returned value
-     * changes the insets.
+     * changes the padding.
      * 
-     * @return the insets; modify to change the graph's insets.
+     * @return the padding; modify to change the graph's padding.
      */
-    public LInsets getInsets() {
-        return insets;
+    public LPadding getPadding() {
+        return padding;
     }
 
     /**

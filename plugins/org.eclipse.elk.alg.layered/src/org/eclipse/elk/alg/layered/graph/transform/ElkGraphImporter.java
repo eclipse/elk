@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -312,18 +312,18 @@ class ElkGraphImporter {
         lgraph.setProperty(InternalProperties.GRAPH_PROPERTIES,
                 EnumSet.noneOf(GraphProperties.class));
         
-        // Adjust the insets to respect inside labels.
+        // Adjust the padding to respect inside labels.
         double labelSpacing = lgraph.getProperty(LayeredOptions.SPACING_LABEL_NODE);
         ElkPadding padding = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
                 ElkGraphAdapters.adaptSingleNode(elkgraph), labelSpacing);
 
         // 'padding' already contains the node's padding that represents the elkgraph
         // copy it to the lgraph ...
-        LInsets linsets = lgraph.getInsets();
-        linsets.left = padding.left;
-        linsets.right = padding.right;
-        linsets.top = padding.top;
-        linsets.bottom = padding.bottom;
+        LPadding lPadding = lgraph.getPadding();
+        lPadding.left = padding.left;
+        lPadding.right = padding.right;
+        lPadding.top = padding.top;
+        lPadding.bottom = padding.bottom;
 
         return lgraph;
     }

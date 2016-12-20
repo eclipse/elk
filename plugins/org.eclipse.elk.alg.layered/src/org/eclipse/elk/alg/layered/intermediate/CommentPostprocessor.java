@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
@@ -88,7 +88,7 @@ public final class CommentPostprocessor implements ILayoutProcessor {
         
         KVector nodePos = node.getPosition();
         KVector nodeSize = node.getSize();
-        LInsets margin = node.getMargin();
+        LMargin margin = node.getMargin();
         
         if (topBoxes != null) {
             // determine the total width and maximal height of the top boxes

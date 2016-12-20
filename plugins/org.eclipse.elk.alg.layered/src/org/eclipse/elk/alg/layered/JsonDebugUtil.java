@@ -318,7 +318,7 @@ public final class JsonDebugUtil {
             throws IOException {
         
         KVector offset = new KVector(lgraph.getOffset())
-                .add(lgraph.getInsets().left, lgraph.getInsets().top);
+                .add(lgraph.getPadding().left, lgraph.getPadding().top);
         
         List<LEdge> edges = Lists.newLinkedList();
         beginChildNodeList(writer, indentation);

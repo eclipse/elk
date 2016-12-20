@@ -25,10 +25,11 @@ import org.eclipse.elk.alg.layered.compaction.recthull.RectilinearConvexHull;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
-import org.eclipse.elk.alg.layered.graph.LInsets;
 import org.eclipse.elk.alg.layered.graph.LLabel;
+import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LShape;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
@@ -390,13 +391,13 @@ public class ComponentsCompactor {
         // extract the relevant margins object.
         //  there's LayoutOptions.MARGINS as well,
         //  however, this is only used outside of klay.
-        LInsets margins = null;
+        LMargin margins = null;
         if (element instanceof LNode) {
             margins = ((LNode) element).getMargin();
         } else if (element instanceof LPort) {
             margins = ((LPort) element).getMargin();
         } else if (element instanceof LLabel) {
-            margins = new LInsets();
+            margins = new LMargin();
         }
         // add bounding box of the node
         pts.add(new Point(element.getPosition().x - margins.left + offset.x, 
@@ -457,7 +458,7 @@ public class ComponentsCompactor {
         
         // extent
         double extent = Double.NEGATIVE_INFINITY;
-        LInsets margins = externalExtension.externalPort.getNode().getMargin();
+        LMargin margins = externalExtension.externalPort.getNode().getMargin();
         switch (side) {
             case WEST:
                 extent = margins.right;
@@ -545,7 +546,7 @@ public class ComponentsCompactor {
     
     private KVector getPortPositionOnMargin(final LPort port) {
         KVector pos = port.getAbsoluteAnchor().clone();
-        LInsets margins = port.getNode().getMargin();
+        LMargin margins = port.getNode().getMargin();
         
         switch (port.getSide()) {
         case NORTH:

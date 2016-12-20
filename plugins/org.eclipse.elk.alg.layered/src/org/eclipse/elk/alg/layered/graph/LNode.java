@@ -93,9 +93,9 @@ public final class LNode extends LShape {
     /** this node's labels. */
     private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
     /** the margin area around this node. */
-    private final LInsets margin = new LInsets();
-    /** the insets inside this node, usually reserved for port and label placement. */
-    private final LInsets insets = new LInsets();
+    private final LMargin margin = new LMargin();
+    /** the padding inside this node, usually reserved for port and label placement. */
+    private final LPadding padding = new LPadding();
     /** Stores beginning and end indices of ports belonging to a side. */
     private EnumMap<PortSide, Pair<Integer, Integer>> portSideIndices;
     /** Stores whether port sides have been cached. */
@@ -433,22 +433,22 @@ public final class LNode extends LShape {
      *  
      * @return the node's margin. May be modified.
      */
-    public LInsets getMargin() {
+    public LMargin getMargin() {
         return margin;
     }
     
     /**
-     * Returns the node's insets. The insets describe the area inside the node that is used by
+     * Returns the node's padding. The padding describes the area inside the node that is used by
      * ports, port labels, and node labels.
      * 
-     * <p>The insets are not automatically updated. Rather, the insets have to be calculated
+     * <p>The padding is not automatically updated. Rather, the paddings have to be calculated
      * once the port and label positions are fixed. Usually this is right before node placement
      * starts.</p>
      * 
-     * @return the node's insets. May be modified.
+     * @return the node's padding. May be modified.
      */
-    public LInsets getInsets() {
-        return insets;
+    public LPadding getPadding() {
+        return padding;
     }
     
     /**
@@ -469,7 +469,7 @@ public final class LNode extends LShape {
     /**
      * Converts the position of this node from coordinates relative to the parent node's border to
      * coordinates relative to that node's content area. The content area is the parent node border
-     * minus insets minus offset.
+     * minus padding minus offset.
      * 
      * @param horizontal
      *            if {@code true}, the x coordinate will be translated.
@@ -481,16 +481,16 @@ public final class LNode extends LShape {
     public void borderToContentAreaCoordinates(final boolean horizontal, final boolean vertical) {
         LGraph thegraph = getGraph();
         
-        LInsets graphInsets = thegraph.getInsets();
+        LPadding graphPadding = thegraph.getPadding();
         KVector offset = thegraph.getOffset();
         KVector pos = getPosition();
         
         if (horizontal) {
-            pos.x = pos.x - graphInsets.left - offset.x;
+            pos.x = pos.x - graphPadding.left - offset.x;
         }
         
         if (vertical) {
-            pos.y = pos.y - graphInsets.top - offset.y;
+            pos.y = pos.y - graphPadding.top - offset.y;
         }
     }
 

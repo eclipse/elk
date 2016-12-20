@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
@@ -88,7 +88,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         switch (mode) {
         case MIRROR_X:
             mirrorX(nodes, layeredGraph);
-            mirrorX(layeredGraph.getInsets());
+            mirrorX(layeredGraph.getPadding());
             break;
             
         case TRANSPOSE:
@@ -96,19 +96,19 @@ public final class GraphTransformer implements ILayoutProcessor {
             transposeEdgeLabelPlacement(layeredGraph);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
-            transpose(layeredGraph.getInsets());
+            transpose(layeredGraph.getPadding());
             break;
             
         case MIRROR_AND_TRANSPOSE:
             mirrorX(nodes, layeredGraph);
             mirrorY(nodes, layeredGraph);
-            mirrorX(layeredGraph.getInsets());
-            mirrorY(layeredGraph.getInsets());
+            mirrorX(layeredGraph.getPadding());
+            mirrorY(layeredGraph.getPadding());
             transpose(nodes);
             transposeEdgeLabelPlacement(layeredGraph);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
-            transpose(layeredGraph.getInsets());
+            transpose(layeredGraph.getPadding());
             break;
         }
         monitor.done();
@@ -154,7 +154,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
             mirrorX(node.getPosition(), offset - node.getSize().x);
-            mirrorX(node.getInsets());
+            mirrorX(node.getPadding());
             mirrorNodeLabelPlacementX(node);
             
             // mirror the alignment
@@ -225,16 +225,16 @@ public final class GraphTransformer implements ILayoutProcessor {
     }
     
     /**
-     * Mirrors the given insets in X direction.
+     * Mirrors the given padding in X direction.
      * 
-     * @param insets the insets to mirror.
+     * @param padding the padding to mirror.
      */
-    private void mirrorX(final LInsets insets) {
-        double oldLeft = insets.left;
-        double oldRight = insets.right;
+    private void mirrorX(final LPadding padding) {
+        double oldLeft = padding.left;
+        double oldRight = padding.right;
         
-        insets.left = oldRight;
-        insets.right = oldLeft;
+        padding.left = oldRight;
+        padding.right = oldLeft;
     }
     
     /**
@@ -348,7 +348,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         // mirror all nodes, ports, edges, and labels
         for (LNode node : nodes) {
             mirrorY(node.getPosition(), offset - node.getSize().y);
-            mirrorY(node.getInsets());
+            mirrorY(node.getPadding());
             mirrorNodeLabelPlacementY(node);
             
             // mirror the alignment
@@ -419,16 +419,16 @@ public final class GraphTransformer implements ILayoutProcessor {
     }
     
     /**
-     * Mirrors the given insets in Y direction.
+     * Mirrors the given padding in Y direction.
      * 
-     * @param insets the insets to mirror.
+     * @param padding the padding to mirror.
      */
-    private void mirrorY(final LInsets insets) {
-        double oldTop = insets.top;
-        double oldBottom = insets.bottom;
+    private void mirrorY(final LPadding padding) {
+        double oldTop = padding.top;
+        double oldBottom = padding.bottom;
         
-        insets.top = oldBottom;
-        insets.bottom = oldTop;
+        padding.top = oldBottom;
+        padding.bottom = oldTop;
     }
     
     /**
@@ -521,7 +521,7 @@ public final class GraphTransformer implements ILayoutProcessor {
         for (LNode node : nodes) {
             transpose(node.getPosition());
             transpose(node.getSize());
-            transpose(node.getInsets());
+            transpose(node.getPadding());
             transposeNodeLabelPlacement(node);
             transposeProperties(node);
             
@@ -589,20 +589,20 @@ public final class GraphTransformer implements ILayoutProcessor {
     }
     
     /**
-     * Transposes the given insets.
+     * Transposes the given padding.
      * 
-     * @param insets the insets to transpose, I guess...
+     * @param padding the padding to transpose, I guess...
      */
-    private void transpose(final LInsets insets) {
-        double oldTop = insets.top;
-        double oldBottom = insets.bottom;
-        double oldLeft = insets.left;
-        double oldRight = insets.right;
+    private void transpose(final LPadding padding) {
+        double oldTop = padding.top;
+        double oldBottom = padding.bottom;
+        double oldLeft = padding.left;
+        double oldRight = padding.right;
         
-        insets.top = oldLeft;
-        insets.bottom = oldRight;
-        insets.left = oldTop;
-        insets.right = oldBottom;
+        padding.top = oldLeft;
+        padding.bottom = oldRight;
+        padding.left = oldTop;
+        padding.right = oldBottom;
     }
     
     /**

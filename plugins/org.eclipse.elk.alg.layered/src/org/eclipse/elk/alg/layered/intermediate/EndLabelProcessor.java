@@ -15,9 +15,10 @@ import java.util.Map;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LInsets;
 import org.eclipse.elk.alg.layered.graph.LLabel;
+import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
@@ -160,7 +161,7 @@ public final class EndLabelProcessor implements ILayoutProcessor {
         KVector labelPosition = label.getPosition();
         KVector absolutePortPosition = KVector.sum(port.getPosition(), port.getNode().getPosition());
         KVector absolutePortAnchor = port.getAbsoluteAnchor();
-        LInsets portMargin = port.getMargin();
+        LMargin portMargin = port.getMargin();
         
         // Actually calculate the coordinates
         switch (port.getSide()) {
@@ -215,7 +216,7 @@ public final class EndLabelProcessor implements ILayoutProcessor {
         KVector labelPosition = label.getPosition();
         KVector absolutePortPosition = KVector.sum(port.getPosition(), port.getNode().getPosition());
         KVector absolutePortAnchor = port.getAbsoluteAnchor();
-        LInsets portMargin = port.getMargin();
+        LMargin portMargin = port.getMargin();
         
         // Actually calculate the coordinates
         switch (port.getSide()) {

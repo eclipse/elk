@@ -14,7 +14,7 @@ package org.eclipse.elk.core.math;
  * Stores the margins of an element. The margin is the area around the border of an element that has to be kept free
  * of any other elements.
  */
-public final class ElkMargin extends Spacing {
+public class ElkMargin extends Spacing {
 
     /** The serial version UID. */
     private static final long serialVersionUID = 7465583871643915474L;

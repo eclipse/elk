@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.layered.components.ComponentsProcessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPostprocessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPreprocessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.Layer;
@@ -657,9 +657,9 @@ public final class KlayLayered {
         }
         
         // Actually apply the new size
-        LInsets insets = lgraph.getInsets();
-        lgraph.getSize().x = newSize.x - insets.left - insets.right;
-        lgraph.getSize().y = newSize.y - insets.top - insets.bottom;
+        LPadding lPadding = lgraph.getPadding();
+        lgraph.getSize().x = newSize.x - lPadding.left - lPadding.right;
+        lgraph.getSize().y = newSize.y - lPadding.top - lPadding.bottom;
     }
     
 }

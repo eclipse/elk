@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.core.math.KVector;
@@ -68,7 +68,7 @@ public final class LayerSizeAndGraphHeightCalculator implements ILayoutProcessor
             // Calculate the layer's width
             for (LNode node : layer) {
                 KVector nodeSize = node.getSize();
-                LInsets nodeMargin = node.getMargin();
+                LMargin nodeMargin = node.getMargin();
                 
                 layerSize.x = Math.max(
                         layerSize.x,

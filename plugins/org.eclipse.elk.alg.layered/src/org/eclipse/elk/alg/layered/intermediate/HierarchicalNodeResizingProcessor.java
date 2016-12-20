@@ -15,7 +15,7 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -226,9 +226,9 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
         }
 
         // Actually apply the new size
-        LInsets insets = lgraph.getInsets();
-        lgraph.getSize().x = newSize.x - insets.left - insets.right;
-        lgraph.getSize().y = newSize.y - insets.top - insets.bottom;
+        LPadding padding = lgraph.getPadding();
+        lgraph.getSize().x = newSize.x - padding.left - padding.right;
+        lgraph.getSize().y = newSize.y - padding.top - padding.bottom;
     }
 
 }

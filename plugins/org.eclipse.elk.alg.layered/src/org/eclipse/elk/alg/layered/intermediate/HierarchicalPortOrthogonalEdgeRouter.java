@@ -18,7 +18,7 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -99,8 +99,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
          * Calculate coordinates for the north / south port dummies. Coordinates for the
          * east / west port dummies have already been calculated prior to this processor's
          * execution. The coordinates are relative to the node's content area, just like
-         * normal node coordinates. (the content area is the node size minus insets minus
-         * border spacing minus offset)
+         * normal node coordinates. (the content area is the node size minus padding minus offset)
          */
         setNorthSouthDummyCoordinates(layeredGraph, northSouthDummies);
         
@@ -248,10 +247,10 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         PortConstraints constraints = layeredGraph.getProperty(LayeredOptions.PORT_CONSTRAINTS);
         KVector graphSize = layeredGraph.getSize();
-        LInsets graphInsets = layeredGraph.getInsets();
-        double graphWidth = graphSize.x + graphInsets.left + graphInsets.right;
-        double northY = 0 - graphInsets.top - layeredGraph.getOffset().y;
-        double southY = graphSize.y + graphInsets.top + graphInsets.bottom - layeredGraph.getOffset().y;
+        LPadding graphPadding = layeredGraph.getPadding();
+        double graphWidth = graphSize.x + graphPadding.left + graphPadding.right;
+        double northY = 0 - graphPadding.top - layeredGraph.getOffset().y;
+        double southY = graphSize.y + graphPadding.top + graphPadding.bottom - layeredGraph.getOffset().y;
         
         // Lists of northern and southern external port dummies
         List<LNode> northernDummies = Lists.newArrayList();
@@ -674,7 +673,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             final LGraph graph) {
         
         // Get some geometric values from the graph
-        LInsets insets = graph.getInsets();
+        LPadding padding = graph.getPadding();
         KVector offset = graph.getOffset();
         KVector graphActualSize = graph.getActualSize();
         
@@ -695,11 +694,11 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             // Set x coordinate
             switch (extPortSide) {
             case EAST:
-                nodePosition.x = graph.getSize().x + insets.right - offset.x;
+                nodePosition.x = graph.getSize().x + padding.right - offset.x;
                 break;
             
             case WEST:
-                nodePosition.x = -offset.x - insets.left;
+                nodePosition.x = -offset.x - padding.left;
                 break;
             }
             
@@ -743,11 +742,11 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             // Set y coordinate
             switch (extPortSide) {
             case NORTH:
-                nodePosition.y = -offset.y - insets.top;
+                nodePosition.y = -offset.y - padding.top;
                 break;
             
             case SOUTH:
-                nodePosition.y = graph.getSize().y + insets.bottom - offset.y;
+                nodePosition.y = graph.getSize().y + padding.bottom - offset.y;
                 break;
             }
         }

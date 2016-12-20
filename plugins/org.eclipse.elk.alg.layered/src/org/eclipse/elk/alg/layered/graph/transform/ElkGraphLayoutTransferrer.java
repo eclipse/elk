@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
-import org.eclipse.elk.alg.layered.graph.LInsets;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -72,28 +72,28 @@ class ElkGraphLayoutTransferrer {
         KVector offset = new KVector(lgraph.getOffset());
         
         // Adjust offset (and with it the positions), if requested
-        LInsets lInsets = lgraph.getInsets();
+        LPadding lPadding = lgraph.getPadding();
         
-        // We may need to apply increased top/left insets
+        // We may need to apply increased top/left padding
         final EnumSet<SizeOptions> sizeOptions = parentElkNode.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
-        KVector additionalInsets = new KVector();
+        KVector additionalPadding = new KVector();
         
-        // MIGRATE I believe this will become the only case since the ElkGraph doesn't know about insets?
+        // MIGRATE I believe this will become the only case since the ElkGraph doesn't know about padding?
         if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_PADDING)) {
-            additionalInsets.x = lInsets.left;
-            additionalInsets.y = lInsets.top;
-            offset.x += additionalInsets.x;
-            offset.y += additionalInsets.y;
+            additionalPadding.x = lPadding.left;
+            additionalPadding.y = lPadding.top;
+            offset.x += additionalPadding.x;
+            offset.y += additionalPadding.y;
         }
         
-        // Set node insets, if requested
+        // Set node padding, if requested
         if (sizeOptions.contains(SizeOptions.COMPUTE_PADDING)) {
             ElkPadding padding = parentElkNode.getProperty(LayeredOptions.PADDING);
             
-            padding.setBottom(lInsets.bottom);
-            padding.setTop(lInsets.top);
-            padding.setLeft(lInsets.left);
-            padding.setRight(lInsets.right);
+            padding.setBottom(lPadding.bottom);
+            padding.setTop(lPadding.top);
+            padding.setLeft(lPadding.left);
+            padding.setRight(lPadding.right);
         }
 
         // Along the way, we collect the list of edges to be processed later
@@ -135,7 +135,7 @@ class ElkGraphLayoutTransferrer {
         // Iterate through all edges
         EdgeRouting routing = parentElkNode.getProperty(LayeredOptions.EDGE_ROUTING);
         for (LEdge ledge : edgeList) {
-            applyEdgeLayout(ledge, routing, offset, additionalInsets);
+            applyEdgeLayout(ledge, routing, offset, additionalPadding);
         }
 
         // Setup the parent node
@@ -216,13 +216,13 @@ class ElkGraphLayoutTransferrer {
      *            the kind of routing applied to edges.
      * @param offset
      *            offset to add to coordinates.
-     * @param additionalInsets
+     * @param additionalPadding
      *            the additional insets that may have to be taken into account for hierarchical that go
      *            into the bowels of their source node. These are already included in the offset, but
      *            are required separately.
      */
     private void applyEdgeLayout(final LEdge ledge, final EdgeRouting routing, final KVector offset,
-            final KVector additionalInsets) {
+            final KVector additionalPadding) {
 
         ElkEdge elkedge = (ElkEdge) ledge.getProperty(InternalProperties.ORIGIN);
         
@@ -244,20 +244,20 @@ class ElkGraphLayoutTransferrer {
             LPort sourcePort = ledge.getSource();
             sourcePoint = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
             
-            // The node's insets need to be subtracted since edges going into the node's bowels are
-            // relative to the top left corner + insets
-            // TODO This line assumes that for a compound node, the insets computed for its LGraph and
+            // The node's padding need to be subtracted since edges going into the node's bowels are
+            // relative to the top left corner + padding
+            // TODO This line assumes that for a compound node, the padding computed for its LGraph and
             //      for its representing LNode are the same, which doesn't always seem to be the case
-            LInsets sourceInsets = sourcePort.getNode().getInsets();
-            sourcePoint.add(-sourceInsets.left, -sourceInsets.top);
+            LPadding sourcePadding = sourcePort.getNode().getPadding();
+            sourcePoint.add(-sourcePadding.left, -sourcePadding.top);
             
             // The source point will later have the passed offset added to it, which it doesn't actually
             // need, so we subtract it now
             sourcePoint.sub(offset);
 
-            // What it does need, however, is any additional insets that may be present, so we
+            // What it does need, however, is any additional padding that may be present, so we
             // explicitly add them here
-            sourcePoint.add(additionalInsets);
+            sourcePoint.add(additionalPadding);
         } else {
             sourcePoint = ledge.getSource().getAbsoluteAnchor();
         }

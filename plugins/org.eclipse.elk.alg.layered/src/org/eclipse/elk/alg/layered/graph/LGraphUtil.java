@@ -884,7 +884,7 @@ public final class LGraphUtil {
         
         // Get some properties of the graph
         KVector graphSize = graph.getSize();
-        LInsets insets = graph.getInsets();
+        LPadding padding = graph.getPadding();
         KVector graphOffset = graph.getOffset();
         
         // The exact coordinates depend on the port's side... (often enough, these calculations will
@@ -892,27 +892,27 @@ public final class LGraphUtil {
         // connected components processing, the computed coordinates might be wrong now)
         switch (portDummy.getProperty(InternalProperties.EXT_PORT_SIDE)) {
         case NORTH:
-            portPosition.x += insets.left + graphOffset.x - (portWidth / 2.0);
+            portPosition.x += padding.left + graphOffset.x - (portWidth / 2.0);
             portPosition.y = -portHeight - portOffset;
-            portDummy.getPosition().y = -(insets.top + portOffset + graphOffset.y);
+            portDummy.getPosition().y = -(padding.top + portOffset + graphOffset.y);
             break;
         
         case EAST:
-            portPosition.x = graphSize.x + insets.left + insets.right + portOffset;
-            portPosition.y += insets.top + graphOffset.y - (portHeight / 2.0);
-            portDummy.getPosition().x = graphSize.x + insets.right + portOffset - graphOffset.x;
+            portPosition.x = graphSize.x + padding.left + padding.right + portOffset;
+            portPosition.y += padding.top + graphOffset.y - (portHeight / 2.0);
+            portDummy.getPosition().x = graphSize.x + padding.right + portOffset - graphOffset.x;
             break;
         
         case SOUTH:
-            portPosition.x += insets.left + graphOffset.x - (portWidth / 2.0);
-            portPosition.y = graphSize.y + insets.top + insets.bottom + portOffset;
-            portDummy.getPosition().y = graphSize.y + insets.bottom + portOffset - graphOffset.y;
+            portPosition.x += padding.left + graphOffset.x - (portWidth / 2.0);
+            portPosition.y = graphSize.y + padding.top + padding.bottom + portOffset;
+            portDummy.getPosition().y = graphSize.y + padding.bottom + portOffset - graphOffset.y;
             break;
         
         case WEST:
             portPosition.x = -portWidth - portOffset;
-            portPosition.y += insets.top + graphOffset.y - (portHeight / 2.0);
-            portDummy.getPosition().x = -(insets.left + portOffset + graphOffset.x);
+            portPosition.y += padding.top + graphOffset.y - (portHeight / 2.0);
+            portDummy.getPosition().x = -(padding.left + portOffset + graphOffset.x);
             break;
         }
         
@@ -945,7 +945,7 @@ public final class LGraphUtil {
     
     /**
      * Converts the given point from the coordinate system of {@code oldGraph} to that of
-     * {@code newGraph}. Insets and graph offset are included in the calculation.
+     * {@code newGraph}. Padding and graph offset are included in the calculation.
      * If the old and new graph are identical, no calculations are made.
      * 
      * @param point a relative point
@@ -967,8 +967,8 @@ public final class LGraphUtil {
             point.add(graph.getOffset());
             node = graph.getProperty(InternalProperties.PARENT_LNODE);
             if (node != null) {
-                LInsets insets = graph.getInsets();
-                point.add(insets.left, insets.top);
+                LPadding padding = graph.getPadding();
+                point.add(padding.left, padding.top);
                 point.add(node.getPosition());
                 graph = node.getGraph();
             }
@@ -980,8 +980,8 @@ public final class LGraphUtil {
             point.sub(graph.getOffset());
             node = graph.getProperty(InternalProperties.PARENT_LNODE);
             if (node != null) {
-                LInsets insets = graph.getInsets();
-                point.sub(insets.left, insets.top);
+                LPadding padding = graph.getPadding();
+                point.sub(padding.left, padding.top);
                 point.sub(node.getPosition());
                 graph = node.getGraph();
             }

@@ -117,7 +117,7 @@ public final class ComponentsProcessor {
                     newGraph.copyProperties(graph);
                     newGraph.setProperty(InternalProperties.EXT_PORT_CONNECTIONS,
                             componentData.getSecond());
-                    newGraph.getInsets().copy(graph.getInsets());
+                    newGraph.getPadding().copy(graph.getPadding());
                     for (LNode n : componentData.getFirst()) {
                         newGraph.getLayerlessNodes().add(n);
                         n.setGraph(newGraph);
