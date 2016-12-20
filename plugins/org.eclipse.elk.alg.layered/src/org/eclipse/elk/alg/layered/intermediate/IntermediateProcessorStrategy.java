@@ -92,9 +92,9 @@ public enum IntermediateProcessorStrategy {
     NORTH_SOUTH_PORT_PREPROCESSOR,
 
     // Before Phase 4
-    /** Hierachical one-sided greedy switch crossing reduction. */
+    /** Hierarchical one-sided greedy switch crossing reduction. */
     ONE_SIDED_GREEDY_SWITCH,
-    /** Hierachical two-sided greedy switch crossing reduction. */
+    /** Hierarchical two-sided greedy switch crossing reduction. */
     TWO_SIDED_GREEDY_SWITCH,
     /** Unhide self loops after phase 3. */
     SPLINE_SELF_LOOP_POSITIONER,

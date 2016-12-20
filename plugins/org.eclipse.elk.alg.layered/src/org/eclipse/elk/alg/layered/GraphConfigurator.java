@@ -306,12 +306,22 @@ final class GraphConfigurator {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
         }
 
-        GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH);
-        if (greedySwitchType != GreedySwitchType.OFF && lgraph.getProperty(
-                        LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) != CrossingMinimizationStrategy.INTERACTIVE) {
-            IntermediateProcessorStrategy internalGreedyType = greedySwitchType == GreedySwitchType.ONE_SIDED
-                                    ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
-                                    : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
+        // Configure greedy switch, activate it if the following holds true
+        //  a) no interactive crossing minimization is performed
+        //  b) the greedy switch type is set to something different than OFF
+        //  c) the activationThreshold is larger than or equal to the graph's number of nodes (or '0')
+        GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
+        boolean interactiveCrossMin = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) 
+                == CrossingMinimizationStrategy.INTERACTIVE;
+        int activationThreshold =
+                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_ACTIVATION_THRESHOLD);
+        int graphSize = lgraph.getLayerlessNodes().size();
+        if (!interactiveCrossMin && greedySwitchType != GreedySwitchType.OFF 
+                && (activationThreshold == 0 || activationThreshold > graphSize)) {
+            IntermediateProcessorStrategy internalGreedyType = 
+                    greedySwitchType == GreedySwitchType.ONE_SIDED
+                        ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
+                        : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
             configuration.addBeforePhase4(internalGreedyType);
         }
 
