@@ -239,11 +239,11 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 int inprio = Integer.MIN_VALUE, outprio = Integer.MIN_VALUE;
                 for (LPort port : node.getPorts()) {
                     for (LEdge edge : port.getIncomingEdges()) {
-                        int prio = edge.getProperty(LayeredOptions.PRIORITY);
+                        int prio = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
                         inprio = Math.max(inprio, prio);
                     }
                     for (LEdge edge : port.getOutgoingEdges()) {
-                        int prio = edge.getProperty(LayeredOptions.PRIORITY);
+                        int prio = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
                         outprio = Math.max(outprio, prio);
                     }
                 }
@@ -717,7 +717,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                         if (segment != linearSegments[otherNode.id]) {
                             int otherPrio = Math.max(otherNode.getProperty(INPUT_PRIO),
                                     otherNode.getProperty(OUTPUT_PRIO));
-                            int prio = edge.getProperty(LayeredOptions.PRIORITY);
+                            int prio = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
                             if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
                                         + otherPort.getPosition().y + otherPort.getAnchor().y
@@ -735,7 +735,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                         if (segment != linearSegments[otherNode.id]) {
                             int otherPrio = Math.max(otherNode.getProperty(INPUT_PRIO),
                                     otherNode.getProperty(OUTPUT_PRIO));
-                            int prio = edge.getProperty(LayeredOptions.PRIORITY);
+                            int prio = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
                             if (prio >= minPrio && prio >= otherPrio) {
                                 nodeDeflection += otherNode.getPosition().y
                                         + otherPort.getPosition().y + otherPort.getAnchor().y

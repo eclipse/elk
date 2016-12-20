@@ -239,7 +239,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
      */
     private int getEdgeWeight(final LEdge edge) {
         
-        int priority = Math.max(1, edge.getProperty(LayeredOptions.PRIORITY));
+        int priority = Math.max(1, edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS));
         
         int edgeTypeWeight;
         if (edge.getSource().getNode().getType() == NodeType.NORMAL

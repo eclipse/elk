@@ -240,7 +240,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 }
                 
                 NEdge.of(lEdge)
-                     .weight(1 * Math.max(1, lEdge.getProperty(LayeredOptions.PRIORITY)))
+                     .weight(1 * Math.max(1, lEdge.getProperty(LayeredOptions.PRIORITY_SHORTNESS)))
                      .delta(1)
                      .source(nodeMap.get(lEdge.getSource().getNode()))
                      .target(nodeMap.get(lEdge.getTarget().getNode()))

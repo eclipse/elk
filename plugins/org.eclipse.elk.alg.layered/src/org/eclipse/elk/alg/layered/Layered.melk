@@ -65,9 +65,17 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.alg.layered.spacing.edgeEdgeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.edgeNodeBetweenLayers
     supports org.eclipse.elk.alg.layered.spacing.nodeNodeBetweenLayers
+    // layer-based priorities
+    supports org.eclipse.elk.priority = 0
+	   documentation 
+	       "Used by the 'simple row graph placer' to decide which connected components to place first. 
+            A component's priority is the sum of the node priorities."
+    supports priority.direction
+    supports priority.shortness
+        documentation "Currently only supported by the network simplex layerer."
+    supports priority.straightness
 	// other options
 	supports org.eclipse.elk.padding = new ElkPadding(12)
-	supports org.eclipse.elk.priority = 0
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
 	supports org.eclipse.elk.port.borderOffset = 0
 	supports org.eclipse.elk.randomSeed = 1
@@ -475,6 +483,42 @@ group spacing {
     
 }
 
+/* ------------------------
+ *    priority
+ * ------------------------*/
+group priority {
+    
+    advanced option direction: int {
+        label "Direction Priority"
+        description 
+            "Defines how important it is to have a certain edge point into the direction of the overall layout.
+             This option is evaluated during the cycle breaking phase."
+        default = 0
+        lowerBound = 0
+        targets edges
+    }
+    
+    advanced option shortness: int {
+        label "Shortness Priority"
+        description 
+            "Defines how important it is to keep an edge as short as possible.
+             This option is evaluated during the layering phase."
+        default = 0
+        lowerBound = 0
+        targets edges
+    }
+    
+    advanced option straightness: int {
+        label "Straightness Priority"
+        description 
+            "Defines how important it is to keep an edge straight, i.e. aligned with one of the two axes.
+             This option is evaluated during node placement."
+        default = 0
+        lowerBound = 0
+        targets edges
+    }
+    
+}
 
 /* ------------------------
  *    compaction

@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Add constraint edges between partitions. </br>
- * In partitioned graphs, each node has a assigned partition. For every node holds, that every other node
+ * In partitioned graphs, each node has an assigned partition. For every node holds, that every other node
  * with a smaller partition is placed left to it. This is accomplished by adding partition constraint
  * edges. For each node, we add an edge to every node in the next greater partition. These edges get a
  * high priority assigned such that during cycle breaking, none of these constraint edges gets reversed.
@@ -86,7 +86,7 @@ public class PartitionPreprocessor implements ILayoutProcessor {
                     
                     LEdge edge = new LEdge();
                     edge.setProperty(InternalProperties.PARTITION_DUMMY, true);
-                    edge.setProperty(LayeredOptions.PRIORITY, PARTITION_CONSTRAINT_EDGE_PRIORITY);
+                    edge.setProperty(LayeredOptions.PRIORITY_DIRECTION, PARTITION_CONSTRAINT_EDGE_PRIORITY);
                     edge.setSource(sourcePort);
                     edge.setTarget(targetPort);
                 }

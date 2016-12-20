@@ -133,14 +133,14 @@ public final class NeighborhoodInformation {
                 int maxPriority = 0;
 
                 for (LEdge edge : n.getOutgoingEdges()) {
-                    if (edge.getProperty(LayeredOptions.PRIORITY) > maxPriority) {
-                        maxPriority = edge.getProperty(LayeredOptions.PRIORITY);
+                    if (edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS) > maxPriority) {
+                        maxPriority = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
                     }
                 }
 
                 for (LEdge edge : n.getOutgoingEdges()) {
                     if (n.getLayer() != edge.getTarget().getNode().getLayer()
-                            && edge.getProperty(LayeredOptions.PRIORITY) == maxPriority) {
+                            && edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS) == maxPriority) {
 
                         result.add(Pair.of(edge.getTarget().getNode(), edge));
                     }
@@ -167,14 +167,14 @@ public final class NeighborhoodInformation {
                 int maxPriority = 0;
                 
                 for (LEdge edge : n.getIncomingEdges()) {
-                    if (edge.getProperty(LayeredOptions.PRIORITY) > maxPriority) {
-                        maxPriority = edge.getProperty(LayeredOptions.PRIORITY);
+                    if (edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS) > maxPriority) {
+                        maxPriority = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
                     }
                 }
                 
                 for (LEdge edge : n.getIncomingEdges()) {
                     if (n.getLayer() != edge.getSource().getNode().getLayer()
-                            && edge.getProperty(LayeredOptions.PRIORITY) == maxPriority) {
+                            && edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS) == maxPriority) {
                         result.add(Pair.of(edge.getSource().getNode(), edge));
                     }
                 }

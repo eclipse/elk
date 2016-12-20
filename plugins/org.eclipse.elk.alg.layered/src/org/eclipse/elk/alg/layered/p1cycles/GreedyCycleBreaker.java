@@ -111,7 +111,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                         continue;
                     }
                     
-                    int priority = edge.getProperty(LayeredOptions.PRIORITY);
+                    int priority = edge.getProperty(LayeredOptions.PRIORITY_DIRECTION);
                     indeg[index] += priority > 0 ? priority + 1 : 1;
                 }
                 
@@ -121,7 +121,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                         continue;
                     }
                     
-                    int priority = edge.getProperty(LayeredOptions.PRIORITY);
+                    int priority = edge.getProperty(LayeredOptions.PRIORITY_DIRECTION);
                     outdeg[index] += priority > 0 ? priority + 1 : 1;
                 }
             }
@@ -245,7 +245,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                     continue;
                 }
                 
-                int priority = edge.getProperty(LayeredOptions.PRIORITY);
+                int priority = edge.getProperty(LayeredOptions.PRIORITY_DIRECTION);
                 if (priority < 0) {
                     priority = 0;
                 }
