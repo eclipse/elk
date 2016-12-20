@@ -124,24 +124,23 @@ public final class NeighborhoodInformation {
      * Give all right neighbors (originally known as lower neighbors) of a given node. A lower
      * neighbor is a node in a following layer that has an edge coming from the given node.
      */
-    private static void determineAllRightNeighbors(final NeighborhoodInformation ni,
-            final LGraph graph) {
+    private static void determineAllRightNeighbors(final NeighborhoodInformation ni, final LGraph graph) {
         for (Layer l : graph) {
             for (LNode n : l) {
 
                 List<Pair<LNode, LEdge>> result = Lists.newArrayList();
                 int maxPriority = 0;
-
+                
                 for (LEdge edge : n.getOutgoingEdges()) {
-                    if (edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS) > maxPriority) {
-                        maxPriority = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
+                    if (edge.isSelfLoop() || edge.isInLayerEdge()) {
+                        continue;
+                    } 
+                    int edgePrio = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
+                    if (edgePrio > maxPriority) {
+                        maxPriority = edgePrio;
+                        result.clear();
                     }
-                }
-
-                for (LEdge edge : n.getOutgoingEdges()) {
-                    if (n.getLayer() != edge.getTarget().getNode().getLayer()
-                            && edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS) == maxPriority) {
-
+                    if (edgePrio == maxPriority) {
                         result.add(Pair.of(edge.getTarget().getNode(), edge));
                     }
                 }
@@ -158,8 +157,7 @@ public final class NeighborhoodInformation {
      * Gives all left neighbors (originally known as upper neighbors) of a given node. An upper
      * neighbor is a node in a previous layer that has an edge pointing to the given node.
      */
-    private static void determineAllLeftNeighbors(final NeighborhoodInformation ni,
-            final LGraph graph) {
+    private static void determineAllLeftNeighbors(final NeighborhoodInformation ni, final LGraph graph) {
         for (Layer l : graph) {
             for (LNode n : l) {
                 
@@ -167,14 +165,15 @@ public final class NeighborhoodInformation {
                 int maxPriority = 0;
                 
                 for (LEdge edge : n.getIncomingEdges()) {
-                    if (edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS) > maxPriority) {
-                        maxPriority = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
+                    if (edge.isSelfLoop() || edge.isInLayerEdge()) {
+                        continue;
+                    } 
+                    int edgePrio = edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS);
+                    if (edgePrio > maxPriority) {
+                        maxPriority = edgePrio;
+                        result.clear();
                     }
-                }
-                
-                for (LEdge edge : n.getIncomingEdges()) {
-                    if (n.getLayer() != edge.getSource().getNode().getLayer()
-                            && edge.getProperty(LayeredOptions.PRIORITY_STRAIGHTNESS) == maxPriority) {
+                    if (edgePrio == maxPriority) {
                         result.add(Pair.of(edge.getSource().getNode(), edge));
                     }
                 }

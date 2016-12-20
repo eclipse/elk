@@ -29,7 +29,7 @@ import org.eclipse.elk.alg.layered.properties.Spacings;
 public final class BKAlignedLayout {
     
     // Allow the fields of this container to be accessed from package siblings.
-    // SUPPRESS CHECKSTYLE NEXT 26 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 28 VisibilityModifier
     /** The root node of each node in a block. */
     LNode[] root;
     /** The size of a block. */
@@ -50,6 +50,8 @@ public final class BKAlignedLayout {
     HDirection hdir;
     /** Flags blocks, represented by their root node, that are part of a straightened edge. */
     Boolean[] su;
+    /** Flags blocks, represented by their root node, that they are solely made up of dummy nodes. */
+    Boolean[] od;
 
     /** The graph to process. */
     LGraph layeredGraph;
@@ -84,6 +86,8 @@ public final class BKAlignedLayout {
         y = new Double[nodeCount];
         su = new Boolean[nodeCount];
         Arrays.fill(su, false);
+        od = new Boolean[nodeCount];
+        Arrays.fill(od, true);
         this.vdir = vdir;
         this.hdir = hdir;
     }

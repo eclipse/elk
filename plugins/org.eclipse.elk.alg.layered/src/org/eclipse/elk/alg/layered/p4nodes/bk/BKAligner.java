@@ -21,6 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.HDirection;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 import org.eclipse.elk.core.util.Pair;
@@ -124,9 +125,10 @@ public class BKAligner {
                                 // ensures that at least one edge exists
                                 if (!markedEdges.contains(u_m_pair.getSecond()) 
                                         && r > ni.nodeIndex[u_m.id]) {
-                                    bal.align[u_m.id] =  v_i_k;
+                                    bal.align[u_m.id] = v_i_k;
                                     bal.root[v_i_k.id] = bal.root[u_m.id];
                                     bal.align[v_i_k.id] = bal.root[v_i_k.id];
+                                    bal.od[bal.root[v_i_k.id].id] &= v_i_k.getType() == NodeType.LONG_EDGE;  
                                     
                                     r = ni.nodeIndex[u_m.id];
                                 }
@@ -144,6 +146,7 @@ public class BKAligner {
                                     bal.align[um.id] = v_i_k;
                                     bal.root[v_i_k.id] = bal.root[um.id];
                                     bal.align[v_i_k.id] = bal.root[v_i_k.id];
+                                    bal.od[bal.root[v_i_k.id].id] &= v_i_k.getType() == NodeType.LONG_EDGE;
                                     
                                     r = ni.nodeIndex[um.id];
                                 }

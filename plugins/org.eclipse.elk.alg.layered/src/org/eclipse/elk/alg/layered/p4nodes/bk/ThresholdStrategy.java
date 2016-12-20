@@ -104,8 +104,7 @@ public abstract class ThresholdStrategy {
      * @return a threshold value representing a bound that would allow an additional edge to be
      *         drawn straight.
      */
-    public abstract double calculateThreshold(final double oldThresh,
-            final LNode blockRoot, final LNode currentNode);
+    public abstract double calculateThreshold(double oldThresh, LNode blockRoot, LNode currentNode);
     
     
     /**
@@ -244,9 +243,12 @@ public abstract class ThresholdStrategy {
             boolean hasEdges = false;
             for (LEdge e : edges) {
                 
-                // ignore in-layer edges
-                if (ni.layerIndex[e.getSource().getNode().getLayer().id] 
-                        == ni.layerIndex[e.getTarget().getNode().getLayer().id]) {
+                // ignore in-layer edges unless the block is solely connected by in-layer edges
+                //  rationale: With self-loops and feedback edges it can happen that blocks contain only dummy nodes 
+                //  are not connected to other blocks by non-inlayer edges. To avoid unnecessarily long edges such 
+                //  blocks are allowed to be handled here as well
+                boolean onlyDummies = bal.od[bal.root[pp.free.id].id];
+                if (!onlyDummies && e.isInLayerEdge()) {
                     continue;
                 }
                 
@@ -355,8 +357,8 @@ public abstract class ThresholdStrategy {
                 LEdge edge = pick.edge;
                 
                 // ignore in-layer edges
-                if (ni.layerIndex[edge.getSource().getNode().getLayer().id] 
-                        == ni.layerIndex[edge.getTarget().getNode().getLayer().id]) {
+                boolean onlyDummies = bal.od[bal.root[pp.free.id].id];
+                if (!onlyDummies && edge.isInLayerEdge()) {
                     continue;
                 }
 

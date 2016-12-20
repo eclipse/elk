@@ -102,6 +102,8 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
 
     /** Internal property to associate dummy {@link NNode}s with {@link LEdge}s. */
     private static final IProperty<NNode> EDGE_NNODE = new Property<>("nodePlace.ns.edgeNNode");
+    /** Smaller weight than default (1), since horizontal edges are more important. */
+    private static final double SMALL_EDGE_WEIGHT = 0.1f;
     
     /** The lGraph to be handled. */
     private LGraph lGraph;
@@ -202,7 +204,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
                 if (prev != null) {
                     
                     NEdge nEdge = new NEdge();
-                    nEdge.weight = 0;
+                    nEdge.weight = isConnectedByInlayerEdge(prevL, lNode) ? SMALL_EDGE_WEIGHT : 0;
                     nEdge.delta =
                             // ceil the value to assert integrality and minimum spacing 
                             (int) Math.floor(
@@ -308,7 +310,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
                     if (other != null) {
                         NEdge nEdge = new NEdge();
                         nEdge.delta = 0; // doesn't matter
-                        nEdge.weight = NORTH_SOUTH_EDGE_WEIGHT; 
+                        nEdge.weight = SMALL_EDGE_WEIGHT; 
                         
                         nEdge.source = nodeMap.get(n);
                         nEdge.target = nodeMap.get(other);
@@ -323,7 +325,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
                     if (other != null) {
                         NEdge nEdge = new NEdge();
                         nEdge.delta = 0; // doesn't matter
-                        nEdge.weight = NORTH_SOUTH_EDGE_WEIGHT;
+                        nEdge.weight = SMALL_EDGE_WEIGHT;
                         
                         nEdge.source = nodeMap.get(other);
                         nEdge.target = nodeMap.get(n);
@@ -336,9 +338,6 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
         
         return graph;
     }
-    
-    /** Smaller weight than default (1), since horizontal edges are more important. */
-    private static final double NORTH_SOUTH_EDGE_WEIGHT = 0.1f;
     
     /**
      * @return for the passed edge, the individual edge weight as specified by Gansner et al. The
@@ -370,6 +369,23 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
     private boolean isHandledEdge(final LEdge edge) {
         return !edge.isSelfLoop() 
             && !(edge.getTarget().getNode().getLayer() == edge.getSource().getNode().getLayer());
+    }
+    
+    /**
+     * @return true if the two nodes are connected by an in-layer edge (with one of the nodes being a dummy node)
+     */
+    private boolean isConnectedByInlayerEdge(final LNode n1, final LNode n2) {
+        // the dummy check tries to avoid iterating many edges, 
+        // since the most common case is to return false
+        if (n1.getType() == NodeType.NORMAL && n2.getType() == NodeType.NORMAL) {
+            return false;
+        }
+        for (LEdge e : n1.getConnectedEdges()) {
+            if (e.isInLayerEdge() && e.getOther(n1) == n2) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
