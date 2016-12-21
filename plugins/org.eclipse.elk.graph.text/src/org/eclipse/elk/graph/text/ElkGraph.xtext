@@ -1,0 +1,100 @@
+/*******************************************************************************
+ * Copyright (c) 2016 TypeFox GmbH (http://www.typefox.io) and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+grammar org.eclipse.elk.graph.text.ElkGraph with org.eclipse.xtext.common.Terminals
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+import "http://elk.eclipse.org/ElkGraph"
+
+RootNode returns ElkNode:
+    {ElkNode} ('graph' identifier=ID)?
+    properties+=Property*
+    (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*;
+
+ElkNode returns ElkNode:
+    'node' identifier=ID ('{'
+        ShapeLayout?
+        properties+=Property*
+        (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+    '}')?;
+
+ElkLabel returns ElkLabel:
+    'label' (identifier=ID ':')? text=STRING ('{'
+        ShapeLayout?
+        properties+=Property*
+        labels+=ElkLabel*
+    '}')?;
+
+ElkPort returns ElkPort:
+    'port' identifier=ID ('{'
+        ShapeLayout?
+        properties+=Property*
+        labels+=ElkLabel*
+    '}')?;
+
+fragment ShapeLayout returns ElkShape:
+    'layout' '['(
+        ('position' '=' x=Number ',' y=Number)?
+        & ('width' '=' width=Number)?
+        & ('height' '=' height=Number)?
+    )']';
+
+ElkEdge returns ElkEdge:
+    'edge' (identifier=ID ':')?
+            sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
+            targets+=[ElkConnectableShape|QualifiedId] (',' targets+=[ElkConnectableShape|QualifiedId])* ('{'
+        EdgeLayout?
+        properties+=Property*
+        labels+=ElkLabel*
+    '}')?;
+
+fragment EdgeLayout returns ElkEdge:
+    'layout' '['(
+        sections+=ElkSingleEdgeSection | sections+=ElkEdgeSection+
+    )']';
+
+ElkSingleEdgeSection returns ElkEdgeSection:
+    {ElkEdgeSection} (
+        ('incoming' '=' incomingShape=[ElkConnectableShape|QualifiedId])?
+        & ('outgoing' '=' outgoingShape=[ElkConnectableShape|QualifiedId])?
+        & ('start' '=' startX=Number ',' startY=Number)?
+        & ('end' '=' endX=Number ',' endY=Number)?
+        & ('bends' '=' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+    );
+
+ElkEdgeSection returns ElkEdgeSection:
+    'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection|ID] (',' outgoingSections+=[ElkEdgeSection|ID])*)? '['(
+        ('incoming' '=' incomingShape=[ElkConnectableShape|QualifiedId])?
+        & ('outgoing' '=' outgoingShape=[ElkConnectableShape|QualifiedId])?
+        & ('start' '=' startX=Number ',' startY=Number)?
+        & ('end' '=' endX=Number ',' endY=Number)?
+        & ('bends' '=' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+    )']';
+
+ElkBendPoint returns ElkBendPoint:
+    x=Number ',' y=Number;
+
+Property returns ElkPropertyToValueMapEntry:
+    key=PropertyKey '=' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT);
+
+QualifiedId:
+    ID ('.' ID)*;
+
+Boolean returns ecore::EBoolean:
+    'true' | 'false';
+
+Number returns ecore::EDouble:
+    SIGNED_INT | FLOAT;
+
+PropertyKey returns IProperty hidden():
+    ID ('.' ID)*;
+
+terminal SIGNED_INT returns ecore::EInt:
+    ('+'|'-')? INT;
+
+terminal FLOAT returns ecore::EDouble: 
+    ('+'|'-')? (INT '.' INT | INT ('.' INT)? ('e'|'E') ('+'|'-')? INT);

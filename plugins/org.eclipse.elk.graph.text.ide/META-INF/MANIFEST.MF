@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK Textual Graph Format Generic IDE Services
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-Version: 0.1.0.qualifier
+Bundle-SymbolicName: org.eclipse.elk.graph.text.ide; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.elk.graph.text,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.elk.graph.text.ide.contentassist.antlr.internal,
+ org.eclipse.elk.graph.text.ide.contentassist.antlr
+
