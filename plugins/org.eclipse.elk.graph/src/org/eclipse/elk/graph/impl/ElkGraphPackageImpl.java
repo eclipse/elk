@@ -652,6 +652,15 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
      * <!-- end-user-doc -->
      * @generated
      */
+    public EAttribute getElkEdgeSection_Identifier() {
+        return (EAttribute)elkEdgeSectionEClass.getEStructuralFeatures().get(10);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getElkPropertyToValueMapEntry() {
         return elkPropertyToValueMapEntryEClass;
     }
@@ -797,6 +806,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         createEReference(elkEdgeSectionEClass, ELK_EDGE_SECTION__INCOMING_SHAPE);
         createEReference(elkEdgeSectionEClass, ELK_EDGE_SECTION__OUTGOING_SECTIONS);
         createEReference(elkEdgeSectionEClass, ELK_EDGE_SECTION__INCOMING_SECTIONS);
+        createEAttribute(elkEdgeSectionEClass, ELK_EDGE_SECTION__IDENTIFIER);
 
         elkPropertyToValueMapEntryEClass = createEClass(ELK_PROPERTY_TO_VALUE_MAP_ENTRY);
         createEAttribute(elkPropertyToValueMapEntryEClass, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY);
@@ -956,6 +966,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         initEReference(getElkEdgeSection_IncomingShape(), this.getElkConnectableShape(), null, "incomingShape", null, 0, 1, ElkEdgeSection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getElkEdgeSection_OutgoingSections(), this.getElkEdgeSection(), this.getElkEdgeSection_IncomingSections(), "outgoingSections", null, 0, -1, ElkEdgeSection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getElkEdgeSection_IncomingSections(), this.getElkEdgeSection(), this.getElkEdgeSection_OutgoingSections(), "incomingSections", null, 0, -1, ElkEdgeSection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getElkEdgeSection_Identifier(), ecorePackage.getEString(), "identifier", null, 0, 1, ElkEdgeSection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         op = addEOperation(elkEdgeSectionEClass, null, "setStartLocation", 0, 1, IS_UNIQUE, IS_ORDERED);
         addEParameter(op, ecorePackage.getEDouble(), "x", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -969,7 +980,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         g1 = createEGenericType(this.getIProperty());
         g2 = createEGenericType();
         g1.getETypeArguments().add(g2);
-        initEAttribute(getElkPropertyToValueMapEntry_Key(), g1, "key", null, 1, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getElkPropertyToValueMapEntry_Key(), g1, "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getElkPropertyToValueMapEntry_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(elkPersistentEntryEClass, ElkPersistentEntry.class, "ElkPersistentEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

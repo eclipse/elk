@@ -51,6 +51,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeSectionImpl#getIncomingShape <em>Incoming Shape</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeSectionImpl#getOutgoingSections <em>Outgoing Sections</em>}</li>
  *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeSectionImpl#getIncomingSections <em>Incoming Sections</em>}</li>
+ *   <li>{@link org.eclipse.elk.graph.impl.ElkEdgeSectionImpl#getIdentifier <em>Identifier</em>}</li>
  * </ul>
  *
  * @generated
@@ -185,6 +186,26 @@ public class ElkEdgeSectionImpl extends EMapPropertyHolderImpl implements ElkEdg
      * @ordered
      */
     protected EList<ElkEdgeSection> incomingSections;
+
+    /**
+     * The default value of the '{@link #getIdentifier() <em>Identifier</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getIdentifier()
+     * @generated
+     * @ordered
+     */
+    protected static final String IDENTIFIER_EDEFAULT = null;
+
+    /**
+     * The cached value of the '{@link #getIdentifier() <em>Identifier</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getIdentifier()
+     * @generated
+     * @ordered
+     */
+    protected String identifier = IDENTIFIER_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -447,6 +468,27 @@ public class ElkEdgeSectionImpl extends EMapPropertyHolderImpl implements ElkEdg
      * <!-- end-user-doc -->
      * @generated
      */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setIdentifier(String newIdentifier) {
+        String oldIdentifier = identifier;
+        identifier = newIdentifier;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, ElkGraphPackage.ELK_EDGE_SECTION__IDENTIFIER, oldIdentifier, identifier));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public void setStartLocation(final double x, final double y) {
         setStartX(x);
         setStartY(y);
@@ -547,6 +589,8 @@ public class ElkEdgeSectionImpl extends EMapPropertyHolderImpl implements ElkEdg
                 return getOutgoingSections();
             case ElkGraphPackage.ELK_EDGE_SECTION__INCOMING_SECTIONS:
                 return getIncomingSections();
+            case ElkGraphPackage.ELK_EDGE_SECTION__IDENTIFIER:
+                return getIdentifier();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -593,6 +637,9 @@ public class ElkEdgeSectionImpl extends EMapPropertyHolderImpl implements ElkEdg
                 getIncomingSections().clear();
                 getIncomingSections().addAll((Collection<? extends ElkEdgeSection>)newValue);
                 return;
+            case ElkGraphPackage.ELK_EDGE_SECTION__IDENTIFIER:
+                setIdentifier((String)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -635,6 +682,9 @@ public class ElkEdgeSectionImpl extends EMapPropertyHolderImpl implements ElkEdg
             case ElkGraphPackage.ELK_EDGE_SECTION__INCOMING_SECTIONS:
                 getIncomingSections().clear();
                 return;
+            case ElkGraphPackage.ELK_EDGE_SECTION__IDENTIFIER:
+                setIdentifier(IDENTIFIER_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -667,6 +717,8 @@ public class ElkEdgeSectionImpl extends EMapPropertyHolderImpl implements ElkEdg
                 return outgoingSections != null && !outgoingSections.isEmpty();
             case ElkGraphPackage.ELK_EDGE_SECTION__INCOMING_SECTIONS:
                 return incomingSections != null && !incomingSections.isEmpty();
+            case ElkGraphPackage.ELK_EDGE_SECTION__IDENTIFIER:
+                return IDENTIFIER_EDEFAULT == null ? identifier != null : !IDENTIFIER_EDEFAULT.equals(identifier);
         }
         return super.eIsSet(featureID);
     }
@@ -689,6 +741,8 @@ public class ElkEdgeSectionImpl extends EMapPropertyHolderImpl implements ElkEdg
         result.append(endX);
         result.append(", endY: ");
         result.append(endY);
+        result.append(", identifier: ");
+        result.append(identifier);
         result.append(')');
         return result.toString();
     }
