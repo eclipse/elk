@@ -150,7 +150,7 @@ public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *     ElkLabel returns ElkLabel
 	 *
 	 * Constraint:
-	 *     (identifier=ID? text=STRING ((width=Number | height=Number)? (x=Number y=Number)?)+ properties+=Property* labels+=ElkLabel*)
+	 *     (identifier=ID? text=STRING ((x=Number y=Number) | (width=Number height=Number))* properties+=Property* labels+=ElkLabel*)
 	 */
 	protected void sequence_ElkLabel_ShapeLayout(ISerializationContext context, ElkLabel semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -164,8 +164,7 @@ public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     (
 	 *         identifier=ID 
-	 *         width=Number? 
-	 *         (((x=Number y=Number) | height=Number)? width=Number?)* 
+	 *         ((x=Number y=Number) | (width=Number height=Number))* 
 	 *         properties+=Property* 
 	 *         (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
 	 *     )
@@ -180,7 +179,7 @@ public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *     ElkPort returns ElkPort
 	 *
 	 * Constraint:
-	 *     (identifier=ID ((width=Number | height=Number)? (x=Number y=Number)?)+ properties+=Property* labels+=ElkLabel*)
+	 *     (identifier=ID ((x=Number y=Number) | (width=Number height=Number))* properties+=Property* labels+=ElkLabel*)
 	 */
 	protected void sequence_ElkPort_ShapeLayout(ISerializationContext context, ElkPort semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

@@ -12,10 +12,12 @@ import java.util.Map
 import org.eclipse.elk.core.LayoutOptionValidator
 import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.graph.EMapPropertyHolder
+import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
 import org.eclipse.elk.graph.ElkGraphElement
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
 import org.eclipse.elk.graph.properties.IProperty
+import org.eclipse.elk.graph.util.ElkGraphUtil
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
 
@@ -134,6 +136,19 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
             ElkEdgeSection: ELK_EDGE_SECTION__IDENTIFIER
         }
 	    error("Identifier is already used.", object, feature)
+	}
+	
+	@Check
+	def void checkEdgeContainer(ElkEdge edge) {
+	    if (!(edge.sources.empty && edge.targets.empty)) {
+	        val bestContainer = ElkGraphUtil.findBestEdgeContainment(edge)
+	        if (bestContainer !== null && bestContainer != edge.containingNode) {
+	            if (bestContainer.parent === null)
+	                warning("This edge should be declared in the root node of this graph.", null)
+	            else
+	                warning("This edge should be declared in node " + bestContainer.identifier + ".", null)
+	        }
+        }
 	}
 	
 	@Check

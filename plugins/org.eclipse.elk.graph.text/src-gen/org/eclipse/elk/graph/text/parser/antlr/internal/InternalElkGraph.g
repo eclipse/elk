@@ -640,9 +640,9 @@ ruleShapeLayout[EObject in_current]  returns [EObject current=in_current]
 								{
 									newLeafNode(otherlv_3, grammarAccess.getShapeLayoutAccess().getPositionKeyword_2_0_0());
 								}
-								otherlv_4='='
+								otherlv_4=':'
 								{
-									newLeafNode(otherlv_4, grammarAccess.getShapeLayoutAccess().getEqualsSignKeyword_2_0_1());
+									newLeafNode(otherlv_4, grammarAccess.getShapeLayoutAccess().getColonKeyword_2_0_1());
 								}
 								(
 									(
@@ -697,13 +697,13 @@ ruleShapeLayout[EObject in_current]  returns [EObject current=in_current]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1);
 					}
-								({true}?=>(otherlv_8='width'
+								({true}?=>(otherlv_8='size'
 								{
-									newLeafNode(otherlv_8, grammarAccess.getShapeLayoutAccess().getWidthKeyword_2_1_0());
+									newLeafNode(otherlv_8, grammarAccess.getShapeLayoutAccess().getSizeKeyword_2_1_0());
 								}
-								otherlv_9='='
+								otherlv_9=':'
 								{
-									newLeafNode(otherlv_9, grammarAccess.getShapeLayoutAccess().getEqualsSignKeyword_2_1_1());
+									newLeafNode(otherlv_9, grammarAccess.getShapeLayoutAccess().getColonKeyword_2_1_1());
 								}
 								(
 									(
@@ -724,31 +724,16 @@ ruleShapeLayout[EObject in_current]  returns [EObject current=in_current]
 										}
 									)
 								)
-								))
-					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2());
-					}
-				)
-			)|
-			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 2)}?=>(
-					{
-						getUnorderedGroupHelper().select(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 2);
-					}
-								({true}?=>(otherlv_11='height'
+								otherlv_11=','
 								{
-									newLeafNode(otherlv_11, grammarAccess.getShapeLayoutAccess().getHeightKeyword_2_2_0());
-								}
-								otherlv_12='='
-								{
-									newLeafNode(otherlv_12, grammarAccess.getShapeLayoutAccess().getEqualsSignKeyword_2_2_1());
+									newLeafNode(otherlv_11, grammarAccess.getShapeLayoutAccess().getCommaKeyword_2_1_3());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getShapeLayoutAccess().getHeightNumberParserRuleCall_2_2_2_0());
+											newCompositeNode(grammarAccess.getShapeLayoutAccess().getHeightNumberParserRuleCall_2_1_4_0());
 										}
-										lv_height_13_0=ruleNumber
+										lv_height_12_0=ruleNumber
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getShapeLayoutRule());
@@ -756,7 +741,7 @@ ruleShapeLayout[EObject in_current]  returns [EObject current=in_current]
 											set(
 												$current,
 												"height",
-												lv_height_13_0,
+												lv_height_12_0,
 												"org.eclipse.elk.graph.text.ElkGraph.Number");
 											afterParserOrEnumRuleCall();
 										}
@@ -775,9 +760,9 @@ ruleShapeLayout[EObject in_current]  returns [EObject current=in_current]
 				  getUnorderedGroupHelper().leave(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2());
 				}
 		)
-		otherlv_14=']'
+		otherlv_13=']'
 		{
-			newLeafNode(otherlv_14, grammarAccess.getShapeLayoutAccess().getRightSquareBracketKeyword_3());
+			newLeafNode(otherlv_13, grammarAccess.getShapeLayoutAccess().getRightSquareBracketKeyword_3());
 		}
 	)
 ;
@@ -1075,9 +1060,9 @@ ruleElkSingleEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_2, grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0());
 								}
-								otherlv_3='='
+								otherlv_3=':'
 								{
-									newLeafNode(otherlv_3, grammarAccess.getElkSingleEdgeSectionAccess().getEqualsSignKeyword_1_0_1());
+									newLeafNode(otherlv_3, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1());
 								}
 								(
 									(
@@ -1110,9 +1095,9 @@ ruleElkSingleEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_5, grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_1_0());
 								}
-								otherlv_6='='
+								otherlv_6=':'
 								{
-									newLeafNode(otherlv_6, grammarAccess.getElkSingleEdgeSectionAccess().getEqualsSignKeyword_1_1_1());
+									newLeafNode(otherlv_6, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_1_1());
 								}
 								(
 									(
@@ -1145,9 +1130,9 @@ ruleElkSingleEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_8, grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_2_0());
 								}
-								otherlv_9='='
+								otherlv_9=':'
 								{
-									newLeafNode(otherlv_9, grammarAccess.getElkSingleEdgeSectionAccess().getEqualsSignKeyword_1_2_1());
+									newLeafNode(otherlv_9, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_2_1());
 								}
 								(
 									(
@@ -1206,9 +1191,9 @@ ruleElkSingleEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_13, grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_3_0());
 								}
-								otherlv_14='='
+								otherlv_14=':'
 								{
-									newLeafNode(otherlv_14, grammarAccess.getElkSingleEdgeSectionAccess().getEqualsSignKeyword_1_3_1());
+									newLeafNode(otherlv_14, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_3_1());
 								}
 								(
 									(
@@ -1267,9 +1252,9 @@ ruleElkSingleEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_18, grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_4_0());
 								}
-								otherlv_19='='
+								otherlv_19=':'
 								{
-									newLeafNode(otherlv_19, grammarAccess.getElkSingleEdgeSectionAccess().getEqualsSignKeyword_1_4_1());
+									newLeafNode(otherlv_19, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_4_1());
 								}
 								(
 									(
@@ -1427,9 +1412,9 @@ ruleElkEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_8, grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0());
 								}
-								otherlv_9='='
+								otherlv_9=':'
 								{
-									newLeafNode(otherlv_9, grammarAccess.getElkEdgeSectionAccess().getEqualsSignKeyword_4_0_1());
+									newLeafNode(otherlv_9, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1());
 								}
 								(
 									(
@@ -1462,9 +1447,9 @@ ruleElkEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_11, grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_1_0());
 								}
-								otherlv_12='='
+								otherlv_12=':'
 								{
-									newLeafNode(otherlv_12, grammarAccess.getElkEdgeSectionAccess().getEqualsSignKeyword_4_1_1());
+									newLeafNode(otherlv_12, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_1_1());
 								}
 								(
 									(
@@ -1497,9 +1482,9 @@ ruleElkEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_14, grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_2_0());
 								}
-								otherlv_15='='
+								otherlv_15=':'
 								{
-									newLeafNode(otherlv_15, grammarAccess.getElkEdgeSectionAccess().getEqualsSignKeyword_4_2_1());
+									newLeafNode(otherlv_15, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_2_1());
 								}
 								(
 									(
@@ -1558,9 +1543,9 @@ ruleElkEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_19, grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_3_0());
 								}
-								otherlv_20='='
+								otherlv_20=':'
 								{
-									newLeafNode(otherlv_20, grammarAccess.getElkEdgeSectionAccess().getEqualsSignKeyword_4_3_1());
+									newLeafNode(otherlv_20, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_3_1());
 								}
 								(
 									(
@@ -1619,9 +1604,9 @@ ruleElkEdgeSection returns [EObject current=null]
 								{
 									newLeafNode(otherlv_24, grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_4_0());
 								}
-								otherlv_25='='
+								otherlv_25=':'
 								{
-									newLeafNode(otherlv_25, grammarAccess.getElkEdgeSectionAccess().getEqualsSignKeyword_4_4_1());
+									newLeafNode(otherlv_25, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_4_1());
 								}
 								(
 									(
@@ -1783,9 +1768,9 @@ ruleProperty returns [EObject current=null]
 				}
 			)
 		)
-		otherlv_1='='
+		otherlv_1=':'
 		{
-			newLeafNode(otherlv_1, grammarAccess.getPropertyAccess().getEqualsSignKeyword_1());
+			newLeafNode(otherlv_1, grammarAccess.getPropertyAccess().getColonKeyword_1());
 		}
 		(
 			(

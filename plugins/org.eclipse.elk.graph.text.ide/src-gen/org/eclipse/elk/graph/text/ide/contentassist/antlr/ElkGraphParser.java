@@ -57,7 +57,6 @@ public class ElkGraphParser extends AbstractContentAssistParser {
 					put(grammarAccess.getShapeLayoutAccess().getGroup(), "rule__ShapeLayout__Group__0");
 					put(grammarAccess.getShapeLayoutAccess().getGroup_2_0(), "rule__ShapeLayout__Group_2_0__0");
 					put(grammarAccess.getShapeLayoutAccess().getGroup_2_1(), "rule__ShapeLayout__Group_2_1__0");
-					put(grammarAccess.getShapeLayoutAccess().getGroup_2_2(), "rule__ShapeLayout__Group_2_2__0");
 					put(grammarAccess.getElkEdgeAccess().getGroup(), "rule__ElkEdge__Group__0");
 					put(grammarAccess.getElkEdgeAccess().getGroup_1(), "rule__ElkEdge__Group_1__0");
 					put(grammarAccess.getElkEdgeAccess().getGroup_3(), "rule__ElkEdge__Group_3__0");
@@ -108,7 +107,7 @@ public class ElkGraphParser extends AbstractContentAssistParser {
 					put(grammarAccess.getShapeLayoutAccess().getXAssignment_2_0_2(), "rule__ShapeLayout__XAssignment_2_0_2");
 					put(grammarAccess.getShapeLayoutAccess().getYAssignment_2_0_4(), "rule__ShapeLayout__YAssignment_2_0_4");
 					put(grammarAccess.getShapeLayoutAccess().getWidthAssignment_2_1_2(), "rule__ShapeLayout__WidthAssignment_2_1_2");
-					put(grammarAccess.getShapeLayoutAccess().getHeightAssignment_2_2_2(), "rule__ShapeLayout__HeightAssignment_2_2_2");
+					put(grammarAccess.getShapeLayoutAccess().getHeightAssignment_2_1_4(), "rule__ShapeLayout__HeightAssignment_2_1_4");
 					put(grammarAccess.getElkEdgeAccess().getIdentifierAssignment_1_0(), "rule__ElkEdge__IdentifierAssignment_1_0");
 					put(grammarAccess.getElkEdgeAccess().getSourcesAssignment_2(), "rule__ElkEdge__SourcesAssignment_2");
 					put(grammarAccess.getElkEdgeAccess().getSourcesAssignment_3_1(), "rule__ElkEdge__SourcesAssignment_3_1");

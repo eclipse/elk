@@ -38,9 +38,8 @@ ElkPort returns ElkPort:
 
 fragment ShapeLayout returns ElkShape:
     'layout' '['(
-        ('position' '=' x=Number ',' y=Number)?
-        & ('width' '=' width=Number)?
-        & ('height' '=' height=Number)?
+        ('position' ':' x=Number ',' y=Number)?
+        & ('size' ':' width=Number ',' height=Number)?
     )']';
 
 ElkEdge returns ElkEdge:
@@ -59,27 +58,27 @@ fragment EdgeLayout returns ElkEdge:
 
 ElkSingleEdgeSection returns ElkEdgeSection:
     {ElkEdgeSection} (
-        ('incoming' '=' incomingShape=[ElkConnectableShape|QualifiedId])?
-        & ('outgoing' '=' outgoingShape=[ElkConnectableShape|QualifiedId])?
-        & ('start' '=' startX=Number ',' startY=Number)?
-        & ('end' '=' endX=Number ',' endY=Number)?
-        & ('bends' '=' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+        ('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+        & ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
+        & ('start' ':' startX=Number ',' startY=Number)?
+        & ('end' ':' endX=Number ',' endY=Number)?
+        & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
     );
 
 ElkEdgeSection returns ElkEdgeSection:
     'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection|ID] (',' outgoingSections+=[ElkEdgeSection|ID])*)? '['(
-        ('incoming' '=' incomingShape=[ElkConnectableShape|QualifiedId])?
-        & ('outgoing' '=' outgoingShape=[ElkConnectableShape|QualifiedId])?
-        & ('start' '=' startX=Number ',' startY=Number)?
-        & ('end' '=' endX=Number ',' endY=Number)?
-        & ('bends' '=' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+        ('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+        & ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
+        & ('start' ':' startX=Number ',' startY=Number)?
+        & ('end' ':' endX=Number ',' endY=Number)?
+        & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
     )']';
 
 ElkBendPoint returns ElkBendPoint:
     x=Number ',' y=Number;
 
 Property returns ElkPropertyToValueMapEntry:
-    key=PropertyKey '=' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT);
+    key=PropertyKey ':' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT);
 
 QualifiedId:
     ID ('.' ID)*;
