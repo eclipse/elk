@@ -296,7 +296,7 @@
                 pattern="org\.eclipse\.elk\.core.*"/>
             <operand
                 xsi:type="predicates:NamePredicate"
-                pattern="org\.eclipse\.elk\.graph"/>
+                pattern="org\.eclipse\.elk\.graph.*"/>
           </operand>
           <operand
               xsi:type="predicates:NotPredicate">
