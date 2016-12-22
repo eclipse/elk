@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK Textual Graph Format UI
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-Version: 0.1.0.qualifier
+Bundle-SymbolicName: org.eclipse.elk.graph.text.ui; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.elk.graph,
+ org.eclipse.elk.graph.text,
+ org.eclipse.elk.graph.text.ide,
+ org.eclipse.xtext.ui,
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.ui,
+ org.eclipse.compare,
+ org.eclipse.xtext.builder,
+ org.eclipse.xtend.lib;resolution:=optional,
+ org.eclipse.xtext.xbase.lib
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.elk.graph.text.ui.contentassist,
+ org.eclipse.elk.graph.text.ui.internal,
+ org.eclipse.elk.graph.text.ui.quickfix
+Bundle-Activator: org.eclipse.elk.graph.text.ui.internal.TextActivator

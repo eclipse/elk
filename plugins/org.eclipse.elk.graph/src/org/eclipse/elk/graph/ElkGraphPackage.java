@@ -1039,13 +1039,22 @@ public interface ElkGraphPackage extends EPackage {
     int ELK_EDGE_SECTION__INCOMING_SECTIONS = EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 9;
 
     /**
+     * The feature id for the '<em><b>Identifier</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ELK_EDGE_SECTION__IDENTIFIER = EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 10;
+
+    /**
      * The number of structural features of the '<em>Elk Edge Section</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int ELK_EDGE_SECTION_FEATURE_COUNT = EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 10;
+    int ELK_EDGE_SECTION_FEATURE_COUNT = EMAP_PROPERTY_HOLDER_FEATURE_COUNT + 11;
 
     /**
      * The meta object id for the '{@link org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl <em>Elk Property To Value Map Entry</em>}' class.
@@ -1662,12 +1671,23 @@ public interface ElkGraphPackage extends EPackage {
     EReference getElkEdgeSection_IncomingSections();
 
     /**
+     * Returns the meta object for the attribute '{@link org.eclipse.elk.graph.ElkEdgeSection#getIdentifier <em>Identifier</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Identifier</em>'.
+     * @see org.eclipse.elk.graph.ElkEdgeSection#getIdentifier()
+     * @see #getElkEdgeSection()
+     * @generated
+     */
+    EAttribute getElkEdgeSection_Identifier();
+
+    /**
      * Returns the meta object for class '{@link java.util.Map.Entry <em>Elk Property To Value Map Entry</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @return the meta object for class '<em>Elk Property To Value Map Entry</em>'.
      * @see java.util.Map.Entry
-     * @model keyDataType="org.eclipse.elk.graph.IProperty<?>" keyRequired="true"
+     * @model keyDataType="org.eclipse.elk.graph.IProperty<?>"
      *        valueDataType="org.eclipse.emf.ecore.EJavaObject"
      * @generated
      */
@@ -2173,6 +2193,14 @@ public interface ElkGraphPackage extends EPackage {
          * @generated
          */
         EReference ELK_EDGE_SECTION__INCOMING_SECTIONS = eINSTANCE.getElkEdgeSection_IncomingSections();
+
+        /**
+         * The meta object literal for the '<em><b>Identifier</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute ELK_EDGE_SECTION__IDENTIFIER = eINSTANCE.getElkEdgeSection_Identifier();
 
         /**
          * The meta object literal for the '{@link org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl <em>Elk Property To Value Map Entry</em>}' class.

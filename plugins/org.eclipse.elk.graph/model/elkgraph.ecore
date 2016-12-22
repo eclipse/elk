@@ -355,9 +355,10 @@
         <details key="documentation" value="List of incoming sections this section is connected to. Must not be empty if this section is an &lt;em>inner section&lt;/em> (not connected to a shape).&#xA;&#xA;&lt;p>Adding or removing a section to/from this list automatically updates its list of outgoing sections.&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="identifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ElkPropertyToValueMapEntry" instanceClassName="java.util.Map$Entry">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" lowerBound="1">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key">
       <eGenericType eClassifier="#//IProperty">
         <eTypeArguments/>
       </eGenericType>
