@@ -419,7 +419,7 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *     MdGroup returns MdGroup
 	 *
 	 * Constraint:
-	 *     (name=ID children+=MdGroupOrOption*)
+	 *     (name=ID documentation=STRING? children+=MdGroupOrOption*)
 	 */
 	protected void sequence_MdGroup(ISerializationContext context, MdGroup semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

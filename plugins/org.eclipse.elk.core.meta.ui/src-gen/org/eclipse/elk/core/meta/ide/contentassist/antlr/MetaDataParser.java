@@ -95,6 +95,7 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdBundleAccess().getGroup_1_2_2(), "rule__MdBundle__Group_1_2_2__0");
 					put(grammarAccess.getMdBundleAccess().getGroup_1_2_3(), "rule__MdBundle__Group_1_2_3__0");
 					put(grammarAccess.getMdGroupAccess().getGroup(), "rule__MdGroup__Group__0");
+					put(grammarAccess.getMdGroupAccess().getGroup_3(), "rule__MdGroup__Group_3__0");
 					put(grammarAccess.getMdOptionAccess().getGroup(), "rule__MdOption__Group__0");
 					put(grammarAccess.getMdOptionAccess().getGroup_4(), "rule__MdOption__Group_4__0");
 					put(grammarAccess.getMdOptionAccess().getGroup_6_0(), "rule__MdOption__Group_6_0__0");
@@ -316,7 +317,8 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdBundleAccess().getIdPrefixAssignment_1_2_3_1(), "rule__MdBundle__IdPrefixAssignment_1_2_3_1");
 					put(grammarAccess.getMdBundleAccess().getMembersAssignment_2(), "rule__MdBundle__MembersAssignment_2");
 					put(grammarAccess.getMdGroupAccess().getNameAssignment_1(), "rule__MdGroup__NameAssignment_1");
-					put(grammarAccess.getMdGroupAccess().getChildrenAssignment_3(), "rule__MdGroup__ChildrenAssignment_3");
+					put(grammarAccess.getMdGroupAccess().getDocumentationAssignment_3_1(), "rule__MdGroup__DocumentationAssignment_3_1");
+					put(grammarAccess.getMdGroupAccess().getChildrenAssignment_4(), "rule__MdGroup__ChildrenAssignment_4");
 					put(grammarAccess.getMdOptionAccess().getDeprecatedAssignment_0(), "rule__MdOption__DeprecatedAssignment_0");
 					put(grammarAccess.getMdOptionAccess().getAdvancedAssignment_1_0(), "rule__MdOption__AdvancedAssignment_1_0");
 					put(grammarAccess.getMdOptionAccess().getProgrammaticAssignment_1_1(), "rule__MdOption__ProgrammaticAssignment_1_1");

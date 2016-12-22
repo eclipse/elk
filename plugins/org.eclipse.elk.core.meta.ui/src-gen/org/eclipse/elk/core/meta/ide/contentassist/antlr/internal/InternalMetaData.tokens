@@ -24,7 +24,7 @@
 '..<'=31
 '/'=16
 '/='=21
-':'=73
+':'=74
 '::'=119
 ';'=95
 '<'=29
@@ -51,10 +51,10 @@
 'compound'=60
 'default'=76
 'deprecated'=114
-'description'=74
+'description'=75
 'disconnected'=62
 'do'=102
-'documentation'=75
+'documentation'=72
 'documentationFolder'=69
 'edge_labels'=59
 'edges'=53
@@ -81,7 +81,7 @@
 'new'=103
 'nodes'=52
 'null'=104
-'option'=72
+'option'=73
 'output'=117
 'package'=63
 'parents'=51

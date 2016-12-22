@@ -197,13 +197,22 @@ public interface MetaDataPackage extends EPackage
   int MD_BUNDLE_MEMBER__NAME = 0;
 
   /**
+   * The feature id for the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_BUNDLE_MEMBER__DOCUMENTATION = 1;
+
+  /**
    * The number of structural features of the '<em>Md Bundle Member</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_BUNDLE_MEMBER_FEATURE_COUNT = 1;
+  int MD_BUNDLE_MEMBER_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdGroupOrOptionImpl <em>Md Group Or Option</em>}' class.
@@ -223,6 +232,15 @@ public interface MetaDataPackage extends EPackage
    * @ordered
    */
   int MD_GROUP_OR_OPTION__NAME = MD_BUNDLE_MEMBER__NAME;
+
+  /**
+   * The feature id for the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_GROUP_OR_OPTION__DOCUMENTATION = MD_BUNDLE_MEMBER__DOCUMENTATION;
 
   /**
    * The number of structural features of the '<em>Md Group Or Option</em>' class.
@@ -251,6 +269,15 @@ public interface MetaDataPackage extends EPackage
    * @ordered
    */
   int MD_GROUP__NAME = MD_GROUP_OR_OPTION__NAME;
+
+  /**
+   * The feature id for the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_GROUP__DOCUMENTATION = MD_GROUP_OR_OPTION__DOCUMENTATION;
 
   /**
    * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -288,6 +315,15 @@ public interface MetaDataPackage extends EPackage
    * @ordered
    */
   int MD_OPTION__NAME = MD_GROUP_OR_OPTION__NAME;
+
+  /**
+   * The feature id for the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_OPTION__DOCUMENTATION = MD_GROUP_OR_OPTION__DOCUMENTATION;
 
   /**
    * The feature id for the '<em><b>Deprecated</b></em>' attribute.
@@ -362,22 +398,13 @@ public interface MetaDataPackage extends EPackage
   int MD_OPTION__DESCRIPTION = MD_GROUP_OR_OPTION_FEATURE_COUNT + 7;
 
   /**
-   * The feature id for the '<em><b>Documentation</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_OPTION__DOCUMENTATION = MD_GROUP_OR_OPTION_FEATURE_COUNT + 8;
-
-  /**
    * The feature id for the '<em><b>Default Value</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_OPTION__DEFAULT_VALUE = MD_GROUP_OR_OPTION_FEATURE_COUNT + 9;
+  int MD_OPTION__DEFAULT_VALUE = MD_GROUP_OR_OPTION_FEATURE_COUNT + 8;
 
   /**
    * The feature id for the '<em><b>Lower Bound</b></em>' containment reference.
@@ -386,7 +413,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_OPTION__LOWER_BOUND = MD_GROUP_OR_OPTION_FEATURE_COUNT + 10;
+  int MD_OPTION__LOWER_BOUND = MD_GROUP_OR_OPTION_FEATURE_COUNT + 9;
 
   /**
    * The feature id for the '<em><b>Upper Bound</b></em>' containment reference.
@@ -395,7 +422,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_OPTION__UPPER_BOUND = MD_GROUP_OR_OPTION_FEATURE_COUNT + 11;
+  int MD_OPTION__UPPER_BOUND = MD_GROUP_OR_OPTION_FEATURE_COUNT + 10;
 
   /**
    * The feature id for the '<em><b>Targets</b></em>' attribute list.
@@ -404,7 +431,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_OPTION__TARGETS = MD_GROUP_OR_OPTION_FEATURE_COUNT + 12;
+  int MD_OPTION__TARGETS = MD_GROUP_OR_OPTION_FEATURE_COUNT + 11;
 
   /**
    * The feature id for the '<em><b>Legacy Ids</b></em>' attribute list.
@@ -413,7 +440,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_OPTION__LEGACY_IDS = MD_GROUP_OR_OPTION_FEATURE_COUNT + 13;
+  int MD_OPTION__LEGACY_IDS = MD_GROUP_OR_OPTION_FEATURE_COUNT + 12;
 
   /**
    * The feature id for the '<em><b>Dependencies</b></em>' containment reference list.
@@ -422,7 +449,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_OPTION__DEPENDENCIES = MD_GROUP_OR_OPTION_FEATURE_COUNT + 14;
+  int MD_OPTION__DEPENDENCIES = MD_GROUP_OR_OPTION_FEATURE_COUNT + 13;
 
   /**
    * The number of structural features of the '<em>Md Option</em>' class.
@@ -431,7 +458,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_OPTION_FEATURE_COUNT = MD_GROUP_OR_OPTION_FEATURE_COUNT + 15;
+  int MD_OPTION_FEATURE_COUNT = MD_GROUP_OR_OPTION_FEATURE_COUNT + 14;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionDependencyImpl <em>Md Option Dependency</em>}' class.
@@ -490,6 +517,15 @@ public interface MetaDataPackage extends EPackage
   int MD_ALGORITHM__NAME = MD_BUNDLE_MEMBER__NAME;
 
   /**
+   * The feature id for the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_ALGORITHM__DOCUMENTATION = MD_BUNDLE_MEMBER__DOCUMENTATION;
+
+  /**
    * The feature id for the '<em><b>Deprecated</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -544,22 +580,13 @@ public interface MetaDataPackage extends EPackage
   int MD_ALGORITHM__DESCRIPTION = MD_BUNDLE_MEMBER_FEATURE_COUNT + 5;
 
   /**
-   * The feature id for the '<em><b>Documentation</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_ALGORITHM__DOCUMENTATION = MD_BUNDLE_MEMBER_FEATURE_COUNT + 6;
-
-  /**
    * The feature id for the '<em><b>Category</b></em>' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__CATEGORY = MD_BUNDLE_MEMBER_FEATURE_COUNT + 7;
+  int MD_ALGORITHM__CATEGORY = MD_BUNDLE_MEMBER_FEATURE_COUNT + 6;
 
   /**
    * The feature id for the '<em><b>Preview Image</b></em>' attribute.
@@ -568,7 +595,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__PREVIEW_IMAGE = MD_BUNDLE_MEMBER_FEATURE_COUNT + 8;
+  int MD_ALGORITHM__PREVIEW_IMAGE = MD_BUNDLE_MEMBER_FEATURE_COUNT + 7;
 
   /**
    * The feature id for the '<em><b>Supported Features</b></em>' attribute list.
@@ -577,7 +604,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__SUPPORTED_FEATURES = MD_BUNDLE_MEMBER_FEATURE_COUNT + 9;
+  int MD_ALGORITHM__SUPPORTED_FEATURES = MD_BUNDLE_MEMBER_FEATURE_COUNT + 8;
 
   /**
    * The feature id for the '<em><b>Supported Options</b></em>' containment reference list.
@@ -586,7 +613,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__SUPPORTED_OPTIONS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 10;
+  int MD_ALGORITHM__SUPPORTED_OPTIONS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 9;
 
   /**
    * The number of structural features of the '<em>Md Algorithm</em>' class.
@@ -595,7 +622,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 11;
+  int MD_ALGORITHM_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 10;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdCategoryImpl <em>Md Category</em>}' class.
@@ -615,6 +642,15 @@ public interface MetaDataPackage extends EPackage
    * @ordered
    */
   int MD_CATEGORY__NAME = MD_BUNDLE_MEMBER__NAME;
+
+  /**
+   * The feature id for the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_CATEGORY__DOCUMENTATION = MD_BUNDLE_MEMBER__DOCUMENTATION;
 
   /**
    * The feature id for the '<em><b>Deprecated</b></em>' attribute.
@@ -644,22 +680,13 @@ public interface MetaDataPackage extends EPackage
   int MD_CATEGORY__DESCRIPTION = MD_BUNDLE_MEMBER_FEATURE_COUNT + 2;
 
   /**
-   * The feature id for the '<em><b>Documentation</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MD_CATEGORY__DOCUMENTATION = MD_BUNDLE_MEMBER_FEATURE_COUNT + 3;
-
-  /**
    * The number of structural features of the '<em>Md Category</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_CATEGORY_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 4;
+  int MD_CATEGORY_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 3;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionSupportImpl <em>Md Option Support</em>}' class.
@@ -858,6 +885,17 @@ public interface MetaDataPackage extends EPackage
   EAttribute getMdBundleMember_Name();
 
   /**
+   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdBundleMember#getDocumentation <em>Documentation</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Documentation</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdBundleMember#getDocumentation()
+   * @see #getMdBundleMember()
+   * @generated
+   */
+  EAttribute getMdBundleMember_Documentation();
+
+  /**
    * Returns the meta object for class '{@link org.eclipse.elk.core.meta.metaData.MdGroupOrOption <em>Md Group Or Option</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -985,17 +1023,6 @@ public interface MetaDataPackage extends EPackage
    * @generated
    */
   EAttribute getMdOption_Description();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdOption#getDocumentation <em>Documentation</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Documentation</em>'.
-   * @see org.eclipse.elk.core.meta.metaData.MdOption#getDocumentation()
-   * @see #getMdOption()
-   * @generated
-   */
-  EAttribute getMdOption_Documentation();
 
   /**
    * Returns the meta object for the containment reference '{@link org.eclipse.elk.core.meta.metaData.MdOption#getDefaultValue <em>Default Value</em>}'.
@@ -1172,17 +1199,6 @@ public interface MetaDataPackage extends EPackage
   EAttribute getMdAlgorithm_Description();
 
   /**
-   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDocumentation <em>Documentation</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Documentation</em>'.
-   * @see org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDocumentation()
-   * @see #getMdAlgorithm()
-   * @generated
-   */
-  EAttribute getMdAlgorithm_Documentation();
-
-  /**
    * Returns the meta object for the reference '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getCategory <em>Category</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1268,17 +1284,6 @@ public interface MetaDataPackage extends EPackage
    * @generated
    */
   EAttribute getMdCategory_Description();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.eclipse.elk.core.meta.metaData.MdCategory#getDocumentation <em>Documentation</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Documentation</em>'.
-   * @see org.eclipse.elk.core.meta.metaData.MdCategory#getDocumentation()
-   * @see #getMdCategory()
-   * @generated
-   */
-  EAttribute getMdCategory_Documentation();
 
   /**
    * Returns the meta object for class '{@link org.eclipse.elk.core.meta.metaData.MdOptionSupport <em>Md Option Support</em>}'.
@@ -1469,6 +1474,14 @@ public interface MetaDataPackage extends EPackage
     EAttribute MD_BUNDLE_MEMBER__NAME = eINSTANCE.getMdBundleMember_Name();
 
     /**
+     * The meta object literal for the '<em><b>Documentation</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MD_BUNDLE_MEMBER__DOCUMENTATION = eINSTANCE.getMdBundleMember_Documentation();
+
+    /**
      * The meta object literal for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdGroupOrOptionImpl <em>Md Group Or Option</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1569,14 +1582,6 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EAttribute MD_OPTION__DESCRIPTION = eINSTANCE.getMdOption_Description();
-
-    /**
-     * The meta object literal for the '<em><b>Documentation</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute MD_OPTION__DOCUMENTATION = eINSTANCE.getMdOption_Documentation();
 
     /**
      * The meta object literal for the '<em><b>Default Value</b></em>' containment reference feature.
@@ -1711,14 +1716,6 @@ public interface MetaDataPackage extends EPackage
     EAttribute MD_ALGORITHM__DESCRIPTION = eINSTANCE.getMdAlgorithm_Description();
 
     /**
-     * The meta object literal for the '<em><b>Documentation</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute MD_ALGORITHM__DOCUMENTATION = eINSTANCE.getMdAlgorithm_Documentation();
-
-    /**
      * The meta object literal for the '<em><b>Category</b></em>' reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1783,14 +1780,6 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EAttribute MD_CATEGORY__DESCRIPTION = eINSTANCE.getMdCategory_Description();
-
-    /**
-     * The meta object literal for the '<em><b>Documentation</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute MD_CATEGORY__DOCUMENTATION = eINSTANCE.getMdCategory_Documentation();
 
     /**
      * The meta object literal for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionSupportImpl <em>Md Option Support</em>}' class.

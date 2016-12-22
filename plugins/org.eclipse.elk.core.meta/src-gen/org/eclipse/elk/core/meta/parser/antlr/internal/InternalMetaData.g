@@ -480,11 +480,35 @@ ruleMdGroup returns [EObject current=null]
 			newLeafNode(otherlv_2, grammarAccess.getMdGroupAccess().getLeftCurlyBracketKeyword_2());
 		}
 		(
+			otherlv_3='documentation'
+			{
+				newLeafNode(otherlv_3, grammarAccess.getMdGroupAccess().getDocumentationKeyword_3_0());
+			}
+			(
+				(
+					lv_documentation_4_0=RULE_STRING
+					{
+						newLeafNode(lv_documentation_4_0, grammarAccess.getMdGroupAccess().getDocumentationSTRINGTerminalRuleCall_3_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getMdGroupRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"documentation",
+							lv_documentation_4_0,
+							"org.eclipse.xtext.xbase.Xtype.STRING");
+					}
+				)
+			)
+		)?
+		(
 			(
 				{
-					newCompositeNode(grammarAccess.getMdGroupAccess().getChildrenMdGroupOrOptionParserRuleCall_3_0());
+					newCompositeNode(grammarAccess.getMdGroupAccess().getChildrenMdGroupOrOptionParserRuleCall_4_0());
 				}
-				lv_children_3_0=ruleMdGroupOrOption
+				lv_children_5_0=ruleMdGroupOrOption
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMdGroupRule());
@@ -492,15 +516,15 @@ ruleMdGroup returns [EObject current=null]
 					add(
 						$current,
 						"children",
-						lv_children_3_0,
+						lv_children_5_0,
 						"org.eclipse.elk.core.meta.MetaData.MdGroupOrOption");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)*
-		otherlv_4='}'
+		otherlv_6='}'
 		{
-			newLeafNode(otherlv_4, grammarAccess.getMdGroupAccess().getRightCurlyBracketKeyword_4());
+			newLeafNode(otherlv_6, grammarAccess.getMdGroupAccess().getRightCurlyBracketKeyword_5());
 		}
 	)
 ;

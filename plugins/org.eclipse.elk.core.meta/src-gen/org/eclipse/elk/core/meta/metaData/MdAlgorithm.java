@@ -31,7 +31,6 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDescription <em>Description</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getPreviewImage <em>Preview Image</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getSupportedFeatures <em>Supported Features</em>}</li>
@@ -199,32 +198,6 @@ public interface MdAlgorithm extends MdBundleMember
    * @generated
    */
   void setDescription(String value);
-
-  /**
-   * Returns the value of the '<em><b>Documentation</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Documentation</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Documentation</em>' attribute.
-   * @see #setDocumentation(String)
-   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdAlgorithm_Documentation()
-   * @model
-   * @generated
-   */
-  String getDocumentation();
-
-  /**
-   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getDocumentation <em>Documentation</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Documentation</em>' attribute.
-   * @see #getDocumentation()
-   * @generated
-   */
-  void setDocumentation(String value);
 
   /**
    * Returns the value of the '<em><b>Category</b></em>' reference.

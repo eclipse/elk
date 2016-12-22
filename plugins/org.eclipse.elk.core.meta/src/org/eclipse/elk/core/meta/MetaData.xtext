@@ -41,6 +41,7 @@ MdGroupOrOption:
 
 MdGroup:
     'group' name=ID '{'
+        ('documentation' documentation=STRING)?
         children+=MdGroupOrOption*
     '}';
 

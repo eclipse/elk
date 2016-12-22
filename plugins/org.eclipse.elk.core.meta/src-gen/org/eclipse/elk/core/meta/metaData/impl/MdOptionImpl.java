@@ -53,7 +53,6 @@ import org.eclipse.xtext.xbase.XExpression;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getDescription <em>Description</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getDefaultValue <em>Default Value</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getLowerBound <em>Lower Bound</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdOptionImpl#getUpperBound <em>Upper Bound</em>}</li>
@@ -215,26 +214,6 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * @ordered
    */
   protected String description = DESCRIPTION_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocumentation()
-   * @generated
-   * @ordered
-   */
-  protected static final String DOCUMENTATION_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocumentation()
-   * @generated
-   * @ordered
-   */
-  protected String documentation = DOCUMENTATION_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getDefaultValue() <em>Default Value</em>}' containment reference.
@@ -531,29 +510,6 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getDocumentation()
-  {
-    return documentation;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDocumentation(String newDocumentation)
-  {
-    String oldDocumentation = documentation;
-    documentation = newDocumentation;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_OPTION__DOCUMENTATION, oldDocumentation, documentation));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public XExpression getDefaultValue()
   {
     return defaultValue;
@@ -785,8 +741,6 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
         return getLabel();
       case MetaDataPackage.MD_OPTION__DESCRIPTION:
         return getDescription();
-      case MetaDataPackage.MD_OPTION__DOCUMENTATION:
-        return getDocumentation();
       case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         return getDefaultValue();
       case MetaDataPackage.MD_OPTION__LOWER_BOUND:
@@ -837,9 +791,6 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
         return;
       case MetaDataPackage.MD_OPTION__DESCRIPTION:
         setDescription((String)newValue);
-        return;
-      case MetaDataPackage.MD_OPTION__DOCUMENTATION:
-        setDocumentation((String)newValue);
         return;
       case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         setDefaultValue((XExpression)newValue);
@@ -900,9 +851,6 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
       case MetaDataPackage.MD_OPTION__DESCRIPTION:
         setDescription(DESCRIPTION_EDEFAULT);
         return;
-      case MetaDataPackage.MD_OPTION__DOCUMENTATION:
-        setDocumentation(DOCUMENTATION_EDEFAULT);
-        return;
       case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         setDefaultValue((XExpression)null);
         return;
@@ -951,8 +899,6 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
         return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case MetaDataPackage.MD_OPTION__DESCRIPTION:
         return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
-      case MetaDataPackage.MD_OPTION__DOCUMENTATION:
-        return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
       case MetaDataPackage.MD_OPTION__DEFAULT_VALUE:
         return defaultValue != null;
       case MetaDataPackage.MD_OPTION__LOWER_BOUND:
@@ -994,8 +940,6 @@ public class MdOptionImpl extends MdGroupOrOptionImpl implements MdOption
     result.append(label);
     result.append(", description: ");
     result.append(description);
-    result.append(", documentation: ");
-    result.append(documentation);
     result.append(", targets: ");
     result.append(targets);
     result.append(", legacyIds: ");

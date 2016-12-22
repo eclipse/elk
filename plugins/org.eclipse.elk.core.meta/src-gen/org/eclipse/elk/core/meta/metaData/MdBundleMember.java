@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundleMember#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdBundleMember#getDocumentation <em>Documentation</em>}</li>
  * </ul>
  *
  * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdBundleMember()
@@ -57,5 +58,31 @@ public interface MdBundleMember extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Documentation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Documentation</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Documentation</em>' attribute.
+   * @see #setDocumentation(String)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdBundleMember_Documentation()
+   * @model
+   * @generated
+   */
+  String getDocumentation();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdBundleMember#getDocumentation <em>Documentation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Documentation</em>' attribute.
+   * @see #getDocumentation()
+   * @generated
+   */
+  void setDocumentation(String value);
 
 } // MdBundleMember

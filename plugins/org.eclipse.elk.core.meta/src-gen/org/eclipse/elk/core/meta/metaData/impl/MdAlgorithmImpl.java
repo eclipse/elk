@@ -50,7 +50,6 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getDescription <em>Description</em>}</li>
- *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getDocumentation <em>Documentation</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getPreviewImage <em>Preview Image</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getSupportedFeatures <em>Supported Features</em>}</li>
@@ -170,26 +169,6 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * @ordered
    */
   protected String description = DESCRIPTION_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocumentation()
-   * @generated
-   * @ordered
-   */
-  protected static final String DOCUMENTATION_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getDocumentation() <em>Documentation</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocumentation()
-   * @generated
-   * @ordered
-   */
-  protected String documentation = DOCUMENTATION_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getCategory() <em>Category</em>}' reference.
@@ -430,29 +409,6 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getDocumentation()
-  {
-    return documentation;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDocumentation(String newDocumentation)
-  {
-    String oldDocumentation = documentation;
-    documentation = newDocumentation;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_ALGORITHM__DOCUMENTATION, oldDocumentation, documentation));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public MdCategory getCategory()
   {
     if (category != null && category.eIsProxy())
@@ -582,8 +538,6 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return getTargetClass();
       case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
         return getDescription();
-      case MetaDataPackage.MD_ALGORITHM__DOCUMENTATION:
-        return getDocumentation();
       case MetaDataPackage.MD_ALGORITHM__CATEGORY:
         if (resolve) return getCategory();
         return basicGetCategory();
@@ -625,9 +579,6 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return;
       case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
         setDescription((String)newValue);
-        return;
-      case MetaDataPackage.MD_ALGORITHM__DOCUMENTATION:
-        setDocumentation((String)newValue);
         return;
       case MetaDataPackage.MD_ALGORITHM__CATEGORY:
         setCategory((MdCategory)newValue);
@@ -675,9 +626,6 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
       case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
         setDescription(DESCRIPTION_EDEFAULT);
         return;
-      case MetaDataPackage.MD_ALGORITHM__DOCUMENTATION:
-        setDocumentation(DOCUMENTATION_EDEFAULT);
-        return;
       case MetaDataPackage.MD_ALGORITHM__CATEGORY:
         setCategory((MdCategory)null);
         return;
@@ -716,8 +664,6 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return TARGET_CLASS_EDEFAULT == null ? targetClass != null : !TARGET_CLASS_EDEFAULT.equals(targetClass);
       case MetaDataPackage.MD_ALGORITHM__DESCRIPTION:
         return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
-      case MetaDataPackage.MD_ALGORITHM__DOCUMENTATION:
-        return DOCUMENTATION_EDEFAULT == null ? documentation != null : !DOCUMENTATION_EDEFAULT.equals(documentation);
       case MetaDataPackage.MD_ALGORITHM__CATEGORY:
         return category != null;
       case MetaDataPackage.MD_ALGORITHM__PREVIEW_IMAGE:
@@ -751,8 +697,6 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
     result.append(targetClass);
     result.append(", description: ");
     result.append(description);
-    result.append(", documentation: ");
-    result.append(documentation);
     result.append(", previewImage: ");
     result.append(previewImage);
     result.append(", supportedFeatures: ");
