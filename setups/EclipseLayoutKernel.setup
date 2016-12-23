@@ -299,11 +299,8 @@
                 pattern="org\.eclipse\.elk\.graph.*"/>
           </operand>
           <operand
-              xsi:type="predicates:NotPredicate">
-            <operand
-                xsi:type="predicates:NamePredicate"
-                pattern="org\.eclipse\.elk\..*\.feature"/>
-          </operand>
+              xsi:type="workingsets:ExclusionPredicate"
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.1 //@streams[name='master']/@setupTasks.7/@workingSets.4"/>
         </predicate>
       </workingSet>
       <workingSet
@@ -315,14 +312,26 @@
       <workingSet
           name="ELK Algorithms">
         <predicate
-            xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.elk\.alg\..*"/>
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern="org\.eclipse\.elk\.alg\..*"/>
+          <operand
+              xsi:type="workingsets:ExclusionPredicate"
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.4"/>
+        </predicate>
       </workingSet>
       <workingSet
           name="ELK Connectors">
         <predicate
-            xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.elk\.conn\..*"/>
+            xsi:type="predicates:AndPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern="org\.eclipse\.elk\.conn\..*"/>
+          <operand
+              xsi:type="workingsets:ExclusionPredicate"
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.4"/>
+        </predicate>
       </workingSet>
       <workingSet
           name="ELK Tests">
