@@ -568,12 +568,15 @@ public final class ElkGraphUtil {
      * 
      * @param connectableShape the shape whose node to return.
      * @return the node that belongs to the shape.
+     * @throws NullPointerException if {@code connectableShape} is {@code null}.
      */
     public static ElkNode connectableShapeToNode(final ElkConnectableShape connectableShape) {
         if (connectableShape instanceof ElkNode) {
             return (ElkNode) connectableShape;
         } else if (connectableShape instanceof ElkPort) {
             return ((ElkPort) connectableShape).getParent();
+        } else if (connectableShape == null) { 
+            throw new NullPointerException("connectableShape cannot be null");
         } else {
             // In case the meta model is changed in the distant future...
             throw new UnsupportedOperationException("Only support nodes and ports.");
@@ -586,10 +589,13 @@ public final class ElkGraphUtil {
      * 
      * @param connectableShape the shape whose port to return.
      * @return the port that belongs to the shape or {@code null}.
+     * @throws NullPointerException if {@code connectableShape} is {@code null}.
      */
     public static ElkPort connectableShapeToPort(final ElkConnectableShape connectableShape) {
         if (connectableShape instanceof ElkPort) {
             return (ElkPort) connectableShape;
+        } else if (connectableShape == null) { 
+            throw new NullPointerException("connectableShape cannot be null");
         } else {
             return null;
         }
