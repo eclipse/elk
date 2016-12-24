@@ -16,7 +16,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated elkgraph -->
       <package
-            uri="http://elk.eclipse.org/ElkGraph"
+            uri="http://www.eclipse.org/elk/ElkGraph"
             class="org.eclipse.elk.graph.ElkGraphPackage"
             genModel="model/elkgraph.genmodel"/>
    </extension>

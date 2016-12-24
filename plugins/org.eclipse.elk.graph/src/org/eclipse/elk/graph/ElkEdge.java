@@ -141,7 +141,7 @@ public interface ElkEdge extends ElkGraphElement {
      * <!-- end-model-doc -->
      * @return the value of the '<em>Hyperedge</em>' attribute.
      * @see org.eclipse.elk.graph.ElkGraphPackage#getElkEdge_Hyperedge()
-     * @model transient="true" changeable="false" volatile="true"
+     * @model transient="true" changeable="false" volatile="true" derived="true"
      * @generated
      */
     boolean isHyperedge();
@@ -157,7 +157,7 @@ public interface ElkEdge extends ElkGraphElement {
      * <!-- end-model-doc -->
      * @return the value of the '<em>Hierarchical</em>' attribute.
      * @see org.eclipse.elk.graph.ElkGraphPackage#getElkEdge_Hierarchical()
-     * @model transient="true" changeable="false" volatile="true"
+     * @model transient="true" changeable="false" volatile="true" derived="true"
      * @generated
      */
     boolean isHierarchical();
@@ -173,7 +173,7 @@ public interface ElkEdge extends ElkGraphElement {
      * <!-- end-model-doc -->
      * @return the value of the '<em>Selfloop</em>' attribute.
      * @see org.eclipse.elk.graph.ElkGraphPackage#getElkEdge_Selfloop()
-     * @model transient="true" changeable="false" volatile="true"
+     * @model transient="true" changeable="false" volatile="true" derived="true"
      * @generated
      */
     boolean isSelfloop();
@@ -189,7 +189,7 @@ public interface ElkEdge extends ElkGraphElement {
      * <!-- end-model-doc -->
      * @return the value of the '<em>Connected</em>' attribute.
      * @see org.eclipse.elk.graph.ElkGraphPackage#getElkEdge_Connected()
-     * @model transient="true" changeable="false" volatile="true"
+     * @model transient="true" changeable="false" volatile="true" derived="true"
      * @generated
      */
     boolean isConnected();

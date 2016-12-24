@@ -37,8 +37,8 @@ public class GraphvizDotStandaloneSetupGenerated implements ISetup {
 	}
 	
 	public void register(Injector injector) {
-		if (!EPackage.Registry.INSTANCE.containsKey("http://elk.eclipse.org/GraphvizDot")) {
-			EPackage.Registry.INSTANCE.put("http://elk.eclipse.org/GraphvizDot", DotPackage.eINSTANCE);
+		if (!EPackage.Registry.INSTANCE.containsKey("http://www.eclipse.org/elk/GraphvizDot")) {
+			EPackage.Registry.INSTANCE.put("http://www.eclipse.org/elk/GraphvizDot", DotPackage.eINSTANCE);
 		}
 		IResourceFactory resourceFactory = injector.getInstance(IResourceFactory.class);
 		IResourceServiceProvider serviceProvider = injector.getInstance(IResourceServiceProvider.class);

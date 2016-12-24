@@ -37,8 +37,8 @@ public class MetaDataStandaloneSetupGenerated implements ISetup {
 	}
 	
 	public void register(Injector injector) {
-		if (!EPackage.Registry.INSTANCE.containsKey("http://www.eclipse.org/elk/core/meta/MetaData")) {
-			EPackage.Registry.INSTANCE.put("http://www.eclipse.org/elk/core/meta/MetaData", MetaDataPackage.eINSTANCE);
+		if (!EPackage.Registry.INSTANCE.containsKey("http://www.eclipse.org/elk/MetaData")) {
+			EPackage.Registry.INSTANCE.put("http://www.eclipse.org/elk/MetaData", MetaDataPackage.eINSTANCE);
 		}
 		IResourceFactory resourceFactory = injector.getInstance(IResourceFactory.class);
 		IResourceServiceProvider serviceProvider = injector.getInstance(IResourceServiceProvider.class);

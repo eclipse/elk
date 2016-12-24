@@ -10,7 +10,7 @@
  *******************************************************************************/
 grammar org.eclipse.elk.core.meta.MetaData with org.eclipse.xtext.xbase.Xbase
 
-generate metaData "http://www.eclipse.org/elk/core/meta/MetaData"
+generate metaData "http://www.eclipse.org/elk/MetaData"
 
 MdModel:
     (

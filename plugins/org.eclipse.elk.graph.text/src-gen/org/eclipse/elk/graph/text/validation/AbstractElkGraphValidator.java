@@ -17,7 +17,7 @@ public abstract class AbstractElkGraphValidator extends AbstractDeclarativeValid
 	@Override
 	protected List<EPackage> getEPackages() {
 		List<EPackage> result = new ArrayList<EPackage>();
-		result.add(EPackage.Registry.INSTANCE.getEPackage("http://elk.eclipse.org/ElkGraph"));
+		result.add(EPackage.Registry.INSTANCE.getEPackage("http://www.eclipse.org/elk/ElkGraph"));
 		return result;
 	}
 	

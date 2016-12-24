@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="graph" nsURI="http://elk.eclipse.org/ElkGraph" nsPrefix="graph">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="graph" nsURI="http://www.eclipse.org/elk/ElkGraph" nsPrefix="graph">
   <eClassifiers xsi:type="ecore:EDataType" name="IProperty" instanceClassName="org.eclipse.elk.graph.properties.IProperty">
     <eTypeParameters name="T"/>
   </eClassifiers>
@@ -232,25 +232,25 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="hyperedge" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-        changeable="false" volatile="true" transient="true">
+        changeable="false" volatile="true" transient="true" derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Whether this edge is a hyperedge or not. It is considered to not be a hyperedge if it has at most one source and at most one target. The result is only meaningful if the node has at least one source and one target.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="hierarchical" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-        changeable="false" volatile="true" transient="true">
+        changeable="false" volatile="true" transient="true" derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Whether the edge is a hierarchical edge or not. It is hierarchical if its sources and targets do not all have the same parent node.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="selfloop" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-        changeable="false" volatile="true" transient="true">
+        changeable="false" volatile="true" transient="true" derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Whether the edge is a self loop or not. It is a self loop if all of its sources and targets are the same node (or its ports). This is only meaningful if the edge connects at least two end points.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="connected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-        changeable="false" volatile="true" transient="true">
+        changeable="false" volatile="true" transient="true" derived="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Whether the edge has at least one source and one target.&#xA;&#xA;&lt;p>The value of this attribute is computed dynamically and not persistent. So, no worries if you can't find it anywhere.&lt;/p>"/>
       </eAnnotations>

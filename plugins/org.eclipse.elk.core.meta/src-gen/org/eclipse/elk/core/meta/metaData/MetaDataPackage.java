@@ -49,7 +49,7 @@ public interface MetaDataPackage extends EPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  String eNS_URI = "http://www.eclipse.org/elk/core/meta/MetaData";
+  String eNS_URI = "http://www.eclipse.org/elk/MetaData";
 
   /**
    * The package namespace name.

@@ -49,7 +49,7 @@ public interface DotPackage extends EPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  String eNS_URI = "http://elk.eclipse.org/GraphvizDot";
+  String eNS_URI = "http://www.eclipse.org/elk/GraphvizDot";
 
   /**
    * The package namespace name.

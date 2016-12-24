@@ -3,7 +3,7 @@
 <plugin>
 	<extension point="org.eclipse.emf.ecore.generated_package">
 		<package 
-			uri = "http://elk.eclipse.org/GraphvizDot"
+			uri = "http://www.eclipse.org/elk/GraphvizDot"
 			class = "org.eclipse.elk.alg.graphviz.dot.dot.DotPackage"
 			genModel = "model/generated/GraphvizDot.genmodel" />
 	</extension>

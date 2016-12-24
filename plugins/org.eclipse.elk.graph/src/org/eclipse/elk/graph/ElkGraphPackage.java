@@ -46,7 +46,7 @@ public interface ElkGraphPackage extends EPackage {
      * <!-- end-user-doc -->
      * @generated
      */
-    String eNS_URI = "http://elk.eclipse.org/ElkGraph";
+    String eNS_URI = "http://www.eclipse.org/elk/ElkGraph";
 
     /**
      * The package namespace name.
