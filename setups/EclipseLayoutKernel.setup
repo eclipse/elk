@@ -348,7 +348,7 @@
               pattern="org\.eclipse\.elk\..*"/>
           <operand
               xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.2 //@streams[name='master']/@setupTasks.7/@workingSets.0 //@streams[name='master']/@setupTasks.7/@workingSets.3 //@streams[name='master']/@setupTasks.7/@workingSets.1"/>
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.2 //@streams[name='master']/@setupTasks.7/@workingSets.0 //@streams[name='master']/@setupTasks.7/@workingSets.3 //@streams[name='master']/@setupTasks.7/@workingSets.1 //@streams[name='master']/@setupTasks.7/@workingSets.4"/>
         </predicate>
       </workingSet>
       <description>The dynamic working sets for ${scope.project.label}</description>
