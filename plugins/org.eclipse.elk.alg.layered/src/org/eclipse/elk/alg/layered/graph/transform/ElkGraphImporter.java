@@ -150,7 +150,7 @@ class ElkGraphImporter {
         // to its children)
         boolean enableInsideSelfLoops = elkgraph.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
         
-        for (ElkEdge elkedge : elkgraph.getOutgoingEdges()) {
+        for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elkgraph)) {
             // Find the edge's target node
             ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
             
