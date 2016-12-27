@@ -8,6 +8,10 @@
 package org.eclipse.elk.graph.text.ui.labeling
 
 import com.google.inject.Inject
+import org.eclipse.elk.graph.ElkEdge
+import org.eclipse.elk.graph.ElkLabel
+import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.graph.ElkPort
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 
@@ -23,12 +27,28 @@ class ElkGraphLabelProvider extends DefaultEObjectLabelProvider {
         super(delegate);
     }
 
-// Labels and icons can be computed like this:
-//	def text(Greeting ele) {
-//		'A greeting to ' + ele.name
-//	}
-//
-//	def image(Greeting ele) {
-//		'Greeting.gif'
-//	}
+    // Labels can be computed like this:
+    //  def text(Greeting ele) {
+    //      'A greeting to ' + ele.name
+    //  }
+    
+    def image(ElkNode node) {
+        if (node.parent == null) {
+            'elkgraph.gif';
+        } else {
+            'elknode.gif';
+        }
+    }
+    
+    def image(ElkPort port) {
+        'elkport.gif';
+    }
+    
+    def image(ElkEdge edge) {
+        'elkedge.gif';
+    }
+    
+    def image(ElkLabel label) {
+        'elklabel.gif';
+    }
 }

@@ -8,6 +8,7 @@
 			contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
 			default="true"
 			extensions="elkt"
+            icon="icons/elkgraph.gif"
 			id="org.eclipse.elk.graph.text.ElkGraph"
 			name="ElkGraph Editor">
 		</editor>
