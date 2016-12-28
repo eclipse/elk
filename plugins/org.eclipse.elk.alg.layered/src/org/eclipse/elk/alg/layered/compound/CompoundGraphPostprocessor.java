@@ -45,7 +45,7 @@ import com.google.common.collect.Sets;
  *       and with fully specified layout.</dd>
  *   <dt>Postcondition:</dt>
  *     <dd>a compound graph with no layers and with the original cross-hierarchy edges;
- *       the layout applied to these edges conforms to the rules of the KGraph meta model.</dd>
+ *       the layout applied to these edges conforms to the rules of the ElkGraph meta model.</dd>
  * </dl>
  *
  * @author msp
@@ -87,15 +87,14 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
         
         // iterate over all original edges
         for (LEdge origEdge : crossHierarchyMap.keySet()) {
+            // find all cross-hierarchy edges the original edge was split into, and sort them from source to target
             List<CrossHierarchyEdge> crossHierarchyEdges = new ArrayList<CrossHierarchyEdge>(
                     crossHierarchyMap.get(origEdge));
-           
-            // put the cross-hierarchy edges in proper order from source to target
             Collections.sort(crossHierarchyEdges, new CrossHierarchyEdgeComparator(graph));
+           
+            // find the original source and target ports for the original edge
             LPort sourcePort = crossHierarchyEdges.get(0).getActualSource();
-            LPort targetPort = crossHierarchyEdges.get(crossHierarchyEdges.size() - 1)
-                    .getActualTarget();
-            origEdge.getBendPoints().clear();
+            LPort targetPort = crossHierarchyEdges.get(crossHierarchyEdges.size() - 1).getActualTarget();
             
             // determine the reference graph for all bend points
             LNode referenceNode = sourcePort.getNode();
@@ -107,18 +106,10 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
             }
 
             // check whether there are any junction points
-            KVectorChain junctionPoints = origEdge.getProperty(LayeredOptions.JUNCTION_POINTS);
-            if (Iterables.any(crossHierarchyEdges, HAS_JUNCTION_POINTS_PREDICATE)) {
-                // if so, make sure the original edge has an empty non-null junction point list
-                if (junctionPoints == null) {
-                    junctionPoints = new KVectorChain();
-                    origEdge.setProperty(LayeredOptions.JUNCTION_POINTS, junctionPoints);
-                } else {
-                    junctionPoints.clear();
-                }
-            } else if (junctionPoints != null) {
-                origEdge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
-            }
+            KVectorChain junctionPoints = clearJunctionPoints(origEdge, crossHierarchyEdges);
+            
+            // reset bend points (we have computed new ones anyway)
+            origEdge.getBendPoints().clear();
             
             // apply the computed layouts to the cross-hierarchy edge
             KVector lastPoint = null;
@@ -170,14 +161,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                 }
                 
                 // copy junction points
-                KVectorChain ledgeJPs = ledge.getProperty(LayeredOptions.JUNCTION_POINTS);
-                if (ledgeJPs != null) {
-                    KVectorChain jpCopies = new KVectorChain();
-                    jpCopies.addAllAsCopies(0, ledgeJPs);
-                    jpCopies.offset(offset);
-                    
-                    junctionPoints.addAll(jpCopies);
-                }
+                copyJunctionPoints(ledge, junctionPoints, offset);
                 
                 // add offset to target port with a special property
                 if (chEdge.getActualTarget() == targetPort) {
@@ -191,19 +175,7 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
                 }
                 
                 // copy labels back to the original edge
-                Iterator<LLabel> labelIterator = ledge.getLabels().listIterator();
-                while (labelIterator.hasNext()) {
-                    LLabel currLabel = labelIterator.next();
-                    if (currLabel.getProperty(InternalProperties.ORIGINAL_LABEL_EDGE) != origEdge) {
-                        continue;
-                    }
-                    
-                    LGraphUtil.changeCoordSystem(currLabel.getPosition(),
-                            ledge.getSource().getNode().getGraph(),
-                            referenceGraph);
-                    labelIterator.remove();
-                    origEdge.getLabels().add(currLabel);
-                }
+                copyLabelsBack(ledge, origEdge, referenceGraph);
                 
                 // remember the dummy edge for later removal (dummy edges may be in use by several
                 // different original edges, which is why we cannot just go and remove it now)
@@ -222,6 +194,66 @@ public class CompoundGraphPostprocessor implements ILayoutProcessor {
         }
 
         monitor.done();
+    }
+    
+    /**
+     * Clears an original edge's list of junction points and returns them. The returned vector chain is already set
+     * on the original edge, so all the calling code needs to do to update the edge's junction points is to update
+     * the returned vector chain.
+     */
+    private static KVectorChain clearJunctionPoints(final LEdge origEdge,
+            final List<CrossHierarchyEdge> crossHierarchyEdges) {
+        
+        KVectorChain junctionPoints = origEdge.getProperty(LayeredOptions.JUNCTION_POINTS);
+        if (Iterables.any(crossHierarchyEdges, HAS_JUNCTION_POINTS_PREDICATE)) {
+            // if so, make sure the original edge has an empty non-null junction point list
+            if (junctionPoints == null) {
+                junctionPoints = new KVectorChain();
+                origEdge.setProperty(LayeredOptions.JUNCTION_POINTS, junctionPoints);
+            } else {
+                junctionPoints.clear();
+            }
+        } else if (junctionPoints != null) {
+            origEdge.setProperty(LayeredOptions.JUNCTION_POINTS, null);
+        }
+        
+        return junctionPoints;
+    }
+
+    /**
+     * Copies the junction points of the source to the target, adding the given offset.
+     */
+    private static void copyJunctionPoints(final LEdge source, final KVectorChain target, final KVector offset) {
+        KVectorChain ledgeJPs = source.getProperty(LayeredOptions.JUNCTION_POINTS);
+        if (ledgeJPs != null) {
+            KVectorChain jpCopies = new KVectorChain();
+            jpCopies.addAllAsCopies(0, ledgeJPs);
+            jpCopies.offset(offset);
+            
+            target.addAll(jpCopies);
+        }
+    }
+
+    /**
+     * Copies the labels from the given hierarchy segment back to the original hierarchical edge.
+     */
+    private static void copyLabelsBack(final LEdge hierarchySegment, final LEdge origEdge,
+            final LGraph referenceGraph) {
+        
+        Iterator<LLabel> labelIterator = hierarchySegment.getLabels().listIterator();
+        while (labelIterator.hasNext()) {
+            LLabel currLabel = labelIterator.next();
+            if (currLabel.getProperty(InternalProperties.ORIGINAL_LABEL_EDGE) != origEdge) {
+                continue;
+            }
+            
+            LGraphUtil.changeCoordSystem(
+                    currLabel.getPosition(),
+                    hierarchySegment.getSource().getNode().getGraph(),
+                    referenceGraph);
+            labelIterator.remove();
+            origEdge.getLabels().add(currLabel);
+        }
     }
 
 }

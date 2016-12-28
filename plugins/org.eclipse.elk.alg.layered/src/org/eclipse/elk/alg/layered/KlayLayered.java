@@ -102,13 +102,13 @@ public final class KlayLayered {
     // Variables
 
     /** the algorithm's current configuration. */
-    private GraphConfigurator graphConfigurator = new GraphConfigurator();
+    private final GraphConfigurator graphConfigurator = new GraphConfigurator();
     /** connected components processor. */
-    private ComponentsProcessor componentsProcessor = new ComponentsProcessor();
+    private final ComponentsProcessor componentsProcessor = new ComponentsProcessor();
     /** compound graph preprocessor. */
-    private CompoundGraphPreprocessor compoundGraphPreprocessor = new CompoundGraphPreprocessor();
+    private final CompoundGraphPreprocessor compoundGraphPreprocessor = new CompoundGraphPreprocessor();
     /** compound graph postprocessor. */
-    private CompoundGraphPostprocessor compoundGraphPostprocessor = new CompoundGraphPostprocessor();
+    private final CompoundGraphPostprocessor compoundGraphPostprocessor = new CompoundGraphPostprocessor();
     
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -337,9 +337,6 @@ public final class KlayLayered {
         graphConfigurator.prepareGraphForLayout(lgraph);
 
         // split the input graph into components
-        if (componentsProcessor == null) {
-            componentsProcessor = new ComponentsProcessor();
-        }
         state.graphs = componentsProcessor.split(lgraph);
         
         return state;
