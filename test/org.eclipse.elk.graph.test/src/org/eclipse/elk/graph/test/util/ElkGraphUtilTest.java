@@ -82,6 +82,10 @@ public class ElkGraphUtilTest {
         ElkEdge sameLevelEdge = createEdgeWithoutContainment(node1, node2);
         assertEquals(graph1, ElkGraphUtil.findBestEdgeContainment(sameLevelEdge));
         
+        // Self loop
+        ElkEdge selfLoopEdge = createEdgeWithoutContainment(node1, node1);
+        assertEquals(graph1, ElkGraphUtil.findBestEdgeContainment(selfLoopEdge));
+        
         // Edge which connects a source on a higher level to a target on a lower level
         ElkEdge downLevelEdge = createEdgeWithoutContainment(node1,  node3_1);
         assertEquals(graph1, ElkGraphUtil.findBestEdgeContainment(downLevelEdge));
