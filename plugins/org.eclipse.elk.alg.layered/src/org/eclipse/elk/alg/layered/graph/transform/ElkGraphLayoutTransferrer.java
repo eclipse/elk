@@ -50,8 +50,8 @@ import com.google.common.collect.Lists;
 class ElkGraphLayoutTransferrer {
 
     /**
-     * Applies the layout information contained in the given LGraph to the KGraph elements it was
-     * created from. All source KGraph elements are expected to be accessible through their LGraph
+     * Applies the layout information contained in the given LGraph to the ElkGraph elements it was
+     * created from. All source ElkGraph elements are expected to be accessible through their LGraph
      * counterparts through the {@link InternalProperties#ORIGIN} property.
      * 
      * @param lgraph the LGraph whose layout information to apply.
@@ -71,25 +71,15 @@ class ElkGraphLayoutTransferrer {
         // Get the offset to be added to all coordinates
         KVector offset = new KVector(lgraph.getOffset());
         
-        // Adjust offset (and with it the positions), if requested
+        // Adjust offset (and with it the positions) by the requested padding
         LPadding lPadding = lgraph.getPadding();
+        offset.x += lPadding.left;
+        offset.y += lPadding.top;
         
-        // We may need to apply increased top/left padding
+        // Set node padding, if it was computed during layout
         final EnumSet<SizeOptions> sizeOptions = parentElkNode.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
-        KVector additionalPadding = new KVector();
-        
-        // MIGRATE I believe this will become the only case since the ElkGraph doesn't know about padding?
-        if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_PADDING)) {
-            additionalPadding.x = lPadding.left;
-            additionalPadding.y = lPadding.top;
-            offset.x += additionalPadding.x;
-            offset.y += additionalPadding.y;
-        }
-        
-        // Set node padding, if requested
         if (sizeOptions.contains(SizeOptions.COMPUTE_PADDING)) {
             ElkPadding padding = parentElkNode.getProperty(LayeredOptions.PADDING);
-            
             padding.setBottom(lPadding.bottom);
             padding.setTop(lPadding.top);
             padding.setLeft(lPadding.left);
@@ -101,15 +91,15 @@ class ElkGraphLayoutTransferrer {
 
         // Process the nodes
         for (LNode lnode : lgraph.getLayerlessNodes()) {
-            Object origin = lnode.getProperty(InternalProperties.ORIGIN);
-
-            if (origin instanceof ElkNode) {
+            if (representsNode(lnode)) {
                 applyNodeLayout(lnode, offset);
-            } else if (origin instanceof ElkPort && parentLNode == null) {
-                // It's an external port. Set its position if it hasn't already been done before
-                ElkPort elkport = (ElkPort) origin;
-                KVector portPosition = LGraphUtil.getExternalPortPosition(lgraph, lnode,
-                        elkport.getWidth(), elkport.getHeight());
+                
+            } else if (representsExternalPort(lnode) && parentLNode == null) {
+                // We have an external port here on the top-most hierarchy level of the current (possibly
+                // hierarchical) layout run; set its position
+                ElkPort elkport = (ElkPort) lnode.getProperty(InternalProperties.ORIGIN);
+                KVector portPosition = LGraphUtil.getExternalPortPosition(
+                        lgraph, lnode, elkport.getWidth(), elkport.getHeight());
                 elkport.setLocation(portPosition.x, portPosition.y);
             }
 
@@ -135,7 +125,7 @@ class ElkGraphLayoutTransferrer {
         // Iterate through all edges
         EdgeRouting routing = parentElkNode.getProperty(LayeredOptions.EDGE_ROUTING);
         for (LEdge ledge : edgeList) {
-            applyEdgeLayout(ledge, routing, offset, additionalPadding);
+            applyEdgeLayout(ledge, routing, offset, lPadding);
         }
 
         // Setup the parent node
@@ -222,7 +212,7 @@ class ElkGraphLayoutTransferrer {
      *            are required separately.
      */
     private void applyEdgeLayout(final LEdge ledge, final EdgeRouting routing, final KVector offset,
-            final KVector additionalPadding) {
+            final LPadding additionalPadding) {
 
         ElkEdge elkedge = (ElkEdge) ledge.getProperty(InternalProperties.ORIGIN);
         
@@ -257,7 +247,7 @@ class ElkGraphLayoutTransferrer {
 
             // What it does need, however, is any additional padding that may be present, so we
             // explicitly add them here
-            sourcePoint.add(additionalPadding);
+            sourcePoint.add(additionalPadding.left, additionalPadding.top);
         } else {
             sourcePoint = ledge.getSource().getAbsoluteAnchor();
         }
@@ -339,6 +329,24 @@ class ElkGraphLayoutTransferrer {
                         true);
             }
         }
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utility Methods
+    
+    /**
+     * Checks if the given node represents a node in the original ELK graph as well.
+     */
+    private static boolean representsNode(final LNode lnode) {
+        return lnode.getProperty(InternalProperties.ORIGIN) instanceof ElkNode;
+    }
+    
+    /**
+     * Checks if the given node represents an external port in the original ELK graph.
+     */
+    private static boolean representsExternalPort(final LNode lnode) {
+        return lnode.getProperty(InternalProperties.ORIGIN) instanceof ElkPort;
     }
 
 }

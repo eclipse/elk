@@ -56,6 +56,10 @@ public enum SizeOptions {
      * any additional padding are directly applied to the position of child nodes. This options is
      * independent from {@link #COMPUTE_PADDING}. If both are set, one has to deal with the effectively
      * doubled padding.
+     * 
+     * @deprecated The new graph does not know anything about padding. If padding is computed, it is automatically
+     *             applied. To find out what part of the coordinates is due to padding, check the value of the
+     *             {@link CoreOptions#PADDING} after layout has finished.
      */
     APPLY_ADDITIONAL_PADDING;
     
