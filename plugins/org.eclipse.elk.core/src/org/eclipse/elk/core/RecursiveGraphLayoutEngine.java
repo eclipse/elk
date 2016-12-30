@@ -26,6 +26,7 @@ import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;
 
@@ -101,7 +102,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
            
             // Persist the Hierarchy Handling in the nodes by querying the parent node
             evaluateHierarchyHandlingInheritance(layoutNode);
-           
             
             // If the node contains inside self loops, but no regular children and if the layout
             // algorithm doesn't actually support inside self loops, we cancel
@@ -337,11 +337,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     protected List<ElkEdge> gatherInsideSelfLoops(final ElkNode node) {
         if (node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
-            List<ElkEdge> insideSelfLoops = Lists.newArrayListWithCapacity(node.getOutgoingEdges().size());
+            List<ElkEdge> insideSelfLoops = Lists.newArrayList();
             
-            for (ElkEdge edge : node.getOutgoingEdges()) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
                 // MIGRATE Adapt to hyperedges and make error-safe
-                if (edge.getTargets().get(0) == node) {
+                if (edge.isSelfloop()) {
                     if (edge.getProperty(CoreOptions.INSIDE_SELF_LOOPS_YO)) {
                         insideSelfLoops.add(edge);
                     }
@@ -366,7 +366,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     protected void postProcessInsideSelfLoops(final List<ElkEdge> insideSelfLoops) {
         for (final ElkEdge selfLoop : insideSelfLoops) {
             // MIGRATE Adapt to hyperedges and make error-safe
-            final ElkConnectableShape node = selfLoop.getSources().get(0);
+            final ElkConnectableShape node = ElkGraphUtil.connectableShapeToNode(selfLoop.getSources().get(0));
             
             final double xOffset = node.getX();
             final double yOffset = node.getY();
