@@ -54,6 +54,11 @@ public final class InternalProperties {
      * The original object from which a graph element was created.
      */
     public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
+    
+    /**
+     * The {@link LGraph} the coordinates of a cross-hierarchy edge are relative to.
+     */
+    public static final IProperty<LGraph> COORDINATE_SYSTEM_ORIGIN = new Property<>("coordinateOrigin");
 
     /**
      * The intermediate processing configuration for an input graph.

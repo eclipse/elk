@@ -225,7 +225,11 @@ class ElkGraphLayoutTransferrer {
         }
         
         KVectorChain bendPoints = ledge.getBendPoints();
-        KVector edgeOffset = offset;
+        
+        // The standard offset may need to be modified if the edge needs to end up in a coordinate system of
+        // a graph in a higher hierarchy level
+        KVector edgeOffset = new KVector(offset);
+        edgeOffset.add(calculateHierarchicalOffset(ledge));
 
         // Adapt the offset value and add the source port position to the vector chain
         KVector sourcePoint;
@@ -234,20 +238,11 @@ class ElkGraphLayoutTransferrer {
             LPort sourcePort = ledge.getSource();
             sourcePoint = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
             
-            // The node's padding need to be subtracted since edges going into the node's bowels are
-            // relative to the top left corner + padding
-            // TODO This line assumes that for a compound node, the padding computed for its LGraph and
-            //      for its representing LNode are the same, which doesn't always seem to be the case
-            LPadding sourcePadding = sourcePort.getNode().getPadding();
-            sourcePoint.add(-sourcePadding.left, -sourcePadding.top);
-            
             // The source point will later have the passed offset added to it, which it doesn't actually
-            // need, so we subtract it now
+            // need, so we subtract it now (notice that the external port's position was already relative
+            // to its node's top left corner, while adding the offset now would mean that it was relative
+            // to the top left corner + its insets area)
             sourcePoint.sub(offset);
-
-            // What it does need, however, is any additional padding that may be present, so we
-            // explicitly add them here
-            sourcePoint.add(additionalPadding.left, additionalPadding.top);
         } else {
             sourcePoint = ledge.getSource().getAbsoluteAnchor();
         }
@@ -293,6 +288,41 @@ class ElkGraphLayoutTransferrer {
             // null means that bend points shall be interpreted as bend points
             elkedge.setProperty(LayeredOptions.EDGE_ROUTING, null);
         }
+    }
+    
+    /** A zero vector to avoid having to instantiate new empty vectors for each edge. */
+    private static final KVector ZERO_OFFSET = new KVector();
+    
+    /**
+     * If the coordinates of an edge must be relative to a different node than they are in the algorithm, this
+     * method returns the correct offset to translate from the algorithm's coordinate system to the necessary
+     * target coordinate system.
+     * 
+     * @return the offset vector, which may simply be zero (but not {@code null}). Must not be modified.
+     */
+    private KVector calculateHierarchicalOffset(final LEdge ledge) {
+        LGraph targetCoordinateSystem = ledge.getProperty(InternalProperties.COORDINATE_SYSTEM_ORIGIN);
+        if (targetCoordinateSystem != null) {
+            KVector result = new KVector();
+            
+            // Edges this method is called on are always in the coordinate system of their source
+            LGraph currentGraph = ledge.getSource().getNode().getGraph();
+            
+            while (currentGraph != targetCoordinateSystem) {
+                // The current graph should always have an upper level if we have not reached the target graph yet;
+                LNode representingNode = currentGraph.getProperty(InternalProperties.PARENT_LNODE);
+                currentGraph = representingNode.getGraph();
+                
+                result.add(representingNode.getPosition())
+                      .add(currentGraph.getOffset())
+                      .add(currentGraph.getPadding().left, currentGraph.getPadding().top);
+            }
+            
+            return result;
+        }
+        
+        // No coordinate system conversion is required
+        return ZERO_OFFSET;
     }
 
     /**

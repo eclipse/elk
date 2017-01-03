@@ -249,7 +249,13 @@ class ElkGraphImporter {
                         }
                         
                         // Transform the edge, finally...
-                        transformEdge(elkedge, parentKGraph, parentLGraph);
+                        LEdge ledge = transformEdge(elkedge, parentKGraph, parentLGraph);
+                        
+                        // Find the graph the edge's coordinates will have to be made relative to during export
+                        LGraph coordinateSystemOrigin = findCoordinateSystemOrigin(elkedge, elkgraph, lgraph);
+                        if (coordinateSystemOrigin != null) {
+                            ledge.setProperty(InternalProperties.COORDINATE_SYSTEM_ORIGIN, coordinateSystemOrigin);
+                        }
                     }
                 }
                 
@@ -257,7 +263,7 @@ class ElkGraphImporter {
             }
         }
     }
-    
+
     /**
      * Checks if the given node has any inside self loops.
      * 
@@ -276,6 +282,58 @@ class ElkGraphImporter {
         }
         
         return false;
+    }
+    
+    /**
+     * Finds the LGraph the edge's coordinates should be relative to when the layout results are applied back. This
+     * is only relevant if this differs from the graph the coordinates are relative to inside ELK Layered. In fact,
+     * this method only returns something for edges that connect nodes that are not in an anscestor-descendant
+     * relationship.
+     */
+    private LGraph findCoordinateSystemOrigin(final ElkEdge elkedge, final ElkNode topLevelElkGraph,
+            final LGraph topLevelLGraph) {
+        
+        ElkNode source = ElkGraphUtil.connectableShapeToNode(elkedge.getSources().get(0));
+        ElkNode target = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
+        
+        // We're going to rule out one case after the other. If the source and the target are siblings, we're good
+        // (this also includes self-loops)
+        if (source.getParent() == target.getParent()) {
+            return null;
+        }
+        
+        // If the target is a descendant of the source, ELK Layered uses the source's top left corner as the origin
+        // of the coordinate system, which matches how ELK graph should be constructed
+        if (ElkGraphUtil.isDescendant(target, source)) {
+            return null;
+        }
+        
+        // If the source is a descendant of the target, ELK Layered uses the source's parent graph as the origin of
+        // the coordinate system, while ELK will expect the first common ancestor (the target) to be the origin.
+        // 
+        // If source and target have no relationship to each other, ELK Layered again uses the source's parent graph
+        // as the origin of the coordinate system, while ELK will expect the first common ancestor to be the origin
+        ElkNode origin = elkedge.getContainingNode();
+        
+        // The origin must always be an ancestor of both, source and parent
+        assert source == origin || ElkGraphUtil.isDescendant(source, origin);
+        assert target == origin || ElkGraphUtil.isDescendant(target, origin);
+        
+        // Find the associated LGraph
+        if (origin == topLevelElkGraph) {
+            return topLevelLGraph;
+        } else {
+            LNode lnode = (LNode) nodeAndPortMap.get(origin);
+            if (lnode != null) {
+                // Find the graph that represents the node's insides
+                LGraph lgraph = lnode.getProperty(InternalProperties.NESTED_LGRAPH);
+                if (lgraph != null) {
+                    return lgraph;
+                }
+            }
+        }
+        
+        return null;
     }
     
 
@@ -732,7 +790,7 @@ class ElkGraphImporter {
 
         // Find the transformed source port, if any
         if (elkSourceShape instanceof ElkPort) {
-            // If the KPort is a regular port, it will map to an LPort; if it's an external port, it
+            // If the ElkPort is a regular port, it will map to an LPort; if it's an external port, it
             // will map to an LNode
             LGraphElement sourceElem = nodeAndPortMap.get(elkSourceShape);
             if (sourceElem instanceof LPort) {
@@ -745,7 +803,7 @@ class ElkGraphImporter {
 
         // Find the transformed target port, if any
         if (elkTargetShape instanceof ElkPort) {
-            // If the KPort is a regular port, it will map to an LPort; if it's an external port, it
+            // If the ElkPort is a regular port, it will map to an LPort; if it's an external port, it
             // will map to an LNode
             LGraphElement targetElem = nodeAndPortMap.get(elkTargetShape);
             if (targetElem instanceof LPort) {
