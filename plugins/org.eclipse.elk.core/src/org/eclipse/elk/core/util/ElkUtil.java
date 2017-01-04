@@ -441,18 +441,33 @@ public final class ElkUtil {
             // Translate node position
             child.setLocation(child.getX() + xoffset, child.getY() + yoffset);
             
-            // Translate edge bend points
+            // Translate edges
             // MIGRATE This used to be outgoing edges; check if it makes sense to translate all contained edges instead
-            for (ElkEdge edge : child.getContainedEdges()) {
-                for (ElkEdgeSection section : edge.getSections()) {
-                    translate(section, xoffset, yoffset);
-                }
-                
-                // Translate edge label positions
-                for (ElkLabel edgeLabel : edge.getLabels()) {
-                    edgeLabel.setLocation(edgeLabel.getX() + xoffset, edgeLabel.getY() + yoffset);
-                }
-            }
+            child.getContainedEdges().stream().forEach(edge -> translate(edge, xoffset, yoffset));
+        }
+    }
+    
+    /**
+     * Translates the given edge by an offset. This includes all routing information, junction points (if any), and
+     * edge labels.
+     * 
+     * @param edge edge that shall be translated
+     * @param xoffset x coordinate offset
+     * @param yoffset y coordinate offset
+     */
+    public static void translate(final ElkEdge edge, final double xoffset, final double yoffset) {
+        // Edge sections
+        edge.getSections().stream().forEach(
+                s -> translate(s, xoffset, yoffset));
+        
+        // Edge labels
+        edge.getLabels().stream().forEach(
+                label -> label.setLocation(label.getX() + xoffset, label.getY() + yoffset));
+        
+        // Junction points
+        KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+        if (junctionPoints != null) {
+            junctionPoints.offset(xoffset, yoffset);
         }
     }
     
