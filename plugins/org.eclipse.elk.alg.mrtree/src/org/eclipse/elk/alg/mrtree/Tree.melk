@@ -22,7 +22,7 @@ bundle {
     idPrefix org.eclipse.elk.mrtree
 }
 
-algorithm mrTree(TreeLayoutProvider) {
+algorithm mrtree(TreeLayoutProvider) {
     label "ELK Mr. Tree"
     description 
         "Tree-based algorithm provided by the Eclipse Layout Kernel. Computes a spanning tree of
