@@ -146,6 +146,13 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
     private EDataType iPropertyEDataType = null;
 
     /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EDataType propertyValueEDataType = null;
+
+    /**
      * Creates an instance of the model <b>Package</b>, registered with
      * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
      * package URI value.
@@ -724,6 +731,15 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
      * <!-- end-user-doc -->
      * @generated
      */
+    public EDataType getPropertyValue() {
+        return propertyValueEDataType;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public ElkGraphFactory getElkGraphFactory() {
         return (ElkGraphFactory)getEFactoryInstance();
     }
@@ -818,6 +834,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
 
         // Create data types
         iPropertyEDataType = createEDataType(IPROPERTY);
+        propertyValueEDataType = createEDataType(PROPERTY_VALUE);
     }
 
     /**
@@ -896,7 +913,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         initEOperation(op, g1);
 
         initEClass(eMapPropertyHolderEClass, EMapPropertyHolder.class, "EMapPropertyHolder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getEMapPropertyHolder_Properties(), this.getElkPropertyToValueMapEntry(), null, "properties", null, 0, -1, EMapPropertyHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEReference(getEMapPropertyHolder_Properties(), this.getElkPropertyToValueMapEntry(), null, "properties", null, 0, -1, EMapPropertyHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getEMapPropertyHolder_PersistentEntries(), this.getElkPersistentEntry(), null, "persistentEntries", null, 0, -1, EMapPropertyHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         addEOperation(eMapPropertyHolderEClass, null, "makePersistent", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -981,7 +998,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         g2 = createEGenericType();
         g1.getETypeArguments().add(g2);
         initEAttribute(getElkPropertyToValueMapEntry_Key(), g1, "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getElkPropertyToValueMapEntry_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getElkPropertyToValueMapEntry_Value(), this.getPropertyValue(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(elkPersistentEntryEClass, ElkPersistentEntry.class, "ElkPersistentEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getElkPersistentEntry_Key(), ecorePackage.getEString(), "key", null, 1, 1, ElkPersistentEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -989,6 +1006,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
 
         // Initialize data types
         initEDataType(iPropertyEDataType, IProperty.class, "IProperty", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+        initEDataType(propertyValueEDataType, Object.class, "PropertyValue", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
         // Create resource
         createResource(eNS_URI);

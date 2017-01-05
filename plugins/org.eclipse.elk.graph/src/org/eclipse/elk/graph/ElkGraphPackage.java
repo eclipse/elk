@@ -1142,6 +1142,17 @@ public interface ElkGraphPackage extends EPackage {
 
 
     /**
+     * The meta object id for the '<em>Property Value</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see java.lang.Object
+     * @see org.eclipse.elk.graph.impl.ElkGraphPackageImpl#getPropertyValue()
+     * @generated
+     */
+    int PROPERTY_VALUE = 14;
+
+
+    /**
      * Returns the meta object for class '{@link org.eclipse.elk.graph.properties.IPropertyHolder <em>IProperty Holder</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1688,7 +1699,7 @@ public interface ElkGraphPackage extends EPackage {
      * @return the meta object for class '<em>Elk Property To Value Map Entry</em>'.
      * @see java.util.Map.Entry
      * @model keyDataType="org.eclipse.elk.graph.IProperty<?>"
-     *        valueDataType="org.eclipse.emf.ecore.EJavaObject"
+     *        valueDataType="org.eclipse.elk.graph.PropertyValue"
      * @generated
      */
     EClass getElkPropertyToValueMapEntry();
@@ -1757,6 +1768,17 @@ public interface ElkGraphPackage extends EPackage {
      * @generated
      */
     EDataType getIProperty();
+
+    /**
+     * Returns the meta object for data type '{@link java.lang.Object <em>Property Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for data type '<em>Property Value</em>'.
+     * @see java.lang.Object
+     * @model instanceClass="java.lang.Object"
+     * @generated
+     */
+    EDataType getPropertyValue();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -2263,6 +2285,16 @@ public interface ElkGraphPackage extends EPackage {
          * @generated
          */
         EDataType IPROPERTY = eINSTANCE.getIProperty();
+
+        /**
+         * The meta object literal for the '<em>Property Value</em>' data type.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see java.lang.Object
+         * @see org.eclipse.elk.graph.impl.ElkGraphPackageImpl#getPropertyValue()
+         * @generated
+         */
+        EDataType PROPERTY_VALUE = eINSTANCE.getPropertyValue();
 
     }
 

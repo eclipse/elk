@@ -96,6 +96,8 @@ public class ElkGraphFactoryImpl extends EFactoryImpl implements ElkGraphFactory
         switch (eDataType.getClassifierID()) {
             case ElkGraphPackage.IPROPERTY:
                 return createIPropertyFromString(eDataType, initialValue);
+            case ElkGraphPackage.PROPERTY_VALUE:
+                return createPropertyValueFromString(eDataType, initialValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
         }
@@ -111,6 +113,8 @@ public class ElkGraphFactoryImpl extends EFactoryImpl implements ElkGraphFactory
         switch (eDataType.getClassifierID()) {
             case ElkGraphPackage.IPROPERTY:
                 return convertIPropertyToString(eDataType, instanceValue);
+            case ElkGraphPackage.PROPERTY_VALUE:
+                return convertPropertyValueToString(eDataType, instanceValue);
             default:
                 throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
         }
@@ -238,20 +242,46 @@ public class ElkGraphFactoryImpl extends EFactoryImpl implements ElkGraphFactory
 
     /**
      * <!-- begin-user-doc -->
+     * Deserialization requires the layout meta data service to be present and can thus not happen in this plug-in.
+     * This method thus always returns {@code null}.
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public IProperty<?> createIPropertyFromString(EDataType eDataType, String initialValue) {
-        return (IProperty<?>)super.createFromString(initialValue);
+        return null;
     }
 
     /**
      * <!-- begin-user-doc -->
+     * Serializes {@link IProperty} instances to their ID. This is used while serializing {@link EMapPropertyHolder}s.
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     public String convertIPropertyToString(EDataType eDataType, Object instanceValue) {
-        return super.convertToString(instanceValue);
+        return instanceValue.toString();
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * Deserialization requires the layout meta data service to be present and can thus not happen in this plug-in.
+     * This method thus always returns {@code null}.
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public Object createPropertyValueFromString(EDataType eDataType, String initialValue) {
+        return null;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * Serializes property values to their String representations by calling {@link Object#toString()}. This is used
+     * while serializing {@link EMapPropertyHolder}s. If a property value implements {@code IDataObject} it will be
+     * able to parse this String representation during deserialization.
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    public String convertPropertyValueToString(EDataType eDataType, Object instanceValue) {
+        return instanceValue.toString();
     }
 
     /**

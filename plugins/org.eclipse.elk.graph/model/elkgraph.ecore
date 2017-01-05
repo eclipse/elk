@@ -4,6 +4,7 @@
   <eClassifiers xsi:type="ecore:EDataType" name="IProperty" instanceClassName="org.eclipse.elk.graph.properties.IProperty">
     <eTypeParameters name="T"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="PropertyValue" instanceClassName="java.lang.Object"/>
   <eClassifiers xsi:type="ecore:EClass" name="IPropertyHolder" instanceClassName="org.eclipse.elk.graph.properties.IPropertyHolder"
       abstract="true" interface="true">
     <eOperations name="setProperty" eType="#//IPropertyHolder">
@@ -50,7 +51,7 @@
       </eAnnotations>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
-        eType="#//ElkPropertyToValueMapEntry" transient="true" containment="true">
+        eType="#//ElkPropertyToValueMapEntry" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Map of properties configured for this property holder."/>
       </eAnnotations>
@@ -363,7 +364,7 @@
         <eTypeArguments/>
       </eGenericType>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="#//PropertyValue"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ElkPersistentEntry">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

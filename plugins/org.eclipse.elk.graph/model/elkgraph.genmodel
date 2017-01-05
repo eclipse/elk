@@ -14,6 +14,7 @@
     <genDataTypes ecoreDataType="elkgraph.ecore#//IProperty">
       <genTypeParameters ecoreTypeParameter="elkgraph.ecore#//IProperty/T"/>
     </genDataTypes>
+    <genDataTypes ecoreDataType="elkgraph.ecore#//PropertyValue"/>
     <genClasses ecoreClass="elkgraph.ecore#//IPropertyHolder">
       <genOperations ecoreOperation="elkgraph.ecore#//IPropertyHolder/setProperty">
         <genParameters ecoreParameter="elkgraph.ecore#//IPropertyHolder/setProperty/property"/>
@@ -34,15 +35,9 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference elkgraph.ecore#//EMapPropertyHolder/persistentEntries"/>
       <genOperations ecoreOperation="elkgraph.ecore#//EMapPropertyHolder/makePersistent"/>
     </genClasses>
-    <genClasses ecoreClass="elkgraph.ecore#//ElkGraphData"/>
     <genClasses ecoreClass="elkgraph.ecore#//ElkGraphElement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference elkgraph.ecore#//ElkGraphElement/labels"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference elkgraph.ecore#//ElkGraphElement/data"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute elkgraph.ecore#//ElkGraphElement/identifier"/>
-      <genOperations ecoreOperation="elkgraph.ecore#//ElkGraphElement/getData">
-        <genParameters ecoreParameter="elkgraph.ecore#//ElkGraphElement/getData/type"/>
-        <genTypeParameters ecoreTypeParameter="elkgraph.ecore#//ElkGraphElement/getData/T"/>
-      </genOperations>
     </genClasses>
     <genClasses ecoreClass="elkgraph.ecore#//ElkShape">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute elkgraph.ecore#//ElkShape/height"/>
@@ -83,6 +78,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference elkgraph.ecore#//ElkEdge/sections"/>
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute elkgraph.ecore#//ElkEdge/hyperedge"/>
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute elkgraph.ecore#//ElkEdge/hierarchical"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute elkgraph.ecore#//ElkEdge/selfloop"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute elkgraph.ecore#//ElkEdge/connected"/>
     </genClasses>
     <genClasses ecoreClass="elkgraph.ecore#//ElkBendPoint">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute elkgraph.ecore#//ElkBendPoint/x"/>
@@ -103,6 +100,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference elkgraph.ecore#//ElkEdgeSection/incomingShape"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference elkgraph.ecore#//ElkEdgeSection/outgoingSections"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference elkgraph.ecore#//ElkEdgeSection/incomingSections"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute elkgraph.ecore#//ElkEdgeSection/identifier"/>
       <genOperations ecoreOperation="elkgraph.ecore#//ElkEdgeSection/setStartLocation">
         <genParameters ecoreParameter="elkgraph.ecore#//ElkEdgeSection/setStartLocation/x"/>
         <genParameters ecoreParameter="elkgraph.ecore#//ElkEdgeSection/setStartLocation/y"/>

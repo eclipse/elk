@@ -11,6 +11,12 @@
 -->
 <?eclipse version="3.2"?>
 <plugin>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+            type="elkg"
+            class="org.eclipse.elk.core.util.persistence.ElkGraphResourceFactory"/>
+   </extension>
    
    <extension-point id="layoutProviders" name="Layout Providers" schema="schema/layoutProviders.exsd"/>
    <extension
