@@ -7,5 +7,6 @@ Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.elk.graph,
  org.eclipse.elk.core
-Export-Package: org.eclipse.elk.alg.mrtree
+Export-Package: org.eclipse.elk.alg.mrtree,
+ org.eclipse.elk.alg.mrtree.properties
 Import-Package: com.google.common.collect
