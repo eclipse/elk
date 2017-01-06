@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
  * <!-- begin-user-doc -->
  * The <b>Resource Factory</b> associated with the ELK graph.
  * <!-- end-user-doc -->
- * @see org.eclipse.elk.graph.util.ElkGraphResourceImpl
+ * @see ElkGraphResource
  * @generated
  */
 public class ElkGraphResourceFactory extends ResourceFactoryImpl {

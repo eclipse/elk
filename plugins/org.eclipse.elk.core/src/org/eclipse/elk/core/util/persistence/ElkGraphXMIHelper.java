@@ -22,7 +22,10 @@ import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
 
 /**
  * An XMI helper which has special knowledge on how to load {@link IProperty} and {@link IDataObject} instances
- * while loading ELK graphs. A fresh instance must be used for every loading operation.
+ * while loading ELK graphs. A fresh instance must be used for every loading operation. See {@link ElkGraphResource}
+ * for details.
+ * 
+ * @see ElkGraphResource
  */
 final class ElkGraphXMIHelper extends XMIHelperImpl {
     
