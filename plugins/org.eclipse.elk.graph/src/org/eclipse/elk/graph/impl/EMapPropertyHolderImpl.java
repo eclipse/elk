@@ -10,27 +10,18 @@
  */
 package org.eclipse.elk.graph.impl;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import org.eclipse.elk.graph.EMapPropertyHolder;
-import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkGraphPackage;
-import org.eclipse.elk.graph.ElkPersistentEntry;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.IPropertyValueProxy;
 import org.eclipse.emf.common.notify.NotificationChain;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -43,7 +34,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.elk.graph.impl.EMapPropertyHolderImpl#getProperties <em>Properties</em>}</li>
- *   <li>{@link org.eclipse.elk.graph.impl.EMapPropertyHolderImpl#getPersistentEntries <em>Persistent Entries</em>}</li>
  * </ul>
  *
  * @generated
@@ -58,16 +48,6 @@ public class EMapPropertyHolderImpl extends MinimalEObjectImpl.Container impleme
      * @ordered
      */
     protected EMap<IProperty<?>, Object> properties;
-
-    /**
-     * The cached value of the '{@link #getPersistentEntries() <em>Persistent Entries</em>}' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getPersistentEntries()
-     * @generated
-     * @ordered
-     */
-    protected EList<ElkPersistentEntry> persistentEntries;
 
     /**
      * <!-- begin-user-doc -->
@@ -98,64 +78,6 @@ public class EMapPropertyHolderImpl extends MinimalEObjectImpl.Container impleme
             properties = new EcoreEMap<IProperty<?>,Object>(ElkGraphPackage.Literals.ELK_PROPERTY_TO_VALUE_MAP_ENTRY, ElkPropertyToValueMapEntryImpl.class, this, ElkGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES);
         }
         return properties;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EList<ElkPersistentEntry> getPersistentEntries() {
-        if (persistentEntries == null) {
-            persistentEntries = new EObjectResolvingEList<ElkPersistentEntry>(ElkPersistentEntry.class, this, ElkGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES);
-        }
-        return persistentEntries;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated NOT
-     */
-    public void makePersistent() {
-        // chsch: deactivated the delivering of notifications as that feature is not used in ELK
-        //  so far and disturbs while working with KLighD
-        boolean deliver = this.eDeliver();
-        this.eSetDeliver(false);
-        
-        int i = 0;
-        List<ElkPersistentEntry> persisEntries = getPersistentEntries();
-        
-        for (Entry<IProperty<?>, Object> entry : getProperties()) {
-            IProperty<?> key = entry.getKey();
-            Object value = entry.getValue();
-            if (key != null && value != null) {
-                ElkPersistentEntry persisEntry;
-                if (i >= persisEntries.size()) {
-                    persisEntry = ElkGraphFactory.eINSTANCE.createElkPersistentEntry();
-                    persisEntries.add(persisEntry);
-                    i++;
-                } else {
-                    persisEntry = persisEntries.get(i++);
-                }
-                
-                boolean pEdeliver = persisEntry.eDeliver();
-                persisEntry.eSetDeliver(false);
-                persisEntry.setKey(key.getId());
-                persisEntry.setValue(value.toString());
-                persisEntry.eSetDeliver(pEdeliver);
-            }
-        }
-        
-        // remove any superfluous persistent entries that are left from previous 
-        // 'persist actions'
-        ListIterator<ElkPersistentEntry> peIt = persisEntries.listIterator(i);
-        while (peIt.hasNext()) {
-            peIt.next();
-            peIt.remove();
-        }
-        
-        this.eSetDeliver(deliver);
     }
 
     /**
@@ -281,8 +203,6 @@ public class EMapPropertyHolderImpl extends MinimalEObjectImpl.Container impleme
             case ElkGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 if (coreType) return getProperties();
                 else return getProperties().map();
-            case ElkGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
-                return getPersistentEntries();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -299,10 +219,6 @@ public class EMapPropertyHolderImpl extends MinimalEObjectImpl.Container impleme
             case ElkGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 ((EStructuralFeature.Setting)getProperties()).set(newValue);
                 return;
-            case ElkGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
-                getPersistentEntries().clear();
-                getPersistentEntries().addAll((Collection<? extends ElkPersistentEntry>)newValue);
-                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -318,9 +234,6 @@ public class EMapPropertyHolderImpl extends MinimalEObjectImpl.Container impleme
             case ElkGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 getProperties().clear();
                 return;
-            case ElkGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
-                getPersistentEntries().clear();
-                return;
         }
         super.eUnset(featureID);
     }
@@ -335,8 +248,6 @@ public class EMapPropertyHolderImpl extends MinimalEObjectImpl.Container impleme
         switch (featureID) {
             case ElkGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES:
                 return properties != null && !properties.isEmpty();
-            case ElkGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES:
-                return persistentEntries != null && !persistentEntries.isEmpty();
         }
         return super.eIsSet(featureID);
     }

@@ -19,6 +19,7 @@ Export-Package: org.eclipse.elk.core,
  org.eclipse.elk.core.util.internal;x-internal:=true,
  org.eclipse.elk.core.util.labelspacing,
  org.eclipse.elk.core.util.nodespacing,
+ org.eclipse.elk.core.util.persistence,
  org.eclipse.elk.core.util.selection
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -80,7 +80,6 @@ public class ElkGraphFactoryImpl extends EFactoryImpl implements ElkGraphFactory
             case ElkGraphPackage.ELK_BEND_POINT: return createElkBendPoint();
             case ElkGraphPackage.ELK_EDGE_SECTION: return createElkEdgeSection();
             case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY: return (EObject)createElkPropertyToValueMapEntry();
-            case ElkGraphPackage.ELK_PERSISTENT_ENTRY: return createElkPersistentEntry();
             default:
                 throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
         }
@@ -228,16 +227,6 @@ public class ElkGraphFactoryImpl extends EFactoryImpl implements ElkGraphFactory
     public Map.Entry<IProperty<?>, Object> createElkPropertyToValueMapEntry() {
         ElkPropertyToValueMapEntryImpl elkPropertyToValueMapEntry = new ElkPropertyToValueMapEntryImpl();
         return elkPropertyToValueMapEntry;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ElkPersistentEntry createElkPersistentEntry() {
-        ElkPersistentEntryImpl elkPersistentEntry = new ElkPersistentEntryImpl();
-        return elkPersistentEntry;
     }
 
     /**

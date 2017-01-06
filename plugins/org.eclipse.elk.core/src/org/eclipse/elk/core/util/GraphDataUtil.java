@@ -11,28 +11,14 @@
 package org.eclipse.elk.core.util;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.util.internal.LayoutOptionProxy;
-import org.eclipse.elk.graph.EMapPropertyHolder;
 import org.eclipse.elk.graph.ElkGraphElement;
-import org.eclipse.elk.graph.ElkGraphPackage;
-import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.ElkPersistentEntry;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
-import org.eclipse.emf.common.util.AbstractTreeIterator;
-import org.eclipse.emf.common.util.TreeIterator;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.EContentsEList.FeatureFilter;
-import org.eclipse.emf.ecore.util.EContentsEList.FeatureIteratorImpl;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 
 /**
  * Utilities for interacting with graphs based on metadata from the extension services.
@@ -56,178 +42,6 @@ public final class GraphDataUtil {
                 graphElement.setProperty(optionData, obj);
             }
         }
-    }
-    
-    /**
-     * Calls {@link #loadDataElements(ElkNode, Predicate, boolean, IProperty...)} with the
-     * {@link #PREDICATE_ALL_PROPERTY_HOLDERS} predicate and with {@code clearProperties} set to {@code false}.
-     * 
-     * @param graph
-     *            the root element of the graph to load elements of.
-     * @param knownProps
-     *            a set of additional properties that are known, hence should be parsed properly
-     */
-    public static void loadDataElements(final ElkNode graph, final IProperty<?>... knownProps) {
-        loadDataElements(graph, PREDICATE_ALL_PROPERTY_HOLDERS, false, knownProps);
-    }
-    
-    /**
-     * Loads all {@link org.eclipse.elk.graph.properties.IProperty IProperty} of all elements of an ELK graph by
-     * deserializing {@link ElkPersistentEntry} tuples. Values are parsed using layout option data obtained from
-     * the {@link LayoutMetaDataService}. Options that cannot be resolved immediately (e.g. because the extension
-     * points have not been read yet) are stored as {@link LayoutOptionProxy}.
-     * 
-     * @param graph
-     *            the root element of the graph to load elements of.
-     * @param clearProperties
-     *            {@code true} if the properties of a property holder should be cleared before
-     *            repopulating them based on persistent entries. Required if the removal of a
-     *            persistent entry should result in the removal of the corresponding property. This
-     *            is for example the case in our Xtext-based KGT editor.
-     * @param knownProps
-     *            a set of additional properties that are known, hence should be parsed properly
-     */
-    public static void loadDataElements(final ElkNode graph, final boolean clearProperties,
-            final IProperty<?>... knownProps) {
-        
-        loadDataElements(graph, PREDICATE_ALL_PROPERTY_HOLDERS, clearProperties, knownProps);
-    }
-
-    /**
-     * A predicate which always returns {@code true}. That causes all property holders to have their data
-     * elements loaded.
-     */
-    public static final Predicate<EMapPropertyHolder> PREDICATE_ALL_PROPERTY_HOLDERS =
-            new Predicate<EMapPropertyHolder>() {
-                public boolean apply(final EMapPropertyHolder input) {
-                    return true;
-                }
-            };
-            
-    /**
-     * Calls {@link #loadDataElements(ElkNode, Predicate, boolean, IProperty...)} with
-     * {@code clearProperties} set to {@code false}.
-     * 
-     * @param graph
-     *            the root element of the graph to load elements of.
-     * @param handledTypes
-     *            a predicate checking if we desire to load data elements for a certain subclass of
-     *            {@link EMapPropertyHolder}.
-     * @param knownProps
-     *            a set of additional properties that are known, hence should be parsed properly.
-     * 
-     * @return the graph itself
-     */
-    public static ElkNode loadDataElements(final ElkNode graph, final Predicate<EMapPropertyHolder> handledTypes,
-            final IProperty<?>... knownProps) {
-
-        return loadDataElements(graph, handledTypes, false, knownProps);
-    }
-    
-    /**
-     * A tree iterator that skips properties of {@link EMapPropertyHolder}s. For an explanation of
-     * why this is necessary, see the implementation of
-     * {@link GraphDataUtil#loadDataElements(ElkNode, Predicate, boolean, IProperty...)}.
-     * 
-     * @author cds
-     */
-    private static class PropertiesSkippingTreeIterator extends AbstractTreeIterator<EObject> {
-        
-        /** Bogus serial version ID. */
-        private static final long serialVersionUID = 1L;
-
-        /**
-         * {@inheritDoc}.
-         */
-        PropertiesSkippingTreeIterator(final Object object, final boolean includeRoot) {
-            super(object, includeRoot);
-        }
-
-        @Override
-        protected Iterator<? extends EObject> getChildren(final Object object) {
-            // We know that the object is an EObject; get an iterator over its content
-            Iterator<EObject> iterator = ((EObject) object).eContents().iterator();
-            
-            // The iterator will usually be a FeatureIteratorImpl that we can set a feature filter on
-            if (iterator instanceof FeatureIteratorImpl) {
-                ((FeatureIteratorImpl<EObject>) iterator).filter(new FeatureFilter() {
-                    public boolean isIncluded(final EStructuralFeature eStructuralFeature) {
-                        // We include everything but properties (layout options)
-                        if (eStructuralFeature.getContainerClass().equals(EMapPropertyHolder.class)) {
-                            return eStructuralFeature.getFeatureID()
-                                    != ElkGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES;
-                        } else {
-                            return true;
-                        }
-                    }
-                });
-            }
-            
-            return iterator;
-        }
-        
-    }
-    
-    /**
-     * Loads all {@link org.eclipse.elk.graph.properties.IProperty IProperty} of elements
-     * that pass the test performed by the {@code handledTypes} predicate of a KGraph by
-     * deserializing {@link ElkPersistentEntry} tuples. Values are parsed using layout option data
-     * obtained from the {@link LayoutMetaDataService}. Options that cannot be resolved immediately
-     * (e.g. because the extension points have not been read yet) are stored as
-     * {@link LayoutOptionProxy}.
-     * 
-     * @param graph
-     *            the root element of the graph to load elements of.
-     * @param handledTypes
-     *            a predicate checking if we desire to load data elements for a certain subclass of
-     *            {@link EMapPropertyHolder}.
-     * @param clearProperties
-     *            {@code true} if the properties of a property holder should be cleared before
-     *            repopulating them based on persistent entries. Required if the removal of a
-     *            persistent entry should result in the removal of the correspondind property. This
-     *            is for example the case in our Xtext-based KGT editor.
-     * @param knownProps
-     *            a set of additional properties that are known, hence should be parsed properly.
-     * 
-     * @return the graph itself
-     */
-    public static ElkNode loadDataElements(final ElkNode graph, final Predicate<EMapPropertyHolder> handledTypes,
-            final boolean clearProperties, final IProperty<?>... knownProps) {
-
-        Map<String, IProperty<?>> knowPropsMap = Maps.newHashMap();
-        for (IProperty<?> p : knownProps) {
-            knowPropsMap.put(p.getId(), p);
-        }
-
-        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
-        
-        /* This is basically the same as graph.eAllContents(). However, using the latter would cause a
-         * ConcurrentModificationException. The reason we're walking through the graph here is that we
-         * rebuild properties based on persistent entries. But with eAllContents(), we would also iterate
-         * over the properties we're modifying. That's where the exception comes in. To avoid that, we're
-         * using a special tree iterator that skips over properties of EMapPropertyHolders. Magic!
-         * (KIPRA-1541)
-         */
-        TreeIterator<EObject> iterator = new PropertiesSkippingTreeIterator(graph, false);
-        while (iterator.hasNext()) {
-            EObject eObject = iterator.next();
-            if (eObject instanceof EMapPropertyHolder
-                    && handledTypes.apply((EMapPropertyHolder) eObject)) {
-                
-                final EMapPropertyHolder holder = (EMapPropertyHolder) eObject;
-                
-                if (clearProperties && holder.getProperties() != null) {
-                    holder.getProperties().clear();
-                }
-                
-                for (ElkPersistentEntry persistentEntry : holder.getPersistentEntries()) {
-                    loadDataElement(dataService, holder, persistentEntry.getKey(),
-                            persistentEntry.getValue(), knowPropsMap);
-                }
-            }
-        }
-        
-        return graph;
     }
 
     /**
