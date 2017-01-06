@@ -14,4 +14,5 @@ import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
  */
 @FinalFieldsConstructor
 class ElkGraphUiModule extends AbstractElkGraphUiModule {
+    public static val String PLUGIN_ID = "org.eclipse.elk.graph.text.ui";
 }
