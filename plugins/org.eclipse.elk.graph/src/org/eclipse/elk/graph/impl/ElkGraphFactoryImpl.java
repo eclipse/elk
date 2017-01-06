@@ -258,7 +258,7 @@ public class ElkGraphFactoryImpl extends EFactoryImpl implements ElkGraphFactory
      * @generated NOT
      */
     public String convertIPropertyToString(EDataType eDataType, Object instanceValue) {
-        return instanceValue.toString();
+        return ((IProperty) instanceValue).getId();
     }
 
     /**
