@@ -82,11 +82,18 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Interactive crossing minimization", 1);
+        
+        // Set ID's for each layer since they will be used by the port distribution code to index into arrays
+        int layerIndex = 0;
+        for (Layer layer : layeredGraph.getLayers()) {
+            layer.id = layerIndex++;
+        }
+        
         LNode[][] nodeOrder = layeredGraph.toNodeArray();
         AbstractBarycenterPortDistributor portDistributor = new NodeRelativePortDistributor(nodeOrder.length);
         IInitializable.init(Arrays.asList(portDistributor), nodeOrder);
         int portCount = 0;
-        int layerIndex = 0;
+        layerIndex = 0;
         for (Layer layer : layeredGraph) {
             // determine a horizontal position for edge bend points comparison
             double horizPos = 0;
@@ -158,6 +165,7 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
         switch (node.getType()) {
         case LONG_EDGE:
             LEdge edge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
+            
             // reconstruct the original bend points from the node annotations
             KVectorChain bendpoints = edge.getProperty(InternalProperties.ORIGINAL_BENDPOINTS);
             if (bendpoints == null) {
@@ -165,27 +173,42 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
             } else if (edge.getProperty(InternalProperties.REVERSED)) {
                 bendpoints = KVectorChain.reverse(bendpoints);
             }
-            LPort source = node.getProperty(InternalProperties.LONG_EDGE_SOURCE);
-            KVector sourcePoint = source.getAbsoluteAnchor();
-            if (horizPos <= sourcePoint.x) {
-                return sourcePoint.y;
-            }
-            bendpoints.addFirst(sourcePoint);
-            LPort target = node.getProperty(InternalProperties.LONG_EDGE_TARGET);
-            KVector targetPoint = target.getAbsoluteAnchor();
-            if (targetPoint.x <= horizPos) {
-                return targetPoint.y;
-            }
-            bendpoints.addLast(targetPoint);
             
-            Iterator<KVector> pointIter = bendpoints.iterator();
-            KVector point1 = pointIter.next();
-            KVector point2 = pointIter.next();
-            while (point2.x < horizPos && pointIter.hasNext()) {
-                point1 = point2;
-                point2 = pointIter.next();
+            // Check if we can determine the position just by using the source point, if we can determine it
+            LPort source = node.getProperty(InternalProperties.LONG_EDGE_SOURCE);
+            if (source != null) {
+                KVector sourcePoint = source.getAbsoluteAnchor();
+                if (horizPos <= sourcePoint.x) {
+                    return sourcePoint.y;
+                }
+                
+                bendpoints.addFirst(sourcePoint);
             }
-            return point1.y + (horizPos - point1.x) / (point2.x - point1.x) * (point2.y - point1.y);
+            
+            // Check if we can determine the position just by using the target point
+            LPort target = node.getProperty(InternalProperties.LONG_EDGE_TARGET);
+            if (target != null) {
+                KVector targetPoint = target.getAbsoluteAnchor();
+                if (targetPoint.x <= horizPos) {
+                    return targetPoint.y;
+                }
+                
+                bendpoints.addLast(targetPoint);
+            }
+            
+            // Find the two points along the edge that the horizontal point lies between
+            if (bendpoints.size() >= 2) {
+                Iterator<KVector> pointIter = bendpoints.iterator();
+                KVector point1 = pointIter.next();
+                KVector point2 = pointIter.next();
+                while (point2.x < horizPos && pointIter.hasNext()) {
+                    point1 = point2;
+                    point2 = pointIter.next();
+                }
+                return point1.y + (horizPos - point1.x) / (point2.x - point1.x) * (point2.y - point1.y);
+            }
+            
+            break;
             
         case NORTH_SOUTH_PORT:
             // Get one of the ports the dummy node was created for, and its original node
