@@ -278,7 +278,7 @@ public class GraphRenderer {
                     graphics.setAlpha(255);
                     graphics.setForeground(configurator.getLabelTextColor());
                     
-                    Rectangle oldClip = graphics.getClipping();
+                    Rectangle oldClip = graphics.isClipped() ? graphics.getClipping() : null;
                     graphics.setClipping(rect.x, rect.y, rect.width, rect.height);
                     graphics.drawString(text, rect.x, rect.y, true);
                     graphics.setClipping(oldClip);
