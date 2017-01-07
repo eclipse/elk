@@ -31,8 +31,10 @@ import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
@@ -170,16 +172,47 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                     
                     // We need the port constraints to position external ports (Issues KIPRA-1528, ELK-48) 
                     PortConstraints portConstraints = node.getProperty(LayeredOptions.PORT_CONSTRAINTS);
+                    boolean insidePortLabels =
+                            node.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.INSIDE;
                     
                     for (LPort port : node.getPorts()) {
-                        if (dummyNodeMap.get(port) == null) {
-                            LNode dummyNode = LGraphUtil.createExternalPortDummy(port,
+                        // Make sure that every port has a dummy node created for it
+                        LNode dummyNode = dummyNodeMap.get(port);
+                        if (dummyNode == null) {
+                            dummyNode = LGraphUtil.createExternalPortDummy(port,
                                     portConstraints, port.getSide(), -port.getNetFlow(),
                                     null, null, port.getSize(),
                                     nestedGraph.getProperty(LayeredOptions.DIRECTION), nestedGraph);
                             dummyNode.setProperty(InternalProperties.ORIGIN, port);
                             dummyNodeMap.put(port, dummyNode);
                             nestedGraph.getLayerlessNodes().add(dummyNode);
+                        }
+                        
+                        // We need to reserve space for external port labels by adding those labels to our dummy nodes
+                        LPort dummyNodePort = dummyNode.getPorts().get(0);
+                        
+                        for (LLabel extPortLabel : port.getLabels()) {
+                            LLabel dummyPortLabel = new LLabel();
+                            dummyPortLabel.getSize().x = extPortLabel.getSize().x;
+                            dummyPortLabel.getSize().y = extPortLabel.getSize().y;
+                            dummyNodePort.getLabels().add(dummyPortLabel);
+                            
+                            // If port labels are placed outside, modify the size
+                            if (!insidePortLabels) {
+                                switch (port.getSide()) {
+                                case EAST:
+                                case WEST:
+                                    dummyPortLabel.getSize().x = 0;
+                                    dummyPortLabel.getSize().y = extPortLabel.getSize().y;
+                                    break;
+                                    
+                                case NORTH:
+                                case SOUTH:
+                                    dummyPortLabel.getSize().x = extPortLabel.getSize().x;
+                                    dummyPortLabel.getSize().y = 0;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

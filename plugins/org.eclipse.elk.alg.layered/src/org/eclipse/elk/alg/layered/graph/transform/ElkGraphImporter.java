@@ -511,17 +511,38 @@ class ElkGraphImporter {
                 layoutDirection, lgraph);
         dummy.setProperty(InternalProperties.ORIGIN, elkport);
         
+        // The dummy only has one port
+        LPort dummyPort = dummy.getPorts().get(0);
+        dummy.setProperty(LayeredOptions.PORT_LABELS_PLACEMENT, PortLabelPlacement.OUTSIDE);
+        
         // If the compound node wants to have its port labels placed on the inside, we need to leave
-        // enough space for them by creating an LLabel for the KLabels
-        if (elkgraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.INSIDE) {
-            // The dummy only has one port
-            LPort dummyPort = dummy.getPorts().get(0);
-            dummy.setProperty(LayeredOptions.PORT_LABELS_PLACEMENT, PortLabelPlacement.OUTSIDE);
-            
-            // Transform all of the port's labels
-            for (ElkLabel elklabel : elkport.getLabels()) {
-                if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT)) {
-                    dummyPort.getLabels().add(transformLabel(elklabel));
+        // enough space for them by creating an LLabel for the KLabels. If the compound node wants to
+        // have its port labels placed on the outside, we still need to leave enough space for them
+        // so the port placement does not cause problems on the outside, but we also don't want to waste
+        // space inside. Thus, for east and west ports, we reduce the label width to zero, otherwise
+        // we reduce the label height to zero
+        boolean insidePortLabels =
+                elkgraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT) == PortLabelPlacement.INSIDE;
+        
+        // Transform all of the port's labels
+        for (ElkLabel elklabel : elkport.getLabels()) {
+            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT)) {
+                LLabel llabel = transformLabel(elklabel);
+                dummyPort.getLabels().add(llabel);
+                
+                // If port labels are placed outside, modify the size
+                if (!insidePortLabels) {
+                    switch (portSide) {
+                    case EAST:
+                    case WEST:
+                        llabel.getSize().x = 0;
+                        break;
+                        
+                    case NORTH:
+                    case SOUTH:
+                        llabel.getSize().y = 0;
+                        break;
+                    }
                 }
             }
         }
