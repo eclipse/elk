@@ -88,6 +88,8 @@ public final class LPort extends LShape {
     private PortSide side = PortSide.UNDEFINED;
     /** the anchor point position. */
     private final KVector anchor = new KVector();
+    /** whether the anchor point position was fixed by the user or not. */
+    private boolean anchorFixed = false;
     /** the margin area around this port. */
     private final LMargin margin = new LMargin();
     /** this port's labels. */
@@ -158,6 +160,28 @@ public final class LPort extends LShape {
      */
     public KVector getAnchor() {
         return anchor;
+    }
+    
+    /**
+     * Checks if the anchor position is fixed or not. If it is fixed, the algorithm will assume that
+     * the user knows what they are doing and not mess with it. If it is not fixed, the algorithm
+     * is free to adjust the anchor position, for example once the port's side is fixed.
+     * 
+     * @return {@code true} or {@code false} as the anchor is fixed or not, respectively.
+     */
+    public boolean isAnchorFixed() {
+        return anchorFixed;
+    }
+    
+    /**
+     * Determeines whether the port's anchor is to be considered fixed or not. This is just a hint
+     * and does not stop code from modifying the anchor anyway.
+     * 
+     * @param fixed {@code true} if the anchor should be fixed, {@code false} if it is eligible
+     *              to be modified.
+     */
+    public void setAnchorFixed(final boolean fixed) {
+        anchorFixed = fixed;
     }
     
     /**

@@ -621,6 +621,7 @@ public final class LGraphUtil {
      */
     public static void initializePort(final LPort port, final PortConstraints portConstraints,
             final Direction direction, final KVector anchorPos) {
+        
         PortSide portSide = port.getSide();
         
         if (portSide == PortSide.UNDEFINED && portConstraints.isSideFixed()) {
@@ -633,6 +634,7 @@ public final class LGraphUtil {
             if (!port.getAllProperties().containsKey(LayeredOptions.PORT_BORDER_OFFSET)
                     && portSide != PortSide.UNDEFINED
                     && (port.getPosition().x != 0 || port.getPosition().y != 0)) {
+                
                 port.setProperty(LayeredOptions.PORT_BORDER_OFFSET, calcPortOffset(port, portSide));
             }
         }
@@ -662,32 +664,37 @@ public final class LGraphUtil {
         }
 
         KVector portSize = port.getSize();
+        KVector portAnchor = port.getAnchor();
+        
         // if the port anchor property is set, use it as anchor point
         if (anchorPos != null) {
-            port.getAnchor().x = anchorPos.x;
-            port.getAnchor().y = anchorPos.y;
+            portAnchor.x = anchorPos.x;
+            portAnchor.y = anchorPos.y;
+            
+            // Since we have applied an explicit anchor, assume the user knows what they are doing and fix it
+            port.setAnchorFixed(true);
         } else if (portConstraints.isSideFixed() && portSide != PortSide.UNDEFINED) {
             // set the anchor point according to the port side
             switch (portSide) {
             case NORTH:
-                port.getAnchor().x = portSize.x / 2;
+                portAnchor.x = portSize.x / 2;
                 break;
             case EAST:
-                port.getAnchor().x = portSize.x;
-                port.getAnchor().y = portSize.y / 2;
+                portAnchor.x = portSize.x;
+                portAnchor.y = portSize.y / 2;
                 break;
             case SOUTH:
-                port.getAnchor().x = portSize.x / 2;
-                port.getAnchor().y = portSize.y;
+                portAnchor.x = portSize.x / 2;
+                portAnchor.y = portSize.y;
                 break;
             case WEST:
-                port.getAnchor().y = portSize.y / 2;
+                portAnchor.y = portSize.y / 2;
                 break;
             }
         } else {
             // the port side will be decided later, so set the anchor to the center point
-            port.getAnchor().x = portSize.x / 2;
-            port.getAnchor().y = portSize.y / 2;
+            portAnchor.x = portSize.x / 2;
+            portAnchor.y = portSize.y / 2;
         }
     }
     
