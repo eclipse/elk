@@ -86,17 +86,32 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
                     LPort currNodeTarget = currNode.getProperty(InternalProperties.LONG_EDGE_TARGET);
                     LPort lastNodeTarget = lastNode.getProperty(InternalProperties.LONG_EDGE_TARGET);
                     
-                    // If at least one of the two nodes doesn't have the properties set, skip it
-                    boolean currNodePropertiesSet = currNodeSource != null && currNodeTarget != null;
-                    boolean lastNodePropertiesSet = lastNodeSource != null && lastNodeTarget != null;
+                    // Find out whether the two long edges come from the same source or target (non-null!)
+                    boolean sameSource = currNodeSource != null && currNodeSource == lastNodeSource;
+                    boolean sameTarget = currNodeTarget != null && currNodeTarget == lastNodeTarget;
                     
-                    // If the source or the target are identical, merge the current node
+                    // If we can merge on grounds of the two long edges having the same source, we need to be
+                    // in front of the label dummy of each of the two edges (if any)
+                    boolean eligibleForSourceMerging =
+                            (!currNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES)
+                                    || currNode.getProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY))
+                            &&
+                            (!lastNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES)
+                                    || lastNode.getProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY));
+                    
+                    // If we can merge on grounds of the two long edges having the same target, we need to be
+                    // behind the label dummy of each of the two edges (if any)
+                    boolean eligibleForTargetMerging =
+                            (!currNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES)
+                                    || !currNode.getProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY))
+                            &&
+                            (!lastNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES)
+                                    || !lastNode.getProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY));
+                    
+                    // If the source or the target are identical and we are allowed to merge, merge the current node
                     // into the last
-                    if (currNodePropertiesSet && lastNodePropertiesSet
-                            && (currNodeSource == lastNodeSource || currNodeTarget == lastNodeTarget)) {
-                        
-                        mergeNodes(currNode, lastNode, currNodeSource == lastNodeSource,
-                                currNodeTarget == lastNodeTarget);
+                    if ((sameSource && eligibleForSourceMerging) || (sameTarget && eligibleForTargetMerging)) {
+                        mergeNodes(currNode, lastNode, sameSource, sameTarget);
                         
                         // Remove the current node and make the last node the current node
                         nodes.remove(nodeIndex);

@@ -190,17 +190,36 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
             final LEdge outEdge) {
         
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
+        LNode outEdgeTargetNode = outEdge.getTarget().getNode();
         
         if (inEdgeSourceNode.getType() == NodeType.LONG_EDGE) {
-            // The incoming edge originates from a long edge dummy node, so we can
-            // just copy its properties
+            // The incoming edge originates from a long edge dummy node, so we can just copy its properties
             dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE,
                     inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_SOURCE));
             dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET,
                     inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_TARGET));
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES,
+                    inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES));
+            
+        } else if (inEdgeSourceNode.getType() == NodeType.LABEL) {
+            // The incoming edge originates from a label dummy node, so we can just copy its properties
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE,
+                    inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_SOURCE));
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET,
+                    inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_TARGET));
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES, true);
+            
+        } else if (outEdgeTargetNode.getType() == NodeType.LABEL) {
+            // The outgoing edge points to a label dummy node, so we can just copy its properties
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE,
+                    outEdgeTargetNode.getProperty(InternalProperties.LONG_EDGE_SOURCE));
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET,
+                    outEdgeTargetNode.getProperty(InternalProperties.LONG_EDGE_TARGET));
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES, true);
+            
         } else {
-            // The source is the input edge's source port, the target is the output
-            // edge's target port
+            // The source is the input edge's source port, the target is the output edge's target port. Also,
+            // the long edge doesn't seem to have label dummy nodes
             dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, inEdge.getSource());
             dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, outEdge.getTarget());
         }

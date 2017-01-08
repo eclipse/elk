@@ -101,11 +101,14 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         EdgeLabelPlacementStrategy strategy =
                 layeredGraph.getProperty(LayeredOptions.EDGE_CENTER_LABEL_PLACEMENT_STRATEGY);
         if (strategy == EdgeLabelPlacementStrategy.WIDEST_LAYER) {
-            // Gather all layer widths if required
+            // Gather all layer widths and setup layer IDs for array indexing
             final List<Layer> layers = layeredGraph.getLayers();
             layerWidths = new double[layers.size()];
-            for (int i = 0; i < layers.size(); i++) {
-                layerWidths[i] = LGraphUtil.findMaxNonDummyNodeWidth(layers.get(i), false);
+            
+            int layerIndex = 0;
+            for (Layer layer : layers) {
+                layerWidths[layerIndex] = LGraphUtil.findMaxNonDummyNodeWidth(layer, false);
+                layer.id = layerIndex;
             }
         }
 
@@ -155,7 +158,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
             swapNodes(swapPair.getFirst(), swapPair.getSecond());
         }
         for (LNode labelDummy : labelDummies) {
-            updateLongEdgeSourceTargetInfo(labelDummy);
+            updateLongEdgeSourceLabelDummyInfo(labelDummy);
         }
 
         layerWidths = null;
@@ -183,8 +186,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         double maxWidth = 0.0;
         LNode swapCandidate = null;
         for (LNode dummy : Iterables.concat(rightLongEdgeDummies, leftLongEdgeDummies)) {
-            // TODO cache the layer width in hashmap or something
-            double width = LGraphUtil.findMaxNonDummyNodeWidth(dummy.getLayer(), false);
+            double width = layerWidths[dummy.getLayer().id];
             if (width > maxWidth) {
                 maxWidth = width;
                 swapCandidate = dummy;
@@ -268,24 +270,19 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
     }
     
     /**
-     * Updates the {@link InternalProperties#LONG_EDGE_SOURCE} and
-     * {@link InternalProperties#LONG_EDGE_TARGET} properties of long edge dummy nodes preceding and
-     * succeeding the given label dummy node.
+     * Updates the {@link InternalProperties#LONG_EDGE_BEFORE_LABEL_DUMMY} property of long edge dummy
+     * nodes preceding and succeeding the given label dummy node.
      * 
      * @param labelDummy the label dummy node.
      */
-    private void updateLongEdgeSourceTargetInfo(final LNode labelDummy) {
-        // Set all LONG_EDGE_TARGET properties of the predecessors to null
-        doUpdateLongEdgeSourceTargetInfo(
+    private void updateLongEdgeSourceLabelDummyInfo(final LNode labelDummy) {
+        // Predecessors
+        doUpdateLongEdgeLabelDummyInfo(
                 labelDummy,
                 node -> node.getIncomingEdges().iterator().next().getSource().getNode(),
-                InternalProperties.LONG_EDGE_TARGET);
+                true);
         
-        // Set all LONG_EDGE_SOURCE properties of the successors to null
-        doUpdateLongEdgeSourceTargetInfo(
-                labelDummy,
-                node -> node.getOutgoingEdges().iterator().next().getTarget().getNode(),
-                InternalProperties.LONG_EDGE_SOURCE);
+        // We may want to do things to the successors as well at some point
     }
     
     /**
@@ -298,15 +295,15 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
      *            a function that, given a node, returns the node to process next. Use this to
      *            decide whether to target all successors or all predecessors of the label dummy
      *            node.
-     * @param longEdgeProperty
-     *            the property to be set to {@code null}.
+     * @param value
+     *            the new property value.
      */
-    private void doUpdateLongEdgeSourceTargetInfo(final LNode labelDummy,
-            final Function<LNode, LNode> nextElement, final IProperty<LPort> longEdgeProperty) {
+    private void doUpdateLongEdgeLabelDummyInfo(final LNode labelDummy,
+            final Function<LNode, LNode> nextElement, final boolean value) {
         
         LNode longEdgeDummy = nextElement.apply(labelDummy);
         while (longEdgeDummy.getType() == NodeType.LONG_EDGE) {
-            longEdgeDummy.setProperty(longEdgeProperty, null);
+            longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY, value);
             longEdgeDummy = nextElement.apply(longEdgeDummy);
         }
     }
