@@ -141,13 +141,27 @@ public final class InternalProperties {
     /**
      * The source port of a long edge before it was broken into multiple segments.
      */
-    public static final IProperty<LPort> LONG_EDGE_SOURCE = new Property<LPort>("longEdgeSource",
-            null);
+    public static final IProperty<LPort> LONG_EDGE_SOURCE = new Property<>("longEdgeSource", null);
+    
     /**
      * The target port of a long edge before it was broken into multiple segments.
      */
-    public static final IProperty<LPort> LONG_EDGE_TARGET = new Property<LPort>("longEdgeTarget",
-            null);
+    public static final IProperty<LPort> LONG_EDGE_TARGET = new Property<>("longEdgeTarget", null);
+    
+    /**
+     * Set on long edge dummies to indicate whether someplace in the long edge is a label dummy. This can for
+     * example influence decisions on how to merge long edge dummies.
+     */
+    public static final IProperty<Boolean> LONG_EDGE_HAS_LABEL_DUMMIES = new Property<>("longEdgeHasLabelDummies",
+            false);
+    
+    /**
+     * If a long edge has a label dummy somewhere, this property indicates for every long edge dummy whether or
+     * not it comes before that label dummy ({@code true}) or not ({@code false}). Coming before a label dummy
+     * in this case means being in a layer left of the label dummy.
+     */
+    public static final IProperty<Boolean> LONG_EDGE_BEFORE_LABEL_DUMMY = new Property<>("longEdgeBeforeLabelDummy",
+            false);
 
     /**
      * Edge constraints for nodes.

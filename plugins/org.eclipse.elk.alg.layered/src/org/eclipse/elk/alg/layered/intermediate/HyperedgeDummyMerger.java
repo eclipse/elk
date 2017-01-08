@@ -28,7 +28,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * amount of edges by having edges originating from the same port or going into the same
  * port joined. This should be done after crossing minimization. Only those dummy nodes
  * are joined that the crossing minimizer placed right next to each other.
- * 
+ *
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>a layered graph</dd>
@@ -55,29 +55,29 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Hyperedge merging", 1);
-        
+
         // Iterate through the layers
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
             List<LNode> nodes = layer.getNodes();
-            
+
             // If there are no nodes anyway, just move on to the next layer
             if (nodes.isEmpty()) {
                 continue;
             }
-            
+
             LNode currNode = null;
             NodeType currNodeType = null;
             LNode lastNode = null;
             NodeType lastNodeType = null;
-            
+
             // Iterate through the remaining nodes
             for (int nodeIndex = 0; nodeIndex < nodes.size(); nodeIndex++) {
                 // Get the next node
                 currNode = nodes.get(nodeIndex);
                 currNodeType = currNode.getType();
-                
+
                 // We're only interested if the current and last nodes are long edge dummies
                 if (currNodeType == NodeType.LONG_EDGE && lastNodeType == NodeType.LONG_EDGE) {
                     // Get long edge source and target ports
@@ -85,19 +85,34 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
                     LPort lastNodeSource = lastNode.getProperty(InternalProperties.LONG_EDGE_SOURCE);
                     LPort currNodeTarget = currNode.getProperty(InternalProperties.LONG_EDGE_TARGET);
                     LPort lastNodeTarget = lastNode.getProperty(InternalProperties.LONG_EDGE_TARGET);
+
+                    // Find out whether the two long edges come from the same source or target (non-null!)
+                    boolean sameSource = currNodeSource != null && currNodeSource == lastNodeSource;
+                    boolean sameTarget = currNodeTarget != null && currNodeTarget == lastNodeTarget;
                     
-                    // If at least one of the two nodes doesn't have the properties set, skip it
-                    boolean currNodePropertiesSet = currNodeSource != null || currNodeTarget != null;
-                    boolean lastNodePropertiesSet = lastNodeSource != null || lastNodeTarget != null;
-                    
-                    // If the source or the target are identical, merge the current node
+                    // If we can merge on grounds of the two long edges having the same source, we need to be
+                    // in front of the label dummy of each of the two edges (if any)
+                    boolean eligibleForSourceMerging =
+                            (!currNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES)
+                                    || currNode.getProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY))
+                            &&
+                            (!lastNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES)
+                                    || lastNode.getProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY));
+
+                    // If we can merge on grounds of the two long edges having the same target, we need to be
+                    // behind the label dummy of each of the two edges (if any)
+                    boolean eligibleForTargetMerging =
+                            (!currNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES)
+                                    || !currNode.getProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY))
+                            &&
+                            (!lastNode.getProperty(InternalProperties.LONG_EDGE_HAS_LABEL_DUMMIES)
+                                    || !lastNode.getProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY));
+
+                    // If the source or the target are identical and we are allowed to merge, merge the current node
                     // into the last
-                    if (currNodePropertiesSet && lastNodePropertiesSet
-                            && (currNodeSource == lastNodeSource || currNodeTarget == lastNodeTarget)) {
-                        
-                        mergeNodes(currNode, lastNode, currNodeSource == lastNodeSource,
-                                currNodeTarget == lastNodeTarget);
-                        
+                    if ((sameSource && eligibleForSourceMerging) || (sameTarget && eligibleForTargetMerging)) {
+                        mergeNodes(currNode, lastNode, sameSource, sameTarget);
+
                         // Remove the current node and make the last node the current node
                         nodes.remove(nodeIndex);
                         nodeIndex--;
@@ -105,21 +120,21 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
                         currNodeType = lastNodeType;
                     }
                 }
-                
+
                 // Remember this node for the next iteration
                 lastNode = currNode;
                 lastNodeType = currNodeType;
             }
         }
-        
+
         monitor.done();
     }
-    
+
     /**
      * Merges the merge source node into the merge target node. All edges that were previously
      * connected to the merge source's ports are rerouted to the merge target. The merge target's
      * long edge source and target ports can be set to {@code null}.
-     * 
+     *
      * @param mergeSource the merge source node.
      * @param mergeTarget the merge target node.
      * @param keepSourcePort if {@code false}, the long edge source property is set to {@code null}.
@@ -131,26 +146,26 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
      */
     private void mergeNodes(final LNode mergeSource, final LNode mergeTarget,
             final boolean keepSourcePort, final boolean keepTargetPort) {
-        
+
         // We assume that the input port is west, and the output port east
         LPort mergeTargetInputPort = mergeTarget.getPorts(PortSide.WEST).iterator().next();
         LPort mergeTargetOutputPort = mergeTarget.getPorts(PortSide.EAST).iterator().next();
-        
+
         for (LPort port : mergeSource.getPorts()) {
             while (!port.getIncomingEdges().isEmpty()) {
                 port.getIncomingEdges().get(0).setTarget(mergeTargetInputPort);
             }
-            
+
             while (!port.getOutgoingEdges().isEmpty()) {
                 port.getOutgoingEdges().get(0).setSource(mergeTargetOutputPort);
             }
         }
-        
+
         // Possibly reset source and target ports
         if (!keepSourcePort) {
             mergeTarget.setProperty(InternalProperties.LONG_EDGE_SOURCE, null);
         }
-        
+
         if (!keepTargetPort) {
             mergeTarget.setProperty(InternalProperties.LONG_EDGE_TARGET, null);
         }
