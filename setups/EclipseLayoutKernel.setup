@@ -337,7 +337,7 @@
           name="ELK Tests">
         <predicate
             xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.elk\..*\.test"/>
+            pattern="org\.eclipse\.elk\..*test"/>
       </workingSet>
       <workingSet
           name="ELK Stuff">
