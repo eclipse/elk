@@ -11,22 +11,16 @@
 package org.eclipse.elk.core.debug.views.graph;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
-import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.debug.ElkDebugPlugin;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.EMapPropertyHolder;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.ElkPersistentEntry;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -97,27 +91,6 @@ public class LoadGraphAction extends Action {
      * @param graph a graph
      */
     private void layout(final ElkNode graph) {
-        // deserialize layout options
-        LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
-        Iterator<EObject> contentIter = graph.eAllContents();
-        while (contentIter.hasNext()) {
-            EObject obj = contentIter.next();
-            if (obj instanceof EMapPropertyHolder) {
-                EMapPropertyHolder propertyHolder = (EMapPropertyHolder) obj;
-                for (ElkPersistentEntry entry : propertyHolder.getPersistentEntries()) {
-                    LayoutOptionData optionData = dataService.getOptionData(entry.getKey());
-                    
-                    if (optionData != null) {
-                        Object value = optionData.parseValue(entry.getValue());
-                        
-                        if (value != null) {
-                            propertyHolder.setProperty(optionData, value);
-                        }
-                    }
-                }
-            }
-        }
-        
         // perform layout using a graph layout engine
         IElkProgressMonitor monitor = new BasicProgressMonitor();
         if (!graph.getProperty(CoreOptions.NO_LAYOUT)) {

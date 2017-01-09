@@ -12,8 +12,6 @@ package org.eclipse.elk.graph;
 
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
-
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EObject;
@@ -34,7 +32,6 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.elk.graph.EMapPropertyHolder#getProperties <em>Properties</em>}</li>
- *   <li>{@link org.eclipse.elk.graph.EMapPropertyHolder#getPersistentEntries <em>Persistent Entries</em>}</li>
  * </ul>
  *
  * @see org.eclipse.elk.graph.ElkGraphPackage#getEMapPropertyHolder()
@@ -53,38 +50,9 @@ public interface EMapPropertyHolder extends EObject, IPropertyHolder {
      * <!-- end-model-doc -->
      * @return the value of the '<em>Properties</em>' map.
      * @see org.eclipse.elk.graph.ElkGraphPackage#getEMapPropertyHolder_Properties()
-     * @model mapType="org.eclipse.elk.graph.ElkPropertyToValueMapEntry<org.eclipse.elk.graph.IProperty<?>, org.eclipse.emf.ecore.EJavaObject>" transient="true"
+     * @model mapType="org.eclipse.elk.graph.ElkPropertyToValueMapEntry<org.eclipse.elk.graph.IProperty<?>, org.eclipse.elk.graph.PropertyValue>"
      * @generated
      */
     EMap<IProperty<?>, Object> getProperties();
-
-    /**
-     * Returns the value of the '<em><b>Persistent Entries</b></em>' reference list.
-     * The list contents are of type {@link org.eclipse.elk.graph.ElkPersistentEntry}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * <!-- begin-model-doc -->
-     * Map of persistent entries of this property holder. See class documentation for more details.
-     * <!-- end-model-doc -->
-     * @return the value of the '<em>Persistent Entries</em>' reference list.
-     * @see org.eclipse.elk.graph.ElkGraphPackage#getEMapPropertyHolder_PersistentEntries()
-     * @model
-     * @generated
-     */
-    EList<ElkPersistentEntry> getPersistentEntries();
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * <!-- begin-model-doc -->
-     * Serialize all entries of the properties map using {@link Object#toString()} and write them into the list of persistent entries. The previous content is cleared. Call this method before serializing an ElkGraph.
-     * 
-     * <p><em>Note:</em>
-     * This method may be replaced by an alternative mechanism that does not require calling any methods in order to serialize the graph.
-     * <!-- end-model-doc -->
-     * @model
-     * @generated
-     */
-    void makePersistent();
 
 } // EMapPropertyHolder

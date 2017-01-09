@@ -22,7 +22,6 @@ import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkGraphPackage;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.ElkPersistentEntry;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.ElkShape;
 
@@ -136,14 +135,14 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    private EClass elkPersistentEntryEClass = null;
+    private EDataType iPropertyEDataType = null;
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    private EDataType iPropertyEDataType = null;
+    private EDataType propertyValueEDataType = null;
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
@@ -231,15 +230,6 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
      */
     public EReference getEMapPropertyHolder_Properties() {
         return (EReference)eMapPropertyHolderEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EReference getEMapPropertyHolder_PersistentEntries() {
-        return (EReference)eMapPropertyHolderEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -688,35 +678,17 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    public EClass getElkPersistentEntry() {
-        return elkPersistentEntryEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getElkPersistentEntry_Key() {
-        return (EAttribute)elkPersistentEntryEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getElkPersistentEntry_Value() {
-        return (EAttribute)elkPersistentEntryEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EDataType getIProperty() {
         return iPropertyEDataType;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EDataType getPropertyValue() {
+        return propertyValueEDataType;
     }
 
     /**
@@ -751,7 +723,6 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
 
         eMapPropertyHolderEClass = createEClass(EMAP_PROPERTY_HOLDER);
         createEReference(eMapPropertyHolderEClass, EMAP_PROPERTY_HOLDER__PROPERTIES);
-        createEReference(eMapPropertyHolderEClass, EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES);
 
         elkGraphElementEClass = createEClass(ELK_GRAPH_ELEMENT);
         createEReference(elkGraphElementEClass, ELK_GRAPH_ELEMENT__LABELS);
@@ -812,12 +783,9 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         createEAttribute(elkPropertyToValueMapEntryEClass, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY);
         createEAttribute(elkPropertyToValueMapEntryEClass, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE);
 
-        elkPersistentEntryEClass = createEClass(ELK_PERSISTENT_ENTRY);
-        createEAttribute(elkPersistentEntryEClass, ELK_PERSISTENT_ENTRY__KEY);
-        createEAttribute(elkPersistentEntryEClass, ELK_PERSISTENT_ENTRY__VALUE);
-
         // Create data types
         iPropertyEDataType = createEDataType(IPROPERTY);
+        propertyValueEDataType = createEDataType(PROPERTY_VALUE);
     }
 
     /**
@@ -896,10 +864,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         initEOperation(op, g1);
 
         initEClass(eMapPropertyHolderEClass, EMapPropertyHolder.class, "EMapPropertyHolder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEReference(getEMapPropertyHolder_Properties(), this.getElkPropertyToValueMapEntry(), null, "properties", null, 0, -1, EMapPropertyHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getEMapPropertyHolder_PersistentEntries(), this.getElkPersistentEntry(), null, "persistentEntries", null, 0, -1, EMapPropertyHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-        addEOperation(eMapPropertyHolderEClass, null, "makePersistent", 0, 1, IS_UNIQUE, IS_ORDERED);
+        initEReference(getEMapPropertyHolder_Properties(), this.getElkPropertyToValueMapEntry(), null, "properties", null, 0, -1, EMapPropertyHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(elkGraphElementEClass, ElkGraphElement.class, "ElkGraphElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getElkGraphElement_Labels(), this.getElkLabel(), this.getElkLabel_Parent(), "labels", null, 0, -1, ElkGraphElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -981,14 +946,11 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         g2 = createEGenericType();
         g1.getETypeArguments().add(g2);
         initEAttribute(getElkPropertyToValueMapEntry_Key(), g1, "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getElkPropertyToValueMapEntry_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-        initEClass(elkPersistentEntryEClass, ElkPersistentEntry.class, "ElkPersistentEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getElkPersistentEntry_Key(), ecorePackage.getEString(), "key", null, 1, 1, ElkPersistentEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getElkPersistentEntry_Value(), ecorePackage.getEString(), "value", null, 0, 1, ElkPersistentEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getElkPropertyToValueMapEntry_Value(), this.getPropertyValue(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         // Initialize data types
         initEDataType(iPropertyEDataType, IProperty.class, "IProperty", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+        initEDataType(propertyValueEDataType, Object.class, "PropertyValue", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
         // Create resource
         createResource(eNS_URI);

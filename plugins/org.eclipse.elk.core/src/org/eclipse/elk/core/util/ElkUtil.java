@@ -490,22 +490,6 @@ public final class ElkUtil {
         // Translate target point
         section.setEndLocation(section.getEndX() + xoffset, section.getEndY() + yoffset);
     }
-
-    /**
-     * Persists all KGraphData elements of a KGraph by serializing the contained properties into
-     * {@link org.eclipse.elk.graph.PersistentEntry} tuples.
-     *
-     * @param graph the root element of the graph to persist elements of.
-     */
-    public static void persistDataElements(final ElkNode graph) {
-        TreeIterator<EObject> iterator = graph.eAllContents();
-        while (iterator.hasNext()) {
-            EObject eObject = iterator.next();
-            if (eObject instanceof EMapPropertyHolder) {
-                ((EMapPropertyHolder) eObject).makePersistent();
-            }
-        }
-    }
     
     /**
      * Determine the junction points of the given edge. This is done by comparing the bend points

@@ -408,4 +408,73 @@
 			type="text">
 		</fileTypes>
 	</extension>
+    <extension
+          point="org.eclipse.ui.commands">
+       <command
+             categoryId="org.eclipse.ui.category.file"
+             defaultHandler="org.eclipse.elk.graph.text.ui.ConvertGraphHandler"
+             id="org.eclipse.elk.graph.text.convert"
+             name="Convert Graph">
+          <commandParameter
+                id="org.eclipse.elk.graph.text.convert.targetExtension"
+                name="Target Extension"
+                optional="false">
+          </commandParameter>
+       </command>
+    </extension>
+     <extension point="org.eclipse.ui.menus">
+          <menuContribution
+             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+          <command
+                commandId="org.eclipse.elk.graph.text.convert"
+                label="Convert to Textual Graph (elkt)"
+                style="push"
+                tooltip="Convert the graph to textual ELK graph format">
+             <visibleWhen
+                   checkEnabled="false">
+                <iterate
+                      ifEmpty="false"
+                      operator="and">
+                   <adapt
+                         type="org.eclipse.core.resources.IResource">
+                      <test
+                            forcePluginActivation="false"
+                            property="org.eclipse.core.resources.extension"
+                            value="elkg">
+                      </test>
+                   </adapt>
+                </iterate>
+             </visibleWhen>
+             <parameter
+                   name="org.eclipse.elk.graph.text.convert.targetExtension"
+                   value="elkt">
+             </parameter>
+          </command>
+          <command
+                commandId="org.eclipse.elk.graph.text.convert"
+                label="Convert to XMI Graph (elkg)"
+                style="push"
+                tooltip="Convert the graph to XMI-based ELK graph format">
+             <visibleWhen
+                   checkEnabled="false">
+                <iterate
+                      ifEmpty="false"
+                      operator="and">
+                   <adapt
+                         type="org.eclipse.core.resources.IResource">
+                      <test
+                            forcePluginActivation="false"
+                            property="org.eclipse.core.resources.extension"
+                            value="elkt">
+                      </test>
+                   </adapt>
+                </iterate>
+             </visibleWhen>
+             <parameter
+                   name="org.eclipse.elk.graph.text.convert.targetExtension"
+                   value="elkg">
+             </parameter>
+          </command>
+      </menuContribution>
+     </extension>
 </plugin>

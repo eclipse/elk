@@ -206,6 +206,24 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     public String toString() {
         return "Layout Option: " + id;
     }
+     
+     /**
+      * Checks whether or not the {@link #parseValue(String)} will be conceivably able to parse Strings into
+      * on option value conforming to this option data's data type. This is the case if {@link #getType()}
+      * returns something other than {@link Type#OBJECT} and {@link Type#UNDEFINED} or if {@link #getType()}
+      * returns {@link Type#OBJECT} and {@link #getClass()} returns something which implements {@link IDataObject}.
+      * 
+      * @return {@code true} if String-represented values of this option can be parsed.
+      */
+     public boolean canParseValue() {
+         if (type == Type.UNDEFINED) {
+             return false;
+         } else if (type == Type.OBJECT) {
+             return clazz != null && IDataObject.class.isAssignableFrom(clazz);
+         } else {
+             return true;
+         }
+     }
 
     /**
      * Parses a string value for this layout option.

@@ -771,10 +771,7 @@ public class DiagramLayoutEngine {
     protected void exportLayoutGraph(final ElkNode graph) {
         URI exportUri = getExportURI(graph);
         if (exportUri != null) {
-            // serialize all properties of the graph
-            ElkUtil.persistDataElements(graph);
-            
-            // save the KGraph to a file
+            // save the graph to a file
             ResourceSet resourceSet = new ResourceSetImpl();
             Resource resource = resourceSet.createResource(exportUri);
             resource.getContents().add(graph);

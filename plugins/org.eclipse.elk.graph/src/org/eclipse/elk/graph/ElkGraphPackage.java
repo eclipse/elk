@@ -103,22 +103,13 @@ public interface ElkGraphPackage extends EPackage {
     int EMAP_PROPERTY_HOLDER__PROPERTIES = IPROPERTY_HOLDER_FEATURE_COUNT + 0;
 
     /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES = IPROPERTY_HOLDER_FEATURE_COUNT + 1;
-
-    /**
      * The number of structural features of the '<em>EMap Property Holder</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int EMAP_PROPERTY_HOLDER_FEATURE_COUNT = IPROPERTY_HOLDER_FEATURE_COUNT + 2;
+    int EMAP_PROPERTY_HOLDER_FEATURE_COUNT = IPROPERTY_HOLDER_FEATURE_COUNT + 1;
 
     /**
      * The meta object id for the '{@link org.eclipse.elk.graph.impl.ElkGraphElementImpl <em>Element</em>}' class.
@@ -138,15 +129,6 @@ public interface ElkGraphPackage extends EPackage {
      * @ordered
      */
     int ELK_GRAPH_ELEMENT__PROPERTIES = EMAP_PROPERTY_HOLDER__PROPERTIES;
-
-    /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_GRAPH_ELEMENT__PERSISTENT_ENTRIES = EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES;
 
     /**
      * The feature id for the '<em><b>Labels</b></em>' containment reference list.
@@ -193,15 +175,6 @@ public interface ElkGraphPackage extends EPackage {
      * @ordered
      */
     int ELK_SHAPE__PROPERTIES = ELK_GRAPH_ELEMENT__PROPERTIES;
-
-    /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_SHAPE__PERSISTENT_ENTRIES = ELK_GRAPH_ELEMENT__PERSISTENT_ENTRIES;
 
     /**
      * The feature id for the '<em><b>Labels</b></em>' containment reference list.
@@ -284,15 +257,6 @@ public interface ElkGraphPackage extends EPackage {
      * @ordered
      */
     int ELK_LABEL__PROPERTIES = ELK_SHAPE__PROPERTIES;
-
-    /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_LABEL__PERSISTENT_ENTRIES = ELK_SHAPE__PERSISTENT_ENTRIES;
 
     /**
      * The feature id for the '<em><b>Labels</b></em>' containment reference list.
@@ -395,15 +359,6 @@ public interface ElkGraphPackage extends EPackage {
     int ELK_CONNECTABLE_SHAPE__PROPERTIES = ELK_SHAPE__PROPERTIES;
 
     /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_CONNECTABLE_SHAPE__PERSISTENT_ENTRIES = ELK_SHAPE__PERSISTENT_ENTRIES;
-
-    /**
      * The feature id for the '<em><b>Labels</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -502,15 +457,6 @@ public interface ElkGraphPackage extends EPackage {
      * @ordered
      */
     int ELK_NODE__PROPERTIES = ELK_CONNECTABLE_SHAPE__PROPERTIES;
-
-    /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_NODE__PERSISTENT_ENTRIES = ELK_CONNECTABLE_SHAPE__PERSISTENT_ENTRIES;
 
     /**
      * The feature id for the '<em><b>Labels</b></em>' containment reference list.
@@ -658,15 +604,6 @@ public interface ElkGraphPackage extends EPackage {
     int ELK_PORT__PROPERTIES = ELK_CONNECTABLE_SHAPE__PROPERTIES;
 
     /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_PORT__PERSISTENT_ENTRIES = ELK_CONNECTABLE_SHAPE__PERSISTENT_ENTRIES;
-
-    /**
      * The feature id for the '<em><b>Labels</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -774,15 +711,6 @@ public interface ElkGraphPackage extends EPackage {
      * @ordered
      */
     int ELK_EDGE__PROPERTIES = ELK_GRAPH_ELEMENT__PROPERTIES;
-
-    /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_EDGE__PERSISTENT_ENTRIES = ELK_GRAPH_ELEMENT__PERSISTENT_ENTRIES;
 
     /**
      * The feature id for the '<em><b>Labels</b></em>' containment reference list.
@@ -940,15 +868,6 @@ public interface ElkGraphPackage extends EPackage {
     int ELK_EDGE_SECTION__PROPERTIES = EMAP_PROPERTY_HOLDER__PROPERTIES;
 
     /**
-     * The feature id for the '<em><b>Persistent Entries</b></em>' reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_EDGE_SECTION__PERSISTENT_ENTRIES = EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES;
-
-    /**
      * The feature id for the '<em><b>Start X</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1094,43 +1013,6 @@ public interface ElkGraphPackage extends EPackage {
     int ELK_PROPERTY_TO_VALUE_MAP_ENTRY_FEATURE_COUNT = 2;
 
     /**
-     * The meta object id for the '{@link org.eclipse.elk.graph.impl.ElkPersistentEntryImpl <em>Elk Persistent Entry</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.eclipse.elk.graph.impl.ElkPersistentEntryImpl
-     * @see org.eclipse.elk.graph.impl.ElkGraphPackageImpl#getElkPersistentEntry()
-     * @generated
-     */
-    int ELK_PERSISTENT_ENTRY = 12;
-
-    /**
-     * The feature id for the '<em><b>Key</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_PERSISTENT_ENTRY__KEY = 0;
-
-    /**
-     * The feature id for the '<em><b>Value</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_PERSISTENT_ENTRY__VALUE = 1;
-
-    /**
-     * The number of structural features of the '<em>Elk Persistent Entry</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int ELK_PERSISTENT_ENTRY_FEATURE_COUNT = 2;
-
-    /**
      * The meta object id for the '<em>IProperty</em>' data type.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1138,7 +1020,18 @@ public interface ElkGraphPackage extends EPackage {
      * @see org.eclipse.elk.graph.impl.ElkGraphPackageImpl#getIProperty()
      * @generated
      */
-    int IPROPERTY = 13;
+    int IPROPERTY = 12;
+
+
+    /**
+     * The meta object id for the '<em>Property Value</em>' data type.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see java.lang.Object
+     * @see org.eclipse.elk.graph.impl.ElkGraphPackageImpl#getPropertyValue()
+     * @generated
+     */
+    int PROPERTY_VALUE = 13;
 
 
     /**
@@ -1172,17 +1065,6 @@ public interface ElkGraphPackage extends EPackage {
      * @generated
      */
     EReference getEMapPropertyHolder_Properties();
-
-    /**
-     * Returns the meta object for the reference list '{@link org.eclipse.elk.graph.EMapPropertyHolder#getPersistentEntries <em>Persistent Entries</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the reference list '<em>Persistent Entries</em>'.
-     * @see org.eclipse.elk.graph.EMapPropertyHolder#getPersistentEntries()
-     * @see #getEMapPropertyHolder()
-     * @generated
-     */
-    EReference getEMapPropertyHolder_PersistentEntries();
 
     /**
      * Returns the meta object for class '{@link org.eclipse.elk.graph.ElkGraphElement <em>Element</em>}'.
@@ -1688,7 +1570,7 @@ public interface ElkGraphPackage extends EPackage {
      * @return the meta object for class '<em>Elk Property To Value Map Entry</em>'.
      * @see java.util.Map.Entry
      * @model keyDataType="org.eclipse.elk.graph.IProperty<?>"
-     *        valueDataType="org.eclipse.emf.ecore.EJavaObject"
+     *        valueDataType="org.eclipse.elk.graph.PropertyValue"
      * @generated
      */
     EClass getElkPropertyToValueMapEntry();
@@ -1716,38 +1598,6 @@ public interface ElkGraphPackage extends EPackage {
     EAttribute getElkPropertyToValueMapEntry_Value();
 
     /**
-     * Returns the meta object for class '{@link org.eclipse.elk.graph.ElkPersistentEntry <em>Elk Persistent Entry</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Elk Persistent Entry</em>'.
-     * @see org.eclipse.elk.graph.ElkPersistentEntry
-     * @generated
-     */
-    EClass getElkPersistentEntry();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.eclipse.elk.graph.ElkPersistentEntry#getKey <em>Key</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Key</em>'.
-     * @see org.eclipse.elk.graph.ElkPersistentEntry#getKey()
-     * @see #getElkPersistentEntry()
-     * @generated
-     */
-    EAttribute getElkPersistentEntry_Key();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.eclipse.elk.graph.ElkPersistentEntry#getValue <em>Value</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Value</em>'.
-     * @see org.eclipse.elk.graph.ElkPersistentEntry#getValue()
-     * @see #getElkPersistentEntry()
-     * @generated
-     */
-    EAttribute getElkPersistentEntry_Value();
-
-    /**
      * Returns the meta object for data type '{@link org.eclipse.elk.graph.properties.IProperty <em>IProperty</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1757,6 +1607,17 @@ public interface ElkGraphPackage extends EPackage {
      * @generated
      */
     EDataType getIProperty();
+
+    /**
+     * Returns the meta object for data type '{@link java.lang.Object <em>Property Value</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for data type '<em>Property Value</em>'.
+     * @see java.lang.Object
+     * @model instanceClass="java.lang.Object"
+     * @generated
+     */
+    EDataType getPropertyValue();
 
     /**
      * Returns the factory that creates the instances of the model.
@@ -1807,14 +1668,6 @@ public interface ElkGraphPackage extends EPackage {
          * @generated
          */
         EReference EMAP_PROPERTY_HOLDER__PROPERTIES = eINSTANCE.getEMapPropertyHolder_Properties();
-
-        /**
-         * The meta object literal for the '<em><b>Persistent Entries</b></em>' reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES = eINSTANCE.getEMapPropertyHolder_PersistentEntries();
 
         /**
          * The meta object literal for the '{@link org.eclipse.elk.graph.impl.ElkGraphElementImpl <em>Element</em>}' class.
@@ -2229,32 +2082,6 @@ public interface ElkGraphPackage extends EPackage {
         EAttribute ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE = eINSTANCE.getElkPropertyToValueMapEntry_Value();
 
         /**
-         * The meta object literal for the '{@link org.eclipse.elk.graph.impl.ElkPersistentEntryImpl <em>Elk Persistent Entry</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.eclipse.elk.graph.impl.ElkPersistentEntryImpl
-         * @see org.eclipse.elk.graph.impl.ElkGraphPackageImpl#getElkPersistentEntry()
-         * @generated
-         */
-        EClass ELK_PERSISTENT_ENTRY = eINSTANCE.getElkPersistentEntry();
-
-        /**
-         * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute ELK_PERSISTENT_ENTRY__KEY = eINSTANCE.getElkPersistentEntry_Key();
-
-        /**
-         * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute ELK_PERSISTENT_ENTRY__VALUE = eINSTANCE.getElkPersistentEntry_Value();
-
-        /**
          * The meta object literal for the '<em>IProperty</em>' data type.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -2263,6 +2090,16 @@ public interface ElkGraphPackage extends EPackage {
          * @generated
          */
         EDataType IPROPERTY = eINSTANCE.getIProperty();
+
+        /**
+         * The meta object literal for the '<em>Property Value</em>' data type.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see java.lang.Object
+         * @see org.eclipse.elk.graph.impl.ElkGraphPackageImpl#getPropertyValue()
+         * @generated
+         */
+        EDataType PROPERTY_VALUE = eINSTANCE.getPropertyValue();
 
     }
 
