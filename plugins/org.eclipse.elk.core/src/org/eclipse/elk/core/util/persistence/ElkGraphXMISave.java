@@ -12,7 +12,7 @@ package org.eclipse.elk.core.util.persistence;
 
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.graph.EMapPropertyHolder;
+import org.eclipse.elk.graph.ElkGraphPackage;
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.emf.ecore.EObject;
@@ -39,17 +39,17 @@ final class ElkGraphXMISave extends XMISaveImpl {
     @Override
     protected void saveElement(final EObject o, final EStructuralFeature f) {
         // We have special handling for property to value map entries
-        if (f.getContainerClass().equals(EMapPropertyHolder.class)) {
-            if (o instanceof ElkPropertyToValueMapEntryImpl) {
-                // Check if the property's data type is deserializable
-                IProperty<?> property = ((ElkPropertyToValueMapEntryImpl) o).getKey();
-                LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(property.getId());
-                
-                // Check if the value we want to serialize here will be parsable later so we can deserialize it
-                // again properly; if this is not the case, there is no point serializing it in the first place
-                if (optionData != null && !optionData.canParseValue()) {
-                    return;
-                }
+        if (f.equals(ElkGraphPackage.Literals.EMAP_PROPERTY_HOLDER__PROPERTIES)
+                && o instanceof ElkPropertyToValueMapEntryImpl) {
+            
+            // Check if the property's data type is deserializable
+            IProperty<?> property = ((ElkPropertyToValueMapEntryImpl) o).getKey();
+            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(property.getId());
+            
+            // Check if the value we want to serialize here will be parsable later so we can deserialize it
+            // again properly; if this is not the case, there is no point serializing it in the first place
+            if (optionData != null && !optionData.canParseValue()) {
+                return;
             }
         }
         

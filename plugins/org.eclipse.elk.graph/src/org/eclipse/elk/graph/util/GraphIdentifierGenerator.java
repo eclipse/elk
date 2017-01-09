@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.util;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Generates identifiers for graph elements where missing. Inside ELK, this class is mainly used to generate
@@ -24,23 +29,49 @@ import org.eclipse.elk.graph.ElkPort;
  */
 public final class GraphIdentifierGenerator {
     
-    /** the highest ID generated for a node so far. */
-    private int currNodeId = 1;
-    /** the highest ID generated for a port so far. */
-    private int currPortId = 1;
-    /** the highest ID generated for an edge so far. */
-    private int currEdgeId = 1;
-    /** the highest ID generated for an edge section so far. */
-    private int currEdgeSectionId = 1;
-    /** the highest ID generated for a label so far. */
-    private int currLabelId = 1;
+    /**
+     * Enumeration of possible graph elements that can receive identifiers.
+     */
+    private static enum ElementType {
+        NODE("N"),
+        PORT("P"),
+        EDGE("E"),
+        EDGE_SECTION("ES"),
+        LABEL("L");
+        
+        private String elementPrefix;
+        
+        ElementType(final String prefix) {
+            elementPrefix = prefix;
+        }
+    }
+    
+    /** Array of highest identifiers generated so far for each kind of element. */
+    private int[] currentIDs = new int[ElementType.values().length];
+    /** Set of existing identifiers in the graph for collision detection. */
+    private Set<String> existingIdentifiers = new HashSet<>();
     
     
     /**
      * Constructor is only called from the inside.
      */
-    private GraphIdentifierGenerator() {
-        
+    private GraphIdentifierGenerator(final ElkNode graph) {
+        Iterator<EObject> iterator = graph.eAllContents();
+        while (iterator.hasNext()) {
+            EObject currentEObject = iterator.next();
+            
+            if (currentEObject instanceof ElkGraphElement) {
+                ElkGraphElement element = (ElkGraphElement) currentEObject;
+                if (element.getIdentifier() != null && !element.getIdentifier().trim().isEmpty()) {
+                    existingIdentifiers.add(element.getIdentifier());
+                }
+            } else if (currentEObject instanceof ElkEdgeSection) {
+                ElkEdgeSection section = (ElkEdgeSection) currentEObject;
+                if (section.getIdentifier() != null && !section.getIdentifier().trim().isEmpty()) {
+                    existingIdentifiers.add(section.getIdentifier());
+                }
+            }
+        }
     }
     
     
@@ -50,7 +81,7 @@ public final class GraphIdentifierGenerator {
      * @param graph the graph to generate identifiers for.
      */
     public static void generate(final ElkNode graph) {
-        new GraphIdentifierGenerator().generateIdentifiers(graph);
+        new GraphIdentifierGenerator(graph).generateIdentifiers(graph);
     }
     
     
@@ -65,9 +96,11 @@ public final class GraphIdentifierGenerator {
             @Override
             public Object caseElkNode(final ElkNode node) {
                 if (node.getParent() == null) {
-                    setIdentifierIfMissing(node, "G1");
+                    if (node.getIdentifier() == null || node.getIdentifier().trim().isEmpty()) {
+                        node.setIdentifier("G1");
+                    }
                 } else {
-                    setIdentifierIfMissing(node, "N" + currNodeId++);
+                    setIdentifierIfMissing(node, ElementType.NODE);
                 }
                 
                 node.getLabels().stream().forEach(l -> generateIdentifiers(l));
@@ -79,50 +112,64 @@ public final class GraphIdentifierGenerator {
             
             @Override
             public Object caseElkPort(final ElkPort port) {
-                setIdentifierIfMissing(port, "P" + currPortId++);
+                setIdentifierIfMissing(port, ElementType.PORT);
                 port.getLabels().stream().forEach(l -> generateIdentifiers(l));
                 return null;
             }
             
             @Override
             public Object caseElkLabel(final ElkLabel label) {
-                setIdentifierIfMissing(label, "L" + currLabelId++);
+                setIdentifierIfMissing(label, ElementType.LABEL);
                 label.getLabels().stream().forEach(l -> generateIdentifiers(l));
                 return null;
             }
             
             @Override
             public Object caseElkEdge(final ElkEdge edge) {
-                setIdentifierIfMissing(edge, "E" + currEdgeId++);
+                setIdentifierIfMissing(edge, ElementType.EDGE);
                 edge.getLabels().stream().forEach(l -> generateIdentifiers(l));
                 return null;
             }
             
             @Override
             public Object caseElkEdgeSection(final ElkEdgeSection section) {
-                setIdentifierIfMissing(section, "ES" + currEdgeSectionId++);
+                setIdentifierIfMissing(section);
                 return null;
             }
             
         }.doSwitch(element);
     }
     
-    private boolean setIdentifierIfMissing(final ElkGraphElement element, final String id) {
+    /**
+     * Generates and sets a new identifier for the given element of the given type.
+     */
+    private void setIdentifierIfMissing(final ElkGraphElement element, final ElementType elementType) {
         if (element.getIdentifier() == null || element.getIdentifier().trim().isEmpty()) {
+            String id = nextIdentifier(elementType);
             element.setIdentifier(id);
-            return true;
-        } else {
-            return false;
         }
     }
     
-    private boolean setIdentifierIfMissing(final ElkEdgeSection section, final String id) {
+    /**
+     * Generates and sets a new identifier for the given edge section.
+     */
+    private void setIdentifierIfMissing(final ElkEdgeSection section) {
         if (section.getIdentifier() == null || section.getIdentifier().trim().isEmpty()) {
+            String id = nextIdentifier(ElementType.EDGE_SECTION);
             section.setIdentifier(id);
-            return true;
-        } else {
-            return false;
         }
+    }
+    
+    /**
+     * Returns the next unused identifier for an element of the given type.
+     */
+    private String nextIdentifier(final ElementType elementType) {
+        String identifier;
+        do {
+            identifier = elementType.elementPrefix + ++currentIDs[elementType.ordinal()];
+        } while (existingIdentifiers.contains(identifier));
+        
+        return identifier;
     }
     
 }

@@ -11,7 +11,6 @@
 package org.eclipse.elk.core.util.persistence;
 
 import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.util.IDataObject;
 import org.eclipse.elk.core.util.internal.LayoutOptionProxy;
 import org.eclipse.elk.graph.ElkGraphPackage;
@@ -29,18 +28,12 @@ import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
  */
 final class ElkGraphXMIHelper extends XMIHelperImpl {
     
-    private static final ElkGraphPackage ELK_GRAPH_PACKAGE = ElkGraphPackage.eINSTANCE;
-    
-    /** The property that was most recently created. Used to load the next property value. */
-    private LayoutOptionData mostRecentlyCreatedProperty = null;
-    
-    
     @Override
     protected Object createFromString(final EFactory eFactory, final EDataType eDataType, final String value) {
         // We know how to obtain IProperty and parse option values
-        if (eDataType.equals(ELK_GRAPH_PACKAGE.getIProperty())) {
+        if (eDataType.equals(ElkGraphPackage.Literals.IPROPERTY)) {
             return createIPropertyFromString(value);
-        } else if (eDataType.equals(ELK_GRAPH_PACKAGE.getPropertyValue())) {
+        } else if (eDataType.equals(ElkGraphPackage.Literals.PROPERTY_VALUE)) {
             return createPropertyValueFromString(value);
         } else {
             return super.createFromString(eFactory, eDataType, value);
@@ -52,8 +45,7 @@ final class ElkGraphXMIHelper extends XMIHelperImpl {
      * as the most recently loaded property.
      */
     private IProperty<?> createIPropertyFromString(final String value) {
-        mostRecentlyCreatedProperty = LayoutMetaDataService.getInstance().getOptionData(value);
-        return mostRecentlyCreatedProperty;
+        return LayoutMetaDataService.getInstance().getOptionData(value);
     }
     
     /**
@@ -61,11 +53,7 @@ final class ElkGraphXMIHelper extends XMIHelperImpl {
      * type. If no property has been loaded yet, creates a {@link LayoutOptionProxy}.
      */
     private Object createPropertyValueFromString(final String value) {
-        if (mostRecentlyCreatedProperty == null) {
-            return new LayoutOptionProxy(value);
-        } else {
-            return mostRecentlyCreatedProperty.parseValue(value);
-        }
+        return new LayoutOptionProxy(value);
     }
     
 }
