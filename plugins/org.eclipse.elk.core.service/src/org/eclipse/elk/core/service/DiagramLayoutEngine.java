@@ -175,7 +175,7 @@ public class DiagramLayoutEngine {
                 ElkGraphElement e = input.getFirst();
                 Set<LayoutOptionData.Target> targets = optionData.getTargets();
                 if (e instanceof ElkNode) {
-                    if (((ElkNode) e).isHierarchical()) {
+                    if (!((ElkNode) e).isHierarchical()) {
                         return targets.contains(LayoutOptionData.Target.NODES);
                     } else {
                         return targets.contains(LayoutOptionData.Target.NODES)
