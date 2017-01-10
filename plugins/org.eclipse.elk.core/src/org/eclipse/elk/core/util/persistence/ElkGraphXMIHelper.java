@@ -41,16 +41,14 @@ final class ElkGraphXMIHelper extends XMIHelperImpl {
     }
     
     /**
-     * Asks the layout meta data service to load the property which has the given value as its ID. Also saves it
-     * as the most recently loaded property.
+     * Asks the layout meta data service to load the property which has the given value as its ID.
      */
     private IProperty<?> createIPropertyFromString(final String value) {
         return LayoutMetaDataService.getInstance().getOptionData(value);
     }
     
     /**
-     * Uses the most recently loaded property to parse the given value as an instance of the property's proper value
-     * type. If no property has been loaded yet, creates a {@link LayoutOptionProxy}.
+     * Creates a {@link LayoutOptionProxy} for the given property value.
      */
     private Object createPropertyValueFromString(final String value) {
         return new LayoutOptionProxy(value);
