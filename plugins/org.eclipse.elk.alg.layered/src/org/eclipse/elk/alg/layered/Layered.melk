@@ -220,9 +220,11 @@ group layering {
         
         advanced option upperBoundOnWidth: int {
             label "Upper Bound On Width [MinWidth Layerer]"
-            description "Defines a loose upper bound on the width of the MinWidth layerer."
+            description 
+                "Defines a loose upper bound on the width of the MinWidth layerer.
+                 If set to '-1' multiple values are tested and the best result is selected."
             default = 4
-            lowerBound = 1
+            lowerBound = -1
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.EXP_MIN_WIDTH
@@ -233,9 +235,10 @@ group layering {
             description
                 "Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
                 haven't been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth
-                algorithm. Compensates for too high estimations."
+                algorithm. Compensates for too high estimations.
+                If set to '-1' multiple values are tested and the best result is selected."
             default = 2
-            lowerBound = 1
+            lowerBound = -1
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor
             requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.EXP_MIN_WIDTH
