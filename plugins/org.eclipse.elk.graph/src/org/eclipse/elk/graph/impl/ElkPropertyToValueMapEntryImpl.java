@@ -202,18 +202,17 @@ public class ElkPropertyToValueMapEntryImpl extends MinimalEObjectImpl.Container
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @generated
+     * @generated NOT
      */
     @Override
     public String toString() {
         if (eIsProxy()) return super.toString();
 
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (key: ");
-        result.append(key);
-        result.append(", value: ");
-        result.append(value);
-        result.append(')');
+        StringBuffer result = new StringBuffer();
+        result.append(key.getId())
+              .append(" -> ")
+              .append(value.toString());
+        
         return result.toString();
     }
 
