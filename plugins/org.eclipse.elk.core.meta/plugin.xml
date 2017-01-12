@@ -13,7 +13,7 @@
 <plugin>
 	<extension point="org.eclipse.emf.ecore.generated_package">
 		<package 
-			uri = "http://www.eclipse.org/elk/core/meta/MetaData"
+			uri = "http://www.eclipse.org/elk/MetaData"
 			class = "org.eclipse.elk.core.meta.metaData.MetaDataPackage"
 			genModel = "model/generated/MetaData.genmodel" />
 	</extension>
