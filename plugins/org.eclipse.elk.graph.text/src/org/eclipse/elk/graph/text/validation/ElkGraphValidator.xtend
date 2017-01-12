@@ -8,9 +8,12 @@
 package org.eclipse.elk.graph.text.validation
 
 import com.google.inject.Inject
+import java.util.EnumSet
 import java.util.Map
 import org.eclipse.elk.core.LayoutOptionValidator
+import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.data.LayoutOptionData
+import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.graph.EMapPropertyHolder
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
@@ -41,15 +44,14 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
 	        var Object translatedValue
 	        if (value instanceof String) {
 	            translatedValue = property.parseValue(value)
-                if (translatedValue === null)
-                    error("Invalid property value format.", ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
-            } else {
+            }
+            if (translatedValue === null) {
     	        switch property.type {
     	            case BOOLEAN:
     	                if (value instanceof Boolean)
     	                    translatedValue = value
     	                else
-	                        expectPropertyType(Boolean)
+                            expectPropertyType(Boolean)
     	            case INT:
     	                if (value instanceof Integer)
                             translatedValue = value
@@ -62,12 +64,19 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
                             translatedValue = Double.valueOf(value)
                         else
                             expectPropertyType(Double, Integer)
-    	            default:
+    	            case STRING:
+    	                // We know it's not a string, otherwise property.parseValue(value) would have returned it
     	                expectPropertyType(String)
+    	            case ENUMSET:
+                        expectPropertyType(EnumSet)
+    	            default:
+    	                if (property.optionClass !== null)
+    	                    expectPropertyType(property.optionClass)
     	        }
 	        }
 	        if (translatedValue !== null) {
-	            val issues = layoutOptionValidator.checkProperty(property, translatedValue, entry.getContainerOfType(ElkGraphElement))
+	            val issues = layoutOptionValidator.checkProperty(property, translatedValue,
+	                   entry.getContainerOfType(ElkGraphElement))
 	            for (issue : issues) {
 	                switch issue.severity {
 	                    case ERROR:
@@ -75,6 +84,11 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
 	                    case WARNING:
 	                        warning(issue.message, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
 	                }
+	            }
+	            if (CoreOptions.ALGORITHM == property) {
+	                if (LayoutMetaDataService.instance.getAlgorithmDataBySuffix(translatedValue as String) === null)
+	                   error("No layout algorithm with identifier '" + translatedValue + "' can be found.",
+                           ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
 	            }
 	        }
 	    }

@@ -20,7 +20,12 @@ class BooleanValueConverter extends AbstractValueConverter<Boolean> {
     }
     
     override toValue(String string, INode node) throws ValueConverterException {
-        return Boolean.valueOf(string)
+        if (string.equalsIgnoreCase('true'))
+            return Boolean.TRUE
+        else if (string.equalsIgnoreCase('false'))
+            return Boolean.FALSE
+        else
+            throw new ValueConverterException("Cannot convert '" + string + "' to a Boolean value.", node, null)
     }
     
 }
