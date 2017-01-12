@@ -13,42 +13,65 @@ import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
+import org.eclipse.xtext.naming.IQualifiedNameProvider
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 
 /**
- * Provides labels for EObjects.
- * 
- * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider
+ * Provides labels for ElkGraph classes.
  */
 class ElkGraphLabelProvider extends DefaultEObjectLabelProvider {
+    
+    @Inject extension IQualifiedNameProvider
 
     @Inject
     new(AdapterFactoryLabelProvider delegate) {
-        super(delegate);
+        super(delegate)
     }
 
-    // Labels can be computed like this:
-    //  def text(Greeting ele) {
-    //      'A greeting to ' + ele.name
-    //  }
-    
     def image(ElkNode node) {
         if (node.parent == null) {
-            'elkgraph.gif';
+            'elkgraph.gif'
         } else {
-            'elknode.gif';
+            'elknode.gif'
         }
     }
     
     def image(ElkPort port) {
-        'elkport.gif';
+        'elkport.gif'
+    }
+    
+    def text(ElkEdge edge) {
+        val result = new StringBuilder
+        if (!edge.identifier.nullOrEmpty)
+            result.append(edge.identifier).append(': ')
+        edge.sources.forEach[ s, i |
+            if (i > 0)
+                result.append(', ')
+            result.append(s.fullyQualifiedName?.toString ?: '?')
+        ]
+        result.append(' \u2192 ')
+        edge.targets.forEach[ t, i |
+            if (i > 0)
+                result.append(', ')
+            result.append(t.fullyQualifiedName?.toString ?: '?')
+        ]
+        return result.toString
     }
     
     def image(ElkEdge edge) {
-        'elkedge.gif';
+        'elkedge.gif'
+    }
+    
+    def text(ElkLabel label) {
+        val result = new StringBuilder
+        if (!label.identifier.nullOrEmpty)
+            result.append(label.identifier).append(': ')
+        result.append('"').append(label.text ?: '').append('"')
+        return result.toString
     }
     
     def image(ElkLabel label) {
-        'elklabel.gif';
+        'elklabel.gif'
     }
+    
 }

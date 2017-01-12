@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.text.ui.contentassist
 
+import com.google.inject.Inject
 import org.eclipse.elk.core.data.ILayoutMetaData
 import org.eclipse.elk.core.data.LayoutAlgorithmData
 import org.eclipse.elk.core.data.LayoutMetaDataService
@@ -18,15 +19,17 @@ import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
+import org.eclipse.elk.graph.text.services.ElkGraphGrammarAccess
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.jface.viewers.StyledString
 import org.eclipse.xtext.Assignment
+import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.RuleCall
+import org.eclipse.xtext.ui.IImageHelper
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import org.eclipse.xtext.Keyword
 
 /**
  * Special content assist proposals for the ELK Graph language.
@@ -34,6 +37,10 @@ import org.eclipse.xtext.Keyword
 class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
     
     static val DISABLED_KEYWORDS = #{'}', ']'}
+    
+    @Inject ElkGraphGrammarAccess grammar
+    
+    @Inject IImageHelper imageHelper
     
     override completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
         if (!DISABLED_KEYWORDS.contains(keyword.value))
@@ -97,7 +104,7 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
                 if (metaDataService.getOptionDataBySuffix(suffix) !== null)
                     foundMatch = true
             }
-            val proposal = createCompletionProposal(suffix, option.getDisplayString(suffix), null, context)
+            val proposal = createCompletionProposal(suffix, option.getDisplayString(suffix), option.image, context)
             acceptor.accept(proposal)
         }
     }
@@ -108,7 +115,7 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
             val property = model.key
             if (property instanceof LayoutOptionData) {
                 for (choice : property.choices) {
-                    val proposal = createCompletionProposal(choice, choice, null, context)
+                    val proposal = createCompletionProposal(choice, choice, property.image, context)
                     acceptor.accept(proposal)
                 }
                 if (CoreOptions.ALGORITHM == property)
@@ -140,6 +147,32 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
     private def getDisplayString(ILayoutMetaData data, String suffix) {
         new StyledString(suffix)
             + new StyledString(''' «'\u2013'» «data.name» («data.id»)''', StyledString.QUALIFIER_STYLER)
+    }
+    
+    override protected getImage(EObject eObject) {
+        if (eObject instanceof Keyword) {
+            val key = switch eObject {
+                case grammar.rootNodeAccess.graphKeyword_1_0: 'elkgraph'
+                case grammar.elkNodeAccess.nodeKeyword_0: 'elknode'
+                case grammar.elkEdgeAccess.edgeKeyword_0: 'elkedge'
+                case grammar.elkPortAccess.portKeyword_0: 'elkport'
+                case grammar.elkLabelAccess.labelKeyword_0: 'elklabel'
+            }
+            if (key !== null)
+                return imageHelper.getImage(key + '.gif')
+        }
+        return super.getImage(eObject)
+    }
+    
+    private def getImage(LayoutOptionData option) {
+        val key = switch option.type {
+            case BOOLEAN: 'prop_true'
+            case INT: 'prop_int'
+            case DOUBLE: 'prop_double'
+            case ENUM, case ENUMSET: 'prop_choice'
+            default: 'prop_text'
+        }
+        return imageHelper.getImage(key + '.gif')
     }
     
     private def +(StyledString s1, StyledString s2) {

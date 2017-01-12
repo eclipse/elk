@@ -7,12 +7,19 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.text.ui.outline
 
+import org.eclipse.elk.graph.ElkEdge
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 
 /**
- * Customization of the default outline structure.
- * 
- * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#outline
+ * Customization of the outline tree structure.
  */
 class ElkGraphOutlineTreeProvider extends DefaultOutlineTreeProvider {
+    
+    def dispatch createChildren(IOutlineNode parentNode, ElkEdge edge) {
+        for (label : edge.labels) {
+            createEObjectNode(parentNode, label)
+        }
+    }
+    
 }
