@@ -137,23 +137,33 @@ public class LayoutMetaDataService {
      * @param suffix
      *            a layout algorithm identifier suffix
      * @return the first layout algorithm data that has the given suffix, or {@code null} if no algorithm has that
-     *         suffix
+     *         suffix or the suffix is not unique (multiple algorithms have it)
      */
     public final LayoutAlgorithmData getAlgorithmDataBySuffix(final String suffix) {
-        LayoutAlgorithmData data = layoutAlgorithmMap.get(suffix);
+        if (suffix == null || suffix.isEmpty()) {
+            return null;
+        }
+        LayoutAlgorithmData data = algorithmSuffixMap.get(suffix);
+        
         if (data == null) {
-            data = algorithmSuffixMap.get(suffix);
-            if (data == null) {
-                for (LayoutAlgorithmData d : layoutAlgorithmMap.values()) {
-                    String id = d.getId();
-                    if (id.endsWith(suffix) && (suffix.length() == id.length()
-                            || id.charAt(id.length() - suffix.length() - 1) == '.')) {
-                        algorithmSuffixMap.put(suffix, d);
-                        return d;
+            // Nothing found? Try to find a suitable suffix
+            for (LayoutAlgorithmData d : layoutAlgorithmMap.values()) {
+                String id = d.getId();
+                if (id.endsWith(suffix) && (suffix.length() == id.length()
+                        || id.charAt(id.length() - suffix.length() - 1) == '.')) {
+                    if (data != null) {
+                        // The suffix is not unique, so we don't support it
+                        return null;
                     }
+                    data = d;
                 }
             }
+            
+            if (data != null) {
+                algorithmSuffixMap.put(suffix, data);
+            }
         }
+        
         return data;
     }
 
@@ -173,16 +183,13 @@ public class LayoutMetaDataService {
         final String finalDefaultId = defaultId == null ? "" : defaultId;
         final String finalAlgorithmId = algorithmId == null || algorithmId.isEmpty() ? finalDefaultId : algorithmId;
 
-        // Query the meta data service for the algorithm's data
-        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
-        LayoutAlgorithmData result = layoutDataService.getAlgorithmData(finalAlgorithmId);
-
+        LayoutAlgorithmData result = getAlgorithmData(finalAlgorithmId);
         if (result != null) {
             return result;
         }
 
-        // We didn't any algorithm yet, so simply return the first one in the list
-        Collection<LayoutAlgorithmData> allAlgorithmData = layoutDataService.getAlgorithmData();
+        // We haven't found any algorithm yet, so simply return the first one in the list
+        Collection<LayoutAlgorithmData> allAlgorithmData = getAlgorithmData();
         if (!allAlgorithmData.isEmpty()) {
             return allAlgorithmData.iterator().next();
         }
@@ -219,33 +226,58 @@ public class LayoutMetaDataService {
      * @param suffix
      *            a layout option identifier suffix
      * @return the first layout option data that has the given suffix, or {@code null} if no option has that suffix
+     *         or the suffix is not unique (multiple options have it)
      */
     public final LayoutOptionData getOptionDataBySuffix(final String suffix) {
-        if (suffix == null || suffix.trim().isEmpty()) {
+        if (suffix == null || suffix.isEmpty()) {
             return null;
         }
+        LayoutOptionData data = optionSuffixMap.get(suffix);
         
-        // try the full id
-        LayoutOptionData data = layoutOptionMap.get(suffix);
-        if (data != null) {
-            return data;
+        if (data == null) {
+            // Nothing found? Try to find a suitable suffix
+            for (LayoutOptionData d : layoutOptionMap.values()) {
+                String id = d.getId();
+                if (id.endsWith(suffix) && (suffix.length() == id.length()
+                        || id.charAt(id.length() - suffix.length() - 1) == '.')) {
+                    if (data != null) {
+                        // The suffix is not unique, so we don't support it
+                        return null;
+                    }
+                    data = d;
+                }
+            }
+            
+            if (data == null) {
+                // Still not lucky? Maybe it's a suffix of a legacy id (we should stop supporting these one day...)
+                for (LayoutOptionData d : layoutOptionMap.values()) {
+                    String[] legacyIds = d.getLegacyIds();
+                    if (legacyIds != null) {
+                        for (String id : legacyIds) {
+                            if (id.endsWith(suffix) && (suffix.length() == id.length()
+                                    || id.charAt(id.length() - suffix.length() - 1) == '.')) {
+                                if (data != null) {
+                                    // The suffix is not unique, so we don't support it
+                                    return null;
+                                }
+                                data = d;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (data != null) {
+                optionSuffixMap.put(suffix, data);
+            }
         }
         
-        // try the legacy id
-        data = legacyLayoutOptionMap.get(suffix);
-        if (data != null) {
-            return data;
-        }
-        
-        // nothing found? try suffix map
-        data = optionSuffixMap.get(suffix);
-
         return data;
     }
 
     /**
      * Returns a list of layout options that are suitable for the given layout algorithm and layout option target. The
-     * layout algorithm must know the layout options and at the target must be active for each option.
+     * layout algorithm must know the layout options and the target must be active for each option.
      * 
      * @param algorithmData
      *            layout algorithm data
@@ -317,42 +349,10 @@ public class LayoutMetaDataService {
             String id = optionData.getId();
             layoutOptionMap.put(id, optionData);
 
-            // #2 register allowed suffixes (this may include every group)
-            // Example: allowed suffixes for 'org.eclipse.elk.foo.bar.option' are 
-            //  --> foo.bar.option
-            //  --> bar.option
-            //  --> option
-            String suffix = id.substring(id.lastIndexOf('.') + 1, id.length());
-            if (optionData.getGroup() != null && !optionData.getGroup().isEmpty()) {
-                suffix = optionData.getGroup() + '.' + suffix;
-            } 
-            String[] split = suffix.split("\\.");
-            StringBuilder tmpSuffix = new StringBuilder();
-            int i = split.length - 1;
-            do {
-                if (tmpSuffix.length() > 0) {
-                    tmpSuffix.insert(0, '.');
-                }
-                tmpSuffix.insert(0, split[i]);
-                if (optionSuffixMap.containsKey(tmpSuffix.toString())) {
-                    // this suffix is not unique -> it's invalid
-                    optionSuffixMap.put(tmpSuffix.toString(), null);
-                } else {
-                    optionSuffixMap.put(tmpSuffix.toString(), optionData);
-                }
-                i--;
-            } while (i >= 0);
-
-            // #3 register legacy options
+            // #2 register legacy options
             if (optionData.getLegacyIds() != null) {
                 for (String legacyId : optionData.getLegacyIds()) {
                     legacyLayoutOptionMap.put(legacyId, optionData);
-                    String legacySuffix =
-                            legacyId.substring(legacyId.lastIndexOf('.') + 1, legacyId.length());
-                    // legacy ids are only considered as valid suffix if they are unique
-                    if (!optionSuffixMap.containsKey(legacySuffix)) {
-                        optionSuffixMap.put(legacySuffix, optionData);
-                    }
                 }
             }
         }

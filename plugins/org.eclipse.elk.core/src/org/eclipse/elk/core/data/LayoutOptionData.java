@@ -49,7 +49,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         /** enumeration set type. */
         ENUMSET,
         /** {@link IDataObject} type. */
-        OBJECT;        
+        OBJECT;
     }
 
     /** Enumeration of target elements for layout options. */
@@ -246,7 +246,13 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         
         switch (type) {
         case BOOLEAN:
-            return Boolean.valueOf(valueString);
+            if (valueString.equalsIgnoreCase("true")) {
+                return Boolean.TRUE;
+            } else if (valueString.equalsIgnoreCase("false")) {
+                return Boolean.FALSE;
+            } else {
+                return null;
+            }
         case INT:
             try {
                 return Integer.valueOf(valueString);
