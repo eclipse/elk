@@ -38,7 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class EMapPropertyHolderImpl extends MinimalEObjectImpl.Container implements EMapPropertyHolder {
+public abstract class EMapPropertyHolderImpl extends MinimalEObjectImpl.Container implements EMapPropertyHolder {
     /**
      * The cached value of the '{@link #getProperties() <em>Properties</em>}' map.
      * <!-- begin-user-doc -->

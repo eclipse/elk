@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class ElkShapeImpl extends ElkGraphElementImpl implements ElkShape {
+public abstract class ElkShapeImpl extends ElkGraphElementImpl implements ElkShape {
     /**
      * The default value of the '{@link #getHeight() <em>Height</em>}' attribute.
      * <!-- begin-user-doc -->

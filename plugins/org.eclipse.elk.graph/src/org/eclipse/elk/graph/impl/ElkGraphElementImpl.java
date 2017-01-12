@@ -38,7 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ElkGraphElementImpl extends EMapPropertyHolderImpl implements ElkGraphElement {
+public abstract class ElkGraphElementImpl extends EMapPropertyHolderImpl implements ElkGraphElement {
     /**
      * The cached value of the '{@link #getLabels() <em>Labels</em>}' containment reference list.
      * <!-- begin-user-doc -->

@@ -40,7 +40,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ElkConnectableShapeImpl extends ElkShapeImpl implements ElkConnectableShape {
+public abstract class ElkConnectableShapeImpl extends ElkShapeImpl implements ElkConnectableShape {
     /**
      * The cached value of the '{@link #getOutgoingEdges() <em>Outgoing Edges</em>}' reference list.
      * <!-- begin-user-doc -->

@@ -30,33 +30,6 @@ public interface ElkGraphFactory extends EFactory {
     ElkGraphFactory eINSTANCE = org.eclipse.elk.graph.impl.ElkGraphFactoryImpl.init();
 
     /**
-     * Returns a new object of class '<em>EMap Property Holder</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>EMap Property Holder</em>'.
-     * @generated
-     */
-    EMapPropertyHolder createEMapPropertyHolder();
-
-    /**
-     * Returns a new object of class '<em>Element</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>Element</em>'.
-     * @generated
-     */
-    ElkGraphElement createElkGraphElement();
-
-    /**
-     * Returns a new object of class '<em>Elk Shape</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>Elk Shape</em>'.
-     * @generated
-     */
-    ElkShape createElkShape();
-
-    /**
      * Returns a new object of class '<em>Elk Label</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -64,15 +37,6 @@ public interface ElkGraphFactory extends EFactory {
      * @generated
      */
     ElkLabel createElkLabel();
-
-    /**
-     * Returns a new object of class '<em>Elk Connectable Shape</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>Elk Connectable Shape</em>'.
-     * @generated
-     */
-    ElkConnectableShape createElkConnectableShape();
 
     /**
      * Returns a new object of class '<em>Elk Node</em>'.

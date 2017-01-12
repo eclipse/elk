@@ -41,7 +41,8 @@
       </eGenericType>
     </eOperations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EMapPropertyHolder" eSuperTypes="#//IPropertyHolder">
+  <eClassifiers xsi:type="ecore:EClass" name="EMapPropertyHolder" abstract="true"
+      eSuperTypes="#//IPropertyHolder">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A property holder implementation based on {@link org.eclipse.emf.common.util.EMap} which can be used in Ecore models.&#xA;&#xA;&lt;p>This property holder implementation currently has two ways for saving properties: a map of properties as well as a map of &lt;em>persistent entries&lt;/em>. Persistent entries are String-String pairs containing String representations of properties. When a graph is serialized, it is the persistent entries that get serialized, not the properties themselves. This has two implications. First, to save a graph, one has to call {@link #makePersistent()} first. Second, after loading a graph, one of the methods in {@link org.eclipse.elk.core.util.GraphDataUtil} needs to be called to turn persistent entries back into usable properties.&lt;/p>"/>
     </eAnnotations>
@@ -52,7 +53,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ElkGraphElement" eSuperTypes="#//EMapPropertyHolder">
+  <eClassifiers xsi:type="ecore:EClass" name="ElkGraphElement" abstract="true" eSuperTypes="#//EMapPropertyHolder">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="This is the superclass of all elements of a graph such as nodes, edges, ports, and labels. Each element can have an arbitrary number of labels attached to it. A graph element can also hold properties that, for instance, influence how it is treated by layout algorithms. Finally, each graph element can have an arbitrary number of {@link ElkGraphData} objects associated with it to further annotate it with more specific information."/>
     </eAnnotations>
@@ -68,7 +69,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ElkShape" eSuperTypes="#//ElkGraphElement">
+  <eClassifiers xsi:type="ecore:EClass" name="ElkShape" abstract="true" eSuperTypes="#//ElkGraphElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A shape is a graph element whose placement and extend can be described by x and y coordinates as well as a width and a height. The coordinates of a shape describe the position of its top left corner, relative to the origin of its parent element. The width and height of a shape describe the extend of its rectangular bounding box."/>
     </eAnnotations>
@@ -130,7 +131,8 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ElkConnectableShape" eSuperTypes="#//ElkShape">
+  <eClassifiers xsi:type="ecore:EClass" name="ElkConnectableShape" abstract="true"
+      eSuperTypes="#//ElkShape">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="A graph element that can be the end point of an edge."/>
     </eAnnotations>

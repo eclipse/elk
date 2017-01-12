@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  *
  * @see org.eclipse.elk.graph.ElkGraphPackage#getEMapPropertyHolder()
- * @model superTypes="org.eclipse.elk.graph.IPropertyHolder"
+ * @model abstract="true" superTypes="org.eclipse.elk.graph.IPropertyHolder"
  * @generated
  */
 public interface EMapPropertyHolder extends EObject, IPropertyHolder {

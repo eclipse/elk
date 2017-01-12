@@ -863,14 +863,14 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         g1.getETypeArguments().add(g2);
         initEOperation(op, g1);
 
-        initEClass(eMapPropertyHolderEClass, EMapPropertyHolder.class, "EMapPropertyHolder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEClass(eMapPropertyHolderEClass, EMapPropertyHolder.class, "EMapPropertyHolder", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getEMapPropertyHolder_Properties(), this.getElkPropertyToValueMapEntry(), null, "properties", null, 0, -1, EMapPropertyHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(elkGraphElementEClass, ElkGraphElement.class, "ElkGraphElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEClass(elkGraphElementEClass, ElkGraphElement.class, "ElkGraphElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getElkGraphElement_Labels(), this.getElkLabel(), this.getElkLabel_Parent(), "labels", null, 0, -1, ElkGraphElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getElkGraphElement_Identifier(), ecorePackage.getEString(), "identifier", null, 0, 1, ElkGraphElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(elkShapeEClass, ElkShape.class, "ElkShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEClass(elkShapeEClass, ElkShape.class, "ElkShape", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getElkShape_Height(), ecorePackage.getEDouble(), "height", "0.0", 1, 1, ElkShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getElkShape_Width(), ecorePackage.getEDouble(), "width", "0.0", 1, 1, ElkShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getElkShape_X(), ecorePackage.getEDouble(), "x", "0.0", 1, 1, ElkShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -888,7 +888,7 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         initEReference(getElkLabel_Parent(), this.getElkGraphElement(), this.getElkGraphElement_Labels(), "parent", null, 0, 1, ElkLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getElkLabel_Text(), ecorePackage.getEString(), "text", "", 0, 1, ElkLabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-        initEClass(elkConnectableShapeEClass, ElkConnectableShape.class, "ElkConnectableShape", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+        initEClass(elkConnectableShapeEClass, ElkConnectableShape.class, "ElkConnectableShape", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getElkConnectableShape_OutgoingEdges(), this.getElkEdge(), this.getElkEdge_Sources(), "outgoingEdges", null, 0, -1, ElkConnectableShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getElkConnectableShape_IncomingEdges(), this.getElkEdge(), this.getElkEdge_Targets(), "incomingEdges", null, 0, -1, ElkConnectableShape.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

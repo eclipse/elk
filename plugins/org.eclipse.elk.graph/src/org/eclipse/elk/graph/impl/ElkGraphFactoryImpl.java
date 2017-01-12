@@ -69,11 +69,7 @@ public class ElkGraphFactoryImpl extends EFactoryImpl implements ElkGraphFactory
     @Override
     public EObject create(EClass eClass) {
         switch (eClass.getClassifierID()) {
-            case ElkGraphPackage.EMAP_PROPERTY_HOLDER: return createEMapPropertyHolder();
-            case ElkGraphPackage.ELK_GRAPH_ELEMENT: return createElkGraphElement();
-            case ElkGraphPackage.ELK_SHAPE: return createElkShape();
             case ElkGraphPackage.ELK_LABEL: return createElkLabel();
-            case ElkGraphPackage.ELK_CONNECTABLE_SHAPE: return createElkConnectableShape();
             case ElkGraphPackage.ELK_NODE: return createElkNode();
             case ElkGraphPackage.ELK_PORT: return createElkPort();
             case ElkGraphPackage.ELK_EDGE: return createElkEdge();
@@ -124,49 +120,9 @@ public class ElkGraphFactoryImpl extends EFactoryImpl implements ElkGraphFactory
      * <!-- end-user-doc -->
      * @generated
      */
-    public EMapPropertyHolder createEMapPropertyHolder() {
-        EMapPropertyHolderImpl eMapPropertyHolder = new EMapPropertyHolderImpl();
-        return eMapPropertyHolder;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ElkGraphElement createElkGraphElement() {
-        ElkGraphElementImpl elkGraphElement = new ElkGraphElementImpl();
-        return elkGraphElement;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ElkShape createElkShape() {
-        ElkShapeImpl elkShape = new ElkShapeImpl();
-        return elkShape;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public ElkLabel createElkLabel() {
         ElkLabelImpl elkLabel = new ElkLabelImpl();
         return elkLabel;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ElkConnectableShape createElkConnectableShape() {
-        ElkConnectableShapeImpl elkConnectableShape = new ElkConnectableShapeImpl();
-        return elkConnectableShape;
     }
 
     /**

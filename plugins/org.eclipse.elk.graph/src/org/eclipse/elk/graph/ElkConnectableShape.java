@@ -30,7 +30,7 @@ import org.eclipse.emf.common.util.EList;
  * </ul>
  *
  * @see org.eclipse.elk.graph.ElkGraphPackage#getElkConnectableShape()
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface ElkConnectableShape extends ElkShape {

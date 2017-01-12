@@ -31,7 +31,7 @@ package org.eclipse.elk.graph;
  * </ul>
  *
  * @see org.eclipse.elk.graph.ElkGraphPackage#getElkShape()
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface ElkShape extends ElkGraphElement {
