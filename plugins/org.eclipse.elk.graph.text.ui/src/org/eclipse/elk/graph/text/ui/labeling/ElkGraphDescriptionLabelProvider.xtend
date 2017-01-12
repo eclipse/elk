@@ -7,20 +7,23 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.text.ui.labeling
 
+import org.eclipse.emf.ecore.EClass
 import org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider
+
+import static org.eclipse.elk.graph.ElkGraphPackage.Literals.*
 
 /**
  * Provides labels for IEObjectDescriptions and IResourceDescriptions.
- * 
- * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider
  */
 class ElkGraphDescriptionLabelProvider extends DefaultDescriptionLabelProvider {
-    // Labels and icons can be computed like this:
-//	override text(IEObjectDescription ele) {
-//		ele.name.toString
-//	}
-//	 
-//	override image(IEObjectDescription ele) {
-//		ele.EClass.name + '.gif'
-//	}
+
+    def image(EClass clazz) {
+        switch clazz {
+            case ELK_NODE: 'elknode.gif'
+            case ELK_EDGE: 'elkedge.gif'
+            case ELK_PORT: 'elkport.gif'
+            case ELK_LABEL: 'elklabel.gif'
+        }
+    }
+
 }

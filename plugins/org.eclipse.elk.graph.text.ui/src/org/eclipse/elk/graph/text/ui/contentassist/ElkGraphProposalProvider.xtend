@@ -42,9 +42,9 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
     
     @Inject IImageHelper imageHelper
     
-    override completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
-        if (!DISABLED_KEYWORDS.contains(keyword.value))
-            super.completeKeyword(keyword, contentAssistContext, acceptor)
+    override completeKeyword(Keyword keyword, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        if (!DISABLED_KEYWORDS.contains(keyword.value) && keyword.value != context.prefix)
+            super.completeKeyword(keyword, context, acceptor)
     }
     
     override protected doCreateStringProposals() {
@@ -101,10 +101,10 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
                     suffix = split.get(i--)
                 else
                     suffix = split.get(i--) + '.' + suffix
-                if (metaDataService.getOptionDataBySuffix(suffix) !== null)
+                if (metaDataService.getOptionDataBySuffix(suffix) !== null && suffix.startsWith(context.prefix))
                     foundMatch = true
             }
-            val proposal = createCompletionProposal(suffix, option.getDisplayString(suffix), option.image, context)
+            val proposal = createCompletionProposal(suffix, option.getDisplayString(suffix), getImage(option, null), context)
             acceptor.accept(proposal)
         }
     }
@@ -115,7 +115,7 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
             val property = model.key
             if (property instanceof LayoutOptionData) {
                 for (choice : property.choices) {
-                    val proposal = createCompletionProposal(choice, choice, property.image, context)
+                    val proposal = createCompletionProposal(choice, choice, getImage(property, choice), context)
                     acceptor.accept(proposal)
                 }
                 if (CoreOptions.ALGORITHM == property)
@@ -136,7 +136,7 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
                     suffix = split.get(i--)
                 else
                     suffix = split.get(i--) + '.' + suffix
-                if (metaDataService.getAlgorithmDataBySuffix(suffix) !== null)
+                if (metaDataService.getAlgorithmDataBySuffix(suffix) !== null && suffix.startsWith(context.prefix))
                     foundMatch = true
             }
             val proposal = createCompletionProposal(suffix, algorithm.getDisplayString(suffix), null, context)
@@ -164,9 +164,11 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
         return super.getImage(eObject)
     }
     
-    private def getImage(LayoutOptionData option) {
+    private def getImage(LayoutOptionData option, String value) {
         val key = switch option.type {
-            case BOOLEAN: 'prop_true'
+            case BOOLEAN:
+                if (value == 'false') 'prop_false'
+                else 'prop_true'
             case INT: 'prop_int'
             case DOUBLE: 'prop_double'
             case ENUM, case ENUMSET: 'prop_choice'
