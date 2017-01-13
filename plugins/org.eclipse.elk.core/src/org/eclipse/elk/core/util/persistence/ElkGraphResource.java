@@ -75,7 +75,7 @@ public class ElkGraphResource extends XMIResourceImpl {
     
     @Override
     protected XMLHelper createXMLHelper() {
-        return new ElkGraphXMIHelper();
+        return new ElkGraphXMIHelper(this);
     }
     
 }

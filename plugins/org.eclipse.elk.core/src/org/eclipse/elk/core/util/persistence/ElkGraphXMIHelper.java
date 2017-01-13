@@ -17,6 +17,7 @@ import org.eclipse.elk.graph.ElkGraphPackage;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
 
 /**
@@ -27,6 +28,16 @@ import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
  * @see ElkGraphResource
  */
 final class ElkGraphXMIHelper extends XMIHelperImpl {
+    
+    /**
+     * Creates a new XMI helper for the given resource.
+     * 
+     * @param resource the resource to help load or save.
+     */
+    ElkGraphXMIHelper(final XMLResource resource) {
+        super(resource);
+    }
+    
     
     @Override
     protected Object createFromString(final EFactory eFactory, final EDataType eDataType, final String value) {
