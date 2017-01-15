@@ -5,7 +5,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
     xmlns:jdt="http://www.eclipse.org/oomph/setup/jdt/1.0"
-    xmlns:pde="http://www.eclipse.org/oomph/setup/pde/1.0"
     xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
     xmlns:projects="http://www.eclipse.org/oomph/setup/projects/1.0"
     xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
@@ -13,7 +12,7 @@
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
     xmlns:workingsets="http://www.eclipse.org/oomph/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/pde/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/PDE.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore http://www.eclipse.org/oomph/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/WorkingSets.ecore"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore http://www.eclipse.org/oomph/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/WorkingSets.ecore"
     name="elk"
     label="Eclipse Layout Kernel">
   <setupTask
@@ -71,11 +70,23 @@
     </setupTask>
   </setupTask>
   <setupTask
-      xsi:type="setup:EclipseIniTask"
-      option="-Xmx"
-      value="2048m"
-      vm="true">
-    <description>Set the heap space needed to work with the projects of ${scope.project.label}</description>
+      xsi:type="setup:CompoundTask"
+      name="Eclipse.ini Settings">
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="-Xmx"
+        value="2048m"
+        vm="true">
+      <description>Set the heap space needed to work with the projects of ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:EclipseIniTask"
+        option="DOCUMENTATION_OUTPUT_DIR"
+        value="=${git.clone.location/docs}"
+        vm="true">
+      <description>Sets the path the melk file documentation should be generated to.</description>
+    </setupTask>
+    <description></description>
   </setupTask>
   <setupTask
       xsi:type="setup:ResourceCreationTask"
@@ -119,13 +130,9 @@
     <requirement
         name="org.eclipse.oomph.workingsets.feature.group"/>
     <requirement
-        name="net.sf.eclipsecs.feature.group"/>
-    <requirement
         name="org.eclipse.elk.sdk.feature.feature.group"/>
     <repository
-        url="http://eclipse-cs.sf.net/update"/>
-    <repository
-        url="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
+        url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
     <repository
         url="http://build.eclipse.org/modeling/elk/updates/nightly/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
@@ -228,55 +235,10 @@
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
           <repository
-              url="http://download.itemis.com/updates/releases/"/>
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
       </targlet>
     </setupTask>
-    <setupTask
-        xsi:type="setup.targlets:TargletTask"
-        targetName="API Baseline"
-        activateTarget="false">
-      <targlet
-          name="${scope.project.label}"
-          activeRepositoryList="${eclipse.target.platform}">
-        <requirement
-            name="org.eclipse.elk.feature.feature.group"
-            versionRange="0.1.0"/>
-        <requirement
-            name="org.eclipse.elk.gmf.feature.feature.group"
-            versionRange="0.1.0"/>
-        <requirement
-            name="org.eclipse.elk.graphiti.feature.feature.group"
-            versionRange="0.1.0"/>
-        <requirement
-            name="org.eclipse.elk.graphviz.feature.feature.group"
-            versionRange="0.1.0"/>
-        <requirement
-            name="org.eclipse.elk.sdk.feature.feature.group"
-            versionRange="0.1.0"/>
-        <requirement
-            name="org.eclipse.elk.ui.feature.feature.group"
-            versionRange="0.1.0"/>
-        <repositoryList
-            name="Mars">
-          <repository
-              url="http://download.eclipse.org/releases/mars"/>
-          <repository
-              url="http://download.eclipse.org/elk/updates/releases/0.1.0/"/>
-        </repositoryList>
-        <repositoryList
-            name="Neon">
-          <repository
-              url="http://download.eclipse.org/releases/neon"/>
-          <repository
-              url="http://download.eclipse.org/elk/updates/releases/0.1.0/"/>
-        </repositoryList>
-      </targlet>
-    </setupTask>
-    <setupTask
-        xsi:type="pde:APIBaselineFromTargetTask"
-        name="ELK"
-        targetName="API Baseline"/>
     <setupTask
         xsi:type="projects:ProjectsImportTask">
       <sourceLocator
@@ -300,7 +262,7 @@
           </operand>
           <operand
               xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.1 //@streams[name='master']/@setupTasks.7/@workingSets.4"/>
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.1 //@streams[name='master']/@setupTasks.5/@workingSets.4"/>
         </predicate>
       </workingSet>
       <workingSet
@@ -318,7 +280,7 @@
               pattern="org\.eclipse\.elk\.alg\..*"/>
           <operand
               xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.4"/>
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.4"/>
         </predicate>
       </workingSet>
       <workingSet
@@ -330,7 +292,7 @@
               pattern="org\.eclipse\.elk\.conn\..*"/>
           <operand
               xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.4"/>
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.4"/>
         </predicate>
       </workingSet>
       <workingSet
@@ -348,7 +310,7 @@
               pattern="org\.eclipse\.elk\..*"/>
           <operand
               xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.7/@workingSets.2 //@streams[name='master']/@setupTasks.7/@workingSets.0 //@streams[name='master']/@setupTasks.7/@workingSets.3 //@streams[name='master']/@setupTasks.7/@workingSets.1 //@streams[name='master']/@setupTasks.7/@workingSets.4"/>
+              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.2 //@streams[name='master']/@setupTasks.5/@workingSets.0 //@streams[name='master']/@setupTasks.5/@workingSets.3 //@streams[name='master']/@setupTasks.5/@workingSets.1 //@streams[name='master']/@setupTasks.5/@workingSets.4"/>
         </predicate>
       </workingSet>
       <description>The dynamic working sets for ${scope.project.label}</description>
