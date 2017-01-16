@@ -82,8 +82,7 @@
     <setupTask
         xsi:type="setup:EclipseIniTask"
         option="DOCUMENTATION_OUTPUT_DIR"
-        value="=${git.clone.location/docs}"
-        vm="true">
+        value="=${git.clone.location/docs}">
       <description>Sets the path the melk file documentation should be generated to.</description>
     </setupTask>
     <description></description>
