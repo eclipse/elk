@@ -129,13 +129,113 @@
         name="org.eclipse.oomph.preferences.feature.group"/>
     <requirement
         name="org.eclipse.oomph.workingsets.feature.group"/>
-    <requirement
-        name="org.eclipse.elk.sdk.feature.feature.group"/>
     <repository
         url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
-    <repository
-        url="http://build.eclipse.org/modeling/elk/updates/nightly/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="git:GitCloneTask"
+      id="git.clone"
+      remoteURI="eclipse/elk">
+    <annotation
+        source="http://www.eclipse.org/oomph/setup/InducedChoices">
+      <detail
+          key="inherit">
+        <value>github.remoteURIs</value>
+      </detail>
+      <detail
+          key="label">
+        <value>${scope.project.label} Github repository</value>
+      </detail>
+      <detail
+          key="target">
+        <value>remoteURI</value>
+      </detail>
+    </annotation>
+    <description>${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="projects:ProjectsImportTask">
+    <sourceLocator
+        rootFolder="${git.clone.location}"
+        locateNestedProjects="true"/>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.workingsets:WorkingSetTask">
+    <workingSet
+        name="ELK Core">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:OrPredicate">
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern="org\.eclipse\.elk\.core.*"/>
+          <operand
+              xsi:type="predicates:NamePredicate"
+              pattern="org\.eclipse\.elk\.graph.*"/>
+        </operand>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//@setupTasks.6/@workingSets.1 //@setupTasks.6/@workingSets.4"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="ELK Features">
+      <predicate
+          xsi:type="predicates:NamePredicate"
+          pattern="org\.eclipse\.elk.*\.feature"/>
+    </workingSet>
+    <workingSet
+        name="ELK Algorithms">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern="org\.eclipse\.elk\.alg\..*"/>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//@setupTasks.6/@workingSets.4"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="ELK Connectors">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern="org\.eclipse\.elk\.conn\..*"/>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//@setupTasks.6/@workingSets.4"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="ELK Tests">
+      <predicate
+          xsi:type="predicates:NamePredicate"
+          pattern="org\.eclipse\.elk\..*test"/>
+    </workingSet>
+    <workingSet
+        name="ELK Stuff">
+      <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:NamePredicate"
+            pattern="org\.eclipse\.elk\..*"/>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//@setupTasks.6/@workingSets.2 //@setupTasks.6/@workingSets.0 //@setupTasks.6/@workingSets.3 //@setupTasks.6/@workingSets.1 //@setupTasks.6/@workingSets.4"/>
+      </predicate>
+    </workingSet>
+    <description>The dynamic working sets for ${scope.project.label}</description>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:ResourceCreationTask"
+      content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&#xA;&lt;checkstyle-configurations file-format-version=&quot;5.0.0&quot; default-check-configuration=&quot;ELK Checkstyle Configuration&quot;>&#xA;  &lt;check-configuration name=&quot;ELK Checkstyle Configuration&quot; location=&quot;/org.eclipse.elk.config/checkstyle.xml&quot; type=&quot;project&quot; description=&quot;&quot;>&#xA;    &lt;additional-data name=&quot;protect-config-file&quot; value=&quot;false&quot;/>&#xA;  &lt;/check-configuration>&#xA;&lt;/checkstyle-configurations>"
+      targetURL="${workspace.location|uri}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml"
+      encoding="UTF-8">
+    <description></description>
   </setupTask>
   <stream name="master"
       label="Master">
@@ -154,25 +254,11 @@
       <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
     <setupTask
-        xsi:type="git:GitCloneTask"
-        id="git.clone"
-        remoteURI="eclipse/elk">
-      <annotation
-          source="http://www.eclipse.org/oomph/setup/InducedChoices">
-        <detail
-            key="inherit">
-          <value>github.remoteURIs</value>
-        </detail>
-        <detail
-            key="label">
-          <value>${scope.project.label} Github repository</value>
-        </detail>
-        <detail
-            key="target">
-          <value>remoteURI</value>
-        </detail>
-      </annotation>
-      <description>${scope.project.label}</description>
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.elk.sdk.feature.feature.group"/>
+      <repository
+          url="http://build.eclipse.org/modeling/elk/updates/nightly/"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask">
@@ -239,88 +325,94 @@
         </repositoryList>
       </targlet>
     </setupTask>
+  </stream>
+  <stream name="releases/0.1.1"
+      label="Release 0.1.1">
     <setupTask
-        xsi:type="projects:ProjectsImportTask">
-      <sourceLocator
-          rootFolder="${git.clone.location}"
-          locateNestedProjects="true"/>
+        xsi:type="setup:VariableTask"
+        name="eclipse.target.platform"
+        defaultValue="Neon"
+        storageURI="scope://Workspace"
+        label="Target Platform">
+      <description>Choose the compatibility level of the target platform</description>
     </setupTask>
     <setupTask
-        xsi:type="setup.workingsets:WorkingSetTask">
-      <workingSet
-          name="ELK Core">
-        <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:OrPredicate">
-            <operand
-                xsi:type="predicates:NamePredicate"
-                pattern="org\.eclipse\.elk\.core.*"/>
-            <operand
-                xsi:type="predicates:NamePredicate"
-                pattern="org\.eclipse\.elk\.graph.*"/>
-          </operand>
-          <operand
-              xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.1 //@streams[name='master']/@setupTasks.5/@workingSets.4"/>
-        </predicate>
-      </workingSet>
-      <workingSet
-          name="ELK Features">
-        <predicate
-            xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.elk.*\.feature"/>
-      </workingSet>
-      <workingSet
-          name="ELK Algorithms">
-        <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:NamePredicate"
-              pattern="org\.eclipse\.elk\.alg\..*"/>
-          <operand
-              xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.4"/>
-        </predicate>
-      </workingSet>
-      <workingSet
-          name="ELK Connectors">
-        <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:NamePredicate"
-              pattern="org\.eclipse\.elk\.conn\..*"/>
-          <operand
-              xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.4"/>
-        </predicate>
-      </workingSet>
-      <workingSet
-          name="ELK Tests">
-        <predicate
-            xsi:type="predicates:NamePredicate"
-            pattern="org\.eclipse\.elk\..*test"/>
-      </workingSet>
-      <workingSet
-          name="ELK Stuff">
-        <predicate
-            xsi:type="predicates:AndPredicate">
-          <operand
-              xsi:type="predicates:NamePredicate"
-              pattern="org\.eclipse\.elk\..*"/>
-          <operand
-              xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//@streams[name='master']/@setupTasks.5/@workingSets.2 //@streams[name='master']/@setupTasks.5/@workingSets.0 //@streams[name='master']/@setupTasks.5/@workingSets.3 //@streams[name='master']/@setupTasks.5/@workingSets.1 //@streams[name='master']/@setupTasks.5/@workingSets.4"/>
-        </predicate>
-      </workingSet>
-      <description>The dynamic working sets for ${scope.project.label}</description>
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.8"
+        location="${jre.location-1.8}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
     </setupTask>
     <setupTask
-        xsi:type="setup:ResourceCreationTask"
-        content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&#xA;&lt;checkstyle-configurations file-format-version=&quot;5.0.0&quot; default-check-configuration=&quot;ELK Checkstyle Configuration&quot;>&#xA;  &lt;check-configuration name=&quot;ELK Checkstyle Configuration&quot; location=&quot;/org.eclipse.elk.config/checkstyle.xml&quot; type=&quot;project&quot; description=&quot;&quot;>&#xA;    &lt;additional-data name=&quot;protect-config-file&quot; value=&quot;false&quot;/>&#xA;  &lt;/check-configuration>&#xA;&lt;/checkstyle-configurations>"
-        targetURL="${workspace.location|uri}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml"
-        encoding="UTF-8">
-      <description></description>
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.elk.sdk.feature.feature.group"/>
+      <repository
+          url="http://download.eclipse.org/elk/updates/releases/0.1.1/"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask">
+      <targlet
+          name="${scope.project.label}"
+          activeRepositoryList="${eclipse.target.platform}">
+        <annotation
+            source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator_DISABLED">
+          <detail
+              key="location">
+            <value>${git.clone.location}/build/org.eclipse.elk.targetplatform/org.eclipse.elk.targetplatform.target</value>
+          </detail>
+          <detail
+              key="preferredRepositories">
+            <value>http://download.eclipse.org/eclipse/updates/</value>
+          </detail>
+          <detail
+              key="includeAllPlatforms">
+            <value>false</value>
+          </detail>
+          <detail
+              key="includeSource">
+            <value>false</value>
+          </detail>
+        </annotation>
+        <requirement
+            name="org.eclipse.sdk.feature.group"/>
+        <requirement
+            name="com.google.guava"
+            versionRange="15.0.0"/>
+        <requirement
+            name="com.google.inject"/>
+        <requirement
+            name="org.eclipse.emf.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.10.0,2.11.0)"/>
+        <requirement
+            name="de.itemis.xtext.antlr.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.gmf.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.graphiti.sdk.feature.feature.group"/>
+        <sourceLocator
+            rootFolder="${git.clone.location}"
+            locateNestedProjects="true"/>
+        <repositoryList
+            name="Mars">
+          <repository
+              url="http://download.eclipse.org/releases/mars"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/"/>
+        </repositoryList>
+        <repositoryList
+            name="Neon">
+          <repository
+              url="http://download.eclipse.org/releases/neon"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
+          <repository
+              url="http://download.itemis.com/updates/releases/2.1.1/"/>
+        </repositoryList>
+      </targlet>
     </setupTask>
   </stream>
   <logicalProjectContainer
