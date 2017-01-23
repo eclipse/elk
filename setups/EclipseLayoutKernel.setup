@@ -345,7 +345,8 @@
     <setupTask
         xsi:type="setup.p2:P2Task">
       <requirement
-          name="org.eclipse.elk.sdk.feature.feature.group"/>
+          name="org.eclipse.elk.sdk.feature.feature.group"
+          versionRange="0.1.1"/>
       <repository
           url="http://download.eclipse.org/elk/updates/releases/0.1.1/"/>
     </setupTask>
