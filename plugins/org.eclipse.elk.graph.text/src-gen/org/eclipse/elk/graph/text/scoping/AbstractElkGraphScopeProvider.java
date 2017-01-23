@@ -9,5 +9,5 @@ package org.eclipse.elk.graph.text.scoping;
 
 import org.eclipse.xtext.scoping.impl.DelegatingScopeProvider;
 
-public class ElkGraphScopeProvider extends DelegatingScopeProvider {
+public abstract class AbstractElkGraphScopeProvider extends DelegatingScopeProvider {
 }
