@@ -21,7 +21,7 @@ class NumberValueConverter extends AbstractValueConverter<Double> {
     
     override toValue(String string, INode node) throws ValueConverterException {
         if (string.nullOrEmpty)
-            throw new ValueConverterException("Cannot convert empty string to a double value.", node, null);
+            throw new ValueConverterException("Cannot convert empty string to a double value.", node, null)
         try {
             return Double.valueOf(string)
         } catch (NumberFormatException e) {

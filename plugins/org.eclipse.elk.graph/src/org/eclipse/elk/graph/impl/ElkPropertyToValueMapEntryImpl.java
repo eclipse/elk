@@ -211,7 +211,7 @@ public class ElkPropertyToValueMapEntryImpl extends MinimalEObjectImpl.Container
         StringBuffer result = new StringBuffer();
         result.append(key.getId())
               .append(" -> ")
-              .append(value.toString());
+              .append(String.valueOf(value));
         
         return result.toString();
     }

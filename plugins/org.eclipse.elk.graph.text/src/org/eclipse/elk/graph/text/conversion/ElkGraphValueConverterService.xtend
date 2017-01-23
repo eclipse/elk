@@ -16,14 +16,6 @@ import org.eclipse.xtext.conversion.ValueConverter
 class ElkGraphValueConverterService extends DefaultTerminalConverters {
 
     @Inject
-    BooleanValueConverter booleanValueConverter
-
-    @ValueConverter(rule="Boolean")
-    def IValueConverter<Boolean> Boolean() {
-        booleanValueConverter
-    }
-
-    @Inject
     NumberValueConverter numberValueConverter
 
     @ValueConverter(rule="Number")
@@ -38,18 +30,28 @@ class ElkGraphValueConverterService extends DefaultTerminalConverters {
     def IValueConverter<IProperty<?>> PropertyKey() {
         propertyKeyValueConverter
     }
+    
+    @Inject
+    PropertyValueValueConverter propertyValueValueConverter
 
-    @ValueConverter(rule="FLOAT")
-    def IValueConverter<Double> FLOAT() {
-        numberValueConverter
+    @ValueConverter(rule="StringValue")
+    def IValueConverter<Object> StringValue() {
+        propertyValueValueConverter
     }
 
-    @Inject
-    IntegerValueConverter integerValueConverter
+    @ValueConverter(rule="QualifiedIdValue")
+    def IValueConverter<Object> QualifiedIdValue() {
+        propertyValueValueConverter
+    }
 
-    @ValueConverter(rule="SIGNED_INT")
-    def IValueConverter<Integer> SIGNED_INT() {
-        integerValueConverter
+    @ValueConverter(rule="NumberValue")
+    def IValueConverter<Object> NumberValue() {
+        propertyValueValueConverter
+    }
+
+    @ValueConverter(rule="BooleanValue")
+    def IValueConverter<Object> BooleanValue() {
+        propertyValueValueConverter
     }
 
 }

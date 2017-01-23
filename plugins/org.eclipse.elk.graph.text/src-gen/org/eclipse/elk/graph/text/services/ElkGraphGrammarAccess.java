@@ -454,7 +454,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cLabelsElkLabelParserRuleCall_7_3_0 = (RuleCall)cLabelsAssignment_7_3.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_7_4 = (Keyword)cGroup_7.eContents().get(4);
 		
-		//ElkEdge:
+		/// * SuppressWarnings[BidirectionalReference] * / ElkEdge:
 		//	'edge' (identifier=ID ':')?
 		//	sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
 		//	targets+=[ElkConnectableShape|QualifiedId] (',' targets+=[ElkConnectableShape|QualifiedId])* ('{'
@@ -834,7 +834,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cBendPointsElkBendPointParserRuleCall_4_4_3_1_0 = (RuleCall)cBendPointsAssignment_4_4_3_1.eContents().get(0);
 		private final Keyword cRightSquareBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
-		//ElkEdgeSection:
+		/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
 		//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
 		//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 		//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
@@ -1041,73 +1041,6 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//Number
 		public RuleCall getYNumberParserRuleCall_2_0() { return cYNumberParserRuleCall_2_0; }
 	}
-	public class PropertyElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.Property");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cKeyPropertyKeyParserRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
-		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
-		private final Assignment cValueAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
-		private final RuleCall cValueSTRINGTerminalRuleCall_2_0_0 = (RuleCall)cValueAssignment_2_0.eContents().get(0);
-		private final Assignment cValueAssignment_2_1 = (Assignment)cAlternatives_2.eContents().get(1);
-		private final RuleCall cValueQualifiedIdParserRuleCall_2_1_0 = (RuleCall)cValueAssignment_2_1.eContents().get(0);
-		private final Assignment cValueAssignment_2_2 = (Assignment)cAlternatives_2.eContents().get(2);
-		private final RuleCall cValueBooleanParserRuleCall_2_2_0 = (RuleCall)cValueAssignment_2_2.eContents().get(0);
-		private final Assignment cValueAssignment_2_3 = (Assignment)cAlternatives_2.eContents().get(3);
-		private final RuleCall cValueSIGNED_INTTerminalRuleCall_2_3_0 = (RuleCall)cValueAssignment_2_3.eContents().get(0);
-		private final Assignment cValueAssignment_2_4 = (Assignment)cAlternatives_2.eContents().get(4);
-		private final RuleCall cValueFLOATTerminalRuleCall_2_4_0 = (RuleCall)cValueAssignment_2_4.eContents().get(0);
-		
-		//Property ElkPropertyToValueMapEntry:
-		//	key=PropertyKey ':' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT)
-		@Override public ParserRule getRule() { return rule; }
-		
-		//key=PropertyKey ':' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT)
-		public Group getGroup() { return cGroup; }
-		
-		//key=PropertyKey
-		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
-		
-		//PropertyKey
-		public RuleCall getKeyPropertyKeyParserRuleCall_0_0() { return cKeyPropertyKeyParserRuleCall_0_0; }
-		
-		//':'
-		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
-		
-		//(value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT)
-		public Alternatives getAlternatives_2() { return cAlternatives_2; }
-		
-		//value=STRING
-		public Assignment getValueAssignment_2_0() { return cValueAssignment_2_0; }
-		
-		//STRING
-		public RuleCall getValueSTRINGTerminalRuleCall_2_0_0() { return cValueSTRINGTerminalRuleCall_2_0_0; }
-		
-		//value=QualifiedId
-		public Assignment getValueAssignment_2_1() { return cValueAssignment_2_1; }
-		
-		//QualifiedId
-		public RuleCall getValueQualifiedIdParserRuleCall_2_1_0() { return cValueQualifiedIdParserRuleCall_2_1_0; }
-		
-		//value=Boolean
-		public Assignment getValueAssignment_2_2() { return cValueAssignment_2_2; }
-		
-		//Boolean
-		public RuleCall getValueBooleanParserRuleCall_2_2_0() { return cValueBooleanParserRuleCall_2_2_0; }
-		
-		//value=SIGNED_INT
-		public Assignment getValueAssignment_2_3() { return cValueAssignment_2_3; }
-		
-		//SIGNED_INT
-		public RuleCall getValueSIGNED_INTTerminalRuleCall_2_3_0() { return cValueSIGNED_INTTerminalRuleCall_2_3_0; }
-		
-		//value=FLOAT
-		public Assignment getValueAssignment_2_4() { return cValueAssignment_2_4; }
-		
-		//FLOAT
-		public RuleCall getValueFLOATTerminalRuleCall_2_4_0() { return cValueFLOATTerminalRuleCall_2_4_0; }
-	}
 	public class QualifiedIdElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.QualifiedId");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -1135,25 +1068,6 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getIDTerminalRuleCall_1_1() { return cIDTerminalRuleCall_1_1; }
 	}
-	public class BooleanElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.Boolean");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Keyword cTrueKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Keyword cFalseKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
-		
-		//Boolean ecore::EBoolean:
-		//	'true' | 'false'
-		@Override public ParserRule getRule() { return rule; }
-		
-		//'true' | 'false'
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//'true'
-		public Keyword getTrueKeyword_0() { return cTrueKeyword_0; }
-		
-		//'false'
-		public Keyword getFalseKeyword_1() { return cFalseKeyword_1; }
-	}
 	public class NumberElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.Number");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
@@ -1172,6 +1086,65 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//FLOAT
 		public RuleCall getFLOATTerminalRuleCall_1() { return cFLOATTerminalRuleCall_1; }
+	}
+	public class PropertyElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.Property");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cKeyPropertyKeyParserRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
+		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
+		private final Assignment cValueAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
+		private final RuleCall cValueStringValueParserRuleCall_2_0_0 = (RuleCall)cValueAssignment_2_0.eContents().get(0);
+		private final Assignment cValueAssignment_2_1 = (Assignment)cAlternatives_2.eContents().get(1);
+		private final RuleCall cValueQualifiedIdValueParserRuleCall_2_1_0 = (RuleCall)cValueAssignment_2_1.eContents().get(0);
+		private final Assignment cValueAssignment_2_2 = (Assignment)cAlternatives_2.eContents().get(2);
+		private final RuleCall cValueNumberValueParserRuleCall_2_2_0 = (RuleCall)cValueAssignment_2_2.eContents().get(0);
+		private final Assignment cValueAssignment_2_3 = (Assignment)cAlternatives_2.eContents().get(3);
+		private final RuleCall cValueBooleanValueParserRuleCall_2_3_0 = (RuleCall)cValueAssignment_2_3.eContents().get(0);
+		
+		//Property ElkPropertyToValueMapEntry:
+		//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+		@Override public ParserRule getRule() { return rule; }
+		
+		//key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+		public Group getGroup() { return cGroup; }
+		
+		//key=PropertyKey
+		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
+		
+		//PropertyKey
+		public RuleCall getKeyPropertyKeyParserRuleCall_0_0() { return cKeyPropertyKeyParserRuleCall_0_0; }
+		
+		//':'
+		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
+		
+		//(value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+		public Alternatives getAlternatives_2() { return cAlternatives_2; }
+		
+		//value=StringValue
+		public Assignment getValueAssignment_2_0() { return cValueAssignment_2_0; }
+		
+		//StringValue
+		public RuleCall getValueStringValueParserRuleCall_2_0_0() { return cValueStringValueParserRuleCall_2_0_0; }
+		
+		//value=QualifiedIdValue
+		public Assignment getValueAssignment_2_1() { return cValueAssignment_2_1; }
+		
+		//QualifiedIdValue
+		public RuleCall getValueQualifiedIdValueParserRuleCall_2_1_0() { return cValueQualifiedIdValueParserRuleCall_2_1_0; }
+		
+		//value=NumberValue
+		public Assignment getValueAssignment_2_2() { return cValueAssignment_2_2; }
+		
+		//NumberValue
+		public RuleCall getValueNumberValueParserRuleCall_2_2_0() { return cValueNumberValueParserRuleCall_2_2_0; }
+		
+		//value=BooleanValue
+		public Assignment getValueAssignment_2_3() { return cValueAssignment_2_3; }
+		
+		//BooleanValue
+		public RuleCall getValueBooleanValueParserRuleCall_2_3_0() { return cValueBooleanValueParserRuleCall_2_3_0; }
 	}
 	public class PropertyKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.PropertyKey");
@@ -1200,6 +1173,66 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getIDTerminalRuleCall_1_1() { return cIDTerminalRuleCall_1_1; }
 	}
+	public class StringValueElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.StringValue");
+		private final RuleCall cSTRINGTerminalRuleCall = (RuleCall)rule.eContents().get(1);
+		
+		//StringValue ecore::EJavaObject:
+		//	STRING
+		@Override public ParserRule getRule() { return rule; }
+		
+		//STRING
+		public RuleCall getSTRINGTerminalRuleCall() { return cSTRINGTerminalRuleCall; }
+	}
+	public class QualifiedIdValueElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.QualifiedIdValue");
+		private final RuleCall cQualifiedIdParserRuleCall = (RuleCall)rule.eContents().get(1);
+		
+		//QualifiedIdValue ecore::EJavaObject:
+		//	QualifiedId
+		@Override public ParserRule getRule() { return rule; }
+		
+		//QualifiedId
+		public RuleCall getQualifiedIdParserRuleCall() { return cQualifiedIdParserRuleCall; }
+	}
+	public class NumberValueElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.NumberValue");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cSIGNED_INTTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cFLOATTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		
+		//NumberValue ecore::EJavaObject:
+		//	SIGNED_INT | FLOAT
+		@Override public ParserRule getRule() { return rule; }
+		
+		//SIGNED_INT | FLOAT
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//SIGNED_INT
+		public RuleCall getSIGNED_INTTerminalRuleCall_0() { return cSIGNED_INTTerminalRuleCall_0; }
+		
+		//FLOAT
+		public RuleCall getFLOATTerminalRuleCall_1() { return cFLOATTerminalRuleCall_1; }
+	}
+	public class BooleanValueElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.BooleanValue");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Keyword cTrueKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cFalseKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		
+		//BooleanValue ecore::EJavaObject:
+		//	'true' | 'false'
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'true' | 'false'
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//'true'
+		public Keyword getTrueKeyword_0() { return cTrueKeyword_0; }
+		
+		//'false'
+		public Keyword getFalseKeyword_1() { return cFalseKeyword_1; }
+	}
 	
 	
 	private final RootNodeElements pRootNode;
@@ -1212,11 +1245,14 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	private final ElkSingleEdgeSectionElements pElkSingleEdgeSection;
 	private final ElkEdgeSectionElements pElkEdgeSection;
 	private final ElkBendPointElements pElkBendPoint;
-	private final PropertyElements pProperty;
 	private final QualifiedIdElements pQualifiedId;
-	private final BooleanElements pBoolean;
 	private final NumberElements pNumber;
+	private final PropertyElements pProperty;
 	private final PropertyKeyElements pPropertyKey;
+	private final StringValueElements pStringValue;
+	private final QualifiedIdValueElements pQualifiedIdValue;
+	private final NumberValueElements pNumberValue;
+	private final BooleanValueElements pBooleanValue;
 	private final TerminalRule tSIGNED_INT;
 	private final TerminalRule tFLOAT;
 	
@@ -1239,11 +1275,14 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		this.pElkSingleEdgeSection = new ElkSingleEdgeSectionElements();
 		this.pElkEdgeSection = new ElkEdgeSectionElements();
 		this.pElkBendPoint = new ElkBendPointElements();
-		this.pProperty = new PropertyElements();
 		this.pQualifiedId = new QualifiedIdElements();
-		this.pBoolean = new BooleanElements();
 		this.pNumber = new NumberElements();
+		this.pProperty = new PropertyElements();
 		this.pPropertyKey = new PropertyKeyElements();
+		this.pStringValue = new StringValueElements();
+		this.pQualifiedIdValue = new QualifiedIdValueElements();
+		this.pNumberValue = new NumberValueElements();
+		this.pBooleanValue = new BooleanValueElements();
 		this.tSIGNED_INT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.SIGNED_INT");
 		this.tFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.FLOAT");
 	}
@@ -1338,7 +1377,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		return getShapeLayoutAccess().getRule();
 	}
 	
-	//ElkEdge:
+	/// * SuppressWarnings[BidirectionalReference] * / ElkEdge:
 	//	'edge' (identifier=ID ':')?
 	//	sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
 	//	targets+=[ElkConnectableShape|QualifiedId] (',' targets+=[ElkConnectableShape|QualifiedId])* ('{'
@@ -1378,7 +1417,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		return getElkSingleEdgeSectionAccess().getRule();
 	}
 	
-	//ElkEdgeSection:
+	/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
 	//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
 	//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
@@ -1403,16 +1442,6 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		return getElkBendPointAccess().getRule();
 	}
 	
-	//Property ElkPropertyToValueMapEntry:
-	//	key=PropertyKey ':' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT)
-	public PropertyElements getPropertyAccess() {
-		return pProperty;
-	}
-	
-	public ParserRule getPropertyRule() {
-		return getPropertyAccess().getRule();
-	}
-	
 	//QualifiedId:
 	//	ID ('.' ID)*;
 	public QualifiedIdElements getQualifiedIdAccess() {
@@ -1421,16 +1450,6 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getQualifiedIdRule() {
 		return getQualifiedIdAccess().getRule();
-	}
-	
-	//Boolean ecore::EBoolean:
-	//	'true' | 'false'
-	public BooleanElements getBooleanAccess() {
-		return pBoolean;
-	}
-	
-	public ParserRule getBooleanRule() {
-		return getBooleanAccess().getRule();
 	}
 	
 	//Number ecore::EDouble:
@@ -1443,6 +1462,16 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		return getNumberAccess().getRule();
 	}
 	
+	//Property ElkPropertyToValueMapEntry:
+	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+	public PropertyElements getPropertyAccess() {
+		return pProperty;
+	}
+	
+	public ParserRule getPropertyRule() {
+		return getPropertyAccess().getRule();
+	}
+	
 	//PropertyKey IProperty hidden():
 	//	ID ('.' ID)*
 	public PropertyKeyElements getPropertyKeyAccess() {
@@ -1451,6 +1480,46 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getPropertyKeyRule() {
 		return getPropertyKeyAccess().getRule();
+	}
+	
+	//StringValue ecore::EJavaObject:
+	//	STRING
+	public StringValueElements getStringValueAccess() {
+		return pStringValue;
+	}
+	
+	public ParserRule getStringValueRule() {
+		return getStringValueAccess().getRule();
+	}
+	
+	//QualifiedIdValue ecore::EJavaObject:
+	//	QualifiedId
+	public QualifiedIdValueElements getQualifiedIdValueAccess() {
+		return pQualifiedIdValue;
+	}
+	
+	public ParserRule getQualifiedIdValueRule() {
+		return getQualifiedIdValueAccess().getRule();
+	}
+	
+	//NumberValue ecore::EJavaObject:
+	//	SIGNED_INT | FLOAT
+	public NumberValueElements getNumberValueAccess() {
+		return pNumberValue;
+	}
+	
+	public ParserRule getNumberValueRule() {
+		return getNumberValueAccess().getRule();
+	}
+	
+	//BooleanValue ecore::EJavaObject:
+	//	'true' | 'false'
+	public BooleanValueElements getBooleanValueAccess() {
+		return pBooleanValue;
+	}
+	
+	public ParserRule getBooleanValueRule() {
+		return getBooleanValueAccess().getRule();
 	}
 	
 	//terminal SIGNED_INT returns ecore::EInt:

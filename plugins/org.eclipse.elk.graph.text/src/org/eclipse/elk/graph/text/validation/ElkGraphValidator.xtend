@@ -14,6 +14,7 @@ import org.eclipse.elk.core.LayoutOptionValidator
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.util.internal.LayoutOptionProxy
 import org.eclipse.elk.graph.EMapPropertyHolder
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
@@ -38,44 +39,27 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
 	
 	@Check
 	def void checkPropertyValue(ElkPropertyToValueMapEntryImpl entry) {
-	    val property = entry.key
-	    val value = entry.value
-	    if (property instanceof LayoutOptionData) {
-	        var Object translatedValue
-	        if (value instanceof String) {
-	            translatedValue = property.parseValue(value)
-            }
-            if (translatedValue === null) {
-    	        switch property.type {
-    	            case BOOLEAN:
-    	                if (value instanceof Boolean)
-    	                    translatedValue = value
-    	                else
-                            expectPropertyType(Boolean)
-    	            case INT:
-    	                if (value instanceof Integer)
-                            translatedValue = value
-                        else
-                            expectPropertyType(Integer)
-    	            case DOUBLE:
-                        if (value instanceof Double)
-                            translatedValue = value
-                        else if (value instanceof Integer)
-                            translatedValue = Double.valueOf(value)
-                        else
-                            expectPropertyType(Double, Integer)
+	    val option = entry.key.toLayoutOption
+	    if (option !== null) {
+    	    val value = entry.value
+    	    if (value instanceof LayoutOptionProxy) {
+    	        switch option.type {
     	            case STRING:
-    	                // We know it's not a string, otherwise property.parseValue(value) would have returned it
     	                expectPropertyType(String)
+    	            case BOOLEAN:
+                        expectPropertyType(Boolean)
+    	            case INT:
+                        expectPropertyType(Integer)
+    	            case DOUBLE:
+                        expectPropertyType(Double)
     	            case ENUMSET:
                         expectPropertyType(EnumSet)
     	            default:
-    	                if (property.optionClass !== null)
-    	                    expectPropertyType(property.optionClass)
+    	                if (option.optionClass !== null)
+    	                    expectPropertyType(option.optionClass)
     	        }
-	        }
-	        if (translatedValue !== null) {
-	            val issues = layoutOptionValidator.checkProperty(property, translatedValue,
+    	    } else {
+	            val issues = layoutOptionValidator.checkProperty(option, value,
 	                   entry.getContainerOfType(ElkGraphElement))
 	            for (issue : issues) {
 	                switch issue.severity {
@@ -85,17 +69,24 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
 	                        warning(issue.message, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
 	                }
 	            }
-	            if (CoreOptions.ALGORITHM == property) {
-	                if (LayoutMetaDataService.instance.getAlgorithmDataBySuffix(translatedValue as String) === null)
-	                   error("No layout algorithm with identifier '" + translatedValue + "' can be found.",
+	            if (CoreOptions.ALGORITHM == option) {
+	                if (LayoutMetaDataService.instance.getAlgorithmDataBySuffix(value as String) === null)
+	                   error("No layout algorithm with identifier '" + value + "' can be found.",
                            ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
 	            }
 	        }
 	    }
 	}
+    
+    private def toLayoutOption(IProperty<?> property) {
+        if (property instanceof LayoutOptionData)
+            return property
+        else if (property !== null)
+            return LayoutMetaDataService.instance.getOptionData(property.id)
+    }
 	
-	private def void expectPropertyType(Class<?>... types) {
-       error("Expected value of type " + types.map[simpleName].join(' or ') + ".", ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
+	private def void expectPropertyType(Class<?> type) {
+       error("Expected value of type " + type.simpleName + ".", ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
 	}
 	
 	@Check
