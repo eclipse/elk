@@ -81,7 +81,7 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
         }
     }
     
-    private def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
+    protected def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
             LayoutOptionData.Target targetType, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         val metaDataService = LayoutMetaDataService.instance
         val filteredOptions = metaDataService.optionData.filter[ o |

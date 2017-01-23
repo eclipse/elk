@@ -21,7 +21,10 @@ Require-Bundle: org.eclipse.elk.core,
  org.eclipse.xtext.xbase.lib
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.elk.graph.text.ui.contentassist,
+Export-Package: org.eclipse.elk.graph.text.ui,
+ org.eclipse.elk.graph.text.ui.contentassist,
  org.eclipse.elk.graph.text.ui.internal,
+ org.eclipse.elk.graph.text.ui.labeling,
+ org.eclipse.elk.graph.text.ui.outline,
  org.eclipse.elk.graph.text.ui.quickfix
 Bundle-Activator: org.eclipse.elk.graph.text.ui.internal.TextActivator
