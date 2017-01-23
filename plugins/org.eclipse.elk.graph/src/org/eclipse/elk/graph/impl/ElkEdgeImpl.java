@@ -231,7 +231,7 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
      */
     public boolean isHierarchical() {
         // We're basically iterating over all sources and targets and check whether they are contained in the same
-        // graph. If they are, we're a simple edge. If they are not, we're a hyperedge.
+        // graph. If they are, we're a simple edge. If they are not, we're a hierarchical edge.
         ElkNode commonRepresentingNode = null;
         
         for (ElkConnectableShape incidentShape : ElkGraphUtil.allIncidentShapes(this)) {
