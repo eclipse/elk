@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site
-      associateSitesURL="associateSites.xml">
+<site>
    <description name="Eclipse Layout Kernel (Nightly Builds)" url="http://build.eclipse.org/modeling/elk/updates/nightly">
       Nightly build update site for the Eclipse Layout Kernel.
    </description>
