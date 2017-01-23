@@ -42,6 +42,7 @@ fragment ShapeLayout returns ElkShape:
         & ('size' ':' width=Number ',' height=Number)?
     )']';
 
+/* SuppressWarnings[BidirectionalReference] */
 ElkEdge returns ElkEdge:
     'edge' (identifier=ID ':')?
             sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
@@ -65,6 +66,7 @@ ElkSingleEdgeSection returns ElkEdgeSection:
         & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
     );
 
+/* SuppressWarnings[BidirectionalReference] */
 ElkEdgeSection returns ElkEdgeSection:
     'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection|ID] (',' outgoingSections+=[ElkEdgeSection|ID])*)? '['(
         ('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
@@ -77,20 +79,29 @@ ElkEdgeSection returns ElkEdgeSection:
 ElkBendPoint returns ElkBendPoint:
     x=Number ',' y=Number;
 
-Property returns ElkPropertyToValueMapEntry:
-    key=PropertyKey ':' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT);
-
 QualifiedId:
     ID ('.' ID)*;
-
-Boolean returns ecore::EBoolean:
-    'true' | 'false';
 
 Number returns ecore::EDouble:
     SIGNED_INT | FLOAT;
 
+Property returns ElkPropertyToValueMapEntry:
+    key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue);
+
 PropertyKey returns IProperty hidden():
     ID ('.' ID)*;
+
+StringValue returns ecore::EJavaObject:
+    STRING;
+
+QualifiedIdValue returns ecore::EJavaObject:
+    QualifiedId;
+
+NumberValue returns ecore::EJavaObject:
+    SIGNED_INT | FLOAT;
+
+BooleanValue returns ecore::EJavaObject:
+    'true' | 'false';
 
 terminal SIGNED_INT returns ecore::EInt:
     ('+'|'-')? INT;

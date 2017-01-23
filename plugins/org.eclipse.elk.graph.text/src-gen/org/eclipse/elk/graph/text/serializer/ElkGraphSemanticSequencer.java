@@ -208,7 +208,7 @@ public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *     Property returns ElkPropertyToValueMapEntry
 	 *
 	 * Constraint:
-	 *     (key=PropertyKey (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT))
+	 *     (key=PropertyKey (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue))
 	 */
 	protected void sequence_Property(ISerializationContext context, Map.Entry semanticObject) {
 		genericSequencer.createSequence(context, (EObject) semanticObject);

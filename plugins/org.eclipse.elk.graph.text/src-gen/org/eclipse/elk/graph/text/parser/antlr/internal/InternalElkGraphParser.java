@@ -4120,8 +4120,244 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleElkBendPoint"
 
 
+    // $ANTLR start "entryRuleQualifiedId"
+    // InternalElkGraph.g:1737:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
+    public final String entryRuleQualifiedId() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleQualifiedId = null;
+
+
+        try {
+            // InternalElkGraph.g:1737:51: (iv_ruleQualifiedId= ruleQualifiedId EOF )
+            // InternalElkGraph.g:1738:2: iv_ruleQualifiedId= ruleQualifiedId EOF
+            {
+             newCompositeNode(grammarAccess.getQualifiedIdRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleQualifiedId=ruleQualifiedId();
+
+            state._fsp--;
+
+             current =iv_ruleQualifiedId.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleQualifiedId"
+
+
+    // $ANTLR start "ruleQualifiedId"
+    // InternalElkGraph.g:1744:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    public final AntlrDatatypeRuleToken ruleQualifiedId() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_ID_0=null;
+        Token kw=null;
+        Token this_ID_2=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalElkGraph.g:1750:2: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalElkGraph.g:1751:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            {
+            // InternalElkGraph.g:1751:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalElkGraph.g:1752:3: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            {
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_27); 
+
+            			current.merge(this_ID_0);
+            		
+
+            			newLeafNode(this_ID_0, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0());
+            		
+            // InternalElkGraph.g:1759:3: (kw= '.' this_ID_2= RULE_ID )*
+            loop33:
+            do {
+                int alt33=2;
+                int LA33_0 = input.LA(1);
+
+                if ( (LA33_0==35) ) {
+                    alt33=1;
+                }
+
+
+                switch (alt33) {
+            	case 1 :
+            	    // InternalElkGraph.g:1760:4: kw= '.' this_ID_2= RULE_ID
+            	    {
+            	    kw=(Token)match(input,35,FOLLOW_3); 
+
+            	    				current.merge(kw);
+            	    				newLeafNode(kw, grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0());
+            	    			
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_27); 
+
+            	    				current.merge(this_ID_2);
+            	    			
+
+            	    				newLeafNode(this_ID_2, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_1_1());
+            	    			
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop33;
+                }
+            } while (true);
+
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleQualifiedId"
+
+
+    // $ANTLR start "entryRuleNumber"
+    // InternalElkGraph.g:1777:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
+    public final String entryRuleNumber() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleNumber = null;
+
+
+        try {
+            // InternalElkGraph.g:1777:46: (iv_ruleNumber= ruleNumber EOF )
+            // InternalElkGraph.g:1778:2: iv_ruleNumber= ruleNumber EOF
+            {
+             newCompositeNode(grammarAccess.getNumberRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleNumber=ruleNumber();
+
+            state._fsp--;
+
+             current =iv_ruleNumber.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleNumber"
+
+
+    // $ANTLR start "ruleNumber"
+    // InternalElkGraph.g:1784:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    public final AntlrDatatypeRuleToken ruleNumber() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_SIGNED_INT_0=null;
+        Token this_FLOAT_1=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalElkGraph.g:1790:2: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalElkGraph.g:1791:2: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            {
+            // InternalElkGraph.g:1791:2: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt34=2;
+            int LA34_0 = input.LA(1);
+
+            if ( (LA34_0==RULE_SIGNED_INT) ) {
+                alt34=1;
+            }
+            else if ( (LA34_0==RULE_FLOAT) ) {
+                alt34=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 34, 0, input);
+
+                throw nvae;
+            }
+            switch (alt34) {
+                case 1 :
+                    // InternalElkGraph.g:1792:3: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    {
+                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
+
+                    			current.merge(this_SIGNED_INT_0);
+                    		
+
+                    			newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberAccess().getSIGNED_INTTerminalRuleCall_0());
+                    		
+
+                    }
+                    break;
+                case 2 :
+                    // InternalElkGraph.g:1800:3: this_FLOAT_1= RULE_FLOAT
+                    {
+                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
+
+                    			current.merge(this_FLOAT_1);
+                    		
+
+                    			newLeafNode(this_FLOAT_1, grammarAccess.getNumberAccess().getFLOATTerminalRuleCall_1());
+                    		
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleNumber"
+
+
     // $ANTLR start "entryRuleProperty"
-    // InternalElkGraph.g:1737:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
+    // InternalElkGraph.g:1811:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
     public final EObject entryRuleProperty() throws RecognitionException {
         EObject current = null;
 
@@ -4129,8 +4365,8 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalElkGraph.g:1737:49: (iv_ruleProperty= ruleProperty EOF )
-            // InternalElkGraph.g:1738:2: iv_ruleProperty= ruleProperty EOF
+            // InternalElkGraph.g:1811:49: (iv_ruleProperty= ruleProperty EOF )
+            // InternalElkGraph.g:1812:2: iv_ruleProperty= ruleProperty EOF
             {
              newCompositeNode(grammarAccess.getPropertyRule()); 
             pushFollow(FOLLOW_1);
@@ -4157,36 +4393,37 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleProperty"
-    // InternalElkGraph.g:1744:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) ) ;
+    // InternalElkGraph.g:1818:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) ;
     public final EObject ruleProperty() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_1=null;
-        Token lv_value_2_0=null;
-        Token lv_value_5_0=null;
-        Token lv_value_6_0=null;
         AntlrDatatypeRuleToken lv_key_0_0 = null;
+
+        AntlrDatatypeRuleToken lv_value_2_0 = null;
 
         AntlrDatatypeRuleToken lv_value_3_0 = null;
 
         AntlrDatatypeRuleToken lv_value_4_0 = null;
+
+        AntlrDatatypeRuleToken lv_value_5_0 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalElkGraph.g:1750:2: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) ) )
-            // InternalElkGraph.g:1751:2: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) )
+            // InternalElkGraph.g:1824:2: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) )
+            // InternalElkGraph.g:1825:2: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
             {
-            // InternalElkGraph.g:1751:2: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) )
-            // InternalElkGraph.g:1752:3: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) )
+            // InternalElkGraph.g:1825:2: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
+            // InternalElkGraph.g:1826:3: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
             {
-            // InternalElkGraph.g:1752:3: ( (lv_key_0_0= rulePropertyKey ) )
-            // InternalElkGraph.g:1753:4: (lv_key_0_0= rulePropertyKey )
+            // InternalElkGraph.g:1826:3: ( (lv_key_0_0= rulePropertyKey ) )
+            // InternalElkGraph.g:1827:4: (lv_key_0_0= rulePropertyKey )
             {
-            // InternalElkGraph.g:1753:4: (lv_key_0_0= rulePropertyKey )
-            // InternalElkGraph.g:1754:5: lv_key_0_0= rulePropertyKey
+            // InternalElkGraph.g:1827:4: (lv_key_0_0= rulePropertyKey )
+            // InternalElkGraph.g:1828:5: lv_key_0_0= rulePropertyKey
             {
 
             					newCompositeNode(grammarAccess.getPropertyAccess().getKeyPropertyKeyParserRuleCall_0_0());
@@ -4213,69 +4450,70 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,18,FOLLOW_27); 
+            otherlv_1=(Token)match(input,18,FOLLOW_28); 
 
             			newLeafNode(otherlv_1, grammarAccess.getPropertyAccess().getColonKeyword_1());
             		
-            // InternalElkGraph.g:1775:3: ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) )
-            int alt33=5;
+            // InternalElkGraph.g:1849:3: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
+            int alt35=4;
             switch ( input.LA(1) ) {
             case RULE_STRING:
                 {
-                alt33=1;
+                alt35=1;
                 }
                 break;
             case RULE_ID:
                 {
-                alt33=2;
+                alt35=2;
+                }
+                break;
+            case RULE_SIGNED_INT:
+            case RULE_FLOAT:
+                {
+                alt35=3;
                 }
                 break;
             case 36:
             case 37:
                 {
-                alt33=3;
-                }
-                break;
-            case RULE_SIGNED_INT:
-                {
-                alt33=4;
-                }
-                break;
-            case RULE_FLOAT:
-                {
-                alt33=5;
+                alt35=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 33, 0, input);
+                    new NoViableAltException("", 35, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt33) {
+            switch (alt35) {
                 case 1 :
-                    // InternalElkGraph.g:1776:4: ( (lv_value_2_0= RULE_STRING ) )
+                    // InternalElkGraph.g:1850:4: ( (lv_value_2_0= ruleStringValue ) )
                     {
-                    // InternalElkGraph.g:1776:4: ( (lv_value_2_0= RULE_STRING ) )
-                    // InternalElkGraph.g:1777:5: (lv_value_2_0= RULE_STRING )
+                    // InternalElkGraph.g:1850:4: ( (lv_value_2_0= ruleStringValue ) )
+                    // InternalElkGraph.g:1851:5: (lv_value_2_0= ruleStringValue )
                     {
-                    // InternalElkGraph.g:1777:5: (lv_value_2_0= RULE_STRING )
-                    // InternalElkGraph.g:1778:6: lv_value_2_0= RULE_STRING
+                    // InternalElkGraph.g:1851:5: (lv_value_2_0= ruleStringValue )
+                    // InternalElkGraph.g:1852:6: lv_value_2_0= ruleStringValue
                     {
-                    lv_value_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
-                    						newLeafNode(lv_value_2_0, grammarAccess.getPropertyAccess().getValueSTRINGTerminalRuleCall_2_0_0());
+                    						newCompositeNode(grammarAccess.getPropertyAccess().getValueStringValueParserRuleCall_2_0_0());
                     					
+                    pushFollow(FOLLOW_2);
+                    lv_value_2_0=ruleStringValue();
+
+                    state._fsp--;
+
 
                     						if (current==null) {
-                    							current = createModelElement(grammarAccess.getPropertyRule());
+                    							current = createModelElementForParent(grammarAccess.getPropertyRule());
                     						}
-                    						setWithLastConsumed(
+                    						set(
                     							current,
                     							"value",
                     							lv_value_2_0,
-                    							"org.eclipse.xtext.common.Terminals.STRING");
+                    							"org.eclipse.elk.graph.text.ElkGraph.StringValue");
+                    						afterParserOrEnumRuleCall();
                     					
 
                     }
@@ -4287,19 +4525,19 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalElkGraph.g:1795:4: ( (lv_value_3_0= ruleQualifiedId ) )
+                    // InternalElkGraph.g:1870:4: ( (lv_value_3_0= ruleQualifiedIdValue ) )
                     {
-                    // InternalElkGraph.g:1795:4: ( (lv_value_3_0= ruleQualifiedId ) )
-                    // InternalElkGraph.g:1796:5: (lv_value_3_0= ruleQualifiedId )
+                    // InternalElkGraph.g:1870:4: ( (lv_value_3_0= ruleQualifiedIdValue ) )
+                    // InternalElkGraph.g:1871:5: (lv_value_3_0= ruleQualifiedIdValue )
                     {
-                    // InternalElkGraph.g:1796:5: (lv_value_3_0= ruleQualifiedId )
-                    // InternalElkGraph.g:1797:6: lv_value_3_0= ruleQualifiedId
+                    // InternalElkGraph.g:1871:5: (lv_value_3_0= ruleQualifiedIdValue )
+                    // InternalElkGraph.g:1872:6: lv_value_3_0= ruleQualifiedIdValue
                     {
 
-                    						newCompositeNode(grammarAccess.getPropertyAccess().getValueQualifiedIdParserRuleCall_2_1_0());
+                    						newCompositeNode(grammarAccess.getPropertyAccess().getValueQualifiedIdValueParserRuleCall_2_1_0());
                     					
                     pushFollow(FOLLOW_2);
-                    lv_value_3_0=ruleQualifiedId();
+                    lv_value_3_0=ruleQualifiedIdValue();
 
                     state._fsp--;
 
@@ -4311,7 +4549,7 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
                     							current,
                     							"value",
                     							lv_value_3_0,
-                    							"org.eclipse.elk.graph.text.ElkGraph.QualifiedId");
+                    							"org.eclipse.elk.graph.text.ElkGraph.QualifiedIdValue");
                     						afterParserOrEnumRuleCall();
                     					
 
@@ -4324,19 +4562,19 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalElkGraph.g:1815:4: ( (lv_value_4_0= ruleBoolean ) )
+                    // InternalElkGraph.g:1890:4: ( (lv_value_4_0= ruleNumberValue ) )
                     {
-                    // InternalElkGraph.g:1815:4: ( (lv_value_4_0= ruleBoolean ) )
-                    // InternalElkGraph.g:1816:5: (lv_value_4_0= ruleBoolean )
+                    // InternalElkGraph.g:1890:4: ( (lv_value_4_0= ruleNumberValue ) )
+                    // InternalElkGraph.g:1891:5: (lv_value_4_0= ruleNumberValue )
                     {
-                    // InternalElkGraph.g:1816:5: (lv_value_4_0= ruleBoolean )
-                    // InternalElkGraph.g:1817:6: lv_value_4_0= ruleBoolean
+                    // InternalElkGraph.g:1891:5: (lv_value_4_0= ruleNumberValue )
+                    // InternalElkGraph.g:1892:6: lv_value_4_0= ruleNumberValue
                     {
 
-                    						newCompositeNode(grammarAccess.getPropertyAccess().getValueBooleanParserRuleCall_2_2_0());
+                    						newCompositeNode(grammarAccess.getPropertyAccess().getValueNumberValueParserRuleCall_2_2_0());
                     					
                     pushFollow(FOLLOW_2);
-                    lv_value_4_0=ruleBoolean();
+                    lv_value_4_0=ruleNumberValue();
 
                     state._fsp--;
 
@@ -4348,7 +4586,7 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
                     							current,
                     							"value",
                     							lv_value_4_0,
-                    							"org.eclipse.elk.graph.text.ElkGraph.Boolean");
+                    							"org.eclipse.elk.graph.text.ElkGraph.NumberValue");
                     						afterParserOrEnumRuleCall();
                     					
 
@@ -4361,59 +4599,32 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalElkGraph.g:1835:4: ( (lv_value_5_0= RULE_SIGNED_INT ) )
+                    // InternalElkGraph.g:1910:4: ( (lv_value_5_0= ruleBooleanValue ) )
                     {
-                    // InternalElkGraph.g:1835:4: ( (lv_value_5_0= RULE_SIGNED_INT ) )
-                    // InternalElkGraph.g:1836:5: (lv_value_5_0= RULE_SIGNED_INT )
+                    // InternalElkGraph.g:1910:4: ( (lv_value_5_0= ruleBooleanValue ) )
+                    // InternalElkGraph.g:1911:5: (lv_value_5_0= ruleBooleanValue )
                     {
-                    // InternalElkGraph.g:1836:5: (lv_value_5_0= RULE_SIGNED_INT )
-                    // InternalElkGraph.g:1837:6: lv_value_5_0= RULE_SIGNED_INT
+                    // InternalElkGraph.g:1911:5: (lv_value_5_0= ruleBooleanValue )
+                    // InternalElkGraph.g:1912:6: lv_value_5_0= ruleBooleanValue
                     {
-                    lv_value_5_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
 
-                    						newLeafNode(lv_value_5_0, grammarAccess.getPropertyAccess().getValueSIGNED_INTTerminalRuleCall_2_3_0());
+                    						newCompositeNode(grammarAccess.getPropertyAccess().getValueBooleanValueParserRuleCall_2_3_0());
                     					
+                    pushFollow(FOLLOW_2);
+                    lv_value_5_0=ruleBooleanValue();
+
+                    state._fsp--;
+
 
                     						if (current==null) {
-                    							current = createModelElement(grammarAccess.getPropertyRule());
+                    							current = createModelElementForParent(grammarAccess.getPropertyRule());
                     						}
-                    						setWithLastConsumed(
+                    						set(
                     							current,
                     							"value",
                     							lv_value_5_0,
-                    							"org.eclipse.elk.graph.text.ElkGraph.SIGNED_INT");
-                    					
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 5 :
-                    // InternalElkGraph.g:1854:4: ( (lv_value_6_0= RULE_FLOAT ) )
-                    {
-                    // InternalElkGraph.g:1854:4: ( (lv_value_6_0= RULE_FLOAT ) )
-                    // InternalElkGraph.g:1855:5: (lv_value_6_0= RULE_FLOAT )
-                    {
-                    // InternalElkGraph.g:1855:5: (lv_value_6_0= RULE_FLOAT )
-                    // InternalElkGraph.g:1856:6: lv_value_6_0= RULE_FLOAT
-                    {
-                    lv_value_6_0=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
-
-                    						newLeafNode(lv_value_6_0, grammarAccess.getPropertyAccess().getValueFLOATTerminalRuleCall_2_4_0());
-                    					
-
-                    						if (current==null) {
-                    							current = createModelElement(grammarAccess.getPropertyRule());
-                    						}
-                    						setWithLastConsumed(
-                    							current,
-                    							"value",
-                    							lv_value_6_0,
-                    							"org.eclipse.elk.graph.text.ElkGraph.FLOAT");
+                    							"org.eclipse.elk.graph.text.ElkGraph.BooleanValue");
+                    						afterParserOrEnumRuleCall();
                     					
 
                     }
@@ -4449,355 +4660,8 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleProperty"
 
 
-    // $ANTLR start "entryRuleQualifiedId"
-    // InternalElkGraph.g:1877:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
-    public final String entryRuleQualifiedId() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleQualifiedId = null;
-
-
-        try {
-            // InternalElkGraph.g:1877:51: (iv_ruleQualifiedId= ruleQualifiedId EOF )
-            // InternalElkGraph.g:1878:2: iv_ruleQualifiedId= ruleQualifiedId EOF
-            {
-             newCompositeNode(grammarAccess.getQualifiedIdRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleQualifiedId=ruleQualifiedId();
-
-            state._fsp--;
-
-             current =iv_ruleQualifiedId.getText(); 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleQualifiedId"
-
-
-    // $ANTLR start "ruleQualifiedId"
-    // InternalElkGraph.g:1884:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
-    public final AntlrDatatypeRuleToken ruleQualifiedId() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token this_ID_0=null;
-        Token kw=null;
-        Token this_ID_2=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalElkGraph.g:1890:2: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalElkGraph.g:1891:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            {
-            // InternalElkGraph.g:1891:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalElkGraph.g:1892:3: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
-            {
-            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_28); 
-
-            			current.merge(this_ID_0);
-            		
-
-            			newLeafNode(this_ID_0, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0());
-            		
-            // InternalElkGraph.g:1899:3: (kw= '.' this_ID_2= RULE_ID )*
-            loop34:
-            do {
-                int alt34=2;
-                int LA34_0 = input.LA(1);
-
-                if ( (LA34_0==35) ) {
-                    alt34=1;
-                }
-
-
-                switch (alt34) {
-            	case 1 :
-            	    // InternalElkGraph.g:1900:4: kw= '.' this_ID_2= RULE_ID
-            	    {
-            	    kw=(Token)match(input,35,FOLLOW_3); 
-
-            	    				current.merge(kw);
-            	    				newLeafNode(kw, grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0());
-            	    			
-            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_28); 
-
-            	    				current.merge(this_ID_2);
-            	    			
-
-            	    				newLeafNode(this_ID_2, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_1_1());
-            	    			
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop34;
-                }
-            } while (true);
-
-
-            }
-
-
-            }
-
-
-            	leaveRule();
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleQualifiedId"
-
-
-    // $ANTLR start "entryRuleBoolean"
-    // InternalElkGraph.g:1917:1: entryRuleBoolean returns [String current=null] : iv_ruleBoolean= ruleBoolean EOF ;
-    public final String entryRuleBoolean() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleBoolean = null;
-
-
-        try {
-            // InternalElkGraph.g:1917:47: (iv_ruleBoolean= ruleBoolean EOF )
-            // InternalElkGraph.g:1918:2: iv_ruleBoolean= ruleBoolean EOF
-            {
-             newCompositeNode(grammarAccess.getBooleanRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleBoolean=ruleBoolean();
-
-            state._fsp--;
-
-             current =iv_ruleBoolean.getText(); 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleBoolean"
-
-
-    // $ANTLR start "ruleBoolean"
-    // InternalElkGraph.g:1924:1: ruleBoolean returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
-    public final AntlrDatatypeRuleToken ruleBoolean() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token kw=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalElkGraph.g:1930:2: ( (kw= 'true' | kw= 'false' ) )
-            // InternalElkGraph.g:1931:2: (kw= 'true' | kw= 'false' )
-            {
-            // InternalElkGraph.g:1931:2: (kw= 'true' | kw= 'false' )
-            int alt35=2;
-            int LA35_0 = input.LA(1);
-
-            if ( (LA35_0==36) ) {
-                alt35=1;
-            }
-            else if ( (LA35_0==37) ) {
-                alt35=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 35, 0, input);
-
-                throw nvae;
-            }
-            switch (alt35) {
-                case 1 :
-                    // InternalElkGraph.g:1932:3: kw= 'true'
-                    {
-                    kw=(Token)match(input,36,FOLLOW_2); 
-
-                    			current.merge(kw);
-                    			newLeafNode(kw, grammarAccess.getBooleanAccess().getTrueKeyword_0());
-                    		
-
-                    }
-                    break;
-                case 2 :
-                    // InternalElkGraph.g:1938:3: kw= 'false'
-                    {
-                    kw=(Token)match(input,37,FOLLOW_2); 
-
-                    			current.merge(kw);
-                    			newLeafNode(kw, grammarAccess.getBooleanAccess().getFalseKeyword_1());
-                    		
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-
-            	leaveRule();
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleBoolean"
-
-
-    // $ANTLR start "entryRuleNumber"
-    // InternalElkGraph.g:1947:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
-    public final String entryRuleNumber() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleNumber = null;
-
-
-        try {
-            // InternalElkGraph.g:1947:46: (iv_ruleNumber= ruleNumber EOF )
-            // InternalElkGraph.g:1948:2: iv_ruleNumber= ruleNumber EOF
-            {
-             newCompositeNode(grammarAccess.getNumberRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleNumber=ruleNumber();
-
-            state._fsp--;
-
-             current =iv_ruleNumber.getText(); 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleNumber"
-
-
-    // $ANTLR start "ruleNumber"
-    // InternalElkGraph.g:1954:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
-    public final AntlrDatatypeRuleToken ruleNumber() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token this_SIGNED_INT_0=null;
-        Token this_FLOAT_1=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalElkGraph.g:1960:2: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
-            // InternalElkGraph.g:1961:2: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            {
-            // InternalElkGraph.g:1961:2: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            int alt36=2;
-            int LA36_0 = input.LA(1);
-
-            if ( (LA36_0==RULE_SIGNED_INT) ) {
-                alt36=1;
-            }
-            else if ( (LA36_0==RULE_FLOAT) ) {
-                alt36=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 36, 0, input);
-
-                throw nvae;
-            }
-            switch (alt36) {
-                case 1 :
-                    // InternalElkGraph.g:1962:3: this_SIGNED_INT_0= RULE_SIGNED_INT
-                    {
-                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
-
-                    			current.merge(this_SIGNED_INT_0);
-                    		
-
-                    			newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberAccess().getSIGNED_INTTerminalRuleCall_0());
-                    		
-
-                    }
-                    break;
-                case 2 :
-                    // InternalElkGraph.g:1970:3: this_FLOAT_1= RULE_FLOAT
-                    {
-                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
-
-                    			current.merge(this_FLOAT_1);
-                    		
-
-                    			newLeafNode(this_FLOAT_1, grammarAccess.getNumberAccess().getFLOATTerminalRuleCall_1());
-                    		
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-
-            	leaveRule();
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleNumber"
-
-
     // $ANTLR start "entryRulePropertyKey"
-    // InternalElkGraph.g:1981:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
+    // InternalElkGraph.g:1934:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
     public final String entryRulePropertyKey() throws RecognitionException {
         String current = null;
 
@@ -4808,8 +4672,8 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
         	HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
 
         try {
-            // InternalElkGraph.g:1983:2: (iv_rulePropertyKey= rulePropertyKey EOF )
-            // InternalElkGraph.g:1984:2: iv_rulePropertyKey= rulePropertyKey EOF
+            // InternalElkGraph.g:1936:2: (iv_rulePropertyKey= rulePropertyKey EOF )
+            // InternalElkGraph.g:1937:2: iv_rulePropertyKey= rulePropertyKey EOF
             {
              newCompositeNode(grammarAccess.getPropertyKeyRule()); 
             pushFollow(FOLLOW_1);
@@ -4839,7 +4703,7 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePropertyKey"
-    // InternalElkGraph.g:1993:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // InternalElkGraph.g:1946:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken rulePropertyKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -4852,40 +4716,40 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
         	HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
 
         try {
-            // InternalElkGraph.g:2000:2: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalElkGraph.g:2001:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalElkGraph.g:1953:2: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalElkGraph.g:1954:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // InternalElkGraph.g:2001:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalElkGraph.g:2002:3: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // InternalElkGraph.g:1954:2: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalElkGraph.g:1955:3: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_28); 
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_27); 
 
             			current.merge(this_ID_0);
             		
 
             			newLeafNode(this_ID_0, grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_0());
             		
-            // InternalElkGraph.g:2009:3: (kw= '.' this_ID_2= RULE_ID )*
-            loop37:
+            // InternalElkGraph.g:1962:3: (kw= '.' this_ID_2= RULE_ID )*
+            loop36:
             do {
-                int alt37=2;
-                int LA37_0 = input.LA(1);
+                int alt36=2;
+                int LA36_0 = input.LA(1);
 
-                if ( (LA37_0==35) ) {
-                    alt37=1;
+                if ( (LA36_0==35) ) {
+                    alt36=1;
                 }
 
 
-                switch (alt37) {
+                switch (alt36) {
             	case 1 :
-            	    // InternalElkGraph.g:2010:4: kw= '.' this_ID_2= RULE_ID
+            	    // InternalElkGraph.g:1963:4: kw= '.' this_ID_2= RULE_ID
             	    {
             	    kw=(Token)match(input,35,FOLLOW_3); 
 
             	    				current.merge(kw);
             	    				newLeafNode(kw, grammarAccess.getPropertyKeyAccess().getFullStopKeyword_1_0());
             	    			
-            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_28); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_27); 
 
             	    				current.merge(this_ID_2);
             	    			
@@ -4897,7 +4761,7 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop37;
+            	    break loop36;
                 }
             } while (true);
 
@@ -4924,6 +4788,393 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
         return current;
     }
     // $ANTLR end "rulePropertyKey"
+
+
+    // $ANTLR start "entryRuleStringValue"
+    // InternalElkGraph.g:1983:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
+    public final String entryRuleStringValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleStringValue = null;
+
+
+        try {
+            // InternalElkGraph.g:1983:51: (iv_ruleStringValue= ruleStringValue EOF )
+            // InternalElkGraph.g:1984:2: iv_ruleStringValue= ruleStringValue EOF
+            {
+             newCompositeNode(grammarAccess.getStringValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleStringValue=ruleStringValue();
+
+            state._fsp--;
+
+             current =iv_ruleStringValue.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleStringValue"
+
+
+    // $ANTLR start "ruleStringValue"
+    // InternalElkGraph.g:1990:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
+    public final AntlrDatatypeRuleToken ruleStringValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_STRING_0=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalElkGraph.g:1996:2: (this_STRING_0= RULE_STRING )
+            // InternalElkGraph.g:1997:2: this_STRING_0= RULE_STRING
+            {
+            this_STRING_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
+
+            		current.merge(this_STRING_0);
+            	
+
+            		newLeafNode(this_STRING_0, grammarAccess.getStringValueAccess().getSTRINGTerminalRuleCall());
+            	
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleStringValue"
+
+
+    // $ANTLR start "entryRuleQualifiedIdValue"
+    // InternalElkGraph.g:2007:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
+    public final String entryRuleQualifiedIdValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleQualifiedIdValue = null;
+
+
+        try {
+            // InternalElkGraph.g:2007:56: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
+            // InternalElkGraph.g:2008:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
+            {
+             newCompositeNode(grammarAccess.getQualifiedIdValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleQualifiedIdValue=ruleQualifiedIdValue();
+
+            state._fsp--;
+
+             current =iv_ruleQualifiedIdValue.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleQualifiedIdValue"
+
+
+    // $ANTLR start "ruleQualifiedIdValue"
+    // InternalElkGraph.g:2014:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
+    public final AntlrDatatypeRuleToken ruleQualifiedIdValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        AntlrDatatypeRuleToken this_QualifiedId_0 = null;
+
+
+
+        	enterRule();
+
+        try {
+            // InternalElkGraph.g:2020:2: (this_QualifiedId_0= ruleQualifiedId )
+            // InternalElkGraph.g:2021:2: this_QualifiedId_0= ruleQualifiedId
+            {
+
+            		newCompositeNode(grammarAccess.getQualifiedIdValueAccess().getQualifiedIdParserRuleCall());
+            	
+            pushFollow(FOLLOW_2);
+            this_QualifiedId_0=ruleQualifiedId();
+
+            state._fsp--;
+
+
+            		current.merge(this_QualifiedId_0);
+            	
+
+            		afterParserOrEnumRuleCall();
+            	
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleQualifiedIdValue"
+
+
+    // $ANTLR start "entryRuleNumberValue"
+    // InternalElkGraph.g:2034:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
+    public final String entryRuleNumberValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleNumberValue = null;
+
+
+        try {
+            // InternalElkGraph.g:2034:51: (iv_ruleNumberValue= ruleNumberValue EOF )
+            // InternalElkGraph.g:2035:2: iv_ruleNumberValue= ruleNumberValue EOF
+            {
+             newCompositeNode(grammarAccess.getNumberValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleNumberValue=ruleNumberValue();
+
+            state._fsp--;
+
+             current =iv_ruleNumberValue.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleNumberValue"
+
+
+    // $ANTLR start "ruleNumberValue"
+    // InternalElkGraph.g:2041:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    public final AntlrDatatypeRuleToken ruleNumberValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_SIGNED_INT_0=null;
+        Token this_FLOAT_1=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalElkGraph.g:2047:2: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalElkGraph.g:2048:2: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            {
+            // InternalElkGraph.g:2048:2: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt37=2;
+            int LA37_0 = input.LA(1);
+
+            if ( (LA37_0==RULE_SIGNED_INT) ) {
+                alt37=1;
+            }
+            else if ( (LA37_0==RULE_FLOAT) ) {
+                alt37=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 37, 0, input);
+
+                throw nvae;
+            }
+            switch (alt37) {
+                case 1 :
+                    // InternalElkGraph.g:2049:3: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    {
+                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
+
+                    			current.merge(this_SIGNED_INT_0);
+                    		
+
+                    			newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberValueAccess().getSIGNED_INTTerminalRuleCall_0());
+                    		
+
+                    }
+                    break;
+                case 2 :
+                    // InternalElkGraph.g:2057:3: this_FLOAT_1= RULE_FLOAT
+                    {
+                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
+
+                    			current.merge(this_FLOAT_1);
+                    		
+
+                    			newLeafNode(this_FLOAT_1, grammarAccess.getNumberValueAccess().getFLOATTerminalRuleCall_1());
+                    		
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleNumberValue"
+
+
+    // $ANTLR start "entryRuleBooleanValue"
+    // InternalElkGraph.g:2068:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
+    public final String entryRuleBooleanValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleBooleanValue = null;
+
+
+        try {
+            // InternalElkGraph.g:2068:52: (iv_ruleBooleanValue= ruleBooleanValue EOF )
+            // InternalElkGraph.g:2069:2: iv_ruleBooleanValue= ruleBooleanValue EOF
+            {
+             newCompositeNode(grammarAccess.getBooleanValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleBooleanValue=ruleBooleanValue();
+
+            state._fsp--;
+
+             current =iv_ruleBooleanValue.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleBooleanValue"
+
+
+    // $ANTLR start "ruleBooleanValue"
+    // InternalElkGraph.g:2075:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
+    public final AntlrDatatypeRuleToken ruleBooleanValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token kw=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalElkGraph.g:2081:2: ( (kw= 'true' | kw= 'false' ) )
+            // InternalElkGraph.g:2082:2: (kw= 'true' | kw= 'false' )
+            {
+            // InternalElkGraph.g:2082:2: (kw= 'true' | kw= 'false' )
+            int alt38=2;
+            int LA38_0 = input.LA(1);
+
+            if ( (LA38_0==36) ) {
+                alt38=1;
+            }
+            else if ( (LA38_0==37) ) {
+                alt38=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 38, 0, input);
+
+                throw nvae;
+            }
+            switch (alt38) {
+                case 1 :
+                    // InternalElkGraph.g:2083:3: kw= 'true'
+                    {
+                    kw=(Token)match(input,36,FOLLOW_2); 
+
+                    			current.merge(kw);
+                    			newLeafNode(kw, grammarAccess.getBooleanValueAccess().getTrueKeyword_0());
+                    		
+
+                    }
+                    break;
+                case 2 :
+                    // InternalElkGraph.g:2089:3: kw= 'false'
+                    {
+                    kw=(Token)match(input,37,FOLLOW_2); 
+
+                    			current.merge(kw);
+                    			newLeafNode(kw, grammarAccess.getBooleanValueAccess().getFalseKeyword_1());
+                    		
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleBooleanValue"
 
     // Delegated rules
 
@@ -4956,7 +5207,7 @@ public class InternalElkGraphParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_24 = new BitSet(new long[]{0x0000000000A00000L});
     public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x00000001F2000000L});
     public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x00000003F2000000L});
-    public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x00000030000000F0L});
-    public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000800000002L});
+    public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x0000000800000002L});
+    public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x00000030000000F0L});
 
 }
