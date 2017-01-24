@@ -14,13 +14,13 @@ import org.eclipse.elk.core.LayoutOptionValidator
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.util.internal.LayoutOptionProxy
 import org.eclipse.elk.graph.EMapPropertyHolder
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
 import org.eclipse.elk.graph.ElkGraphElement
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
 import org.eclipse.elk.graph.properties.IProperty
+import org.eclipse.elk.graph.properties.IPropertyValueProxy
 import org.eclipse.elk.graph.util.ElkGraphUtil
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
@@ -41,40 +41,46 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
 	def void checkPropertyValue(ElkPropertyToValueMapEntryImpl entry) {
 	    val option = entry.key.toLayoutOption
 	    if (option !== null) {
-    	    val value = entry.value
-    	    if (value instanceof LayoutOptionProxy) {
-    	        switch option.type {
-    	            case STRING:
-    	                expectPropertyType(String)
-    	            case BOOLEAN:
-                        expectPropertyType(Boolean)
-    	            case INT:
-                        expectPropertyType(Integer)
-    	            case DOUBLE:
-                        expectPropertyType(Double)
-    	            case ENUMSET:
-                        expectPropertyType(EnumSet)
-    	            default:
-    	                if (option.optionClass !== null)
-    	                    expectPropertyType(option.optionClass)
+    	    var value = entry.value
+    	    if (value instanceof IPropertyValueProxy) {
+    	        value = value.resolveValue(option)
+    	        if (value === null) {
+        	        switch option.type {
+        	            case STRING:
+        	                expectPropertyType(String)
+        	            case BOOLEAN:
+                            expectPropertyType(Boolean)
+        	            case INT:
+                            expectPropertyType(Integer)
+        	            case DOUBLE:
+                            expectPropertyType(Double)
+        	            case ENUMSET:
+                            expectPropertyType(EnumSet)
+        	            default:
+        	                if (option.optionClass !== null)
+        	                    expectPropertyType(option.optionClass)
+        	        }
+    	        } else {
+    	            entry.value = value
     	        }
-    	    } else {
-	            val issues = layoutOptionValidator.checkProperty(option, value,
-	                   entry.getContainerOfType(ElkGraphElement))
-	            for (issue : issues) {
-	                switch issue.severity {
-	                    case ERROR:
-	                        error(issue.message, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
-	                    case WARNING:
-	                        warning(issue.message, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
-	                }
-	            }
-	            if (CoreOptions.ALGORITHM == option) {
-	                if (LayoutMetaDataService.instance.getAlgorithmDataBySuffix(value as String) === null)
-	                   error("No layout algorithm with identifier '" + value + "' can be found.",
+    	    }
+    	    if (value !== null) {
+                val issues = layoutOptionValidator.checkProperty(option, value,
+                       entry.getContainerOfType(ElkGraphElement))
+                for (issue : issues) {
+                    switch issue.severity {
+                        case ERROR:
+                            error(issue.message, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
+                        case WARNING:
+                            warning(issue.message, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
+                    }
+                }
+                if (CoreOptions.ALGORITHM == option) {
+                    if (LayoutMetaDataService.instance.getAlgorithmDataBySuffix(value as String) === null)
+                       error("No layout algorithm with identifier '" + value + "' can be found.",
                            ELK_PROPERTY_TO_VALUE_MAP_ENTRY__VALUE)
-	            }
-	        }
+                }
+            }
 	    }
 	}
     
@@ -109,7 +115,7 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
 	
 	private def void propertyAlreadyAssigned(Map.Entry<IProperty<?>, Object> entry) {
 	    if (entry instanceof ElkPropertyToValueMapEntryImpl)
-	       error("Property is already assigned.", entry, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY)
+	        error("Property is already assigned.", entry, ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY)
 	}
 	
 	@Check

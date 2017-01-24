@@ -9,6 +9,8 @@ package org.eclipse.elk.graph.text
 
 import org.eclipse.elk.graph.text.conversion.ElkGraphValueConverterService
 import org.eclipse.elk.graph.text.naming.ElkGraphQualifiedNameProvider
+import org.eclipse.elk.graph.text.serializer.ElkGraphTransientValueService
+import org.eclipse.xtext.serializer.sequencer.ITransientValueService
 
 /**
  * Use this class to register components for the ElkGraph language.
@@ -21,6 +23,10 @@ class ElkGraphRuntimeModule extends AbstractElkGraphRuntimeModule {
     
     override bindIQualifiedNameProvider() {
         ElkGraphQualifiedNameProvider
+    }
+    
+    def Class<? extends ITransientValueService> bindITransientValueService2() {
+        ElkGraphTransientValueService
     }
     
 }

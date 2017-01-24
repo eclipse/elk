@@ -40,22 +40,22 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cPropertiesAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cPropertiesPropertyParserRuleCall_2_0 = (RuleCall)cPropertiesAssignment_2.eContents().get(0);
 		private final Alternatives cAlternatives_3 = (Alternatives)cGroup.eContents().get(3);
-		private final Assignment cChildrenAssignment_3_0 = (Assignment)cAlternatives_3.eContents().get(0);
-		private final RuleCall cChildrenElkNodeParserRuleCall_3_0_0 = (RuleCall)cChildrenAssignment_3_0.eContents().get(0);
-		private final Assignment cContainedEdgesAssignment_3_1 = (Assignment)cAlternatives_3.eContents().get(1);
-		private final RuleCall cContainedEdgesElkEdgeParserRuleCall_3_1_0 = (RuleCall)cContainedEdgesAssignment_3_1.eContents().get(0);
-		private final Assignment cPortsAssignment_3_2 = (Assignment)cAlternatives_3.eContents().get(2);
-		private final RuleCall cPortsElkPortParserRuleCall_3_2_0 = (RuleCall)cPortsAssignment_3_2.eContents().get(0);
-		private final Assignment cLabelsAssignment_3_3 = (Assignment)cAlternatives_3.eContents().get(3);
-		private final RuleCall cLabelsElkLabelParserRuleCall_3_3_0 = (RuleCall)cLabelsAssignment_3_3.eContents().get(0);
+		private final Assignment cLabelsAssignment_3_0 = (Assignment)cAlternatives_3.eContents().get(0);
+		private final RuleCall cLabelsElkLabelParserRuleCall_3_0_0 = (RuleCall)cLabelsAssignment_3_0.eContents().get(0);
+		private final Assignment cPortsAssignment_3_1 = (Assignment)cAlternatives_3.eContents().get(1);
+		private final RuleCall cPortsElkPortParserRuleCall_3_1_0 = (RuleCall)cPortsAssignment_3_1.eContents().get(0);
+		private final Assignment cChildrenAssignment_3_2 = (Assignment)cAlternatives_3.eContents().get(2);
+		private final RuleCall cChildrenElkNodeParserRuleCall_3_2_0 = (RuleCall)cChildrenAssignment_3_2.eContents().get(0);
+		private final Assignment cContainedEdgesAssignment_3_3 = (Assignment)cAlternatives_3.eContents().get(3);
+		private final RuleCall cContainedEdgesElkEdgeParserRuleCall_3_3_0 = (RuleCall)cContainedEdgesAssignment_3_3.eContents().get(0);
 		
 		//RootNode ElkNode:
 		//	{ElkNode} ('graph' identifier=ID)?
-		//	properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+		//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{ElkNode} ('graph' identifier=ID)? properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort |
-		//labels+=ElkLabel)*
+		//{ElkNode} ('graph' identifier=ID)? properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode |
+		//containedEdges+=ElkEdge)*
 		public Group getGroup() { return cGroup; }
 		
 		//{ElkNode}
@@ -79,32 +79,32 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//Property
 		public RuleCall getPropertiesPropertyParserRuleCall_2_0() { return cPropertiesPropertyParserRuleCall_2_0; }
 		
-		//(children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+		//(labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 		public Alternatives getAlternatives_3() { return cAlternatives_3; }
 		
-		//children+=ElkNode
-		public Assignment getChildrenAssignment_3_0() { return cChildrenAssignment_3_0; }
-		
-		//ElkNode
-		public RuleCall getChildrenElkNodeParserRuleCall_3_0_0() { return cChildrenElkNodeParserRuleCall_3_0_0; }
-		
-		//containedEdges+=ElkEdge
-		public Assignment getContainedEdgesAssignment_3_1() { return cContainedEdgesAssignment_3_1; }
-		
-		//ElkEdge
-		public RuleCall getContainedEdgesElkEdgeParserRuleCall_3_1_0() { return cContainedEdgesElkEdgeParserRuleCall_3_1_0; }
-		
-		//ports+=ElkPort
-		public Assignment getPortsAssignment_3_2() { return cPortsAssignment_3_2; }
-		
-		//ElkPort
-		public RuleCall getPortsElkPortParserRuleCall_3_2_0() { return cPortsElkPortParserRuleCall_3_2_0; }
-		
 		//labels+=ElkLabel
-		public Assignment getLabelsAssignment_3_3() { return cLabelsAssignment_3_3; }
+		public Assignment getLabelsAssignment_3_0() { return cLabelsAssignment_3_0; }
 		
 		//ElkLabel
-		public RuleCall getLabelsElkLabelParserRuleCall_3_3_0() { return cLabelsElkLabelParserRuleCall_3_3_0; }
+		public RuleCall getLabelsElkLabelParserRuleCall_3_0_0() { return cLabelsElkLabelParserRuleCall_3_0_0; }
+		
+		//ports+=ElkPort
+		public Assignment getPortsAssignment_3_1() { return cPortsAssignment_3_1; }
+		
+		//ElkPort
+		public RuleCall getPortsElkPortParserRuleCall_3_1_0() { return cPortsElkPortParserRuleCall_3_1_0; }
+		
+		//children+=ElkNode
+		public Assignment getChildrenAssignment_3_2() { return cChildrenAssignment_3_2; }
+		
+		//ElkNode
+		public RuleCall getChildrenElkNodeParserRuleCall_3_2_0() { return cChildrenElkNodeParserRuleCall_3_2_0; }
+		
+		//containedEdges+=ElkEdge
+		public Assignment getContainedEdgesAssignment_3_3() { return cContainedEdgesAssignment_3_3; }
+		
+		//ElkEdge
+		public RuleCall getContainedEdgesElkEdgeParserRuleCall_3_3_0() { return cContainedEdgesElkEdgeParserRuleCall_3_3_0; }
 	}
 	public class ElkNodeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.ElkNode");
@@ -118,25 +118,25 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cPropertiesAssignment_2_2 = (Assignment)cGroup_2.eContents().get(2);
 		private final RuleCall cPropertiesPropertyParserRuleCall_2_2_0 = (RuleCall)cPropertiesAssignment_2_2.eContents().get(0);
 		private final Alternatives cAlternatives_2_3 = (Alternatives)cGroup_2.eContents().get(3);
-		private final Assignment cChildrenAssignment_2_3_0 = (Assignment)cAlternatives_2_3.eContents().get(0);
-		private final RuleCall cChildrenElkNodeParserRuleCall_2_3_0_0 = (RuleCall)cChildrenAssignment_2_3_0.eContents().get(0);
-		private final Assignment cContainedEdgesAssignment_2_3_1 = (Assignment)cAlternatives_2_3.eContents().get(1);
-		private final RuleCall cContainedEdgesElkEdgeParserRuleCall_2_3_1_0 = (RuleCall)cContainedEdgesAssignment_2_3_1.eContents().get(0);
-		private final Assignment cPortsAssignment_2_3_2 = (Assignment)cAlternatives_2_3.eContents().get(2);
-		private final RuleCall cPortsElkPortParserRuleCall_2_3_2_0 = (RuleCall)cPortsAssignment_2_3_2.eContents().get(0);
-		private final Assignment cLabelsAssignment_2_3_3 = (Assignment)cAlternatives_2_3.eContents().get(3);
-		private final RuleCall cLabelsElkLabelParserRuleCall_2_3_3_0 = (RuleCall)cLabelsAssignment_2_3_3.eContents().get(0);
+		private final Assignment cLabelsAssignment_2_3_0 = (Assignment)cAlternatives_2_3.eContents().get(0);
+		private final RuleCall cLabelsElkLabelParserRuleCall_2_3_0_0 = (RuleCall)cLabelsAssignment_2_3_0.eContents().get(0);
+		private final Assignment cPortsAssignment_2_3_1 = (Assignment)cAlternatives_2_3.eContents().get(1);
+		private final RuleCall cPortsElkPortParserRuleCall_2_3_1_0 = (RuleCall)cPortsAssignment_2_3_1.eContents().get(0);
+		private final Assignment cChildrenAssignment_2_3_2 = (Assignment)cAlternatives_2_3.eContents().get(2);
+		private final RuleCall cChildrenElkNodeParserRuleCall_2_3_2_0 = (RuleCall)cChildrenAssignment_2_3_2.eContents().get(0);
+		private final Assignment cContainedEdgesAssignment_2_3_3 = (Assignment)cAlternatives_2_3.eContents().get(3);
+		private final RuleCall cContainedEdgesElkEdgeParserRuleCall_2_3_3_0 = (RuleCall)cContainedEdgesAssignment_2_3_3.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_2_4 = (Keyword)cGroup_2.eContents().get(4);
 		
 		//ElkNode:
 		//	'node' identifier=ID ('{'
 		//	ShapeLayout?
-		//	properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+		//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 		//	'}')?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'node' identifier=ID ('{' ShapeLayout? properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge |
-		//ports+=ElkPort | labels+=ElkLabel)* '}')?
+		//'node' identifier=ID ('{' ShapeLayout? properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode |
+		//containedEdges+=ElkEdge)* '}')?
 		public Group getGroup() { return cGroup; }
 		
 		//'node'
@@ -148,8 +148,8 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getIdentifierIDTerminalRuleCall_1_0() { return cIdentifierIDTerminalRuleCall_1_0; }
 		
-		//('{' ShapeLayout? properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort |
-		//labels+=ElkLabel)* '}')?
+		//('{' ShapeLayout? properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode |
+		//containedEdges+=ElkEdge)* '}')?
 		public Group getGroup_2() { return cGroup_2; }
 		
 		//'{'
@@ -164,32 +164,32 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//Property
 		public RuleCall getPropertiesPropertyParserRuleCall_2_2_0() { return cPropertiesPropertyParserRuleCall_2_2_0; }
 		
-		//(children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+		//(labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 		public Alternatives getAlternatives_2_3() { return cAlternatives_2_3; }
 		
-		//children+=ElkNode
-		public Assignment getChildrenAssignment_2_3_0() { return cChildrenAssignment_2_3_0; }
-		
-		//ElkNode
-		public RuleCall getChildrenElkNodeParserRuleCall_2_3_0_0() { return cChildrenElkNodeParserRuleCall_2_3_0_0; }
-		
-		//containedEdges+=ElkEdge
-		public Assignment getContainedEdgesAssignment_2_3_1() { return cContainedEdgesAssignment_2_3_1; }
-		
-		//ElkEdge
-		public RuleCall getContainedEdgesElkEdgeParserRuleCall_2_3_1_0() { return cContainedEdgesElkEdgeParserRuleCall_2_3_1_0; }
-		
-		//ports+=ElkPort
-		public Assignment getPortsAssignment_2_3_2() { return cPortsAssignment_2_3_2; }
-		
-		//ElkPort
-		public RuleCall getPortsElkPortParserRuleCall_2_3_2_0() { return cPortsElkPortParserRuleCall_2_3_2_0; }
-		
 		//labels+=ElkLabel
-		public Assignment getLabelsAssignment_2_3_3() { return cLabelsAssignment_2_3_3; }
+		public Assignment getLabelsAssignment_2_3_0() { return cLabelsAssignment_2_3_0; }
 		
 		//ElkLabel
-		public RuleCall getLabelsElkLabelParserRuleCall_2_3_3_0() { return cLabelsElkLabelParserRuleCall_2_3_3_0; }
+		public RuleCall getLabelsElkLabelParserRuleCall_2_3_0_0() { return cLabelsElkLabelParserRuleCall_2_3_0_0; }
+		
+		//ports+=ElkPort
+		public Assignment getPortsAssignment_2_3_1() { return cPortsAssignment_2_3_1; }
+		
+		//ElkPort
+		public RuleCall getPortsElkPortParserRuleCall_2_3_1_0() { return cPortsElkPortParserRuleCall_2_3_1_0; }
+		
+		//children+=ElkNode
+		public Assignment getChildrenAssignment_2_3_2() { return cChildrenAssignment_2_3_2; }
+		
+		//ElkNode
+		public RuleCall getChildrenElkNodeParserRuleCall_2_3_2_0() { return cChildrenElkNodeParserRuleCall_2_3_2_0; }
+		
+		//containedEdges+=ElkEdge
+		public Assignment getContainedEdgesAssignment_2_3_3() { return cContainedEdgesAssignment_2_3_3; }
+		
+		//ElkEdge
+		public RuleCall getContainedEdgesElkEdgeParserRuleCall_2_3_3_0() { return cContainedEdgesElkEdgeParserRuleCall_2_3_3_0; }
 		
 		//'}'
 		public Keyword getRightCurlyBracketKeyword_2_4() { return cRightCurlyBracketKeyword_2_4; }
@@ -606,176 +606,192 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.ElkSingleEdgeSection");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cElkEdgeSectionAction_0 = (Action)cGroup.eContents().get(0);
-		private final UnorderedGroup cUnorderedGroup_1 = (UnorderedGroup)cGroup.eContents().get(1);
-		private final Group cGroup_1_0 = (Group)cUnorderedGroup_1.eContents().get(0);
-		private final Keyword cIncomingKeyword_1_0_0 = (Keyword)cGroup_1_0.eContents().get(0);
-		private final Keyword cColonKeyword_1_0_1 = (Keyword)cGroup_1_0.eContents().get(1);
-		private final Assignment cIncomingShapeAssignment_1_0_2 = (Assignment)cGroup_1_0.eContents().get(2);
-		private final CrossReference cIncomingShapeElkConnectableShapeCrossReference_1_0_2_0 = (CrossReference)cIncomingShapeAssignment_1_0_2.eContents().get(0);
-		private final RuleCall cIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_2_0_1 = (RuleCall)cIncomingShapeElkConnectableShapeCrossReference_1_0_2_0.eContents().get(1);
-		private final Group cGroup_1_1 = (Group)cUnorderedGroup_1.eContents().get(1);
-		private final Keyword cOutgoingKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final UnorderedGroup cUnorderedGroup_1_0 = (UnorderedGroup)cGroup_1.eContents().get(0);
+		private final Group cGroup_1_0_0 = (Group)cUnorderedGroup_1_0.eContents().get(0);
+		private final Keyword cIncomingKeyword_1_0_0_0 = (Keyword)cGroup_1_0_0.eContents().get(0);
+		private final Keyword cColonKeyword_1_0_0_1 = (Keyword)cGroup_1_0_0.eContents().get(1);
+		private final Assignment cIncomingShapeAssignment_1_0_0_2 = (Assignment)cGroup_1_0_0.eContents().get(2);
+		private final CrossReference cIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0 = (CrossReference)cIncomingShapeAssignment_1_0_0_2.eContents().get(0);
+		private final RuleCall cIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_0_2_0_1 = (RuleCall)cIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0.eContents().get(1);
+		private final Group cGroup_1_0_1 = (Group)cUnorderedGroup_1_0.eContents().get(1);
+		private final Keyword cOutgoingKeyword_1_0_1_0 = (Keyword)cGroup_1_0_1.eContents().get(0);
+		private final Keyword cColonKeyword_1_0_1_1 = (Keyword)cGroup_1_0_1.eContents().get(1);
+		private final Assignment cOutgoingShapeAssignment_1_0_1_2 = (Assignment)cGroup_1_0_1.eContents().get(2);
+		private final CrossReference cOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0 = (CrossReference)cOutgoingShapeAssignment_1_0_1_2.eContents().get(0);
+		private final RuleCall cOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_1_2_0_1 = (RuleCall)cOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0.eContents().get(1);
+		private final Group cGroup_1_0_2 = (Group)cUnorderedGroup_1_0.eContents().get(2);
+		private final Keyword cStartKeyword_1_0_2_0 = (Keyword)cGroup_1_0_2.eContents().get(0);
+		private final Keyword cColonKeyword_1_0_2_1 = (Keyword)cGroup_1_0_2.eContents().get(1);
+		private final Assignment cStartXAssignment_1_0_2_2 = (Assignment)cGroup_1_0_2.eContents().get(2);
+		private final RuleCall cStartXNumberParserRuleCall_1_0_2_2_0 = (RuleCall)cStartXAssignment_1_0_2_2.eContents().get(0);
+		private final Keyword cCommaKeyword_1_0_2_3 = (Keyword)cGroup_1_0_2.eContents().get(3);
+		private final Assignment cStartYAssignment_1_0_2_4 = (Assignment)cGroup_1_0_2.eContents().get(4);
+		private final RuleCall cStartYNumberParserRuleCall_1_0_2_4_0 = (RuleCall)cStartYAssignment_1_0_2_4.eContents().get(0);
+		private final Group cGroup_1_0_3 = (Group)cUnorderedGroup_1_0.eContents().get(3);
+		private final Keyword cEndKeyword_1_0_3_0 = (Keyword)cGroup_1_0_3.eContents().get(0);
+		private final Keyword cColonKeyword_1_0_3_1 = (Keyword)cGroup_1_0_3.eContents().get(1);
+		private final Assignment cEndXAssignment_1_0_3_2 = (Assignment)cGroup_1_0_3.eContents().get(2);
+		private final RuleCall cEndXNumberParserRuleCall_1_0_3_2_0 = (RuleCall)cEndXAssignment_1_0_3_2.eContents().get(0);
+		private final Keyword cCommaKeyword_1_0_3_3 = (Keyword)cGroup_1_0_3.eContents().get(3);
+		private final Assignment cEndYAssignment_1_0_3_4 = (Assignment)cGroup_1_0_3.eContents().get(4);
+		private final RuleCall cEndYNumberParserRuleCall_1_0_3_4_0 = (RuleCall)cEndYAssignment_1_0_3_4.eContents().get(0);
+		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
+		private final Keyword cBendsKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
 		private final Keyword cColonKeyword_1_1_1 = (Keyword)cGroup_1_1.eContents().get(1);
-		private final Assignment cOutgoingShapeAssignment_1_1_2 = (Assignment)cGroup_1_1.eContents().get(2);
-		private final CrossReference cOutgoingShapeElkConnectableShapeCrossReference_1_1_2_0 = (CrossReference)cOutgoingShapeAssignment_1_1_2.eContents().get(0);
-		private final RuleCall cOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_1_2_0_1 = (RuleCall)cOutgoingShapeElkConnectableShapeCrossReference_1_1_2_0.eContents().get(1);
-		private final Group cGroup_1_2 = (Group)cUnorderedGroup_1.eContents().get(2);
-		private final Keyword cStartKeyword_1_2_0 = (Keyword)cGroup_1_2.eContents().get(0);
-		private final Keyword cColonKeyword_1_2_1 = (Keyword)cGroup_1_2.eContents().get(1);
-		private final Assignment cStartXAssignment_1_2_2 = (Assignment)cGroup_1_2.eContents().get(2);
-		private final RuleCall cStartXNumberParserRuleCall_1_2_2_0 = (RuleCall)cStartXAssignment_1_2_2.eContents().get(0);
-		private final Keyword cCommaKeyword_1_2_3 = (Keyword)cGroup_1_2.eContents().get(3);
-		private final Assignment cStartYAssignment_1_2_4 = (Assignment)cGroup_1_2.eContents().get(4);
-		private final RuleCall cStartYNumberParserRuleCall_1_2_4_0 = (RuleCall)cStartYAssignment_1_2_4.eContents().get(0);
-		private final Group cGroup_1_3 = (Group)cUnorderedGroup_1.eContents().get(3);
-		private final Keyword cEndKeyword_1_3_0 = (Keyword)cGroup_1_3.eContents().get(0);
-		private final Keyword cColonKeyword_1_3_1 = (Keyword)cGroup_1_3.eContents().get(1);
-		private final Assignment cEndXAssignment_1_3_2 = (Assignment)cGroup_1_3.eContents().get(2);
-		private final RuleCall cEndXNumberParserRuleCall_1_3_2_0 = (RuleCall)cEndXAssignment_1_3_2.eContents().get(0);
-		private final Keyword cCommaKeyword_1_3_3 = (Keyword)cGroup_1_3.eContents().get(3);
-		private final Assignment cEndYAssignment_1_3_4 = (Assignment)cGroup_1_3.eContents().get(4);
-		private final RuleCall cEndYNumberParserRuleCall_1_3_4_0 = (RuleCall)cEndYAssignment_1_3_4.eContents().get(0);
-		private final Group cGroup_1_4 = (Group)cUnorderedGroup_1.eContents().get(4);
-		private final Keyword cBendsKeyword_1_4_0 = (Keyword)cGroup_1_4.eContents().get(0);
-		private final Keyword cColonKeyword_1_4_1 = (Keyword)cGroup_1_4.eContents().get(1);
-		private final Assignment cBendPointsAssignment_1_4_2 = (Assignment)cGroup_1_4.eContents().get(2);
-		private final RuleCall cBendPointsElkBendPointParserRuleCall_1_4_2_0 = (RuleCall)cBendPointsAssignment_1_4_2.eContents().get(0);
-		private final Group cGroup_1_4_3 = (Group)cGroup_1_4.eContents().get(3);
-		private final Keyword cVerticalLineKeyword_1_4_3_0 = (Keyword)cGroup_1_4_3.eContents().get(0);
-		private final Assignment cBendPointsAssignment_1_4_3_1 = (Assignment)cGroup_1_4_3.eContents().get(1);
-		private final RuleCall cBendPointsElkBendPointParserRuleCall_1_4_3_1_0 = (RuleCall)cBendPointsAssignment_1_4_3_1.eContents().get(0);
+		private final Assignment cBendPointsAssignment_1_1_2 = (Assignment)cGroup_1_1.eContents().get(2);
+		private final RuleCall cBendPointsElkBendPointParserRuleCall_1_1_2_0 = (RuleCall)cBendPointsAssignment_1_1_2.eContents().get(0);
+		private final Group cGroup_1_1_3 = (Group)cGroup_1_1.eContents().get(3);
+		private final Keyword cVerticalLineKeyword_1_1_3_0 = (Keyword)cGroup_1_1_3.eContents().get(0);
+		private final Assignment cBendPointsAssignment_1_1_3_1 = (Assignment)cGroup_1_1_3.eContents().get(1);
+		private final RuleCall cBendPointsElkBendPointParserRuleCall_1_1_3_1_0 = (RuleCall)cBendPointsAssignment_1_1_3_1.eContents().get(0);
+		private final Assignment cPropertiesAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
+		private final RuleCall cPropertiesPropertyParserRuleCall_1_2_0 = (RuleCall)cPropertiesAssignment_1_2.eContents().get(0);
 		
 		//ElkSingleEdgeSection ElkEdgeSection:
-		//	{ElkEdgeSection} (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+		//	{ElkEdgeSection} ((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 		//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 		//	& ('start' ':' startX=Number ',' startY=Number)?
-		//	& ('end' ':' endX=Number ',' endY=Number)?
-		//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
+		//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		//	properties+=Property*)
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{ElkEdgeSection} (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//{ElkEdgeSection} ((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)? & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
+		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		//properties+=Property*)
 		public Group getGroup() { return cGroup; }
 		
 		//{ElkEdgeSection}
 		public Action getElkEdgeSectionAction_0() { return cElkEdgeSectionAction_0; }
 		
+		//((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
+		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		//properties+=Property*)
+		public Group getGroup_1() { return cGroup_1; }
+		
 		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)? & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
-		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
+		//endX=Number ',' endY=Number)?)
+		public UnorderedGroup getUnorderedGroup_1_0() { return cUnorderedGroup_1_0; }
 		
 		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
-		public Group getGroup_1_0() { return cGroup_1_0; }
+		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
 		
 		//'incoming'
-		public Keyword getIncomingKeyword_1_0_0() { return cIncomingKeyword_1_0_0; }
+		public Keyword getIncomingKeyword_1_0_0_0() { return cIncomingKeyword_1_0_0_0; }
 		
 		//':'
-		public Keyword getColonKeyword_1_0_1() { return cColonKeyword_1_0_1; }
+		public Keyword getColonKeyword_1_0_0_1() { return cColonKeyword_1_0_0_1; }
 		
 		//incomingShape=[ElkConnectableShape|QualifiedId]
-		public Assignment getIncomingShapeAssignment_1_0_2() { return cIncomingShapeAssignment_1_0_2; }
+		public Assignment getIncomingShapeAssignment_1_0_0_2() { return cIncomingShapeAssignment_1_0_0_2; }
 		
 		//[ElkConnectableShape|QualifiedId]
-		public CrossReference getIncomingShapeElkConnectableShapeCrossReference_1_0_2_0() { return cIncomingShapeElkConnectableShapeCrossReference_1_0_2_0; }
+		public CrossReference getIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0() { return cIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0; }
 		
 		//QualifiedId
-		public RuleCall getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_2_0_1() { return cIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_2_0_1; }
+		public RuleCall getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_0_2_0_1() { return cIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_0_2_0_1; }
 		
 		//('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
-		public Group getGroup_1_1() { return cGroup_1_1; }
+		public Group getGroup_1_0_1() { return cGroup_1_0_1; }
 		
 		//'outgoing'
-		public Keyword getOutgoingKeyword_1_1_0() { return cOutgoingKeyword_1_1_0; }
+		public Keyword getOutgoingKeyword_1_0_1_0() { return cOutgoingKeyword_1_0_1_0; }
+		
+		//':'
+		public Keyword getColonKeyword_1_0_1_1() { return cColonKeyword_1_0_1_1; }
+		
+		//outgoingShape=[ElkConnectableShape|QualifiedId]
+		public Assignment getOutgoingShapeAssignment_1_0_1_2() { return cOutgoingShapeAssignment_1_0_1_2; }
+		
+		//[ElkConnectableShape|QualifiedId]
+		public CrossReference getOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0() { return cOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0; }
+		
+		//QualifiedId
+		public RuleCall getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_1_2_0_1() { return cOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_1_2_0_1; }
+		
+		//('start' ':' startX=Number ',' startY=Number)?
+		public Group getGroup_1_0_2() { return cGroup_1_0_2; }
+		
+		//'start'
+		public Keyword getStartKeyword_1_0_2_0() { return cStartKeyword_1_0_2_0; }
+		
+		//':'
+		public Keyword getColonKeyword_1_0_2_1() { return cColonKeyword_1_0_2_1; }
+		
+		//startX=Number
+		public Assignment getStartXAssignment_1_0_2_2() { return cStartXAssignment_1_0_2_2; }
+		
+		//Number
+		public RuleCall getStartXNumberParserRuleCall_1_0_2_2_0() { return cStartXNumberParserRuleCall_1_0_2_2_0; }
+		
+		//','
+		public Keyword getCommaKeyword_1_0_2_3() { return cCommaKeyword_1_0_2_3; }
+		
+		//startY=Number
+		public Assignment getStartYAssignment_1_0_2_4() { return cStartYAssignment_1_0_2_4; }
+		
+		//Number
+		public RuleCall getStartYNumberParserRuleCall_1_0_2_4_0() { return cStartYNumberParserRuleCall_1_0_2_4_0; }
+		
+		//('end' ':' endX=Number ',' endY=Number)?
+		public Group getGroup_1_0_3() { return cGroup_1_0_3; }
+		
+		//'end'
+		public Keyword getEndKeyword_1_0_3_0() { return cEndKeyword_1_0_3_0; }
+		
+		//':'
+		public Keyword getColonKeyword_1_0_3_1() { return cColonKeyword_1_0_3_1; }
+		
+		//endX=Number
+		public Assignment getEndXAssignment_1_0_3_2() { return cEndXAssignment_1_0_3_2; }
+		
+		//Number
+		public RuleCall getEndXNumberParserRuleCall_1_0_3_2_0() { return cEndXNumberParserRuleCall_1_0_3_2_0; }
+		
+		//','
+		public Keyword getCommaKeyword_1_0_3_3() { return cCommaKeyword_1_0_3_3; }
+		
+		//endY=Number
+		public Assignment getEndYAssignment_1_0_3_4() { return cEndYAssignment_1_0_3_4; }
+		
+		//Number
+		public RuleCall getEndYNumberParserRuleCall_1_0_3_4_0() { return cEndYNumberParserRuleCall_1_0_3_4_0; }
+		
+		//('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		public Group getGroup_1_1() { return cGroup_1_1; }
+		
+		//'bends'
+		public Keyword getBendsKeyword_1_1_0() { return cBendsKeyword_1_1_0; }
 		
 		//':'
 		public Keyword getColonKeyword_1_1_1() { return cColonKeyword_1_1_1; }
 		
-		//outgoingShape=[ElkConnectableShape|QualifiedId]
-		public Assignment getOutgoingShapeAssignment_1_1_2() { return cOutgoingShapeAssignment_1_1_2; }
-		
-		//[ElkConnectableShape|QualifiedId]
-		public CrossReference getOutgoingShapeElkConnectableShapeCrossReference_1_1_2_0() { return cOutgoingShapeElkConnectableShapeCrossReference_1_1_2_0; }
-		
-		//QualifiedId
-		public RuleCall getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_1_2_0_1() { return cOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_1_2_0_1; }
-		
-		//('start' ':' startX=Number ',' startY=Number)?
-		public Group getGroup_1_2() { return cGroup_1_2; }
-		
-		//'start'
-		public Keyword getStartKeyword_1_2_0() { return cStartKeyword_1_2_0; }
-		
-		//':'
-		public Keyword getColonKeyword_1_2_1() { return cColonKeyword_1_2_1; }
-		
-		//startX=Number
-		public Assignment getStartXAssignment_1_2_2() { return cStartXAssignment_1_2_2; }
-		
-		//Number
-		public RuleCall getStartXNumberParserRuleCall_1_2_2_0() { return cStartXNumberParserRuleCall_1_2_2_0; }
-		
-		//','
-		public Keyword getCommaKeyword_1_2_3() { return cCommaKeyword_1_2_3; }
-		
-		//startY=Number
-		public Assignment getStartYAssignment_1_2_4() { return cStartYAssignment_1_2_4; }
-		
-		//Number
-		public RuleCall getStartYNumberParserRuleCall_1_2_4_0() { return cStartYNumberParserRuleCall_1_2_4_0; }
-		
-		//('end' ':' endX=Number ',' endY=Number)?
-		public Group getGroup_1_3() { return cGroup_1_3; }
-		
-		//'end'
-		public Keyword getEndKeyword_1_3_0() { return cEndKeyword_1_3_0; }
-		
-		//':'
-		public Keyword getColonKeyword_1_3_1() { return cColonKeyword_1_3_1; }
-		
-		//endX=Number
-		public Assignment getEndXAssignment_1_3_2() { return cEndXAssignment_1_3_2; }
-		
-		//Number
-		public RuleCall getEndXNumberParserRuleCall_1_3_2_0() { return cEndXNumberParserRuleCall_1_3_2_0; }
-		
-		//','
-		public Keyword getCommaKeyword_1_3_3() { return cCommaKeyword_1_3_3; }
-		
-		//endY=Number
-		public Assignment getEndYAssignment_1_3_4() { return cEndYAssignment_1_3_4; }
-		
-		//Number
-		public RuleCall getEndYNumberParserRuleCall_1_3_4_0() { return cEndYNumberParserRuleCall_1_3_4_0; }
-		
-		//('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
-		public Group getGroup_1_4() { return cGroup_1_4; }
-		
-		//'bends'
-		public Keyword getBendsKeyword_1_4_0() { return cBendsKeyword_1_4_0; }
-		
-		//':'
-		public Keyword getColonKeyword_1_4_1() { return cColonKeyword_1_4_1; }
-		
 		//bendPoints+=ElkBendPoint
-		public Assignment getBendPointsAssignment_1_4_2() { return cBendPointsAssignment_1_4_2; }
+		public Assignment getBendPointsAssignment_1_1_2() { return cBendPointsAssignment_1_1_2; }
 		
 		//ElkBendPoint
-		public RuleCall getBendPointsElkBendPointParserRuleCall_1_4_2_0() { return cBendPointsElkBendPointParserRuleCall_1_4_2_0; }
+		public RuleCall getBendPointsElkBendPointParserRuleCall_1_1_2_0() { return cBendPointsElkBendPointParserRuleCall_1_1_2_0; }
 		
 		//('|' bendPoints+=ElkBendPoint)*
-		public Group getGroup_1_4_3() { return cGroup_1_4_3; }
+		public Group getGroup_1_1_3() { return cGroup_1_1_3; }
 		
 		//'|'
-		public Keyword getVerticalLineKeyword_1_4_3_0() { return cVerticalLineKeyword_1_4_3_0; }
+		public Keyword getVerticalLineKeyword_1_1_3_0() { return cVerticalLineKeyword_1_1_3_0; }
 		
 		//bendPoints+=ElkBendPoint
-		public Assignment getBendPointsAssignment_1_4_3_1() { return cBendPointsAssignment_1_4_3_1; }
+		public Assignment getBendPointsAssignment_1_1_3_1() { return cBendPointsAssignment_1_1_3_1; }
 		
 		//ElkBendPoint
-		public RuleCall getBendPointsElkBendPointParserRuleCall_1_4_3_1_0() { return cBendPointsElkBendPointParserRuleCall_1_4_3_1_0; }
+		public RuleCall getBendPointsElkBendPointParserRuleCall_1_1_3_1_0() { return cBendPointsElkBendPointParserRuleCall_1_1_3_1_0; }
+		
+		//properties+=Property*
+		public Assignment getPropertiesAssignment_1_2() { return cPropertiesAssignment_1_2; }
+		
+		//Property
+		public RuleCall getPropertiesPropertyParserRuleCall_1_2_0() { return cPropertiesPropertyParserRuleCall_1_2_0; }
 	}
 	public class ElkEdgeSectionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.ElkEdgeSection");
@@ -794,59 +810,63 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final CrossReference cOutgoingSectionsElkEdgeSectionCrossReference_2_2_1_0 = (CrossReference)cOutgoingSectionsAssignment_2_2_1.eContents().get(0);
 		private final RuleCall cOutgoingSectionsElkEdgeSectionIDTerminalRuleCall_2_2_1_0_1 = (RuleCall)cOutgoingSectionsElkEdgeSectionCrossReference_2_2_1_0.eContents().get(1);
 		private final Keyword cLeftSquareBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
-		private final UnorderedGroup cUnorderedGroup_4 = (UnorderedGroup)cGroup.eContents().get(4);
-		private final Group cGroup_4_0 = (Group)cUnorderedGroup_4.eContents().get(0);
-		private final Keyword cIncomingKeyword_4_0_0 = (Keyword)cGroup_4_0.eContents().get(0);
-		private final Keyword cColonKeyword_4_0_1 = (Keyword)cGroup_4_0.eContents().get(1);
-		private final Assignment cIncomingShapeAssignment_4_0_2 = (Assignment)cGroup_4_0.eContents().get(2);
-		private final CrossReference cIncomingShapeElkConnectableShapeCrossReference_4_0_2_0 = (CrossReference)cIncomingShapeAssignment_4_0_2.eContents().get(0);
-		private final RuleCall cIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_2_0_1 = (RuleCall)cIncomingShapeElkConnectableShapeCrossReference_4_0_2_0.eContents().get(1);
-		private final Group cGroup_4_1 = (Group)cUnorderedGroup_4.eContents().get(1);
-		private final Keyword cOutgoingKeyword_4_1_0 = (Keyword)cGroup_4_1.eContents().get(0);
+		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
+		private final UnorderedGroup cUnorderedGroup_4_0 = (UnorderedGroup)cGroup_4.eContents().get(0);
+		private final Group cGroup_4_0_0 = (Group)cUnorderedGroup_4_0.eContents().get(0);
+		private final Keyword cIncomingKeyword_4_0_0_0 = (Keyword)cGroup_4_0_0.eContents().get(0);
+		private final Keyword cColonKeyword_4_0_0_1 = (Keyword)cGroup_4_0_0.eContents().get(1);
+		private final Assignment cIncomingShapeAssignment_4_0_0_2 = (Assignment)cGroup_4_0_0.eContents().get(2);
+		private final CrossReference cIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0 = (CrossReference)cIncomingShapeAssignment_4_0_0_2.eContents().get(0);
+		private final RuleCall cIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_0_2_0_1 = (RuleCall)cIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0.eContents().get(1);
+		private final Group cGroup_4_0_1 = (Group)cUnorderedGroup_4_0.eContents().get(1);
+		private final Keyword cOutgoingKeyword_4_0_1_0 = (Keyword)cGroup_4_0_1.eContents().get(0);
+		private final Keyword cColonKeyword_4_0_1_1 = (Keyword)cGroup_4_0_1.eContents().get(1);
+		private final Assignment cOutgoingShapeAssignment_4_0_1_2 = (Assignment)cGroup_4_0_1.eContents().get(2);
+		private final CrossReference cOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0 = (CrossReference)cOutgoingShapeAssignment_4_0_1_2.eContents().get(0);
+		private final RuleCall cOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_1_2_0_1 = (RuleCall)cOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0.eContents().get(1);
+		private final Group cGroup_4_0_2 = (Group)cUnorderedGroup_4_0.eContents().get(2);
+		private final Keyword cStartKeyword_4_0_2_0 = (Keyword)cGroup_4_0_2.eContents().get(0);
+		private final Keyword cColonKeyword_4_0_2_1 = (Keyword)cGroup_4_0_2.eContents().get(1);
+		private final Assignment cStartXAssignment_4_0_2_2 = (Assignment)cGroup_4_0_2.eContents().get(2);
+		private final RuleCall cStartXNumberParserRuleCall_4_0_2_2_0 = (RuleCall)cStartXAssignment_4_0_2_2.eContents().get(0);
+		private final Keyword cCommaKeyword_4_0_2_3 = (Keyword)cGroup_4_0_2.eContents().get(3);
+		private final Assignment cStartYAssignment_4_0_2_4 = (Assignment)cGroup_4_0_2.eContents().get(4);
+		private final RuleCall cStartYNumberParserRuleCall_4_0_2_4_0 = (RuleCall)cStartYAssignment_4_0_2_4.eContents().get(0);
+		private final Group cGroup_4_0_3 = (Group)cUnorderedGroup_4_0.eContents().get(3);
+		private final Keyword cEndKeyword_4_0_3_0 = (Keyword)cGroup_4_0_3.eContents().get(0);
+		private final Keyword cColonKeyword_4_0_3_1 = (Keyword)cGroup_4_0_3.eContents().get(1);
+		private final Assignment cEndXAssignment_4_0_3_2 = (Assignment)cGroup_4_0_3.eContents().get(2);
+		private final RuleCall cEndXNumberParserRuleCall_4_0_3_2_0 = (RuleCall)cEndXAssignment_4_0_3_2.eContents().get(0);
+		private final Keyword cCommaKeyword_4_0_3_3 = (Keyword)cGroup_4_0_3.eContents().get(3);
+		private final Assignment cEndYAssignment_4_0_3_4 = (Assignment)cGroup_4_0_3.eContents().get(4);
+		private final RuleCall cEndYNumberParserRuleCall_4_0_3_4_0 = (RuleCall)cEndYAssignment_4_0_3_4.eContents().get(0);
+		private final Group cGroup_4_1 = (Group)cGroup_4.eContents().get(1);
+		private final Keyword cBendsKeyword_4_1_0 = (Keyword)cGroup_4_1.eContents().get(0);
 		private final Keyword cColonKeyword_4_1_1 = (Keyword)cGroup_4_1.eContents().get(1);
-		private final Assignment cOutgoingShapeAssignment_4_1_2 = (Assignment)cGroup_4_1.eContents().get(2);
-		private final CrossReference cOutgoingShapeElkConnectableShapeCrossReference_4_1_2_0 = (CrossReference)cOutgoingShapeAssignment_4_1_2.eContents().get(0);
-		private final RuleCall cOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_1_2_0_1 = (RuleCall)cOutgoingShapeElkConnectableShapeCrossReference_4_1_2_0.eContents().get(1);
-		private final Group cGroup_4_2 = (Group)cUnorderedGroup_4.eContents().get(2);
-		private final Keyword cStartKeyword_4_2_0 = (Keyword)cGroup_4_2.eContents().get(0);
-		private final Keyword cColonKeyword_4_2_1 = (Keyword)cGroup_4_2.eContents().get(1);
-		private final Assignment cStartXAssignment_4_2_2 = (Assignment)cGroup_4_2.eContents().get(2);
-		private final RuleCall cStartXNumberParserRuleCall_4_2_2_0 = (RuleCall)cStartXAssignment_4_2_2.eContents().get(0);
-		private final Keyword cCommaKeyword_4_2_3 = (Keyword)cGroup_4_2.eContents().get(3);
-		private final Assignment cStartYAssignment_4_2_4 = (Assignment)cGroup_4_2.eContents().get(4);
-		private final RuleCall cStartYNumberParserRuleCall_4_2_4_0 = (RuleCall)cStartYAssignment_4_2_4.eContents().get(0);
-		private final Group cGroup_4_3 = (Group)cUnorderedGroup_4.eContents().get(3);
-		private final Keyword cEndKeyword_4_3_0 = (Keyword)cGroup_4_3.eContents().get(0);
-		private final Keyword cColonKeyword_4_3_1 = (Keyword)cGroup_4_3.eContents().get(1);
-		private final Assignment cEndXAssignment_4_3_2 = (Assignment)cGroup_4_3.eContents().get(2);
-		private final RuleCall cEndXNumberParserRuleCall_4_3_2_0 = (RuleCall)cEndXAssignment_4_3_2.eContents().get(0);
-		private final Keyword cCommaKeyword_4_3_3 = (Keyword)cGroup_4_3.eContents().get(3);
-		private final Assignment cEndYAssignment_4_3_4 = (Assignment)cGroup_4_3.eContents().get(4);
-		private final RuleCall cEndYNumberParserRuleCall_4_3_4_0 = (RuleCall)cEndYAssignment_4_3_4.eContents().get(0);
-		private final Group cGroup_4_4 = (Group)cUnorderedGroup_4.eContents().get(4);
-		private final Keyword cBendsKeyword_4_4_0 = (Keyword)cGroup_4_4.eContents().get(0);
-		private final Keyword cColonKeyword_4_4_1 = (Keyword)cGroup_4_4.eContents().get(1);
-		private final Assignment cBendPointsAssignment_4_4_2 = (Assignment)cGroup_4_4.eContents().get(2);
-		private final RuleCall cBendPointsElkBendPointParserRuleCall_4_4_2_0 = (RuleCall)cBendPointsAssignment_4_4_2.eContents().get(0);
-		private final Group cGroup_4_4_3 = (Group)cGroup_4_4.eContents().get(3);
-		private final Keyword cVerticalLineKeyword_4_4_3_0 = (Keyword)cGroup_4_4_3.eContents().get(0);
-		private final Assignment cBendPointsAssignment_4_4_3_1 = (Assignment)cGroup_4_4_3.eContents().get(1);
-		private final RuleCall cBendPointsElkBendPointParserRuleCall_4_4_3_1_0 = (RuleCall)cBendPointsAssignment_4_4_3_1.eContents().get(0);
+		private final Assignment cBendPointsAssignment_4_1_2 = (Assignment)cGroup_4_1.eContents().get(2);
+		private final RuleCall cBendPointsElkBendPointParserRuleCall_4_1_2_0 = (RuleCall)cBendPointsAssignment_4_1_2.eContents().get(0);
+		private final Group cGroup_4_1_3 = (Group)cGroup_4_1.eContents().get(3);
+		private final Keyword cVerticalLineKeyword_4_1_3_0 = (Keyword)cGroup_4_1_3.eContents().get(0);
+		private final Assignment cBendPointsAssignment_4_1_3_1 = (Assignment)cGroup_4_1_3.eContents().get(1);
+		private final RuleCall cBendPointsElkBendPointParserRuleCall_4_1_3_1_0 = (RuleCall)cBendPointsAssignment_4_1_3_1.eContents().get(0);
+		private final Assignment cPropertiesAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
+		private final RuleCall cPropertiesPropertyParserRuleCall_4_2_0 = (RuleCall)cPropertiesAssignment_4_2.eContents().get(0);
 		private final Keyword cRightSquareBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
 		/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
 		//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
-		//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+		//	((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 		//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 		//	& ('start' ':' startX=Number ',' startY=Number)?
-		//	& ('end' ':' endX=Number ',' endY=Number)?
-		//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?) ']';
+		//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		//	properties+=Property*) ']';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
-		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)? & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?) ']'
+		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		//properties+=Property*) ']'
 		public Group getGroup() { return cGroup; }
 		
 		//'section'
@@ -891,121 +911,133 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//'['
 		public Keyword getLeftSquareBracketKeyword_3() { return cLeftSquareBracketKeyword_3; }
 		
+		//((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
+		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		//properties+=Property*)
+		public Group getGroup_4() { return cGroup_4; }
+		
 		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)? & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
-		public UnorderedGroup getUnorderedGroup_4() { return cUnorderedGroup_4; }
+		//endX=Number ',' endY=Number)?)
+		public UnorderedGroup getUnorderedGroup_4_0() { return cUnorderedGroup_4_0; }
 		
 		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
-		public Group getGroup_4_0() { return cGroup_4_0; }
+		public Group getGroup_4_0_0() { return cGroup_4_0_0; }
 		
 		//'incoming'
-		public Keyword getIncomingKeyword_4_0_0() { return cIncomingKeyword_4_0_0; }
+		public Keyword getIncomingKeyword_4_0_0_0() { return cIncomingKeyword_4_0_0_0; }
 		
 		//':'
-		public Keyword getColonKeyword_4_0_1() { return cColonKeyword_4_0_1; }
+		public Keyword getColonKeyword_4_0_0_1() { return cColonKeyword_4_0_0_1; }
 		
 		//incomingShape=[ElkConnectableShape|QualifiedId]
-		public Assignment getIncomingShapeAssignment_4_0_2() { return cIncomingShapeAssignment_4_0_2; }
+		public Assignment getIncomingShapeAssignment_4_0_0_2() { return cIncomingShapeAssignment_4_0_0_2; }
 		
 		//[ElkConnectableShape|QualifiedId]
-		public CrossReference getIncomingShapeElkConnectableShapeCrossReference_4_0_2_0() { return cIncomingShapeElkConnectableShapeCrossReference_4_0_2_0; }
+		public CrossReference getIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0() { return cIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0; }
 		
 		//QualifiedId
-		public RuleCall getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_2_0_1() { return cIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_2_0_1; }
+		public RuleCall getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_0_2_0_1() { return cIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_0_2_0_1; }
 		
 		//('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
-		public Group getGroup_4_1() { return cGroup_4_1; }
+		public Group getGroup_4_0_1() { return cGroup_4_0_1; }
 		
 		//'outgoing'
-		public Keyword getOutgoingKeyword_4_1_0() { return cOutgoingKeyword_4_1_0; }
+		public Keyword getOutgoingKeyword_4_0_1_0() { return cOutgoingKeyword_4_0_1_0; }
+		
+		//':'
+		public Keyword getColonKeyword_4_0_1_1() { return cColonKeyword_4_0_1_1; }
+		
+		//outgoingShape=[ElkConnectableShape|QualifiedId]
+		public Assignment getOutgoingShapeAssignment_4_0_1_2() { return cOutgoingShapeAssignment_4_0_1_2; }
+		
+		//[ElkConnectableShape|QualifiedId]
+		public CrossReference getOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0() { return cOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0; }
+		
+		//QualifiedId
+		public RuleCall getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_1_2_0_1() { return cOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_1_2_0_1; }
+		
+		//('start' ':' startX=Number ',' startY=Number)?
+		public Group getGroup_4_0_2() { return cGroup_4_0_2; }
+		
+		//'start'
+		public Keyword getStartKeyword_4_0_2_0() { return cStartKeyword_4_0_2_0; }
+		
+		//':'
+		public Keyword getColonKeyword_4_0_2_1() { return cColonKeyword_4_0_2_1; }
+		
+		//startX=Number
+		public Assignment getStartXAssignment_4_0_2_2() { return cStartXAssignment_4_0_2_2; }
+		
+		//Number
+		public RuleCall getStartXNumberParserRuleCall_4_0_2_2_0() { return cStartXNumberParserRuleCall_4_0_2_2_0; }
+		
+		//','
+		public Keyword getCommaKeyword_4_0_2_3() { return cCommaKeyword_4_0_2_3; }
+		
+		//startY=Number
+		public Assignment getStartYAssignment_4_0_2_4() { return cStartYAssignment_4_0_2_4; }
+		
+		//Number
+		public RuleCall getStartYNumberParserRuleCall_4_0_2_4_0() { return cStartYNumberParserRuleCall_4_0_2_4_0; }
+		
+		//('end' ':' endX=Number ',' endY=Number)?
+		public Group getGroup_4_0_3() { return cGroup_4_0_3; }
+		
+		//'end'
+		public Keyword getEndKeyword_4_0_3_0() { return cEndKeyword_4_0_3_0; }
+		
+		//':'
+		public Keyword getColonKeyword_4_0_3_1() { return cColonKeyword_4_0_3_1; }
+		
+		//endX=Number
+		public Assignment getEndXAssignment_4_0_3_2() { return cEndXAssignment_4_0_3_2; }
+		
+		//Number
+		public RuleCall getEndXNumberParserRuleCall_4_0_3_2_0() { return cEndXNumberParserRuleCall_4_0_3_2_0; }
+		
+		//','
+		public Keyword getCommaKeyword_4_0_3_3() { return cCommaKeyword_4_0_3_3; }
+		
+		//endY=Number
+		public Assignment getEndYAssignment_4_0_3_4() { return cEndYAssignment_4_0_3_4; }
+		
+		//Number
+		public RuleCall getEndYNumberParserRuleCall_4_0_3_4_0() { return cEndYNumberParserRuleCall_4_0_3_4_0; }
+		
+		//('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		public Group getGroup_4_1() { return cGroup_4_1; }
+		
+		//'bends'
+		public Keyword getBendsKeyword_4_1_0() { return cBendsKeyword_4_1_0; }
 		
 		//':'
 		public Keyword getColonKeyword_4_1_1() { return cColonKeyword_4_1_1; }
 		
-		//outgoingShape=[ElkConnectableShape|QualifiedId]
-		public Assignment getOutgoingShapeAssignment_4_1_2() { return cOutgoingShapeAssignment_4_1_2; }
-		
-		//[ElkConnectableShape|QualifiedId]
-		public CrossReference getOutgoingShapeElkConnectableShapeCrossReference_4_1_2_0() { return cOutgoingShapeElkConnectableShapeCrossReference_4_1_2_0; }
-		
-		//QualifiedId
-		public RuleCall getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_1_2_0_1() { return cOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_1_2_0_1; }
-		
-		//('start' ':' startX=Number ',' startY=Number)?
-		public Group getGroup_4_2() { return cGroup_4_2; }
-		
-		//'start'
-		public Keyword getStartKeyword_4_2_0() { return cStartKeyword_4_2_0; }
-		
-		//':'
-		public Keyword getColonKeyword_4_2_1() { return cColonKeyword_4_2_1; }
-		
-		//startX=Number
-		public Assignment getStartXAssignment_4_2_2() { return cStartXAssignment_4_2_2; }
-		
-		//Number
-		public RuleCall getStartXNumberParserRuleCall_4_2_2_0() { return cStartXNumberParserRuleCall_4_2_2_0; }
-		
-		//','
-		public Keyword getCommaKeyword_4_2_3() { return cCommaKeyword_4_2_3; }
-		
-		//startY=Number
-		public Assignment getStartYAssignment_4_2_4() { return cStartYAssignment_4_2_4; }
-		
-		//Number
-		public RuleCall getStartYNumberParserRuleCall_4_2_4_0() { return cStartYNumberParserRuleCall_4_2_4_0; }
-		
-		//('end' ':' endX=Number ',' endY=Number)?
-		public Group getGroup_4_3() { return cGroup_4_3; }
-		
-		//'end'
-		public Keyword getEndKeyword_4_3_0() { return cEndKeyword_4_3_0; }
-		
-		//':'
-		public Keyword getColonKeyword_4_3_1() { return cColonKeyword_4_3_1; }
-		
-		//endX=Number
-		public Assignment getEndXAssignment_4_3_2() { return cEndXAssignment_4_3_2; }
-		
-		//Number
-		public RuleCall getEndXNumberParserRuleCall_4_3_2_0() { return cEndXNumberParserRuleCall_4_3_2_0; }
-		
-		//','
-		public Keyword getCommaKeyword_4_3_3() { return cCommaKeyword_4_3_3; }
-		
-		//endY=Number
-		public Assignment getEndYAssignment_4_3_4() { return cEndYAssignment_4_3_4; }
-		
-		//Number
-		public RuleCall getEndYNumberParserRuleCall_4_3_4_0() { return cEndYNumberParserRuleCall_4_3_4_0; }
-		
-		//('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
-		public Group getGroup_4_4() { return cGroup_4_4; }
-		
-		//'bends'
-		public Keyword getBendsKeyword_4_4_0() { return cBendsKeyword_4_4_0; }
-		
-		//':'
-		public Keyword getColonKeyword_4_4_1() { return cColonKeyword_4_4_1; }
-		
 		//bendPoints+=ElkBendPoint
-		public Assignment getBendPointsAssignment_4_4_2() { return cBendPointsAssignment_4_4_2; }
+		public Assignment getBendPointsAssignment_4_1_2() { return cBendPointsAssignment_4_1_2; }
 		
 		//ElkBendPoint
-		public RuleCall getBendPointsElkBendPointParserRuleCall_4_4_2_0() { return cBendPointsElkBendPointParserRuleCall_4_4_2_0; }
+		public RuleCall getBendPointsElkBendPointParserRuleCall_4_1_2_0() { return cBendPointsElkBendPointParserRuleCall_4_1_2_0; }
 		
 		//('|' bendPoints+=ElkBendPoint)*
-		public Group getGroup_4_4_3() { return cGroup_4_4_3; }
+		public Group getGroup_4_1_3() { return cGroup_4_1_3; }
 		
 		//'|'
-		public Keyword getVerticalLineKeyword_4_4_3_0() { return cVerticalLineKeyword_4_4_3_0; }
+		public Keyword getVerticalLineKeyword_4_1_3_0() { return cVerticalLineKeyword_4_1_3_0; }
 		
 		//bendPoints+=ElkBendPoint
-		public Assignment getBendPointsAssignment_4_4_3_1() { return cBendPointsAssignment_4_4_3_1; }
+		public Assignment getBendPointsAssignment_4_1_3_1() { return cBendPointsAssignment_4_1_3_1; }
 		
 		//ElkBendPoint
-		public RuleCall getBendPointsElkBendPointParserRuleCall_4_4_3_1_0() { return cBendPointsElkBendPointParserRuleCall_4_4_3_1_0; }
+		public RuleCall getBendPointsElkBendPointParserRuleCall_4_1_3_1_0() { return cBendPointsElkBendPointParserRuleCall_4_1_3_1_0; }
+		
+		//properties+=Property*
+		public Assignment getPropertiesAssignment_4_2() { return cPropertiesAssignment_4_2; }
+		
+		//Property
+		public RuleCall getPropertiesPropertyParserRuleCall_4_2_0() { return cPropertiesPropertyParserRuleCall_4_2_0; }
 		
 		//']'
 		public Keyword getRightSquareBracketKeyword_5() { return cRightSquareBracketKeyword_5; }
@@ -1316,7 +1348,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//RootNode ElkNode:
 	//	{ElkNode} ('graph' identifier=ID)?
-	//	properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	public RootNodeElements getRootNodeAccess() {
 		return pRootNode;
 	}
@@ -1328,7 +1360,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	//ElkNode:
 	//	'node' identifier=ID ('{'
 	//	ShapeLayout?
-	//	properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	//	'}')?;
 	public ElkNodeElements getElkNodeAccess() {
 		return pElkNode;
@@ -1404,11 +1436,11 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ElkSingleEdgeSection ElkEdgeSection:
-	//	{ElkEdgeSection} (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	{ElkEdgeSection} ((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('start' ':' startX=Number ',' startY=Number)?
-	//	& ('end' ':' endX=Number ',' endY=Number)?
-	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
+	//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+	//	properties+=Property*)
 	public ElkSingleEdgeSectionElements getElkSingleEdgeSectionAccess() {
 		return pElkSingleEdgeSection;
 	}
@@ -1419,11 +1451,11 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	
 	/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
 	//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
-	//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('start' ':' startX=Number ',' startY=Number)?
-	//	& ('end' ':' endX=Number ',' endY=Number)?
-	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?) ']';
+	//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+	//	properties+=Property*) ']';
 	public ElkEdgeSectionElements getElkEdgeSectionAccess() {
 		return pElkEdgeSection;
 	}

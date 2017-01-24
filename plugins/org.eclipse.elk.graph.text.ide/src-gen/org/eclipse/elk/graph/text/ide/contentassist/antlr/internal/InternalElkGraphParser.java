@@ -1421,31 +1421,31 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__RootNode__Alternatives_3"
-    // InternalElkGraph.g:498:1: rule__RootNode__Alternatives_3 : ( ( ( rule__RootNode__ChildrenAssignment_3_0 ) ) | ( ( rule__RootNode__ContainedEdgesAssignment_3_1 ) ) | ( ( rule__RootNode__PortsAssignment_3_2 ) ) | ( ( rule__RootNode__LabelsAssignment_3_3 ) ) );
+    // InternalElkGraph.g:498:1: rule__RootNode__Alternatives_3 : ( ( ( rule__RootNode__LabelsAssignment_3_0 ) ) | ( ( rule__RootNode__PortsAssignment_3_1 ) ) | ( ( rule__RootNode__ChildrenAssignment_3_2 ) ) | ( ( rule__RootNode__ContainedEdgesAssignment_3_3 ) ) );
     public final void rule__RootNode__Alternatives_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:502:1: ( ( ( rule__RootNode__ChildrenAssignment_3_0 ) ) | ( ( rule__RootNode__ContainedEdgesAssignment_3_1 ) ) | ( ( rule__RootNode__PortsAssignment_3_2 ) ) | ( ( rule__RootNode__LabelsAssignment_3_3 ) ) )
+            // InternalElkGraph.g:502:1: ( ( ( rule__RootNode__LabelsAssignment_3_0 ) ) | ( ( rule__RootNode__PortsAssignment_3_1 ) ) | ( ( rule__RootNode__ChildrenAssignment_3_2 ) ) | ( ( rule__RootNode__ContainedEdgesAssignment_3_3 ) ) )
             int alt1=4;
             switch ( input.LA(1) ) {
-            case 16:
+            case 19:
                 {
                 alt1=1;
                 }
                 break;
-            case 28:
+            case 21:
                 {
                 alt1=2;
                 }
                 break;
-            case 21:
+            case 16:
                 {
                 alt1=3;
                 }
                 break;
-            case 19:
+            case 28:
                 {
                 alt1=4;
                 }
@@ -1459,24 +1459,24 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
             switch (alt1) {
                 case 1 :
-                    // InternalElkGraph.g:503:2: ( ( rule__RootNode__ChildrenAssignment_3_0 ) )
+                    // InternalElkGraph.g:503:2: ( ( rule__RootNode__LabelsAssignment_3_0 ) )
                     {
-                    // InternalElkGraph.g:503:2: ( ( rule__RootNode__ChildrenAssignment_3_0 ) )
-                    // InternalElkGraph.g:504:3: ( rule__RootNode__ChildrenAssignment_3_0 )
+                    // InternalElkGraph.g:503:2: ( ( rule__RootNode__LabelsAssignment_3_0 ) )
+                    // InternalElkGraph.g:504:3: ( rule__RootNode__LabelsAssignment_3_0 )
                     {
-                     before(grammarAccess.getRootNodeAccess().getChildrenAssignment_3_0()); 
-                    // InternalElkGraph.g:505:3: ( rule__RootNode__ChildrenAssignment_3_0 )
-                    // InternalElkGraph.g:505:4: rule__RootNode__ChildrenAssignment_3_0
+                     before(grammarAccess.getRootNodeAccess().getLabelsAssignment_3_0()); 
+                    // InternalElkGraph.g:505:3: ( rule__RootNode__LabelsAssignment_3_0 )
+                    // InternalElkGraph.g:505:4: rule__RootNode__LabelsAssignment_3_0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__RootNode__ChildrenAssignment_3_0();
+                    rule__RootNode__LabelsAssignment_3_0();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getRootNodeAccess().getChildrenAssignment_3_0()); 
+                     after(grammarAccess.getRootNodeAccess().getLabelsAssignment_3_0()); 
 
                     }
 
@@ -1484,24 +1484,24 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 2 :
-                    // InternalElkGraph.g:509:2: ( ( rule__RootNode__ContainedEdgesAssignment_3_1 ) )
+                    // InternalElkGraph.g:509:2: ( ( rule__RootNode__PortsAssignment_3_1 ) )
                     {
-                    // InternalElkGraph.g:509:2: ( ( rule__RootNode__ContainedEdgesAssignment_3_1 ) )
-                    // InternalElkGraph.g:510:3: ( rule__RootNode__ContainedEdgesAssignment_3_1 )
+                    // InternalElkGraph.g:509:2: ( ( rule__RootNode__PortsAssignment_3_1 ) )
+                    // InternalElkGraph.g:510:3: ( rule__RootNode__PortsAssignment_3_1 )
                     {
-                     before(grammarAccess.getRootNodeAccess().getContainedEdgesAssignment_3_1()); 
-                    // InternalElkGraph.g:511:3: ( rule__RootNode__ContainedEdgesAssignment_3_1 )
-                    // InternalElkGraph.g:511:4: rule__RootNode__ContainedEdgesAssignment_3_1
+                     before(grammarAccess.getRootNodeAccess().getPortsAssignment_3_1()); 
+                    // InternalElkGraph.g:511:3: ( rule__RootNode__PortsAssignment_3_1 )
+                    // InternalElkGraph.g:511:4: rule__RootNode__PortsAssignment_3_1
                     {
                     pushFollow(FOLLOW_2);
-                    rule__RootNode__ContainedEdgesAssignment_3_1();
+                    rule__RootNode__PortsAssignment_3_1();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getRootNodeAccess().getContainedEdgesAssignment_3_1()); 
+                     after(grammarAccess.getRootNodeAccess().getPortsAssignment_3_1()); 
 
                     }
 
@@ -1509,24 +1509,24 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 3 :
-                    // InternalElkGraph.g:515:2: ( ( rule__RootNode__PortsAssignment_3_2 ) )
+                    // InternalElkGraph.g:515:2: ( ( rule__RootNode__ChildrenAssignment_3_2 ) )
                     {
-                    // InternalElkGraph.g:515:2: ( ( rule__RootNode__PortsAssignment_3_2 ) )
-                    // InternalElkGraph.g:516:3: ( rule__RootNode__PortsAssignment_3_2 )
+                    // InternalElkGraph.g:515:2: ( ( rule__RootNode__ChildrenAssignment_3_2 ) )
+                    // InternalElkGraph.g:516:3: ( rule__RootNode__ChildrenAssignment_3_2 )
                     {
-                     before(grammarAccess.getRootNodeAccess().getPortsAssignment_3_2()); 
-                    // InternalElkGraph.g:517:3: ( rule__RootNode__PortsAssignment_3_2 )
-                    // InternalElkGraph.g:517:4: rule__RootNode__PortsAssignment_3_2
+                     before(grammarAccess.getRootNodeAccess().getChildrenAssignment_3_2()); 
+                    // InternalElkGraph.g:517:3: ( rule__RootNode__ChildrenAssignment_3_2 )
+                    // InternalElkGraph.g:517:4: rule__RootNode__ChildrenAssignment_3_2
                     {
                     pushFollow(FOLLOW_2);
-                    rule__RootNode__PortsAssignment_3_2();
+                    rule__RootNode__ChildrenAssignment_3_2();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getRootNodeAccess().getPortsAssignment_3_2()); 
+                     after(grammarAccess.getRootNodeAccess().getChildrenAssignment_3_2()); 
 
                     }
 
@@ -1534,24 +1534,24 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 4 :
-                    // InternalElkGraph.g:521:2: ( ( rule__RootNode__LabelsAssignment_3_3 ) )
+                    // InternalElkGraph.g:521:2: ( ( rule__RootNode__ContainedEdgesAssignment_3_3 ) )
                     {
-                    // InternalElkGraph.g:521:2: ( ( rule__RootNode__LabelsAssignment_3_3 ) )
-                    // InternalElkGraph.g:522:3: ( rule__RootNode__LabelsAssignment_3_3 )
+                    // InternalElkGraph.g:521:2: ( ( rule__RootNode__ContainedEdgesAssignment_3_3 ) )
+                    // InternalElkGraph.g:522:3: ( rule__RootNode__ContainedEdgesAssignment_3_3 )
                     {
-                     before(grammarAccess.getRootNodeAccess().getLabelsAssignment_3_3()); 
-                    // InternalElkGraph.g:523:3: ( rule__RootNode__LabelsAssignment_3_3 )
-                    // InternalElkGraph.g:523:4: rule__RootNode__LabelsAssignment_3_3
+                     before(grammarAccess.getRootNodeAccess().getContainedEdgesAssignment_3_3()); 
+                    // InternalElkGraph.g:523:3: ( rule__RootNode__ContainedEdgesAssignment_3_3 )
+                    // InternalElkGraph.g:523:4: rule__RootNode__ContainedEdgesAssignment_3_3
                     {
                     pushFollow(FOLLOW_2);
-                    rule__RootNode__LabelsAssignment_3_3();
+                    rule__RootNode__ContainedEdgesAssignment_3_3();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getRootNodeAccess().getLabelsAssignment_3_3()); 
+                     after(grammarAccess.getRootNodeAccess().getContainedEdgesAssignment_3_3()); 
 
                     }
 
@@ -1576,31 +1576,31 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkNode__Alternatives_2_3"
-    // InternalElkGraph.g:531:1: rule__ElkNode__Alternatives_2_3 : ( ( ( rule__ElkNode__ChildrenAssignment_2_3_0 ) ) | ( ( rule__ElkNode__ContainedEdgesAssignment_2_3_1 ) ) | ( ( rule__ElkNode__PortsAssignment_2_3_2 ) ) | ( ( rule__ElkNode__LabelsAssignment_2_3_3 ) ) );
+    // InternalElkGraph.g:531:1: rule__ElkNode__Alternatives_2_3 : ( ( ( rule__ElkNode__LabelsAssignment_2_3_0 ) ) | ( ( rule__ElkNode__PortsAssignment_2_3_1 ) ) | ( ( rule__ElkNode__ChildrenAssignment_2_3_2 ) ) | ( ( rule__ElkNode__ContainedEdgesAssignment_2_3_3 ) ) );
     public final void rule__ElkNode__Alternatives_2_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:535:1: ( ( ( rule__ElkNode__ChildrenAssignment_2_3_0 ) ) | ( ( rule__ElkNode__ContainedEdgesAssignment_2_3_1 ) ) | ( ( rule__ElkNode__PortsAssignment_2_3_2 ) ) | ( ( rule__ElkNode__LabelsAssignment_2_3_3 ) ) )
+            // InternalElkGraph.g:535:1: ( ( ( rule__ElkNode__LabelsAssignment_2_3_0 ) ) | ( ( rule__ElkNode__PortsAssignment_2_3_1 ) ) | ( ( rule__ElkNode__ChildrenAssignment_2_3_2 ) ) | ( ( rule__ElkNode__ContainedEdgesAssignment_2_3_3 ) ) )
             int alt2=4;
             switch ( input.LA(1) ) {
-            case 16:
+            case 19:
                 {
                 alt2=1;
                 }
                 break;
-            case 28:
+            case 21:
                 {
                 alt2=2;
                 }
                 break;
-            case 21:
+            case 16:
                 {
                 alt2=3;
                 }
                 break;
-            case 19:
+            case 28:
                 {
                 alt2=4;
                 }
@@ -1614,24 +1614,24 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
             switch (alt2) {
                 case 1 :
-                    // InternalElkGraph.g:536:2: ( ( rule__ElkNode__ChildrenAssignment_2_3_0 ) )
+                    // InternalElkGraph.g:536:2: ( ( rule__ElkNode__LabelsAssignment_2_3_0 ) )
                     {
-                    // InternalElkGraph.g:536:2: ( ( rule__ElkNode__ChildrenAssignment_2_3_0 ) )
-                    // InternalElkGraph.g:537:3: ( rule__ElkNode__ChildrenAssignment_2_3_0 )
+                    // InternalElkGraph.g:536:2: ( ( rule__ElkNode__LabelsAssignment_2_3_0 ) )
+                    // InternalElkGraph.g:537:3: ( rule__ElkNode__LabelsAssignment_2_3_0 )
                     {
-                     before(grammarAccess.getElkNodeAccess().getChildrenAssignment_2_3_0()); 
-                    // InternalElkGraph.g:538:3: ( rule__ElkNode__ChildrenAssignment_2_3_0 )
-                    // InternalElkGraph.g:538:4: rule__ElkNode__ChildrenAssignment_2_3_0
+                     before(grammarAccess.getElkNodeAccess().getLabelsAssignment_2_3_0()); 
+                    // InternalElkGraph.g:538:3: ( rule__ElkNode__LabelsAssignment_2_3_0 )
+                    // InternalElkGraph.g:538:4: rule__ElkNode__LabelsAssignment_2_3_0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkNode__ChildrenAssignment_2_3_0();
+                    rule__ElkNode__LabelsAssignment_2_3_0();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getElkNodeAccess().getChildrenAssignment_2_3_0()); 
+                     after(grammarAccess.getElkNodeAccess().getLabelsAssignment_2_3_0()); 
 
                     }
 
@@ -1639,24 +1639,24 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 2 :
-                    // InternalElkGraph.g:542:2: ( ( rule__ElkNode__ContainedEdgesAssignment_2_3_1 ) )
+                    // InternalElkGraph.g:542:2: ( ( rule__ElkNode__PortsAssignment_2_3_1 ) )
                     {
-                    // InternalElkGraph.g:542:2: ( ( rule__ElkNode__ContainedEdgesAssignment_2_3_1 ) )
-                    // InternalElkGraph.g:543:3: ( rule__ElkNode__ContainedEdgesAssignment_2_3_1 )
+                    // InternalElkGraph.g:542:2: ( ( rule__ElkNode__PortsAssignment_2_3_1 ) )
+                    // InternalElkGraph.g:543:3: ( rule__ElkNode__PortsAssignment_2_3_1 )
                     {
-                     before(grammarAccess.getElkNodeAccess().getContainedEdgesAssignment_2_3_1()); 
-                    // InternalElkGraph.g:544:3: ( rule__ElkNode__ContainedEdgesAssignment_2_3_1 )
-                    // InternalElkGraph.g:544:4: rule__ElkNode__ContainedEdgesAssignment_2_3_1
+                     before(grammarAccess.getElkNodeAccess().getPortsAssignment_2_3_1()); 
+                    // InternalElkGraph.g:544:3: ( rule__ElkNode__PortsAssignment_2_3_1 )
+                    // InternalElkGraph.g:544:4: rule__ElkNode__PortsAssignment_2_3_1
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkNode__ContainedEdgesAssignment_2_3_1();
+                    rule__ElkNode__PortsAssignment_2_3_1();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getElkNodeAccess().getContainedEdgesAssignment_2_3_1()); 
+                     after(grammarAccess.getElkNodeAccess().getPortsAssignment_2_3_1()); 
 
                     }
 
@@ -1664,24 +1664,24 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 3 :
-                    // InternalElkGraph.g:548:2: ( ( rule__ElkNode__PortsAssignment_2_3_2 ) )
+                    // InternalElkGraph.g:548:2: ( ( rule__ElkNode__ChildrenAssignment_2_3_2 ) )
                     {
-                    // InternalElkGraph.g:548:2: ( ( rule__ElkNode__PortsAssignment_2_3_2 ) )
-                    // InternalElkGraph.g:549:3: ( rule__ElkNode__PortsAssignment_2_3_2 )
+                    // InternalElkGraph.g:548:2: ( ( rule__ElkNode__ChildrenAssignment_2_3_2 ) )
+                    // InternalElkGraph.g:549:3: ( rule__ElkNode__ChildrenAssignment_2_3_2 )
                     {
-                     before(grammarAccess.getElkNodeAccess().getPortsAssignment_2_3_2()); 
-                    // InternalElkGraph.g:550:3: ( rule__ElkNode__PortsAssignment_2_3_2 )
-                    // InternalElkGraph.g:550:4: rule__ElkNode__PortsAssignment_2_3_2
+                     before(grammarAccess.getElkNodeAccess().getChildrenAssignment_2_3_2()); 
+                    // InternalElkGraph.g:550:3: ( rule__ElkNode__ChildrenAssignment_2_3_2 )
+                    // InternalElkGraph.g:550:4: rule__ElkNode__ChildrenAssignment_2_3_2
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkNode__PortsAssignment_2_3_2();
+                    rule__ElkNode__ChildrenAssignment_2_3_2();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getElkNodeAccess().getPortsAssignment_2_3_2()); 
+                     after(grammarAccess.getElkNodeAccess().getChildrenAssignment_2_3_2()); 
 
                     }
 
@@ -1689,24 +1689,24 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 4 :
-                    // InternalElkGraph.g:554:2: ( ( rule__ElkNode__LabelsAssignment_2_3_3 ) )
+                    // InternalElkGraph.g:554:2: ( ( rule__ElkNode__ContainedEdgesAssignment_2_3_3 ) )
                     {
-                    // InternalElkGraph.g:554:2: ( ( rule__ElkNode__LabelsAssignment_2_3_3 ) )
-                    // InternalElkGraph.g:555:3: ( rule__ElkNode__LabelsAssignment_2_3_3 )
+                    // InternalElkGraph.g:554:2: ( ( rule__ElkNode__ContainedEdgesAssignment_2_3_3 ) )
+                    // InternalElkGraph.g:555:3: ( rule__ElkNode__ContainedEdgesAssignment_2_3_3 )
                     {
-                     before(grammarAccess.getElkNodeAccess().getLabelsAssignment_2_3_3()); 
-                    // InternalElkGraph.g:556:3: ( rule__ElkNode__LabelsAssignment_2_3_3 )
-                    // InternalElkGraph.g:556:4: rule__ElkNode__LabelsAssignment_2_3_3
+                     before(grammarAccess.getElkNodeAccess().getContainedEdgesAssignment_2_3_3()); 
+                    // InternalElkGraph.g:556:3: ( rule__ElkNode__ContainedEdgesAssignment_2_3_3 )
+                    // InternalElkGraph.g:556:4: rule__ElkNode__ContainedEdgesAssignment_2_3_3
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkNode__LabelsAssignment_2_3_3();
+                    rule__ElkNode__ContainedEdgesAssignment_2_3_3();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getElkNodeAccess().getLabelsAssignment_2_3_3()); 
+                     after(grammarAccess.getElkNodeAccess().getContainedEdgesAssignment_2_3_3()); 
 
                     }
 
@@ -1741,7 +1741,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             int alt4=2;
             int LA4_0 = input.LA(1);
 
-            if ( (LA4_0==EOF||LA4_0==24||(LA4_0>=30 && LA4_0<=34)) ) {
+            if ( (LA4_0==EOF||LA4_0==RULE_ID||LA4_0==24||(LA4_0>=30 && LA4_0<=34)) ) {
                 alt4=1;
             }
             else if ( (LA4_0==36) ) {
@@ -3971,7 +3971,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1232:1: ( rule__ElkLabel__Group_3__0__Impl rule__ElkLabel__Group_3__1 )
             // InternalElkGraph.g:1233:2: rule__ElkLabel__Group_3__0__Impl rule__ElkLabel__Group_3__1
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkLabel__Group_3__0__Impl();
 
             state._fsp--;
@@ -4046,7 +4046,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1259:1: ( rule__ElkLabel__Group_3__1__Impl rule__ElkLabel__Group_3__2 )
             // InternalElkGraph.g:1260:2: rule__ElkLabel__Group_3__1__Impl rule__ElkLabel__Group_3__2
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkLabel__Group_3__1__Impl();
 
             state._fsp--;
@@ -4142,7 +4142,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1286:1: ( rule__ElkLabel__Group_3__2__Impl rule__ElkLabel__Group_3__3 )
             // InternalElkGraph.g:1287:2: rule__ElkLabel__Group_3__2__Impl rule__ElkLabel__Group_3__3
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkLabel__Group_3__2__Impl();
 
             state._fsp--;
@@ -4245,7 +4245,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1313:1: ( rule__ElkLabel__Group_3__3__Impl rule__ElkLabel__Group_3__4 )
             // InternalElkGraph.g:1314:2: rule__ElkLabel__Group_3__3__Impl rule__ElkLabel__Group_3__4
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkLabel__Group_3__3__Impl();
 
             state._fsp--;
@@ -4302,7 +4302,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	case 1 :
             	    // InternalElkGraph.g:1328:3: rule__ElkLabel__LabelsAssignment_3_3
             	    {
-            	    pushFollow(FOLLOW_6);
+            	    pushFollow(FOLLOW_13);
             	    rule__ElkLabel__LabelsAssignment_3_3();
 
             	    state._fsp--;
@@ -4669,7 +4669,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1448:1: ( rule__ElkPort__Group_2__0__Impl rule__ElkPort__Group_2__1 )
             // InternalElkGraph.g:1449:2: rule__ElkPort__Group_2__0__Impl rule__ElkPort__Group_2__1
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkPort__Group_2__0__Impl();
 
             state._fsp--;
@@ -4744,7 +4744,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1475:1: ( rule__ElkPort__Group_2__1__Impl rule__ElkPort__Group_2__2 )
             // InternalElkGraph.g:1476:2: rule__ElkPort__Group_2__1__Impl rule__ElkPort__Group_2__2
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkPort__Group_2__1__Impl();
 
             state._fsp--;
@@ -4840,7 +4840,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1502:1: ( rule__ElkPort__Group_2__2__Impl rule__ElkPort__Group_2__3 )
             // InternalElkGraph.g:1503:2: rule__ElkPort__Group_2__2__Impl rule__ElkPort__Group_2__3
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkPort__Group_2__2__Impl();
 
             state._fsp--;
@@ -4943,7 +4943,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1529:1: ( rule__ElkPort__Group_2__3__Impl rule__ElkPort__Group_2__4 )
             // InternalElkGraph.g:1530:2: rule__ElkPort__Group_2__3__Impl rule__ElkPort__Group_2__4
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkPort__Group_2__3__Impl();
 
             state._fsp--;
@@ -5000,7 +5000,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	case 1 :
             	    // InternalElkGraph.g:1544:3: rule__ElkPort__LabelsAssignment_2_3
             	    {
-            	    pushFollow(FOLLOW_6);
+            	    pushFollow(FOLLOW_13);
             	    rule__ElkPort__LabelsAssignment_2_3();
 
             	    state._fsp--;
@@ -5116,7 +5116,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1583:1: ( rule__ShapeLayout__Group__0__Impl rule__ShapeLayout__Group__1 )
             // InternalElkGraph.g:1584:2: rule__ShapeLayout__Group__0__Impl rule__ShapeLayout__Group__1
             {
-            pushFollow(FOLLOW_12);
+            pushFollow(FOLLOW_14);
             rule__ShapeLayout__Group__0__Impl();
 
             state._fsp--;
@@ -5191,7 +5191,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1610:1: ( rule__ShapeLayout__Group__1__Impl rule__ShapeLayout__Group__2 )
             // InternalElkGraph.g:1611:2: rule__ShapeLayout__Group__1__Impl rule__ShapeLayout__Group__2
             {
-            pushFollow(FOLLOW_13);
+            pushFollow(FOLLOW_15);
             rule__ShapeLayout__Group__1__Impl();
 
             state._fsp--;
@@ -5266,7 +5266,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1637:1: ( rule__ShapeLayout__Group__2__Impl rule__ShapeLayout__Group__3 )
             // InternalElkGraph.g:1638:2: rule__ShapeLayout__Group__2__Impl rule__ShapeLayout__Group__3
             {
-            pushFollow(FOLLOW_14);
+            pushFollow(FOLLOW_16);
             rule__ShapeLayout__Group__2__Impl();
 
             state._fsp--;
@@ -5496,7 +5496,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1718:1: ( rule__ShapeLayout__Group_2_0__1__Impl rule__ShapeLayout__Group_2_0__2 )
             // InternalElkGraph.g:1719:2: rule__ShapeLayout__Group_2_0__1__Impl rule__ShapeLayout__Group_2_0__2
             {
-            pushFollow(FOLLOW_15);
+            pushFollow(FOLLOW_17);
             rule__ShapeLayout__Group_2_0__1__Impl();
 
             state._fsp--;
@@ -5571,7 +5571,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1745:1: ( rule__ShapeLayout__Group_2_0__2__Impl rule__ShapeLayout__Group_2_0__3 )
             // InternalElkGraph.g:1746:2: rule__ShapeLayout__Group_2_0__2__Impl rule__ShapeLayout__Group_2_0__3
             {
-            pushFollow(FOLLOW_16);
+            pushFollow(FOLLOW_18);
             rule__ShapeLayout__Group_2_0__2__Impl();
 
             state._fsp--;
@@ -5656,7 +5656,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1772:1: ( rule__ShapeLayout__Group_2_0__3__Impl rule__ShapeLayout__Group_2_0__4 )
             // InternalElkGraph.g:1773:2: rule__ShapeLayout__Group_2_0__3__Impl rule__ShapeLayout__Group_2_0__4
             {
-            pushFollow(FOLLOW_15);
+            pushFollow(FOLLOW_17);
             rule__ShapeLayout__Group_2_0__3__Impl();
 
             state._fsp--;
@@ -5886,7 +5886,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1853:1: ( rule__ShapeLayout__Group_2_1__1__Impl rule__ShapeLayout__Group_2_1__2 )
             // InternalElkGraph.g:1854:2: rule__ShapeLayout__Group_2_1__1__Impl rule__ShapeLayout__Group_2_1__2
             {
-            pushFollow(FOLLOW_15);
+            pushFollow(FOLLOW_17);
             rule__ShapeLayout__Group_2_1__1__Impl();
 
             state._fsp--;
@@ -5961,7 +5961,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1880:1: ( rule__ShapeLayout__Group_2_1__2__Impl rule__ShapeLayout__Group_2_1__3 )
             // InternalElkGraph.g:1881:2: rule__ShapeLayout__Group_2_1__2__Impl rule__ShapeLayout__Group_2_1__3
             {
-            pushFollow(FOLLOW_16);
+            pushFollow(FOLLOW_18);
             rule__ShapeLayout__Group_2_1__2__Impl();
 
             state._fsp--;
@@ -6046,7 +6046,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:1907:1: ( rule__ShapeLayout__Group_2_1__3__Impl rule__ShapeLayout__Group_2_1__4 )
             // InternalElkGraph.g:1908:2: rule__ShapeLayout__Group_2_1__3__Impl rule__ShapeLayout__Group_2_1__4
             {
-            pushFollow(FOLLOW_15);
+            pushFollow(FOLLOW_17);
             rule__ShapeLayout__Group_2_1__3__Impl();
 
             state._fsp--;
@@ -6376,7 +6376,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2015:1: ( rule__ElkEdge__Group__2__Impl rule__ElkEdge__Group__3 )
             // InternalElkGraph.g:2016:2: rule__ElkEdge__Group__2__Impl rule__ElkEdge__Group__3
             {
-            pushFollow(FOLLOW_17);
+            pushFollow(FOLLOW_19);
             rule__ElkEdge__Group__2__Impl();
 
             state._fsp--;
@@ -6461,7 +6461,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2042:1: ( rule__ElkEdge__Group__3__Impl rule__ElkEdge__Group__4 )
             // InternalElkGraph.g:2043:2: rule__ElkEdge__Group__3__Impl rule__ElkEdge__Group__4
             {
-            pushFollow(FOLLOW_17);
+            pushFollow(FOLLOW_19);
             rule__ElkEdge__Group__3__Impl();
 
             state._fsp--;
@@ -6518,7 +6518,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	case 1 :
             	    // InternalElkGraph.g:2057:3: rule__ElkEdge__Group_3__0
             	    {
-            	    pushFollow(FOLLOW_18);
+            	    pushFollow(FOLLOW_20);
             	    rule__ElkEdge__Group_3__0();
 
             	    state._fsp--;
@@ -6639,7 +6639,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2096:1: ( rule__ElkEdge__Group__5__Impl rule__ElkEdge__Group__6 )
             // InternalElkGraph.g:2097:2: rule__ElkEdge__Group__5__Impl rule__ElkEdge__Group__6
             {
-            pushFollow(FOLLOW_19);
+            pushFollow(FOLLOW_21);
             rule__ElkEdge__Group__5__Impl();
 
             state._fsp--;
@@ -6724,7 +6724,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2123:1: ( rule__ElkEdge__Group__6__Impl rule__ElkEdge__Group__7 )
             // InternalElkGraph.g:2124:2: rule__ElkEdge__Group__6__Impl rule__ElkEdge__Group__7
             {
-            pushFollow(FOLLOW_19);
+            pushFollow(FOLLOW_21);
             rule__ElkEdge__Group__6__Impl();
 
             state._fsp--;
@@ -6781,7 +6781,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	case 1 :
             	    // InternalElkGraph.g:2138:3: rule__ElkEdge__Group_6__0
             	    {
-            	    pushFollow(FOLLOW_18);
+            	    pushFollow(FOLLOW_20);
             	    rule__ElkEdge__Group_6__0();
 
             	    state._fsp--;
@@ -7383,7 +7383,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2339:1: ( rule__ElkEdge__Group_7__0__Impl rule__ElkEdge__Group_7__1 )
             // InternalElkGraph.g:2340:2: rule__ElkEdge__Group_7__0__Impl rule__ElkEdge__Group_7__1
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkEdge__Group_7__0__Impl();
 
             state._fsp--;
@@ -7458,7 +7458,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2366:1: ( rule__ElkEdge__Group_7__1__Impl rule__ElkEdge__Group_7__2 )
             // InternalElkGraph.g:2367:2: rule__ElkEdge__Group_7__1__Impl rule__ElkEdge__Group_7__2
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkEdge__Group_7__1__Impl();
 
             state._fsp--;
@@ -7554,7 +7554,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2393:1: ( rule__ElkEdge__Group_7__2__Impl rule__ElkEdge__Group_7__3 )
             // InternalElkGraph.g:2394:2: rule__ElkEdge__Group_7__2__Impl rule__ElkEdge__Group_7__3
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkEdge__Group_7__2__Impl();
 
             state._fsp--;
@@ -7657,7 +7657,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2420:1: ( rule__ElkEdge__Group_7__3__Impl rule__ElkEdge__Group_7__4 )
             // InternalElkGraph.g:2421:2: rule__ElkEdge__Group_7__3__Impl rule__ElkEdge__Group_7__4
             {
-            pushFollow(FOLLOW_9);
+            pushFollow(FOLLOW_12);
             rule__ElkEdge__Group_7__3__Impl();
 
             state._fsp--;
@@ -7714,7 +7714,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	case 1 :
             	    // InternalElkGraph.g:2435:3: rule__ElkEdge__LabelsAssignment_7_3
             	    {
-            	    pushFollow(FOLLOW_6);
+            	    pushFollow(FOLLOW_13);
             	    rule__ElkEdge__LabelsAssignment_7_3();
 
             	    state._fsp--;
@@ -7830,7 +7830,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2474:1: ( rule__EdgeLayout__Group__0__Impl rule__EdgeLayout__Group__1 )
             // InternalElkGraph.g:2475:2: rule__EdgeLayout__Group__0__Impl rule__EdgeLayout__Group__1
             {
-            pushFollow(FOLLOW_12);
+            pushFollow(FOLLOW_14);
             rule__EdgeLayout__Group__0__Impl();
 
             state._fsp--;
@@ -7905,7 +7905,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2501:1: ( rule__EdgeLayout__Group__1__Impl rule__EdgeLayout__Group__2 )
             // InternalElkGraph.g:2502:2: rule__EdgeLayout__Group__1__Impl rule__EdgeLayout__Group__2
             {
-            pushFollow(FOLLOW_20);
+            pushFollow(FOLLOW_22);
             rule__EdgeLayout__Group__1__Impl();
 
             state._fsp--;
@@ -7980,7 +7980,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2528:1: ( rule__EdgeLayout__Group__2__Impl rule__EdgeLayout__Group__3 )
             // InternalElkGraph.g:2529:2: rule__EdgeLayout__Group__2__Impl rule__EdgeLayout__Group__3
             {
-            pushFollow(FOLLOW_14);
+            pushFollow(FOLLOW_16);
             rule__EdgeLayout__Group__2__Impl();
 
             state._fsp--;
@@ -8135,7 +8135,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             // InternalElkGraph.g:2582:1: ( rule__ElkSingleEdgeSection__Group__0__Impl rule__ElkSingleEdgeSection__Group__1 )
             // InternalElkGraph.g:2583:2: rule__ElkSingleEdgeSection__Group__0__Impl rule__ElkSingleEdgeSection__Group__1
             {
-            pushFollow(FOLLOW_21);
+            pushFollow(FOLLOW_23);
             rule__ElkSingleEdgeSection__Group__0__Impl();
 
             state._fsp--;
@@ -8234,31 +8234,31 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group__1__Impl"
-    // InternalElkGraph.g:2616:1: rule__ElkSingleEdgeSection__Group__1__Impl : ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1 ) ) ;
+    // InternalElkGraph.g:2616:1: rule__ElkSingleEdgeSection__Group__1__Impl : ( ( rule__ElkSingleEdgeSection__Group_1__0 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2620:1: ( ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1 ) ) )
-            // InternalElkGraph.g:2621:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1 ) )
+            // InternalElkGraph.g:2620:1: ( ( ( rule__ElkSingleEdgeSection__Group_1__0 ) ) )
+            // InternalElkGraph.g:2621:1: ( ( rule__ElkSingleEdgeSection__Group_1__0 ) )
             {
-            // InternalElkGraph.g:2621:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1 ) )
-            // InternalElkGraph.g:2622:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1 )
+            // InternalElkGraph.g:2621:1: ( ( rule__ElkSingleEdgeSection__Group_1__0 ) )
+            // InternalElkGraph.g:2622:2: ( rule__ElkSingleEdgeSection__Group_1__0 )
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1()); 
-            // InternalElkGraph.g:2623:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1 )
-            // InternalElkGraph.g:2623:3: rule__ElkSingleEdgeSection__UnorderedGroup_1
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1()); 
+            // InternalElkGraph.g:2623:2: ( rule__ElkSingleEdgeSection__Group_1__0 )
+            // InternalElkGraph.g:2623:3: rule__ElkSingleEdgeSection__Group_1__0
             {
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__UnorderedGroup_1();
+            rule__ElkSingleEdgeSection__Group_1__0();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1()); 
 
             }
 
@@ -8280,23 +8280,302 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__ElkSingleEdgeSection__Group__1__Impl"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0__0"
-    // InternalElkGraph.g:2632:1: rule__ElkSingleEdgeSection__Group_1_0__0 : rule__ElkSingleEdgeSection__Group_1_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0__1 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_0__0() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__0"
+    // InternalElkGraph.g:2632:1: rule__ElkSingleEdgeSection__Group_1__0 : rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1 ;
+    public final void rule__ElkSingleEdgeSection__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2636:1: ( rule__ElkSingleEdgeSection__Group_1_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0__1 )
-            // InternalElkGraph.g:2637:2: rule__ElkSingleEdgeSection__Group_1_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0__1
+            // InternalElkGraph.g:2636:1: ( rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1 )
+            // InternalElkGraph.g:2637:2: rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1
+            {
+            pushFollow(FOLLOW_24);
+            rule__ElkSingleEdgeSection__Group_1__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1__0"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__0__Impl"
+    // InternalElkGraph.g:2644:1: rule__ElkSingleEdgeSection__Group_1__0__Impl : ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2648:1: ( ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) ) )
+            // InternalElkGraph.g:2649:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) )
+            {
+            // InternalElkGraph.g:2649:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) )
+            // InternalElkGraph.g:2650:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 )
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0()); 
+            // InternalElkGraph.g:2651:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 )
+            // InternalElkGraph.g:2651:3: rule__ElkSingleEdgeSection__UnorderedGroup_1_0
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__UnorderedGroup_1_0();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1__0__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__1"
+    // InternalElkGraph.g:2659:1: rule__ElkSingleEdgeSection__Group_1__1 : rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2 ;
+    public final void rule__ElkSingleEdgeSection__Group_1__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2663:1: ( rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2 )
+            // InternalElkGraph.g:2664:2: rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2
+            {
+            pushFollow(FOLLOW_24);
+            rule__ElkSingleEdgeSection__Group_1__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1__2();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1__1"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__1__Impl"
+    // InternalElkGraph.g:2671:1: rule__ElkSingleEdgeSection__Group_1__1__Impl : ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2675:1: ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? ) )
+            // InternalElkGraph.g:2676:1: ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? )
+            {
+            // InternalElkGraph.g:2676:1: ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? )
+            // InternalElkGraph.g:2677:2: ( rule__ElkSingleEdgeSection__Group_1_1__0 )?
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_1()); 
+            // InternalElkGraph.g:2678:2: ( rule__ElkSingleEdgeSection__Group_1_1__0 )?
+            int alt32=2;
+            int LA32_0 = input.LA(1);
+
+            if ( (LA32_0==34) ) {
+                alt32=1;
+            }
+            switch (alt32) {
+                case 1 :
+                    // InternalElkGraph.g:2678:3: rule__ElkSingleEdgeSection__Group_1_1__0
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkSingleEdgeSection__Group_1_1__0();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1__1__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__2"
+    // InternalElkGraph.g:2686:1: rule__ElkSingleEdgeSection__Group_1__2 : rule__ElkSingleEdgeSection__Group_1__2__Impl ;
+    public final void rule__ElkSingleEdgeSection__Group_1__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2690:1: ( rule__ElkSingleEdgeSection__Group_1__2__Impl )
+            // InternalElkGraph.g:2691:2: rule__ElkSingleEdgeSection__Group_1__2__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1__2__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1__2"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__2__Impl"
+    // InternalElkGraph.g:2697:1: rule__ElkSingleEdgeSection__Group_1__2__Impl : ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2701:1: ( ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* ) )
+            // InternalElkGraph.g:2702:1: ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* )
+            {
+            // InternalElkGraph.g:2702:1: ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* )
+            // InternalElkGraph.g:2703:2: ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )*
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getPropertiesAssignment_1_2()); 
+            // InternalElkGraph.g:2704:2: ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )*
+            loop33:
+            do {
+                int alt33=2;
+                int LA33_0 = input.LA(1);
+
+                if ( (LA33_0==RULE_ID) ) {
+                    alt33=1;
+                }
+
+
+                switch (alt33) {
+            	case 1 :
+            	    // InternalElkGraph.g:2704:3: rule__ElkSingleEdgeSection__PropertiesAssignment_1_2
+            	    {
+            	    pushFollow(FOLLOW_5);
+            	    rule__ElkSingleEdgeSection__PropertiesAssignment_1_2();
+
+            	    state._fsp--;
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop33;
+                }
+            } while (true);
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getPropertiesAssignment_1_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1__2__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__0"
+    // InternalElkGraph.g:2713:1: rule__ElkSingleEdgeSection__Group_1_0_0__0 : rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_0__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2717:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1 )
+            // InternalElkGraph.g:2718:2: rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1
             {
             pushFollow(FOLLOW_11);
-            rule__ElkSingleEdgeSection__Group_1_0__0__Impl();
+            rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl();
 
             state._fsp--;
 
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_0__1();
+            rule__ElkSingleEdgeSection__Group_1_0_0__1();
 
             state._fsp--;
 
@@ -8315,25 +8594,25 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0__0"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_0__0"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0__0__Impl"
-    // InternalElkGraph.g:2644:1: rule__ElkSingleEdgeSection__Group_1_0__0__Impl : ( 'incoming' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_0__0__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl"
+    // InternalElkGraph.g:2725:1: rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl : ( 'incoming' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2648:1: ( ( 'incoming' ) )
-            // InternalElkGraph.g:2649:1: ( 'incoming' )
+            // InternalElkGraph.g:2729:1: ( ( 'incoming' ) )
+            // InternalElkGraph.g:2730:1: ( 'incoming' )
             {
-            // InternalElkGraph.g:2649:1: ( 'incoming' )
-            // InternalElkGraph.g:2650:2: 'incoming'
+            // InternalElkGraph.g:2730:1: ( 'incoming' )
+            // InternalElkGraph.g:2731:2: 'incoming'
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0_0()); 
             match(input,30,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0_0()); 
 
             }
 
@@ -8352,26 +8631,26 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0__0__Impl"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0__1"
-    // InternalElkGraph.g:2659:1: rule__ElkSingleEdgeSection__Group_1_0__1 : rule__ElkSingleEdgeSection__Group_1_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0__2 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_0__1() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__1"
+    // InternalElkGraph.g:2740:1: rule__ElkSingleEdgeSection__Group_1_0_0__1 : rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_0__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2663:1: ( rule__ElkSingleEdgeSection__Group_1_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0__2 )
-            // InternalElkGraph.g:2664:2: rule__ElkSingleEdgeSection__Group_1_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0__2
+            // InternalElkGraph.g:2744:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2 )
+            // InternalElkGraph.g:2745:2: rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2
             {
             pushFollow(FOLLOW_7);
-            rule__ElkSingleEdgeSection__Group_1_0__1__Impl();
+            rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl();
 
             state._fsp--;
 
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_0__2();
+            rule__ElkSingleEdgeSection__Group_1_0_0__2();
 
             state._fsp--;
 
@@ -8390,25 +8669,25 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0__1"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_0__1"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0__1__Impl"
-    // InternalElkGraph.g:2671:1: rule__ElkSingleEdgeSection__Group_1_0__1__Impl : ( ':' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_0__1__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl"
+    // InternalElkGraph.g:2752:1: rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl : ( ':' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2675:1: ( ( ':' ) )
-            // InternalElkGraph.g:2676:1: ( ':' )
+            // InternalElkGraph.g:2756:1: ( ( ':' ) )
+            // InternalElkGraph.g:2757:1: ( ':' )
             {
-            // InternalElkGraph.g:2676:1: ( ':' )
-            // InternalElkGraph.g:2677:2: ':'
+            // InternalElkGraph.g:2757:1: ( ':' )
+            // InternalElkGraph.g:2758:2: ':'
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_0_1()); 
             match(input,20,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_0_1()); 
 
             }
 
@@ -8427,21 +8706,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0__1__Impl"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0__2"
-    // InternalElkGraph.g:2686:1: rule__ElkSingleEdgeSection__Group_1_0__2 : rule__ElkSingleEdgeSection__Group_1_0__2__Impl ;
-    public final void rule__ElkSingleEdgeSection__Group_1_0__2() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__2"
+    // InternalElkGraph.g:2767:1: rule__ElkSingleEdgeSection__Group_1_0_0__2 : rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_0__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2690:1: ( rule__ElkSingleEdgeSection__Group_1_0__2__Impl )
-            // InternalElkGraph.g:2691:2: rule__ElkSingleEdgeSection__Group_1_0__2__Impl
+            // InternalElkGraph.g:2771:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl )
+            // InternalElkGraph.g:2772:2: rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_0__2__Impl();
+            rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl();
 
             state._fsp--;
 
@@ -8460,35 +8739,35 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0__2"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_0__2"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0__2__Impl"
-    // InternalElkGraph.g:2697:1: rule__ElkSingleEdgeSection__Group_1_0__2__Impl : ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2 ) ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_0__2__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl"
+    // InternalElkGraph.g:2778:1: rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl : ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2701:1: ( ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2 ) ) )
-            // InternalElkGraph.g:2702:1: ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2 ) )
+            // InternalElkGraph.g:2782:1: ( ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) ) )
+            // InternalElkGraph.g:2783:1: ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) )
             {
-            // InternalElkGraph.g:2702:1: ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2 ) )
-            // InternalElkGraph.g:2703:2: ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2 )
+            // InternalElkGraph.g:2783:1: ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) )
+            // InternalElkGraph.g:2784:2: ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 )
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeAssignment_1_0_2()); 
-            // InternalElkGraph.g:2704:2: ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2 )
-            // InternalElkGraph.g:2704:3: rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeAssignment_1_0_0_2()); 
+            // InternalElkGraph.g:2785:2: ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 )
+            // InternalElkGraph.g:2785:3: rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2
             {
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2();
+            rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeAssignment_1_0_2()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeAssignment_1_0_0_2()); 
 
             }
 
@@ -8507,18 +8786,1028 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0__2__Impl"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__0"
+    // InternalElkGraph.g:2794:1: rule__ElkSingleEdgeSection__Group_1_0_1__0 : rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_1__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2798:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1 )
+            // InternalElkGraph.g:2799:2: rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1
+            {
+            pushFollow(FOLLOW_11);
+            rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_1__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_1__0"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl"
+    // InternalElkGraph.g:2806:1: rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl : ( 'outgoing' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2810:1: ( ( 'outgoing' ) )
+            // InternalElkGraph.g:2811:1: ( 'outgoing' )
+            {
+            // InternalElkGraph.g:2811:1: ( 'outgoing' )
+            // InternalElkGraph.g:2812:2: 'outgoing'
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_0_1_0()); 
+            match(input,31,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_0_1_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__1"
+    // InternalElkGraph.g:2821:1: rule__ElkSingleEdgeSection__Group_1_0_1__1 : rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_1__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2825:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2 )
+            // InternalElkGraph.g:2826:2: rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2
+            {
+            pushFollow(FOLLOW_7);
+            rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_1__2();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_1__1"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl"
+    // InternalElkGraph.g:2833:1: rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl : ( ':' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2837:1: ( ( ':' ) )
+            // InternalElkGraph.g:2838:1: ( ':' )
+            {
+            // InternalElkGraph.g:2838:1: ( ':' )
+            // InternalElkGraph.g:2839:2: ':'
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1_1()); 
+            match(input,20,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__2"
+    // InternalElkGraph.g:2848:1: rule__ElkSingleEdgeSection__Group_1_0_1__2 : rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_1__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2852:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl )
+            // InternalElkGraph.g:2853:2: rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_1__2"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl"
+    // InternalElkGraph.g:2859:1: rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl : ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2863:1: ( ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) ) )
+            // InternalElkGraph.g:2864:1: ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) )
+            {
+            // InternalElkGraph.g:2864:1: ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) )
+            // InternalElkGraph.g:2865:2: ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 )
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeAssignment_1_0_1_2()); 
+            // InternalElkGraph.g:2866:2: ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 )
+            // InternalElkGraph.g:2866:3: rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeAssignment_1_0_1_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__0"
+    // InternalElkGraph.g:2875:1: rule__ElkSingleEdgeSection__Group_1_0_2__0 : rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2879:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1 )
+            // InternalElkGraph.g:2880:2: rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1
+            {
+            pushFollow(FOLLOW_11);
+            rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_2__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__0"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl"
+    // InternalElkGraph.g:2887:1: rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl : ( 'start' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2891:1: ( ( 'start' ) )
+            // InternalElkGraph.g:2892:1: ( 'start' )
+            {
+            // InternalElkGraph.g:2892:1: ( 'start' )
+            // InternalElkGraph.g:2893:2: 'start'
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_0_2_0()); 
+            match(input,32,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_0_2_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__1"
+    // InternalElkGraph.g:2902:1: rule__ElkSingleEdgeSection__Group_1_0_2__1 : rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2906:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2 )
+            // InternalElkGraph.g:2907:2: rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2
+            {
+            pushFollow(FOLLOW_17);
+            rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_2__2();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__1"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl"
+    // InternalElkGraph.g:2914:1: rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl : ( ':' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2918:1: ( ( ':' ) )
+            // InternalElkGraph.g:2919:1: ( ':' )
+            {
+            // InternalElkGraph.g:2919:1: ( ':' )
+            // InternalElkGraph.g:2920:2: ':'
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_2_1()); 
+            match(input,20,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_2_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__2"
+    // InternalElkGraph.g:2929:1: rule__ElkSingleEdgeSection__Group_1_0_2__2 : rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2933:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3 )
+            // InternalElkGraph.g:2934:2: rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3
+            {
+            pushFollow(FOLLOW_18);
+            rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_2__3();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__2"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl"
+    // InternalElkGraph.g:2941:1: rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl : ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2945:1: ( ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) ) )
+            // InternalElkGraph.g:2946:1: ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) )
+            {
+            // InternalElkGraph.g:2946:1: ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) )
+            // InternalElkGraph.g:2947:2: ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 )
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartXAssignment_1_0_2_2()); 
+            // InternalElkGraph.g:2948:2: ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 )
+            // InternalElkGraph.g:2948:3: rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartXAssignment_1_0_2_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__3"
+    // InternalElkGraph.g:2956:1: rule__ElkSingleEdgeSection__Group_1_0_2__3 : rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__3() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2960:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4 )
+            // InternalElkGraph.g:2961:2: rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4
+            {
+            pushFollow(FOLLOW_17);
+            rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_2__4();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__3"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl"
+    // InternalElkGraph.g:2968:1: rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl : ( ',' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2972:1: ( ( ',' ) )
+            // InternalElkGraph.g:2973:1: ( ',' )
+            {
+            // InternalElkGraph.g:2973:1: ( ',' )
+            // InternalElkGraph.g:2974:2: ','
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_2_3()); 
+            match(input,26,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_2_3()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__4"
+    // InternalElkGraph.g:2983:1: rule__ElkSingleEdgeSection__Group_1_0_2__4 : rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__4() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2987:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl )
+            // InternalElkGraph.g:2988:2: rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__4"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl"
+    // InternalElkGraph.g:2994:1: rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl : ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:2998:1: ( ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) ) )
+            // InternalElkGraph.g:2999:1: ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) )
+            {
+            // InternalElkGraph.g:2999:1: ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) )
+            // InternalElkGraph.g:3000:2: ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 )
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartYAssignment_1_0_2_4()); 
+            // InternalElkGraph.g:3001:2: ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 )
+            // InternalElkGraph.g:3001:3: rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartYAssignment_1_0_2_4()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__0"
+    // InternalElkGraph.g:3010:1: rule__ElkSingleEdgeSection__Group_1_0_3__0 : rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3014:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1 )
+            // InternalElkGraph.g:3015:2: rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1
+            {
+            pushFollow(FOLLOW_11);
+            rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_3__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__0"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl"
+    // InternalElkGraph.g:3022:1: rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl : ( 'end' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3026:1: ( ( 'end' ) )
+            // InternalElkGraph.g:3027:1: ( 'end' )
+            {
+            // InternalElkGraph.g:3027:1: ( 'end' )
+            // InternalElkGraph.g:3028:2: 'end'
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_0_3_0()); 
+            match(input,33,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_0_3_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__1"
+    // InternalElkGraph.g:3037:1: rule__ElkSingleEdgeSection__Group_1_0_3__1 : rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3041:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2 )
+            // InternalElkGraph.g:3042:2: rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2
+            {
+            pushFollow(FOLLOW_17);
+            rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_3__2();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__1"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl"
+    // InternalElkGraph.g:3049:1: rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl : ( ':' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3053:1: ( ( ':' ) )
+            // InternalElkGraph.g:3054:1: ( ':' )
+            {
+            // InternalElkGraph.g:3054:1: ( ':' )
+            // InternalElkGraph.g:3055:2: ':'
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_3_1()); 
+            match(input,20,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_3_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__2"
+    // InternalElkGraph.g:3064:1: rule__ElkSingleEdgeSection__Group_1_0_3__2 : rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3068:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3 )
+            // InternalElkGraph.g:3069:2: rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3
+            {
+            pushFollow(FOLLOW_18);
+            rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_3__3();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__2"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl"
+    // InternalElkGraph.g:3076:1: rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl : ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3080:1: ( ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) ) )
+            // InternalElkGraph.g:3081:1: ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) )
+            {
+            // InternalElkGraph.g:3081:1: ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) )
+            // InternalElkGraph.g:3082:2: ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 )
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndXAssignment_1_0_3_2()); 
+            // InternalElkGraph.g:3083:2: ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 )
+            // InternalElkGraph.g:3083:3: rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndXAssignment_1_0_3_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__3"
+    // InternalElkGraph.g:3091:1: rule__ElkSingleEdgeSection__Group_1_0_3__3 : rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__3() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3095:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4 )
+            // InternalElkGraph.g:3096:2: rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4
+            {
+            pushFollow(FOLLOW_17);
+            rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_3__4();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__3"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl"
+    // InternalElkGraph.g:3103:1: rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl : ( ',' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3107:1: ( ( ',' ) )
+            // InternalElkGraph.g:3108:1: ( ',' )
+            {
+            // InternalElkGraph.g:3108:1: ( ',' )
+            // InternalElkGraph.g:3109:2: ','
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_3_3()); 
+            match(input,26,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_3_3()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__4"
+    // InternalElkGraph.g:3118:1: rule__ElkSingleEdgeSection__Group_1_0_3__4 : rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__4() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3122:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl )
+            // InternalElkGraph.g:3123:2: rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__4"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl"
+    // InternalElkGraph.g:3129:1: rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl : ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3133:1: ( ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) ) )
+            // InternalElkGraph.g:3134:1: ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) )
+            {
+            // InternalElkGraph.g:3134:1: ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) )
+            // InternalElkGraph.g:3135:2: ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 )
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndYAssignment_1_0_3_4()); 
+            // InternalElkGraph.g:3136:2: ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 )
+            // InternalElkGraph.g:3136:3: rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndYAssignment_1_0_3_4()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl"
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__0"
-    // InternalElkGraph.g:2713:1: rule__ElkSingleEdgeSection__Group_1_1__0 : rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1 ;
+    // InternalElkGraph.g:3145:1: rule__ElkSingleEdgeSection__Group_1_1__0 : rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1 ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2717:1: ( rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1 )
-            // InternalElkGraph.g:2718:2: rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1
+            // InternalElkGraph.g:3149:1: ( rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1 )
+            // InternalElkGraph.g:3150:2: rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1
             {
             pushFollow(FOLLOW_11);
             rule__ElkSingleEdgeSection__Group_1_1__0__Impl();
@@ -8549,21 +9838,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__0__Impl"
-    // InternalElkGraph.g:2725:1: rule__ElkSingleEdgeSection__Group_1_1__0__Impl : ( 'outgoing' ) ;
+    // InternalElkGraph.g:3157:1: rule__ElkSingleEdgeSection__Group_1_1__0__Impl : ( 'bends' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2729:1: ( ( 'outgoing' ) )
-            // InternalElkGraph.g:2730:1: ( 'outgoing' )
+            // InternalElkGraph.g:3161:1: ( ( 'bends' ) )
+            // InternalElkGraph.g:3162:1: ( 'bends' )
             {
-            // InternalElkGraph.g:2730:1: ( 'outgoing' )
-            // InternalElkGraph.g:2731:2: 'outgoing'
+            // InternalElkGraph.g:3162:1: ( 'bends' )
+            // InternalElkGraph.g:3163:2: 'bends'
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_1_0()); 
-            match(input,31,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_1_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_1_0()); 
+            match(input,34,FOLLOW_2); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_1_0()); 
 
             }
 
@@ -8586,16 +9875,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__1"
-    // InternalElkGraph.g:2740:1: rule__ElkSingleEdgeSection__Group_1_1__1 : rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2 ;
+    // InternalElkGraph.g:3172:1: rule__ElkSingleEdgeSection__Group_1_1__1 : rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2 ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2744:1: ( rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2 )
-            // InternalElkGraph.g:2745:2: rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2
+            // InternalElkGraph.g:3176:1: ( rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2 )
+            // InternalElkGraph.g:3177:2: rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2
             {
-            pushFollow(FOLLOW_7);
+            pushFollow(FOLLOW_17);
             rule__ElkSingleEdgeSection__Group_1_1__1__Impl();
 
             state._fsp--;
@@ -8624,17 +9913,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__1__Impl"
-    // InternalElkGraph.g:2752:1: rule__ElkSingleEdgeSection__Group_1_1__1__Impl : ( ':' ) ;
+    // InternalElkGraph.g:3184:1: rule__ElkSingleEdgeSection__Group_1_1__1__Impl : ( ':' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2756:1: ( ( ':' ) )
-            // InternalElkGraph.g:2757:1: ( ':' )
+            // InternalElkGraph.g:3188:1: ( ( ':' ) )
+            // InternalElkGraph.g:3189:1: ( ':' )
             {
-            // InternalElkGraph.g:2757:1: ( ':' )
-            // InternalElkGraph.g:2758:2: ':'
+            // InternalElkGraph.g:3189:1: ( ':' )
+            // InternalElkGraph.g:3190:2: ':'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_1_1()); 
             match(input,20,FOLLOW_2); 
@@ -8661,17 +9950,22 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__2"
-    // InternalElkGraph.g:2767:1: rule__ElkSingleEdgeSection__Group_1_1__2 : rule__ElkSingleEdgeSection__Group_1_1__2__Impl ;
+    // InternalElkGraph.g:3199:1: rule__ElkSingleEdgeSection__Group_1_1__2 : rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3 ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2771:1: ( rule__ElkSingleEdgeSection__Group_1_1__2__Impl )
-            // InternalElkGraph.g:2772:2: rule__ElkSingleEdgeSection__Group_1_1__2__Impl
+            // InternalElkGraph.g:3203:1: ( rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3 )
+            // InternalElkGraph.g:3204:2: rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3
             {
-            pushFollow(FOLLOW_2);
+            pushFollow(FOLLOW_25);
             rule__ElkSingleEdgeSection__Group_1_1__2__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__Group_1_1__3();
 
             state._fsp--;
 
@@ -8694,31 +9988,31 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__2__Impl"
-    // InternalElkGraph.g:2778:1: rule__ElkSingleEdgeSection__Group_1_1__2__Impl : ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2 ) ) ;
+    // InternalElkGraph.g:3211:1: rule__ElkSingleEdgeSection__Group_1_1__2__Impl : ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2782:1: ( ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2 ) ) )
-            // InternalElkGraph.g:2783:1: ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2 ) )
+            // InternalElkGraph.g:3215:1: ( ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) ) )
+            // InternalElkGraph.g:3216:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) )
             {
-            // InternalElkGraph.g:2783:1: ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2 ) )
-            // InternalElkGraph.g:2784:2: ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2 )
+            // InternalElkGraph.g:3216:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) )
+            // InternalElkGraph.g:3217:2: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 )
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeAssignment_1_1_2()); 
-            // InternalElkGraph.g:2785:2: ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2 )
-            // InternalElkGraph.g:2785:3: rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_1_2()); 
+            // InternalElkGraph.g:3218:2: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 )
+            // InternalElkGraph.g:3218:3: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2
             {
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2();
+            rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeAssignment_1_1_2()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_1_2()); 
 
             }
 
@@ -8740,258 +10034,18 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_1__2__Impl"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__0"
-    // InternalElkGraph.g:2794:1: rule__ElkSingleEdgeSection__Group_1_2__0 : rule__ElkSingleEdgeSection__Group_1_2__0__Impl rule__ElkSingleEdgeSection__Group_1_2__1 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__0() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__3"
+    // InternalElkGraph.g:3226:1: rule__ElkSingleEdgeSection__Group_1_1__3 : rule__ElkSingleEdgeSection__Group_1_1__3__Impl ;
+    public final void rule__ElkSingleEdgeSection__Group_1_1__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2798:1: ( rule__ElkSingleEdgeSection__Group_1_2__0__Impl rule__ElkSingleEdgeSection__Group_1_2__1 )
-            // InternalElkGraph.g:2799:2: rule__ElkSingleEdgeSection__Group_1_2__0__Impl rule__ElkSingleEdgeSection__Group_1_2__1
-            {
-            pushFollow(FOLLOW_11);
-            rule__ElkSingleEdgeSection__Group_1_2__0__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_2__1();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__0"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__0__Impl"
-    // InternalElkGraph.g:2806:1: rule__ElkSingleEdgeSection__Group_1_2__0__Impl : ( 'start' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2810:1: ( ( 'start' ) )
-            // InternalElkGraph.g:2811:1: ( 'start' )
-            {
-            // InternalElkGraph.g:2811:1: ( 'start' )
-            // InternalElkGraph.g:2812:2: 'start'
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_2_0()); 
-            match(input,32,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_2_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__0__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__1"
-    // InternalElkGraph.g:2821:1: rule__ElkSingleEdgeSection__Group_1_2__1 : rule__ElkSingleEdgeSection__Group_1_2__1__Impl rule__ElkSingleEdgeSection__Group_1_2__2 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2825:1: ( rule__ElkSingleEdgeSection__Group_1_2__1__Impl rule__ElkSingleEdgeSection__Group_1_2__2 )
-            // InternalElkGraph.g:2826:2: rule__ElkSingleEdgeSection__Group_1_2__1__Impl rule__ElkSingleEdgeSection__Group_1_2__2
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkSingleEdgeSection__Group_1_2__1__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_2__2();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__1"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__1__Impl"
-    // InternalElkGraph.g:2833:1: rule__ElkSingleEdgeSection__Group_1_2__1__Impl : ( ':' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2837:1: ( ( ':' ) )
-            // InternalElkGraph.g:2838:1: ( ':' )
-            {
-            // InternalElkGraph.g:2838:1: ( ':' )
-            // InternalElkGraph.g:2839:2: ':'
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_2_1()); 
-            match(input,20,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_2_1()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__1__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__2"
-    // InternalElkGraph.g:2848:1: rule__ElkSingleEdgeSection__Group_1_2__2 : rule__ElkSingleEdgeSection__Group_1_2__2__Impl rule__ElkSingleEdgeSection__Group_1_2__3 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2852:1: ( rule__ElkSingleEdgeSection__Group_1_2__2__Impl rule__ElkSingleEdgeSection__Group_1_2__3 )
-            // InternalElkGraph.g:2853:2: rule__ElkSingleEdgeSection__Group_1_2__2__Impl rule__ElkSingleEdgeSection__Group_1_2__3
-            {
-            pushFollow(FOLLOW_16);
-            rule__ElkSingleEdgeSection__Group_1_2__2__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_2__3();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__2"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__2__Impl"
-    // InternalElkGraph.g:2860:1: rule__ElkSingleEdgeSection__Group_1_2__2__Impl : ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_2_2 ) ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__2__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2864:1: ( ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_2_2 ) ) )
-            // InternalElkGraph.g:2865:1: ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_2_2 ) )
-            {
-            // InternalElkGraph.g:2865:1: ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_2_2 ) )
-            // InternalElkGraph.g:2866:2: ( rule__ElkSingleEdgeSection__StartXAssignment_1_2_2 )
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartXAssignment_1_2_2()); 
-            // InternalElkGraph.g:2867:2: ( rule__ElkSingleEdgeSection__StartXAssignment_1_2_2 )
-            // InternalElkGraph.g:2867:3: rule__ElkSingleEdgeSection__StartXAssignment_1_2_2
+            // InternalElkGraph.g:3230:1: ( rule__ElkSingleEdgeSection__Group_1_1__3__Impl )
+            // InternalElkGraph.g:3231:2: rule__ElkSingleEdgeSection__Group_1_1__3__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__StartXAssignment_1_2_2();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartXAssignment_1_2_2()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__2__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__3"
-    // InternalElkGraph.g:2875:1: rule__ElkSingleEdgeSection__Group_1_2__3 : rule__ElkSingleEdgeSection__Group_1_2__3__Impl rule__ElkSingleEdgeSection__Group_1_2__4 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2879:1: ( rule__ElkSingleEdgeSection__Group_1_2__3__Impl rule__ElkSingleEdgeSection__Group_1_2__4 )
-            // InternalElkGraph.g:2880:2: rule__ElkSingleEdgeSection__Group_1_2__3__Impl rule__ElkSingleEdgeSection__Group_1_2__4
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkSingleEdgeSection__Group_1_2__3__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_2__4();
+            rule__ElkSingleEdgeSection__Group_1_1__3__Impl();
 
             state._fsp--;
 
@@ -9010,815 +10064,40 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__3"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_1__3"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__3__Impl"
-    // InternalElkGraph.g:2887:1: rule__ElkSingleEdgeSection__Group_1_2__3__Impl : ( ',' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__3__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2891:1: ( ( ',' ) )
-            // InternalElkGraph.g:2892:1: ( ',' )
-            {
-            // InternalElkGraph.g:2892:1: ( ',' )
-            // InternalElkGraph.g:2893:2: ','
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_2_3()); 
-            match(input,26,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_2_3()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__3__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__4"
-    // InternalElkGraph.g:2902:1: rule__ElkSingleEdgeSection__Group_1_2__4 : rule__ElkSingleEdgeSection__Group_1_2__4__Impl ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__4() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__3__Impl"
+    // InternalElkGraph.g:3237:1: rule__ElkSingleEdgeSection__Group_1_1__3__Impl : ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_1__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:2906:1: ( rule__ElkSingleEdgeSection__Group_1_2__4__Impl )
-            // InternalElkGraph.g:2907:2: rule__ElkSingleEdgeSection__Group_1_2__4__Impl
+            // InternalElkGraph.g:3241:1: ( ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* ) )
+            // InternalElkGraph.g:3242:1: ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* )
             {
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_2__4__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__4"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_2__4__Impl"
-    // InternalElkGraph.g:2913:1: rule__ElkSingleEdgeSection__Group_1_2__4__Impl : ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_2_4 ) ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_2__4__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2917:1: ( ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_2_4 ) ) )
-            // InternalElkGraph.g:2918:1: ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_2_4 ) )
+            // InternalElkGraph.g:3242:1: ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* )
+            // InternalElkGraph.g:3243:2: ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )*
             {
-            // InternalElkGraph.g:2918:1: ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_2_4 ) )
-            // InternalElkGraph.g:2919:2: ( rule__ElkSingleEdgeSection__StartYAssignment_1_2_4 )
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartYAssignment_1_2_4()); 
-            // InternalElkGraph.g:2920:2: ( rule__ElkSingleEdgeSection__StartYAssignment_1_2_4 )
-            // InternalElkGraph.g:2920:3: rule__ElkSingleEdgeSection__StartYAssignment_1_2_4
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__StartYAssignment_1_2_4();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartYAssignment_1_2_4()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_2__4__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__0"
-    // InternalElkGraph.g:2929:1: rule__ElkSingleEdgeSection__Group_1_3__0 : rule__ElkSingleEdgeSection__Group_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_3__1 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__0() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2933:1: ( rule__ElkSingleEdgeSection__Group_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_3__1 )
-            // InternalElkGraph.g:2934:2: rule__ElkSingleEdgeSection__Group_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_3__1
-            {
-            pushFollow(FOLLOW_11);
-            rule__ElkSingleEdgeSection__Group_1_3__0__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_3__1();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__0"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__0__Impl"
-    // InternalElkGraph.g:2941:1: rule__ElkSingleEdgeSection__Group_1_3__0__Impl : ( 'end' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2945:1: ( ( 'end' ) )
-            // InternalElkGraph.g:2946:1: ( 'end' )
-            {
-            // InternalElkGraph.g:2946:1: ( 'end' )
-            // InternalElkGraph.g:2947:2: 'end'
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_3_0()); 
-            match(input,33,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_3_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__0__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__1"
-    // InternalElkGraph.g:2956:1: rule__ElkSingleEdgeSection__Group_1_3__1 : rule__ElkSingleEdgeSection__Group_1_3__1__Impl rule__ElkSingleEdgeSection__Group_1_3__2 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2960:1: ( rule__ElkSingleEdgeSection__Group_1_3__1__Impl rule__ElkSingleEdgeSection__Group_1_3__2 )
-            // InternalElkGraph.g:2961:2: rule__ElkSingleEdgeSection__Group_1_3__1__Impl rule__ElkSingleEdgeSection__Group_1_3__2
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkSingleEdgeSection__Group_1_3__1__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_3__2();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__1"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__1__Impl"
-    // InternalElkGraph.g:2968:1: rule__ElkSingleEdgeSection__Group_1_3__1__Impl : ( ':' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2972:1: ( ( ':' ) )
-            // InternalElkGraph.g:2973:1: ( ':' )
-            {
-            // InternalElkGraph.g:2973:1: ( ':' )
-            // InternalElkGraph.g:2974:2: ':'
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_3_1()); 
-            match(input,20,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_3_1()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__1__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__2"
-    // InternalElkGraph.g:2983:1: rule__ElkSingleEdgeSection__Group_1_3__2 : rule__ElkSingleEdgeSection__Group_1_3__2__Impl rule__ElkSingleEdgeSection__Group_1_3__3 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2987:1: ( rule__ElkSingleEdgeSection__Group_1_3__2__Impl rule__ElkSingleEdgeSection__Group_1_3__3 )
-            // InternalElkGraph.g:2988:2: rule__ElkSingleEdgeSection__Group_1_3__2__Impl rule__ElkSingleEdgeSection__Group_1_3__3
-            {
-            pushFollow(FOLLOW_16);
-            rule__ElkSingleEdgeSection__Group_1_3__2__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_3__3();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__2"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__2__Impl"
-    // InternalElkGraph.g:2995:1: rule__ElkSingleEdgeSection__Group_1_3__2__Impl : ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_3_2 ) ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__2__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:2999:1: ( ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_3_2 ) ) )
-            // InternalElkGraph.g:3000:1: ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_3_2 ) )
-            {
-            // InternalElkGraph.g:3000:1: ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_3_2 ) )
-            // InternalElkGraph.g:3001:2: ( rule__ElkSingleEdgeSection__EndXAssignment_1_3_2 )
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndXAssignment_1_3_2()); 
-            // InternalElkGraph.g:3002:2: ( rule__ElkSingleEdgeSection__EndXAssignment_1_3_2 )
-            // InternalElkGraph.g:3002:3: rule__ElkSingleEdgeSection__EndXAssignment_1_3_2
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__EndXAssignment_1_3_2();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndXAssignment_1_3_2()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__2__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__3"
-    // InternalElkGraph.g:3010:1: rule__ElkSingleEdgeSection__Group_1_3__3 : rule__ElkSingleEdgeSection__Group_1_3__3__Impl rule__ElkSingleEdgeSection__Group_1_3__4 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3014:1: ( rule__ElkSingleEdgeSection__Group_1_3__3__Impl rule__ElkSingleEdgeSection__Group_1_3__4 )
-            // InternalElkGraph.g:3015:2: rule__ElkSingleEdgeSection__Group_1_3__3__Impl rule__ElkSingleEdgeSection__Group_1_3__4
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkSingleEdgeSection__Group_1_3__3__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_3__4();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__3"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__3__Impl"
-    // InternalElkGraph.g:3022:1: rule__ElkSingleEdgeSection__Group_1_3__3__Impl : ( ',' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__3__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3026:1: ( ( ',' ) )
-            // InternalElkGraph.g:3027:1: ( ',' )
-            {
-            // InternalElkGraph.g:3027:1: ( ',' )
-            // InternalElkGraph.g:3028:2: ','
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_3_3()); 
-            match(input,26,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_3_3()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__3__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__4"
-    // InternalElkGraph.g:3037:1: rule__ElkSingleEdgeSection__Group_1_3__4 : rule__ElkSingleEdgeSection__Group_1_3__4__Impl ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__4() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3041:1: ( rule__ElkSingleEdgeSection__Group_1_3__4__Impl )
-            // InternalElkGraph.g:3042:2: rule__ElkSingleEdgeSection__Group_1_3__4__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_3__4__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__4"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_3__4__Impl"
-    // InternalElkGraph.g:3048:1: rule__ElkSingleEdgeSection__Group_1_3__4__Impl : ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_3_4 ) ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_3__4__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3052:1: ( ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_3_4 ) ) )
-            // InternalElkGraph.g:3053:1: ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_3_4 ) )
-            {
-            // InternalElkGraph.g:3053:1: ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_3_4 ) )
-            // InternalElkGraph.g:3054:2: ( rule__ElkSingleEdgeSection__EndYAssignment_1_3_4 )
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndYAssignment_1_3_4()); 
-            // InternalElkGraph.g:3055:2: ( rule__ElkSingleEdgeSection__EndYAssignment_1_3_4 )
-            // InternalElkGraph.g:3055:3: rule__ElkSingleEdgeSection__EndYAssignment_1_3_4
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__EndYAssignment_1_3_4();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndYAssignment_1_3_4()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_3__4__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4__0"
-    // InternalElkGraph.g:3064:1: rule__ElkSingleEdgeSection__Group_1_4__0 : rule__ElkSingleEdgeSection__Group_1_4__0__Impl rule__ElkSingleEdgeSection__Group_1_4__1 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4__0() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3068:1: ( rule__ElkSingleEdgeSection__Group_1_4__0__Impl rule__ElkSingleEdgeSection__Group_1_4__1 )
-            // InternalElkGraph.g:3069:2: rule__ElkSingleEdgeSection__Group_1_4__0__Impl rule__ElkSingleEdgeSection__Group_1_4__1
-            {
-            pushFollow(FOLLOW_11);
-            rule__ElkSingleEdgeSection__Group_1_4__0__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_4__1();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4__0"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4__0__Impl"
-    // InternalElkGraph.g:3076:1: rule__ElkSingleEdgeSection__Group_1_4__0__Impl : ( 'bends' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3080:1: ( ( 'bends' ) )
-            // InternalElkGraph.g:3081:1: ( 'bends' )
-            {
-            // InternalElkGraph.g:3081:1: ( 'bends' )
-            // InternalElkGraph.g:3082:2: 'bends'
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_4_0()); 
-            match(input,34,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_4_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4__0__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4__1"
-    // InternalElkGraph.g:3091:1: rule__ElkSingleEdgeSection__Group_1_4__1 : rule__ElkSingleEdgeSection__Group_1_4__1__Impl rule__ElkSingleEdgeSection__Group_1_4__2 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3095:1: ( rule__ElkSingleEdgeSection__Group_1_4__1__Impl rule__ElkSingleEdgeSection__Group_1_4__2 )
-            // InternalElkGraph.g:3096:2: rule__ElkSingleEdgeSection__Group_1_4__1__Impl rule__ElkSingleEdgeSection__Group_1_4__2
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkSingleEdgeSection__Group_1_4__1__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_4__2();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4__1"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4__1__Impl"
-    // InternalElkGraph.g:3103:1: rule__ElkSingleEdgeSection__Group_1_4__1__Impl : ( ':' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3107:1: ( ( ':' ) )
-            // InternalElkGraph.g:3108:1: ( ':' )
-            {
-            // InternalElkGraph.g:3108:1: ( ':' )
-            // InternalElkGraph.g:3109:2: ':'
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_4_1()); 
-            match(input,20,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_4_1()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4__1__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4__2"
-    // InternalElkGraph.g:3118:1: rule__ElkSingleEdgeSection__Group_1_4__2 : rule__ElkSingleEdgeSection__Group_1_4__2__Impl rule__ElkSingleEdgeSection__Group_1_4__3 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4__2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3122:1: ( rule__ElkSingleEdgeSection__Group_1_4__2__Impl rule__ElkSingleEdgeSection__Group_1_4__3 )
-            // InternalElkGraph.g:3123:2: rule__ElkSingleEdgeSection__Group_1_4__2__Impl rule__ElkSingleEdgeSection__Group_1_4__3
-            {
-            pushFollow(FOLLOW_22);
-            rule__ElkSingleEdgeSection__Group_1_4__2__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_4__3();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4__2"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4__2__Impl"
-    // InternalElkGraph.g:3130:1: rule__ElkSingleEdgeSection__Group_1_4__2__Impl : ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2 ) ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4__2__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3134:1: ( ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2 ) ) )
-            // InternalElkGraph.g:3135:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2 ) )
-            {
-            // InternalElkGraph.g:3135:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2 ) )
-            // InternalElkGraph.g:3136:2: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2 )
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_4_2()); 
-            // InternalElkGraph.g:3137:2: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2 )
-            // InternalElkGraph.g:3137:3: rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_4_2()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4__2__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4__3"
-    // InternalElkGraph.g:3145:1: rule__ElkSingleEdgeSection__Group_1_4__3 : rule__ElkSingleEdgeSection__Group_1_4__3__Impl ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4__3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3149:1: ( rule__ElkSingleEdgeSection__Group_1_4__3__Impl )
-            // InternalElkGraph.g:3150:2: rule__ElkSingleEdgeSection__Group_1_4__3__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_4__3__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4__3"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4__3__Impl"
-    // InternalElkGraph.g:3156:1: rule__ElkSingleEdgeSection__Group_1_4__3__Impl : ( ( rule__ElkSingleEdgeSection__Group_1_4_3__0 )* ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4__3__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3160:1: ( ( ( rule__ElkSingleEdgeSection__Group_1_4_3__0 )* ) )
-            // InternalElkGraph.g:3161:1: ( ( rule__ElkSingleEdgeSection__Group_1_4_3__0 )* )
-            {
-            // InternalElkGraph.g:3161:1: ( ( rule__ElkSingleEdgeSection__Group_1_4_3__0 )* )
-            // InternalElkGraph.g:3162:2: ( rule__ElkSingleEdgeSection__Group_1_4_3__0 )*
-            {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_4_3()); 
-            // InternalElkGraph.g:3163:2: ( rule__ElkSingleEdgeSection__Group_1_4_3__0 )*
-            loop32:
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_1_3()); 
+            // InternalElkGraph.g:3244:2: ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )*
+            loop34:
             do {
-                int alt32=2;
-                int LA32_0 = input.LA(1);
+                int alt34=2;
+                int LA34_0 = input.LA(1);
 
-                if ( (LA32_0==35) ) {
-                    alt32=1;
+                if ( (LA34_0==35) ) {
+                    alt34=1;
                 }
 
 
-                switch (alt32) {
+                switch (alt34) {
             	case 1 :
-            	    // InternalElkGraph.g:3163:3: rule__ElkSingleEdgeSection__Group_1_4_3__0
+            	    // InternalElkGraph.g:3244:3: rule__ElkSingleEdgeSection__Group_1_1_3__0
             	    {
-            	    pushFollow(FOLLOW_23);
-            	    rule__ElkSingleEdgeSection__Group_1_4_3__0();
+            	    pushFollow(FOLLOW_26);
+            	    rule__ElkSingleEdgeSection__Group_1_1_3__0();
 
             	    state._fsp--;
 
@@ -9827,11 +10106,11 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	    break;
 
             	default :
-            	    break loop32;
+            	    break loop34;
                 }
             } while (true);
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_4_3()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_1_3()); 
 
             }
 
@@ -9850,26 +10129,26 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4__3__Impl"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_1__3__Impl"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4_3__0"
-    // InternalElkGraph.g:3172:1: rule__ElkSingleEdgeSection__Group_1_4_3__0 : rule__ElkSingleEdgeSection__Group_1_4_3__0__Impl rule__ElkSingleEdgeSection__Group_1_4_3__1 ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4_3__0() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1_3__0"
+    // InternalElkGraph.g:3253:1: rule__ElkSingleEdgeSection__Group_1_1_3__0 : rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1 ;
+    public final void rule__ElkSingleEdgeSection__Group_1_1_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3176:1: ( rule__ElkSingleEdgeSection__Group_1_4_3__0__Impl rule__ElkSingleEdgeSection__Group_1_4_3__1 )
-            // InternalElkGraph.g:3177:2: rule__ElkSingleEdgeSection__Group_1_4_3__0__Impl rule__ElkSingleEdgeSection__Group_1_4_3__1
+            // InternalElkGraph.g:3257:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1 )
+            // InternalElkGraph.g:3258:2: rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1
             {
-            pushFollow(FOLLOW_15);
-            rule__ElkSingleEdgeSection__Group_1_4_3__0__Impl();
+            pushFollow(FOLLOW_17);
+            rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl();
 
             state._fsp--;
 
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_4_3__1();
+            rule__ElkSingleEdgeSection__Group_1_1_3__1();
 
             state._fsp--;
 
@@ -9888,25 +10167,25 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4_3__0"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_1_3__0"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4_3__0__Impl"
-    // InternalElkGraph.g:3184:1: rule__ElkSingleEdgeSection__Group_1_4_3__0__Impl : ( '|' ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4_3__0__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl"
+    // InternalElkGraph.g:3265:1: rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl : ( '|' ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3188:1: ( ( '|' ) )
-            // InternalElkGraph.g:3189:1: ( '|' )
+            // InternalElkGraph.g:3269:1: ( ( '|' ) )
+            // InternalElkGraph.g:3270:1: ( '|' )
             {
-            // InternalElkGraph.g:3189:1: ( '|' )
-            // InternalElkGraph.g:3190:2: '|'
+            // InternalElkGraph.g:3270:1: ( '|' )
+            // InternalElkGraph.g:3271:2: '|'
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_4_3_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_1_3_0()); 
             match(input,35,FOLLOW_2); 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_4_3_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_1_3_0()); 
 
             }
 
@@ -9925,21 +10204,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4_3__0__Impl"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4_3__1"
-    // InternalElkGraph.g:3199:1: rule__ElkSingleEdgeSection__Group_1_4_3__1 : rule__ElkSingleEdgeSection__Group_1_4_3__1__Impl ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4_3__1() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1_3__1"
+    // InternalElkGraph.g:3280:1: rule__ElkSingleEdgeSection__Group_1_1_3__1 : rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl ;
+    public final void rule__ElkSingleEdgeSection__Group_1_1_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3203:1: ( rule__ElkSingleEdgeSection__Group_1_4_3__1__Impl )
-            // InternalElkGraph.g:3204:2: rule__ElkSingleEdgeSection__Group_1_4_3__1__Impl
+            // InternalElkGraph.g:3284:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl )
+            // InternalElkGraph.g:3285:2: rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__Group_1_4_3__1__Impl();
+            rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl();
 
             state._fsp--;
 
@@ -9958,35 +10237,35 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4_3__1"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_1_3__1"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_4_3__1__Impl"
-    // InternalElkGraph.g:3210:1: rule__ElkSingleEdgeSection__Group_1_4_3__1__Impl : ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1 ) ) ;
-    public final void rule__ElkSingleEdgeSection__Group_1_4_3__1__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl"
+    // InternalElkGraph.g:3291:1: rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl : ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) ) ;
+    public final void rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3214:1: ( ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1 ) ) )
-            // InternalElkGraph.g:3215:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1 ) )
+            // InternalElkGraph.g:3295:1: ( ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) ) )
+            // InternalElkGraph.g:3296:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) )
             {
-            // InternalElkGraph.g:3215:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1 ) )
-            // InternalElkGraph.g:3216:2: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1 )
+            // InternalElkGraph.g:3296:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) )
+            // InternalElkGraph.g:3297:2: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 )
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_4_3_1()); 
-            // InternalElkGraph.g:3217:2: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1 )
-            // InternalElkGraph.g:3217:3: rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_1_3_1()); 
+            // InternalElkGraph.g:3298:2: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 )
+            // InternalElkGraph.g:3298:3: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1
             {
             pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1();
+            rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_4_3_1()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_1_3_1()); 
 
             }
 
@@ -10005,18 +10284,18 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_4_3__1__Impl"
+    // $ANTLR end "rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl"
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__0"
-    // InternalElkGraph.g:3226:1: rule__ElkEdgeSection__Group__0 : rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1 ;
+    // InternalElkGraph.g:3307:1: rule__ElkEdgeSection__Group__0 : rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1 ;
     public final void rule__ElkEdgeSection__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3230:1: ( rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1 )
-            // InternalElkGraph.g:3231:2: rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1
+            // InternalElkGraph.g:3311:1: ( rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1 )
+            // InternalElkGraph.g:3312:2: rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1
             {
             pushFollow(FOLLOW_7);
             rule__ElkEdgeSection__Group__0__Impl();
@@ -10047,17 +10326,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__0__Impl"
-    // InternalElkGraph.g:3238:1: rule__ElkEdgeSection__Group__0__Impl : ( 'section' ) ;
+    // InternalElkGraph.g:3319:1: rule__ElkEdgeSection__Group__0__Impl : ( 'section' ) ;
     public final void rule__ElkEdgeSection__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3242:1: ( ( 'section' ) )
-            // InternalElkGraph.g:3243:1: ( 'section' )
+            // InternalElkGraph.g:3323:1: ( ( 'section' ) )
+            // InternalElkGraph.g:3324:1: ( 'section' )
             {
-            // InternalElkGraph.g:3243:1: ( 'section' )
-            // InternalElkGraph.g:3244:2: 'section'
+            // InternalElkGraph.g:3324:1: ( 'section' )
+            // InternalElkGraph.g:3325:2: 'section'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getSectionKeyword_0()); 
             match(input,36,FOLLOW_2); 
@@ -10084,16 +10363,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__1"
-    // InternalElkGraph.g:3253:1: rule__ElkEdgeSection__Group__1 : rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2 ;
+    // InternalElkGraph.g:3334:1: rule__ElkEdgeSection__Group__1 : rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2 ;
     public final void rule__ElkEdgeSection__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3257:1: ( rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2 )
-            // InternalElkGraph.g:3258:2: rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2
+            // InternalElkGraph.g:3338:1: ( rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2 )
+            // InternalElkGraph.g:3339:2: rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2
             {
-            pushFollow(FOLLOW_24);
+            pushFollow(FOLLOW_27);
             rule__ElkEdgeSection__Group__1__Impl();
 
             state._fsp--;
@@ -10122,21 +10401,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__1__Impl"
-    // InternalElkGraph.g:3265:1: rule__ElkEdgeSection__Group__1__Impl : ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) ) ;
+    // InternalElkGraph.g:3346:1: rule__ElkEdgeSection__Group__1__Impl : ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) ) ;
     public final void rule__ElkEdgeSection__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3269:1: ( ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) ) )
-            // InternalElkGraph.g:3270:1: ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) )
+            // InternalElkGraph.g:3350:1: ( ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) ) )
+            // InternalElkGraph.g:3351:1: ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) )
             {
-            // InternalElkGraph.g:3270:1: ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) )
-            // InternalElkGraph.g:3271:2: ( rule__ElkEdgeSection__IdentifierAssignment_1 )
+            // InternalElkGraph.g:3351:1: ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) )
+            // InternalElkGraph.g:3352:2: ( rule__ElkEdgeSection__IdentifierAssignment_1 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getIdentifierAssignment_1()); 
-            // InternalElkGraph.g:3272:2: ( rule__ElkEdgeSection__IdentifierAssignment_1 )
-            // InternalElkGraph.g:3272:3: rule__ElkEdgeSection__IdentifierAssignment_1
+            // InternalElkGraph.g:3353:2: ( rule__ElkEdgeSection__IdentifierAssignment_1 )
+            // InternalElkGraph.g:3353:3: rule__ElkEdgeSection__IdentifierAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__IdentifierAssignment_1();
@@ -10169,16 +10448,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__2"
-    // InternalElkGraph.g:3280:1: rule__ElkEdgeSection__Group__2 : rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3 ;
+    // InternalElkGraph.g:3361:1: rule__ElkEdgeSection__Group__2 : rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3 ;
     public final void rule__ElkEdgeSection__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3284:1: ( rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3 )
-            // InternalElkGraph.g:3285:2: rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3
+            // InternalElkGraph.g:3365:1: ( rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3 )
+            // InternalElkGraph.g:3366:2: rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3
             {
-            pushFollow(FOLLOW_24);
+            pushFollow(FOLLOW_27);
             rule__ElkEdgeSection__Group__2__Impl();
 
             state._fsp--;
@@ -10207,29 +10486,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__2__Impl"
-    // InternalElkGraph.g:3292:1: rule__ElkEdgeSection__Group__2__Impl : ( ( rule__ElkEdgeSection__Group_2__0 )? ) ;
+    // InternalElkGraph.g:3373:1: rule__ElkEdgeSection__Group__2__Impl : ( ( rule__ElkEdgeSection__Group_2__0 )? ) ;
     public final void rule__ElkEdgeSection__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3296:1: ( ( ( rule__ElkEdgeSection__Group_2__0 )? ) )
-            // InternalElkGraph.g:3297:1: ( ( rule__ElkEdgeSection__Group_2__0 )? )
+            // InternalElkGraph.g:3377:1: ( ( ( rule__ElkEdgeSection__Group_2__0 )? ) )
+            // InternalElkGraph.g:3378:1: ( ( rule__ElkEdgeSection__Group_2__0 )? )
             {
-            // InternalElkGraph.g:3297:1: ( ( rule__ElkEdgeSection__Group_2__0 )? )
-            // InternalElkGraph.g:3298:2: ( rule__ElkEdgeSection__Group_2__0 )?
+            // InternalElkGraph.g:3378:1: ( ( rule__ElkEdgeSection__Group_2__0 )? )
+            // InternalElkGraph.g:3379:2: ( rule__ElkEdgeSection__Group_2__0 )?
             {
              before(grammarAccess.getElkEdgeSectionAccess().getGroup_2()); 
-            // InternalElkGraph.g:3299:2: ( rule__ElkEdgeSection__Group_2__0 )?
-            int alt33=2;
-            int LA33_0 = input.LA(1);
+            // InternalElkGraph.g:3380:2: ( rule__ElkEdgeSection__Group_2__0 )?
+            int alt35=2;
+            int LA35_0 = input.LA(1);
 
-            if ( (LA33_0==29) ) {
-                alt33=1;
+            if ( (LA35_0==29) ) {
+                alt35=1;
             }
-            switch (alt33) {
+            switch (alt35) {
                 case 1 :
-                    // InternalElkGraph.g:3299:3: rule__ElkEdgeSection__Group_2__0
+                    // InternalElkGraph.g:3380:3: rule__ElkEdgeSection__Group_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__Group_2__0();
@@ -10265,16 +10544,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__3"
-    // InternalElkGraph.g:3307:1: rule__ElkEdgeSection__Group__3 : rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4 ;
+    // InternalElkGraph.g:3388:1: rule__ElkEdgeSection__Group__3 : rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4 ;
     public final void rule__ElkEdgeSection__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3311:1: ( rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4 )
-            // InternalElkGraph.g:3312:2: rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4
+            // InternalElkGraph.g:3392:1: ( rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4 )
+            // InternalElkGraph.g:3393:2: rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4
             {
-            pushFollow(FOLLOW_21);
+            pushFollow(FOLLOW_23);
             rule__ElkEdgeSection__Group__3__Impl();
 
             state._fsp--;
@@ -10303,17 +10582,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__3__Impl"
-    // InternalElkGraph.g:3319:1: rule__ElkEdgeSection__Group__3__Impl : ( '[' ) ;
+    // InternalElkGraph.g:3400:1: rule__ElkEdgeSection__Group__3__Impl : ( '[' ) ;
     public final void rule__ElkEdgeSection__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3323:1: ( ( '[' ) )
-            // InternalElkGraph.g:3324:1: ( '[' )
+            // InternalElkGraph.g:3404:1: ( ( '[' ) )
+            // InternalElkGraph.g:3405:1: ( '[' )
             {
-            // InternalElkGraph.g:3324:1: ( '[' )
-            // InternalElkGraph.g:3325:2: '['
+            // InternalElkGraph.g:3405:1: ( '[' )
+            // InternalElkGraph.g:3406:2: '['
             {
              before(grammarAccess.getElkEdgeSectionAccess().getLeftSquareBracketKeyword_3()); 
             match(input,23,FOLLOW_2); 
@@ -10340,16 +10619,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__4"
-    // InternalElkGraph.g:3334:1: rule__ElkEdgeSection__Group__4 : rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5 ;
+    // InternalElkGraph.g:3415:1: rule__ElkEdgeSection__Group__4 : rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5 ;
     public final void rule__ElkEdgeSection__Group__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3338:1: ( rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5 )
-            // InternalElkGraph.g:3339:2: rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5
+            // InternalElkGraph.g:3419:1: ( rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5 )
+            // InternalElkGraph.g:3420:2: rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5
             {
-            pushFollow(FOLLOW_14);
+            pushFollow(FOLLOW_16);
             rule__ElkEdgeSection__Group__4__Impl();
 
             state._fsp--;
@@ -10378,31 +10657,31 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__4__Impl"
-    // InternalElkGraph.g:3346:1: rule__ElkEdgeSection__Group__4__Impl : ( ( rule__ElkEdgeSection__UnorderedGroup_4 ) ) ;
+    // InternalElkGraph.g:3427:1: rule__ElkEdgeSection__Group__4__Impl : ( ( rule__ElkEdgeSection__Group_4__0 ) ) ;
     public final void rule__ElkEdgeSection__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3350:1: ( ( ( rule__ElkEdgeSection__UnorderedGroup_4 ) ) )
-            // InternalElkGraph.g:3351:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4 ) )
+            // InternalElkGraph.g:3431:1: ( ( ( rule__ElkEdgeSection__Group_4__0 ) ) )
+            // InternalElkGraph.g:3432:1: ( ( rule__ElkEdgeSection__Group_4__0 ) )
             {
-            // InternalElkGraph.g:3351:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4 ) )
-            // InternalElkGraph.g:3352:2: ( rule__ElkEdgeSection__UnorderedGroup_4 )
+            // InternalElkGraph.g:3432:1: ( ( rule__ElkEdgeSection__Group_4__0 ) )
+            // InternalElkGraph.g:3433:2: ( rule__ElkEdgeSection__Group_4__0 )
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4()); 
-            // InternalElkGraph.g:3353:2: ( rule__ElkEdgeSection__UnorderedGroup_4 )
-            // InternalElkGraph.g:3353:3: rule__ElkEdgeSection__UnorderedGroup_4
+             before(grammarAccess.getElkEdgeSectionAccess().getGroup_4()); 
+            // InternalElkGraph.g:3434:2: ( rule__ElkEdgeSection__Group_4__0 )
+            // InternalElkGraph.g:3434:3: rule__ElkEdgeSection__Group_4__0
             {
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__UnorderedGroup_4();
+            rule__ElkEdgeSection__Group_4__0();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getGroup_4()); 
 
             }
 
@@ -10425,14 +10704,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__5"
-    // InternalElkGraph.g:3361:1: rule__ElkEdgeSection__Group__5 : rule__ElkEdgeSection__Group__5__Impl ;
+    // InternalElkGraph.g:3442:1: rule__ElkEdgeSection__Group__5 : rule__ElkEdgeSection__Group__5__Impl ;
     public final void rule__ElkEdgeSection__Group__5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3365:1: ( rule__ElkEdgeSection__Group__5__Impl )
-            // InternalElkGraph.g:3366:2: rule__ElkEdgeSection__Group__5__Impl
+            // InternalElkGraph.g:3446:1: ( rule__ElkEdgeSection__Group__5__Impl )
+            // InternalElkGraph.g:3447:2: rule__ElkEdgeSection__Group__5__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group__5__Impl();
@@ -10458,17 +10737,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__5__Impl"
-    // InternalElkGraph.g:3372:1: rule__ElkEdgeSection__Group__5__Impl : ( ']' ) ;
+    // InternalElkGraph.g:3453:1: rule__ElkEdgeSection__Group__5__Impl : ( ']' ) ;
     public final void rule__ElkEdgeSection__Group__5__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3376:1: ( ( ']' ) )
-            // InternalElkGraph.g:3377:1: ( ']' )
+            // InternalElkGraph.g:3457:1: ( ( ']' ) )
+            // InternalElkGraph.g:3458:1: ( ']' )
             {
-            // InternalElkGraph.g:3377:1: ( ']' )
-            // InternalElkGraph.g:3378:2: ']'
+            // InternalElkGraph.g:3458:1: ( ']' )
+            // InternalElkGraph.g:3459:2: ']'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getRightSquareBracketKeyword_5()); 
             match(input,24,FOLLOW_2); 
@@ -10495,14 +10774,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__0"
-    // InternalElkGraph.g:3388:1: rule__ElkEdgeSection__Group_2__0 : rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1 ;
+    // InternalElkGraph.g:3469:1: rule__ElkEdgeSection__Group_2__0 : rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1 ;
     public final void rule__ElkEdgeSection__Group_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3392:1: ( rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1 )
-            // InternalElkGraph.g:3393:2: rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1
+            // InternalElkGraph.g:3473:1: ( rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1 )
+            // InternalElkGraph.g:3474:2: rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1
             {
             pushFollow(FOLLOW_7);
             rule__ElkEdgeSection__Group_2__0__Impl();
@@ -10533,17 +10812,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__0__Impl"
-    // InternalElkGraph.g:3400:1: rule__ElkEdgeSection__Group_2__0__Impl : ( '->' ) ;
+    // InternalElkGraph.g:3481:1: rule__ElkEdgeSection__Group_2__0__Impl : ( '->' ) ;
     public final void rule__ElkEdgeSection__Group_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3404:1: ( ( '->' ) )
-            // InternalElkGraph.g:3405:1: ( '->' )
+            // InternalElkGraph.g:3485:1: ( ( '->' ) )
+            // InternalElkGraph.g:3486:1: ( '->' )
             {
-            // InternalElkGraph.g:3405:1: ( '->' )
-            // InternalElkGraph.g:3406:2: '->'
+            // InternalElkGraph.g:3486:1: ( '->' )
+            // InternalElkGraph.g:3487:2: '->'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getHyphenMinusGreaterThanSignKeyword_2_0()); 
             match(input,29,FOLLOW_2); 
@@ -10570,16 +10849,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__1"
-    // InternalElkGraph.g:3415:1: rule__ElkEdgeSection__Group_2__1 : rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2 ;
+    // InternalElkGraph.g:3496:1: rule__ElkEdgeSection__Group_2__1 : rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2 ;
     public final void rule__ElkEdgeSection__Group_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3419:1: ( rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2 )
-            // InternalElkGraph.g:3420:2: rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2
+            // InternalElkGraph.g:3500:1: ( rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2 )
+            // InternalElkGraph.g:3501:2: rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2
             {
-            pushFollow(FOLLOW_16);
+            pushFollow(FOLLOW_18);
             rule__ElkEdgeSection__Group_2__1__Impl();
 
             state._fsp--;
@@ -10608,21 +10887,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__1__Impl"
-    // InternalElkGraph.g:3427:1: rule__ElkEdgeSection__Group_2__1__Impl : ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) ) ;
+    // InternalElkGraph.g:3508:1: rule__ElkEdgeSection__Group_2__1__Impl : ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) ) ;
     public final void rule__ElkEdgeSection__Group_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3431:1: ( ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) ) )
-            // InternalElkGraph.g:3432:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) )
+            // InternalElkGraph.g:3512:1: ( ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) ) )
+            // InternalElkGraph.g:3513:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) )
             {
-            // InternalElkGraph.g:3432:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) )
-            // InternalElkGraph.g:3433:2: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 )
+            // InternalElkGraph.g:3513:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) )
+            // InternalElkGraph.g:3514:2: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsAssignment_2_1()); 
-            // InternalElkGraph.g:3434:2: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 )
-            // InternalElkGraph.g:3434:3: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1
+            // InternalElkGraph.g:3515:2: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 )
+            // InternalElkGraph.g:3515:3: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1();
@@ -10655,14 +10934,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__2"
-    // InternalElkGraph.g:3442:1: rule__ElkEdgeSection__Group_2__2 : rule__ElkEdgeSection__Group_2__2__Impl ;
+    // InternalElkGraph.g:3523:1: rule__ElkEdgeSection__Group_2__2 : rule__ElkEdgeSection__Group_2__2__Impl ;
     public final void rule__ElkEdgeSection__Group_2__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3446:1: ( rule__ElkEdgeSection__Group_2__2__Impl )
-            // InternalElkGraph.g:3447:2: rule__ElkEdgeSection__Group_2__2__Impl
+            // InternalElkGraph.g:3527:1: ( rule__ElkEdgeSection__Group_2__2__Impl )
+            // InternalElkGraph.g:3528:2: rule__ElkEdgeSection__Group_2__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_2__2__Impl();
@@ -10688,35 +10967,35 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__2__Impl"
-    // InternalElkGraph.g:3453:1: rule__ElkEdgeSection__Group_2__2__Impl : ( ( rule__ElkEdgeSection__Group_2_2__0 )* ) ;
+    // InternalElkGraph.g:3534:1: rule__ElkEdgeSection__Group_2__2__Impl : ( ( rule__ElkEdgeSection__Group_2_2__0 )* ) ;
     public final void rule__ElkEdgeSection__Group_2__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3457:1: ( ( ( rule__ElkEdgeSection__Group_2_2__0 )* ) )
-            // InternalElkGraph.g:3458:1: ( ( rule__ElkEdgeSection__Group_2_2__0 )* )
+            // InternalElkGraph.g:3538:1: ( ( ( rule__ElkEdgeSection__Group_2_2__0 )* ) )
+            // InternalElkGraph.g:3539:1: ( ( rule__ElkEdgeSection__Group_2_2__0 )* )
             {
-            // InternalElkGraph.g:3458:1: ( ( rule__ElkEdgeSection__Group_2_2__0 )* )
-            // InternalElkGraph.g:3459:2: ( rule__ElkEdgeSection__Group_2_2__0 )*
+            // InternalElkGraph.g:3539:1: ( ( rule__ElkEdgeSection__Group_2_2__0 )* )
+            // InternalElkGraph.g:3540:2: ( rule__ElkEdgeSection__Group_2_2__0 )*
             {
              before(grammarAccess.getElkEdgeSectionAccess().getGroup_2_2()); 
-            // InternalElkGraph.g:3460:2: ( rule__ElkEdgeSection__Group_2_2__0 )*
-            loop34:
+            // InternalElkGraph.g:3541:2: ( rule__ElkEdgeSection__Group_2_2__0 )*
+            loop36:
             do {
-                int alt34=2;
-                int LA34_0 = input.LA(1);
+                int alt36=2;
+                int LA36_0 = input.LA(1);
 
-                if ( (LA34_0==26) ) {
-                    alt34=1;
+                if ( (LA36_0==26) ) {
+                    alt36=1;
                 }
 
 
-                switch (alt34) {
+                switch (alt36) {
             	case 1 :
-            	    // InternalElkGraph.g:3460:3: rule__ElkEdgeSection__Group_2_2__0
+            	    // InternalElkGraph.g:3541:3: rule__ElkEdgeSection__Group_2_2__0
             	    {
-            	    pushFollow(FOLLOW_18);
+            	    pushFollow(FOLLOW_20);
             	    rule__ElkEdgeSection__Group_2_2__0();
 
             	    state._fsp--;
@@ -10726,7 +11005,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	    break;
 
             	default :
-            	    break loop34;
+            	    break loop36;
                 }
             } while (true);
 
@@ -10753,14 +11032,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2_2__0"
-    // InternalElkGraph.g:3469:1: rule__ElkEdgeSection__Group_2_2__0 : rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1 ;
+    // InternalElkGraph.g:3550:1: rule__ElkEdgeSection__Group_2_2__0 : rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1 ;
     public final void rule__ElkEdgeSection__Group_2_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3473:1: ( rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1 )
-            // InternalElkGraph.g:3474:2: rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1
+            // InternalElkGraph.g:3554:1: ( rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1 )
+            // InternalElkGraph.g:3555:2: rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1
             {
             pushFollow(FOLLOW_7);
             rule__ElkEdgeSection__Group_2_2__0__Impl();
@@ -10791,17 +11070,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2_2__0__Impl"
-    // InternalElkGraph.g:3481:1: rule__ElkEdgeSection__Group_2_2__0__Impl : ( ',' ) ;
+    // InternalElkGraph.g:3562:1: rule__ElkEdgeSection__Group_2_2__0__Impl : ( ',' ) ;
     public final void rule__ElkEdgeSection__Group_2_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3485:1: ( ( ',' ) )
-            // InternalElkGraph.g:3486:1: ( ',' )
+            // InternalElkGraph.g:3566:1: ( ( ',' ) )
+            // InternalElkGraph.g:3567:1: ( ',' )
             {
-            // InternalElkGraph.g:3486:1: ( ',' )
-            // InternalElkGraph.g:3487:2: ','
+            // InternalElkGraph.g:3567:1: ( ',' )
+            // InternalElkGraph.g:3568:2: ','
             {
              before(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_2_2_0()); 
             match(input,26,FOLLOW_2); 
@@ -10828,14 +11107,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2_2__1"
-    // InternalElkGraph.g:3496:1: rule__ElkEdgeSection__Group_2_2__1 : rule__ElkEdgeSection__Group_2_2__1__Impl ;
+    // InternalElkGraph.g:3577:1: rule__ElkEdgeSection__Group_2_2__1 : rule__ElkEdgeSection__Group_2_2__1__Impl ;
     public final void rule__ElkEdgeSection__Group_2_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3500:1: ( rule__ElkEdgeSection__Group_2_2__1__Impl )
-            // InternalElkGraph.g:3501:2: rule__ElkEdgeSection__Group_2_2__1__Impl
+            // InternalElkGraph.g:3581:1: ( rule__ElkEdgeSection__Group_2_2__1__Impl )
+            // InternalElkGraph.g:3582:2: rule__ElkEdgeSection__Group_2_2__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_2_2__1__Impl();
@@ -10861,21 +11140,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2_2__1__Impl"
-    // InternalElkGraph.g:3507:1: rule__ElkEdgeSection__Group_2_2__1__Impl : ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) ) ;
+    // InternalElkGraph.g:3588:1: rule__ElkEdgeSection__Group_2_2__1__Impl : ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) ) ;
     public final void rule__ElkEdgeSection__Group_2_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3511:1: ( ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) ) )
-            // InternalElkGraph.g:3512:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) )
+            // InternalElkGraph.g:3592:1: ( ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) ) )
+            // InternalElkGraph.g:3593:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) )
             {
-            // InternalElkGraph.g:3512:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) )
-            // InternalElkGraph.g:3513:2: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 )
+            // InternalElkGraph.g:3593:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) )
+            // InternalElkGraph.g:3594:2: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsAssignment_2_2_1()); 
-            // InternalElkGraph.g:3514:2: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 )
-            // InternalElkGraph.g:3514:3: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1
+            // InternalElkGraph.g:3595:2: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 )
+            // InternalElkGraph.g:3595:3: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1();
@@ -10907,23 +11186,302 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__ElkEdgeSection__Group_2_2__1__Impl"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_0__0"
-    // InternalElkGraph.g:3523:1: rule__ElkEdgeSection__Group_4_0__0 : rule__ElkEdgeSection__Group_4_0__0__Impl rule__ElkEdgeSection__Group_4_0__1 ;
-    public final void rule__ElkEdgeSection__Group_4_0__0() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4__0"
+    // InternalElkGraph.g:3604:1: rule__ElkEdgeSection__Group_4__0 : rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1 ;
+    public final void rule__ElkEdgeSection__Group_4__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3527:1: ( rule__ElkEdgeSection__Group_4_0__0__Impl rule__ElkEdgeSection__Group_4_0__1 )
-            // InternalElkGraph.g:3528:2: rule__ElkEdgeSection__Group_4_0__0__Impl rule__ElkEdgeSection__Group_4_0__1
+            // InternalElkGraph.g:3608:1: ( rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1 )
+            // InternalElkGraph.g:3609:2: rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1
+            {
+            pushFollow(FOLLOW_24);
+            rule__ElkEdgeSection__Group_4__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4__0"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4__0__Impl"
+    // InternalElkGraph.g:3616:1: rule__ElkEdgeSection__Group_4__0__Impl : ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) ) ;
+    public final void rule__ElkEdgeSection__Group_4__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3620:1: ( ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) ) )
+            // InternalElkGraph.g:3621:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) )
+            {
+            // InternalElkGraph.g:3621:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) )
+            // InternalElkGraph.g:3622:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0 )
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0()); 
+            // InternalElkGraph.g:3623:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0 )
+            // InternalElkGraph.g:3623:3: rule__ElkEdgeSection__UnorderedGroup_4_0
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__UnorderedGroup_4_0();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4__0__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4__1"
+    // InternalElkGraph.g:3631:1: rule__ElkEdgeSection__Group_4__1 : rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2 ;
+    public final void rule__ElkEdgeSection__Group_4__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3635:1: ( rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2 )
+            // InternalElkGraph.g:3636:2: rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2
+            {
+            pushFollow(FOLLOW_24);
+            rule__ElkEdgeSection__Group_4__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4__2();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4__1"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4__1__Impl"
+    // InternalElkGraph.g:3643:1: rule__ElkEdgeSection__Group_4__1__Impl : ( ( rule__ElkEdgeSection__Group_4_1__0 )? ) ;
+    public final void rule__ElkEdgeSection__Group_4__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3647:1: ( ( ( rule__ElkEdgeSection__Group_4_1__0 )? ) )
+            // InternalElkGraph.g:3648:1: ( ( rule__ElkEdgeSection__Group_4_1__0 )? )
+            {
+            // InternalElkGraph.g:3648:1: ( ( rule__ElkEdgeSection__Group_4_1__0 )? )
+            // InternalElkGraph.g:3649:2: ( rule__ElkEdgeSection__Group_4_1__0 )?
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_1()); 
+            // InternalElkGraph.g:3650:2: ( rule__ElkEdgeSection__Group_4_1__0 )?
+            int alt37=2;
+            int LA37_0 = input.LA(1);
+
+            if ( (LA37_0==34) ) {
+                alt37=1;
+            }
+            switch (alt37) {
+                case 1 :
+                    // InternalElkGraph.g:3650:3: rule__ElkEdgeSection__Group_4_1__0
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkEdgeSection__Group_4_1__0();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+             after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4__1__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4__2"
+    // InternalElkGraph.g:3658:1: rule__ElkEdgeSection__Group_4__2 : rule__ElkEdgeSection__Group_4__2__Impl ;
+    public final void rule__ElkEdgeSection__Group_4__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3662:1: ( rule__ElkEdgeSection__Group_4__2__Impl )
+            // InternalElkGraph.g:3663:2: rule__ElkEdgeSection__Group_4__2__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4__2__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4__2"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4__2__Impl"
+    // InternalElkGraph.g:3669:1: rule__ElkEdgeSection__Group_4__2__Impl : ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* ) ;
+    public final void rule__ElkEdgeSection__Group_4__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3673:1: ( ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* ) )
+            // InternalElkGraph.g:3674:1: ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* )
+            {
+            // InternalElkGraph.g:3674:1: ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* )
+            // InternalElkGraph.g:3675:2: ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )*
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getPropertiesAssignment_4_2()); 
+            // InternalElkGraph.g:3676:2: ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )*
+            loop38:
+            do {
+                int alt38=2;
+                int LA38_0 = input.LA(1);
+
+                if ( (LA38_0==RULE_ID) ) {
+                    alt38=1;
+                }
+
+
+                switch (alt38) {
+            	case 1 :
+            	    // InternalElkGraph.g:3676:3: rule__ElkEdgeSection__PropertiesAssignment_4_2
+            	    {
+            	    pushFollow(FOLLOW_5);
+            	    rule__ElkEdgeSection__PropertiesAssignment_4_2();
+
+            	    state._fsp--;
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop38;
+                }
+            } while (true);
+
+             after(grammarAccess.getElkEdgeSectionAccess().getPropertiesAssignment_4_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4__2__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__0"
+    // InternalElkGraph.g:3685:1: rule__ElkEdgeSection__Group_4_0_0__0 : rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1 ;
+    public final void rule__ElkEdgeSection__Group_4_0_0__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3689:1: ( rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1 )
+            // InternalElkGraph.g:3690:2: rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1
             {
             pushFollow(FOLLOW_11);
-            rule__ElkEdgeSection__Group_4_0__0__Impl();
+            rule__ElkEdgeSection__Group_4_0_0__0__Impl();
 
             state._fsp--;
 
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_0__1();
+            rule__ElkEdgeSection__Group_4_0_0__1();
 
             state._fsp--;
 
@@ -10942,25 +11500,25 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_0__0"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_0__0"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_0__0__Impl"
-    // InternalElkGraph.g:3535:1: rule__ElkEdgeSection__Group_4_0__0__Impl : ( 'incoming' ) ;
-    public final void rule__ElkEdgeSection__Group_4_0__0__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__0__Impl"
+    // InternalElkGraph.g:3697:1: rule__ElkEdgeSection__Group_4_0_0__0__Impl : ( 'incoming' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_0__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3539:1: ( ( 'incoming' ) )
-            // InternalElkGraph.g:3540:1: ( 'incoming' )
+            // InternalElkGraph.g:3701:1: ( ( 'incoming' ) )
+            // InternalElkGraph.g:3702:1: ( 'incoming' )
             {
-            // InternalElkGraph.g:3540:1: ( 'incoming' )
-            // InternalElkGraph.g:3541:2: 'incoming'
+            // InternalElkGraph.g:3702:1: ( 'incoming' )
+            // InternalElkGraph.g:3703:2: 'incoming'
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0_0()); 
             match(input,30,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0_0()); 
 
             }
 
@@ -10979,26 +11537,26 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_0__0__Impl"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_0__0__Impl"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_0__1"
-    // InternalElkGraph.g:3550:1: rule__ElkEdgeSection__Group_4_0__1 : rule__ElkEdgeSection__Group_4_0__1__Impl rule__ElkEdgeSection__Group_4_0__2 ;
-    public final void rule__ElkEdgeSection__Group_4_0__1() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__1"
+    // InternalElkGraph.g:3712:1: rule__ElkEdgeSection__Group_4_0_0__1 : rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2 ;
+    public final void rule__ElkEdgeSection__Group_4_0_0__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3554:1: ( rule__ElkEdgeSection__Group_4_0__1__Impl rule__ElkEdgeSection__Group_4_0__2 )
-            // InternalElkGraph.g:3555:2: rule__ElkEdgeSection__Group_4_0__1__Impl rule__ElkEdgeSection__Group_4_0__2
+            // InternalElkGraph.g:3716:1: ( rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2 )
+            // InternalElkGraph.g:3717:2: rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2
             {
             pushFollow(FOLLOW_7);
-            rule__ElkEdgeSection__Group_4_0__1__Impl();
+            rule__ElkEdgeSection__Group_4_0_0__1__Impl();
 
             state._fsp--;
 
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_0__2();
+            rule__ElkEdgeSection__Group_4_0_0__2();
 
             state._fsp--;
 
@@ -11017,25 +11575,25 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_0__1"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_0__1"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_0__1__Impl"
-    // InternalElkGraph.g:3562:1: rule__ElkEdgeSection__Group_4_0__1__Impl : ( ':' ) ;
-    public final void rule__ElkEdgeSection__Group_4_0__1__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__1__Impl"
+    // InternalElkGraph.g:3724:1: rule__ElkEdgeSection__Group_4_0_0__1__Impl : ( ':' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_0__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3566:1: ( ( ':' ) )
-            // InternalElkGraph.g:3567:1: ( ':' )
+            // InternalElkGraph.g:3728:1: ( ( ':' ) )
+            // InternalElkGraph.g:3729:1: ( ':' )
             {
-            // InternalElkGraph.g:3567:1: ( ':' )
-            // InternalElkGraph.g:3568:2: ':'
+            // InternalElkGraph.g:3729:1: ( ':' )
+            // InternalElkGraph.g:3730:2: ':'
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_0_1()); 
             match(input,20,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_0_1()); 
 
             }
 
@@ -11054,21 +11612,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_0__1__Impl"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_0__1__Impl"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_0__2"
-    // InternalElkGraph.g:3577:1: rule__ElkEdgeSection__Group_4_0__2 : rule__ElkEdgeSection__Group_4_0__2__Impl ;
-    public final void rule__ElkEdgeSection__Group_4_0__2() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__2"
+    // InternalElkGraph.g:3739:1: rule__ElkEdgeSection__Group_4_0_0__2 : rule__ElkEdgeSection__Group_4_0_0__2__Impl ;
+    public final void rule__ElkEdgeSection__Group_4_0_0__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3581:1: ( rule__ElkEdgeSection__Group_4_0__2__Impl )
-            // InternalElkGraph.g:3582:2: rule__ElkEdgeSection__Group_4_0__2__Impl
+            // InternalElkGraph.g:3743:1: ( rule__ElkEdgeSection__Group_4_0_0__2__Impl )
+            // InternalElkGraph.g:3744:2: rule__ElkEdgeSection__Group_4_0_0__2__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_0__2__Impl();
+            rule__ElkEdgeSection__Group_4_0_0__2__Impl();
 
             state._fsp--;
 
@@ -11087,35 +11645,35 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_0__2"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_0__2"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_0__2__Impl"
-    // InternalElkGraph.g:3588:1: rule__ElkEdgeSection__Group_4_0__2__Impl : ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2 ) ) ;
-    public final void rule__ElkEdgeSection__Group_4_0__2__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__2__Impl"
+    // InternalElkGraph.g:3750:1: rule__ElkEdgeSection__Group_4_0_0__2__Impl : ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_0__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3592:1: ( ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2 ) ) )
-            // InternalElkGraph.g:3593:1: ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2 ) )
+            // InternalElkGraph.g:3754:1: ( ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) ) )
+            // InternalElkGraph.g:3755:1: ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) )
             {
-            // InternalElkGraph.g:3593:1: ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2 ) )
-            // InternalElkGraph.g:3594:2: ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2 )
+            // InternalElkGraph.g:3755:1: ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) )
+            // InternalElkGraph.g:3756:2: ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 )
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeAssignment_4_0_2()); 
-            // InternalElkGraph.g:3595:2: ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2 )
-            // InternalElkGraph.g:3595:3: rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2
+             before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeAssignment_4_0_0_2()); 
+            // InternalElkGraph.g:3757:2: ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 )
+            // InternalElkGraph.g:3757:3: rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2
             {
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2();
+            rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeAssignment_4_0_2()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeAssignment_4_0_0_2()); 
 
             }
 
@@ -11134,18 +11692,1028 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_0__2__Impl"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_0__2__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__0"
+    // InternalElkGraph.g:3766:1: rule__ElkEdgeSection__Group_4_0_1__0 : rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1 ;
+    public final void rule__ElkEdgeSection__Group_4_0_1__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3770:1: ( rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1 )
+            // InternalElkGraph.g:3771:2: rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1
+            {
+            pushFollow(FOLLOW_11);
+            rule__ElkEdgeSection__Group_4_0_1__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_1__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_1__0"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__0__Impl"
+    // InternalElkGraph.g:3778:1: rule__ElkEdgeSection__Group_4_0_1__0__Impl : ( 'outgoing' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_1__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3782:1: ( ( 'outgoing' ) )
+            // InternalElkGraph.g:3783:1: ( 'outgoing' )
+            {
+            // InternalElkGraph.g:3783:1: ( 'outgoing' )
+            // InternalElkGraph.g:3784:2: 'outgoing'
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_0_1_0()); 
+            match(input,31,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_0_1_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_1__0__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__1"
+    // InternalElkGraph.g:3793:1: rule__ElkEdgeSection__Group_4_0_1__1 : rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2 ;
+    public final void rule__ElkEdgeSection__Group_4_0_1__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3797:1: ( rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2 )
+            // InternalElkGraph.g:3798:2: rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2
+            {
+            pushFollow(FOLLOW_7);
+            rule__ElkEdgeSection__Group_4_0_1__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_1__2();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_1__1"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__1__Impl"
+    // InternalElkGraph.g:3805:1: rule__ElkEdgeSection__Group_4_0_1__1__Impl : ( ':' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_1__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3809:1: ( ( ':' ) )
+            // InternalElkGraph.g:3810:1: ( ':' )
+            {
+            // InternalElkGraph.g:3810:1: ( ':' )
+            // InternalElkGraph.g:3811:2: ':'
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1_1()); 
+            match(input,20,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_1__1__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__2"
+    // InternalElkGraph.g:3820:1: rule__ElkEdgeSection__Group_4_0_1__2 : rule__ElkEdgeSection__Group_4_0_1__2__Impl ;
+    public final void rule__ElkEdgeSection__Group_4_0_1__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3824:1: ( rule__ElkEdgeSection__Group_4_0_1__2__Impl )
+            // InternalElkGraph.g:3825:2: rule__ElkEdgeSection__Group_4_0_1__2__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_1__2__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_1__2"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__2__Impl"
+    // InternalElkGraph.g:3831:1: rule__ElkEdgeSection__Group_4_0_1__2__Impl : ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_1__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3835:1: ( ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) ) )
+            // InternalElkGraph.g:3836:1: ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) )
+            {
+            // InternalElkGraph.g:3836:1: ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) )
+            // InternalElkGraph.g:3837:2: ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 )
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeAssignment_4_0_1_2()); 
+            // InternalElkGraph.g:3838:2: ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 )
+            // InternalElkGraph.g:3838:3: rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeAssignment_4_0_1_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_1__2__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__0"
+    // InternalElkGraph.g:3847:1: rule__ElkEdgeSection__Group_4_0_2__0 : rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1 ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3851:1: ( rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1 )
+            // InternalElkGraph.g:3852:2: rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1
+            {
+            pushFollow(FOLLOW_11);
+            rule__ElkEdgeSection__Group_4_0_2__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_2__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__0"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__0__Impl"
+    // InternalElkGraph.g:3859:1: rule__ElkEdgeSection__Group_4_0_2__0__Impl : ( 'start' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3863:1: ( ( 'start' ) )
+            // InternalElkGraph.g:3864:1: ( 'start' )
+            {
+            // InternalElkGraph.g:3864:1: ( 'start' )
+            // InternalElkGraph.g:3865:2: 'start'
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_0_2_0()); 
+            match(input,32,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_0_2_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__0__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__1"
+    // InternalElkGraph.g:3874:1: rule__ElkEdgeSection__Group_4_0_2__1 : rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2 ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3878:1: ( rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2 )
+            // InternalElkGraph.g:3879:2: rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2
+            {
+            pushFollow(FOLLOW_17);
+            rule__ElkEdgeSection__Group_4_0_2__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_2__2();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__1"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__1__Impl"
+    // InternalElkGraph.g:3886:1: rule__ElkEdgeSection__Group_4_0_2__1__Impl : ( ':' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3890:1: ( ( ':' ) )
+            // InternalElkGraph.g:3891:1: ( ':' )
+            {
+            // InternalElkGraph.g:3891:1: ( ':' )
+            // InternalElkGraph.g:3892:2: ':'
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_2_1()); 
+            match(input,20,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_2_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__1__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__2"
+    // InternalElkGraph.g:3901:1: rule__ElkEdgeSection__Group_4_0_2__2 : rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3 ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3905:1: ( rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3 )
+            // InternalElkGraph.g:3906:2: rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3
+            {
+            pushFollow(FOLLOW_18);
+            rule__ElkEdgeSection__Group_4_0_2__2__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_2__3();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__2"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__2__Impl"
+    // InternalElkGraph.g:3913:1: rule__ElkEdgeSection__Group_4_0_2__2__Impl : ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3917:1: ( ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) ) )
+            // InternalElkGraph.g:3918:1: ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) )
+            {
+            // InternalElkGraph.g:3918:1: ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) )
+            // InternalElkGraph.g:3919:2: ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 )
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getStartXAssignment_4_0_2_2()); 
+            // InternalElkGraph.g:3920:2: ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 )
+            // InternalElkGraph.g:3920:3: rule__ElkEdgeSection__StartXAssignment_4_0_2_2
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__StartXAssignment_4_0_2_2();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkEdgeSectionAccess().getStartXAssignment_4_0_2_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__2__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__3"
+    // InternalElkGraph.g:3928:1: rule__ElkEdgeSection__Group_4_0_2__3 : rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4 ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__3() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3932:1: ( rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4 )
+            // InternalElkGraph.g:3933:2: rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4
+            {
+            pushFollow(FOLLOW_17);
+            rule__ElkEdgeSection__Group_4_0_2__3__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_2__4();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__3"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__3__Impl"
+    // InternalElkGraph.g:3940:1: rule__ElkEdgeSection__Group_4_0_2__3__Impl : ( ',' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__3__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3944:1: ( ( ',' ) )
+            // InternalElkGraph.g:3945:1: ( ',' )
+            {
+            // InternalElkGraph.g:3945:1: ( ',' )
+            // InternalElkGraph.g:3946:2: ','
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_2_3()); 
+            match(input,26,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_2_3()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__3__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__4"
+    // InternalElkGraph.g:3955:1: rule__ElkEdgeSection__Group_4_0_2__4 : rule__ElkEdgeSection__Group_4_0_2__4__Impl ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__4() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3959:1: ( rule__ElkEdgeSection__Group_4_0_2__4__Impl )
+            // InternalElkGraph.g:3960:2: rule__ElkEdgeSection__Group_4_0_2__4__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_2__4__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__4"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__4__Impl"
+    // InternalElkGraph.g:3966:1: rule__ElkEdgeSection__Group_4_0_2__4__Impl : ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_2__4__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3970:1: ( ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) ) )
+            // InternalElkGraph.g:3971:1: ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) )
+            {
+            // InternalElkGraph.g:3971:1: ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) )
+            // InternalElkGraph.g:3972:2: ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 )
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getStartYAssignment_4_0_2_4()); 
+            // InternalElkGraph.g:3973:2: ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 )
+            // InternalElkGraph.g:3973:3: rule__ElkEdgeSection__StartYAssignment_4_0_2_4
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__StartYAssignment_4_0_2_4();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkEdgeSectionAccess().getStartYAssignment_4_0_2_4()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_2__4__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__0"
+    // InternalElkGraph.g:3982:1: rule__ElkEdgeSection__Group_4_0_3__0 : rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1 ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3986:1: ( rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1 )
+            // InternalElkGraph.g:3987:2: rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1
+            {
+            pushFollow(FOLLOW_11);
+            rule__ElkEdgeSection__Group_4_0_3__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_3__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__0"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__0__Impl"
+    // InternalElkGraph.g:3994:1: rule__ElkEdgeSection__Group_4_0_3__0__Impl : ( 'end' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:3998:1: ( ( 'end' ) )
+            // InternalElkGraph.g:3999:1: ( 'end' )
+            {
+            // InternalElkGraph.g:3999:1: ( 'end' )
+            // InternalElkGraph.g:4000:2: 'end'
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_0_3_0()); 
+            match(input,33,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_0_3_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__0__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__1"
+    // InternalElkGraph.g:4009:1: rule__ElkEdgeSection__Group_4_0_3__1 : rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2 ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4013:1: ( rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2 )
+            // InternalElkGraph.g:4014:2: rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2
+            {
+            pushFollow(FOLLOW_17);
+            rule__ElkEdgeSection__Group_4_0_3__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_3__2();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__1"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__1__Impl"
+    // InternalElkGraph.g:4021:1: rule__ElkEdgeSection__Group_4_0_3__1__Impl : ( ':' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4025:1: ( ( ':' ) )
+            // InternalElkGraph.g:4026:1: ( ':' )
+            {
+            // InternalElkGraph.g:4026:1: ( ':' )
+            // InternalElkGraph.g:4027:2: ':'
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_3_1()); 
+            match(input,20,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_3_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__1__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__2"
+    // InternalElkGraph.g:4036:1: rule__ElkEdgeSection__Group_4_0_3__2 : rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3 ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4040:1: ( rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3 )
+            // InternalElkGraph.g:4041:2: rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3
+            {
+            pushFollow(FOLLOW_18);
+            rule__ElkEdgeSection__Group_4_0_3__2__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_3__3();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__2"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__2__Impl"
+    // InternalElkGraph.g:4048:1: rule__ElkEdgeSection__Group_4_0_3__2__Impl : ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4052:1: ( ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) ) )
+            // InternalElkGraph.g:4053:1: ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) )
+            {
+            // InternalElkGraph.g:4053:1: ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) )
+            // InternalElkGraph.g:4054:2: ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 )
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getEndXAssignment_4_0_3_2()); 
+            // InternalElkGraph.g:4055:2: ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 )
+            // InternalElkGraph.g:4055:3: rule__ElkEdgeSection__EndXAssignment_4_0_3_2
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__EndXAssignment_4_0_3_2();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkEdgeSectionAccess().getEndXAssignment_4_0_3_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__2__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__3"
+    // InternalElkGraph.g:4063:1: rule__ElkEdgeSection__Group_4_0_3__3 : rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4 ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__3() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4067:1: ( rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4 )
+            // InternalElkGraph.g:4068:2: rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4
+            {
+            pushFollow(FOLLOW_17);
+            rule__ElkEdgeSection__Group_4_0_3__3__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_3__4();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__3"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__3__Impl"
+    // InternalElkGraph.g:4075:1: rule__ElkEdgeSection__Group_4_0_3__3__Impl : ( ',' ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__3__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4079:1: ( ( ',' ) )
+            // InternalElkGraph.g:4080:1: ( ',' )
+            {
+            // InternalElkGraph.g:4080:1: ( ',' )
+            // InternalElkGraph.g:4081:2: ','
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_3_3()); 
+            match(input,26,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_3_3()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__3__Impl"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__4"
+    // InternalElkGraph.g:4090:1: rule__ElkEdgeSection__Group_4_0_3__4 : rule__ElkEdgeSection__Group_4_0_3__4__Impl ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__4() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4094:1: ( rule__ElkEdgeSection__Group_4_0_3__4__Impl )
+            // InternalElkGraph.g:4095:2: rule__ElkEdgeSection__Group_4_0_3__4__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_0_3__4__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__4"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__4__Impl"
+    // InternalElkGraph.g:4101:1: rule__ElkEdgeSection__Group_4_0_3__4__Impl : ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) ) ;
+    public final void rule__ElkEdgeSection__Group_4_0_3__4__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4105:1: ( ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) ) )
+            // InternalElkGraph.g:4106:1: ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) )
+            {
+            // InternalElkGraph.g:4106:1: ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) )
+            // InternalElkGraph.g:4107:2: ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 )
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getEndYAssignment_4_0_3_4()); 
+            // InternalElkGraph.g:4108:2: ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 )
+            // InternalElkGraph.g:4108:3: rule__ElkEdgeSection__EndYAssignment_4_0_3_4
+            {
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__EndYAssignment_4_0_3_4();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getElkEdgeSectionAccess().getEndYAssignment_4_0_3_4()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_0_3__4__Impl"
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__0"
-    // InternalElkGraph.g:3604:1: rule__ElkEdgeSection__Group_4_1__0 : rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1 ;
+    // InternalElkGraph.g:4117:1: rule__ElkEdgeSection__Group_4_1__0 : rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1 ;
     public final void rule__ElkEdgeSection__Group_4_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3608:1: ( rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1 )
-            // InternalElkGraph.g:3609:2: rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1
+            // InternalElkGraph.g:4121:1: ( rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1 )
+            // InternalElkGraph.g:4122:2: rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1
             {
             pushFollow(FOLLOW_11);
             rule__ElkEdgeSection__Group_4_1__0__Impl();
@@ -11176,21 +12744,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__0__Impl"
-    // InternalElkGraph.g:3616:1: rule__ElkEdgeSection__Group_4_1__0__Impl : ( 'outgoing' ) ;
+    // InternalElkGraph.g:4129:1: rule__ElkEdgeSection__Group_4_1__0__Impl : ( 'bends' ) ;
     public final void rule__ElkEdgeSection__Group_4_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3620:1: ( ( 'outgoing' ) )
-            // InternalElkGraph.g:3621:1: ( 'outgoing' )
+            // InternalElkGraph.g:4133:1: ( ( 'bends' ) )
+            // InternalElkGraph.g:4134:1: ( 'bends' )
             {
-            // InternalElkGraph.g:3621:1: ( 'outgoing' )
-            // InternalElkGraph.g:3622:2: 'outgoing'
+            // InternalElkGraph.g:4134:1: ( 'bends' )
+            // InternalElkGraph.g:4135:2: 'bends'
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_1_0()); 
-            match(input,31,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_1_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_1_0()); 
+            match(input,34,FOLLOW_2); 
+             after(grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_1_0()); 
 
             }
 
@@ -11213,16 +12781,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__1"
-    // InternalElkGraph.g:3631:1: rule__ElkEdgeSection__Group_4_1__1 : rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2 ;
+    // InternalElkGraph.g:4144:1: rule__ElkEdgeSection__Group_4_1__1 : rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2 ;
     public final void rule__ElkEdgeSection__Group_4_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3635:1: ( rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2 )
-            // InternalElkGraph.g:3636:2: rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2
+            // InternalElkGraph.g:4148:1: ( rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2 )
+            // InternalElkGraph.g:4149:2: rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2
             {
-            pushFollow(FOLLOW_7);
+            pushFollow(FOLLOW_17);
             rule__ElkEdgeSection__Group_4_1__1__Impl();
 
             state._fsp--;
@@ -11251,17 +12819,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__1__Impl"
-    // InternalElkGraph.g:3643:1: rule__ElkEdgeSection__Group_4_1__1__Impl : ( ':' ) ;
+    // InternalElkGraph.g:4156:1: rule__ElkEdgeSection__Group_4_1__1__Impl : ( ':' ) ;
     public final void rule__ElkEdgeSection__Group_4_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3647:1: ( ( ':' ) )
-            // InternalElkGraph.g:3648:1: ( ':' )
+            // InternalElkGraph.g:4160:1: ( ( ':' ) )
+            // InternalElkGraph.g:4161:1: ( ':' )
             {
-            // InternalElkGraph.g:3648:1: ( ':' )
-            // InternalElkGraph.g:3649:2: ':'
+            // InternalElkGraph.g:4161:1: ( ':' )
+            // InternalElkGraph.g:4162:2: ':'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_1_1()); 
             match(input,20,FOLLOW_2); 
@@ -11288,17 +12856,22 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__2"
-    // InternalElkGraph.g:3658:1: rule__ElkEdgeSection__Group_4_1__2 : rule__ElkEdgeSection__Group_4_1__2__Impl ;
+    // InternalElkGraph.g:4171:1: rule__ElkEdgeSection__Group_4_1__2 : rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3 ;
     public final void rule__ElkEdgeSection__Group_4_1__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3662:1: ( rule__ElkEdgeSection__Group_4_1__2__Impl )
-            // InternalElkGraph.g:3663:2: rule__ElkEdgeSection__Group_4_1__2__Impl
+            // InternalElkGraph.g:4175:1: ( rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3 )
+            // InternalElkGraph.g:4176:2: rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3
             {
-            pushFollow(FOLLOW_2);
+            pushFollow(FOLLOW_25);
             rule__ElkEdgeSection__Group_4_1__2__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__ElkEdgeSection__Group_4_1__3();
 
             state._fsp--;
 
@@ -11321,31 +12894,31 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__2__Impl"
-    // InternalElkGraph.g:3669:1: rule__ElkEdgeSection__Group_4_1__2__Impl : ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2 ) ) ;
+    // InternalElkGraph.g:4183:1: rule__ElkEdgeSection__Group_4_1__2__Impl : ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_1__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3673:1: ( ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2 ) ) )
-            // InternalElkGraph.g:3674:1: ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2 ) )
+            // InternalElkGraph.g:4187:1: ( ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) ) )
+            // InternalElkGraph.g:4188:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) )
             {
-            // InternalElkGraph.g:3674:1: ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2 ) )
-            // InternalElkGraph.g:3675:2: ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2 )
+            // InternalElkGraph.g:4188:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) )
+            // InternalElkGraph.g:4189:2: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 )
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeAssignment_4_1_2()); 
-            // InternalElkGraph.g:3676:2: ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2 )
-            // InternalElkGraph.g:3676:3: rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2
+             before(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_1_2()); 
+            // InternalElkGraph.g:4190:2: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 )
+            // InternalElkGraph.g:4190:3: rule__ElkEdgeSection__BendPointsAssignment_4_1_2
             {
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2();
+            rule__ElkEdgeSection__BendPointsAssignment_4_1_2();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeAssignment_4_1_2()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_1_2()); 
 
             }
 
@@ -11367,258 +12940,18 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__ElkEdgeSection__Group_4_1__2__Impl"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__0"
-    // InternalElkGraph.g:3685:1: rule__ElkEdgeSection__Group_4_2__0 : rule__ElkEdgeSection__Group_4_2__0__Impl rule__ElkEdgeSection__Group_4_2__1 ;
-    public final void rule__ElkEdgeSection__Group_4_2__0() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_1__3"
+    // InternalElkGraph.g:4198:1: rule__ElkEdgeSection__Group_4_1__3 : rule__ElkEdgeSection__Group_4_1__3__Impl ;
+    public final void rule__ElkEdgeSection__Group_4_1__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3689:1: ( rule__ElkEdgeSection__Group_4_2__0__Impl rule__ElkEdgeSection__Group_4_2__1 )
-            // InternalElkGraph.g:3690:2: rule__ElkEdgeSection__Group_4_2__0__Impl rule__ElkEdgeSection__Group_4_2__1
-            {
-            pushFollow(FOLLOW_11);
-            rule__ElkEdgeSection__Group_4_2__0__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_2__1();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__0"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__0__Impl"
-    // InternalElkGraph.g:3697:1: rule__ElkEdgeSection__Group_4_2__0__Impl : ( 'start' ) ;
-    public final void rule__ElkEdgeSection__Group_4_2__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3701:1: ( ( 'start' ) )
-            // InternalElkGraph.g:3702:1: ( 'start' )
-            {
-            // InternalElkGraph.g:3702:1: ( 'start' )
-            // InternalElkGraph.g:3703:2: 'start'
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_2_0()); 
-            match(input,32,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_2_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__0__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__1"
-    // InternalElkGraph.g:3712:1: rule__ElkEdgeSection__Group_4_2__1 : rule__ElkEdgeSection__Group_4_2__1__Impl rule__ElkEdgeSection__Group_4_2__2 ;
-    public final void rule__ElkEdgeSection__Group_4_2__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3716:1: ( rule__ElkEdgeSection__Group_4_2__1__Impl rule__ElkEdgeSection__Group_4_2__2 )
-            // InternalElkGraph.g:3717:2: rule__ElkEdgeSection__Group_4_2__1__Impl rule__ElkEdgeSection__Group_4_2__2
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkEdgeSection__Group_4_2__1__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_2__2();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__1"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__1__Impl"
-    // InternalElkGraph.g:3724:1: rule__ElkEdgeSection__Group_4_2__1__Impl : ( ':' ) ;
-    public final void rule__ElkEdgeSection__Group_4_2__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3728:1: ( ( ':' ) )
-            // InternalElkGraph.g:3729:1: ( ':' )
-            {
-            // InternalElkGraph.g:3729:1: ( ':' )
-            // InternalElkGraph.g:3730:2: ':'
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_2_1()); 
-            match(input,20,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_2_1()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__1__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__2"
-    // InternalElkGraph.g:3739:1: rule__ElkEdgeSection__Group_4_2__2 : rule__ElkEdgeSection__Group_4_2__2__Impl rule__ElkEdgeSection__Group_4_2__3 ;
-    public final void rule__ElkEdgeSection__Group_4_2__2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3743:1: ( rule__ElkEdgeSection__Group_4_2__2__Impl rule__ElkEdgeSection__Group_4_2__3 )
-            // InternalElkGraph.g:3744:2: rule__ElkEdgeSection__Group_4_2__2__Impl rule__ElkEdgeSection__Group_4_2__3
-            {
-            pushFollow(FOLLOW_16);
-            rule__ElkEdgeSection__Group_4_2__2__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_2__3();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__2"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__2__Impl"
-    // InternalElkGraph.g:3751:1: rule__ElkEdgeSection__Group_4_2__2__Impl : ( ( rule__ElkEdgeSection__StartXAssignment_4_2_2 ) ) ;
-    public final void rule__ElkEdgeSection__Group_4_2__2__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3755:1: ( ( ( rule__ElkEdgeSection__StartXAssignment_4_2_2 ) ) )
-            // InternalElkGraph.g:3756:1: ( ( rule__ElkEdgeSection__StartXAssignment_4_2_2 ) )
-            {
-            // InternalElkGraph.g:3756:1: ( ( rule__ElkEdgeSection__StartXAssignment_4_2_2 ) )
-            // InternalElkGraph.g:3757:2: ( rule__ElkEdgeSection__StartXAssignment_4_2_2 )
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getStartXAssignment_4_2_2()); 
-            // InternalElkGraph.g:3758:2: ( rule__ElkEdgeSection__StartXAssignment_4_2_2 )
-            // InternalElkGraph.g:3758:3: rule__ElkEdgeSection__StartXAssignment_4_2_2
+            // InternalElkGraph.g:4202:1: ( rule__ElkEdgeSection__Group_4_1__3__Impl )
+            // InternalElkGraph.g:4203:2: rule__ElkEdgeSection__Group_4_1__3__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__StartXAssignment_4_2_2();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkEdgeSectionAccess().getStartXAssignment_4_2_2()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__2__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__3"
-    // InternalElkGraph.g:3766:1: rule__ElkEdgeSection__Group_4_2__3 : rule__ElkEdgeSection__Group_4_2__3__Impl rule__ElkEdgeSection__Group_4_2__4 ;
-    public final void rule__ElkEdgeSection__Group_4_2__3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3770:1: ( rule__ElkEdgeSection__Group_4_2__3__Impl rule__ElkEdgeSection__Group_4_2__4 )
-            // InternalElkGraph.g:3771:2: rule__ElkEdgeSection__Group_4_2__3__Impl rule__ElkEdgeSection__Group_4_2__4
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkEdgeSection__Group_4_2__3__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_2__4();
+            rule__ElkEdgeSection__Group_4_1__3__Impl();
 
             state._fsp--;
 
@@ -11637,815 +12970,40 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__3"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_1__3"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__3__Impl"
-    // InternalElkGraph.g:3778:1: rule__ElkEdgeSection__Group_4_2__3__Impl : ( ',' ) ;
-    public final void rule__ElkEdgeSection__Group_4_2__3__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3782:1: ( ( ',' ) )
-            // InternalElkGraph.g:3783:1: ( ',' )
-            {
-            // InternalElkGraph.g:3783:1: ( ',' )
-            // InternalElkGraph.g:3784:2: ','
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_2_3()); 
-            match(input,26,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_2_3()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__3__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__4"
-    // InternalElkGraph.g:3793:1: rule__ElkEdgeSection__Group_4_2__4 : rule__ElkEdgeSection__Group_4_2__4__Impl ;
-    public final void rule__ElkEdgeSection__Group_4_2__4() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_1__3__Impl"
+    // InternalElkGraph.g:4209:1: rule__ElkEdgeSection__Group_4_1__3__Impl : ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* ) ;
+    public final void rule__ElkEdgeSection__Group_4_1__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:3797:1: ( rule__ElkEdgeSection__Group_4_2__4__Impl )
-            // InternalElkGraph.g:3798:2: rule__ElkEdgeSection__Group_4_2__4__Impl
+            // InternalElkGraph.g:4213:1: ( ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* ) )
+            // InternalElkGraph.g:4214:1: ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* )
             {
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_2__4__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__4"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_2__4__Impl"
-    // InternalElkGraph.g:3804:1: rule__ElkEdgeSection__Group_4_2__4__Impl : ( ( rule__ElkEdgeSection__StartYAssignment_4_2_4 ) ) ;
-    public final void rule__ElkEdgeSection__Group_4_2__4__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3808:1: ( ( ( rule__ElkEdgeSection__StartYAssignment_4_2_4 ) ) )
-            // InternalElkGraph.g:3809:1: ( ( rule__ElkEdgeSection__StartYAssignment_4_2_4 ) )
+            // InternalElkGraph.g:4214:1: ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* )
+            // InternalElkGraph.g:4215:2: ( rule__ElkEdgeSection__Group_4_1_3__0 )*
             {
-            // InternalElkGraph.g:3809:1: ( ( rule__ElkEdgeSection__StartYAssignment_4_2_4 ) )
-            // InternalElkGraph.g:3810:2: ( rule__ElkEdgeSection__StartYAssignment_4_2_4 )
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getStartYAssignment_4_2_4()); 
-            // InternalElkGraph.g:3811:2: ( rule__ElkEdgeSection__StartYAssignment_4_2_4 )
-            // InternalElkGraph.g:3811:3: rule__ElkEdgeSection__StartYAssignment_4_2_4
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__StartYAssignment_4_2_4();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkEdgeSectionAccess().getStartYAssignment_4_2_4()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_2__4__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__0"
-    // InternalElkGraph.g:3820:1: rule__ElkEdgeSection__Group_4_3__0 : rule__ElkEdgeSection__Group_4_3__0__Impl rule__ElkEdgeSection__Group_4_3__1 ;
-    public final void rule__ElkEdgeSection__Group_4_3__0() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3824:1: ( rule__ElkEdgeSection__Group_4_3__0__Impl rule__ElkEdgeSection__Group_4_3__1 )
-            // InternalElkGraph.g:3825:2: rule__ElkEdgeSection__Group_4_3__0__Impl rule__ElkEdgeSection__Group_4_3__1
-            {
-            pushFollow(FOLLOW_11);
-            rule__ElkEdgeSection__Group_4_3__0__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_3__1();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__0"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__0__Impl"
-    // InternalElkGraph.g:3832:1: rule__ElkEdgeSection__Group_4_3__0__Impl : ( 'end' ) ;
-    public final void rule__ElkEdgeSection__Group_4_3__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3836:1: ( ( 'end' ) )
-            // InternalElkGraph.g:3837:1: ( 'end' )
-            {
-            // InternalElkGraph.g:3837:1: ( 'end' )
-            // InternalElkGraph.g:3838:2: 'end'
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_3_0()); 
-            match(input,33,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_3_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__0__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__1"
-    // InternalElkGraph.g:3847:1: rule__ElkEdgeSection__Group_4_3__1 : rule__ElkEdgeSection__Group_4_3__1__Impl rule__ElkEdgeSection__Group_4_3__2 ;
-    public final void rule__ElkEdgeSection__Group_4_3__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3851:1: ( rule__ElkEdgeSection__Group_4_3__1__Impl rule__ElkEdgeSection__Group_4_3__2 )
-            // InternalElkGraph.g:3852:2: rule__ElkEdgeSection__Group_4_3__1__Impl rule__ElkEdgeSection__Group_4_3__2
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkEdgeSection__Group_4_3__1__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_3__2();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__1"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__1__Impl"
-    // InternalElkGraph.g:3859:1: rule__ElkEdgeSection__Group_4_3__1__Impl : ( ':' ) ;
-    public final void rule__ElkEdgeSection__Group_4_3__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3863:1: ( ( ':' ) )
-            // InternalElkGraph.g:3864:1: ( ':' )
-            {
-            // InternalElkGraph.g:3864:1: ( ':' )
-            // InternalElkGraph.g:3865:2: ':'
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_3_1()); 
-            match(input,20,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_3_1()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__1__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__2"
-    // InternalElkGraph.g:3874:1: rule__ElkEdgeSection__Group_4_3__2 : rule__ElkEdgeSection__Group_4_3__2__Impl rule__ElkEdgeSection__Group_4_3__3 ;
-    public final void rule__ElkEdgeSection__Group_4_3__2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3878:1: ( rule__ElkEdgeSection__Group_4_3__2__Impl rule__ElkEdgeSection__Group_4_3__3 )
-            // InternalElkGraph.g:3879:2: rule__ElkEdgeSection__Group_4_3__2__Impl rule__ElkEdgeSection__Group_4_3__3
-            {
-            pushFollow(FOLLOW_16);
-            rule__ElkEdgeSection__Group_4_3__2__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_3__3();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__2"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__2__Impl"
-    // InternalElkGraph.g:3886:1: rule__ElkEdgeSection__Group_4_3__2__Impl : ( ( rule__ElkEdgeSection__EndXAssignment_4_3_2 ) ) ;
-    public final void rule__ElkEdgeSection__Group_4_3__2__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3890:1: ( ( ( rule__ElkEdgeSection__EndXAssignment_4_3_2 ) ) )
-            // InternalElkGraph.g:3891:1: ( ( rule__ElkEdgeSection__EndXAssignment_4_3_2 ) )
-            {
-            // InternalElkGraph.g:3891:1: ( ( rule__ElkEdgeSection__EndXAssignment_4_3_2 ) )
-            // InternalElkGraph.g:3892:2: ( rule__ElkEdgeSection__EndXAssignment_4_3_2 )
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getEndXAssignment_4_3_2()); 
-            // InternalElkGraph.g:3893:2: ( rule__ElkEdgeSection__EndXAssignment_4_3_2 )
-            // InternalElkGraph.g:3893:3: rule__ElkEdgeSection__EndXAssignment_4_3_2
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__EndXAssignment_4_3_2();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkEdgeSectionAccess().getEndXAssignment_4_3_2()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__2__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__3"
-    // InternalElkGraph.g:3901:1: rule__ElkEdgeSection__Group_4_3__3 : rule__ElkEdgeSection__Group_4_3__3__Impl rule__ElkEdgeSection__Group_4_3__4 ;
-    public final void rule__ElkEdgeSection__Group_4_3__3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3905:1: ( rule__ElkEdgeSection__Group_4_3__3__Impl rule__ElkEdgeSection__Group_4_3__4 )
-            // InternalElkGraph.g:3906:2: rule__ElkEdgeSection__Group_4_3__3__Impl rule__ElkEdgeSection__Group_4_3__4
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkEdgeSection__Group_4_3__3__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_3__4();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__3"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__3__Impl"
-    // InternalElkGraph.g:3913:1: rule__ElkEdgeSection__Group_4_3__3__Impl : ( ',' ) ;
-    public final void rule__ElkEdgeSection__Group_4_3__3__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3917:1: ( ( ',' ) )
-            // InternalElkGraph.g:3918:1: ( ',' )
-            {
-            // InternalElkGraph.g:3918:1: ( ',' )
-            // InternalElkGraph.g:3919:2: ','
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_3_3()); 
-            match(input,26,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_3_3()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__3__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__4"
-    // InternalElkGraph.g:3928:1: rule__ElkEdgeSection__Group_4_3__4 : rule__ElkEdgeSection__Group_4_3__4__Impl ;
-    public final void rule__ElkEdgeSection__Group_4_3__4() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3932:1: ( rule__ElkEdgeSection__Group_4_3__4__Impl )
-            // InternalElkGraph.g:3933:2: rule__ElkEdgeSection__Group_4_3__4__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_3__4__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__4"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_3__4__Impl"
-    // InternalElkGraph.g:3939:1: rule__ElkEdgeSection__Group_4_3__4__Impl : ( ( rule__ElkEdgeSection__EndYAssignment_4_3_4 ) ) ;
-    public final void rule__ElkEdgeSection__Group_4_3__4__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3943:1: ( ( ( rule__ElkEdgeSection__EndYAssignment_4_3_4 ) ) )
-            // InternalElkGraph.g:3944:1: ( ( rule__ElkEdgeSection__EndYAssignment_4_3_4 ) )
-            {
-            // InternalElkGraph.g:3944:1: ( ( rule__ElkEdgeSection__EndYAssignment_4_3_4 ) )
-            // InternalElkGraph.g:3945:2: ( rule__ElkEdgeSection__EndYAssignment_4_3_4 )
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getEndYAssignment_4_3_4()); 
-            // InternalElkGraph.g:3946:2: ( rule__ElkEdgeSection__EndYAssignment_4_3_4 )
-            // InternalElkGraph.g:3946:3: rule__ElkEdgeSection__EndYAssignment_4_3_4
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__EndYAssignment_4_3_4();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkEdgeSectionAccess().getEndYAssignment_4_3_4()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_3__4__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4__0"
-    // InternalElkGraph.g:3955:1: rule__ElkEdgeSection__Group_4_4__0 : rule__ElkEdgeSection__Group_4_4__0__Impl rule__ElkEdgeSection__Group_4_4__1 ;
-    public final void rule__ElkEdgeSection__Group_4_4__0() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3959:1: ( rule__ElkEdgeSection__Group_4_4__0__Impl rule__ElkEdgeSection__Group_4_4__1 )
-            // InternalElkGraph.g:3960:2: rule__ElkEdgeSection__Group_4_4__0__Impl rule__ElkEdgeSection__Group_4_4__1
-            {
-            pushFollow(FOLLOW_11);
-            rule__ElkEdgeSection__Group_4_4__0__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_4__1();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4__0"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4__0__Impl"
-    // InternalElkGraph.g:3967:1: rule__ElkEdgeSection__Group_4_4__0__Impl : ( 'bends' ) ;
-    public final void rule__ElkEdgeSection__Group_4_4__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3971:1: ( ( 'bends' ) )
-            // InternalElkGraph.g:3972:1: ( 'bends' )
-            {
-            // InternalElkGraph.g:3972:1: ( 'bends' )
-            // InternalElkGraph.g:3973:2: 'bends'
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_4_0()); 
-            match(input,34,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_4_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4__0__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4__1"
-    // InternalElkGraph.g:3982:1: rule__ElkEdgeSection__Group_4_4__1 : rule__ElkEdgeSection__Group_4_4__1__Impl rule__ElkEdgeSection__Group_4_4__2 ;
-    public final void rule__ElkEdgeSection__Group_4_4__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3986:1: ( rule__ElkEdgeSection__Group_4_4__1__Impl rule__ElkEdgeSection__Group_4_4__2 )
-            // InternalElkGraph.g:3987:2: rule__ElkEdgeSection__Group_4_4__1__Impl rule__ElkEdgeSection__Group_4_4__2
-            {
-            pushFollow(FOLLOW_15);
-            rule__ElkEdgeSection__Group_4_4__1__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_4__2();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4__1"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4__1__Impl"
-    // InternalElkGraph.g:3994:1: rule__ElkEdgeSection__Group_4_4__1__Impl : ( ':' ) ;
-    public final void rule__ElkEdgeSection__Group_4_4__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:3998:1: ( ( ':' ) )
-            // InternalElkGraph.g:3999:1: ( ':' )
-            {
-            // InternalElkGraph.g:3999:1: ( ':' )
-            // InternalElkGraph.g:4000:2: ':'
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_4_1()); 
-            match(input,20,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_4_1()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4__1__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4__2"
-    // InternalElkGraph.g:4009:1: rule__ElkEdgeSection__Group_4_4__2 : rule__ElkEdgeSection__Group_4_4__2__Impl rule__ElkEdgeSection__Group_4_4__3 ;
-    public final void rule__ElkEdgeSection__Group_4_4__2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4013:1: ( rule__ElkEdgeSection__Group_4_4__2__Impl rule__ElkEdgeSection__Group_4_4__3 )
-            // InternalElkGraph.g:4014:2: rule__ElkEdgeSection__Group_4_4__2__Impl rule__ElkEdgeSection__Group_4_4__3
-            {
-            pushFollow(FOLLOW_22);
-            rule__ElkEdgeSection__Group_4_4__2__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_4__3();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4__2"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4__2__Impl"
-    // InternalElkGraph.g:4021:1: rule__ElkEdgeSection__Group_4_4__2__Impl : ( ( rule__ElkEdgeSection__BendPointsAssignment_4_4_2 ) ) ;
-    public final void rule__ElkEdgeSection__Group_4_4__2__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4025:1: ( ( ( rule__ElkEdgeSection__BendPointsAssignment_4_4_2 ) ) )
-            // InternalElkGraph.g:4026:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_4_2 ) )
-            {
-            // InternalElkGraph.g:4026:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_4_2 ) )
-            // InternalElkGraph.g:4027:2: ( rule__ElkEdgeSection__BendPointsAssignment_4_4_2 )
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_4_2()); 
-            // InternalElkGraph.g:4028:2: ( rule__ElkEdgeSection__BendPointsAssignment_4_4_2 )
-            // InternalElkGraph.g:4028:3: rule__ElkEdgeSection__BendPointsAssignment_4_4_2
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__BendPointsAssignment_4_4_2();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_4_2()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4__2__Impl"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4__3"
-    // InternalElkGraph.g:4036:1: rule__ElkEdgeSection__Group_4_4__3 : rule__ElkEdgeSection__Group_4_4__3__Impl ;
-    public final void rule__ElkEdgeSection__Group_4_4__3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4040:1: ( rule__ElkEdgeSection__Group_4_4__3__Impl )
-            // InternalElkGraph.g:4041:2: rule__ElkEdgeSection__Group_4_4__3__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_4__3__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4__3"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4__3__Impl"
-    // InternalElkGraph.g:4047:1: rule__ElkEdgeSection__Group_4_4__3__Impl : ( ( rule__ElkEdgeSection__Group_4_4_3__0 )* ) ;
-    public final void rule__ElkEdgeSection__Group_4_4__3__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4051:1: ( ( ( rule__ElkEdgeSection__Group_4_4_3__0 )* ) )
-            // InternalElkGraph.g:4052:1: ( ( rule__ElkEdgeSection__Group_4_4_3__0 )* )
-            {
-            // InternalElkGraph.g:4052:1: ( ( rule__ElkEdgeSection__Group_4_4_3__0 )* )
-            // InternalElkGraph.g:4053:2: ( rule__ElkEdgeSection__Group_4_4_3__0 )*
-            {
-             before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_4_3()); 
-            // InternalElkGraph.g:4054:2: ( rule__ElkEdgeSection__Group_4_4_3__0 )*
-            loop35:
+             before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_1_3()); 
+            // InternalElkGraph.g:4216:2: ( rule__ElkEdgeSection__Group_4_1_3__0 )*
+            loop39:
             do {
-                int alt35=2;
-                int LA35_0 = input.LA(1);
+                int alt39=2;
+                int LA39_0 = input.LA(1);
 
-                if ( (LA35_0==35) ) {
-                    alt35=1;
+                if ( (LA39_0==35) ) {
+                    alt39=1;
                 }
 
 
-                switch (alt35) {
+                switch (alt39) {
             	case 1 :
-            	    // InternalElkGraph.g:4054:3: rule__ElkEdgeSection__Group_4_4_3__0
+            	    // InternalElkGraph.g:4216:3: rule__ElkEdgeSection__Group_4_1_3__0
             	    {
-            	    pushFollow(FOLLOW_23);
-            	    rule__ElkEdgeSection__Group_4_4_3__0();
+            	    pushFollow(FOLLOW_26);
+            	    rule__ElkEdgeSection__Group_4_1_3__0();
 
             	    state._fsp--;
 
@@ -12454,11 +13012,11 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	    break;
 
             	default :
-            	    break loop35;
+            	    break loop39;
                 }
             } while (true);
 
-             after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_4_3()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_1_3()); 
 
             }
 
@@ -12477,26 +13035,26 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4__3__Impl"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_1__3__Impl"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4_3__0"
-    // InternalElkGraph.g:4063:1: rule__ElkEdgeSection__Group_4_4_3__0 : rule__ElkEdgeSection__Group_4_4_3__0__Impl rule__ElkEdgeSection__Group_4_4_3__1 ;
-    public final void rule__ElkEdgeSection__Group_4_4_3__0() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_1_3__0"
+    // InternalElkGraph.g:4225:1: rule__ElkEdgeSection__Group_4_1_3__0 : rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1 ;
+    public final void rule__ElkEdgeSection__Group_4_1_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4067:1: ( rule__ElkEdgeSection__Group_4_4_3__0__Impl rule__ElkEdgeSection__Group_4_4_3__1 )
-            // InternalElkGraph.g:4068:2: rule__ElkEdgeSection__Group_4_4_3__0__Impl rule__ElkEdgeSection__Group_4_4_3__1
+            // InternalElkGraph.g:4229:1: ( rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1 )
+            // InternalElkGraph.g:4230:2: rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1
             {
-            pushFollow(FOLLOW_15);
-            rule__ElkEdgeSection__Group_4_4_3__0__Impl();
+            pushFollow(FOLLOW_17);
+            rule__ElkEdgeSection__Group_4_1_3__0__Impl();
 
             state._fsp--;
 
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_4_3__1();
+            rule__ElkEdgeSection__Group_4_1_3__1();
 
             state._fsp--;
 
@@ -12515,25 +13073,25 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4_3__0"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_1_3__0"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4_3__0__Impl"
-    // InternalElkGraph.g:4075:1: rule__ElkEdgeSection__Group_4_4_3__0__Impl : ( '|' ) ;
-    public final void rule__ElkEdgeSection__Group_4_4_3__0__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_1_3__0__Impl"
+    // InternalElkGraph.g:4237:1: rule__ElkEdgeSection__Group_4_1_3__0__Impl : ( '|' ) ;
+    public final void rule__ElkEdgeSection__Group_4_1_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4079:1: ( ( '|' ) )
-            // InternalElkGraph.g:4080:1: ( '|' )
+            // InternalElkGraph.g:4241:1: ( ( '|' ) )
+            // InternalElkGraph.g:4242:1: ( '|' )
             {
-            // InternalElkGraph.g:4080:1: ( '|' )
-            // InternalElkGraph.g:4081:2: '|'
+            // InternalElkGraph.g:4242:1: ( '|' )
+            // InternalElkGraph.g:4243:2: '|'
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_4_3_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_1_3_0()); 
             match(input,35,FOLLOW_2); 
-             after(grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_4_3_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_1_3_0()); 
 
             }
 
@@ -12552,21 +13110,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4_3__0__Impl"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_1_3__0__Impl"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4_3__1"
-    // InternalElkGraph.g:4090:1: rule__ElkEdgeSection__Group_4_4_3__1 : rule__ElkEdgeSection__Group_4_4_3__1__Impl ;
-    public final void rule__ElkEdgeSection__Group_4_4_3__1() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_1_3__1"
+    // InternalElkGraph.g:4252:1: rule__ElkEdgeSection__Group_4_1_3__1 : rule__ElkEdgeSection__Group_4_1_3__1__Impl ;
+    public final void rule__ElkEdgeSection__Group_4_1_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4094:1: ( rule__ElkEdgeSection__Group_4_4_3__1__Impl )
-            // InternalElkGraph.g:4095:2: rule__ElkEdgeSection__Group_4_4_3__1__Impl
+            // InternalElkGraph.g:4256:1: ( rule__ElkEdgeSection__Group_4_1_3__1__Impl )
+            // InternalElkGraph.g:4257:2: rule__ElkEdgeSection__Group_4_1_3__1__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__Group_4_4_3__1__Impl();
+            rule__ElkEdgeSection__Group_4_1_3__1__Impl();
 
             state._fsp--;
 
@@ -12585,35 +13143,35 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4_3__1"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_1_3__1"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__Group_4_4_3__1__Impl"
-    // InternalElkGraph.g:4101:1: rule__ElkEdgeSection__Group_4_4_3__1__Impl : ( ( rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1 ) ) ;
-    public final void rule__ElkEdgeSection__Group_4_4_3__1__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__Group_4_1_3__1__Impl"
+    // InternalElkGraph.g:4263:1: rule__ElkEdgeSection__Group_4_1_3__1__Impl : ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) ) ;
+    public final void rule__ElkEdgeSection__Group_4_1_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4105:1: ( ( ( rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1 ) ) )
-            // InternalElkGraph.g:4106:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1 ) )
+            // InternalElkGraph.g:4267:1: ( ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) ) )
+            // InternalElkGraph.g:4268:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) )
             {
-            // InternalElkGraph.g:4106:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1 ) )
-            // InternalElkGraph.g:4107:2: ( rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1 )
+            // InternalElkGraph.g:4268:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) )
+            // InternalElkGraph.g:4269:2: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 )
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_4_3_1()); 
-            // InternalElkGraph.g:4108:2: ( rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1 )
-            // InternalElkGraph.g:4108:3: rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1
+             before(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_1_3_1()); 
+            // InternalElkGraph.g:4270:2: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 )
+            // InternalElkGraph.g:4270:3: rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1
             {
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1();
+            rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_4_3_1()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_1_3_1()); 
 
             }
 
@@ -12632,20 +13190,20 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__Group_4_4_3__1__Impl"
+    // $ANTLR end "rule__ElkEdgeSection__Group_4_1_3__1__Impl"
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__0"
-    // InternalElkGraph.g:4117:1: rule__ElkBendPoint__Group__0 : rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1 ;
+    // InternalElkGraph.g:4279:1: rule__ElkBendPoint__Group__0 : rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1 ;
     public final void rule__ElkBendPoint__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4121:1: ( rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1 )
-            // InternalElkGraph.g:4122:2: rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1
+            // InternalElkGraph.g:4283:1: ( rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1 )
+            // InternalElkGraph.g:4284:2: rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1
             {
-            pushFollow(FOLLOW_16);
+            pushFollow(FOLLOW_18);
             rule__ElkBendPoint__Group__0__Impl();
 
             state._fsp--;
@@ -12674,21 +13232,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__0__Impl"
-    // InternalElkGraph.g:4129:1: rule__ElkBendPoint__Group__0__Impl : ( ( rule__ElkBendPoint__XAssignment_0 ) ) ;
+    // InternalElkGraph.g:4291:1: rule__ElkBendPoint__Group__0__Impl : ( ( rule__ElkBendPoint__XAssignment_0 ) ) ;
     public final void rule__ElkBendPoint__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4133:1: ( ( ( rule__ElkBendPoint__XAssignment_0 ) ) )
-            // InternalElkGraph.g:4134:1: ( ( rule__ElkBendPoint__XAssignment_0 ) )
+            // InternalElkGraph.g:4295:1: ( ( ( rule__ElkBendPoint__XAssignment_0 ) ) )
+            // InternalElkGraph.g:4296:1: ( ( rule__ElkBendPoint__XAssignment_0 ) )
             {
-            // InternalElkGraph.g:4134:1: ( ( rule__ElkBendPoint__XAssignment_0 ) )
-            // InternalElkGraph.g:4135:2: ( rule__ElkBendPoint__XAssignment_0 )
+            // InternalElkGraph.g:4296:1: ( ( rule__ElkBendPoint__XAssignment_0 ) )
+            // InternalElkGraph.g:4297:2: ( rule__ElkBendPoint__XAssignment_0 )
             {
              before(grammarAccess.getElkBendPointAccess().getXAssignment_0()); 
-            // InternalElkGraph.g:4136:2: ( rule__ElkBendPoint__XAssignment_0 )
-            // InternalElkGraph.g:4136:3: rule__ElkBendPoint__XAssignment_0
+            // InternalElkGraph.g:4298:2: ( rule__ElkBendPoint__XAssignment_0 )
+            // InternalElkGraph.g:4298:3: rule__ElkBendPoint__XAssignment_0
             {
             pushFollow(FOLLOW_2);
             rule__ElkBendPoint__XAssignment_0();
@@ -12721,16 +13279,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__1"
-    // InternalElkGraph.g:4144:1: rule__ElkBendPoint__Group__1 : rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2 ;
+    // InternalElkGraph.g:4306:1: rule__ElkBendPoint__Group__1 : rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2 ;
     public final void rule__ElkBendPoint__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4148:1: ( rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2 )
-            // InternalElkGraph.g:4149:2: rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2
+            // InternalElkGraph.g:4310:1: ( rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2 )
+            // InternalElkGraph.g:4311:2: rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2
             {
-            pushFollow(FOLLOW_15);
+            pushFollow(FOLLOW_17);
             rule__ElkBendPoint__Group__1__Impl();
 
             state._fsp--;
@@ -12759,17 +13317,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__1__Impl"
-    // InternalElkGraph.g:4156:1: rule__ElkBendPoint__Group__1__Impl : ( ',' ) ;
+    // InternalElkGraph.g:4318:1: rule__ElkBendPoint__Group__1__Impl : ( ',' ) ;
     public final void rule__ElkBendPoint__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4160:1: ( ( ',' ) )
-            // InternalElkGraph.g:4161:1: ( ',' )
+            // InternalElkGraph.g:4322:1: ( ( ',' ) )
+            // InternalElkGraph.g:4323:1: ( ',' )
             {
-            // InternalElkGraph.g:4161:1: ( ',' )
-            // InternalElkGraph.g:4162:2: ','
+            // InternalElkGraph.g:4323:1: ( ',' )
+            // InternalElkGraph.g:4324:2: ','
             {
              before(grammarAccess.getElkBendPointAccess().getCommaKeyword_1()); 
             match(input,26,FOLLOW_2); 
@@ -12796,14 +13354,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__2"
-    // InternalElkGraph.g:4171:1: rule__ElkBendPoint__Group__2 : rule__ElkBendPoint__Group__2__Impl ;
+    // InternalElkGraph.g:4333:1: rule__ElkBendPoint__Group__2 : rule__ElkBendPoint__Group__2__Impl ;
     public final void rule__ElkBendPoint__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4175:1: ( rule__ElkBendPoint__Group__2__Impl )
-            // InternalElkGraph.g:4176:2: rule__ElkBendPoint__Group__2__Impl
+            // InternalElkGraph.g:4337:1: ( rule__ElkBendPoint__Group__2__Impl )
+            // InternalElkGraph.g:4338:2: rule__ElkBendPoint__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkBendPoint__Group__2__Impl();
@@ -12829,21 +13387,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__2__Impl"
-    // InternalElkGraph.g:4182:1: rule__ElkBendPoint__Group__2__Impl : ( ( rule__ElkBendPoint__YAssignment_2 ) ) ;
+    // InternalElkGraph.g:4344:1: rule__ElkBendPoint__Group__2__Impl : ( ( rule__ElkBendPoint__YAssignment_2 ) ) ;
     public final void rule__ElkBendPoint__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4186:1: ( ( ( rule__ElkBendPoint__YAssignment_2 ) ) )
-            // InternalElkGraph.g:4187:1: ( ( rule__ElkBendPoint__YAssignment_2 ) )
+            // InternalElkGraph.g:4348:1: ( ( ( rule__ElkBendPoint__YAssignment_2 ) ) )
+            // InternalElkGraph.g:4349:1: ( ( rule__ElkBendPoint__YAssignment_2 ) )
             {
-            // InternalElkGraph.g:4187:1: ( ( rule__ElkBendPoint__YAssignment_2 ) )
-            // InternalElkGraph.g:4188:2: ( rule__ElkBendPoint__YAssignment_2 )
+            // InternalElkGraph.g:4349:1: ( ( rule__ElkBendPoint__YAssignment_2 ) )
+            // InternalElkGraph.g:4350:2: ( rule__ElkBendPoint__YAssignment_2 )
             {
              before(grammarAccess.getElkBendPointAccess().getYAssignment_2()); 
-            // InternalElkGraph.g:4189:2: ( rule__ElkBendPoint__YAssignment_2 )
-            // InternalElkGraph.g:4189:3: rule__ElkBendPoint__YAssignment_2
+            // InternalElkGraph.g:4351:2: ( rule__ElkBendPoint__YAssignment_2 )
+            // InternalElkGraph.g:4351:3: rule__ElkBendPoint__YAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkBendPoint__YAssignment_2();
@@ -12876,16 +13434,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__QualifiedId__Group__0"
-    // InternalElkGraph.g:4198:1: rule__QualifiedId__Group__0 : rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1 ;
+    // InternalElkGraph.g:4360:1: rule__QualifiedId__Group__0 : rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1 ;
     public final void rule__QualifiedId__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4202:1: ( rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1 )
-            // InternalElkGraph.g:4203:2: rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1
+            // InternalElkGraph.g:4364:1: ( rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1 )
+            // InternalElkGraph.g:4365:2: rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1
             {
-            pushFollow(FOLLOW_25);
+            pushFollow(FOLLOW_28);
             rule__QualifiedId__Group__0__Impl();
 
             state._fsp--;
@@ -12914,17 +13472,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__QualifiedId__Group__0__Impl"
-    // InternalElkGraph.g:4210:1: rule__QualifiedId__Group__0__Impl : ( RULE_ID ) ;
+    // InternalElkGraph.g:4372:1: rule__QualifiedId__Group__0__Impl : ( RULE_ID ) ;
     public final void rule__QualifiedId__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4214:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:4215:1: ( RULE_ID )
+            // InternalElkGraph.g:4376:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:4377:1: ( RULE_ID )
             {
-            // InternalElkGraph.g:4215:1: ( RULE_ID )
-            // InternalElkGraph.g:4216:2: RULE_ID
+            // InternalElkGraph.g:4377:1: ( RULE_ID )
+            // InternalElkGraph.g:4378:2: RULE_ID
             {
              before(grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -12951,14 +13509,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__QualifiedId__Group__1"
-    // InternalElkGraph.g:4225:1: rule__QualifiedId__Group__1 : rule__QualifiedId__Group__1__Impl ;
+    // InternalElkGraph.g:4387:1: rule__QualifiedId__Group__1 : rule__QualifiedId__Group__1__Impl ;
     public final void rule__QualifiedId__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4229:1: ( rule__QualifiedId__Group__1__Impl )
-            // InternalElkGraph.g:4230:2: rule__QualifiedId__Group__1__Impl
+            // InternalElkGraph.g:4391:1: ( rule__QualifiedId__Group__1__Impl )
+            // InternalElkGraph.g:4392:2: rule__QualifiedId__Group__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__QualifiedId__Group__1__Impl();
@@ -12984,35 +13542,35 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__QualifiedId__Group__1__Impl"
-    // InternalElkGraph.g:4236:1: rule__QualifiedId__Group__1__Impl : ( ( rule__QualifiedId__Group_1__0 )* ) ;
+    // InternalElkGraph.g:4398:1: rule__QualifiedId__Group__1__Impl : ( ( rule__QualifiedId__Group_1__0 )* ) ;
     public final void rule__QualifiedId__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4240:1: ( ( ( rule__QualifiedId__Group_1__0 )* ) )
-            // InternalElkGraph.g:4241:1: ( ( rule__QualifiedId__Group_1__0 )* )
+            // InternalElkGraph.g:4402:1: ( ( ( rule__QualifiedId__Group_1__0 )* ) )
+            // InternalElkGraph.g:4403:1: ( ( rule__QualifiedId__Group_1__0 )* )
             {
-            // InternalElkGraph.g:4241:1: ( ( rule__QualifiedId__Group_1__0 )* )
-            // InternalElkGraph.g:4242:2: ( rule__QualifiedId__Group_1__0 )*
+            // InternalElkGraph.g:4403:1: ( ( rule__QualifiedId__Group_1__0 )* )
+            // InternalElkGraph.g:4404:2: ( rule__QualifiedId__Group_1__0 )*
             {
              before(grammarAccess.getQualifiedIdAccess().getGroup_1()); 
-            // InternalElkGraph.g:4243:2: ( rule__QualifiedId__Group_1__0 )*
-            loop36:
+            // InternalElkGraph.g:4405:2: ( rule__QualifiedId__Group_1__0 )*
+            loop40:
             do {
-                int alt36=2;
-                int LA36_0 = input.LA(1);
+                int alt40=2;
+                int LA40_0 = input.LA(1);
 
-                if ( (LA36_0==37) ) {
-                    alt36=1;
+                if ( (LA40_0==37) ) {
+                    alt40=1;
                 }
 
 
-                switch (alt36) {
+                switch (alt40) {
             	case 1 :
-            	    // InternalElkGraph.g:4243:3: rule__QualifiedId__Group_1__0
+            	    // InternalElkGraph.g:4405:3: rule__QualifiedId__Group_1__0
             	    {
-            	    pushFollow(FOLLOW_26);
+            	    pushFollow(FOLLOW_29);
             	    rule__QualifiedId__Group_1__0();
 
             	    state._fsp--;
@@ -13022,7 +13580,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	    break;
 
             	default :
-            	    break loop36;
+            	    break loop40;
                 }
             } while (true);
 
@@ -13049,14 +13607,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__QualifiedId__Group_1__0"
-    // InternalElkGraph.g:4252:1: rule__QualifiedId__Group_1__0 : rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1 ;
+    // InternalElkGraph.g:4414:1: rule__QualifiedId__Group_1__0 : rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1 ;
     public final void rule__QualifiedId__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4256:1: ( rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1 )
-            // InternalElkGraph.g:4257:2: rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1
+            // InternalElkGraph.g:4418:1: ( rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1 )
+            // InternalElkGraph.g:4419:2: rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1
             {
             pushFollow(FOLLOW_7);
             rule__QualifiedId__Group_1__0__Impl();
@@ -13087,17 +13645,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__QualifiedId__Group_1__0__Impl"
-    // InternalElkGraph.g:4264:1: rule__QualifiedId__Group_1__0__Impl : ( '.' ) ;
+    // InternalElkGraph.g:4426:1: rule__QualifiedId__Group_1__0__Impl : ( '.' ) ;
     public final void rule__QualifiedId__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4268:1: ( ( '.' ) )
-            // InternalElkGraph.g:4269:1: ( '.' )
+            // InternalElkGraph.g:4430:1: ( ( '.' ) )
+            // InternalElkGraph.g:4431:1: ( '.' )
             {
-            // InternalElkGraph.g:4269:1: ( '.' )
-            // InternalElkGraph.g:4270:2: '.'
+            // InternalElkGraph.g:4431:1: ( '.' )
+            // InternalElkGraph.g:4432:2: '.'
             {
              before(grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0()); 
             match(input,37,FOLLOW_2); 
@@ -13124,14 +13682,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__QualifiedId__Group_1__1"
-    // InternalElkGraph.g:4279:1: rule__QualifiedId__Group_1__1 : rule__QualifiedId__Group_1__1__Impl ;
+    // InternalElkGraph.g:4441:1: rule__QualifiedId__Group_1__1 : rule__QualifiedId__Group_1__1__Impl ;
     public final void rule__QualifiedId__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4283:1: ( rule__QualifiedId__Group_1__1__Impl )
-            // InternalElkGraph.g:4284:2: rule__QualifiedId__Group_1__1__Impl
+            // InternalElkGraph.g:4445:1: ( rule__QualifiedId__Group_1__1__Impl )
+            // InternalElkGraph.g:4446:2: rule__QualifiedId__Group_1__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__QualifiedId__Group_1__1__Impl();
@@ -13157,17 +13715,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__QualifiedId__Group_1__1__Impl"
-    // InternalElkGraph.g:4290:1: rule__QualifiedId__Group_1__1__Impl : ( RULE_ID ) ;
+    // InternalElkGraph.g:4452:1: rule__QualifiedId__Group_1__1__Impl : ( RULE_ID ) ;
     public final void rule__QualifiedId__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4294:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:4295:1: ( RULE_ID )
+            // InternalElkGraph.g:4456:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:4457:1: ( RULE_ID )
             {
-            // InternalElkGraph.g:4295:1: ( RULE_ID )
-            // InternalElkGraph.g:4296:2: RULE_ID
+            // InternalElkGraph.g:4457:1: ( RULE_ID )
+            // InternalElkGraph.g:4458:2: RULE_ID
             {
              before(grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_1_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -13194,14 +13752,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__Group__0"
-    // InternalElkGraph.g:4306:1: rule__Property__Group__0 : rule__Property__Group__0__Impl rule__Property__Group__1 ;
+    // InternalElkGraph.g:4468:1: rule__Property__Group__0 : rule__Property__Group__0__Impl rule__Property__Group__1 ;
     public final void rule__Property__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4310:1: ( rule__Property__Group__0__Impl rule__Property__Group__1 )
-            // InternalElkGraph.g:4311:2: rule__Property__Group__0__Impl rule__Property__Group__1
+            // InternalElkGraph.g:4472:1: ( rule__Property__Group__0__Impl rule__Property__Group__1 )
+            // InternalElkGraph.g:4473:2: rule__Property__Group__0__Impl rule__Property__Group__1
             {
             pushFollow(FOLLOW_11);
             rule__Property__Group__0__Impl();
@@ -13232,21 +13790,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__Group__0__Impl"
-    // InternalElkGraph.g:4318:1: rule__Property__Group__0__Impl : ( ( rule__Property__KeyAssignment_0 ) ) ;
+    // InternalElkGraph.g:4480:1: rule__Property__Group__0__Impl : ( ( rule__Property__KeyAssignment_0 ) ) ;
     public final void rule__Property__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4322:1: ( ( ( rule__Property__KeyAssignment_0 ) ) )
-            // InternalElkGraph.g:4323:1: ( ( rule__Property__KeyAssignment_0 ) )
+            // InternalElkGraph.g:4484:1: ( ( ( rule__Property__KeyAssignment_0 ) ) )
+            // InternalElkGraph.g:4485:1: ( ( rule__Property__KeyAssignment_0 ) )
             {
-            // InternalElkGraph.g:4323:1: ( ( rule__Property__KeyAssignment_0 ) )
-            // InternalElkGraph.g:4324:2: ( rule__Property__KeyAssignment_0 )
+            // InternalElkGraph.g:4485:1: ( ( rule__Property__KeyAssignment_0 ) )
+            // InternalElkGraph.g:4486:2: ( rule__Property__KeyAssignment_0 )
             {
              before(grammarAccess.getPropertyAccess().getKeyAssignment_0()); 
-            // InternalElkGraph.g:4325:2: ( rule__Property__KeyAssignment_0 )
-            // InternalElkGraph.g:4325:3: rule__Property__KeyAssignment_0
+            // InternalElkGraph.g:4487:2: ( rule__Property__KeyAssignment_0 )
+            // InternalElkGraph.g:4487:3: rule__Property__KeyAssignment_0
             {
             pushFollow(FOLLOW_2);
             rule__Property__KeyAssignment_0();
@@ -13279,16 +13837,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__Group__1"
-    // InternalElkGraph.g:4333:1: rule__Property__Group__1 : rule__Property__Group__1__Impl rule__Property__Group__2 ;
+    // InternalElkGraph.g:4495:1: rule__Property__Group__1 : rule__Property__Group__1__Impl rule__Property__Group__2 ;
     public final void rule__Property__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4337:1: ( rule__Property__Group__1__Impl rule__Property__Group__2 )
-            // InternalElkGraph.g:4338:2: rule__Property__Group__1__Impl rule__Property__Group__2
+            // InternalElkGraph.g:4499:1: ( rule__Property__Group__1__Impl rule__Property__Group__2 )
+            // InternalElkGraph.g:4500:2: rule__Property__Group__1__Impl rule__Property__Group__2
             {
-            pushFollow(FOLLOW_27);
+            pushFollow(FOLLOW_30);
             rule__Property__Group__1__Impl();
 
             state._fsp--;
@@ -13317,17 +13875,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__Group__1__Impl"
-    // InternalElkGraph.g:4345:1: rule__Property__Group__1__Impl : ( ':' ) ;
+    // InternalElkGraph.g:4507:1: rule__Property__Group__1__Impl : ( ':' ) ;
     public final void rule__Property__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4349:1: ( ( ':' ) )
-            // InternalElkGraph.g:4350:1: ( ':' )
+            // InternalElkGraph.g:4511:1: ( ( ':' ) )
+            // InternalElkGraph.g:4512:1: ( ':' )
             {
-            // InternalElkGraph.g:4350:1: ( ':' )
-            // InternalElkGraph.g:4351:2: ':'
+            // InternalElkGraph.g:4512:1: ( ':' )
+            // InternalElkGraph.g:4513:2: ':'
             {
              before(grammarAccess.getPropertyAccess().getColonKeyword_1()); 
             match(input,20,FOLLOW_2); 
@@ -13354,14 +13912,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__Group__2"
-    // InternalElkGraph.g:4360:1: rule__Property__Group__2 : rule__Property__Group__2__Impl ;
+    // InternalElkGraph.g:4522:1: rule__Property__Group__2 : rule__Property__Group__2__Impl ;
     public final void rule__Property__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4364:1: ( rule__Property__Group__2__Impl )
-            // InternalElkGraph.g:4365:2: rule__Property__Group__2__Impl
+            // InternalElkGraph.g:4526:1: ( rule__Property__Group__2__Impl )
+            // InternalElkGraph.g:4527:2: rule__Property__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Property__Group__2__Impl();
@@ -13387,21 +13945,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__Group__2__Impl"
-    // InternalElkGraph.g:4371:1: rule__Property__Group__2__Impl : ( ( rule__Property__Alternatives_2 ) ) ;
+    // InternalElkGraph.g:4533:1: rule__Property__Group__2__Impl : ( ( rule__Property__Alternatives_2 ) ) ;
     public final void rule__Property__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4375:1: ( ( ( rule__Property__Alternatives_2 ) ) )
-            // InternalElkGraph.g:4376:1: ( ( rule__Property__Alternatives_2 ) )
+            // InternalElkGraph.g:4537:1: ( ( ( rule__Property__Alternatives_2 ) ) )
+            // InternalElkGraph.g:4538:1: ( ( rule__Property__Alternatives_2 ) )
             {
-            // InternalElkGraph.g:4376:1: ( ( rule__Property__Alternatives_2 ) )
-            // InternalElkGraph.g:4377:2: ( rule__Property__Alternatives_2 )
+            // InternalElkGraph.g:4538:1: ( ( rule__Property__Alternatives_2 ) )
+            // InternalElkGraph.g:4539:2: ( rule__Property__Alternatives_2 )
             {
              before(grammarAccess.getPropertyAccess().getAlternatives_2()); 
-            // InternalElkGraph.g:4378:2: ( rule__Property__Alternatives_2 )
-            // InternalElkGraph.g:4378:3: rule__Property__Alternatives_2
+            // InternalElkGraph.g:4540:2: ( rule__Property__Alternatives_2 )
+            // InternalElkGraph.g:4540:3: rule__Property__Alternatives_2
             {
             pushFollow(FOLLOW_2);
             rule__Property__Alternatives_2();
@@ -13434,16 +13992,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__PropertyKey__Group__0"
-    // InternalElkGraph.g:4387:1: rule__PropertyKey__Group__0 : rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1 ;
+    // InternalElkGraph.g:4549:1: rule__PropertyKey__Group__0 : rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1 ;
     public final void rule__PropertyKey__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4391:1: ( rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1 )
-            // InternalElkGraph.g:4392:2: rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1
+            // InternalElkGraph.g:4553:1: ( rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1 )
+            // InternalElkGraph.g:4554:2: rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1
             {
-            pushFollow(FOLLOW_25);
+            pushFollow(FOLLOW_28);
             rule__PropertyKey__Group__0__Impl();
 
             state._fsp--;
@@ -13472,17 +14030,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__PropertyKey__Group__0__Impl"
-    // InternalElkGraph.g:4399:1: rule__PropertyKey__Group__0__Impl : ( RULE_ID ) ;
+    // InternalElkGraph.g:4561:1: rule__PropertyKey__Group__0__Impl : ( RULE_ID ) ;
     public final void rule__PropertyKey__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4403:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:4404:1: ( RULE_ID )
+            // InternalElkGraph.g:4565:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:4566:1: ( RULE_ID )
             {
-            // InternalElkGraph.g:4404:1: ( RULE_ID )
-            // InternalElkGraph.g:4405:2: RULE_ID
+            // InternalElkGraph.g:4566:1: ( RULE_ID )
+            // InternalElkGraph.g:4567:2: RULE_ID
             {
              before(grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -13509,14 +14067,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__PropertyKey__Group__1"
-    // InternalElkGraph.g:4414:1: rule__PropertyKey__Group__1 : rule__PropertyKey__Group__1__Impl ;
+    // InternalElkGraph.g:4576:1: rule__PropertyKey__Group__1 : rule__PropertyKey__Group__1__Impl ;
     public final void rule__PropertyKey__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4418:1: ( rule__PropertyKey__Group__1__Impl )
-            // InternalElkGraph.g:4419:2: rule__PropertyKey__Group__1__Impl
+            // InternalElkGraph.g:4580:1: ( rule__PropertyKey__Group__1__Impl )
+            // InternalElkGraph.g:4581:2: rule__PropertyKey__Group__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__PropertyKey__Group__1__Impl();
@@ -13542,35 +14100,35 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__PropertyKey__Group__1__Impl"
-    // InternalElkGraph.g:4425:1: rule__PropertyKey__Group__1__Impl : ( ( rule__PropertyKey__Group_1__0 )* ) ;
+    // InternalElkGraph.g:4587:1: rule__PropertyKey__Group__1__Impl : ( ( rule__PropertyKey__Group_1__0 )* ) ;
     public final void rule__PropertyKey__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4429:1: ( ( ( rule__PropertyKey__Group_1__0 )* ) )
-            // InternalElkGraph.g:4430:1: ( ( rule__PropertyKey__Group_1__0 )* )
+            // InternalElkGraph.g:4591:1: ( ( ( rule__PropertyKey__Group_1__0 )* ) )
+            // InternalElkGraph.g:4592:1: ( ( rule__PropertyKey__Group_1__0 )* )
             {
-            // InternalElkGraph.g:4430:1: ( ( rule__PropertyKey__Group_1__0 )* )
-            // InternalElkGraph.g:4431:2: ( rule__PropertyKey__Group_1__0 )*
+            // InternalElkGraph.g:4592:1: ( ( rule__PropertyKey__Group_1__0 )* )
+            // InternalElkGraph.g:4593:2: ( rule__PropertyKey__Group_1__0 )*
             {
              before(grammarAccess.getPropertyKeyAccess().getGroup_1()); 
-            // InternalElkGraph.g:4432:2: ( rule__PropertyKey__Group_1__0 )*
-            loop37:
+            // InternalElkGraph.g:4594:2: ( rule__PropertyKey__Group_1__0 )*
+            loop41:
             do {
-                int alt37=2;
-                int LA37_0 = input.LA(1);
+                int alt41=2;
+                int LA41_0 = input.LA(1);
 
-                if ( (LA37_0==37) ) {
-                    alt37=1;
+                if ( (LA41_0==37) ) {
+                    alt41=1;
                 }
 
 
-                switch (alt37) {
+                switch (alt41) {
             	case 1 :
-            	    // InternalElkGraph.g:4432:3: rule__PropertyKey__Group_1__0
+            	    // InternalElkGraph.g:4594:3: rule__PropertyKey__Group_1__0
             	    {
-            	    pushFollow(FOLLOW_26);
+            	    pushFollow(FOLLOW_29);
             	    rule__PropertyKey__Group_1__0();
 
             	    state._fsp--;
@@ -13580,7 +14138,7 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
             	    break;
 
             	default :
-            	    break loop37;
+            	    break loop41;
                 }
             } while (true);
 
@@ -13607,14 +14165,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__PropertyKey__Group_1__0"
-    // InternalElkGraph.g:4441:1: rule__PropertyKey__Group_1__0 : rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1 ;
+    // InternalElkGraph.g:4603:1: rule__PropertyKey__Group_1__0 : rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1 ;
     public final void rule__PropertyKey__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4445:1: ( rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1 )
-            // InternalElkGraph.g:4446:2: rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1
+            // InternalElkGraph.g:4607:1: ( rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1 )
+            // InternalElkGraph.g:4608:2: rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1
             {
             pushFollow(FOLLOW_7);
             rule__PropertyKey__Group_1__0__Impl();
@@ -13645,17 +14203,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__PropertyKey__Group_1__0__Impl"
-    // InternalElkGraph.g:4453:1: rule__PropertyKey__Group_1__0__Impl : ( '.' ) ;
+    // InternalElkGraph.g:4615:1: rule__PropertyKey__Group_1__0__Impl : ( '.' ) ;
     public final void rule__PropertyKey__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4457:1: ( ( '.' ) )
-            // InternalElkGraph.g:4458:1: ( '.' )
+            // InternalElkGraph.g:4619:1: ( ( '.' ) )
+            // InternalElkGraph.g:4620:1: ( '.' )
             {
-            // InternalElkGraph.g:4458:1: ( '.' )
-            // InternalElkGraph.g:4459:2: '.'
+            // InternalElkGraph.g:4620:1: ( '.' )
+            // InternalElkGraph.g:4621:2: '.'
             {
              before(grammarAccess.getPropertyKeyAccess().getFullStopKeyword_1_0()); 
             match(input,37,FOLLOW_2); 
@@ -13682,14 +14240,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__PropertyKey__Group_1__1"
-    // InternalElkGraph.g:4468:1: rule__PropertyKey__Group_1__1 : rule__PropertyKey__Group_1__1__Impl ;
+    // InternalElkGraph.g:4630:1: rule__PropertyKey__Group_1__1 : rule__PropertyKey__Group_1__1__Impl ;
     public final void rule__PropertyKey__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4472:1: ( rule__PropertyKey__Group_1__1__Impl )
-            // InternalElkGraph.g:4473:2: rule__PropertyKey__Group_1__1__Impl
+            // InternalElkGraph.g:4634:1: ( rule__PropertyKey__Group_1__1__Impl )
+            // InternalElkGraph.g:4635:2: rule__PropertyKey__Group_1__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__PropertyKey__Group_1__1__Impl();
@@ -13715,17 +14273,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__PropertyKey__Group_1__1__Impl"
-    // InternalElkGraph.g:4479:1: rule__PropertyKey__Group_1__1__Impl : ( RULE_ID ) ;
+    // InternalElkGraph.g:4641:1: rule__PropertyKey__Group_1__1__Impl : ( RULE_ID ) ;
     public final void rule__PropertyKey__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4483:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:4484:1: ( RULE_ID )
+            // InternalElkGraph.g:4645:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:4646:1: ( RULE_ID )
             {
-            // InternalElkGraph.g:4484:1: ( RULE_ID )
-            // InternalElkGraph.g:4485:2: RULE_ID
+            // InternalElkGraph.g:4646:1: ( RULE_ID )
+            // InternalElkGraph.g:4647:2: RULE_ID
             {
              before(grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_1_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -13752,29 +14310,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ShapeLayout__UnorderedGroup_2"
-    // InternalElkGraph.g:4495:1: rule__ShapeLayout__UnorderedGroup_2 : ( rule__ShapeLayout__UnorderedGroup_2__0 )? ;
+    // InternalElkGraph.g:4657:1: rule__ShapeLayout__UnorderedGroup_2 : ( rule__ShapeLayout__UnorderedGroup_2__0 )? ;
     public final void rule__ShapeLayout__UnorderedGroup_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         		getUnorderedGroupHelper().enter(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2());
         	
         try {
-            // InternalElkGraph.g:4500:1: ( ( rule__ShapeLayout__UnorderedGroup_2__0 )? )
-            // InternalElkGraph.g:4501:2: ( rule__ShapeLayout__UnorderedGroup_2__0 )?
+            // InternalElkGraph.g:4662:1: ( ( rule__ShapeLayout__UnorderedGroup_2__0 )? )
+            // InternalElkGraph.g:4663:2: ( rule__ShapeLayout__UnorderedGroup_2__0 )?
             {
-            // InternalElkGraph.g:4501:2: ( rule__ShapeLayout__UnorderedGroup_2__0 )?
-            int alt38=2;
-            int LA38_0 = input.LA(1);
+            // InternalElkGraph.g:4663:2: ( rule__ShapeLayout__UnorderedGroup_2__0 )?
+            int alt42=2;
+            int LA42_0 = input.LA(1);
 
-            if ( LA38_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
-                alt38=1;
+            if ( LA42_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
+                alt42=1;
             }
-            else if ( LA38_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
-                alt38=1;
+            else if ( LA42_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
+                alt42=1;
             }
-            switch (alt38) {
+            switch (alt42) {
                 case 1 :
-                    // InternalElkGraph.g:4501:2: rule__ShapeLayout__UnorderedGroup_2__0
+                    // InternalElkGraph.g:4663:2: rule__ShapeLayout__UnorderedGroup_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ShapeLayout__UnorderedGroup_2__0();
@@ -13807,44 +14365,44 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ShapeLayout__UnorderedGroup_2__Impl"
-    // InternalElkGraph.g:4509:1: rule__ShapeLayout__UnorderedGroup_2__Impl : ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) ) ;
+    // InternalElkGraph.g:4671:1: rule__ShapeLayout__UnorderedGroup_2__Impl : ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) ) ;
     public final void rule__ShapeLayout__UnorderedGroup_2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         		boolean selected = false;
         	
         try {
-            // InternalElkGraph.g:4514:1: ( ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) ) )
-            // InternalElkGraph.g:4515:3: ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) )
+            // InternalElkGraph.g:4676:1: ( ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) ) )
+            // InternalElkGraph.g:4677:3: ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) )
             {
-            // InternalElkGraph.g:4515:3: ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) )
-            int alt39=2;
-            int LA39_0 = input.LA(1);
+            // InternalElkGraph.g:4677:3: ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) )
+            int alt43=2;
+            int LA43_0 = input.LA(1);
 
-            if ( LA39_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
-                alt39=1;
+            if ( LA43_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
+                alt43=1;
             }
-            else if ( LA39_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
-                alt39=2;
+            else if ( LA43_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
+                alt43=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 39, 0, input);
+                    new NoViableAltException("", 43, 0, input);
 
                 throw nvae;
             }
-            switch (alt39) {
+            switch (alt43) {
                 case 1 :
-                    // InternalElkGraph.g:4516:3: ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) )
+                    // InternalElkGraph.g:4678:3: ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) )
                     {
-                    // InternalElkGraph.g:4516:3: ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) )
-                    // InternalElkGraph.g:4517:4: {...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) )
+                    // InternalElkGraph.g:4678:3: ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) )
+                    // InternalElkGraph.g:4679:4: {...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
                         throw new FailedPredicateException(input, "rule__ShapeLayout__UnorderedGroup_2__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0)");
                     }
-                    // InternalElkGraph.g:4517:107: ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) )
-                    // InternalElkGraph.g:4518:5: ( ( rule__ShapeLayout__Group_2_0__0 ) )
+                    // InternalElkGraph.g:4679:107: ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) )
+                    // InternalElkGraph.g:4680:5: ( ( rule__ShapeLayout__Group_2_0__0 ) )
                     {
 
                     					getUnorderedGroupHelper().select(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0);
@@ -13852,12 +14410,12 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
                     					selected = true;
                     				
-                    // InternalElkGraph.g:4524:5: ( ( rule__ShapeLayout__Group_2_0__0 ) )
-                    // InternalElkGraph.g:4525:6: ( rule__ShapeLayout__Group_2_0__0 )
+                    // InternalElkGraph.g:4686:5: ( ( rule__ShapeLayout__Group_2_0__0 ) )
+                    // InternalElkGraph.g:4687:6: ( rule__ShapeLayout__Group_2_0__0 )
                     {
                      before(grammarAccess.getShapeLayoutAccess().getGroup_2_0()); 
-                    // InternalElkGraph.g:4526:6: ( rule__ShapeLayout__Group_2_0__0 )
-                    // InternalElkGraph.g:4526:7: rule__ShapeLayout__Group_2_0__0
+                    // InternalElkGraph.g:4688:6: ( rule__ShapeLayout__Group_2_0__0 )
+                    // InternalElkGraph.g:4688:7: rule__ShapeLayout__Group_2_0__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ShapeLayout__Group_2_0__0();
@@ -13881,16 +14439,16 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 2 :
-                    // InternalElkGraph.g:4531:3: ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) )
+                    // InternalElkGraph.g:4693:3: ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) )
                     {
-                    // InternalElkGraph.g:4531:3: ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) )
-                    // InternalElkGraph.g:4532:4: {...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) )
+                    // InternalElkGraph.g:4693:3: ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) )
+                    // InternalElkGraph.g:4694:4: {...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
                         throw new FailedPredicateException(input, "rule__ShapeLayout__UnorderedGroup_2__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1)");
                     }
-                    // InternalElkGraph.g:4532:107: ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) )
-                    // InternalElkGraph.g:4533:5: ( ( rule__ShapeLayout__Group_2_1__0 ) )
+                    // InternalElkGraph.g:4694:107: ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) )
+                    // InternalElkGraph.g:4695:5: ( ( rule__ShapeLayout__Group_2_1__0 ) )
                     {
 
                     					getUnorderedGroupHelper().select(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1);
@@ -13898,12 +14456,12 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
                     					selected = true;
                     				
-                    // InternalElkGraph.g:4539:5: ( ( rule__ShapeLayout__Group_2_1__0 ) )
-                    // InternalElkGraph.g:4540:6: ( rule__ShapeLayout__Group_2_1__0 )
+                    // InternalElkGraph.g:4701:5: ( ( rule__ShapeLayout__Group_2_1__0 ) )
+                    // InternalElkGraph.g:4702:6: ( rule__ShapeLayout__Group_2_1__0 )
                     {
                      before(grammarAccess.getShapeLayoutAccess().getGroup_2_1()); 
-                    // InternalElkGraph.g:4541:6: ( rule__ShapeLayout__Group_2_1__0 )
-                    // InternalElkGraph.g:4541:7: rule__ShapeLayout__Group_2_1__0
+                    // InternalElkGraph.g:4703:6: ( rule__ShapeLayout__Group_2_1__0 )
+                    // InternalElkGraph.g:4703:7: rule__ShapeLayout__Group_2_1__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ShapeLayout__Group_2_1__0();
@@ -13950,33 +14508,33 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ShapeLayout__UnorderedGroup_2__0"
-    // InternalElkGraph.g:4554:1: rule__ShapeLayout__UnorderedGroup_2__0 : rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )? ;
+    // InternalElkGraph.g:4716:1: rule__ShapeLayout__UnorderedGroup_2__0 : rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )? ;
     public final void rule__ShapeLayout__UnorderedGroup_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4558:1: ( rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )? )
-            // InternalElkGraph.g:4559:2: rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )?
+            // InternalElkGraph.g:4720:1: ( rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )? )
+            // InternalElkGraph.g:4721:2: rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )?
             {
-            pushFollow(FOLLOW_28);
+            pushFollow(FOLLOW_31);
             rule__ShapeLayout__UnorderedGroup_2__Impl();
 
             state._fsp--;
 
-            // InternalElkGraph.g:4560:2: ( rule__ShapeLayout__UnorderedGroup_2__1 )?
-            int alt40=2;
-            int LA40_0 = input.LA(1);
+            // InternalElkGraph.g:4722:2: ( rule__ShapeLayout__UnorderedGroup_2__1 )?
+            int alt44=2;
+            int LA44_0 = input.LA(1);
 
-            if ( LA40_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
-                alt40=1;
+            if ( LA44_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
+                alt44=1;
             }
-            else if ( LA40_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
-                alt40=1;
+            else if ( LA44_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
+                alt44=1;
             }
-            switch (alt40) {
+            switch (alt44) {
                 case 1 :
-                    // InternalElkGraph.g:4560:2: rule__ShapeLayout__UnorderedGroup_2__1
+                    // InternalElkGraph.g:4722:2: rule__ShapeLayout__UnorderedGroup_2__1
                     {
                     pushFollow(FOLLOW_2);
                     rule__ShapeLayout__UnorderedGroup_2__1();
@@ -14008,14 +14566,14 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ShapeLayout__UnorderedGroup_2__1"
-    // InternalElkGraph.g:4566:1: rule__ShapeLayout__UnorderedGroup_2__1 : rule__ShapeLayout__UnorderedGroup_2__Impl ;
+    // InternalElkGraph.g:4728:1: rule__ShapeLayout__UnorderedGroup_2__1 : rule__ShapeLayout__UnorderedGroup_2__Impl ;
     public final void rule__ShapeLayout__UnorderedGroup_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4570:1: ( rule__ShapeLayout__UnorderedGroup_2__Impl )
-            // InternalElkGraph.g:4571:2: rule__ShapeLayout__UnorderedGroup_2__Impl
+            // InternalElkGraph.g:4732:1: ( rule__ShapeLayout__UnorderedGroup_2__Impl )
+            // InternalElkGraph.g:4733:2: rule__ShapeLayout__UnorderedGroup_2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__UnorderedGroup_2__Impl();
@@ -14040,534 +14598,39 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__ShapeLayout__UnorderedGroup_2__1"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1"
-    // InternalElkGraph.g:4578:1: rule__ElkSingleEdgeSection__UnorderedGroup_1 : ( rule__ElkSingleEdgeSection__UnorderedGroup_1__0 )? ;
-    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0"
+    // InternalElkGraph.g:4740:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0 : ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )? ;
+    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
-        		getUnorderedGroupHelper().enter(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+        		getUnorderedGroupHelper().enter(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
         	
         try {
-            // InternalElkGraph.g:4583:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1__0 )? )
-            // InternalElkGraph.g:4584:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__0 )?
+            // InternalElkGraph.g:4745:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )? )
+            // InternalElkGraph.g:4746:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )?
             {
-            // InternalElkGraph.g:4584:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__0 )?
-            int alt41=2;
-            int LA41_0 = input.LA(1);
-
-            if ( LA41_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-                alt41=1;
-            }
-            else if ( LA41_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-                alt41=1;
-            }
-            else if ( LA41_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-                alt41=1;
-            }
-            else if ( LA41_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                alt41=1;
-            }
-            else if ( LA41_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-                alt41=1;
-            }
-            switch (alt41) {
-                case 1 :
-                    // InternalElkGraph.g:4584:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__0
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__UnorderedGroup_1__0();
-
-                    state._fsp--;
-
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	getUnorderedGroupHelper().leave(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl"
-    // InternalElkGraph.g:4592:1: rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl : ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) ) ) ) ) ;
-    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        		boolean selected = false;
-        	
-        try {
-            // InternalElkGraph.g:4597:1: ( ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) ) ) ) ) )
-            // InternalElkGraph.g:4598:3: ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) ) ) ) )
-            {
-            // InternalElkGraph.g:4598:3: ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) ) ) ) )
-            int alt42=5;
-            int LA42_0 = input.LA(1);
-
-            if ( LA42_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-                alt42=1;
-            }
-            else if ( LA42_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-                alt42=2;
-            }
-            else if ( LA42_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-                alt42=3;
-            }
-            else if ( LA42_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                alt42=4;
-            }
-            else if ( LA42_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-                alt42=5;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 42, 0, input);
-
-                throw nvae;
-            }
-            switch (alt42) {
-                case 1 :
-                    // InternalElkGraph.g:4599:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) ) ) )
-                    {
-                    // InternalElkGraph.g:4599:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) ) ) )
-                    // InternalElkGraph.g:4600:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) ) )
-                    {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0)");
-                    }
-                    // InternalElkGraph.g:4600:116: ( ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) ) )
-                    // InternalElkGraph.g:4601:5: ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) )
-                    {
-
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0);
-                    				
-
-                    					selected = true;
-                    				
-                    // InternalElkGraph.g:4607:5: ( ( rule__ElkSingleEdgeSection__Group_1_0__0 ) )
-                    // InternalElkGraph.g:4608:6: ( rule__ElkSingleEdgeSection__Group_1_0__0 )
-                    {
-                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0()); 
-                    // InternalElkGraph.g:4609:6: ( rule__ElkSingleEdgeSection__Group_1_0__0 )
-                    // InternalElkGraph.g:4609:7: rule__ElkSingleEdgeSection__Group_1_0__0
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__Group_1_0__0();
-
-                    state._fsp--;
-
-
-                    }
-
-                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0()); 
-
-                    }
-
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 2 :
-                    // InternalElkGraph.g:4614:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) ) ) )
-                    {
-                    // InternalElkGraph.g:4614:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) ) ) )
-                    // InternalElkGraph.g:4615:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) ) )
-                    {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1)");
-                    }
-                    // InternalElkGraph.g:4615:116: ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) ) )
-                    // InternalElkGraph.g:4616:5: ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) )
-                    {
-
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1);
-                    				
-
-                    					selected = true;
-                    				
-                    // InternalElkGraph.g:4622:5: ( ( rule__ElkSingleEdgeSection__Group_1_1__0 ) )
-                    // InternalElkGraph.g:4623:6: ( rule__ElkSingleEdgeSection__Group_1_1__0 )
-                    {
-                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_1()); 
-                    // InternalElkGraph.g:4624:6: ( rule__ElkSingleEdgeSection__Group_1_1__0 )
-                    // InternalElkGraph.g:4624:7: rule__ElkSingleEdgeSection__Group_1_1__0
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__Group_1_1__0();
-
-                    state._fsp--;
-
-
-                    }
-
-                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_1()); 
-
-                    }
-
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 3 :
-                    // InternalElkGraph.g:4629:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) ) ) )
-                    {
-                    // InternalElkGraph.g:4629:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) ) ) )
-                    // InternalElkGraph.g:4630:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) ) )
-                    {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2)");
-                    }
-                    // InternalElkGraph.g:4630:116: ( ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) ) )
-                    // InternalElkGraph.g:4631:5: ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) )
-                    {
-
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2);
-                    				
-
-                    					selected = true;
-                    				
-                    // InternalElkGraph.g:4637:5: ( ( rule__ElkSingleEdgeSection__Group_1_2__0 ) )
-                    // InternalElkGraph.g:4638:6: ( rule__ElkSingleEdgeSection__Group_1_2__0 )
-                    {
-                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_2()); 
-                    // InternalElkGraph.g:4639:6: ( rule__ElkSingleEdgeSection__Group_1_2__0 )
-                    // InternalElkGraph.g:4639:7: rule__ElkSingleEdgeSection__Group_1_2__0
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__Group_1_2__0();
-
-                    state._fsp--;
-
-
-                    }
-
-                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_2()); 
-
-                    }
-
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 4 :
-                    // InternalElkGraph.g:4644:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) ) ) )
-                    {
-                    // InternalElkGraph.g:4644:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) ) ) )
-                    // InternalElkGraph.g:4645:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) ) )
-                    {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3)");
-                    }
-                    // InternalElkGraph.g:4645:116: ( ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) ) )
-                    // InternalElkGraph.g:4646:5: ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) )
-                    {
-
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3);
-                    				
-
-                    					selected = true;
-                    				
-                    // InternalElkGraph.g:4652:5: ( ( rule__ElkSingleEdgeSection__Group_1_3__0 ) )
-                    // InternalElkGraph.g:4653:6: ( rule__ElkSingleEdgeSection__Group_1_3__0 )
-                    {
-                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_3()); 
-                    // InternalElkGraph.g:4654:6: ( rule__ElkSingleEdgeSection__Group_1_3__0 )
-                    // InternalElkGraph.g:4654:7: rule__ElkSingleEdgeSection__Group_1_3__0
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__Group_1_3__0();
-
-                    state._fsp--;
-
-
-                    }
-
-                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_3()); 
-
-                    }
-
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 5 :
-                    // InternalElkGraph.g:4659:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) ) ) )
-                    {
-                    // InternalElkGraph.g:4659:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) ) ) )
-                    // InternalElkGraph.g:4660:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) ) )
-                    {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4)");
-                    }
-                    // InternalElkGraph.g:4660:116: ( ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) ) )
-                    // InternalElkGraph.g:4661:5: ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) )
-                    {
-
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4);
-                    				
-
-                    					selected = true;
-                    				
-                    // InternalElkGraph.g:4667:5: ( ( rule__ElkSingleEdgeSection__Group_1_4__0 ) )
-                    // InternalElkGraph.g:4668:6: ( rule__ElkSingleEdgeSection__Group_1_4__0 )
-                    {
-                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_4()); 
-                    // InternalElkGraph.g:4669:6: ( rule__ElkSingleEdgeSection__Group_1_4__0 )
-                    // InternalElkGraph.g:4669:7: rule__ElkSingleEdgeSection__Group_1_4__0
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__Group_1_4__0();
-
-                    state._fsp--;
-
-
-                    }
-
-                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_4()); 
-
-                    }
-
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	if (selected)
-            		getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1__0"
-    // InternalElkGraph.g:4682:1: rule__ElkSingleEdgeSection__UnorderedGroup_1__0 : rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__1 )? ;
-    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1__0() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4686:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__1 )? )
-            // InternalElkGraph.g:4687:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__1 )?
-            {
-            pushFollow(FOLLOW_29);
-            rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl();
-
-            state._fsp--;
-
-            // InternalElkGraph.g:4688:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__1 )?
-            int alt43=2;
-            int LA43_0 = input.LA(1);
-
-            if ( LA43_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-                alt43=1;
-            }
-            else if ( LA43_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-                alt43=1;
-            }
-            else if ( LA43_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-                alt43=1;
-            }
-            else if ( LA43_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                alt43=1;
-            }
-            else if ( LA43_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-                alt43=1;
-            }
-            switch (alt43) {
-                case 1 :
-                    // InternalElkGraph.g:4688:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__1
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__UnorderedGroup_1__1();
-
-                    state._fsp--;
-
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1__0"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1__1"
-    // InternalElkGraph.g:4694:1: rule__ElkSingleEdgeSection__UnorderedGroup_1__1 : rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__2 )? ;
-    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4698:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__2 )? )
-            // InternalElkGraph.g:4699:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__2 )?
-            {
-            pushFollow(FOLLOW_29);
-            rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl();
-
-            state._fsp--;
-
-            // InternalElkGraph.g:4700:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__2 )?
-            int alt44=2;
-            int LA44_0 = input.LA(1);
-
-            if ( LA44_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-                alt44=1;
-            }
-            else if ( LA44_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-                alt44=1;
-            }
-            else if ( LA44_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-                alt44=1;
-            }
-            else if ( LA44_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                alt44=1;
-            }
-            else if ( LA44_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-                alt44=1;
-            }
-            switch (alt44) {
-                case 1 :
-                    // InternalElkGraph.g:4700:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__2
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__UnorderedGroup_1__2();
-
-                    state._fsp--;
-
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1__1"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1__2"
-    // InternalElkGraph.g:4706:1: rule__ElkSingleEdgeSection__UnorderedGroup_1__2 : rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__3 )? ;
-    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1__2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4710:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__3 )? )
-            // InternalElkGraph.g:4711:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__3 )?
-            {
-            pushFollow(FOLLOW_29);
-            rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl();
-
-            state._fsp--;
-
-            // InternalElkGraph.g:4712:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__3 )?
+            // InternalElkGraph.g:4746:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )?
             int alt45=2;
             int LA45_0 = input.LA(1);
 
-            if ( LA45_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
+            if ( LA45_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
                 alt45=1;
             }
-            else if ( LA45_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
+            else if ( LA45_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
                 alt45=1;
             }
-            else if ( LA45_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
+            else if ( LA45_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
                 alt45=1;
             }
-            else if ( LA45_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                alt45=1;
-            }
-            else if ( LA45_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
+            else if ( LA45_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
                 alt45=1;
             }
             switch (alt45) {
                 case 1 :
-                    // InternalElkGraph.g:4712:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__3
+                    // InternalElkGraph.g:4746:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__UnorderedGroup_1__3();
+                    rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0();
 
                     state._fsp--;
 
@@ -14587,249 +14650,83 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         finally {
 
+            	getUnorderedGroupHelper().leave(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	restoreStackSize(stackSize);
 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1__2"
+    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1_0"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1__3"
-    // InternalElkGraph.g:4718:1: rule__ElkSingleEdgeSection__UnorderedGroup_1__3 : rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__4 )? ;
-    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1__3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4722:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__4 )? )
-            // InternalElkGraph.g:4723:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1__4 )?
-            {
-            pushFollow(FOLLOW_29);
-            rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl();
-
-            state._fsp--;
-
-            // InternalElkGraph.g:4724:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__4 )?
-            int alt46=2;
-            int LA46_0 = input.LA(1);
-
-            if ( LA46_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-                alt46=1;
-            }
-            else if ( LA46_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-                alt46=1;
-            }
-            else if ( LA46_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-                alt46=1;
-            }
-            else if ( LA46_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                alt46=1;
-            }
-            else if ( LA46_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-                alt46=1;
-            }
-            switch (alt46) {
-                case 1 :
-                    // InternalElkGraph.g:4724:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__4
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkSingleEdgeSection__UnorderedGroup_1__4();
-
-                    state._fsp--;
-
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1__3"
-
-
-    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1__4"
-    // InternalElkGraph.g:4730:1: rule__ElkSingleEdgeSection__UnorderedGroup_1__4 : rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl ;
-    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1__4() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4734:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl )
-            // InternalElkGraph.g:4735:2: rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__ElkSingleEdgeSection__UnorderedGroup_1__Impl();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1__4"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4"
-    // InternalElkGraph.g:4742:1: rule__ElkEdgeSection__UnorderedGroup_4 : ( rule__ElkEdgeSection__UnorderedGroup_4__0 )? ;
-    public final void rule__ElkEdgeSection__UnorderedGroup_4() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        		getUnorderedGroupHelper().enter(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
-        	
-        try {
-            // InternalElkGraph.g:4747:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4__0 )? )
-            // InternalElkGraph.g:4748:2: ( rule__ElkEdgeSection__UnorderedGroup_4__0 )?
-            {
-            // InternalElkGraph.g:4748:2: ( rule__ElkEdgeSection__UnorderedGroup_4__0 )?
-            int alt47=2;
-            int LA47_0 = input.LA(1);
-
-            if ( LA47_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
-                alt47=1;
-            }
-            else if ( LA47_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
-                alt47=1;
-            }
-            else if ( LA47_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
-                alt47=1;
-            }
-            else if ( LA47_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                alt47=1;
-            }
-            else if ( LA47_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
-                alt47=1;
-            }
-            switch (alt47) {
-                case 1 :
-                    // InternalElkGraph.g:4748:2: rule__ElkEdgeSection__UnorderedGroup_4__0
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__UnorderedGroup_4__0();
-
-                    state._fsp--;
-
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	getUnorderedGroupHelper().leave(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4"
-
-
-    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4__Impl"
-    // InternalElkGraph.g:4756:1: rule__ElkEdgeSection__UnorderedGroup_4__Impl : ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_3__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_4__0 ) ) ) ) ) ;
-    public final void rule__ElkEdgeSection__UnorderedGroup_4__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl"
+    // InternalElkGraph.g:4754:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl : ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) ) ;
+    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         		boolean selected = false;
         	
         try {
-            // InternalElkGraph.g:4761:1: ( ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_3__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_4__0 ) ) ) ) ) )
-            // InternalElkGraph.g:4762:3: ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_3__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_4__0 ) ) ) ) )
+            // InternalElkGraph.g:4759:1: ( ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) ) )
+            // InternalElkGraph.g:4760:3: ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) )
             {
-            // InternalElkGraph.g:4762:3: ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_3__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_4__0 ) ) ) ) )
-            int alt48=5;
-            int LA48_0 = input.LA(1);
+            // InternalElkGraph.g:4760:3: ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) )
+            int alt46=4;
+            int LA46_0 = input.LA(1);
 
-            if ( LA48_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
-                alt48=1;
+            if ( LA46_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                alt46=1;
             }
-            else if ( LA48_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
-                alt48=2;
+            else if ( LA46_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                alt46=2;
             }
-            else if ( LA48_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
-                alt48=3;
+            else if ( LA46_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                alt46=3;
             }
-            else if ( LA48_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                alt48=4;
-            }
-            else if ( LA48_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
-                alt48=5;
+            else if ( LA46_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                alt46=4;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 48, 0, input);
+                    new NoViableAltException("", 46, 0, input);
 
                 throw nvae;
             }
-            switch (alt48) {
+            switch (alt46) {
                 case 1 :
-                    // InternalElkGraph.g:4763:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0__0 ) ) ) )
+                    // InternalElkGraph.g:4761:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) )
                     {
-                    // InternalElkGraph.g:4763:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0__0 ) ) ) )
-                    // InternalElkGraph.g:4764:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0__0 ) ) )
+                    // InternalElkGraph.g:4761:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) )
+                    // InternalElkGraph.g:4762:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) )
                     {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
-                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0)");
+                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0)");
                     }
-                    // InternalElkGraph.g:4764:110: ( ( ( rule__ElkEdgeSection__Group_4_0__0 ) ) )
-                    // InternalElkGraph.g:4765:5: ( ( rule__ElkEdgeSection__Group_4_0__0 ) )
+                    // InternalElkGraph.g:4762:118: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) )
+                    // InternalElkGraph.g:4763:5: ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) )
                     {
 
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0);
+                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0);
                     				
 
                     					selected = true;
                     				
-                    // InternalElkGraph.g:4771:5: ( ( rule__ElkEdgeSection__Group_4_0__0 ) )
-                    // InternalElkGraph.g:4772:6: ( rule__ElkEdgeSection__Group_4_0__0 )
+                    // InternalElkGraph.g:4769:5: ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) )
+                    // InternalElkGraph.g:4770:6: ( rule__ElkSingleEdgeSection__Group_1_0_0__0 )
                     {
-                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0()); 
-                    // InternalElkGraph.g:4773:6: ( rule__ElkEdgeSection__Group_4_0__0 )
-                    // InternalElkGraph.g:4773:7: rule__ElkEdgeSection__Group_4_0__0
+                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_0()); 
+                    // InternalElkGraph.g:4771:6: ( rule__ElkSingleEdgeSection__Group_1_0_0__0 )
+                    // InternalElkGraph.g:4771:7: rule__ElkSingleEdgeSection__Group_1_0_0__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__Group_4_0__0();
+                    rule__ElkSingleEdgeSection__Group_1_0_0__0();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0()); 
+                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_0()); 
 
                     }
 
@@ -14843,39 +14740,39 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 2 :
-                    // InternalElkGraph.g:4778:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_1__0 ) ) ) )
+                    // InternalElkGraph.g:4776:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) )
                     {
-                    // InternalElkGraph.g:4778:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_1__0 ) ) ) )
-                    // InternalElkGraph.g:4779:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_1__0 ) ) )
+                    // InternalElkGraph.g:4776:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) )
+                    // InternalElkGraph.g:4777:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) )
                     {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
-                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1)");
+                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1)");
                     }
-                    // InternalElkGraph.g:4779:110: ( ( ( rule__ElkEdgeSection__Group_4_1__0 ) ) )
-                    // InternalElkGraph.g:4780:5: ( ( rule__ElkEdgeSection__Group_4_1__0 ) )
+                    // InternalElkGraph.g:4777:118: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) )
+                    // InternalElkGraph.g:4778:5: ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) )
                     {
 
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1);
+                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1);
                     				
 
                     					selected = true;
                     				
-                    // InternalElkGraph.g:4786:5: ( ( rule__ElkEdgeSection__Group_4_1__0 ) )
-                    // InternalElkGraph.g:4787:6: ( rule__ElkEdgeSection__Group_4_1__0 )
+                    // InternalElkGraph.g:4784:5: ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) )
+                    // InternalElkGraph.g:4785:6: ( rule__ElkSingleEdgeSection__Group_1_0_1__0 )
                     {
-                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_1()); 
-                    // InternalElkGraph.g:4788:6: ( rule__ElkEdgeSection__Group_4_1__0 )
-                    // InternalElkGraph.g:4788:7: rule__ElkEdgeSection__Group_4_1__0
+                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_1()); 
+                    // InternalElkGraph.g:4786:6: ( rule__ElkSingleEdgeSection__Group_1_0_1__0 )
+                    // InternalElkGraph.g:4786:7: rule__ElkSingleEdgeSection__Group_1_0_1__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__Group_4_1__0();
+                    rule__ElkSingleEdgeSection__Group_1_0_1__0();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_1()); 
+                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_1()); 
 
                     }
 
@@ -14889,39 +14786,39 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 3 :
-                    // InternalElkGraph.g:4793:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_2__0 ) ) ) )
+                    // InternalElkGraph.g:4791:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) )
                     {
-                    // InternalElkGraph.g:4793:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_2__0 ) ) ) )
-                    // InternalElkGraph.g:4794:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_2__0 ) ) )
+                    // InternalElkGraph.g:4791:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) )
+                    // InternalElkGraph.g:4792:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) )
                     {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
-                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2)");
+                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2)");
                     }
-                    // InternalElkGraph.g:4794:110: ( ( ( rule__ElkEdgeSection__Group_4_2__0 ) ) )
-                    // InternalElkGraph.g:4795:5: ( ( rule__ElkEdgeSection__Group_4_2__0 ) )
+                    // InternalElkGraph.g:4792:118: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) )
+                    // InternalElkGraph.g:4793:5: ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) )
                     {
 
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2);
+                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2);
                     				
 
                     					selected = true;
                     				
-                    // InternalElkGraph.g:4801:5: ( ( rule__ElkEdgeSection__Group_4_2__0 ) )
-                    // InternalElkGraph.g:4802:6: ( rule__ElkEdgeSection__Group_4_2__0 )
+                    // InternalElkGraph.g:4799:5: ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) )
+                    // InternalElkGraph.g:4800:6: ( rule__ElkSingleEdgeSection__Group_1_0_2__0 )
                     {
-                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_2()); 
-                    // InternalElkGraph.g:4803:6: ( rule__ElkEdgeSection__Group_4_2__0 )
-                    // InternalElkGraph.g:4803:7: rule__ElkEdgeSection__Group_4_2__0
+                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_2()); 
+                    // InternalElkGraph.g:4801:6: ( rule__ElkSingleEdgeSection__Group_1_0_2__0 )
+                    // InternalElkGraph.g:4801:7: rule__ElkSingleEdgeSection__Group_1_0_2__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__Group_4_2__0();
+                    rule__ElkSingleEdgeSection__Group_1_0_2__0();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_2()); 
+                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_2()); 
 
                     }
 
@@ -14935,85 +14832,39 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 4 :
-                    // InternalElkGraph.g:4808:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_3__0 ) ) ) )
+                    // InternalElkGraph.g:4806:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) )
                     {
-                    // InternalElkGraph.g:4808:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_3__0 ) ) ) )
-                    // InternalElkGraph.g:4809:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_3__0 ) ) )
+                    // InternalElkGraph.g:4806:3: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) )
+                    // InternalElkGraph.g:4807:4: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) )
                     {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3)");
+                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                        throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3)");
                     }
-                    // InternalElkGraph.g:4809:110: ( ( ( rule__ElkEdgeSection__Group_4_3__0 ) ) )
-                    // InternalElkGraph.g:4810:5: ( ( rule__ElkEdgeSection__Group_4_3__0 ) )
+                    // InternalElkGraph.g:4807:118: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) )
+                    // InternalElkGraph.g:4808:5: ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) )
                     {
 
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3);
+                    					getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3);
                     				
 
                     					selected = true;
                     				
-                    // InternalElkGraph.g:4816:5: ( ( rule__ElkEdgeSection__Group_4_3__0 ) )
-                    // InternalElkGraph.g:4817:6: ( rule__ElkEdgeSection__Group_4_3__0 )
+                    // InternalElkGraph.g:4814:5: ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) )
+                    // InternalElkGraph.g:4815:6: ( rule__ElkSingleEdgeSection__Group_1_0_3__0 )
                     {
-                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_3()); 
-                    // InternalElkGraph.g:4818:6: ( rule__ElkEdgeSection__Group_4_3__0 )
-                    // InternalElkGraph.g:4818:7: rule__ElkEdgeSection__Group_4_3__0
+                     before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_3()); 
+                    // InternalElkGraph.g:4816:6: ( rule__ElkSingleEdgeSection__Group_1_0_3__0 )
+                    // InternalElkGraph.g:4816:7: rule__ElkSingleEdgeSection__Group_1_0_3__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__Group_4_3__0();
+                    rule__ElkSingleEdgeSection__Group_1_0_3__0();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_3()); 
-
-                    }
-
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 5 :
-                    // InternalElkGraph.g:4823:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_4__0 ) ) ) )
-                    {
-                    // InternalElkGraph.g:4823:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_4__0 ) ) ) )
-                    // InternalElkGraph.g:4824:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_4__0 ) ) )
-                    {
-                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
-                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4)");
-                    }
-                    // InternalElkGraph.g:4824:110: ( ( ( rule__ElkEdgeSection__Group_4_4__0 ) ) )
-                    // InternalElkGraph.g:4825:5: ( ( rule__ElkEdgeSection__Group_4_4__0 ) )
-                    {
-
-                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4);
-                    				
-
-                    					selected = true;
-                    				
-                    // InternalElkGraph.g:4831:5: ( ( rule__ElkEdgeSection__Group_4_4__0 ) )
-                    // InternalElkGraph.g:4832:6: ( rule__ElkEdgeSection__Group_4_4__0 )
-                    {
-                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_4()); 
-                    // InternalElkGraph.g:4833:6: ( rule__ElkEdgeSection__Group_4_4__0 )
-                    // InternalElkGraph.g:4833:7: rule__ElkEdgeSection__Group_4_4__0
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__Group_4_4__0();
-
-                    state._fsp--;
-
-
-                    }
-
-                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_4()); 
+                     after(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_3()); 
 
                     }
 
@@ -15040,55 +14891,180 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         finally {
 
             	if (selected)
-            		getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            		getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	restoreStackSize(stackSize);
 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4__Impl"
+    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4__0"
-    // InternalElkGraph.g:4846:1: rule__ElkEdgeSection__UnorderedGroup_4__0 : rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__1 )? ;
-    public final void rule__ElkEdgeSection__UnorderedGroup_4__0() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0"
+    // InternalElkGraph.g:4829:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )? ;
+    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4850:1: ( rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__1 )? )
-            // InternalElkGraph.g:4851:2: rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__1 )?
+            // InternalElkGraph.g:4833:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )? )
+            // InternalElkGraph.g:4834:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )?
             {
-            pushFollow(FOLLOW_29);
-            rule__ElkEdgeSection__UnorderedGroup_4__Impl();
+            pushFollow(FOLLOW_32);
+            rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl();
 
             state._fsp--;
 
-            // InternalElkGraph.g:4852:2: ( rule__ElkEdgeSection__UnorderedGroup_4__1 )?
+            // InternalElkGraph.g:4835:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )?
+            int alt47=2;
+            int LA47_0 = input.LA(1);
+
+            if ( LA47_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                alt47=1;
+            }
+            else if ( LA47_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                alt47=1;
+            }
+            else if ( LA47_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                alt47=1;
+            }
+            else if ( LA47_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                alt47=1;
+            }
+            switch (alt47) {
+                case 1 :
+                    // InternalElkGraph.g:4835:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1"
+    // InternalElkGraph.g:4841:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )? ;
+    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4845:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )? )
+            // InternalElkGraph.g:4846:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )?
+            {
+            pushFollow(FOLLOW_32);
+            rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl();
+
+            state._fsp--;
+
+            // InternalElkGraph.g:4847:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )?
+            int alt48=2;
+            int LA48_0 = input.LA(1);
+
+            if ( LA48_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                alt48=1;
+            }
+            else if ( LA48_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                alt48=1;
+            }
+            else if ( LA48_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                alt48=1;
+            }
+            else if ( LA48_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                alt48=1;
+            }
+            switch (alt48) {
+                case 1 :
+                    // InternalElkGraph.g:4847:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2"
+    // InternalElkGraph.g:4853:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )? ;
+    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4857:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )? )
+            // InternalElkGraph.g:4858:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )?
+            {
+            pushFollow(FOLLOW_32);
+            rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl();
+
+            state._fsp--;
+
+            // InternalElkGraph.g:4859:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )?
             int alt49=2;
             int LA49_0 = input.LA(1);
 
-            if ( LA49_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
+            if ( LA49_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
                 alt49=1;
             }
-            else if ( LA49_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
+            else if ( LA49_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
                 alt49=1;
             }
-            else if ( LA49_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
+            else if ( LA49_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
                 alt49=1;
             }
-            else if ( LA49_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                alt49=1;
-            }
-            else if ( LA49_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
+            else if ( LA49_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
                 alt49=1;
             }
             switch (alt49) {
                 case 1 :
-                    // InternalElkGraph.g:4852:2: rule__ElkEdgeSection__UnorderedGroup_4__1
+                    // InternalElkGraph.g:4859:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__UnorderedGroup_4__1();
+                    rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3();
 
                     state._fsp--;
 
@@ -15113,49 +15089,75 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4__0"
+    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4__1"
-    // InternalElkGraph.g:4858:1: rule__ElkEdgeSection__UnorderedGroup_4__1 : rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__2 )? ;
-    public final void rule__ElkEdgeSection__UnorderedGroup_4__1() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3"
+    // InternalElkGraph.g:4865:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ;
+    public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4862:1: ( rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__2 )? )
-            // InternalElkGraph.g:4863:2: rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__2 )?
+            // InternalElkGraph.g:4869:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl )
+            // InternalElkGraph.g:4870:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl
             {
-            pushFollow(FOLLOW_29);
-            rule__ElkEdgeSection__UnorderedGroup_4__Impl();
+            pushFollow(FOLLOW_2);
+            rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl();
 
             state._fsp--;
 
-            // InternalElkGraph.g:4864:2: ( rule__ElkEdgeSection__UnorderedGroup_4__2 )?
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0"
+    // InternalElkGraph.g:4877:1: rule__ElkEdgeSection__UnorderedGroup_4_0 : ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )? ;
+    public final void rule__ElkEdgeSection__UnorderedGroup_4_0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        		getUnorderedGroupHelper().enter(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
+        	
+        try {
+            // InternalElkGraph.g:4882:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )? )
+            // InternalElkGraph.g:4883:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )?
+            {
+            // InternalElkGraph.g:4883:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )?
             int alt50=2;
             int LA50_0 = input.LA(1);
 
-            if ( LA50_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
+            if ( LA50_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
                 alt50=1;
             }
-            else if ( LA50_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
+            else if ( LA50_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
                 alt50=1;
             }
-            else if ( LA50_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
+            else if ( LA50_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
                 alt50=1;
             }
-            else if ( LA50_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                alt50=1;
-            }
-            else if ( LA50_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
+            else if ( LA50_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
                 alt50=1;
             }
             switch (alt50) {
                 case 1 :
-                    // InternalElkGraph.g:4864:2: rule__ElkEdgeSection__UnorderedGroup_4__2
+                    // InternalElkGraph.g:4883:2: rule__ElkEdgeSection__UnorderedGroup_4_0__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__UnorderedGroup_4__2();
+                    rule__ElkEdgeSection__UnorderedGroup_4_0__0();
 
                     state._fsp--;
 
@@ -15175,56 +15177,229 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         finally {
 
+            	getUnorderedGroupHelper().leave(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	restoreStackSize(stackSize);
 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4__1"
+    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4_0"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4__2"
-    // InternalElkGraph.g:4870:1: rule__ElkEdgeSection__UnorderedGroup_4__2 : rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__3 )? ;
-    public final void rule__ElkEdgeSection__UnorderedGroup_4__2() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl"
+    // InternalElkGraph.g:4891:1: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl : ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) ) ;
+    public final void rule__ElkEdgeSection__UnorderedGroup_4_0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
+        		boolean selected = false;
         	
         try {
-            // InternalElkGraph.g:4874:1: ( rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__3 )? )
-            // InternalElkGraph.g:4875:2: rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__3 )?
+            // InternalElkGraph.g:4896:1: ( ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) ) )
+            // InternalElkGraph.g:4897:3: ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) )
             {
-            pushFollow(FOLLOW_29);
-            rule__ElkEdgeSection__UnorderedGroup_4__Impl();
-
-            state._fsp--;
-
-            // InternalElkGraph.g:4876:2: ( rule__ElkEdgeSection__UnorderedGroup_4__3 )?
-            int alt51=2;
+            // InternalElkGraph.g:4897:3: ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) )
+            int alt51=4;
             int LA51_0 = input.LA(1);
 
-            if ( LA51_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
+            if ( LA51_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
                 alt51=1;
             }
-            else if ( LA51_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
-                alt51=1;
+            else if ( LA51_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                alt51=2;
             }
-            else if ( LA51_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
-                alt51=1;
+            else if ( LA51_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                alt51=3;
             }
-            else if ( LA51_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                alt51=1;
+            else if ( LA51_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                alt51=4;
             }
-            else if ( LA51_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
-                alt51=1;
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 51, 0, input);
+
+                throw nvae;
             }
             switch (alt51) {
                 case 1 :
-                    // InternalElkGraph.g:4876:2: rule__ElkEdgeSection__UnorderedGroup_4__3
+                    // InternalElkGraph.g:4898:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) )
+                    {
+                    // InternalElkGraph.g:4898:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) )
+                    // InternalElkGraph.g:4899:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) )
+                    {
+                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0)");
+                    }
+                    // InternalElkGraph.g:4899:112: ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) )
+                    // InternalElkGraph.g:4900:5: ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) )
+                    {
+
+                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0);
+                    				
+
+                    					selected = true;
+                    				
+                    // InternalElkGraph.g:4906:5: ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) )
+                    // InternalElkGraph.g:4907:6: ( rule__ElkEdgeSection__Group_4_0_0__0 )
+                    {
+                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_0()); 
+                    // InternalElkGraph.g:4908:6: ( rule__ElkEdgeSection__Group_4_0_0__0 )
+                    // InternalElkGraph.g:4908:7: rule__ElkEdgeSection__Group_4_0_0__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__UnorderedGroup_4__3();
+                    rule__ElkEdgeSection__Group_4_0_0__0();
 
                     state._fsp--;
+
+
+                    }
+
+                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_0()); 
+
+                    }
+
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 2 :
+                    // InternalElkGraph.g:4913:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) )
+                    {
+                    // InternalElkGraph.g:4913:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) )
+                    // InternalElkGraph.g:4914:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) )
+                    {
+                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1)");
+                    }
+                    // InternalElkGraph.g:4914:112: ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) )
+                    // InternalElkGraph.g:4915:5: ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) )
+                    {
+
+                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1);
+                    				
+
+                    					selected = true;
+                    				
+                    // InternalElkGraph.g:4921:5: ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) )
+                    // InternalElkGraph.g:4922:6: ( rule__ElkEdgeSection__Group_4_0_1__0 )
+                    {
+                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_1()); 
+                    // InternalElkGraph.g:4923:6: ( rule__ElkEdgeSection__Group_4_0_1__0 )
+                    // InternalElkGraph.g:4923:7: rule__ElkEdgeSection__Group_4_0_1__0
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkEdgeSection__Group_4_0_1__0();
+
+                    state._fsp--;
+
+
+                    }
+
+                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_1()); 
+
+                    }
+
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 3 :
+                    // InternalElkGraph.g:4928:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) )
+                    {
+                    // InternalElkGraph.g:4928:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) )
+                    // InternalElkGraph.g:4929:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) )
+                    {
+                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2)");
+                    }
+                    // InternalElkGraph.g:4929:112: ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) )
+                    // InternalElkGraph.g:4930:5: ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) )
+                    {
+
+                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2);
+                    				
+
+                    					selected = true;
+                    				
+                    // InternalElkGraph.g:4936:5: ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) )
+                    // InternalElkGraph.g:4937:6: ( rule__ElkEdgeSection__Group_4_0_2__0 )
+                    {
+                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_2()); 
+                    // InternalElkGraph.g:4938:6: ( rule__ElkEdgeSection__Group_4_0_2__0 )
+                    // InternalElkGraph.g:4938:7: rule__ElkEdgeSection__Group_4_0_2__0
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkEdgeSection__Group_4_0_2__0();
+
+                    state._fsp--;
+
+
+                    }
+
+                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_2()); 
+
+                    }
+
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 4 :
+                    // InternalElkGraph.g:4943:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) )
+                    {
+                    // InternalElkGraph.g:4943:3: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) )
+                    // InternalElkGraph.g:4944:4: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) )
+                    {
+                    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                        throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3)");
+                    }
+                    // InternalElkGraph.g:4944:112: ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) )
+                    // InternalElkGraph.g:4945:5: ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) )
+                    {
+
+                    					getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3);
+                    				
+
+                    					selected = true;
+                    				
+                    // InternalElkGraph.g:4951:5: ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) )
+                    // InternalElkGraph.g:4952:6: ( rule__ElkEdgeSection__Group_4_0_3__0 )
+                    {
+                     before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_3()); 
+                    // InternalElkGraph.g:4953:6: ( rule__ElkEdgeSection__Group_4_0_3__0 )
+                    // InternalElkGraph.g:4953:7: rule__ElkEdgeSection__Group_4_0_3__0
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkEdgeSection__Group_4_0_3__0();
+
+                    state._fsp--;
+
+
+                    }
+
+                     after(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_3()); 
+
+                    }
+
+
+                    }
+
+
+                    }
 
 
                     }
@@ -15242,54 +15417,53 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         finally {
 
+            	if (selected)
+            		getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	restoreStackSize(stackSize);
 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4__2"
+    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4__3"
-    // InternalElkGraph.g:4882:1: rule__ElkEdgeSection__UnorderedGroup_4__3 : rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__4 )? ;
-    public final void rule__ElkEdgeSection__UnorderedGroup_4__3() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__0"
+    // InternalElkGraph.g:4966:1: rule__ElkEdgeSection__UnorderedGroup_4_0__0 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )? ;
+    public final void rule__ElkEdgeSection__UnorderedGroup_4_0__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4886:1: ( rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__4 )? )
-            // InternalElkGraph.g:4887:2: rule__ElkEdgeSection__UnorderedGroup_4__Impl ( rule__ElkEdgeSection__UnorderedGroup_4__4 )?
+            // InternalElkGraph.g:4970:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )? )
+            // InternalElkGraph.g:4971:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )?
             {
-            pushFollow(FOLLOW_29);
-            rule__ElkEdgeSection__UnorderedGroup_4__Impl();
+            pushFollow(FOLLOW_32);
+            rule__ElkEdgeSection__UnorderedGroup_4_0__Impl();
 
             state._fsp--;
 
-            // InternalElkGraph.g:4888:2: ( rule__ElkEdgeSection__UnorderedGroup_4__4 )?
+            // InternalElkGraph.g:4972:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )?
             int alt52=2;
             int LA52_0 = input.LA(1);
 
-            if ( LA52_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
+            if ( LA52_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
                 alt52=1;
             }
-            else if ( LA52_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
+            else if ( LA52_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
                 alt52=1;
             }
-            else if ( LA52_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
+            else if ( LA52_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
                 alt52=1;
             }
-            else if ( LA52_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                alt52=1;
-            }
-            else if ( LA52_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
+            else if ( LA52_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
                 alt52=1;
             }
             switch (alt52) {
                 case 1 :
-                    // InternalElkGraph.g:4888:2: rule__ElkEdgeSection__UnorderedGroup_4__4
+                    // InternalElkGraph.g:4972:2: rule__ElkEdgeSection__UnorderedGroup_4_0__1
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ElkEdgeSection__UnorderedGroup_4__4();
+                    rule__ElkEdgeSection__UnorderedGroup_4_0__1();
 
                     state._fsp--;
 
@@ -15314,21 +15488,149 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4__3"
+    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4_0__0"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4__4"
-    // InternalElkGraph.g:4894:1: rule__ElkEdgeSection__UnorderedGroup_4__4 : rule__ElkEdgeSection__UnorderedGroup_4__Impl ;
-    public final void rule__ElkEdgeSection__UnorderedGroup_4__4() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__1"
+    // InternalElkGraph.g:4978:1: rule__ElkEdgeSection__UnorderedGroup_4_0__1 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )? ;
+    public final void rule__ElkEdgeSection__UnorderedGroup_4_0__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4898:1: ( rule__ElkEdgeSection__UnorderedGroup_4__Impl )
-            // InternalElkGraph.g:4899:2: rule__ElkEdgeSection__UnorderedGroup_4__Impl
+            // InternalElkGraph.g:4982:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )? )
+            // InternalElkGraph.g:4983:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )?
+            {
+            pushFollow(FOLLOW_32);
+            rule__ElkEdgeSection__UnorderedGroup_4_0__Impl();
+
+            state._fsp--;
+
+            // InternalElkGraph.g:4984:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )?
+            int alt53=2;
+            int LA53_0 = input.LA(1);
+
+            if ( LA53_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                alt53=1;
+            }
+            else if ( LA53_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                alt53=1;
+            }
+            else if ( LA53_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                alt53=1;
+            }
+            else if ( LA53_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                alt53=1;
+            }
+            switch (alt53) {
+                case 1 :
+                    // InternalElkGraph.g:4984:2: rule__ElkEdgeSection__UnorderedGroup_4_0__2
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkEdgeSection__UnorderedGroup_4_0__2();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4_0__1"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__2"
+    // InternalElkGraph.g:4990:1: rule__ElkEdgeSection__UnorderedGroup_4_0__2 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )? ;
+    public final void rule__ElkEdgeSection__UnorderedGroup_4_0__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:4994:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )? )
+            // InternalElkGraph.g:4995:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )?
+            {
+            pushFollow(FOLLOW_32);
+            rule__ElkEdgeSection__UnorderedGroup_4_0__Impl();
+
+            state._fsp--;
+
+            // InternalElkGraph.g:4996:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )?
+            int alt54=2;
+            int LA54_0 = input.LA(1);
+
+            if ( LA54_0 == 30 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                alt54=1;
+            }
+            else if ( LA54_0 == 31 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                alt54=1;
+            }
+            else if ( LA54_0 == 32 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                alt54=1;
+            }
+            else if ( LA54_0 == 33 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                alt54=1;
+            }
+            switch (alt54) {
+                case 1 :
+                    // InternalElkGraph.g:4996:2: rule__ElkEdgeSection__UnorderedGroup_4_0__3
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ElkEdgeSection__UnorderedGroup_4_0__3();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4_0__2"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__3"
+    // InternalElkGraph.g:5002:1: rule__ElkEdgeSection__UnorderedGroup_4_0__3 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ;
+    public final void rule__ElkEdgeSection__UnorderedGroup_4_0__3() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5006:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl )
+            // InternalElkGraph.g:5007:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ElkEdgeSection__UnorderedGroup_4__Impl();
+            rule__ElkEdgeSection__UnorderedGroup_4_0__Impl();
 
             state._fsp--;
 
@@ -15347,21 +15649,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4__4"
+    // $ANTLR end "rule__ElkEdgeSection__UnorderedGroup_4_0__3"
 
 
     // $ANTLR start "rule__RootNode__IdentifierAssignment_1_1"
-    // InternalElkGraph.g:4906:1: rule__RootNode__IdentifierAssignment_1_1 : ( RULE_ID ) ;
+    // InternalElkGraph.g:5014:1: rule__RootNode__IdentifierAssignment_1_1 : ( RULE_ID ) ;
     public final void rule__RootNode__IdentifierAssignment_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4910:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:4911:2: ( RULE_ID )
+            // InternalElkGraph.g:5018:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5019:2: ( RULE_ID )
             {
-            // InternalElkGraph.g:4911:2: ( RULE_ID )
-            // InternalElkGraph.g:4912:3: RULE_ID
+            // InternalElkGraph.g:5019:2: ( RULE_ID )
+            // InternalElkGraph.g:5020:3: RULE_ID
             {
              before(grammarAccess.getRootNodeAccess().getIdentifierIDTerminalRuleCall_1_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -15388,17 +15690,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__RootNode__PropertiesAssignment_2"
-    // InternalElkGraph.g:4921:1: rule__RootNode__PropertiesAssignment_2 : ( ruleProperty ) ;
+    // InternalElkGraph.g:5029:1: rule__RootNode__PropertiesAssignment_2 : ( ruleProperty ) ;
     public final void rule__RootNode__PropertiesAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4925:1: ( ( ruleProperty ) )
-            // InternalElkGraph.g:4926:2: ( ruleProperty )
+            // InternalElkGraph.g:5033:1: ( ( ruleProperty ) )
+            // InternalElkGraph.g:5034:2: ( ruleProperty )
             {
-            // InternalElkGraph.g:4926:2: ( ruleProperty )
-            // InternalElkGraph.g:4927:3: ruleProperty
+            // InternalElkGraph.g:5034:2: ( ruleProperty )
+            // InternalElkGraph.g:5035:3: ruleProperty
             {
              before(grammarAccess.getRootNodeAccess().getPropertiesPropertyParserRuleCall_2_0()); 
             pushFollow(FOLLOW_2);
@@ -15428,149 +15730,26 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__RootNode__PropertiesAssignment_2"
 
 
-    // $ANTLR start "rule__RootNode__ChildrenAssignment_3_0"
-    // InternalElkGraph.g:4936:1: rule__RootNode__ChildrenAssignment_3_0 : ( ruleElkNode ) ;
-    public final void rule__RootNode__ChildrenAssignment_3_0() throws RecognitionException {
+    // $ANTLR start "rule__RootNode__LabelsAssignment_3_0"
+    // InternalElkGraph.g:5044:1: rule__RootNode__LabelsAssignment_3_0 : ( ruleElkLabel ) ;
+    public final void rule__RootNode__LabelsAssignment_3_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:4940:1: ( ( ruleElkNode ) )
-            // InternalElkGraph.g:4941:2: ( ruleElkNode )
+            // InternalElkGraph.g:5048:1: ( ( ruleElkLabel ) )
+            // InternalElkGraph.g:5049:2: ( ruleElkLabel )
             {
-            // InternalElkGraph.g:4941:2: ( ruleElkNode )
-            // InternalElkGraph.g:4942:3: ruleElkNode
+            // InternalElkGraph.g:5049:2: ( ruleElkLabel )
+            // InternalElkGraph.g:5050:3: ruleElkLabel
             {
-             before(grammarAccess.getRootNodeAccess().getChildrenElkNodeParserRuleCall_3_0_0()); 
-            pushFollow(FOLLOW_2);
-            ruleElkNode();
-
-            state._fsp--;
-
-             after(grammarAccess.getRootNodeAccess().getChildrenElkNodeParserRuleCall_3_0_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__RootNode__ChildrenAssignment_3_0"
-
-
-    // $ANTLR start "rule__RootNode__ContainedEdgesAssignment_3_1"
-    // InternalElkGraph.g:4951:1: rule__RootNode__ContainedEdgesAssignment_3_1 : ( ruleElkEdge ) ;
-    public final void rule__RootNode__ContainedEdgesAssignment_3_1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4955:1: ( ( ruleElkEdge ) )
-            // InternalElkGraph.g:4956:2: ( ruleElkEdge )
-            {
-            // InternalElkGraph.g:4956:2: ( ruleElkEdge )
-            // InternalElkGraph.g:4957:3: ruleElkEdge
-            {
-             before(grammarAccess.getRootNodeAccess().getContainedEdgesElkEdgeParserRuleCall_3_1_0()); 
-            pushFollow(FOLLOW_2);
-            ruleElkEdge();
-
-            state._fsp--;
-
-             after(grammarAccess.getRootNodeAccess().getContainedEdgesElkEdgeParserRuleCall_3_1_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__RootNode__ContainedEdgesAssignment_3_1"
-
-
-    // $ANTLR start "rule__RootNode__PortsAssignment_3_2"
-    // InternalElkGraph.g:4966:1: rule__RootNode__PortsAssignment_3_2 : ( ruleElkPort ) ;
-    public final void rule__RootNode__PortsAssignment_3_2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4970:1: ( ( ruleElkPort ) )
-            // InternalElkGraph.g:4971:2: ( ruleElkPort )
-            {
-            // InternalElkGraph.g:4971:2: ( ruleElkPort )
-            // InternalElkGraph.g:4972:3: ruleElkPort
-            {
-             before(grammarAccess.getRootNodeAccess().getPortsElkPortParserRuleCall_3_2_0()); 
-            pushFollow(FOLLOW_2);
-            ruleElkPort();
-
-            state._fsp--;
-
-             after(grammarAccess.getRootNodeAccess().getPortsElkPortParserRuleCall_3_2_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__RootNode__PortsAssignment_3_2"
-
-
-    // $ANTLR start "rule__RootNode__LabelsAssignment_3_3"
-    // InternalElkGraph.g:4981:1: rule__RootNode__LabelsAssignment_3_3 : ( ruleElkLabel ) ;
-    public final void rule__RootNode__LabelsAssignment_3_3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:4985:1: ( ( ruleElkLabel ) )
-            // InternalElkGraph.g:4986:2: ( ruleElkLabel )
-            {
-            // InternalElkGraph.g:4986:2: ( ruleElkLabel )
-            // InternalElkGraph.g:4987:3: ruleElkLabel
-            {
-             before(grammarAccess.getRootNodeAccess().getLabelsElkLabelParserRuleCall_3_3_0()); 
+             before(grammarAccess.getRootNodeAccess().getLabelsElkLabelParserRuleCall_3_0_0()); 
             pushFollow(FOLLOW_2);
             ruleElkLabel();
 
             state._fsp--;
 
-             after(grammarAccess.getRootNodeAccess().getLabelsElkLabelParserRuleCall_3_3_0()); 
+             after(grammarAccess.getRootNodeAccess().getLabelsElkLabelParserRuleCall_3_0_0()); 
 
             }
 
@@ -15589,21 +15768,144 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__RootNode__LabelsAssignment_3_3"
+    // $ANTLR end "rule__RootNode__LabelsAssignment_3_0"
+
+
+    // $ANTLR start "rule__RootNode__PortsAssignment_3_1"
+    // InternalElkGraph.g:5059:1: rule__RootNode__PortsAssignment_3_1 : ( ruleElkPort ) ;
+    public final void rule__RootNode__PortsAssignment_3_1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5063:1: ( ( ruleElkPort ) )
+            // InternalElkGraph.g:5064:2: ( ruleElkPort )
+            {
+            // InternalElkGraph.g:5064:2: ( ruleElkPort )
+            // InternalElkGraph.g:5065:3: ruleElkPort
+            {
+             before(grammarAccess.getRootNodeAccess().getPortsElkPortParserRuleCall_3_1_0()); 
+            pushFollow(FOLLOW_2);
+            ruleElkPort();
+
+            state._fsp--;
+
+             after(grammarAccess.getRootNodeAccess().getPortsElkPortParserRuleCall_3_1_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__RootNode__PortsAssignment_3_1"
+
+
+    // $ANTLR start "rule__RootNode__ChildrenAssignment_3_2"
+    // InternalElkGraph.g:5074:1: rule__RootNode__ChildrenAssignment_3_2 : ( ruleElkNode ) ;
+    public final void rule__RootNode__ChildrenAssignment_3_2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5078:1: ( ( ruleElkNode ) )
+            // InternalElkGraph.g:5079:2: ( ruleElkNode )
+            {
+            // InternalElkGraph.g:5079:2: ( ruleElkNode )
+            // InternalElkGraph.g:5080:3: ruleElkNode
+            {
+             before(grammarAccess.getRootNodeAccess().getChildrenElkNodeParserRuleCall_3_2_0()); 
+            pushFollow(FOLLOW_2);
+            ruleElkNode();
+
+            state._fsp--;
+
+             after(grammarAccess.getRootNodeAccess().getChildrenElkNodeParserRuleCall_3_2_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__RootNode__ChildrenAssignment_3_2"
+
+
+    // $ANTLR start "rule__RootNode__ContainedEdgesAssignment_3_3"
+    // InternalElkGraph.g:5089:1: rule__RootNode__ContainedEdgesAssignment_3_3 : ( ruleElkEdge ) ;
+    public final void rule__RootNode__ContainedEdgesAssignment_3_3() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5093:1: ( ( ruleElkEdge ) )
+            // InternalElkGraph.g:5094:2: ( ruleElkEdge )
+            {
+            // InternalElkGraph.g:5094:2: ( ruleElkEdge )
+            // InternalElkGraph.g:5095:3: ruleElkEdge
+            {
+             before(grammarAccess.getRootNodeAccess().getContainedEdgesElkEdgeParserRuleCall_3_3_0()); 
+            pushFollow(FOLLOW_2);
+            ruleElkEdge();
+
+            state._fsp--;
+
+             after(grammarAccess.getRootNodeAccess().getContainedEdgesElkEdgeParserRuleCall_3_3_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__RootNode__ContainedEdgesAssignment_3_3"
 
 
     // $ANTLR start "rule__ElkNode__IdentifierAssignment_1"
-    // InternalElkGraph.g:4996:1: rule__ElkNode__IdentifierAssignment_1 : ( RULE_ID ) ;
+    // InternalElkGraph.g:5104:1: rule__ElkNode__IdentifierAssignment_1 : ( RULE_ID ) ;
     public final void rule__ElkNode__IdentifierAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5000:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:5001:2: ( RULE_ID )
+            // InternalElkGraph.g:5108:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5109:2: ( RULE_ID )
             {
-            // InternalElkGraph.g:5001:2: ( RULE_ID )
-            // InternalElkGraph.g:5002:3: RULE_ID
+            // InternalElkGraph.g:5109:2: ( RULE_ID )
+            // InternalElkGraph.g:5110:3: RULE_ID
             {
              before(grammarAccess.getElkNodeAccess().getIdentifierIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -15630,17 +15932,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkNode__PropertiesAssignment_2_2"
-    // InternalElkGraph.g:5011:1: rule__ElkNode__PropertiesAssignment_2_2 : ( ruleProperty ) ;
+    // InternalElkGraph.g:5119:1: rule__ElkNode__PropertiesAssignment_2_2 : ( ruleProperty ) ;
     public final void rule__ElkNode__PropertiesAssignment_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5015:1: ( ( ruleProperty ) )
-            // InternalElkGraph.g:5016:2: ( ruleProperty )
+            // InternalElkGraph.g:5123:1: ( ( ruleProperty ) )
+            // InternalElkGraph.g:5124:2: ( ruleProperty )
             {
-            // InternalElkGraph.g:5016:2: ( ruleProperty )
-            // InternalElkGraph.g:5017:3: ruleProperty
+            // InternalElkGraph.g:5124:2: ( ruleProperty )
+            // InternalElkGraph.g:5125:3: ruleProperty
             {
              before(grammarAccess.getElkNodeAccess().getPropertiesPropertyParserRuleCall_2_2_0()); 
             pushFollow(FOLLOW_2);
@@ -15670,149 +15972,26 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__ElkNode__PropertiesAssignment_2_2"
 
 
-    // $ANTLR start "rule__ElkNode__ChildrenAssignment_2_3_0"
-    // InternalElkGraph.g:5026:1: rule__ElkNode__ChildrenAssignment_2_3_0 : ( ruleElkNode ) ;
-    public final void rule__ElkNode__ChildrenAssignment_2_3_0() throws RecognitionException {
+    // $ANTLR start "rule__ElkNode__LabelsAssignment_2_3_0"
+    // InternalElkGraph.g:5134:1: rule__ElkNode__LabelsAssignment_2_3_0 : ( ruleElkLabel ) ;
+    public final void rule__ElkNode__LabelsAssignment_2_3_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5030:1: ( ( ruleElkNode ) )
-            // InternalElkGraph.g:5031:2: ( ruleElkNode )
+            // InternalElkGraph.g:5138:1: ( ( ruleElkLabel ) )
+            // InternalElkGraph.g:5139:2: ( ruleElkLabel )
             {
-            // InternalElkGraph.g:5031:2: ( ruleElkNode )
-            // InternalElkGraph.g:5032:3: ruleElkNode
+            // InternalElkGraph.g:5139:2: ( ruleElkLabel )
+            // InternalElkGraph.g:5140:3: ruleElkLabel
             {
-             before(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_3_0_0()); 
-            pushFollow(FOLLOW_2);
-            ruleElkNode();
-
-            state._fsp--;
-
-             after(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_3_0_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkNode__ChildrenAssignment_2_3_0"
-
-
-    // $ANTLR start "rule__ElkNode__ContainedEdgesAssignment_2_3_1"
-    // InternalElkGraph.g:5041:1: rule__ElkNode__ContainedEdgesAssignment_2_3_1 : ( ruleElkEdge ) ;
-    public final void rule__ElkNode__ContainedEdgesAssignment_2_3_1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:5045:1: ( ( ruleElkEdge ) )
-            // InternalElkGraph.g:5046:2: ( ruleElkEdge )
-            {
-            // InternalElkGraph.g:5046:2: ( ruleElkEdge )
-            // InternalElkGraph.g:5047:3: ruleElkEdge
-            {
-             before(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_3_1_0()); 
-            pushFollow(FOLLOW_2);
-            ruleElkEdge();
-
-            state._fsp--;
-
-             after(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_3_1_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkNode__ContainedEdgesAssignment_2_3_1"
-
-
-    // $ANTLR start "rule__ElkNode__PortsAssignment_2_3_2"
-    // InternalElkGraph.g:5056:1: rule__ElkNode__PortsAssignment_2_3_2 : ( ruleElkPort ) ;
-    public final void rule__ElkNode__PortsAssignment_2_3_2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:5060:1: ( ( ruleElkPort ) )
-            // InternalElkGraph.g:5061:2: ( ruleElkPort )
-            {
-            // InternalElkGraph.g:5061:2: ( ruleElkPort )
-            // InternalElkGraph.g:5062:3: ruleElkPort
-            {
-             before(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_3_2_0()); 
-            pushFollow(FOLLOW_2);
-            ruleElkPort();
-
-            state._fsp--;
-
-             after(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_3_2_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__ElkNode__PortsAssignment_2_3_2"
-
-
-    // $ANTLR start "rule__ElkNode__LabelsAssignment_2_3_3"
-    // InternalElkGraph.g:5071:1: rule__ElkNode__LabelsAssignment_2_3_3 : ( ruleElkLabel ) ;
-    public final void rule__ElkNode__LabelsAssignment_2_3_3() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalElkGraph.g:5075:1: ( ( ruleElkLabel ) )
-            // InternalElkGraph.g:5076:2: ( ruleElkLabel )
-            {
-            // InternalElkGraph.g:5076:2: ( ruleElkLabel )
-            // InternalElkGraph.g:5077:3: ruleElkLabel
-            {
-             before(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_3_3_0()); 
+             before(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_3_0_0()); 
             pushFollow(FOLLOW_2);
             ruleElkLabel();
 
             state._fsp--;
 
-             after(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_3_3_0()); 
+             after(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_3_0_0()); 
 
             }
 
@@ -15831,21 +16010,144 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkNode__LabelsAssignment_2_3_3"
+    // $ANTLR end "rule__ElkNode__LabelsAssignment_2_3_0"
+
+
+    // $ANTLR start "rule__ElkNode__PortsAssignment_2_3_1"
+    // InternalElkGraph.g:5149:1: rule__ElkNode__PortsAssignment_2_3_1 : ( ruleElkPort ) ;
+    public final void rule__ElkNode__PortsAssignment_2_3_1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5153:1: ( ( ruleElkPort ) )
+            // InternalElkGraph.g:5154:2: ( ruleElkPort )
+            {
+            // InternalElkGraph.g:5154:2: ( ruleElkPort )
+            // InternalElkGraph.g:5155:3: ruleElkPort
+            {
+             before(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_3_1_0()); 
+            pushFollow(FOLLOW_2);
+            ruleElkPort();
+
+            state._fsp--;
+
+             after(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_3_1_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkNode__PortsAssignment_2_3_1"
+
+
+    // $ANTLR start "rule__ElkNode__ChildrenAssignment_2_3_2"
+    // InternalElkGraph.g:5164:1: rule__ElkNode__ChildrenAssignment_2_3_2 : ( ruleElkNode ) ;
+    public final void rule__ElkNode__ChildrenAssignment_2_3_2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5168:1: ( ( ruleElkNode ) )
+            // InternalElkGraph.g:5169:2: ( ruleElkNode )
+            {
+            // InternalElkGraph.g:5169:2: ( ruleElkNode )
+            // InternalElkGraph.g:5170:3: ruleElkNode
+            {
+             before(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_3_2_0()); 
+            pushFollow(FOLLOW_2);
+            ruleElkNode();
+
+            state._fsp--;
+
+             after(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_3_2_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkNode__ChildrenAssignment_2_3_2"
+
+
+    // $ANTLR start "rule__ElkNode__ContainedEdgesAssignment_2_3_3"
+    // InternalElkGraph.g:5179:1: rule__ElkNode__ContainedEdgesAssignment_2_3_3 : ( ruleElkEdge ) ;
+    public final void rule__ElkNode__ContainedEdgesAssignment_2_3_3() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5183:1: ( ( ruleElkEdge ) )
+            // InternalElkGraph.g:5184:2: ( ruleElkEdge )
+            {
+            // InternalElkGraph.g:5184:2: ( ruleElkEdge )
+            // InternalElkGraph.g:5185:3: ruleElkEdge
+            {
+             before(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_3_3_0()); 
+            pushFollow(FOLLOW_2);
+            ruleElkEdge();
+
+            state._fsp--;
+
+             after(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_3_3_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkNode__ContainedEdgesAssignment_2_3_3"
 
 
     // $ANTLR start "rule__ElkLabel__IdentifierAssignment_1_0"
-    // InternalElkGraph.g:5086:1: rule__ElkLabel__IdentifierAssignment_1_0 : ( RULE_ID ) ;
+    // InternalElkGraph.g:5194:1: rule__ElkLabel__IdentifierAssignment_1_0 : ( RULE_ID ) ;
     public final void rule__ElkLabel__IdentifierAssignment_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5090:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:5091:2: ( RULE_ID )
+            // InternalElkGraph.g:5198:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5199:2: ( RULE_ID )
             {
-            // InternalElkGraph.g:5091:2: ( RULE_ID )
-            // InternalElkGraph.g:5092:3: RULE_ID
+            // InternalElkGraph.g:5199:2: ( RULE_ID )
+            // InternalElkGraph.g:5200:3: RULE_ID
             {
              before(grammarAccess.getElkLabelAccess().getIdentifierIDTerminalRuleCall_1_0_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -15872,17 +16174,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkLabel__TextAssignment_2"
-    // InternalElkGraph.g:5101:1: rule__ElkLabel__TextAssignment_2 : ( RULE_STRING ) ;
+    // InternalElkGraph.g:5209:1: rule__ElkLabel__TextAssignment_2 : ( RULE_STRING ) ;
     public final void rule__ElkLabel__TextAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5105:1: ( ( RULE_STRING ) )
-            // InternalElkGraph.g:5106:2: ( RULE_STRING )
+            // InternalElkGraph.g:5213:1: ( ( RULE_STRING ) )
+            // InternalElkGraph.g:5214:2: ( RULE_STRING )
             {
-            // InternalElkGraph.g:5106:2: ( RULE_STRING )
-            // InternalElkGraph.g:5107:3: RULE_STRING
+            // InternalElkGraph.g:5214:2: ( RULE_STRING )
+            // InternalElkGraph.g:5215:3: RULE_STRING
             {
              before(grammarAccess.getElkLabelAccess().getTextSTRINGTerminalRuleCall_2_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -15909,17 +16211,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkLabel__PropertiesAssignment_3_2"
-    // InternalElkGraph.g:5116:1: rule__ElkLabel__PropertiesAssignment_3_2 : ( ruleProperty ) ;
+    // InternalElkGraph.g:5224:1: rule__ElkLabel__PropertiesAssignment_3_2 : ( ruleProperty ) ;
     public final void rule__ElkLabel__PropertiesAssignment_3_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5120:1: ( ( ruleProperty ) )
-            // InternalElkGraph.g:5121:2: ( ruleProperty )
+            // InternalElkGraph.g:5228:1: ( ( ruleProperty ) )
+            // InternalElkGraph.g:5229:2: ( ruleProperty )
             {
-            // InternalElkGraph.g:5121:2: ( ruleProperty )
-            // InternalElkGraph.g:5122:3: ruleProperty
+            // InternalElkGraph.g:5229:2: ( ruleProperty )
+            // InternalElkGraph.g:5230:3: ruleProperty
             {
              before(grammarAccess.getElkLabelAccess().getPropertiesPropertyParserRuleCall_3_2_0()); 
             pushFollow(FOLLOW_2);
@@ -15950,17 +16252,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkLabel__LabelsAssignment_3_3"
-    // InternalElkGraph.g:5131:1: rule__ElkLabel__LabelsAssignment_3_3 : ( ruleElkLabel ) ;
+    // InternalElkGraph.g:5239:1: rule__ElkLabel__LabelsAssignment_3_3 : ( ruleElkLabel ) ;
     public final void rule__ElkLabel__LabelsAssignment_3_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5135:1: ( ( ruleElkLabel ) )
-            // InternalElkGraph.g:5136:2: ( ruleElkLabel )
+            // InternalElkGraph.g:5243:1: ( ( ruleElkLabel ) )
+            // InternalElkGraph.g:5244:2: ( ruleElkLabel )
             {
-            // InternalElkGraph.g:5136:2: ( ruleElkLabel )
-            // InternalElkGraph.g:5137:3: ruleElkLabel
+            // InternalElkGraph.g:5244:2: ( ruleElkLabel )
+            // InternalElkGraph.g:5245:3: ruleElkLabel
             {
              before(grammarAccess.getElkLabelAccess().getLabelsElkLabelParserRuleCall_3_3_0()); 
             pushFollow(FOLLOW_2);
@@ -15991,17 +16293,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkPort__IdentifierAssignment_1"
-    // InternalElkGraph.g:5146:1: rule__ElkPort__IdentifierAssignment_1 : ( RULE_ID ) ;
+    // InternalElkGraph.g:5254:1: rule__ElkPort__IdentifierAssignment_1 : ( RULE_ID ) ;
     public final void rule__ElkPort__IdentifierAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5150:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:5151:2: ( RULE_ID )
+            // InternalElkGraph.g:5258:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5259:2: ( RULE_ID )
             {
-            // InternalElkGraph.g:5151:2: ( RULE_ID )
-            // InternalElkGraph.g:5152:3: RULE_ID
+            // InternalElkGraph.g:5259:2: ( RULE_ID )
+            // InternalElkGraph.g:5260:3: RULE_ID
             {
              before(grammarAccess.getElkPortAccess().getIdentifierIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -16028,17 +16330,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkPort__PropertiesAssignment_2_2"
-    // InternalElkGraph.g:5161:1: rule__ElkPort__PropertiesAssignment_2_2 : ( ruleProperty ) ;
+    // InternalElkGraph.g:5269:1: rule__ElkPort__PropertiesAssignment_2_2 : ( ruleProperty ) ;
     public final void rule__ElkPort__PropertiesAssignment_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5165:1: ( ( ruleProperty ) )
-            // InternalElkGraph.g:5166:2: ( ruleProperty )
+            // InternalElkGraph.g:5273:1: ( ( ruleProperty ) )
+            // InternalElkGraph.g:5274:2: ( ruleProperty )
             {
-            // InternalElkGraph.g:5166:2: ( ruleProperty )
-            // InternalElkGraph.g:5167:3: ruleProperty
+            // InternalElkGraph.g:5274:2: ( ruleProperty )
+            // InternalElkGraph.g:5275:3: ruleProperty
             {
              before(grammarAccess.getElkPortAccess().getPropertiesPropertyParserRuleCall_2_2_0()); 
             pushFollow(FOLLOW_2);
@@ -16069,17 +16371,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkPort__LabelsAssignment_2_3"
-    // InternalElkGraph.g:5176:1: rule__ElkPort__LabelsAssignment_2_3 : ( ruleElkLabel ) ;
+    // InternalElkGraph.g:5284:1: rule__ElkPort__LabelsAssignment_2_3 : ( ruleElkLabel ) ;
     public final void rule__ElkPort__LabelsAssignment_2_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5180:1: ( ( ruleElkLabel ) )
-            // InternalElkGraph.g:5181:2: ( ruleElkLabel )
+            // InternalElkGraph.g:5288:1: ( ( ruleElkLabel ) )
+            // InternalElkGraph.g:5289:2: ( ruleElkLabel )
             {
-            // InternalElkGraph.g:5181:2: ( ruleElkLabel )
-            // InternalElkGraph.g:5182:3: ruleElkLabel
+            // InternalElkGraph.g:5289:2: ( ruleElkLabel )
+            // InternalElkGraph.g:5290:3: ruleElkLabel
             {
              before(grammarAccess.getElkPortAccess().getLabelsElkLabelParserRuleCall_2_3_0()); 
             pushFollow(FOLLOW_2);
@@ -16110,17 +16412,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ShapeLayout__XAssignment_2_0_2"
-    // InternalElkGraph.g:5191:1: rule__ShapeLayout__XAssignment_2_0_2 : ( ruleNumber ) ;
+    // InternalElkGraph.g:5299:1: rule__ShapeLayout__XAssignment_2_0_2 : ( ruleNumber ) ;
     public final void rule__ShapeLayout__XAssignment_2_0_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5195:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5196:2: ( ruleNumber )
+            // InternalElkGraph.g:5303:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5304:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5196:2: ( ruleNumber )
-            // InternalElkGraph.g:5197:3: ruleNumber
+            // InternalElkGraph.g:5304:2: ( ruleNumber )
+            // InternalElkGraph.g:5305:3: ruleNumber
             {
              before(grammarAccess.getShapeLayoutAccess().getXNumberParserRuleCall_2_0_2_0()); 
             pushFollow(FOLLOW_2);
@@ -16151,17 +16453,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ShapeLayout__YAssignment_2_0_4"
-    // InternalElkGraph.g:5206:1: rule__ShapeLayout__YAssignment_2_0_4 : ( ruleNumber ) ;
+    // InternalElkGraph.g:5314:1: rule__ShapeLayout__YAssignment_2_0_4 : ( ruleNumber ) ;
     public final void rule__ShapeLayout__YAssignment_2_0_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5210:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5211:2: ( ruleNumber )
+            // InternalElkGraph.g:5318:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5319:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5211:2: ( ruleNumber )
-            // InternalElkGraph.g:5212:3: ruleNumber
+            // InternalElkGraph.g:5319:2: ( ruleNumber )
+            // InternalElkGraph.g:5320:3: ruleNumber
             {
              before(grammarAccess.getShapeLayoutAccess().getYNumberParserRuleCall_2_0_4_0()); 
             pushFollow(FOLLOW_2);
@@ -16192,17 +16494,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ShapeLayout__WidthAssignment_2_1_2"
-    // InternalElkGraph.g:5221:1: rule__ShapeLayout__WidthAssignment_2_1_2 : ( ruleNumber ) ;
+    // InternalElkGraph.g:5329:1: rule__ShapeLayout__WidthAssignment_2_1_2 : ( ruleNumber ) ;
     public final void rule__ShapeLayout__WidthAssignment_2_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5225:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5226:2: ( ruleNumber )
+            // InternalElkGraph.g:5333:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5334:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5226:2: ( ruleNumber )
-            // InternalElkGraph.g:5227:3: ruleNumber
+            // InternalElkGraph.g:5334:2: ( ruleNumber )
+            // InternalElkGraph.g:5335:3: ruleNumber
             {
              before(grammarAccess.getShapeLayoutAccess().getWidthNumberParserRuleCall_2_1_2_0()); 
             pushFollow(FOLLOW_2);
@@ -16233,17 +16535,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ShapeLayout__HeightAssignment_2_1_4"
-    // InternalElkGraph.g:5236:1: rule__ShapeLayout__HeightAssignment_2_1_4 : ( ruleNumber ) ;
+    // InternalElkGraph.g:5344:1: rule__ShapeLayout__HeightAssignment_2_1_4 : ( ruleNumber ) ;
     public final void rule__ShapeLayout__HeightAssignment_2_1_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5240:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5241:2: ( ruleNumber )
+            // InternalElkGraph.g:5348:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5349:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5241:2: ( ruleNumber )
-            // InternalElkGraph.g:5242:3: ruleNumber
+            // InternalElkGraph.g:5349:2: ( ruleNumber )
+            // InternalElkGraph.g:5350:3: ruleNumber
             {
              before(grammarAccess.getShapeLayoutAccess().getHeightNumberParserRuleCall_2_1_4_0()); 
             pushFollow(FOLLOW_2);
@@ -16274,17 +16576,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdge__IdentifierAssignment_1_0"
-    // InternalElkGraph.g:5251:1: rule__ElkEdge__IdentifierAssignment_1_0 : ( RULE_ID ) ;
+    // InternalElkGraph.g:5359:1: rule__ElkEdge__IdentifierAssignment_1_0 : ( RULE_ID ) ;
     public final void rule__ElkEdge__IdentifierAssignment_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5255:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:5256:2: ( RULE_ID )
+            // InternalElkGraph.g:5363:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5364:2: ( RULE_ID )
             {
-            // InternalElkGraph.g:5256:2: ( RULE_ID )
-            // InternalElkGraph.g:5257:3: RULE_ID
+            // InternalElkGraph.g:5364:2: ( RULE_ID )
+            // InternalElkGraph.g:5365:3: RULE_ID
             {
              before(grammarAccess.getElkEdgeAccess().getIdentifierIDTerminalRuleCall_1_0_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -16311,21 +16613,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdge__SourcesAssignment_2"
-    // InternalElkGraph.g:5266:1: rule__ElkEdge__SourcesAssignment_2 : ( ( ruleQualifiedId ) ) ;
+    // InternalElkGraph.g:5374:1: rule__ElkEdge__SourcesAssignment_2 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdge__SourcesAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5270:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalElkGraph.g:5271:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5378:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalElkGraph.g:5379:2: ( ( ruleQualifiedId ) )
             {
-            // InternalElkGraph.g:5271:2: ( ( ruleQualifiedId ) )
-            // InternalElkGraph.g:5272:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5379:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5380:3: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeCrossReference_2_0()); 
-            // InternalElkGraph.g:5273:3: ( ruleQualifiedId )
-            // InternalElkGraph.g:5274:4: ruleQualifiedId
+            // InternalElkGraph.g:5381:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5382:4: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeQualifiedIdParserRuleCall_2_0_1()); 
             pushFollow(FOLLOW_2);
@@ -16360,21 +16662,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdge__SourcesAssignment_3_1"
-    // InternalElkGraph.g:5285:1: rule__ElkEdge__SourcesAssignment_3_1 : ( ( ruleQualifiedId ) ) ;
+    // InternalElkGraph.g:5393:1: rule__ElkEdge__SourcesAssignment_3_1 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdge__SourcesAssignment_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5289:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalElkGraph.g:5290:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5397:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalElkGraph.g:5398:2: ( ( ruleQualifiedId ) )
             {
-            // InternalElkGraph.g:5290:2: ( ( ruleQualifiedId ) )
-            // InternalElkGraph.g:5291:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5398:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5399:3: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeCrossReference_3_1_0()); 
-            // InternalElkGraph.g:5292:3: ( ruleQualifiedId )
-            // InternalElkGraph.g:5293:4: ruleQualifiedId
+            // InternalElkGraph.g:5400:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5401:4: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeQualifiedIdParserRuleCall_3_1_0_1()); 
             pushFollow(FOLLOW_2);
@@ -16409,21 +16711,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdge__TargetsAssignment_5"
-    // InternalElkGraph.g:5304:1: rule__ElkEdge__TargetsAssignment_5 : ( ( ruleQualifiedId ) ) ;
+    // InternalElkGraph.g:5412:1: rule__ElkEdge__TargetsAssignment_5 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdge__TargetsAssignment_5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5308:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalElkGraph.g:5309:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5416:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalElkGraph.g:5417:2: ( ( ruleQualifiedId ) )
             {
-            // InternalElkGraph.g:5309:2: ( ( ruleQualifiedId ) )
-            // InternalElkGraph.g:5310:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5417:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5418:3: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeCrossReference_5_0()); 
-            // InternalElkGraph.g:5311:3: ( ruleQualifiedId )
-            // InternalElkGraph.g:5312:4: ruleQualifiedId
+            // InternalElkGraph.g:5419:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5420:4: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeQualifiedIdParserRuleCall_5_0_1()); 
             pushFollow(FOLLOW_2);
@@ -16458,21 +16760,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdge__TargetsAssignment_6_1"
-    // InternalElkGraph.g:5323:1: rule__ElkEdge__TargetsAssignment_6_1 : ( ( ruleQualifiedId ) ) ;
+    // InternalElkGraph.g:5431:1: rule__ElkEdge__TargetsAssignment_6_1 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdge__TargetsAssignment_6_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5327:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalElkGraph.g:5328:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5435:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalElkGraph.g:5436:2: ( ( ruleQualifiedId ) )
             {
-            // InternalElkGraph.g:5328:2: ( ( ruleQualifiedId ) )
-            // InternalElkGraph.g:5329:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5436:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5437:3: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeCrossReference_6_1_0()); 
-            // InternalElkGraph.g:5330:3: ( ruleQualifiedId )
-            // InternalElkGraph.g:5331:4: ruleQualifiedId
+            // InternalElkGraph.g:5438:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5439:4: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeQualifiedIdParserRuleCall_6_1_0_1()); 
             pushFollow(FOLLOW_2);
@@ -16507,17 +16809,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdge__PropertiesAssignment_7_2"
-    // InternalElkGraph.g:5342:1: rule__ElkEdge__PropertiesAssignment_7_2 : ( ruleProperty ) ;
+    // InternalElkGraph.g:5450:1: rule__ElkEdge__PropertiesAssignment_7_2 : ( ruleProperty ) ;
     public final void rule__ElkEdge__PropertiesAssignment_7_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5346:1: ( ( ruleProperty ) )
-            // InternalElkGraph.g:5347:2: ( ruleProperty )
+            // InternalElkGraph.g:5454:1: ( ( ruleProperty ) )
+            // InternalElkGraph.g:5455:2: ( ruleProperty )
             {
-            // InternalElkGraph.g:5347:2: ( ruleProperty )
-            // InternalElkGraph.g:5348:3: ruleProperty
+            // InternalElkGraph.g:5455:2: ( ruleProperty )
+            // InternalElkGraph.g:5456:3: ruleProperty
             {
              before(grammarAccess.getElkEdgeAccess().getPropertiesPropertyParserRuleCall_7_2_0()); 
             pushFollow(FOLLOW_2);
@@ -16548,17 +16850,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdge__LabelsAssignment_7_3"
-    // InternalElkGraph.g:5357:1: rule__ElkEdge__LabelsAssignment_7_3 : ( ruleElkLabel ) ;
+    // InternalElkGraph.g:5465:1: rule__ElkEdge__LabelsAssignment_7_3 : ( ruleElkLabel ) ;
     public final void rule__ElkEdge__LabelsAssignment_7_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5361:1: ( ( ruleElkLabel ) )
-            // InternalElkGraph.g:5362:2: ( ruleElkLabel )
+            // InternalElkGraph.g:5469:1: ( ( ruleElkLabel ) )
+            // InternalElkGraph.g:5470:2: ( ruleElkLabel )
             {
-            // InternalElkGraph.g:5362:2: ( ruleElkLabel )
-            // InternalElkGraph.g:5363:3: ruleElkLabel
+            // InternalElkGraph.g:5470:2: ( ruleElkLabel )
+            // InternalElkGraph.g:5471:3: ruleElkLabel
             {
              before(grammarAccess.getElkEdgeAccess().getLabelsElkLabelParserRuleCall_7_3_0()); 
             pushFollow(FOLLOW_2);
@@ -16589,17 +16891,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__EdgeLayout__SectionsAssignment_2_0"
-    // InternalElkGraph.g:5372:1: rule__EdgeLayout__SectionsAssignment_2_0 : ( ruleElkSingleEdgeSection ) ;
+    // InternalElkGraph.g:5480:1: rule__EdgeLayout__SectionsAssignment_2_0 : ( ruleElkSingleEdgeSection ) ;
     public final void rule__EdgeLayout__SectionsAssignment_2_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5376:1: ( ( ruleElkSingleEdgeSection ) )
-            // InternalElkGraph.g:5377:2: ( ruleElkSingleEdgeSection )
+            // InternalElkGraph.g:5484:1: ( ( ruleElkSingleEdgeSection ) )
+            // InternalElkGraph.g:5485:2: ( ruleElkSingleEdgeSection )
             {
-            // InternalElkGraph.g:5377:2: ( ruleElkSingleEdgeSection )
-            // InternalElkGraph.g:5378:3: ruleElkSingleEdgeSection
+            // InternalElkGraph.g:5485:2: ( ruleElkSingleEdgeSection )
+            // InternalElkGraph.g:5486:3: ruleElkSingleEdgeSection
             {
              before(grammarAccess.getEdgeLayoutAccess().getSectionsElkSingleEdgeSectionParserRuleCall_2_0_0()); 
             pushFollow(FOLLOW_2);
@@ -16630,17 +16932,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__EdgeLayout__SectionsAssignment_2_1"
-    // InternalElkGraph.g:5387:1: rule__EdgeLayout__SectionsAssignment_2_1 : ( ruleElkEdgeSection ) ;
+    // InternalElkGraph.g:5495:1: rule__EdgeLayout__SectionsAssignment_2_1 : ( ruleElkEdgeSection ) ;
     public final void rule__EdgeLayout__SectionsAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5391:1: ( ( ruleElkEdgeSection ) )
-            // InternalElkGraph.g:5392:2: ( ruleElkEdgeSection )
+            // InternalElkGraph.g:5499:1: ( ( ruleElkEdgeSection ) )
+            // InternalElkGraph.g:5500:2: ( ruleElkEdgeSection )
             {
-            // InternalElkGraph.g:5392:2: ( ruleElkEdgeSection )
-            // InternalElkGraph.g:5393:3: ruleElkEdgeSection
+            // InternalElkGraph.g:5500:2: ( ruleElkEdgeSection )
+            // InternalElkGraph.g:5501:3: ruleElkEdgeSection
             {
              before(grammarAccess.getEdgeLayoutAccess().getSectionsElkEdgeSectionParserRuleCall_2_1_0()); 
             pushFollow(FOLLOW_2);
@@ -16670,34 +16972,34 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__EdgeLayout__SectionsAssignment_2_1"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2"
-    // InternalElkGraph.g:5402:1: rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2 : ( ( ruleQualifiedId ) ) ;
-    public final void rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2"
+    // InternalElkGraph.g:5510:1: rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 : ( ( ruleQualifiedId ) ) ;
+    public final void rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5406:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalElkGraph.g:5407:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5514:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalElkGraph.g:5515:2: ( ( ruleQualifiedId ) )
             {
-            // InternalElkGraph.g:5407:2: ( ( ruleQualifiedId ) )
-            // InternalElkGraph.g:5408:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5515:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5516:3: ( ruleQualifiedId )
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_2_0()); 
-            // InternalElkGraph.g:5409:3: ( ruleQualifiedId )
-            // InternalElkGraph.g:5410:4: ruleQualifiedId
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0()); 
+            // InternalElkGraph.g:5517:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5518:4: ruleQualifiedId
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_2_0_1()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_0_2_0_1()); 
             pushFollow(FOLLOW_2);
             ruleQualifiedId();
 
             state._fsp--;
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_2_0_1()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_0_2_0_1()); 
 
             }
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_2_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0()); 
 
             }
 
@@ -16716,37 +17018,37 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_2"
+    // $ANTLR end "rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2"
-    // InternalElkGraph.g:5421:1: rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2 : ( ( ruleQualifiedId ) ) ;
-    public final void rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2"
+    // InternalElkGraph.g:5529:1: rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 : ( ( ruleQualifiedId ) ) ;
+    public final void rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5425:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalElkGraph.g:5426:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5533:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalElkGraph.g:5534:2: ( ( ruleQualifiedId ) )
             {
-            // InternalElkGraph.g:5426:2: ( ( ruleQualifiedId ) )
-            // InternalElkGraph.g:5427:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5534:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5535:3: ( ruleQualifiedId )
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_1_2_0()); 
-            // InternalElkGraph.g:5428:3: ( ruleQualifiedId )
-            // InternalElkGraph.g:5429:4: ruleQualifiedId
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0()); 
+            // InternalElkGraph.g:5536:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5537:4: ruleQualifiedId
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_1_2_0_1()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_1_2_0_1()); 
             pushFollow(FOLLOW_2);
             ruleQualifiedId();
 
             state._fsp--;
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_1_2_0_1()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_1_2_0_1()); 
 
             }
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_1_2_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0()); 
 
             }
 
@@ -16765,29 +17067,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_1_2"
+    // $ANTLR end "rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__StartXAssignment_1_2_2"
-    // InternalElkGraph.g:5440:1: rule__ElkSingleEdgeSection__StartXAssignment_1_2_2 : ( ruleNumber ) ;
-    public final void rule__ElkSingleEdgeSection__StartXAssignment_1_2_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2"
+    // InternalElkGraph.g:5548:1: rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 : ( ruleNumber ) ;
+    public final void rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5444:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5445:2: ( ruleNumber )
+            // InternalElkGraph.g:5552:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5553:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5445:2: ( ruleNumber )
-            // InternalElkGraph.g:5446:3: ruleNumber
+            // InternalElkGraph.g:5553:2: ( ruleNumber )
+            // InternalElkGraph.g:5554:3: ruleNumber
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_2_2_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_0_2_2_0()); 
             pushFollow(FOLLOW_2);
             ruleNumber();
 
             state._fsp--;
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_2_2_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_0_2_2_0()); 
 
             }
 
@@ -16806,29 +17108,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__StartXAssignment_1_2_2"
+    // $ANTLR end "rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__StartYAssignment_1_2_4"
-    // InternalElkGraph.g:5455:1: rule__ElkSingleEdgeSection__StartYAssignment_1_2_4 : ( ruleNumber ) ;
-    public final void rule__ElkSingleEdgeSection__StartYAssignment_1_2_4() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4"
+    // InternalElkGraph.g:5563:1: rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 : ( ruleNumber ) ;
+    public final void rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5459:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5460:2: ( ruleNumber )
+            // InternalElkGraph.g:5567:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5568:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5460:2: ( ruleNumber )
-            // InternalElkGraph.g:5461:3: ruleNumber
+            // InternalElkGraph.g:5568:2: ( ruleNumber )
+            // InternalElkGraph.g:5569:3: ruleNumber
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_2_4_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_0_2_4_0()); 
             pushFollow(FOLLOW_2);
             ruleNumber();
 
             state._fsp--;
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_2_4_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_0_2_4_0()); 
 
             }
 
@@ -16847,29 +17149,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__StartYAssignment_1_2_4"
+    // $ANTLR end "rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__EndXAssignment_1_3_2"
-    // InternalElkGraph.g:5470:1: rule__ElkSingleEdgeSection__EndXAssignment_1_3_2 : ( ruleNumber ) ;
-    public final void rule__ElkSingleEdgeSection__EndXAssignment_1_3_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2"
+    // InternalElkGraph.g:5578:1: rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 : ( ruleNumber ) ;
+    public final void rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5474:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5475:2: ( ruleNumber )
+            // InternalElkGraph.g:5582:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5583:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5475:2: ( ruleNumber )
-            // InternalElkGraph.g:5476:3: ruleNumber
+            // InternalElkGraph.g:5583:2: ( ruleNumber )
+            // InternalElkGraph.g:5584:3: ruleNumber
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_3_2_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_0_3_2_0()); 
             pushFollow(FOLLOW_2);
             ruleNumber();
 
             state._fsp--;
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_3_2_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_0_3_2_0()); 
 
             }
 
@@ -16888,29 +17190,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__EndXAssignment_1_3_2"
+    // $ANTLR end "rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__EndYAssignment_1_3_4"
-    // InternalElkGraph.g:5485:1: rule__ElkSingleEdgeSection__EndYAssignment_1_3_4 : ( ruleNumber ) ;
-    public final void rule__ElkSingleEdgeSection__EndYAssignment_1_3_4() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4"
+    // InternalElkGraph.g:5593:1: rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 : ( ruleNumber ) ;
+    public final void rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5489:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5490:2: ( ruleNumber )
+            // InternalElkGraph.g:5597:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5598:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5490:2: ( ruleNumber )
-            // InternalElkGraph.g:5491:3: ruleNumber
+            // InternalElkGraph.g:5598:2: ( ruleNumber )
+            // InternalElkGraph.g:5599:3: ruleNumber
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_3_4_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_0_3_4_0()); 
             pushFollow(FOLLOW_2);
             ruleNumber();
 
             state._fsp--;
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_3_4_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_0_3_4_0()); 
 
             }
 
@@ -16929,29 +17231,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__EndYAssignment_1_3_4"
+    // $ANTLR end "rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2"
-    // InternalElkGraph.g:5500:1: rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2 : ( ruleElkBendPoint ) ;
-    public final void rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2"
+    // InternalElkGraph.g:5608:1: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 : ( ruleElkBendPoint ) ;
+    public final void rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5504:1: ( ( ruleElkBendPoint ) )
-            // InternalElkGraph.g:5505:2: ( ruleElkBendPoint )
+            // InternalElkGraph.g:5612:1: ( ( ruleElkBendPoint ) )
+            // InternalElkGraph.g:5613:2: ( ruleElkBendPoint )
             {
-            // InternalElkGraph.g:5505:2: ( ruleElkBendPoint )
-            // InternalElkGraph.g:5506:3: ruleElkBendPoint
+            // InternalElkGraph.g:5613:2: ( ruleElkBendPoint )
+            // InternalElkGraph.g:5614:3: ruleElkBendPoint
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_4_2_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_2_0()); 
             pushFollow(FOLLOW_2);
             ruleElkBendPoint();
 
             state._fsp--;
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_4_2_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_2_0()); 
 
             }
 
@@ -16970,29 +17272,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_2"
+    // $ANTLR end "rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2"
 
 
-    // $ANTLR start "rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1"
-    // InternalElkGraph.g:5515:1: rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1 : ( ruleElkBendPoint ) ;
-    public final void rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1() throws RecognitionException {
+    // $ANTLR start "rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1"
+    // InternalElkGraph.g:5623:1: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 : ( ruleElkBendPoint ) ;
+    public final void rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5519:1: ( ( ruleElkBendPoint ) )
-            // InternalElkGraph.g:5520:2: ( ruleElkBendPoint )
+            // InternalElkGraph.g:5627:1: ( ( ruleElkBendPoint ) )
+            // InternalElkGraph.g:5628:2: ( ruleElkBendPoint )
             {
-            // InternalElkGraph.g:5520:2: ( ruleElkBendPoint )
-            // InternalElkGraph.g:5521:3: ruleElkBendPoint
+            // InternalElkGraph.g:5628:2: ( ruleElkBendPoint )
+            // InternalElkGraph.g:5629:3: ruleElkBendPoint
             {
-             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_4_3_1_0()); 
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_3_1_0()); 
             pushFollow(FOLLOW_2);
             ruleElkBendPoint();
 
             state._fsp--;
 
-             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_4_3_1_0()); 
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_3_1_0()); 
 
             }
 
@@ -17011,21 +17313,62 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkSingleEdgeSection__BendPointsAssignment_1_4_3_1"
+    // $ANTLR end "rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1"
+
+
+    // $ANTLR start "rule__ElkSingleEdgeSection__PropertiesAssignment_1_2"
+    // InternalElkGraph.g:5638:1: rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 : ( ruleProperty ) ;
+    public final void rule__ElkSingleEdgeSection__PropertiesAssignment_1_2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5642:1: ( ( ruleProperty ) )
+            // InternalElkGraph.g:5643:2: ( ruleProperty )
+            {
+            // InternalElkGraph.g:5643:2: ( ruleProperty )
+            // InternalElkGraph.g:5644:3: ruleProperty
+            {
+             before(grammarAccess.getElkSingleEdgeSectionAccess().getPropertiesPropertyParserRuleCall_1_2_0()); 
+            pushFollow(FOLLOW_2);
+            ruleProperty();
+
+            state._fsp--;
+
+             after(grammarAccess.getElkSingleEdgeSectionAccess().getPropertiesPropertyParserRuleCall_1_2_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkSingleEdgeSection__PropertiesAssignment_1_2"
 
 
     // $ANTLR start "rule__ElkEdgeSection__IdentifierAssignment_1"
-    // InternalElkGraph.g:5530:1: rule__ElkEdgeSection__IdentifierAssignment_1 : ( RULE_ID ) ;
+    // InternalElkGraph.g:5653:1: rule__ElkEdgeSection__IdentifierAssignment_1 : ( RULE_ID ) ;
     public final void rule__ElkEdgeSection__IdentifierAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5534:1: ( ( RULE_ID ) )
-            // InternalElkGraph.g:5535:2: ( RULE_ID )
+            // InternalElkGraph.g:5657:1: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5658:2: ( RULE_ID )
             {
-            // InternalElkGraph.g:5535:2: ( RULE_ID )
-            // InternalElkGraph.g:5536:3: RULE_ID
+            // InternalElkGraph.g:5658:2: ( RULE_ID )
+            // InternalElkGraph.g:5659:3: RULE_ID
             {
              before(grammarAccess.getElkEdgeSectionAccess().getIdentifierIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -17052,21 +17395,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1"
-    // InternalElkGraph.g:5545:1: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 : ( ( RULE_ID ) ) ;
+    // InternalElkGraph.g:5668:1: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 : ( ( RULE_ID ) ) ;
     public final void rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5549:1: ( ( ( RULE_ID ) ) )
-            // InternalElkGraph.g:5550:2: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5672:1: ( ( ( RULE_ID ) ) )
+            // InternalElkGraph.g:5673:2: ( ( RULE_ID ) )
             {
-            // InternalElkGraph.g:5550:2: ( ( RULE_ID ) )
-            // InternalElkGraph.g:5551:3: ( RULE_ID )
+            // InternalElkGraph.g:5673:2: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5674:3: ( RULE_ID )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionCrossReference_2_1_0()); 
-            // InternalElkGraph.g:5552:3: ( RULE_ID )
-            // InternalElkGraph.g:5553:4: RULE_ID
+            // InternalElkGraph.g:5675:3: ( RULE_ID )
+            // InternalElkGraph.g:5676:4: RULE_ID
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionIDTerminalRuleCall_2_1_0_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -17097,21 +17440,21 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1"
-    // InternalElkGraph.g:5564:1: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 : ( ( RULE_ID ) ) ;
+    // InternalElkGraph.g:5687:1: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 : ( ( RULE_ID ) ) ;
     public final void rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5568:1: ( ( ( RULE_ID ) ) )
-            // InternalElkGraph.g:5569:2: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5691:1: ( ( ( RULE_ID ) ) )
+            // InternalElkGraph.g:5692:2: ( ( RULE_ID ) )
             {
-            // InternalElkGraph.g:5569:2: ( ( RULE_ID ) )
-            // InternalElkGraph.g:5570:3: ( RULE_ID )
+            // InternalElkGraph.g:5692:2: ( ( RULE_ID ) )
+            // InternalElkGraph.g:5693:3: ( RULE_ID )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionCrossReference_2_2_1_0()); 
-            // InternalElkGraph.g:5571:3: ( RULE_ID )
-            // InternalElkGraph.g:5572:4: RULE_ID
+            // InternalElkGraph.g:5694:3: ( RULE_ID )
+            // InternalElkGraph.g:5695:4: RULE_ID
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionIDTerminalRuleCall_2_2_1_0_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -17141,34 +17484,34 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2"
-    // InternalElkGraph.g:5583:1: rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2 : ( ( ruleQualifiedId ) ) ;
-    public final void rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2"
+    // InternalElkGraph.g:5706:1: rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 : ( ( ruleQualifiedId ) ) ;
+    public final void rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5587:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalElkGraph.g:5588:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5710:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalElkGraph.g:5711:2: ( ( ruleQualifiedId ) )
             {
-            // InternalElkGraph.g:5588:2: ( ( ruleQualifiedId ) )
-            // InternalElkGraph.g:5589:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5711:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5712:3: ( ruleQualifiedId )
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_2_0()); 
-            // InternalElkGraph.g:5590:3: ( ruleQualifiedId )
-            // InternalElkGraph.g:5591:4: ruleQualifiedId
+             before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0()); 
+            // InternalElkGraph.g:5713:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5714:4: ruleQualifiedId
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_2_0_1()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_0_2_0_1()); 
             pushFollow(FOLLOW_2);
             ruleQualifiedId();
 
             state._fsp--;
 
-             after(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_2_0_1()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_0_2_0_1()); 
 
             }
 
-             after(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_2_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0()); 
 
             }
 
@@ -17187,37 +17530,37 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__IncomingShapeAssignment_4_0_2"
+    // $ANTLR end "rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2"
-    // InternalElkGraph.g:5602:1: rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2 : ( ( ruleQualifiedId ) ) ;
-    public final void rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2"
+    // InternalElkGraph.g:5725:1: rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 : ( ( ruleQualifiedId ) ) ;
+    public final void rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5606:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalElkGraph.g:5607:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5729:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalElkGraph.g:5730:2: ( ( ruleQualifiedId ) )
             {
-            // InternalElkGraph.g:5607:2: ( ( ruleQualifiedId ) )
-            // InternalElkGraph.g:5608:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5730:2: ( ( ruleQualifiedId ) )
+            // InternalElkGraph.g:5731:3: ( ruleQualifiedId )
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_1_2_0()); 
-            // InternalElkGraph.g:5609:3: ( ruleQualifiedId )
-            // InternalElkGraph.g:5610:4: ruleQualifiedId
+             before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0()); 
+            // InternalElkGraph.g:5732:3: ( ruleQualifiedId )
+            // InternalElkGraph.g:5733:4: ruleQualifiedId
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_1_2_0_1()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_1_2_0_1()); 
             pushFollow(FOLLOW_2);
             ruleQualifiedId();
 
             state._fsp--;
 
-             after(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_1_2_0_1()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_1_2_0_1()); 
 
             }
 
-             after(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_1_2_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0()); 
 
             }
 
@@ -17236,29 +17579,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__OutgoingShapeAssignment_4_1_2"
+    // $ANTLR end "rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__StartXAssignment_4_2_2"
-    // InternalElkGraph.g:5621:1: rule__ElkEdgeSection__StartXAssignment_4_2_2 : ( ruleNumber ) ;
-    public final void rule__ElkEdgeSection__StartXAssignment_4_2_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__StartXAssignment_4_0_2_2"
+    // InternalElkGraph.g:5744:1: rule__ElkEdgeSection__StartXAssignment_4_0_2_2 : ( ruleNumber ) ;
+    public final void rule__ElkEdgeSection__StartXAssignment_4_0_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5625:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5626:2: ( ruleNumber )
+            // InternalElkGraph.g:5748:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5749:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5626:2: ( ruleNumber )
-            // InternalElkGraph.g:5627:3: ruleNumber
+            // InternalElkGraph.g:5749:2: ( ruleNumber )
+            // InternalElkGraph.g:5750:3: ruleNumber
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_2_2_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_0_2_2_0()); 
             pushFollow(FOLLOW_2);
             ruleNumber();
 
             state._fsp--;
 
-             after(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_2_2_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_0_2_2_0()); 
 
             }
 
@@ -17277,29 +17620,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__StartXAssignment_4_2_2"
+    // $ANTLR end "rule__ElkEdgeSection__StartXAssignment_4_0_2_2"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__StartYAssignment_4_2_4"
-    // InternalElkGraph.g:5636:1: rule__ElkEdgeSection__StartYAssignment_4_2_4 : ( ruleNumber ) ;
-    public final void rule__ElkEdgeSection__StartYAssignment_4_2_4() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__StartYAssignment_4_0_2_4"
+    // InternalElkGraph.g:5759:1: rule__ElkEdgeSection__StartYAssignment_4_0_2_4 : ( ruleNumber ) ;
+    public final void rule__ElkEdgeSection__StartYAssignment_4_0_2_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5640:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5641:2: ( ruleNumber )
+            // InternalElkGraph.g:5763:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5764:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5641:2: ( ruleNumber )
-            // InternalElkGraph.g:5642:3: ruleNumber
+            // InternalElkGraph.g:5764:2: ( ruleNumber )
+            // InternalElkGraph.g:5765:3: ruleNumber
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_2_4_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_0_2_4_0()); 
             pushFollow(FOLLOW_2);
             ruleNumber();
 
             state._fsp--;
 
-             after(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_2_4_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_0_2_4_0()); 
 
             }
 
@@ -17318,29 +17661,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__StartYAssignment_4_2_4"
+    // $ANTLR end "rule__ElkEdgeSection__StartYAssignment_4_0_2_4"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__EndXAssignment_4_3_2"
-    // InternalElkGraph.g:5651:1: rule__ElkEdgeSection__EndXAssignment_4_3_2 : ( ruleNumber ) ;
-    public final void rule__ElkEdgeSection__EndXAssignment_4_3_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__EndXAssignment_4_0_3_2"
+    // InternalElkGraph.g:5774:1: rule__ElkEdgeSection__EndXAssignment_4_0_3_2 : ( ruleNumber ) ;
+    public final void rule__ElkEdgeSection__EndXAssignment_4_0_3_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5655:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5656:2: ( ruleNumber )
+            // InternalElkGraph.g:5778:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5779:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5656:2: ( ruleNumber )
-            // InternalElkGraph.g:5657:3: ruleNumber
+            // InternalElkGraph.g:5779:2: ( ruleNumber )
+            // InternalElkGraph.g:5780:3: ruleNumber
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_3_2_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_0_3_2_0()); 
             pushFollow(FOLLOW_2);
             ruleNumber();
 
             state._fsp--;
 
-             after(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_3_2_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_0_3_2_0()); 
 
             }
 
@@ -17359,29 +17702,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__EndXAssignment_4_3_2"
+    // $ANTLR end "rule__ElkEdgeSection__EndXAssignment_4_0_3_2"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__EndYAssignment_4_3_4"
-    // InternalElkGraph.g:5666:1: rule__ElkEdgeSection__EndYAssignment_4_3_4 : ( ruleNumber ) ;
-    public final void rule__ElkEdgeSection__EndYAssignment_4_3_4() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__EndYAssignment_4_0_3_4"
+    // InternalElkGraph.g:5789:1: rule__ElkEdgeSection__EndYAssignment_4_0_3_4 : ( ruleNumber ) ;
+    public final void rule__ElkEdgeSection__EndYAssignment_4_0_3_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5670:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5671:2: ( ruleNumber )
+            // InternalElkGraph.g:5793:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5794:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5671:2: ( ruleNumber )
-            // InternalElkGraph.g:5672:3: ruleNumber
+            // InternalElkGraph.g:5794:2: ( ruleNumber )
+            // InternalElkGraph.g:5795:3: ruleNumber
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_3_4_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_0_3_4_0()); 
             pushFollow(FOLLOW_2);
             ruleNumber();
 
             state._fsp--;
 
-             after(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_3_4_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_0_3_4_0()); 
 
             }
 
@@ -17400,29 +17743,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__EndYAssignment_4_3_4"
+    // $ANTLR end "rule__ElkEdgeSection__EndYAssignment_4_0_3_4"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__BendPointsAssignment_4_4_2"
-    // InternalElkGraph.g:5681:1: rule__ElkEdgeSection__BendPointsAssignment_4_4_2 : ( ruleElkBendPoint ) ;
-    public final void rule__ElkEdgeSection__BendPointsAssignment_4_4_2() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__BendPointsAssignment_4_1_2"
+    // InternalElkGraph.g:5804:1: rule__ElkEdgeSection__BendPointsAssignment_4_1_2 : ( ruleElkBendPoint ) ;
+    public final void rule__ElkEdgeSection__BendPointsAssignment_4_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5685:1: ( ( ruleElkBendPoint ) )
-            // InternalElkGraph.g:5686:2: ( ruleElkBendPoint )
+            // InternalElkGraph.g:5808:1: ( ( ruleElkBendPoint ) )
+            // InternalElkGraph.g:5809:2: ( ruleElkBendPoint )
             {
-            // InternalElkGraph.g:5686:2: ( ruleElkBendPoint )
-            // InternalElkGraph.g:5687:3: ruleElkBendPoint
+            // InternalElkGraph.g:5809:2: ( ruleElkBendPoint )
+            // InternalElkGraph.g:5810:3: ruleElkBendPoint
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_4_2_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_2_0()); 
             pushFollow(FOLLOW_2);
             ruleElkBendPoint();
 
             state._fsp--;
 
-             after(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_4_2_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_2_0()); 
 
             }
 
@@ -17441,29 +17784,29 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__BendPointsAssignment_4_4_2"
+    // $ANTLR end "rule__ElkEdgeSection__BendPointsAssignment_4_1_2"
 
 
-    // $ANTLR start "rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1"
-    // InternalElkGraph.g:5696:1: rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1 : ( ruleElkBendPoint ) ;
-    public final void rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1() throws RecognitionException {
+    // $ANTLR start "rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1"
+    // InternalElkGraph.g:5819:1: rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 : ( ruleElkBendPoint ) ;
+    public final void rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5700:1: ( ( ruleElkBendPoint ) )
-            // InternalElkGraph.g:5701:2: ( ruleElkBendPoint )
+            // InternalElkGraph.g:5823:1: ( ( ruleElkBendPoint ) )
+            // InternalElkGraph.g:5824:2: ( ruleElkBendPoint )
             {
-            // InternalElkGraph.g:5701:2: ( ruleElkBendPoint )
-            // InternalElkGraph.g:5702:3: ruleElkBendPoint
+            // InternalElkGraph.g:5824:2: ( ruleElkBendPoint )
+            // InternalElkGraph.g:5825:3: ruleElkBendPoint
             {
-             before(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_4_3_1_0()); 
+             before(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_3_1_0()); 
             pushFollow(FOLLOW_2);
             ruleElkBendPoint();
 
             state._fsp--;
 
-             after(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_4_3_1_0()); 
+             after(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_3_1_0()); 
 
             }
 
@@ -17482,21 +17825,62 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__ElkEdgeSection__BendPointsAssignment_4_4_3_1"
+    // $ANTLR end "rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1"
+
+
+    // $ANTLR start "rule__ElkEdgeSection__PropertiesAssignment_4_2"
+    // InternalElkGraph.g:5834:1: rule__ElkEdgeSection__PropertiesAssignment_4_2 : ( ruleProperty ) ;
+    public final void rule__ElkEdgeSection__PropertiesAssignment_4_2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalElkGraph.g:5838:1: ( ( ruleProperty ) )
+            // InternalElkGraph.g:5839:2: ( ruleProperty )
+            {
+            // InternalElkGraph.g:5839:2: ( ruleProperty )
+            // InternalElkGraph.g:5840:3: ruleProperty
+            {
+             before(grammarAccess.getElkEdgeSectionAccess().getPropertiesPropertyParserRuleCall_4_2_0()); 
+            pushFollow(FOLLOW_2);
+            ruleProperty();
+
+            state._fsp--;
+
+             after(grammarAccess.getElkEdgeSectionAccess().getPropertiesPropertyParserRuleCall_4_2_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ElkEdgeSection__PropertiesAssignment_4_2"
 
 
     // $ANTLR start "rule__ElkBendPoint__XAssignment_0"
-    // InternalElkGraph.g:5711:1: rule__ElkBendPoint__XAssignment_0 : ( ruleNumber ) ;
+    // InternalElkGraph.g:5849:1: rule__ElkBendPoint__XAssignment_0 : ( ruleNumber ) ;
     public final void rule__ElkBendPoint__XAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5715:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5716:2: ( ruleNumber )
+            // InternalElkGraph.g:5853:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5854:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5716:2: ( ruleNumber )
-            // InternalElkGraph.g:5717:3: ruleNumber
+            // InternalElkGraph.g:5854:2: ( ruleNumber )
+            // InternalElkGraph.g:5855:3: ruleNumber
             {
              before(grammarAccess.getElkBendPointAccess().getXNumberParserRuleCall_0_0()); 
             pushFollow(FOLLOW_2);
@@ -17527,17 +17911,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__ElkBendPoint__YAssignment_2"
-    // InternalElkGraph.g:5726:1: rule__ElkBendPoint__YAssignment_2 : ( ruleNumber ) ;
+    // InternalElkGraph.g:5864:1: rule__ElkBendPoint__YAssignment_2 : ( ruleNumber ) ;
     public final void rule__ElkBendPoint__YAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5730:1: ( ( ruleNumber ) )
-            // InternalElkGraph.g:5731:2: ( ruleNumber )
+            // InternalElkGraph.g:5868:1: ( ( ruleNumber ) )
+            // InternalElkGraph.g:5869:2: ( ruleNumber )
             {
-            // InternalElkGraph.g:5731:2: ( ruleNumber )
-            // InternalElkGraph.g:5732:3: ruleNumber
+            // InternalElkGraph.g:5869:2: ( ruleNumber )
+            // InternalElkGraph.g:5870:3: ruleNumber
             {
              before(grammarAccess.getElkBendPointAccess().getYNumberParserRuleCall_2_0()); 
             pushFollow(FOLLOW_2);
@@ -17568,17 +17952,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__KeyAssignment_0"
-    // InternalElkGraph.g:5741:1: rule__Property__KeyAssignment_0 : ( rulePropertyKey ) ;
+    // InternalElkGraph.g:5879:1: rule__Property__KeyAssignment_0 : ( rulePropertyKey ) ;
     public final void rule__Property__KeyAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5745:1: ( ( rulePropertyKey ) )
-            // InternalElkGraph.g:5746:2: ( rulePropertyKey )
+            // InternalElkGraph.g:5883:1: ( ( rulePropertyKey ) )
+            // InternalElkGraph.g:5884:2: ( rulePropertyKey )
             {
-            // InternalElkGraph.g:5746:2: ( rulePropertyKey )
-            // InternalElkGraph.g:5747:3: rulePropertyKey
+            // InternalElkGraph.g:5884:2: ( rulePropertyKey )
+            // InternalElkGraph.g:5885:3: rulePropertyKey
             {
              before(grammarAccess.getPropertyAccess().getKeyPropertyKeyParserRuleCall_0_0()); 
             pushFollow(FOLLOW_2);
@@ -17609,17 +17993,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__ValueAssignment_2_0"
-    // InternalElkGraph.g:5756:1: rule__Property__ValueAssignment_2_0 : ( ruleStringValue ) ;
+    // InternalElkGraph.g:5894:1: rule__Property__ValueAssignment_2_0 : ( ruleStringValue ) ;
     public final void rule__Property__ValueAssignment_2_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5760:1: ( ( ruleStringValue ) )
-            // InternalElkGraph.g:5761:2: ( ruleStringValue )
+            // InternalElkGraph.g:5898:1: ( ( ruleStringValue ) )
+            // InternalElkGraph.g:5899:2: ( ruleStringValue )
             {
-            // InternalElkGraph.g:5761:2: ( ruleStringValue )
-            // InternalElkGraph.g:5762:3: ruleStringValue
+            // InternalElkGraph.g:5899:2: ( ruleStringValue )
+            // InternalElkGraph.g:5900:3: ruleStringValue
             {
              before(grammarAccess.getPropertyAccess().getValueStringValueParserRuleCall_2_0_0()); 
             pushFollow(FOLLOW_2);
@@ -17650,17 +18034,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__ValueAssignment_2_1"
-    // InternalElkGraph.g:5771:1: rule__Property__ValueAssignment_2_1 : ( ruleQualifiedIdValue ) ;
+    // InternalElkGraph.g:5909:1: rule__Property__ValueAssignment_2_1 : ( ruleQualifiedIdValue ) ;
     public final void rule__Property__ValueAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5775:1: ( ( ruleQualifiedIdValue ) )
-            // InternalElkGraph.g:5776:2: ( ruleQualifiedIdValue )
+            // InternalElkGraph.g:5913:1: ( ( ruleQualifiedIdValue ) )
+            // InternalElkGraph.g:5914:2: ( ruleQualifiedIdValue )
             {
-            // InternalElkGraph.g:5776:2: ( ruleQualifiedIdValue )
-            // InternalElkGraph.g:5777:3: ruleQualifiedIdValue
+            // InternalElkGraph.g:5914:2: ( ruleQualifiedIdValue )
+            // InternalElkGraph.g:5915:3: ruleQualifiedIdValue
             {
              before(grammarAccess.getPropertyAccess().getValueQualifiedIdValueParserRuleCall_2_1_0()); 
             pushFollow(FOLLOW_2);
@@ -17691,17 +18075,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__ValueAssignment_2_2"
-    // InternalElkGraph.g:5786:1: rule__Property__ValueAssignment_2_2 : ( ruleNumberValue ) ;
+    // InternalElkGraph.g:5924:1: rule__Property__ValueAssignment_2_2 : ( ruleNumberValue ) ;
     public final void rule__Property__ValueAssignment_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5790:1: ( ( ruleNumberValue ) )
-            // InternalElkGraph.g:5791:2: ( ruleNumberValue )
+            // InternalElkGraph.g:5928:1: ( ( ruleNumberValue ) )
+            // InternalElkGraph.g:5929:2: ( ruleNumberValue )
             {
-            // InternalElkGraph.g:5791:2: ( ruleNumberValue )
-            // InternalElkGraph.g:5792:3: ruleNumberValue
+            // InternalElkGraph.g:5929:2: ( ruleNumberValue )
+            // InternalElkGraph.g:5930:3: ruleNumberValue
             {
              before(grammarAccess.getPropertyAccess().getValueNumberValueParserRuleCall_2_2_0()); 
             pushFollow(FOLLOW_2);
@@ -17732,17 +18116,17 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Property__ValueAssignment_2_3"
-    // InternalElkGraph.g:5801:1: rule__Property__ValueAssignment_2_3 : ( ruleBooleanValue ) ;
+    // InternalElkGraph.g:5939:1: rule__Property__ValueAssignment_2_3 : ( ruleBooleanValue ) ;
     public final void rule__Property__ValueAssignment_2_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalElkGraph.g:5805:1: ( ( ruleBooleanValue ) )
-            // InternalElkGraph.g:5806:2: ( ruleBooleanValue )
+            // InternalElkGraph.g:5943:1: ( ( ruleBooleanValue ) )
+            // InternalElkGraph.g:5944:2: ( ruleBooleanValue )
             {
-            // InternalElkGraph.g:5806:2: ( ruleBooleanValue )
-            // InternalElkGraph.g:5807:3: ruleBooleanValue
+            // InternalElkGraph.g:5944:2: ( ruleBooleanValue )
+            // InternalElkGraph.g:5945:3: ruleBooleanValue
             {
              before(grammarAccess.getPropertyAccess().getValueBooleanValueParserRuleCall_2_3_0()); 
             pushFollow(FOLLOW_2);
@@ -17787,23 +18171,26 @@ public class InternalElkGraphParser extends AbstractInternalContentAssistParser 
     public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x00000000106D0080L});
     public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000000000000090L});
     public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x000000000A000000L});
-    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x0000000001000000L});
-    public static final BitSet FOLLOW_15 = new BitSet(new long[]{0x0000000000000060L});
-    public static final BitSet FOLLOW_16 = new BitSet(new long[]{0x0000000004000000L});
-    public static final BitSet FOLLOW_17 = new BitSet(new long[]{0x0000000024000000L});
-    public static final BitSet FOLLOW_18 = new BitSet(new long[]{0x0000000004000002L});
-    public static final BitSet FOLLOW_19 = new BitSet(new long[]{0x0000000004020000L});
-    public static final BitSet FOLLOW_20 = new BitSet(new long[]{0x00000017C0000000L});
-    public static final BitSet FOLLOW_21 = new BitSet(new long[]{0x00000007C0000000L});
-    public static final BitSet FOLLOW_22 = new BitSet(new long[]{0x0000000800000000L});
-    public static final BitSet FOLLOW_23 = new BitSet(new long[]{0x0000000800000002L});
-    public static final BitSet FOLLOW_24 = new BitSet(new long[]{0x0000000020800000L});
-    public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x0000002000000000L});
-    public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x0000002000000002L});
-    public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x00000000000060F0L});
-    public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x000000000A000002L});
-    public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x00000007C0000002L});
+    public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x00000000004C0080L});
+    public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0000000000080002L});
+    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x0000000000800000L});
+    public static final BitSet FOLLOW_15 = new BitSet(new long[]{0x000000000A000000L});
+    public static final BitSet FOLLOW_16 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_17 = new BitSet(new long[]{0x0000000000000060L});
+    public static final BitSet FOLLOW_18 = new BitSet(new long[]{0x0000000004000000L});
+    public static final BitSet FOLLOW_19 = new BitSet(new long[]{0x0000000024000000L});
+    public static final BitSet FOLLOW_20 = new BitSet(new long[]{0x0000000004000002L});
+    public static final BitSet FOLLOW_21 = new BitSet(new long[]{0x0000000004020000L});
+    public static final BitSet FOLLOW_22 = new BitSet(new long[]{0x00000013C0000000L});
+    public static final BitSet FOLLOW_23 = new BitSet(new long[]{0x00000003C0000000L});
+    public static final BitSet FOLLOW_24 = new BitSet(new long[]{0x0000000400000080L});
+    public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x0000000800000000L});
+    public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x0000000800000002L});
+    public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x0000000020800000L});
+    public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000002000000000L});
+    public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x0000002000000002L});
+    public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x00000000000060F0L});
+    public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x000000000A000002L});
+    public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x00000003C0000002L});
 
 }

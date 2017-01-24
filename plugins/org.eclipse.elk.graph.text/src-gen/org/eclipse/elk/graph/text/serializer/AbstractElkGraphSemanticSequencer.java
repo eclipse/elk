@@ -29,7 +29,7 @@ import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequence
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
 
 @SuppressWarnings("all")
-public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequencer {
+public abstract class AbstractElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 
 	@Inject
 	private ElkGraphGrammarAccess grammarAccess;
@@ -134,10 +134,11 @@ public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *         (outgoingSections+=[ElkEdgeSection|ID] outgoingSections+=[ElkEdgeSection|ID]*)? 
 	 *         (
 	 *             (incomingShape=[ElkConnectableShape|QualifiedId] | outgoingShape=[ElkConnectableShape|QualifiedId])? 
-	 *             (bendPoints+=ElkBendPoint bendPoints+=ElkBendPoint*)? 
 	 *             (startX=Number startY=Number)? 
 	 *             (endX=Number endY=Number)?
-	 *         )+
+	 *         )+ 
+	 *         (bendPoints+=ElkBendPoint bendPoints+=ElkBendPoint*)? 
+	 *         properties+=Property*
 	 *     )
 	 */
 	protected void sequence_ElkEdgeSection(ISerializationContext context, ElkEdgeSection semanticObject) {
@@ -166,7 +167,7 @@ public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *         identifier=ID 
 	 *         ((x=Number y=Number) | (width=Number height=Number))* 
 	 *         properties+=Property* 
-	 *         (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+	 *         (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	 *     )
 	 */
 	protected void sequence_ElkNode_ShapeLayout(ISerializationContext context, ElkNode semanticObject) {
@@ -192,11 +193,14 @@ public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *
 	 * Constraint:
 	 *     (
-	 *         (incomingShape=[ElkConnectableShape|QualifiedId] | outgoingShape=[ElkConnectableShape|QualifiedId])? 
+	 *         (
+	 *             (incomingShape=[ElkConnectableShape|QualifiedId] | outgoingShape=[ElkConnectableShape|QualifiedId])? 
+	 *             (startX=Number startY=Number)? 
+	 *             (endX=Number endY=Number)?
+	 *         )+ 
 	 *         (bendPoints+=ElkBendPoint bendPoints+=ElkBendPoint*)? 
-	 *         (startX=Number startY=Number)? 
-	 *         (endX=Number endY=Number)?
-	 *     )+
+	 *         properties+=Property*
+	 *     )
 	 */
 	protected void sequence_ElkSingleEdgeSection(ISerializationContext context, ElkEdgeSection semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -220,7 +224,7 @@ public class ElkGraphSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *     RootNode returns ElkNode
 	 *
 	 * Constraint:
-	 *     (identifier=ID? properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*)
+	 *     (identifier=ID? properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*)
 	 */
 	protected void sequence_RootNode(ISerializationContext context, ElkNode semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

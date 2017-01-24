@@ -22,7 +22,7 @@ import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISyn
 import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 
 @SuppressWarnings("all")
-public class ElkGraphSyntacticSequencer extends AbstractSyntacticSequencer {
+public abstract class AbstractElkGraphSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected ElkGraphGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q;

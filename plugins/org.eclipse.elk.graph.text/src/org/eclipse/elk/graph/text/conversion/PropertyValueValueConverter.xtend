@@ -33,12 +33,12 @@ class PropertyValueValueConverter extends AbstractValueConverter<Object> {
     }
     
     override toString(Object value) throws ValueConverterException {
-        if (value === null)
-            throw new ValueConverterException("Value may not be null.", null, null)
+        if (value instanceof Double && Math.floor(value as Double) == value as Double)
+            return Integer.toString((value as Double).intValue)
         else if (value instanceof Boolean || value instanceof Number || value instanceof Enum<?>)
             return value.toString
         else
-            return value.toString.quoteIfNecessary
+            return String.valueOf(value).quoteIfNecessary
     }
     
     private def quoteIfNecessary(String s) {

@@ -16,7 +16,10 @@ class NumberValueConverter extends AbstractValueConverter<Double> {
     override toString(Double value) throws ValueConverterException {
         if (value === null)
             throw new ValueConverterException("Double value may not be null.", null, null)
-        return value.toString
+        else if (Math.floor(value) == value)
+            return Integer.toString(value.intValue)
+        else
+            return value.toString
     }
     
     override toValue(String string, INode node) throws ValueConverterException {

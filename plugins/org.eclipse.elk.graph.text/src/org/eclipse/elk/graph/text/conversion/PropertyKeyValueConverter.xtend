@@ -32,7 +32,19 @@ class PropertyKeyValueConverter extends AbstractValueConverter<IProperty<?>> {
     override toString(IProperty<?> value) throws ValueConverterException {
         if (value === null)
             throw new ValueConverterException("IProperty value may not be null.", null, null)
-        return Strings.split(value.id, '.').map[idValueConverter.toString(it)].join('.')
+        val metaDataService = LayoutMetaDataService.instance
+        val split = Strings.split(value.id, '.')
+        var String suffix
+        var i = split.size - 1
+        while (i >= 0) {
+            if (suffix === null)
+                suffix = idValueConverter.toString(split.get(i--))
+            else
+                suffix = idValueConverter.toString(split.get(i--)) + '.' + suffix
+            if (metaDataService.getOptionDataBySuffix(suffix) !== null)
+                return suffix
+        }
+        return split.map[idValueConverter.toString(it)].join('.')
     }
     
     override toValue(String string, INode node) throws ValueConverterException {

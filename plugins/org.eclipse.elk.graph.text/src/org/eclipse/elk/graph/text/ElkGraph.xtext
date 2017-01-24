@@ -13,13 +13,13 @@ import "http://www.eclipse.org/elk/ElkGraph"
 RootNode returns ElkNode:
     {ElkNode} ('graph' identifier=ID)?
     properties+=Property*
-    (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*;
+    (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*;
 
 ElkNode returns ElkNode:
     'node' identifier=ID ('{'
         ShapeLayout?
         properties+=Property*
-        (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+        (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
     '}')?;
 
 ElkLabel returns ElkLabel:
@@ -59,21 +59,23 @@ fragment EdgeLayout returns ElkEdge:
 
 ElkSingleEdgeSection returns ElkEdgeSection:
     {ElkEdgeSection} (
-        ('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+        (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
         & ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
         & ('start' ':' startX=Number ',' startY=Number)?
-        & ('end' ':' endX=Number ',' endY=Number)?
-        & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+        & ('end' ':' endX=Number ',' endY=Number)?)
+        ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+        properties+=Property*
     );
 
 /* SuppressWarnings[BidirectionalReference] */
 ElkEdgeSection returns ElkEdgeSection:
     'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection|ID] (',' outgoingSections+=[ElkEdgeSection|ID])*)? '['(
-        ('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+        (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
         & ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
         & ('start' ':' startX=Number ',' startY=Number)?
-        & ('end' ':' endX=Number ',' endY=Number)?
-        & ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+        & ('end' ':' endX=Number ',' endY=Number)?)
+        ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+        properties+=Property*
     )']';
 
 ElkBendPoint returns ElkBendPoint:

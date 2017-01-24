@@ -8,6 +8,7 @@
 package org.eclipse.elk.graph.text.ui.contentassist
 
 import com.google.inject.Inject
+import com.google.inject.Provider
 import org.eclipse.elk.core.data.ILayoutMetaData
 import org.eclipse.elk.core.data.LayoutAlgorithmData
 import org.eclipse.elk.core.data.LayoutMetaDataService
@@ -25,9 +26,11 @@ import org.eclipse.jface.viewers.StyledString
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.RuleCall
+import org.eclipse.xtext.conversion.impl.IDValueConverter
 import org.eclipse.xtext.ui.IImageHelper
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
+import org.eclipse.xtext.util.Strings
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
 
@@ -38,9 +41,19 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
     
     static val DISABLED_KEYWORDS = #{'}', ']'}
     
-    @Inject ElkGraphGrammarAccess grammar
-    
     @Inject IImageHelper imageHelper
+    
+    ElkGraphGrammarAccess grammar
+    
+    IDValueConverter idValueConverter
+    
+    @Inject
+    def void initialize(Provider<IDValueConverter> idValueConverterProvider, ElkGraphGrammarAccess grammarAccess) {
+        this.idValueConverter = idValueConverterProvider.get => [
+            rule = grammarAccess.IDRule
+        ]
+        this.grammar = grammarAccess
+    }
     
     override completeKeyword(Keyword keyword, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         if (!DISABLED_KEYWORDS.contains(keyword.value) && keyword.value != context.prefix)
@@ -92,10 +105,10 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
             element === null || !element.properties.map.containsKey(o)
         ]
         for (option : filteredOptions) {
-            val split = option.id.split('\\.')
+            val split = Strings.split(option.id, '.')
             var String suffix
             var foundMatch = false
-            var i = split.length - 1
+            var i = split.size - 1
             while (i >= 0 && !foundMatch) {
                 if (suffix === null)
                     suffix = split.get(i--)
@@ -104,7 +117,7 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
                 if (metaDataService.getOptionDataBySuffix(suffix) !== null && suffix.startsWith(context.prefix))
                     foundMatch = true
             }
-            val proposal = createCompletionProposal(suffix, option.getDisplayString(suffix), getImage(option, null), context)
+            val proposal = createCompletionProposal(suffix.convert, option.getDisplayString(suffix), getImage(option, null), context)
             acceptor.accept(proposal)
         }
     }
@@ -124,13 +137,13 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
         }
     }
     
-    private def proposeAlgorithms(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+    protected def proposeAlgorithms(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         val metaDataService = LayoutMetaDataService.instance
         for (algorithm : metaDataService.algorithmData) {
-            val split = algorithm.id.split('\\.')
+            val split = Strings.split(algorithm.id, '.')
             var String suffix
             var foundMatch = false
-            var i = split.length - 1
+            var i = split.size - 1
             while (i >= 0 && !foundMatch) {
                 if (suffix === null)
                     suffix = split.get(i--)
@@ -139,9 +152,13 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
                 if (metaDataService.getAlgorithmDataBySuffix(suffix) !== null && suffix.startsWith(context.prefix))
                     foundMatch = true
             }
-            val proposal = createCompletionProposal(suffix, algorithm.getDisplayString(suffix), null, context)
+            val proposal = createCompletionProposal(suffix.convert, algorithm.getDisplayString(suffix), null, context)
             acceptor.accept(proposal)
         }
+    }
+    
+    private def convert(String suffix) {
+        Strings.split(suffix, '.').map[idValueConverter.toString(it)].join('.')
     }
     
     private def getDisplayString(ILayoutMetaData data, String suffix) {

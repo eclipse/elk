@@ -41,9 +41,9 @@ Workflow {
 			fileExtensions = "elkt"
 			referencedResource = "platform:/resource/org.eclipse.elk.graph/model/elkgraph.genmodel"
             
-			serializer = {
-				generateStub = false
-			}
+            formatter = {
+                generateStub = true
+            }
 			generator = {
 			    generateStub = false
 			}

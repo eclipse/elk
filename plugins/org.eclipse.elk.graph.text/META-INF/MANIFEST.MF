@@ -22,5 +22,6 @@ Export-Package: org.eclipse.elk.graph.text,
  org.eclipse.elk.graph.text.scoping,
  org.eclipse.elk.graph.text.serializer,
  org.eclipse.elk.graph.text.services,
- org.eclipse.elk.graph.text.validation
+ org.eclipse.elk.graph.text.validation,
+ org.eclipse.elk.graph.text.formatting2
 Import-Package: org.apache.log4j
