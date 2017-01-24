@@ -11,10 +11,15 @@
 package org.eclipse.elk.core.util;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.eclipse.elk.core.GraphIssue;
+import org.eclipse.elk.core.GraphValidationException;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -25,9 +30,6 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.selection.DefaultSelectionIterator;
-import org.eclipse.elk.core.util.selection.SelectionIterator;
-import org.eclipse.elk.graph.EMapPropertyHolder;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -38,14 +40,11 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.ElkShape;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Sets;
 
 /**
  * Utility methods for layout-related things.
@@ -635,124 +634,6 @@ public final class ElkUtil {
         
         return points;
     }
-
-    /**
-     * Determines the edges that are (transitively) connected to the given edges across hierarchy boundaries
-     * via common ports. See {@link #getConnectedEdges(ElkEdge)} for details.
-     *
-     * @see #getConnectedEdges(ElkEdge)
-     * @param edges
-     *            an {@link Iterable} of edges that shall be checked
-     * @return an {@link Iterator} visiting the given edges and all (transitively) connected ones.
-     * @deprecated Use {@link #getConnectedElements(ElkEdge, SelectionIterator, SelectionIterator)} in
-     *             combination with {@link DefaultSelectionIterator}
-     */
-    public static Iterator<ElkEdge> getConnectedEdges(final Iterable<ElkEdge> edges) {
-        return Iterators.concat(Iterators.transform(edges.iterator(), new Function<ElkEdge, Iterator<ElkEdge>>() {
-            public Iterator<ElkEdge> apply(final ElkEdge kedge) {
-                return getConnectedEdges(kedge);
-            }
-        }));
-    }
-
-    /**
-     * Determines the edges that are (transitively) connected to the given edge across
-     * hierarchy boundaries via common ports. Rational: Multiple edges that are
-     * pairwise connected by means of an {@link ElkPort} (target port of edge a == source port of edge
-     * b or vice versa) may form one logical connection. This kind of splitting might be already
-     * present in the view model, or is performed by the layout algorithm for decomposing a nested
-     * layout input graph into flat sub graphs.
-     *
-     * @param edge
-     *            the edge check for connected edges
-     * @return an {@link Iterator} visiting the given edge and all connected edges in a(n
-     *         almost) breadth first search fashion
-     * @deprecated Use {@link #getConnectedElements(ElkEdge, SelectionIterator, SelectionIterator)} in
-     *             combination with {@link DefaultSelectionIterator}
-     */
-    public static Iterator<ElkEdge> getConnectedEdges(final ElkEdge edge) {
-        // Default behavior should be to not select the ports
-        return Iterators.filter(getConnectedElements(edge, false), ElkEdge.class);
-    }
-    
-    /**
-     * Determines the {@link ElkGraphElement ElkGraphElements} that are (transitively) connected to
-     * {@code kedge} across hierarchy boundaries via common ports. Rational: Multiple {@link ElkEdge
-     * ElkEdges} that are pairwise connected by means of an {@link ElkPort} (target port of edge a ==
-     * source port of edge b or vice versa) may form one logical connection. This kind of splitting
-     * might be already present in the view model, or is performed by the layout algorithm for
-     * decomposing a nested layout input graph into flat sub graphs.
-     * This version allows to also include ports in the selection.
-     *
-     * @param kedge
-     *            the edge to check for connected elements
-     * @param addPorts
-     *            flag to determine, whether ports should be added to the selection or not
-     * @return an {@link Iterator} visiting the given {@code edge} and all connected edges in a(n
-     *         almost) breadth first search fashion
-     * @deprecated Use {@link #getConnectedElements(ElkEdge, SelectionIterator, SelectionIterator)} in
-     *             combination with {@link DefaultSelectionIterator}
-     */
-    public static Iterator<ElkGraphElement> getConnectedElements(final ElkEdge edge, final boolean addPorts) {
-        final SelectionIterator sourceSideIt = new DefaultSelectionIterator(edge, addPorts, false);
-        final SelectionIterator targetSideIt = new DefaultSelectionIterator(edge, addPorts, true);
-
-        return getConnectedElements(edge, sourceSideIt, targetSideIt);
-    }
-    
-    /**
-     * Determines the {@link ElkEdge ElkEdges} that are (transitively) connected to {@code edge} across
-     * hierarchy boundaries via common ports. Rational: Multiple {@link ElkEdge ElkEdges} that are
-     * pairwise connected by means of na {@link ElkPort} (target port of edge a == source port of edge
-     * b or vice versa) may form one logical connection. This kind of splitting might be already
-     * present in the view model, or is performed by the layout algorithm for decomposing a nested
-     * layout input graph into flat sub graphs.
-     *
-     * @param edge
-     *            the {@link ElkEdge} check for connected elements
-     * @param sourceIterator
-     *            the {@link SelectionIterator} to be used for iterating towards the tail of the
-     *            selected edge
-     * @param targetIterator
-     *            the {@link SelectionIterator} to be used for iterating towards the head of the
-     *            selected edge
-     * @return an {@link Iterator} visiting the given {@code edge} and all connected elements
-     *         determined by the {@link SelectionIterator SelectionIterators}
-     */
-    public static Iterator<ElkGraphElement> getConnectedElements(final ElkEdge edge,
-            final SelectionIterator sourceIterator, final SelectionIterator targetIterator) {
-
-        // get a singleton iterator offering 'edge'
-        final Iterator<ElkGraphElement> kedgeIt = Iterators.singletonIterator(edge);
-        
-        // Keep a set of visited elements for the tree iterators
-        final Set<ElkPort> visited = Sets.newHashSet();
-
-        // Grab source iterator if edge has a source
-        final SelectionIterator sourceSideIt =
-                !edge.getSources().isEmpty() ? null : sourceIterator;
-        if (sourceSideIt != null) {
-            // Configure the iterator
-            sourceSideIt.attachVisitedSet(visited);
-        }
-
-        // Grab target iterator if edge has a target
-        final SelectionIterator targetSideIt =
-                !edge.getTargets().isEmpty() ? null : targetIterator;
-        if (targetSideIt != null) {
-            // Configure the iterator
-            targetSideIt.attachVisitedSet(visited);
-        }
-
-        // concatenate the source-sidewise and target-sidewise iterators if present ...
-        final Iterator<ElkGraphElement> connectedEdges =
-                sourceSideIt == null ? targetSideIt : targetSideIt == null ? sourceSideIt
-                        : Iterators.concat(sourceSideIt, targetSideIt);
-
-        // ... and attach them to the input 'kedge' offering iterator, or return just the
-        // input 'kedge' iterator in case no ports are configured for 'kedge'
-        return connectedEdges == null ? kedgeIt : Iterators.concat(kedgeIt, connectedEdges);
-    }
     
     /**
      * Recursively configures default values for all child elements of the passed graph. This
@@ -932,6 +813,61 @@ public final class ElkUtil {
         // End point
         KVector lastPoint = vectorChain.getLast();
         section.setEndLocation(lastPoint.x, lastPoint.y);
+    }
+    
+    /**
+     * Apply the given graph element visitors to the content of the given graph. If validators are involved
+     * and at least one error is found, a {@link GraphValidationException} is thrown.
+     * 
+     * @throws GraphValidationException if an error is found while validating the graph
+     */
+    public static void applyVisitors(final ElkNode graph, final IGraphElementVisitor... visitors)
+                throws GraphValidationException {
+        
+        for (int i = 0; i < visitors.length; i++) {
+            visitors[i].visit(graph);
+        }
+        Iterator<EObject> allElements = ElkGraphUtil.propertiesSkippingIteratorFor(graph, true);
+        while (allElements.hasNext()) {
+            EObject nextElement = allElements.next();
+            
+            if (nextElement instanceof ElkGraphElement) {
+                ElkGraphElement graphElement = (ElkGraphElement) nextElement;
+                for (int i = 0; i < visitors.length; i++) {
+                    visitors[i].visit(graphElement);
+                }
+            }
+        }
+        
+        // Gather validator results and generate an error message
+        List<GraphIssue> allIssues = null;
+        for (int i = 0; i < visitors.length; i++) {
+            if (visitors[i] instanceof IValidatingGraphElementVisitor) {
+                Collection<GraphIssue> issues = ((IValidatingGraphElementVisitor) visitors[i]).getIssues();
+                if (!issues.isEmpty()) {
+                    if (allIssues == null) {
+                        allIssues = new ArrayList<GraphIssue>(issues);
+                    } else {
+                        allIssues.addAll(issues);
+                    }
+                }
+            }
+        }
+        
+        if (allIssues != null) {
+            StringBuilder message = new StringBuilder();
+            for (GraphIssue issue : allIssues) {
+                if (message.length() > 0) {
+                    message.append("\n");
+                }
+                message.append(issue.getSeverity())
+                    .append(": ")
+                    .append(issue.getMessage())
+                    .append("\n\tat ");
+                ElkUtil.printElementPath(issue.getElement(), message);
+            }
+            throw new GraphValidationException(message.toString(), allIssues);
+        }
     }
     
     /**
