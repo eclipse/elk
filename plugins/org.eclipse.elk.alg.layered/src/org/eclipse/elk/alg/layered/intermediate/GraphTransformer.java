@@ -156,6 +156,11 @@ public final class GraphTransformer implements ILayoutProcessor {
             mirrorX(node.getPosition(), offset - node.getSize().x);
             mirrorX(node.getPadding());
             mirrorNodeLabelPlacementX(node);
+
+            // mirror position
+            if (node.getAllProperties().containsKey(LayeredOptions.POSITION)) {
+                mirrorX(node.getProperty(LayeredOptions.POSITION), offset - node.getSize().x);
+            }
             
             // mirror the alignment
             switch (node.getProperty(LayeredOptions.ALIGNMENT)) {
@@ -350,6 +355,11 @@ public final class GraphTransformer implements ILayoutProcessor {
             mirrorY(node.getPosition(), offset - node.getSize().y);
             mirrorY(node.getPadding());
             mirrorNodeLabelPlacementY(node);
+            
+            // mirror position
+            if (node.getAllProperties().containsKey(LayeredOptions.POSITION)) {
+                mirrorY(node.getProperty(LayeredOptions.POSITION), offset - node.getSize().y);
+            }
             
             // mirror the alignment
             switch (node.getProperty(LayeredOptions.ALIGNMENT)) {
@@ -742,6 +752,8 @@ public final class GraphTransformer implements ILayoutProcessor {
      * properties are transposed:
      * <ul>
      *   <li>{@link LayeredOptions#MIN_HEIGHT} and {@link LayeredOptions#MIN_WIDTH}.</li>
+     *   <li>{@link LayeredOptions#ALIGNMENT}.</li>
+     *   <li>{@link LayeredOptions#POSITION}.</li>
      * </ul>
      * 
      * @param node the node whose properties are to be transposed.
@@ -770,6 +782,14 @@ public final class GraphTransformer implements ILayoutProcessor {
         case BOTTOM:
             node.setProperty(LayeredOptions.ALIGNMENT, Alignment.RIGHT);
             break;
+        }
+        
+        // POSITION
+        if (node.getAllProperties().containsKey(LayeredOptions.POSITION)) {
+            KVector pos = node.getProperty(LayeredOptions.POSITION);
+            double tmp = pos.x;
+            pos.x = pos.y;
+            pos.y = tmp;
         }
     }
     
