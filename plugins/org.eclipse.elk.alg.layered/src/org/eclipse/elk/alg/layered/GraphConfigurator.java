@@ -317,8 +317,10 @@ final class GraphConfigurator {
         //  b) the greedy switch type is set to something different than OFF
         //  c) the activationThreshold is larger than or equal to the graph's number of nodes (or '0')
         GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
-        boolean interactiveCrossMin = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) 
-                == CrossingMinimizationStrategy.INTERACTIVE;
+        boolean interactiveCrossMin =
+                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE) 
+                || lgraph.getProperty(
+                        LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) == CrossingMinimizationStrategy.INTERACTIVE;
         int activationThreshold =
                 lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_ACTIVATION_THRESHOLD);
         int graphSize = lgraph.getLayerlessNodes().size();
