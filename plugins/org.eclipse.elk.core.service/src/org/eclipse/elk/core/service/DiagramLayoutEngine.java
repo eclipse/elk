@@ -674,7 +674,7 @@ public class DiagramLayoutEngine {
         try {
             // Configure the layout graph by applying the given visitors
             if (visitors.length > 0) {
-                ElkUtil.applyVisitors(mapping.getLayoutGraph(), visitors);
+                ElkUtil.applyVisitorsWithValidation(mapping.getLayoutGraph(), visitors);
             }
             
             // Export the layout graph for debugging
