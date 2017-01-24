@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
@@ -122,6 +123,11 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // reset variables
         widthCurrent = 0;
         widthUp = 0;
+        // initialize min and max node sizes to 1,  
+        // since 0 or negative values to not make sense 
+        minimumNodeSize = Double.POSITIVE_INFINITY; 
+        maximumNodeSize = Double.NEGATIVE_INFINITY; 
+         
         // initialize the dummy size with the spacing properties
         dummySize = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE).doubleValue();
         // Sort the nodes at beginning, since the rank will not change.
@@ -137,6 +143,10 @@ public class StretchWidthLayerer implements ILayoutPhase {
         minMaxNodeSize();
         // Compute normalized size of every node
         computeNormalizedSize();
+        // make sure the values are reasonable
+        minimumNodeSize = Math.max(1, minimumNodeSize);
+        maximumNodeSize = Math.max(1, maximumNodeSize);
+        
         // normalize dummy size
         dummySize = dummySize / minimumNodeSize;
         maxWidth = maximumNodeSize / minimumNodeSize;
@@ -181,7 +191,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
                     // create the new first layer;
                     currentLayer = new Layer(currentGraph);
                     currentGraph.getLayers().add(currentLayer);
-                    // reset variables
+                    // reset variables 
                     widthCurrent = 0;
                     widthUp = 0;
                     alreadyPlacedNodes.clear();
@@ -199,10 +209,8 @@ public class StretchWidthLayerer implements ILayoutPhase {
                     tempLayerlessNodes.remove(selectedNode);
                     alreadyPlacedNodes.add(selectedNode);
                     // compute new widthCurrent and widthUp
-                    widthCurrent =
-                            widthCurrent - outDegree[selectedNode.id] * dummySize
-                                    + normSize[selectedNode.id];
-                    widthUp = widthUp + inDegree[selectedNode.id] * dummySize;
+                    widthCurrent = widthCurrent - outDegree[selectedNode.id] * dummySize + normSize[selectedNode.id];
+                    widthUp += inDegree[selectedNode.id] * dummySize;
                 }
             }
         }
@@ -217,14 +225,14 @@ public class StretchWidthLayerer implements ILayoutPhase {
 
     /**
      * Checks the effects of the hypothetical placement of the selected node and whether the
-     * algorithm should rather go up, then placing the node.
+     * algorithm should rather go up than placing the node.
      * 
      * @return true, if the algorithm should go to the next layer, false otherwise
      */
-    private Boolean conditionGoUp() {
-        return ((widthCurrent - (outDegree[selectedNode.id] * dummySize) + normSize[selectedNode.id]) 
-                    > maxWidth || ((widthUp + inDegree[selectedNode.id]
-                * dummySize) > (maxWidth * upperLayerInfluence)));
+    private boolean conditionGoUp() {
+        boolean a = ((widthCurrent - (outDegree[selectedNode.id] * dummySize) + normSize[selectedNode.id]) > maxWidth);
+        boolean b = ((widthUp + inDegree[selectedNode.id] * dummySize) > (maxWidth * upperLayerInfluence * dummySize)); 
+        return a || b;
     }
 
     /**
@@ -338,16 +346,17 @@ public class StretchWidthLayerer implements ILayoutPhase {
      * {@link #computeSuccessors()}.
      */
     private void minMaxNodeSize() {
-        double size;
-        minimumNodeSize = sortedLayerlessNodes.get(0).getSize().y;
         // since in KLay all things are layered, left to right
         // a preprocessor also transposes the width and height and
         // we don't need to consider the layering direction and can take the
         // the y-size
         for (LNode node : sortedLayerlessNodes) {
-            size = node.getSize().y;
+            if (node.getType() != NodeType.NORMAL) {
+                continue;
+            }
+            double size = node.getSize().y;
             minimumNodeSize = Math.min(minimumNodeSize, size);
-
+            maximumNodeSize = Math.max(maximumNodeSize, size);
         }
     }
 
@@ -371,12 +380,9 @@ public class StretchWidthLayerer implements ILayoutPhase {
      * {@link #minimumNodeSize()}.
      */
     private void computeNormalizedSize() {
-
-        // choose which size is the width
         normSize = new double[sortedLayerlessNodes.size()];
         for (LNode node : sortedLayerlessNodes) {
             normSize[node.id] = node.getSize().y / minimumNodeSize;
-
         }
     }
 
@@ -395,11 +401,11 @@ public class StretchWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Updates the information of the nodes, telling which has successors that are not placed. Is
-     * used when one layer is finished, to eliminate edges in the same layer.
+     * Updates the information of the nodes, telling which has successors that are not placed. Is used when one layer is
+     * finished, to eliminate edges in the same layer.
      * 
      * @param currentLayer
-     *            , which is about to be finished
+     *            which is about to be finished
      */
     private void updateOutGoing(final Layer currentLayer) {
         for (LNode node : currentLayer.getNodes()) {
