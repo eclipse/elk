@@ -7,14 +7,17 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.text.ui.contentassist
 
+import com.google.common.base.Predicate
 import com.google.inject.Inject
 import com.google.inject.Provider
+import java.util.List
 import org.eclipse.elk.core.data.ILayoutMetaData
 import org.eclipse.elk.core.data.LayoutAlgorithmData
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.graph.ElkEdge
+import org.eclipse.elk.graph.ElkEdgeSection
 import org.eclipse.elk.graph.ElkGraphElement
 import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
@@ -23,15 +26,19 @@ import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
 import org.eclipse.elk.graph.text.services.ElkGraphGrammarAccess
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.jface.viewers.StyledString
+import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.xtext.Assignment
+import org.eclipse.xtext.CrossReference
 import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.conversion.impl.IDValueConverter
+import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.ui.IImageHelper
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 import org.eclipse.xtext.util.Strings
 
+import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
 
 /**
@@ -196,6 +203,69 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
     
     private def +(StyledString s1, StyledString s2) {
         s1.append(s2)
+    }
+    
+    override completeElkEdgeSection_IncomingShape(EObject model, Assignment assignment, ContentAssistContext context,
+            ICompletionProposalAcceptor acceptor) {
+        if (model instanceof ElkEdgeSection)
+            lookupCrossReference((assignment.terminal as CrossReference), context, acceptor,
+                    new SectionShapeFilter(model, SectionShapeFilter.INCOMING))
+        else
+            super.completeElkEdgeSection_IncomingShape(model, assignment, context, acceptor)
+    }
+    
+    override completeElkEdgeSection_OutgoingShape(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        if (model instanceof ElkEdgeSection)
+            lookupCrossReference((assignment.terminal as CrossReference), context, acceptor,
+                    new SectionShapeFilter(model, SectionShapeFilter.OUTGOING))
+        else
+            super.completeElkEdgeSection_OutgoingShape(model, assignment, context, acceptor)
+    }
+    
+    override completeElkSingleEdgeSection_IncomingShape(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        if (model instanceof ElkEdgeSection)
+            lookupCrossReference((assignment.terminal as CrossReference), context, acceptor,
+                    new SectionShapeFilter(model, SectionShapeFilter.INCOMING))
+        else
+            super.completeElkSingleEdgeSection_IncomingShape(model, assignment, context, acceptor)
+    }
+    
+    override completeElkSingleEdgeSection_OutgoingShape(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        if (model instanceof ElkEdgeSection)
+            lookupCrossReference((assignment.terminal as CrossReference), context, acceptor,
+                    new SectionShapeFilter(model, SectionShapeFilter.OUTGOING))
+        else
+            super.completeElkSingleEdgeSection_OutgoingShape(model, assignment, context, acceptor)
+    }
+    
+    @FinalFieldsConstructor
+    static class SectionShapeFilter implements Predicate<IEObjectDescription> {
+        
+        static val INCOMING = 0
+        static val OUTGOING = 1
+        
+        val ElkEdgeSection section
+        val int type
+        
+        override apply(IEObjectDescription input) {
+            switch type {
+                case INCOMING:
+                    input.isInList(section.parent.sources)
+                case OUTGOING:
+                    input.isInList(section.parent.targets)
+                default: true
+            }
+        }
+        
+        private def isInList(IEObjectDescription input, List<? extends EObject> list) {
+            val object = input.EObjectOrProxy
+            if (object.eIsProxy) {
+                list.exists[URI == input.EObjectURI]
+            } else {
+                list.contains(object)
+            }
+        }
+        
     }
     
 }
