@@ -20,6 +20,7 @@ import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.util.IValidatingGraphElementVisitor;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.IPropertyValueProxy;
 
 /**
  * A validator for lower and upper bounds of layout options.
@@ -36,7 +37,14 @@ public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
     @Override
     public void visit(final ElkGraphElement element) {
         for (Map.Entry<IProperty<?>, Object> entry : element.getProperties()) {
-            issues.addAll(checkProperty((IProperty<Object>) entry.getKey(), entry.getValue(), element));
+            Object value = entry.getValue();
+            if (value instanceof IPropertyValueProxy) {
+                value = ((IPropertyValueProxy) value).resolveValue(entry.getKey());
+                if (value != null) {
+                    entry.setValue(value);
+                }
+            }
+            issues.addAll(checkProperty((IProperty<Object>) entry.getKey(), value, element));
         }
     }
     
