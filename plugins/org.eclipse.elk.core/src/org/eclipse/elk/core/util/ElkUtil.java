@@ -817,13 +817,12 @@ public final class ElkUtil {
     
     /**
      * Apply the given graph element visitors to the content of the given graph. If validators are involved
-     * and at least one error is found, a {@link GraphValidationException} is thrown.
+     * they are not queried about errors.
      * 
-     * @throws GraphValidationException if an error is found while validating the graph
+     * @param graph the graph the visitors shall be applied to.
+     * @param visitors the visitors to apply.
      */
-    public static void applyVisitors(final ElkNode graph, final IGraphElementVisitor... visitors)
-                throws GraphValidationException {
-        
+    public static void applyVisitors(final ElkNode graph, final IGraphElementVisitor... visitors) {
         for (int i = 0; i < visitors.length; i++) {
             visitors[i].visit(graph);
         }
@@ -838,6 +837,20 @@ public final class ElkUtil {
                 }
             }
         }
+    }
+    
+    /**
+     * Apply the given graph element visitors to the content of the given graph. If validators are involved
+     * and at least one error is found, a {@link GraphValidationException} is thrown.
+     * 
+     * @param graph the graph the visitors shall be applied to.
+     * @param visitors the visitors to apply.
+     * @throws GraphValidationException if an error is found while validating the graph
+     */
+    public static void applyVisitorsWithValidation(final ElkNode graph, final IGraphElementVisitor... visitors)
+                throws GraphValidationException {
+        
+        applyVisitors(graph, visitors);
         
         // Gather validator results and generate an error message
         List<GraphIssue> allIssues = null;
