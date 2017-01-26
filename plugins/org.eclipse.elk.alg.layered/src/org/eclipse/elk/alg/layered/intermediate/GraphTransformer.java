@@ -761,12 +761,7 @@ public final class GraphTransformer implements ILayoutProcessor {
     private void transposeProperties(final LNode node) {
         // Transpose MIN_HEIGHT and MIN_WIDTH
         KVector minSize = node.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
-        if (minSize == null) {
-            minSize = new KVector(
-                    node.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH).doubleValue(),
-                    node.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT).doubleValue());
-        }
-        node.setProperty(LayeredOptions.NODE_SIZE_MINIMUM, new KVector(minSize.y, minSize.x));
+        node.setProperty(LayeredOptions.NODE_SIZE_MINIMUM, minSize.clone());
         
         // Transpose ALIGNMENT
         switch (node.getProperty(LayeredOptions.ALIGNMENT)) {

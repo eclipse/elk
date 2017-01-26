@@ -15,16 +15,15 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.properties.ContentAlignment;
 import org.eclipse.elk.alg.layered.properties.GraphProperties;
 import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -146,23 +145,22 @@ public class HierarchicalNodeResizingProcessor implements ILayoutProcessor {
 
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            double minWidth = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH);
-            double minHeight = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT);
+            KVector minSize = lgraph.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
 
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
-                if (minWidth <= 0) {
-                    minWidth = ElkUtil.DEFAULT_MIN_WIDTH;
+                if (minSize.x <= 0) {
+                    minSize.x = ElkUtil.DEFAULT_MIN_WIDTH;
                 }
 
-                if (minHeight <= 0) {
-                    minHeight = ElkUtil.DEFAULT_MIN_HEIGHT;
+                if (minSize.y <= 0) {
+                    minSize.y = ElkUtil.DEFAULT_MIN_HEIGHT;
                 }
             }
 
             // apply new size including border spacing
-            adjustedSize.x = Math.max(calculatedSize.x, minWidth);
-            adjustedSize.y = Math.max(calculatedSize.y, minHeight);
+            adjustedSize.x = Math.max(calculatedSize.x, minSize.x);
+            adjustedSize.y = Math.max(calculatedSize.y, minSize.y);
         }
 
         resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);

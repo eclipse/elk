@@ -566,29 +566,21 @@ public final class KlayLayered {
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             KVector minSize = lgraph.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
-            double minWidth, minHeight;
-            if (minSize == null) {
-                minWidth = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_WIDTH);
-                minHeight = lgraph.getProperty(LayeredOptions.NODE_SIZE_MIN_HEIGHT);
-            } else {
-                minWidth = minSize.x;
-                minHeight = minSize.y;
-            }
             
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
-                if (minWidth <= 0) {
-                    minWidth = ElkUtil.DEFAULT_MIN_WIDTH;
+                if (minSize.x <= 0) {
+                    minSize.x = ElkUtil.DEFAULT_MIN_WIDTH;
                 }
                 
-                if (minHeight <= 0) {
-                    minHeight = ElkUtil.DEFAULT_MIN_HEIGHT;
+                if (minSize.y <= 0) {
+                    minSize.y = ElkUtil.DEFAULT_MIN_HEIGHT;
                 }
             }
             
             // apply new size including border spacing
-            adjustedSize.x = Math.max(calculatedSize.x, minWidth);
-            adjustedSize.y = Math.max(calculatedSize.y, minHeight);
+            adjustedSize.x = Math.max(calculatedSize.x, minSize.x);
+            adjustedSize.y = Math.max(calculatedSize.y, minSize.y);
         }
         
         resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);

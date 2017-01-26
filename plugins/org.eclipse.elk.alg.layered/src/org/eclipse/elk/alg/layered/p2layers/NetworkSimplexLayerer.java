@@ -111,9 +111,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
 
         // Additional dependencies
-        if (graph.getProperty(LayeredOptions.LAYERING_DISTRIBUTE_NODES)
-                || graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) 
-                        == WideNodesStrategy.AGGRESSIVE) {
+        if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) == WideNodesStrategy.AGGRESSIVE) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
             wideNodesStrategy = WideNodesStrategy.AGGRESSIVE;
             

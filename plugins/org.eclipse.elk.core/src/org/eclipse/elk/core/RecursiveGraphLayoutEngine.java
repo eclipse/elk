@@ -271,13 +271,6 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      *            The current node which should be evaluated
      */
     private void evaluateHierarchyHandlingInheritance(final ElkNode layoutNode) {
-        // Pre-process the hierarchy handling by replacing the deprecated LAYOUT_HIERARCHY
-        // property with the new hierarchy handling property
-        boolean hasLayoutHierarchy = layoutNode.getProperty(CoreOptions.LAYOUT_HIERARCHY);
-        if (hasLayoutHierarchy) {
-            layoutNode.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
-        }
-        
         // Pre-process the hierarchy handling to substitute inherited handling by the parent
         // value. If the root node is set to inherit, it is set to separate the children.
         if (layoutNode.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INHERIT) {

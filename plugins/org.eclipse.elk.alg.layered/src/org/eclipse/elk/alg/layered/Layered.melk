@@ -85,7 +85,6 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.port.side
 	supports org.eclipse.elk.debugMode
 	supports org.eclipse.elk.alignment
-	supports org.eclipse.elk.layoutHierarchy // TODO deprecated
 	supports org.eclipse.elk.hierarchyHandling
 	supports org.eclipse.elk.separateConnectedComponents = true
 	supports org.eclipse.elk.insideSelfLoops.activate
@@ -129,8 +128,6 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.alg.layered.highDegreeNodes.threshold
 	supports org.eclipse.elk.alg.layered.highDegreeNodes.treeHeight
 	supports org.eclipse.elk.nodeSize.minimum
-	supports org.eclipse.elk.nodeSize.minWidth
-	supports org.eclipse.elk.nodeSize.minHeight
 	supports org.eclipse.elk.junctionPoints
 	supports org.eclipse.elk.edge.thickness
 	supports org.eclipse.elk.edgeLabels.placement
@@ -141,10 +138,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.port.anchor
     supports org.eclipse.elk.partitioning.activate
     supports org.eclipse.elk.partitioning.partition
-    supports org.eclipse.elk.alg.layered.layering.distributeNodes
     supports org.eclipse.elk.alg.layered.layering.minWidth.upperBoundOnWidth
     supports org.eclipse.elk.alg.layered.layering.minWidth.upperLayerEstimationScalingFactor
-    supports sausageFolding
     supports org.eclipse.elk.position
     supports northOrSouthPort
     supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
@@ -197,14 +192,6 @@ group layering {
         default = LayerConstraint.NONE
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.layerConstraint
-    }
-    
-    deprecated advanced option distributeNodes: boolean {
-        label "Distribute Nodes (Deprecated)"
-        description "Whether wide nodes should be distributed to several layers."
-        default = false
-        targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.distributeNodes
     }
 
     advanced option wideNodesOnMultipleLayers: WideNodesStrategy {
@@ -361,7 +348,7 @@ group nodePlacement {
         // no default, see description
         targets parents
         requires strategy == NodePlacementStrategy.NETWORK_SIMPLEX 
-          // ||  strategy == NodePlacementStrategy.BRANDES_KOEPF
+          // ||  strategy == NodePlacementStrategy.BRANDES_KOEPF TODO
     }
     
     group bk {
@@ -476,40 +463,6 @@ group spacing {
         default = 20
         lowerBound = 0.0
         targets parents
-    }
-    
-
-    deprecated advanced option edgeNodeSpacingFactor: double {
-        label "Edge Node Spacing Factor"
-        description
-            "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
-            an edge and a node."
-        default = 0.5
-        lowerBound = ExclusiveBounds.greaterThan(0)
-        targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor
-    }
-    
-    deprecated advanced option edgeSpacingFactor: double {
-        label "Edge Spacing Factor"
-        description
-            "Factor by which the object spacing is multiplied to arrive at the minimal spacing between
-            edges."
-        default = 0.5
-        lowerBound = ExclusiveBounds.greaterThan(0)
-        targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.edgeSpacingFactor
-    }
-    
-    deprecated advanced option inLayerSpacingFactor: double {
-        label "In-layer Spacing Factor"
-        description
-            "Factor by which the usual spacing is multiplied to determine the in-layer spacing between
-            objects."
-        default = 1
-        lowerBound = ExclusiveBounds.greaterThan(0)
-        targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.inLayerSpacingFactor
     }
     
 }
@@ -693,15 +646,6 @@ advanced option mergeHierarchyEdges: boolean {
 	default = true
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.mergeHierarchyEdges
-}
-
-advanced option sausageFolding: boolean {
-	label "Sausage Folding"
-	description "Whether long sausages should be folded up nice and tight."
-	default = false
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.sausageFolding
-	requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.LONGEST_PATH
 }
 
 advanced option thoroughness: int {

@@ -46,23 +46,7 @@ public enum SizeOptions {
      * This options is also independent from {@link #APPLY_ADDITIONAL_PADDING}. If both are set, one has to deal
      * with the effectively doubled padding.
      */
-    COMPUTE_PADDING,
-    
-    /**
-     * Applies any additional padding computed by the layout algorithm directly to the positions of
-     * child nodes. While a drawing framework could ask the layout algorithm to return the computed
-     * padding and not apply them directly, not all drawing frameworks work this way. With this option
-     * set, padding set on a graph passed to the layout algorithm are still taken into consideration, but
-     * any additional padding are directly applied to the position of child nodes. This options is
-     * independent from {@link #COMPUTE_PADDING}. If both are set, one has to deal with the effectively
-     * doubled padding.
-     * 
-     * @deprecated The new graph does not know anything about padding. If padding is computed, it is automatically
-     *             applied. To find out what part of the coordinates is due to padding, check the value of the
-     *             {@link CoreOptions#PADDING} after layout has finished.
-     */
-    APPLY_ADDITIONAL_PADDING;
-    
+    COMPUTE_PADDING;
     
     /**
      * Returns the enumeration value related to the given ordinal.

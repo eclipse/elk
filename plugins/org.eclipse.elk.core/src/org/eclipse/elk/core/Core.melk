@@ -100,8 +100,6 @@ algorithm fixed(FixedLayoutProvider) {
 	supports bendPoints
 	supports nodeSize.constraints
 	supports nodeSize.minimum
-	supports nodeSize.minWidth
-	supports nodeSize.minHeight
 }
 
 algorithm box(BoxLayoutProvider) {
@@ -121,8 +119,6 @@ algorithm box(BoxLayoutProvider) {
 	supports aspectRatio = 1.3f
 	supports interactive
     supports nodeSize.minimum
-    supports nodeSize.minWidth
-    supports nodeSize.minHeight
     supports box.packingMode
 }
 
@@ -229,9 +225,11 @@ advanced option expandNodes: boolean {
 advanced option hierarchyHandling: HierarchyHandling {
 	label "Hierarchy Handling"
 	description 
-		"Determines whether the descendants should be layouted separately or together with their 
-	    parents. If the root node is set to inherit (or not set at all), the option is assumed 
-	    as SEPARATE_CHILDREN."
+		"If this option is set to SEPARATE_CHILDREN, each hierarchy level of the graph is processed independently, 
+        possibly by different layout algorithms, beginning with the lowest level. 
+        If it is set to INCLUDE_CHILDREN, the algorithm is responsible to process
+        all hierarchy levels that are contained in the associated parent node.
+        If the root node is set to inherit (or not set at all), the default behavior is SEPARATE_CHILDREN."
 	default = HierarchyHandling.INHERIT
 	targets parents, nodes
 	legacyIds de.cau.cs.kieler.hierarchyHandling
@@ -369,18 +367,6 @@ group spacing {
 			side is 20 units away from the northern border."
 		targets nodes
 	}
-}
-
-deprecated option layoutHierarchy: boolean {
-	label "Layout Hierarchy"
-	description
-		"Whether the whole hierarchy shall be layouted. If this option is not set, each hierarchy
-		level of the graph is processed independently, possibly by different layout algorithms,
-		beginning with the lowest level. If it is set, the algorithm is responsible to process
-		all hierarchy levels that are contained in the associated parent node."
-	default = false
-	targets parents
-	legacyIds de.cau.cs.kieler.layoutHierarchy
 }
 
 // --- PARTITIONING 
@@ -535,29 +521,17 @@ group nodeSize {
 			"Options modifying the behavior of the size constraints set on a node. Each member of the
 			set specifies something that should be taken into account when calculating node sizes.
 			The empty set corresponds to no further modifications."
-		default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.APPLY_ADDITIONAL_PADDING)
+		default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE)
 		targets nodes
 	}
 	 
 	advanced option minimum: KVector {
 		label "Node Size Minimum"
 		description "The minimal size to which a node can be reduced."
+		default = new KVector(0, 0)
 		targets nodes
 	} 
-	
-	deprecated advanced option minWidth: double {
-		label "Minimum Width"
-		default = 0
-        lowerBound = 0.0
-		targets nodes
-	}
-	
-	deprecated advanced option minHeight: double {
-		label "Minimum Height"
-		default = 0 
-        lowerBound = 0.0
-		targets nodes
-	}
+
 }
 
 //------- PROGRAMMATIC OPTIONS
@@ -625,7 +599,6 @@ programmatic option hypernode: boolean {
 	legacyIds de.cau.cs.kieler.hypernode
 }
 
-// TODO this doesn't implement IDataObject which prevents it from being serialized
 programmatic option labelManager: ILabelManager {
 	label "Label Manager"
 	description "Label managers can shorten labels upon a layout algorithm's request."
@@ -729,7 +702,8 @@ programmatic option scaleFactor: double {
 	default = 1
 	targets nodes
 	legacyIds de.cau.cs.kieler.scaleFactor
-	requires layoutHierarchy == false
+	// TODO
+	// requires hierarchyHandling != HierarchyHandling.INCLUDE_CHILDREN 
 }
 
 // --- INSIDE SELF LOOPS

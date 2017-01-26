@@ -600,46 +600,38 @@ public class LabelAndNodeSizeProcessor {
         // Respect minimum size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             KVector minSize = data.node.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
-            double minWidth, minHeight;
-            if (minSize == null) {
-                minWidth = data.node.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
-                minHeight = data.node.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
-            } else {
-                minWidth = minSize.x;
-                minHeight = minSize.y;
-            }
 
             // If we are to use default minima, check if the values are properly set
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
-                if (minWidth <= 0) {
-                    minWidth = ElkUtil.DEFAULT_MIN_WIDTH;
+                if (minSize.x <= 0) {
+                    minSize.x = ElkUtil.DEFAULT_MIN_WIDTH;
                 }
 
-                if (minHeight <= 0) {
-                    minHeight = ElkUtil.DEFAULT_MIN_HEIGHT;
+                if (minSize.y <= 0) {
+                    minSize.y = ElkUtil.DEFAULT_MIN_HEIGHT;
                 }
             }
 
             // We might have to take the padding into account
             if (sizeOptions.contains(SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_PADDING)) {
-                if (minWidth > 0) {
+                if (minSize.x > 0) {
                     nodeSize.x =
-                            Math.max(nodeSize.x, minWidth + data.requiredPortLabelSpace.left
+                            Math.max(nodeSize.x, minSize.x + data.requiredPortLabelSpace.left
                                     + data.requiredPortLabelSpace.right);
                 }
 
-                if (minHeight > 0) {
+                if (minSize.y > 0) {
                     nodeSize.y =
-                            Math.max(nodeSize.y, minHeight + data.requiredPortLabelSpace.top
+                            Math.max(nodeSize.y, minSize.y + data.requiredPortLabelSpace.top
                                     + data.requiredPortLabelSpace.bottom);
                 }
             } else {
-                if (minWidth > 0) {
-                    nodeSize.x = Math.max(nodeSize.x, minWidth);
+                if (minSize.x > 0) {
+                    nodeSize.x = Math.max(nodeSize.x, minSize.x);
                 }
 
-                if (minHeight > 0) {
-                    nodeSize.y = Math.max(nodeSize.y, minHeight);
+                if (minSize.y > 0) {
+                    nodeSize.y = Math.max(nodeSize.y, minSize.y);
                 }
             }
         }

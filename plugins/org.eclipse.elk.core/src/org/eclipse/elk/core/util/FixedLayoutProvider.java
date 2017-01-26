@@ -71,16 +71,8 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                         SizeConstraint.MINIMUM_SIZE)) {
                     
                     KVector minSize = node.getProperty(FixedLayouterOptions.NODE_SIZE_MINIMUM);
-                    double width, height;
-                    if (minSize == null) {
-                        width = node.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
-                        height = node.getProperty(FixedLayouterOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
-                    } else {
-                        width = minSize.x;
-                        height = minSize.y; 
-                    }
-                    if (width > 0 && height > 0) {
-                        ElkUtil.resizeNode(node, width, height, true, true);
+                    if (minSize.x > 0 && minSize.y > 0) {
+                        ElkUtil.resizeNode(node, minSize.x, minSize.y, true, true);
                     }
                 }
             }

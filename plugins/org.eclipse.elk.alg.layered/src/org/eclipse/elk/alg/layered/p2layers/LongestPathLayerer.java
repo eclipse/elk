@@ -73,18 +73,12 @@ public final class LongestPathLayerer implements ILayoutPhase {
                 IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
 
         // Additional dependencies
-        if (graph.getProperty(LayeredOptions.LAYERING_DISTRIBUTE_NODES)
-                || graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) 
-                        == WideNodesStrategy.AGGRESSIVE) {
+        if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) == WideNodesStrategy.AGGRESSIVE) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
             
         } else if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.CAREFUL) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
-        }
-        
-        if (graph.getProperty(LayeredOptions.SAUSAGE_FOLDING)) {
-            strategy.addBeforePhase4(IntermediateProcessorStrategy.SAUSAGE_COMPACTION);
         }
         
         return strategy;

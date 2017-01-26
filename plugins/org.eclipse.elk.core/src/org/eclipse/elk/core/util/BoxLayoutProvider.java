@@ -181,16 +181,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             final double objSpacing, final ElkPadding padding, final boolean expandNodes) {
         
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
-        double minWidth, minHeight;
-        if (minSize == null) {
-            minWidth = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
-            minHeight = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
-        } else {
-            minWidth = (float) minSize.x;
-            minHeight = (float) minSize.y; 
-        }
-        minWidth = Math.max(minWidth - padding.getLeft() - padding.getRight(), 0);
-        minHeight = Math.max(minHeight - padding.getTop() - padding.getBottom(), 0);
+        minSize.x = Math.max(minSize.x - padding.getLeft() - padding.getRight(), 0);
+        minSize.y = Math.max(minSize.y - padding.getTop() - padding.getBottom(), 0);
         
         Double aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
@@ -198,7 +190,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         }
 
         // do place the boxes
-        KVector parentSize = placeBoxes(sortedBoxes, objSpacing, padding, minWidth, minHeight,
+        KVector parentSize = placeBoxes(sortedBoxes, objSpacing, padding, minSize.x, minSize.y,
                 expandNodes, aspectRatio);
 
         // adjust parent size
@@ -339,16 +331,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
             final float objSpacing, final ElkPadding padding, final boolean expandNodes) {
         
         KVector minSize = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MINIMUM);
-        double minWidth, minHeight;
-        if (minSize == null) {
-            minWidth = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
-            minHeight = parentNode.getProperty(BoxLayouterOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
-        } else {
-            minWidth = (float) minSize.x;
-            minHeight = (float) minSize.y; 
-        }
-        minWidth = Math.max(minWidth - padding.getLeft() - padding.getRight(), 0);
-        minHeight = Math.max(minHeight - padding.getTop() - padding.getBottom(), 0);
+        minSize.x = Math.max(minSize.x - padding.getLeft() - padding.getRight(), 0);
+        minSize.y = Math.max(minSize.y - padding.getTop() - padding.getBottom(), 0);
         
         Double aspectRatio = parentNode.getProperty(BoxLayouterOptions.ASPECT_RATIO);
         if (aspectRatio == null || aspectRatio <= 0) {
@@ -368,19 +352,19 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         // no border spacing for the grouped nodes!
         switch (mode) {
         case GROUP_INC:
-            toBePlaced = mergeAndPlaceInc(groups, objSpacing, minWidth, minHeight, expandNodes, aspectRatio);
+            toBePlaced = mergeAndPlaceInc(groups, objSpacing, minSize.x, minSize.y, expandNodes, aspectRatio);
             break;
         case GROUP_DEC:
-            toBePlaced = mergeAndPlaceDec(groups, objSpacing, minWidth, minHeight, expandNodes, aspectRatio);
+            toBePlaced = mergeAndPlaceDec(groups, objSpacing, minSize.x, minSize.y, expandNodes, aspectRatio);
             break;
         default: // GROUP_MIXED
-            toBePlaced = mergeAndPlaceMixed(groups, objSpacing, minWidth, minHeight, expandNodes, aspectRatio);
+            toBePlaced = mergeAndPlaceMixed(groups, objSpacing, minSize.x, minSize.y, expandNodes, aspectRatio);
             break;
         }
         
         Group finalGroup = new Group(toBePlaced);
         // do final packing of the 'out-most' boxes
-        KVector parentSize = placeInnerBoxes(finalGroup, objSpacing, padding, minWidth, minHeight,
+        KVector parentSize = placeInnerBoxes(finalGroup, objSpacing, padding, minSize.x, minSize.y,
                 expandNodes, aspectRatio);
 
         // account for border spacing

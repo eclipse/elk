@@ -264,27 +264,18 @@ public final class ElkUtil {
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             Set<SizeOptions> sizeOptions = node.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
             KVector minSize = node.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
-            double minWidth, minHeight;
-            if (minSize == null) {
-                minWidth = node.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH).doubleValue();
-                minHeight = node.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT).doubleValue();
-            } else {
-                minWidth = minSize.x;
-                minHeight = minSize.y; 
-            }
             
             // If minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
-                if (minWidth <= 0) {
-                    minWidth = DEFAULT_MIN_WIDTH;
+                if (minSize.x <= 0) {
+                    minSize.x = DEFAULT_MIN_WIDTH;
                 }
-                
-                if (minHeight <= 0) {
-                    minHeight = DEFAULT_MIN_HEIGHT;
+                if (minSize.y <= 0) {
+                    minSize.y = DEFAULT_MIN_HEIGHT;
                 }
             }
             
-            newSize = new KVector(Math.max(newWidth, minWidth), Math.max(newHeight, minHeight));
+            newSize = new KVector(Math.max(newWidth, minSize.x), Math.max(newHeight, minSize.y));
         } else {
             newSize = new KVector(newWidth, newHeight);
         }

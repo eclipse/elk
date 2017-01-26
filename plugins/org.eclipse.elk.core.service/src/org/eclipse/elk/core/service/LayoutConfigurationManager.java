@@ -22,6 +22,7 @@ import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.GraphFeature;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
 
@@ -184,12 +185,12 @@ public class LayoutConfigurationManager {
      * i.e. to process all contained hierarchy levels with a single layout algorithm invocation.
      */
     protected boolean isFullHierarchyLayout(final ILayoutConfigurationStore config) {
-        Object layoutHierarchyVal = config.getOptionValue(CoreOptions.LAYOUT_HIERARCHY.getId());
-        boolean layoutHierarchy = layoutHierarchyVal instanceof Boolean
-                ? (Boolean) layoutHierarchyVal
-                : Boolean.parseBoolean((String) layoutHierarchyVal);
+        Object layoutHierarchyVal = config.getOptionValue(CoreOptions.HIERARCHY_HANDLING.getId());
+        HierarchyHandling layoutHierarchy = layoutHierarchyVal instanceof HierarchyHandling
+                ? (HierarchyHandling) layoutHierarchyVal
+                : HierarchyHandling.valueOf((String) layoutHierarchyVal);
                 
-        if (layoutHierarchy) {
+        if (layoutHierarchy == HierarchyHandling.INCLUDE_CHILDREN) {
             LayoutAlgorithmData algoData = getAlgorithm(config);
             return algoData != null
                     && (algoData.supportsFeature(GraphFeature.COMPOUND)
