@@ -112,20 +112,25 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
             element === null || !element.properties.map.containsKey(o)
         ]
         for (option : filteredOptions) {
-            val split = Strings.split(option.id, '.')
-            var String suffix
+            val idSplit = Strings.split(option.id, '.')
+            val prefixSplit = Strings.split(context.prefix, '.')
             var foundMatch = false
-            var i = split.size - 1
-            while (i >= 0 && !foundMatch) {
-                if (suffix === null)
-                    suffix = split.get(i--)
-                else
-                    suffix = split.get(i--) + '.' + suffix
-                if (metaDataService.getOptionDataBySuffix(suffix) !== null && suffix.startsWith(context.prefix))
-                    foundMatch = true
+            var i = idSplit.size - 1
+            if (i >= 1 && option.group == idSplit.get(i - 1)) {
+                i--
             }
-            val proposal = createCompletionProposal(suffix.convert, option.getDisplayString(suffix), getImage(option, null), context)
-            acceptor.accept(proposal)
+            while (i >= 0 && !foundMatch) {
+                val suffix = idSplit.drop(i)
+                if (metaDataService.getOptionDataBySuffix(suffix.join('.')) !== null && suffix.startsWith(prefixSplit))
+                    foundMatch = true
+                else
+                    i--
+            }
+            if (foundMatch) {
+                val suffix = idSplit.drop(i)
+                val proposal = createCompletionProposal(suffix.convert, option.getDisplayString(suffix), getImage(option, null), context)
+                acceptor.accept(proposal)
+            }
         }
     }
     
@@ -147,29 +152,48 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
     protected def proposeAlgorithms(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         val metaDataService = LayoutMetaDataService.instance
         for (algorithm : metaDataService.algorithmData) {
-            val split = Strings.split(algorithm.id, '.')
-            var String suffix
+            val idSplit = Strings.split(algorithm.id, '.')
+            val prefixSplit = Strings.split(context.prefix, '.')
             var foundMatch = false
-            var i = split.size - 1
+            var i = idSplit.size - 1
             while (i >= 0 && !foundMatch) {
-                if (suffix === null)
-                    suffix = split.get(i--)
-                else
-                    suffix = split.get(i--) + '.' + suffix
-                if (metaDataService.getAlgorithmDataBySuffix(suffix) !== null && suffix.startsWith(context.prefix))
+                val suffix = idSplit.drop(i)
+                if (metaDataService.getAlgorithmDataBySuffix(suffix.join('.')) !== null && suffix.startsWith(prefixSplit))
                     foundMatch = true
+                else
+                    i--
             }
-            val proposal = createCompletionProposal(suffix.convert, algorithm.getDisplayString(suffix), null, context)
-            acceptor.accept(proposal)
+            if (foundMatch) {
+                val suffix = idSplit.drop(i)
+                val proposal = createCompletionProposal(suffix.convert, algorithm.getDisplayString(suffix), null, context)
+                acceptor.accept(proposal)
+            }
         }
     }
     
-    private def convert(String suffix) {
-        Strings.split(suffix, '.').map[idValueConverter.toString(it)].join('.')
+    private def startsWith(Iterable<String> strings, List<String> prefix) {
+        if (prefix.empty)
+            return true
+        val stringList = strings.toList
+        for (var i = 0; i < stringList.size - prefix.size + 1; i++) {
+            var j = 0
+            var matches = true
+            while (j < prefix.size && matches) {
+                matches = stringList.get(i + j).startsWith(prefix.get(j))
+                j++
+            }
+            if (matches)
+                return true
+        }
+        return false
     }
     
-    private def getDisplayString(ILayoutMetaData data, String suffix) {
-        new StyledString(suffix)
+    private def convert(Iterable<String> suffix) {
+        suffix.map[idValueConverter.toString(it)].join('.')
+    }
+    
+    private def getDisplayString(ILayoutMetaData data, Iterable<String> suffix) {
+        new StyledString(suffix.join('.'))
             + new StyledString(''' «'\u2013'» «data.name» («data.id»)''', StyledString.QUALIFIER_STYLER)
     }
     
