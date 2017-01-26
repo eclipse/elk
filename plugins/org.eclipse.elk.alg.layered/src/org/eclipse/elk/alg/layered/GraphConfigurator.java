@@ -333,6 +333,19 @@ final class GraphConfigurator {
             configuration.addBeforePhase4(internalGreedyType);
         }
 
+        // Wrapping of graphs
+        switch (lgraph.getProperty(LayeredOptions.WRAPPING_STRATEGY)) {
+        case PATH_LIKE:
+            configuration.addBeforePhase4(IntermediateProcessorStrategy.PATH_LIKE_GRAPH_WRAPPER);
+            break;
+        case GENERAL:
+            configuration.addBeforePhase3(IntermediateProcessorStrategy.BREAKING_POINT_INSERTER)
+                    .addBeforePhase4(IntermediateProcessorStrategy.BREAKING_POINT_PROCESSOR)
+                    .addAfterPhase5(IntermediateProcessorStrategy.BREAKING_POINT_REMOVER);
+            break;
+        default: // OFF
+        }
+        
         return configuration;
     }
     

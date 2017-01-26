@@ -256,6 +256,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 case LABEL:
                 case LONG_EDGE:
                 case NORTH_SOUTH_PORT:
+                case BREAKING_POINT:
                     processNode(node, xpos);
                     break;
                 }

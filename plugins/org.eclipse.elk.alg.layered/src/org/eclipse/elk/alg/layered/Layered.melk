@@ -11,21 +11,25 @@
 package org.eclipse.elk.alg.layered
 
 import java.util.EnumSet
+import java.util.List
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider
 import org.eclipse.elk.alg.layered.intermediate.NodePromotionStrategy
 import org.eclipse.elk.alg.layered.intermediate.compaction.ConstraintCalculationStrategy
 import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrategy
+import org.eclipse.elk.alg.layered.intermediate.wrapping.CuttingStrategy
+import org.eclipse.elk.alg.layered.intermediate.wrapping.ValidifyStrategy
+import org.eclipse.elk.alg.layered.intermediate.wrapping.WrappingStrategy
 import org.eclipse.elk.alg.layered.p1cycles.CycleBreakingStrategy
 import org.eclipse.elk.alg.layered.p2layers.LayeringStrategy
 import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy
 import org.eclipse.elk.alg.layered.p4nodes.NodePlacementStrategy
 import org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy
+import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
-import org.eclipse.elk.core.math.ElkPadding
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -74,6 +78,16 @@ algorithm layered(LayeredLayoutProvider) {
     supports priority.shortness
         documentation "Currently only supported by the network simplex layerer."
     supports priority.straightness
+    // wrapping related
+    supports wrapping.strategy
+    supports wrapping.additionalEdgeSpacing
+    supports wrapping.cutting.strategy
+    supports wrapping.cutting.cuts
+    supports wrapping.cutting.msd.freedom
+    supports wrapping.pathLike.validify.strategy
+    supports wrapping.general.improveCuts
+    supports wrapping.general.distancePenalty
+    supports wrapping.general.improveWrappedEdges
 	// other options
 	supports org.eclipse.elk.padding = new ElkPadding(12)
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
@@ -576,6 +590,112 @@ group highDegreeNodes {
 
 }
 
+/* ------------------------
+  *    wrapping
+  * ------------------------*/
+group wrapping {
+      
+    advanced option strategy: WrappingStrategy {
+        label "Graph Wrapping Strategy"
+        description 
+            "For certain graphs and certain prescribed drawing areas it may be desirable to 
+             split the laid out graph into chunks that are placed side by side. 
+             The edges that connect different chunks are 'wrapped' around from the end of 
+             one chunk to the start of the other chunk.
+            The points between the chunks are referred to as 'cuts'."
+        targets parents
+        default = WrappingStrategy.OFF
+    }
+ 
+    advanced option additionalEdgeSpacing: double {
+        label "Additional Wrapped Edges Spacing."
+        description 
+            "To visually separate edges that are wrapped from regularly routed edges an additional spacing value 
+             can be specified in form of this layout option. The spacing is added to the regular edgeNode spacing."
+        default = 10
+        targets parents
+    }
+
+    group cutting {
+
+        advanced option strategy: CuttingStrategy {
+            label "Cutting Strategy"
+            description 
+                "The strategy by which the layer indexes are determined at which the layering crumbles into chunks."
+            default = CuttingStrategy.MSD
+            targets parents
+            //requires wrapping.strategy != WrappingStrategy.OFF
+        } 
+      
+        advanced option cuts: List<Integer> {
+            label "Manually Specified Cuts"
+            description "Allows the user to specify her own cuts for a certain graph."
+            targets parents 
+            requires wrapping.cutting.strategy == CuttingStrategy.MANUAL
+        }
+     
+        group msd {
+            advanced option freedom: Integer {
+                label "MSD Freedom"
+                description 
+                    "The MSD cutting strategy starts with an initial guess on the number of chunks the graph 
+                     should be split into. The freedom specifies how much the strategy may deviate from this guess.
+                     E.g. if an initial number of 3 is computed, a freedom of 1 allows 2, 3, and 4 cuts."
+                default = 1
+                lowerBound = 0     
+                targets parents
+                requires wrapping.cutting.strategy == CuttingStrategy.MSD
+            }
+        }
+    }
+ 
+    group pathLike {
+    
+        group validify {
+            
+            advanced option strategy: ValidifyStrategy {
+                label "Path-Like Validify Strategy"
+                description 
+                    "When wrapping path-like graphs, the graph must not be split between any pair of layers.
+                     The validify strategy makes sure every computed split point is allowed."
+                default = ValidifyStrategy.GREEDY 
+                targets parents
+                requires wrapping.strategy == WrappingStrategy.PATH_LIKE
+            }
+        }
+    }
+ 
+    group general {
+     
+        advanced option improveCuts: boolean {
+            label "Improve Cuts"
+            description 
+                "For general graphs it is important that not too many edges wrap backwards. 
+                 Thus a compromise between evenly-distributed cuts and the total number of cut edges is sought."
+            default = true
+            targets parents
+            requires strategy == WrappingStrategy.GENERAL
+        }
+ 
+        advanced option distancePenalty: double {
+            label "Distance Penalty When Improving Cuts "
+            default = 2.0
+            targets parents
+            requires strategy == WrappingStrategy.GENERAL
+            requires improveCuts == true
+        }
+     
+        advanced option improveWrappedEdges: boolean {
+            label "Improve Wrapped Edges"
+            description 
+                "The initial wrapping is performed in a very simple way. As a consequence, edges that wrap from 
+                 one chunk to another may be unnecessarily long. Activating this option tries to shorten such edges."
+            default = true
+            targets parents 
+            requires strategy == WrappingStrategy.GENERAL
+         }
+    }
+}
 
 /* ------------------------
  *    miscellaneous

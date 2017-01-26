@@ -58,7 +58,9 @@ public final class LNode extends LShape {
         /** a dummy node to represent a mid-label on an edge. */
         LABEL,
         /** a dummy node originating from a node spanning multiple layers. */
-        BIG_NODE;
+        BIG_NODE,
+        /** a dummy node representing a breaking point used to 'wrap' graphs. */
+        BREAKING_POINT;
         
         /**
          * Return the color used when writing debug output graphs. The colors are given as strings of
@@ -73,7 +75,8 @@ public final class LNode extends LShape {
             case LONG_EDGE: return "#eaed00";
             case NORTH_SOUTH_PORT: return "#0034de";
             case LABEL: return "#75c3c3";
-            default: return "#000000";
+            case BREAKING_POINT: return "#eeeeff"; 
+            default: return "#eeeeee";
             }
         }
 

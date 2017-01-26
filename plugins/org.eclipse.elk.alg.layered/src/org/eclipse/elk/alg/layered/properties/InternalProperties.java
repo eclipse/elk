@@ -24,6 +24,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
 import org.eclipse.elk.core.math.ElkMargin;
@@ -391,6 +392,15 @@ public final class InternalProperties {
      */
     public static final IProperty<Boolean> PARTITION_DUMMY = new Property<Boolean>(
             "partitionConstraint", false);
+
+    /**
+     * Holds information about a breaking point, e.g. the start dummy node, the end dummy node 
+     * and the original edge that was split.
+     * 
+     * @see org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter BreakingPointInserter
+     */
+    public static final IProperty<BreakingPointInserter.BPInfo> BREAKING_POINT_INFO =
+            new Property<BreakingPointInserter.BPInfo>("breakingPoint.info");
 
     /**
      * Hidden default constructor.

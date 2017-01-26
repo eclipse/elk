@@ -56,8 +56,6 @@ public final class Spacings {
     }
     
     private void precalculateNodeTypeSpacings() {
-        // 6 node types --> (6 ncr 2) = 16 2-subsets + 6 1-subsets = 22
-        // sort them based on expected frequency
         
         // normal
         nodeTypeSpacing(NodeType.NORMAL, 
@@ -118,6 +116,18 @@ public final class Spacings {
         nodeTypeSpacing(NodeType.BIG_NODE, 
                 LayeredOptions.SPACING_NODE_NODE,
                 LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
+        
+        // breaking points
+        nodeTypeSpacing(NodeType.BREAKING_POINT, 
+                LayeredOptions.SPACING_EDGE_EDGE,
+                LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
+        nodeTypeSpacing(NodeType.BREAKING_POINT, NodeType.NORMAL, 
+                LayeredOptions.SPACING_EDGE_NODE,
+                LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
+        nodeTypeSpacing(NodeType.BREAKING_POINT, NodeType.LONG_EDGE, 
+                LayeredOptions.SPACING_EDGE_NODE,
+                LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
+        
     }
 
     private void nodeTypeSpacing(final NodeType nt, final IProperty<Double> spacing) {

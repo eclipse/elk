@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2016 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,10 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
+import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
+import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointProcessor;
+import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointRemover;
+import org.eclipse.elk.alg.layered.intermediate.wrapping.PathLikeGraphWrapper;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 
@@ -74,6 +78,8 @@ public enum IntermediateProcessorStrategy {
     BIG_NODES_INTERMEDIATEPROCESSOR,
     /** Adds successor constraints between regular nodes before crossing minimization. */
     SEMI_INTERACTIVE_CROSSMIN_PROCESSOR,
+    
+    BREAKING_POINT_INSERTER,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
@@ -92,14 +98,16 @@ public enum IntermediateProcessorStrategy {
     NORTH_SOUTH_PORT_PREPROCESSOR,
 
     // Before Phase 4
+    
+    BREAKING_POINT_PROCESSOR,
     /** Hierarchical one-sided greedy switch crossing reduction. */
     ONE_SIDED_GREEDY_SWITCH,
     /** Hierarchical two-sided greedy switch crossing reduction. */
     TWO_SIDED_GREEDY_SWITCH,
     /** Unhide self loops after phase 3. */
     SPLINE_SELF_LOOP_POSITIONER,
-    /** Compacts looong sausages. This is a hidden feature. */
-    SAUSAGE_COMPACTION,
+    /** Wraps path-like graphs such that they better fit a given drawing area. */
+    PATH_LIKE_GRAPH_WRAPPER,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
@@ -136,6 +144,8 @@ public enum IntermediateProcessorStrategy {
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
+    
+    BREAKING_POINT_REMOVER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
@@ -176,6 +186,16 @@ public enum IntermediateProcessorStrategy {
 
         case BIG_NODES_SPLITTER:
             return new BigNodesSplitter();
+            
+        case BREAKING_POINT_INSERTER:
+            return new BreakingPointInserter();
+            
+        case BREAKING_POINT_PROCESSOR:
+            return new BreakingPointProcessor();
+            
+        case BREAKING_POINT_REMOVER:
+            return new BreakingPointRemover();
+            
 
         case COMMENT_POSTPROCESSOR:
             return new CommentPostprocessor();
@@ -296,8 +316,8 @@ public enum IntermediateProcessorStrategy {
         case REVERSED_EDGE_RESTORER:
             return new ReversedEdgeRestorer();
 
-        case SAUSAGE_COMPACTION:
-            return new SausageFolding();
+        case PATH_LIKE_GRAPH_WRAPPER:
+            return new PathLikeGraphWrapper();
 
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();
