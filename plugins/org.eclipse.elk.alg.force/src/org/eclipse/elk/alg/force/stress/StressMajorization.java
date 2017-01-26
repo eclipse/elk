@@ -45,11 +45,11 @@ public class StressMajorization {
     private double[][] w;
 
     /** Common desired edge length, can be overridden by individual edges. */
-    private float desiredEdgeLength;
+    private doublew desiredEdgeLength;
     /** Dimensions to consider during layout. */
     private Dimension dim;
     /** Epsilon for terminating the stress minimizing process. */
-    private float epsilon;
+    private double epsilon;
     /** Maximum number of iterations (overrides the {@link #epsilon}). */
     private int iterationLimit;
 
@@ -151,7 +151,7 @@ public class StressMajorization {
                     continue;
                 }
                 // get e's desired length
-                float el;
+                double el;
                 if (e.getAllProperties().containsKey(StressOptions.DESIRED_EDGE_LENGTH)) {
                     el = e.getProperty(StressOptions.DESIRED_EDGE_LENGTH);
                 } else { 

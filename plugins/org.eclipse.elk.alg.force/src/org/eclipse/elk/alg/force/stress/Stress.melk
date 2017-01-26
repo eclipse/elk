@@ -47,12 +47,12 @@ option fixed: boolean {
     targets nodes
 }
 
-option desiredEdgeLength: float {
+option desiredEdgeLength: double {
     label "Desired Edge Length"
     description 
         "Either specified for parent nodes or for individual edges, 
         where the latter takes higher precedence."
-    default = 100f
+    default = 100.0
     targets parents, edges 
 }
 
@@ -63,10 +63,10 @@ option dimension: Dimension {
     targets parents
 }
 
-option epsilon: float {
+option epsilon: double {
     label "Stress Epsilon"
     description "Termination criterion for the iterative process."
-    default = 10e-4f
+    default = 10e-4
     targets parents
 } 
 
