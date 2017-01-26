@@ -45,7 +45,7 @@ public class StressMajorization {
     private double[][] w;
 
     /** Common desired edge length, can be overridden by individual edges. */
-    private doublew desiredEdgeLength;
+    private double desiredEdgeLength;
     /** Dimensions to consider during layout. */
     private Dimension dim;
     /** Epsilon for terminating the stress minimizing process. */
