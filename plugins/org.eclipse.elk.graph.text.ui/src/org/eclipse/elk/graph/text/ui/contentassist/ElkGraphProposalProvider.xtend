@@ -93,8 +93,10 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
     }
     
     private def getAlgorithm(ElkGraphElement element) {
-        val node = element.getContainerOfType(ElkNode)
+        var node = element.getContainerOfType(ElkNode)
         if (node !== null) {
+            if ((element instanceof ElkLabel || element instanceof ElkPort) && node.parent !== null)
+                node = node.parent
             val algorithmId = node.getProperty(CoreOptions.ALGORITHM)
             if (!algorithmId.nullOrEmpty)
                 return LayoutMetaDataService.instance.getAlgorithmDataBySuffix(algorithmId)

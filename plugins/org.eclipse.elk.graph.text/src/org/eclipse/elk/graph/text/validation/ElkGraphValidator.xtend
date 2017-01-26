@@ -18,6 +18,9 @@ import org.eclipse.elk.graph.EMapPropertyHolder
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
 import org.eclipse.elk.graph.ElkGraphElement
+import org.eclipse.elk.graph.ElkLabel
+import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
 import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.properties.IPropertyValueProxy
@@ -41,6 +44,23 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
 	def void checkPropertyValue(ElkPropertyToValueMapEntryImpl entry) {
 	    val option = entry.key.toLayoutOption
 	    if (option !== null) {
+	        val container = entry.eContainer
+	        if (container instanceof ElkGraphElement) {
+	            switch container {
+                    ElkNode:
+                        checkOptionTarget(option, LayoutOptionData.Target.NODES, LayoutOptionData.Target.PARENTS)
+                    ElkEdge:
+                        checkOptionTarget(option, LayoutOptionData.Target.EDGES)
+                    ElkPort:
+                        checkOptionTarget(option, LayoutOptionData.Target.PORTS)
+                    ElkLabel:
+                        checkOptionTarget(option, LayoutOptionData.Target.LABELS)
+                }
+                if (container instanceof ElkNode && option.targets.contains(LayoutOptionData.Target.NODES))
+                    checkAlgorithmSupport(option, (container as ElkNode).parent)
+                else
+                    checkAlgorithmSupport(option, container)
+	        }
     	    var value = entry.value
     	    if (value instanceof IPropertyValueProxy) {
     	        value = value.resolveValue(option)
@@ -89,6 +109,34 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
             return property
         else if (property !== null)
             return LayoutMetaDataService.instance.getOptionData(property.id)
+    }
+    
+    private def void checkOptionTarget(LayoutOptionData option, LayoutOptionData.Target... targetTypes) {
+        if (!targetTypes.exists[option.targets.contains(it)])
+            warning("The layout option '" + option.id + "' is not applicable to " + targetTypes.head.toString.toLowerCase + '.',
+                ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY)
+    }
+    
+    private def void checkAlgorithmSupport(LayoutOptionData option, ElkGraphElement element) {
+        if (option != CoreOptions.ALGORITHM) {
+            val algorithm = element.algorithm
+            if (algorithm !== null) {
+                if (!algorithm.knowsOption(option))
+                    warning("The algorithm '" + algorithm.id + "' does not support the option '" + option.id + "'.",
+                        ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY)
+            }
+        }
+    }
+    
+    private def getAlgorithm(ElkGraphElement element) {
+        var node = element.getContainerOfType(ElkNode)
+        if (node !== null) {
+            if ((element instanceof ElkLabel || element instanceof ElkPort) && node.parent !== null)
+                node = node.parent
+            val algorithmId = node.getProperty(CoreOptions.ALGORITHM)
+            if (!algorithmId.nullOrEmpty)
+                return LayoutMetaDataService.instance.getAlgorithmDataBySuffix(algorithmId)
+        }
     }
 	
 	private def void expectPropertyType(Class<?> type) {
