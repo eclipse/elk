@@ -553,13 +553,13 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
         // The type of the node most recently placed in a given layer
         NodeType[] recentNodeType = new NodeType[layeredGraph.getLayers().size()];
+        LNode[] recentNode = new LNode[layeredGraph.getLayers().size()];
 
         // Iterate through the linear segments (in proper order!) and place them
         for (LinearSegment segment : linearSegments) {
             // Determine the uppermost placement for the linear segment
             double uppermostPlace = 0.0f;
             for (LNode node : segment.nodes) {
-                NodeType nodeType = node.getType();
                 int layerIndex = node.getLayer().getIndex();
                 nodeCount[layerIndex]++;
 
@@ -567,8 +567,9 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 // node of the given layer
                 double spacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE);
                 if (nodeCount[layerIndex] > 0) {
-                    if (recentNodeType[layerIndex] != null) {
-                        spacing = spacings.getVerticalSpacing(recentNodeType[layerIndex], nodeType);
+                    if (recentNode[layerIndex] != null) {
+                        //spacing = spacings.getVerticalSpacing(recentNodeType[layerIndex], nodeType);
+                        spacing = spacings.getVerticalSpacing(recentNode[layerIndex], node);
                     }
                 }
 
@@ -586,6 +587,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                         + node.getSize().y + node.getMargin().bottom;
 
                 recentNodeType[layer.getIndex()] = node.getType();
+                recentNode[layer.getIndex()] = node;
             }
         }
     }

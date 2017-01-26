@@ -18,7 +18,6 @@ import java.util.Queue;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.HDirection;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 import org.eclipse.elk.alg.layered.p4nodes.bk.ThresholdStrategy.NullThresholdStrategy;
@@ -184,7 +183,6 @@ public class BKCompactor implements ICompactor {
         do {
             int currentIndexInLayer = ni.nodeIndex[currentNode.id];
             int currentLayerSize = currentNode.getLayer().getNodes().size();
-            NodeType currentNodeType = currentNode.getType();
 
             // If the node is the top or bottom node of its layer, it can be placed safely since it is
             // the first to be placed in its layer. If it's not, we'll have to check its neighbours
@@ -201,9 +199,6 @@ public class BKCompactor implements ICompactor {
                 }
                 neighborRoot = bal.root[neighbor.id];
                 
-                // The neighbour's node type is important for the spacing between the two later on
-                NodeType neighborNodeType = neighbor.getType();
-
                 // Ensure the neighbor was already placed
                 placeBlock(neighborRoot, bal);
                 
@@ -223,7 +218,7 @@ public class BKCompactor implements ICompactor {
                     // They are part of the same class
                     
                     // The minimal spacing between the two nodes depends on their node type
-                    double spacing = spacings.getVerticalSpacing(currentNodeType, neighborNodeType);
+                    double spacing = spacings.getVerticalSpacing(currentNode, neighbor);
                     
                     // Determine the block's final position
                     if (bal.vdir == VDirection.UP) {
