@@ -228,7 +228,7 @@ group layering {
             lowerBound = -1
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth
-            requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.EXP_MIN_WIDTH
+            requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.MIN_WIDTH
         }
         
         advanced option upperLayerEstimationScalingFactor: int {
@@ -242,7 +242,7 @@ group layering {
             lowerBound = -1
             targets parents
             legacyIds de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor
-            requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.EXP_MIN_WIDTH
+            requires org.eclipse.elk.alg.layered.layering.strategy == LayeringStrategy.MIN_WIDTH
         }
         
     }

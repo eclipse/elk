@@ -78,7 +78,7 @@ public enum IntermediateProcessorStrategy {
     BIG_NODES_INTERMEDIATEPROCESSOR,
     /** Adds successor constraints between regular nodes before crossing minimization. */
     SEMI_INTERACTIVE_CROSSMIN_PROCESSOR,
-    
+    /** Inserts breaking points which are used to 'wrap' the graph after crossing minimization. */
     BREAKING_POINT_INSERTER,
     /** Takes a layered graph and turns it into a properly layered graph. */
     LONG_EDGE_SPLITTER,
@@ -98,7 +98,7 @@ public enum IntermediateProcessorStrategy {
     NORTH_SOUTH_PORT_PREPROCESSOR,
 
     // Before Phase 4
-    
+    /** Performs 'wrapping' of the graph, potentially executing improvement heuristics. */
     BREAKING_POINT_PROCESSOR,
     /** Hierarchical one-sided greedy switch crossing reduction. */
     ONE_SIDED_GREEDY_SWITCH,
@@ -144,7 +144,7 @@ public enum IntermediateProcessorStrategy {
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
-    
+    /** Removes the breaking points that were inserted for 'wrapping', derives edge routes correspondingly. */
     BREAKING_POINT_REMOVER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,

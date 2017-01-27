@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
+
 /**
  * Definitions of strategies for the node promotion heuristic.
  * 
@@ -41,11 +43,13 @@ public enum NodePromotionStrategy {
      * will be dismissed and another run of the node promotion heuristic is started with the
      * strategy of Nikolov et al. (maintaining width while promoting nodes).
      */
+    @AdvancedPropertyValue
     NIKOLOV_IMPROVED,
     /**
      * Operates like NIKOLOV_IMPROVED but with consideration of approximated sizes of the original
      * and dummy nodes.
      */
+    @AdvancedPropertyValue
     NIKOLOV_IMPROVED_PIXEL,
     /**
      * Stops the promotion either if there are no more promotions to make or a certain percentage
@@ -54,6 +58,7 @@ public enum NodePromotionStrategy {
      * percentage is reached there will be no more promotions made even if there are possible
      * promotions left.
      */
+    @AdvancedPropertyValue
     DUMMYNODE_PERCENTAGE,
     /**
      * Stops the promotion either if there are no more promotions to make or a certain number of
@@ -62,9 +67,11 @@ public enum NodePromotionStrategy {
      * Properties#NODE_PROMOTION_BOUNDARY} of the number of all nodes in the graph. If the number is
      * reached there will be no more promotions made even if there are possible promotions left.
      */
+    @AdvancedPropertyValue
     NODECOUNT_PERCENTAGE,
     /** 
      * The node promotion will run until there are no more promotions left to make. 
      */
+    @AdvancedPropertyValue
     NO_BOUNDARY;
 }

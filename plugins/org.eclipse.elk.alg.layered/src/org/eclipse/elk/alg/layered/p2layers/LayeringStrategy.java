@@ -12,6 +12,8 @@ package org.eclipse.elk.alg.layered.p2layers;
 
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
+import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
+import org.eclipse.elk.graph.properties.ExperimentalPropertyValue;
 
 /**
  * Enumeration of and factory for the different available layering strategies.
@@ -26,25 +28,32 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      * All nodes will be layered according to the longest path to any sink.
      */
     LONGEST_PATH,
-    
+    /** 
+     * Allows to restrict the number of original nodes in any layer. Essentially 
+     * solves a precedence-constrained scheduling problem. 
+     */
+    @AdvancedPropertyValue
     COFFMAN_GRAHAM,
     /**
      * Nodes are put into layers according to their relative position. The actual positions
      * as given in the input diagram are considered here. This means that if the user moves
      * a node, that movement is reflected in the layering of the graph.
      */
+    @AdvancedPropertyValue
     INTERACTIVE,
     /**
      * Nodes are put into Layers according to the average out-degree and their rank.
      * Similar to {@link #LONGEST_PATH}, however, tries to reduce the maximum number of 
      * nodes per layer.
      */
-    EXP_STRETCH_WIDTH,
+    @ExperimentalPropertyValue
+    STRETCH_WIDTH,
     /**
-     * Implementation of the 'MinWidht' heuristic for solving the NP-hard minimum-width layering
+     * Implementation of the 'MinWidth' heuristic for solving the NP-hard minimum-width layering
      * problem with consideration of dummy nodes.
      */
-    EXP_MIN_WIDTH;
+    @ExperimentalPropertyValue
+    MIN_WIDTH;
     
     /**
      * {@inheritDoc}
@@ -63,10 +72,10 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
         case INTERACTIVE:
             return new InteractiveLayerer();
             
-        case EXP_STRETCH_WIDTH:
+        case STRETCH_WIDTH:
             return new StretchWidthLayerer();
           
-        case EXP_MIN_WIDTH:
+        case MIN_WIDTH:
             return new MinWidthLayerer();
 
         default:

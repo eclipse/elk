@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.layered.p3order;
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
 /**
  * Enumeration of and factory for the different available crossing minimization strategies.
@@ -37,6 +38,7 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
      * as given in the input diagram are considered here. This means that if the user moves
      * a node, that movement is reflected in the ordering of nodes.
      */
+    @AdvancedPropertyValue
     INTERACTIVE;
     
 

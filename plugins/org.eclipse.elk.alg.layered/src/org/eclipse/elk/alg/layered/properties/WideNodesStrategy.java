@@ -17,6 +17,8 @@ package org.eclipse.elk.alg.layered.properties;
  */
 public enum WideNodesStrategy {
 
+    /** Do not handle wide nodes specially. */
+    OFF,
     /**
      * Splits wide nodes prior to the crossing minimization phase. Note that this can lead to
      * edge-node crossings.
@@ -27,7 +29,5 @@ public enum WideNodesStrategy {
      * crossings are introduced.
      */
     CAREFUL,
-    /** Do not handle wide nodes specially. */
-    OFF
 
 }

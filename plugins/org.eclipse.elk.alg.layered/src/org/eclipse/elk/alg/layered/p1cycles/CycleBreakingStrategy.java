@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.p1cycles;
 
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
+import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
 /**
  * Enumeration of and factory for the different available cycle breaking strategies.
@@ -32,6 +33,7 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory {
      * as given in the input diagram are considered here. This means that if the user moves
      * a node, that movement is reflected in the decision which edges to reverse.
      */
+    @AdvancedPropertyValue
     INTERACTIVE;
     
 

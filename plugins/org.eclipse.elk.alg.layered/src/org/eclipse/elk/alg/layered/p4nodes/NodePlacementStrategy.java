@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.layered.p4nodes;
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKNodePlacer;
+import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
 /**
  * Definition of the available node placement strategies for the layered layout approach.
@@ -27,6 +28,7 @@ public enum NodePlacementStrategy implements ILayoutPhaseFactory {
     /**
      * Interactive node placer that leaves y coordinates of nodes untouched.
      */
+    @AdvancedPropertyValue
     INTERACTIVE,
     
     /**
