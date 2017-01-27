@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.util;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +30,8 @@ import org.eclipse.elk.graph.ElkGraphPackage;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
+import org.eclipse.elk.graph.properties.ExperimentalPropertyValue;
 import org.eclipse.emf.common.util.AbstractTreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -659,6 +663,58 @@ public final class ElkGraphUtil {
         return new PropertiesSkippingTreeIterator(root, includeRoot);
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Property values
+    
+    /**
+     * Returns whether an enumeration value, usually the value of layout option, is considered <em>advanced</em>. 
+     * The user should have extended knowledge about the effects and underlying methods that are
+     * activated when using the layout option value. 
+     * 
+     * @param enumValue an enumeration value, usually representing the value of a layout option.
+     * @return whether the value is annotated as {@link AdvancedPropertyValue}. 
+     * @see AdvancedPropertyValue
+     */
+    public static boolean isAdvancedPropertyValue(final Enum<?> enumValue) {
+        if (enumValue != null) {
+            try {
+                Annotation[] annotations =
+                        enumValue.getClass().getField(enumValue.name()).getAnnotations();
+                return Arrays.stream(annotations)
+                        .anyMatch(a -> a instanceof AdvancedPropertyValue);
+            } catch (NoSuchFieldException | SecurityException e) {
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Returns whether an enumeration value, usually the value of layout option, is considered <em>experimental</em>.
+     * Experimental layout options may result in unexpected behavior, for instance because their implementation has not
+     * been thoroughly tested yet.
+     * 
+     * @param enumValue
+     *            an enumeration value, usually representing the value of a layout option.
+     * @return whether the value is annotated as {@link ExperimentalPropertyValue}.
+     * @see ExperimentalPropertyValue
+     */
+    public static boolean isExperimentalPropertyValue(final Enum<?> enumValue) {
+        if (enumValue != null) {
+            try {
+                Annotation[] annotations =
+                        enumValue.getClass().getField(enumValue.name()).getAnnotations();
+                return Arrays.stream(annotations)
+                        .anyMatch(a -> a instanceof ExperimentalPropertyValue);
+            } catch (NoSuchFieldException | SecurityException e) {
+                return false;
+            }
+        }
+        
+        return false;
+    }
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////
