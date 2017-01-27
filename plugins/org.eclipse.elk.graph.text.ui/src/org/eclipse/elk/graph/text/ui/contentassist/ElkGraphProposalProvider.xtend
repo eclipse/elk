@@ -40,6 +40,8 @@ import org.eclipse.xtext.util.Strings
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import org.eclipse.elk.graph.util.ElkGraphUtil
+import org.eclipse.elk.core.data.LayoutOptionData.Type
 
 /**
  * Special content assist proposals for the ELK Graph language.
@@ -141,14 +143,51 @@ class ElkGraphProposalProvider extends AbstractElkGraphProposalProvider {
         if (model instanceof ElkPropertyToValueMapEntryImpl) {
             val property = model.key
             if (property instanceof LayoutOptionData) {
-                for (choice : property.choices) {
-                    val proposal = createCompletionProposal(choice, choice, getImage(property, choice), context)
-                    acceptor.accept(proposal)
-                }
                 if (CoreOptions.ALGORITHM == property)
                     proposeAlgorithms(context, acceptor)
+                else 
+                    typeAwarePropertyValueProposal(property, assignment, context, acceptor)
             }
         }
+    }
+    
+    private def typeAwarePropertyValueProposal(LayoutOptionData property, Assignment assignment, ContentAssistContext context, 
+         ICompletionProposalAcceptor acceptor) {
+         
+         switch (property.type) {
+             case Type.BOOLEAN,
+             case Type.ENUM, 
+             case Type.ENUMSET: {
+                 val choices = property.choices
+                 for (var i = 0; i < choices.length; i++) {
+                    val proposal = choices.get(i)
+                    val enumVal = property.getEnumValue(i)
+                    
+                    val displayString = new StyledString(proposal)
+                    var priority = 3
+                    if (ElkGraphUtil.isExperimentalPropertyValue(enumVal)) {
+                        displayString.append(" - Experimental", StyledString.COUNTER_STYLER);
+                        priority = 1
+                    } else if (ElkGraphUtil.isAdvancedPropertyValue(enumVal)) {
+                        displayString.append(" - Advanced", StyledString.COUNTER_STYLER);
+                        priority = 2
+                    }
+                    acceptor.accept(createCompletionProposal(proposal, displayString, getImage(property, proposal), priority, "", context))
+                 }
+             }
+             case DOUBLE:
+                acceptor.accept(createCompletionProposal("0.0", property.getType().toString(), null, context))
+             case INT:
+                acceptor.accept(createCompletionProposal("0", property.getType().toString(), null, context))
+             case OBJECT: {
+                val proposal = try {
+                    "\"" + property.getOptionClass().newInstance().toString() + "\"";
+                } catch (InstantiationException e) ""
+                  catch (IllegalAccessException e) ""
+                acceptor.accept(createCompletionProposal(proposal, property.getType().toString(), null, context)) 
+             }
+             default: { } // nothing to propose
+         }
     }
     
     protected def proposeAlgorithms(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
