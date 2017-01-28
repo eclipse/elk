@@ -23,7 +23,7 @@ One such meta data provider is always automatically registered: `CoreOptions`. T
 
 ```java
 LayoutMetaDataService service = LayoutMetaDataService.getInstance();
-service.registerLayoutMetaDataProvider(new LayeredOptions());
+service.registerLayoutMetaDataProvider(new LayeredMetaDataService());
 ```
 
 
