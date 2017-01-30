@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
  * 
  * <h3>Deserialization</h3>
  * 
- * <p>Deserializing properties requries the
+ * <p>Deserializing properties requires the
  * {@link org.eclipse.elk.core.data.LayoutMetaDataService LayoutMetaDataService} to obtain appropriate
  * {@link org.eclipse.elk.core.data.LayoutOptionData LayoutOptionData} objects to be able to parse option
  * values. This cannot be done in the graph plug-in with the graph factory's conversion methods, since the
