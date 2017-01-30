@@ -48,7 +48,7 @@ final class ElkGraphXMISave extends XMISaveImpl {
             
             // Check if the value we want to serialize here will be parsable later so we can deserialize it
             // again properly; if this is not the case, there is no point serializing it in the first place
-            if (optionData != null && !optionData.canParseValue()) {
+            if (optionData == null || (optionData != null && !optionData.canParseValue())) {
                 return;
             }
         }
