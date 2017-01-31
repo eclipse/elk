@@ -17,8 +17,8 @@ class ElkGraphSemanticSequencer extends AbstractElkGraphSemanticSequencer {
     override protected sequence_Property(ISerializationContext context, Map.Entry semanticObject) {
         if (semanticObject instanceof ElkPropertyToValueMapEntryImpl) {
             val value = semanticObject.value
-            if (value instanceof IPropertyValueProxy) {
-                val resolvedValue = value.resolveValue(semanticObject.key)
+            if (value instanceof IPropertyValueProxy && semanticObject.key !== null) {
+                val resolvedValue = (value as IPropertyValueProxy).resolveValue(semanticObject.key)
                 if (resolvedValue !== null)
                     semanticObject.value = resolvedValue
             }
