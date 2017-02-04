@@ -54,6 +54,7 @@
       <modules>
         <module>org.eclipse.elk.targetplatform</module>
         <module>../plugins/org.eclipse.elk.graph</module>
+        <module>../plugins/org.eclipse.elk.core</module>
         <module>../plugins/org.eclipse.elk.core.meta</module>
       </modules>
 
