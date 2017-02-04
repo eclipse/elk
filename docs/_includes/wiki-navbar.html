@@ -1,0 +1,24 @@
+<aside class="wiki-aside">
+	<div class="flex-nav">
+		<nav>
+		    <input type="checkbox" id="menu-toggle">
+            <label for="menu-toggle" class="label-toggle"></label>
+            </input>
+			<ul>
+				{% for p in site.pages %} {% if p.title and p.type == page.type %} {% unless p.parent %}
+				    <li><a {% if p.url == page.url %}class="active"{% endif %} href="{{ p.url | prepend: site.baseurl }}">{{ p.title }}</a></li>
+				    <ul>
+				    {% for p2 in site.pages %} {% if p2.title and p2.type == page.type and p2.parent == p.title %}
+				        <li><a style="padding: 8px 32px;" {% if p2.url == page.url %}class="active"{% endif %} href="{{ p2.url | prepend: site.baseurl }}">{{ p2.title }}</a></li>
+				        <ul>
+				        {% for p3 in site.pages %} {% if p3.title and p3.type == page.type and p3.parent == p2.title %}
+				            <li><a style="padding: 8px 48px;" {% if p3.url == page.url %}class="active"{% endif %} href="{{ p3.url | prepend: site.baseurl }}">{{ p3.title }}</a></li>
+				        {% endif %} {% endfor %}
+				        </ul>
+				    {% endif %} {% endfor %}
+				    </ul>
+				{% endunless %} {% endif %} {% endfor %}
+			</ul>
+		</nav>
+	</div>
+</aside>
