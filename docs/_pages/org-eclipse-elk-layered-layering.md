@@ -11,7 +11,6 @@ type: group
 
 [Node Layering Strategy](org-eclipse-elk-layered-layering-strategy)
 [Layer Constraint](org-eclipse-elk-layered-layering-layerConstraint)
-[Distribute Nodes (Deprecated)](org-eclipse-elk-layered-layering-distributeNodes)
 [Wide Nodes on Multiple Layers](org-eclipse-elk-layered-layering-wideNodesOnMultipleLayers)
 
 ### Subgroups:

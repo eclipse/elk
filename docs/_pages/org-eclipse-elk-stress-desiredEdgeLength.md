@@ -8,8 +8,8 @@ type: option
 ----|----
 **Identifier:** | org.eclipse.elk.stress.desiredEdgeLength
 **Meta Data Provider:** | properties.StressMetaDataProvider
-**Value Type:** | `float`
-**Default Value:** | `100f` (as defined in org.eclipse.elk.stress)
+**Value Type:** | `double`
+**Default Value:** | `100.0` (as defined in org.eclipse.elk.stress)
 **Applies To:** | parents, edges
 
 ### Description

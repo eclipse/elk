@@ -17,4 +17,4 @@ type: option
 
 ### Description
 
-Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the option is assumed as SEPARATE_CHILDREN.
+If this option is set to SEPARATE_CHILDREN, each hierarchy level of the graph is processed independently, possibly by different layout algorithms, beginning with the lowest level. If it is set to INCLUDE_CHILDREN, the algorithm is responsible to process all hierarchy levels that are contained in the associated parent node. If the root node is set to inherit (or not set at all), the default behavior is SEPARATE_CHILDREN.

@@ -17,10 +17,8 @@ Keeps the current layout as it is, without any automatic modification. Optional 
 Option | Type | Default Value | Identifier
 ----|----|----|----
 [Bend Points](org-eclipse-elk-bendPoints) | `KVectorChain` | `<not defined>` | org&#8203;.eclipse&#8203;.elk&#8203;.bendPoints
-[Minimum Height](org-eclipse-elk-nodeSize-minHeight) | `double` | `0` | org&#8203;.eclipse&#8203;.elk&#8203;.nodeSize&#8203;.minHeight
-[Minimum Width](org-eclipse-elk-nodeSize-minWidth) | `double` | `0` | org&#8203;.eclipse&#8203;.elk&#8203;.nodeSize&#8203;.minWidth
 [Node Size Constraints](org-eclipse-elk-nodeSize-constraints) | `EnumSet<SizeConstraint>` | `EnumSet.noneOf(SizeConstraint)` | org&#8203;.eclipse&#8203;.elk&#8203;.nodeSize&#8203;.constraints
-[Node Size Minimum](org-eclipse-elk-nodeSize-minimum) | `KVector` | `<not defined>` | org&#8203;.eclipse&#8203;.elk&#8203;.nodeSize&#8203;.minimum
+[Node Size Minimum](org-eclipse-elk-nodeSize-minimum) | `KVector` | `new KVector(0, 0)` | org&#8203;.eclipse&#8203;.elk&#8203;.nodeSize&#8203;.minimum
 [Padding](org-eclipse-elk-padding) | `ElkPadding` | `new ElkPadding(15)` | org&#8203;.eclipse&#8203;.elk&#8203;.padding
 [Position](org-eclipse-elk-position) | `KVector` | `<not defined>` | org&#8203;.eclipse&#8203;.elk&#8203;.position
 

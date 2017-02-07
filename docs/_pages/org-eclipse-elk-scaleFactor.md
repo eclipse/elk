@@ -14,7 +14,6 @@ type: option
 **Lower Bound:** | `ExclusiveBounds.greaterThan(0)`
 **Applies To:** | nodes
 **Legacy Id:** | de.cau.cs.kieler.scaleFactor
-**Dependencies:** | [org.eclipse.elk.layoutHierarchy](org-eclipse-elk-layoutHierarchy)
 
 ### Description
 

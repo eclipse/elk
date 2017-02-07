@@ -8,8 +8,8 @@ type: option
 ----|----
 **Identifier:** | org.eclipse.elk.stress.epsilon
 **Meta Data Provider:** | properties.StressMetaDataProvider
-**Value Type:** | `float`
-**Default Value:** | `10e-4f` (as defined in org.eclipse.elk.stress)
+**Value Type:** | `double`
+**Default Value:** | `10e-4` (as defined in org.eclipse.elk.stress)
 **Applies To:** | parents
 
 ### Description
