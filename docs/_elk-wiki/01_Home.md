@@ -3,12 +3,7 @@ layout: wiki
 title: Home
 type: wiki
 ---
-The *Eclipse Layout Kernel (ELK)* implements an infrastructure
-to connect diagram editors or viewers
-to automatic layout algorithms.
-It also implements a number
-of standard layout algorithms
-ready to be used out of the box.
+The *Eclipse Layout Kernel (ELK)* implements an infrastructure to connect diagram editors or viewers to automatic layout algorithms.  It also implements a number of standard layout algorithms ready to be used out of the box.
 
 ![ELK Architecture](graphics/architecture.png)
 
