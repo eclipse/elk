@@ -21,3 +21,7 @@ Before you can start development, follow this list of steps. Not doing so may re
 1. **"Sign" the Eclipse ECA**
 
    While still on the _My Account_ page, go to the _Eclipse ECA_ tab and follow the instructions to "sign" the _Eclipse Contributor Agreement_. This is a necessary piece of legal paperwork that basically says that you as a contributor certify that the code you contribute is actually yours to contribute and will be made available under an open source license.
+
+1. **Sign Up to Our Development Mailing List**
+
+   It would probably be a good idea to sign up for [developer mailing list](https://dev.eclipse.org/mailman/listinfo/elk-dev). This ensures that you are up to date on current developments, and that you can get in touch with us easily. Just say hello!
