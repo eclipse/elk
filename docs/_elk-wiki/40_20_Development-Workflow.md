@@ -8,7 +8,7 @@ Once you [have everything set up](40_10_Setting-Everything-Up) it is time to sta
 
 1. **Set Up an Eclipse Installation**
 
-   This used to be rather hard, but thankfully people have seen that problem and started to do something about it. The result is the _Oomph Eclipse Installer_. The easiest way now is to go [to the Eclipse Downloads page](https://www.eclipse.org/downloads/index.php) and click the prominent _Download_ button there. Execute the installer and [follow this guide](60_Installing-With-Oomph) (includes pictures!).
+   This used to be rather hard, but thankfully people have seen that problem and started to do something about it. The result is the _Oomph Eclipse Installer_. The easiest way now is to go [to the Eclipse Downloads page](https://www.eclipse.org/downloads/index.php) and click the prominent _Download_ button there. Execute the installer and [follow this guide](40_20_10_Installing-With-Oomph) (includes pictures!).
 
 1. **Find a Git Repository to Work With**
 
