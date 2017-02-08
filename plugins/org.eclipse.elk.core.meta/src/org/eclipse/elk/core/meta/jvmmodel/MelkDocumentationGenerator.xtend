@@ -93,7 +93,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         }
         
         // We currently don't generate documentation unless the model is part of the ELK project
-        if (model.name.startsWith(ELK_BASE_PACKAGE)) {
+        if (!model.name.startsWith(ELK_BASE_PACKAGE)) {
             return
         }
         
