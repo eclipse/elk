@@ -49,6 +49,11 @@ import org.eclipse.xtext.xbase.compiler.JvmModelGenerator
  * @author dag
  */
 class MelkDocumentationGenerator extends JvmModelGenerator {
+    /** The directory relative to {@code outputPath} where images are stored. */
+    private static val IMAGES_OUTPUT_FOLDER = "images"
+    /** The base package all ELK classes are placed under. */
+    private static val ELK_BASE_PACKAGE = "org.eclipse.elk"
+    
     /** The {@code IFileSystemAccess} used to read additional documentation files stored within
      *  the eclipse project that contains the model. */
     private IFileSystemAccess fsa
@@ -56,8 +61,6 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
     private Path outputPath
     /** The directory containing additional documentation files. */
     private Path documentationFolder
-    /** The directory relative to {@code outputPath} where images are stored. */
-    private static val IMAGES_OUTPUT_FOLDER = "images"
     
     /**
      * The method {@code internalDoGenerate} is called for each {@link MdModel} derived from a *.melk file.
@@ -86,6 +89,11 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         
         // If the model has no name or no bundle section, nothing can be generated.
         if (model.name === null || model.bundle === null) {
+            return
+        }
+        
+        // We currently don't generate documentation unless the model is part of the ELK project
+        if (model.name.startsWith(ELK_BASE_PACKAGE)) {
             return
         }
         
