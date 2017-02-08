@@ -13,7 +13,6 @@ package org.eclipse.elk.core.ui.views;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
 import org.eclipse.elk.core.GraphIssue;
@@ -90,16 +89,15 @@ public class LayoutPropertySource implements IPropertySource {
      */
     public IPropertyDescriptor[] getPropertyDescriptors() {
         if (propertyDescriptors == null) {
-            List<LayoutOptionData> optionData = configManager.getSupportedOptions(layoutConfig);
+            Set<LayoutOptionData> optionData = configManager.getSupportedOptions(layoutConfig);
             
             // Filter the options hidden by visibility settings and option dependencies
             filterOptions(optionData);
             
             propertyDescriptors = new IPropertyDescriptor[optionData.size()];
-            ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
-            while (optionIter.hasNext()) {
-                LayoutOptionData data = optionIter.next();
-                propertyDescriptors[optionIter.previousIndex()] = createPropertyDescriptor(data);
+            Iterator<LayoutOptionData> optionIter = optionData.iterator();
+            for (int i = 0; i < propertyDescriptors.length; ++i) {
+                propertyDescriptors[i] = createPropertyDescriptor(optionIter.next());
             }
         }
         return propertyDescriptors;
@@ -122,11 +120,11 @@ public class LayoutPropertySource implements IPropertySource {
      * 
      * @param optionData a list of option meta data
      */
-    protected void filterOptions(final List<LayoutOptionData> optionData) {
+    protected void filterOptions(final Set<LayoutOptionData> optionData) {
         // the layout algorithm option always affects other options
         dependencyOptions.add(CoreOptions.ALGORITHM.getId());
         
-        ListIterator<LayoutOptionData> optionIter = optionData.listIterator();
+        Iterator<LayoutOptionData> optionIter = optionData.iterator();
         while (optionIter.hasNext()) {
             LayoutOptionData option = optionIter.next();
             boolean visible = option.getVisibility() != LayoutOptionData.Visibility.HIDDEN;

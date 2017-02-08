@@ -11,8 +11,7 @@
 package org.eclipse.elk.core.service;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.elk.core.IGraphLayoutEngine;
@@ -67,10 +66,10 @@ public class LayoutConfigurationManager {
      * @param config a layout configuration store associated to a graph element
      * @return a list of supported options
      */
-    public List<LayoutOptionData> getSupportedOptions(final ILayoutConfigurationStore config) {
+    public Set<LayoutOptionData> getSupportedOptions(final ILayoutConfigurationStore config) {
         LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
         
-        List<LayoutOptionData> optionData = new LinkedList<LayoutOptionData>();
+        Set<LayoutOptionData> optionData = new LinkedHashSet<LayoutOptionData>();
         Set<LayoutOptionData.Target> optionTargets = config.getOptionTargets();
         if (optionTargets.contains(LayoutOptionData.Target.PARENTS)) {
             LayoutAlgorithmData algoData = getAlgorithm(config);
