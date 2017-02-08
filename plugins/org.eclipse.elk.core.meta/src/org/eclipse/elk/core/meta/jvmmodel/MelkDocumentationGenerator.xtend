@@ -145,20 +145,30 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         **Identifier:** «algorithm.qualifiedName»
         **Meta Data Provider:** «algorithm.bundle.targetClass»
         
-        ### Description
-        
-        «algorithm.description.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")»
-        
         '''
+        
+        if (!algorithm.description.isNullOrEmpty) {
+            doc += '''
+            ### Description
+            
+            «algorithm.description.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")»
+            
+            '''
+        }
         
         // If the algorithm belongs to a category, get its description as well.
         if (algorithm.category !== null) {
             doc += '''
             ## Category: «algorithm.category.label ?: algorithm.category.name»
             
-            «algorithm.category.description.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")»
-            
             '''
+            
+            if (!algorithm.category.description.isNullOrEmpty) {
+                doc += '''
+                «algorithm.category.description.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")»
+                
+                '''
+            }
         }
     
         // table of supported graph features
