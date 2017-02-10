@@ -45,8 +45,10 @@ public interface IPropertyHolder {
     /**
      * Checks whether a value is configured for the given property. If not, the next call to
      * {@link #getProperty(IProperty)} will return the property's default value and set the
-     * value to the default value for this property holder. After that, all further calls to
-     * {@link #hasProperty(IProperty)} will return {@code true} for that property.
+     * property's value to the default value for this property holder, provided that the
+     * default value is not {@code null}. After that, the property value is set and thus
+     * all further calls to {@link #hasProperty(IProperty)} will return {@code true} for
+     * that property.
      * 
      * @param property the property.
      * @return {@code true} or {@code false} as a value is or is not set for the property. 
