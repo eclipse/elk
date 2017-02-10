@@ -42,9 +42,8 @@ There are two aspects of working with properties: accessing them (which is what 
 To set a property's value on a property holder, use this code:
 
 ```java
-KGraphElement graphElement = ...;
-KLayoutData layoutData = graphElement.getData(KLayoutData.class);
-layoutData.setProperty(CoreOptions.DEBUG_MODE, true);
+ElkGraphElement graphElement = ...;
+graphElement.setProperty(CoreOptions.DEBUG_MODE, true);
 ```
 
 Note that the available property objects used to set property values are 
@@ -55,14 +54,13 @@ Note that the available property objects used to set property values are
 To get hold of the properties of a graph element, use code such as this:
 
 ```java
-KGraphElement graphElement = ...;
-KLayoutData layoutData = graphElement.getData(KLayoutData.class);
+ElkGraphElement graphElement = ...;
 // Note that we do not use CoreOptions to access the property
 // (see below for why that is)
-boolean debugMode = layoutData.getProperty(MyAlgorithmOptions.DEBUG_MODE);
+boolean debugMode = graphElement.getProperty(MyAlgorithmOptions.DEBUG_MODE);
 ```
 
-Of course, since `IProperty` is a generic type, there is no explicit type casting involved here. Also, if the `MyAlgorithmOptions.DEBUG_MODE` property is not set on `layoutData`, the `getProperty(...)` method will simply return the property's default value, which in this case is `false`. Why is it `false`, though? Where does the default value come from?
+Of course, since `IProperty` is a generic type, there is no explicit type casting involved here. Also, if the `MyAlgorithmOptions.DEBUG_MODE` property is not set on `graphElement`, the `getProperty(...)` method will simply return the property's default value, which in this case is `false`. Why is it `false`, though? Where does the default value come from?
 
 When the `getProperty(...)` method determines that the property whose value it should retrieve is not actually configured, it asks the passed `IProperty` instance for the default value to be returned. This has an important consequence. Consider the following code:
 
