@@ -202,9 +202,7 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
                 expandNodes, aspectRatio);
 
         // adjust parent size
-        double width = padding.getLeft() + (float) parentSize.x + padding.getRight();
-        double height = padding.getTop() + (float) parentSize.y + padding.getBottom();
-        ElkUtil.resizeNode(parentNode, width, height, false, true);
+        ElkUtil.resizeNode(parentNode, parentSize.x, parentSize.y, false, true);
     }
 
     /**
@@ -383,14 +381,8 @@ public class BoxLayoutProvider extends AbstractLayoutProvider {
         KVector parentSize = placeInnerBoxes(finalGroup, objSpacing, padding, minWidth, minHeight,
                 expandNodes, aspectRatio);
 
-        // account for border spacing
-        finalGroup.translate(padding.getLeft(), padding.getTop());
-        parentSize.add(padding.getHorizontal(), padding.getVertical());
-        
         // adjust parent size
-        double width = padding.getLeft() + parentSize.x + padding.getRight();
-        double height = padding.getTop() + parentSize.y + padding.getBottom();
-        ElkUtil.resizeNode(parentNode, width, height, false, true);
+        ElkUtil.resizeNode(parentNode, parentSize.x, parentSize.y, false, true);
     }
     
     /**
