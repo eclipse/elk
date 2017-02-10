@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+ * Copyright (c) 2009, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,17 @@ public interface IPropertyHolder {
      * @return the current value, or the default value if the property is not set
      */
     <T> T getProperty(IProperty<T> property);
+    
+    /**
+     * Checks whether a value is configured for the given property. If not, the next call to
+     * {@link #getProperty(IProperty)} will return the property's default value and set the
+     * value to the default value for this property holder. After that, all further calls to
+     * {@link #hasProperty(IProperty)} will return {@code true} for that property.
+     * 
+     * @param property the property.
+     * @return {@code true} or {@code false} as a value is or is not set for the property. 
+     */
+    boolean hasProperty(IProperty<?> property);
     
     /**
      * Copy all properties from another property holder to this one.

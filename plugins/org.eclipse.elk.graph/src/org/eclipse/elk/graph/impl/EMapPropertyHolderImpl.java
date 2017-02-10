@@ -126,6 +126,15 @@ public abstract class EMapPropertyHolderImpl extends MinimalEObjectImpl.Containe
      * <!-- end-user-doc -->
      * @generated NOT
      */
+    public boolean hasProperty(IProperty<?> property) {
+        return getProperties().containsKey(property);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
     public IPropertyHolder copyProperties(IPropertyHolder source) {
         if (source == null) {
             return this;

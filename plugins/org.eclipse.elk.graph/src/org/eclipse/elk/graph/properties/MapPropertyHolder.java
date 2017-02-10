@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+ * Copyright (c) 2009, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public <T> MapPropertyHolder setProperty(final IProperty<? super T> property, final T value) {
         if (propertyMap == null) {
             propertyMap = new HashMap<IProperty<?>, Object>();
@@ -49,6 +50,7 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public <T> T getProperty(final IProperty<T> property) {
         if (propertyMap != null) {
             @SuppressWarnings("unchecked")
@@ -73,6 +75,15 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public boolean hasProperty(final IProperty<?> property) {
+        return propertyMap != null && propertyMap.containsKey(property);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public MapPropertyHolder copyProperties(final IPropertyHolder other) {
         if (other == null) {
             return this;
@@ -93,6 +104,7 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<IProperty<?>, Object> getAllProperties() {
         if (propertyMap == null) {
             return Collections.emptyMap();

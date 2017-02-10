@@ -850,6 +850,12 @@ public class ElkGraphPackageImpl extends EPackageImpl implements ElkGraphPackage
         g1 = createEGenericType(t1);
         initEOperation(op, g1);
 
+        op = addEOperation(iPropertyHolderEClass, ecorePackage.getEBoolean(), "hasProperty", 0, 1, IS_UNIQUE, IS_ORDERED);
+        g1 = createEGenericType(this.getIProperty());
+        g2 = createEGenericType();
+        g1.getETypeArguments().add(g2);
+        addEParameter(op, g1, "property", 0, 1, IS_UNIQUE, IS_ORDERED);
+
         op = addEOperation(iPropertyHolderEClass, this.getIPropertyHolder(), "copyProperties", 0, 1, IS_UNIQUE, IS_ORDERED);
         addEParameter(op, this.getIPropertyHolder(), "source", 0, 1, IS_UNIQUE, IS_ORDERED);
 
