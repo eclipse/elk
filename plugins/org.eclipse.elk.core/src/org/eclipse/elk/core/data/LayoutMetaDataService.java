@@ -168,30 +168,35 @@ public class LayoutMetaDataService {
     }
 
     /**
-     * Returns the layout algorithm data associated with the given ID with a fallback to the algorithm with the given
-     * default ID. If neither of which are found, returns the first layout algorithm data in the list of registered
-     * layout algorithms. If no layout algorithms are registered, {@code null} is returned.
+     * Returns the layout algorithm data associated with the given suffix. If none is found, the algorithm with the
+     * given default suffix is returned. If that is not found either, returns {@code null}.
      * 
      * @param algorithmId
      *            layout algorithm identifier.
      * @param defaultId
-     *            fallback layout algorithm identifier.
-     * @return the layout algorithm data or {@code null} if no layout algorithm at all is registered.
+     *            fallback layout algorithm identifier. May be {@code null}.
+     * @return the layout algorithm data or {@code null} if neither the requested nor the default layout algorithm
+     *         are present.
      */
-    public final LayoutAlgorithmData getAlgorithmDataOrDefault(final String algorithmId, final String defaultId) {
-        // If the algorithm ID is empty, use a default layout algorithm
-        final String finalDefaultId = defaultId == null ? "" : defaultId;
-        final String finalAlgorithmId = algorithmId == null || algorithmId.isEmpty() ? finalDefaultId : algorithmId;
-
-        LayoutAlgorithmData result = getAlgorithmData(finalAlgorithmId);
-        if (result != null) {
-            return result;
+    public final LayoutAlgorithmData getAlgorithmDataBySuffixOrDefault(final String algorithmId,
+            final String defaultId) {
+        
+        // First, look for the requested algorithm
+        if (algorithmId != null && !algorithmId.trim().isEmpty()) {
+            LayoutAlgorithmData algorithmIdData = getAlgorithmDataBySuffix(algorithmId);
+            
+            if (algorithmIdData != null) {
+                return algorithmIdData;
+            }
         }
-
-        // We haven't found any algorithm yet, so simply return the first one in the list
-        Collection<LayoutAlgorithmData> allAlgorithmData = getAlgorithmData();
-        if (!allAlgorithmData.isEmpty()) {
-            return allAlgorithmData.iterator().next();
+        
+        // We haven't found the requested algorithm, so look for the requested default algorithm, if any
+        if (defaultId != null && !defaultId.trim().isEmpty()) {
+            LayoutAlgorithmData defaultIdData = getAlgorithmDataBySuffix(defaultId);
+            
+            if (defaultIdData != null) {
+                return defaultIdData;
+            }
         }
 
         // Right, at this point we simply give up

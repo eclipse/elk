@@ -208,7 +208,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      */
     protected LayoutAlgorithmData getAlgorithm(final ElkNode layoutNode) {
         String algorithmId = layoutNode.getProperty(CoreOptions.ALGORITHM);
-        LayoutAlgorithmData result = LayoutMetaDataService.getInstance().getAlgorithmDataOrDefault(
+        LayoutAlgorithmData result = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffixOrDefault(
                 algorithmId, getDefaultLayoutAlgorithmID());
         
         if (result == null) {

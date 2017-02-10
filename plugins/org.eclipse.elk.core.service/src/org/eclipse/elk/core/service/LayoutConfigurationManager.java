@@ -55,7 +55,7 @@ public class LayoutConfigurationManager {
      * @return a layout algorithm, or {@code null} if none was found for the given configuration
      */
     public LayoutAlgorithmData getAlgorithm(final ILayoutConfigurationStore config) {
-        return LayoutMetaDataService.getInstance().getAlgorithmDataOrDefault(
+        return LayoutMetaDataService.getInstance().getAlgorithmDataBySuffixOrDefault(
                 (String) getRawOptionValue(CoreOptions.ALGORITHM, config),
                 graphLayoutEngine.getDefaultLayoutAlgorithmID());
     }
@@ -101,7 +101,7 @@ public class LayoutConfigurationManager {
     public Object getOptionValue(final LayoutOptionData optionData, final ILayoutConfigurationStore config) {
         Object result = getRawOptionValue(optionData, config);
         if (optionData.equals(CoreOptions.ALGORITHM)) {
-            LayoutAlgorithmData algoData = LayoutMetaDataService.getInstance().getAlgorithmDataOrDefault(
+            LayoutAlgorithmData algoData = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffixOrDefault(
                     (String) result, graphLayoutEngine.getDefaultLayoutAlgorithmID());
             if (algoData != null) {
                 return algoData.getId();
