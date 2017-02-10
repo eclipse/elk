@@ -2,7 +2,7 @@
  * Syntax highlighting styles
  */
 .highlight {
-    background: #eee;
+    background: #f7f7f7;
 
     .c { color: #999988; font-style: italic } /* Comment */
     .err { color: #a61717; background-color: #e3d2d2 } /* Error */
@@ -71,4 +71,7 @@
 .highlighter-rouge {
     background: #eee;
     margin: 3px;
+}
+pre.highlight {
+    padding: 16px;
 }
