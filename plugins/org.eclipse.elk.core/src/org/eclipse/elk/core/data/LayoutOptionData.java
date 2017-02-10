@@ -421,12 +421,32 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
         }
         return choices;
     }
+    
+    /**
+     * Returns the number of items in the enumeration class. Calling this method is only meaningful if the option type
+     * is either {@link Type#ENUM} or {@link Type#ENUMSET}.
+     * 
+     * @return the number of enumeration constants or 0 if the option type is not enumeration related.
+     */
+    public int getEnumValueCount() {
+        switch (type) {
+        case ENUM:
+        case ENUMSET:
+            checkEnumClass();
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            int count = ((Class<? extends Enum>) clazz).getEnumConstants().length;
+            return count;
+        default:
+            return 0;
+        }
+    }
 
     /**
-     * Returns the enumeration value for a given index.
+     * Returns the enumeration value for a given index. Calling this method is only meaningful if the option type
+     * is either {@link Type#ENUM} or {@link Type#ENUMSET}.
      * 
      * @param intValue zero-based index of the enumeration value
-     * @return the corresponding enumeration value
+     * @return the corresponding enumeration value, or {@code null} if the option type is not enumeration related.
      */
     public Enum<?> getEnumValue(final int intValue) {
         switch (type) {

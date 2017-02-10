@@ -20,6 +20,7 @@ import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.elk.core.ui.Messages;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellEditorValidator;
@@ -122,14 +123,45 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
             return floatEditor;
         case BOOLEAN:
         case ENUM:
-            return new ComboBoxCellEditor(parent, optionData.getChoices(), SWT.READ_ONLY);
+            return new ComboBoxCellEditor(parent, getEnumerationChoices(optionData), SWT.READ_ONLY);
         case ENUMSET:
-            return new MultipleOptionsCellEditor(parent, optionData.getChoices());
+            return new MultipleOptionsCellEditor(parent, getEnumerationChoices(optionData), true);
         case OBJECT:
             return new TextCellEditor(parent);
         default:
             return null;
         }
+    }
+    
+    /**
+     * Returns a string array representing the enumeration choices of the given layout option. The choices are
+     * decorated with suffixes if they are advanced, experimental, or both.
+     * 
+     * @param data the layout option to generate choices for.
+     * @return array of decorated choices.
+     */
+    private String[] getEnumerationChoices(final LayoutOptionData data) {
+        String[] choices = new String[data.getEnumValueCount()];
+        
+        for (int i = 0; i < choices.length; i++) {
+            Enum<?> value = data.getEnumValue(i);
+            
+            // Check if the value is advanced or experimental
+            boolean isAdvanced = ElkGraphUtil.isAdvancedPropertyValue(value);
+            boolean isExperimental = ElkGraphUtil.isExperimentalPropertyValue(value);
+            
+            if (isAdvanced && isExperimental) {
+                choices[i] = value.toString() + " (advanced and experimental)";
+            } else if (isAdvanced) {
+                choices[i] = value.toString() + " (advanced)";
+            } else if (isExperimental) {
+                choices[i] = value.toString() + " (experimental)";
+            } else {
+                choices[i] = value.toString();
+            }
+        }
+        
+        return choices;
     }
 
     /**

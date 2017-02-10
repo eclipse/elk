@@ -30,6 +30,13 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
      * The items contained in the enumeration. Used to populate the selection dialog.
      */
     private String[] items;
+    /**
+     * If this is true, the items have been created for an enumeration set. This means that each item is of the
+     * following form: {@code EnumConstantName [" " Decorator]}. The optional decorator describes if the enum
+     * constant is advanced or experimental and needs to be stripped away, if present, before returning the
+     * chosen option values.
+     */
+    private boolean decoratedItemValues;
     
     
     /**
@@ -37,11 +44,13 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
      * 
      * @param parent the parent composite
      * @param items array of items to select from.
+     * @param enumerationSet {@code true} if this editor is created for editing the value of an enumeration set.
      */
-    public MultipleOptionsCellEditor(final Composite parent, final String[] items) {
+    public MultipleOptionsCellEditor(final Composite parent, final String[] items, final boolean enumerationSet) {
         super(parent);
         
         this.items = items;
+        decoratedItemValues = enumerationSet;
     }
     
     /**
@@ -102,19 +111,51 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
                 new ArrayContentProvider(),
                 new LabelProvider(),
                 null);
-        dialog.setInitialSelections((String[]) getValue());
+        dialog.setInitialSelections(matchSelectionToItems((String[]) getValue()));
         
         if (dialog.open() == Window.OK) {
             Object[] result = dialog.getResult();
             String[] stringResult = new String[result.length];
             
             for (int i = 0; i < result.length; i++) {
-                stringResult[i] = (String) result[i];
+                stringResult[i] = stripDecorator((String) result[i]);
             }
             
             return stringResult;
         } else {
             return new String[0];
+        }
+    }
+    
+    private String stripDecorator(final String text) {
+        if (decoratedItemValues) {
+            int spaceIndex = text.indexOf(' ');
+            
+            if (spaceIndex != -1) {
+                return text.substring(0, spaceIndex);
+            }
+        }
+        
+        return text;
+    }
+    
+    private String[] matchSelectionToItems(final String[] selection) {
+        if (decoratedItemValues) {
+            String[] selectedItems = new String[selection.length];
+            
+            for (int i = 0; i < selectedItems.length; i++) {
+                // Find the item that starts with the given selection thingy
+                for (String candidate : items) {
+                    if (candidate.startsWith(selection[i])) {
+                        selectedItems[i] = candidate;
+                        break;
+                    }
+                }
+            }
+            
+            return selectedItems;
+        } else {
+            return selection;
         }
     }
 
