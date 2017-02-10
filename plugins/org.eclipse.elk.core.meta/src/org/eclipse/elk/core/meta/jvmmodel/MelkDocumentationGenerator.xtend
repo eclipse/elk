@@ -306,7 +306,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         «if (!option.legacyIds.empty) "**Legacy Id:** | " + option.legacyIds.join(", ")»
         «if (!option.dependencies.empty) "**Dependencies:** | " + option.dependencies.map["[" + it.target.qualifiedName
                                                   + "](" + it.target.qualifiedName.replace('.', '-') + ")"].join(", ")»
-        «if (!option.groups.empty) "**Containing Groups:** | " + option.groups.map["[" + it.name+ "](" + 
+        «if (!option.groups.empty) "**Containing Group:** | " + option.groups.map["[" + it.name+ "](" + 
                                                                 it.qualifiedName.replace('.', '-') + ")"].join(" -> ")»
         «if (option.description !== null) "\n### Description\n\n" + 
                             option.description.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")»
@@ -327,14 +327,20 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      *      the Markdown String
      */
     private def dispatch String generateDoc(MdGroup group) {
+        val title = new StringBuffer(group.groups.map[it.name].join("."));
+        if (title.length == 0) {
+            title.append(group.name);
+        } else {
+            title.append(".").append(group.name);
+        }
         
         var doc = '''
         ---
         layout: page
-        title: «group.name»
+        title: «title.toString()»
         type: group
         ---
-        ## «group.name»
+        ## «title.toString()»
         
         **Identifier:** «group.qualifiedName»
         «if (!group.children.filter(MdOption).empty) "\n### Options:\n\n" + group.children.filter(MdOption).map[
