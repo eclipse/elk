@@ -12,7 +12,7 @@ type: option
 **Possible Values:** | `COMPUTE_PADDING`<br>`DEFAULT_MINIMUM_SIZE`<br>`MINIMUM_SIZE_ACCOUNTS_FOR_PADDING`
 **Default Value:** | `EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE)` (as defined in org.eclipse.elk)
 **Applies To:** | nodes
-**Containing Groups:** | [nodeSize](org-eclipse-elk-nodeSize)
+**Containing Group:** | [nodeSize](org-eclipse-elk-nodeSize)
 
 ### Description
 

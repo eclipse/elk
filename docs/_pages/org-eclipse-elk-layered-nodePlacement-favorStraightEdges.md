@@ -11,7 +11,7 @@ type: option
 **Value Type:** | `boolean`
 **Applies To:** | parents
 **Dependencies:** | [org.eclipse.elk.layered.nodePlacement.strategy](org-eclipse-elk-layered-nodePlacement-strategy)
-**Containing Groups:** | [nodePlacement](org-eclipse-elk-layered-nodePlacement)
+**Containing Group:** | [nodePlacement](org-eclipse-elk-layered-nodePlacement)
 
 ### Description
 

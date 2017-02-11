@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `double`
 **Default Value:** | `10` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
-**Containing Groups:** | [wrapping](org-eclipse-elk-layered-wrapping)
+**Containing Group:** | [wrapping](org-eclipse-elk-layered-wrapping)
 
 ### Description
 

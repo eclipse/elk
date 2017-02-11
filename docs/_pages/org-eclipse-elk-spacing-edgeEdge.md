@@ -12,7 +12,7 @@ type: option
 **Default Value:** | `10` (as defined in org.eclipse.elk)
 **Lower Bound:** | `0.0`
 **Applies To:** | parents
-**Containing Groups:** | [spacing](org-eclipse-elk-spacing)
+**Containing Group:** | [spacing](org-eclipse-elk-spacing)
 
 ### Description
 

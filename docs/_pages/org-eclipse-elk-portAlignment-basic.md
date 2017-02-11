@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `PortAlignment.JUSTIFIED` (as defined in org.eclipse.elk)
 **Applies To:** | nodes
 **Legacy Id:** | de.cau.cs.kieler.portAlignment
-**Containing Groups:** | [portAlignment](org-eclipse-elk-portAlignment)
+**Containing Group:** | [portAlignment](org-eclipse-elk-portAlignment)
 
 ### Description
 

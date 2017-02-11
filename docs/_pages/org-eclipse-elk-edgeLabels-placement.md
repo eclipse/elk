@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `EdgeLabelPlacement.UNDEFINED` (as defined in org.eclipse.elk)
 **Applies To:** | labels
 **Legacy Id:** | de.cau.cs.kieler.edgeLabelPlacement
-**Containing Groups:** | [edgeLabels](org-eclipse-elk-edgeLabels)
+**Containing Group:** | [edgeLabels](org-eclipse-elk-edgeLabels)
 
 ### Description
 

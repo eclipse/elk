@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `int`
 **Applies To:** | ports
 **Legacy Id:** | de.cau.cs.kieler.portIndex
-**Containing Groups:** | [port](org-eclipse-elk-port)
+**Containing Group:** | [port](org-eclipse-elk-port)
 
 ### Description
 

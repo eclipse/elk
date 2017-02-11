@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `1` (as defined in org.eclipse.elk)
 **Applies To:** | edges
 **Legacy Id:** | de.cau.cs.kieler.thickness
-**Containing Groups:** | [edge](org-eclipse-elk-edge)
+**Containing Group:** | [edge](org-eclipse-elk-edge)
 
 ### Description
 

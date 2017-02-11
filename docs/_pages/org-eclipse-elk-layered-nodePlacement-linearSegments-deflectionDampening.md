@@ -15,7 +15,7 @@ type: option
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening
 **Dependencies:** | [org.eclipse.elk.layered.nodePlacement.strategy](org-eclipse-elk-layered-nodePlacement-strategy)
-**Containing Groups:** | [nodePlacement](org-eclipse-elk-layered-nodePlacement) -> [linearSegments](org-eclipse-elk-layered-nodePlacement-linearSegments)
+**Containing Group:** | [nodePlacement](org-eclipse-elk-layered-nodePlacement) -> [linearSegments](org-eclipse-elk-layered-nodePlacement-linearSegments)
 
 ### Description
 

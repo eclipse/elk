@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `40` (as defined in org.eclipse.elk.layered)
 **Lower Bound:** | `0`
 **Applies To:** | parents
-**Containing Groups:** | [crossingMinimization](org-eclipse-elk-layered-crossingMinimization) -> [greedySwitch](org-eclipse-elk-layered-crossingMinimization-greedySwitch)
+**Containing Group:** | [crossingMinimization](org-eclipse-elk-layered-crossingMinimization) -> [greedySwitch](org-eclipse-elk-layered-crossingMinimization-greedySwitch)
 
 ### Description
 

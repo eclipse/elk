@@ -15,7 +15,7 @@ type: option
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor
 **Dependencies:** | [org.eclipse.elk.layered.layering.strategy](org-eclipse-elk-layered-layering-strategy)
-**Containing Groups:** | [layering](org-eclipse-elk-layered-layering) -> [minWidth](org-eclipse-elk-layered-layering-minWidth)
+**Containing Group:** | [layering](org-eclipse-elk-layered-layering) -> [minWidth](org-eclipse-elk-layered-layering-minWidth)
 
 ### Description
 

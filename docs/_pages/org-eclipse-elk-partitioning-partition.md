@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `java.lang.Integer`
 **Applies To:** | parents, nodes
 **Legacy Id:** | de.cau.cs.kieler.partition
-**Containing Groups:** | [partitioning](org-eclipse-elk-partitioning)
+**Containing Group:** | [partitioning](org-eclipse-elk-partitioning)
 
 ### Description
 

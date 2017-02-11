@@ -15,7 +15,7 @@ type: option
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.nodePromotionBoundary
 **Dependencies:** | [org.eclipse.elk.layered.layering.nodePromotion.strategy](org-eclipse-elk-layered-layering-nodePromotion-strategy)
-**Containing Groups:** | [layering](org-eclipse-elk-layered-layering) -> [nodePromotion](org-eclipse-elk-layered-layering-nodePromotion)
+**Containing Group:** | [layering](org-eclipse-elk-layered-layering) -> [nodePromotion](org-eclipse-elk-layered-layering-nodePromotion)
 
 ### Description
 

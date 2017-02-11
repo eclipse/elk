@@ -11,7 +11,7 @@ type: option
 **Meta Data Provider:** | core.options.CoreOptions
 **Value Type:** | `org.eclipse.elk.core.util.IndividualSpacings`
 **Applies To:** | nodes, edges, ports, labels
-**Containing Groups:** | [spacing](org-eclipse-elk-spacing)
+**Containing Group:** | [spacing](org-eclipse-elk-spacing)
 
 ### Description
 

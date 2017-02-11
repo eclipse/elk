@@ -12,7 +12,7 @@ type: option
 **Possible Values:** | `GROUP_DEC`<br>`GROUP_INC`<br>`GROUP_MIXED`<br>`SIMPLE`
 **Default Value:** | `BoxLayoutProvider.PackingMode.SIMPLE` (as defined in org.eclipse.elk)
 **Applies To:** | parents
-**Containing Groups:** | [box](org-eclipse-elk-box)
+**Containing Group:** | [box](org-eclipse-elk-box)
 
 ### Description
 

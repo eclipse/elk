@@ -13,7 +13,7 @@ type: option
 **Lower Bound:** | `0.0`
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.labelSpacing
-**Containing Groups:** | [spacing](org-eclipse-elk-spacing)
+**Containing Group:** | [spacing](org-eclipse-elk-spacing)
 
 ### Description
 

@@ -14,4 +14,4 @@ type: option
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement
 **Dependencies:** | [org.eclipse.elk.edgeRouting](org-eclipse-elk-edgeRouting)
-**Containing Groups:** | [edgeRouting](org-eclipse-elk-layered-edgeRouting)
+**Containing Group:** | [edgeRouting](org-eclipse-elk-layered-edgeRouting)

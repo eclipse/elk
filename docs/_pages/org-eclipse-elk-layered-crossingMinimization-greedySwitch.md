@@ -1,9 +1,9 @@
 ---
 layout: page
-title: greedySwitch
+title: crossingMinimization.greedySwitch
 type: group
 ---
-## greedySwitch
+## crossingMinimization.greedySwitch
 
 **Identifier:** org.eclipse.elk.layered.crossingMinimization.greedySwitch
 

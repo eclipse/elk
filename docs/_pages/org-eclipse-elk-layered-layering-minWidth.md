@@ -1,9 +1,9 @@
 ---
 layout: page
-title: minWidth
+title: layering.minWidth
 type: group
 ---
-## minWidth
+## layering.minWidth
 
 **Identifier:** org.eclipse.elk.layered.layering.minWidth
 

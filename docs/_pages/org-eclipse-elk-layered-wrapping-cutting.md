@@ -1,9 +1,9 @@
 ---
 layout: page
-title: cutting
+title: wrapping.cutting
 type: group
 ---
-## cutting
+## wrapping.cutting
 
 **Identifier:** org.eclipse.elk.layered.wrapping.cutting
 

@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `NodeLabelPlacement.fixed()` (as defined in org.eclipse.elk)
 **Applies To:** | nodes, labels
 **Legacy Id:** | de.cau.cs.kieler.nodeLabelPlacement
-**Containing Groups:** | [nodeLabels](org-eclipse-elk-nodeLabels)
+**Containing Group:** | [nodeLabels](org-eclipse-elk-nodeLabels)
 
 ### Description
 

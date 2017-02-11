@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `CycleBreakingStrategy.GREEDY` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.cycleBreaking
-**Containing Groups:** | [cycleBreaking](org-eclipse-elk-layered-cycleBreaking)
+**Containing Group:** | [cycleBreaking](org-eclipse-elk-layered-cycleBreaking)
 
 ### Description
 

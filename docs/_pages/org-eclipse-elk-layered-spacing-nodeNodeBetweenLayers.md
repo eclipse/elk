@@ -12,7 +12,7 @@ type: option
 **Default Value:** | `20` (as defined in org.eclipse.elk.layered)
 **Lower Bound:** | `0.0`
 **Applies To:** | parents
-**Containing Groups:** | [spacing](org-eclipse-elk-layered-spacing)
+**Containing Group:** | [spacing](org-eclipse-elk-layered-spacing)
 
 ### Description
 

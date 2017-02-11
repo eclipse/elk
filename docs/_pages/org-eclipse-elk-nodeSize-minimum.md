@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `org.eclipse.elk.core.math.KVector`
 **Default Value:** | `new KVector(0, 0)` (as defined in org.eclipse.elk)
 **Applies To:** | nodes
-**Containing Groups:** | [nodeSize](org-eclipse-elk-nodeSize)
+**Containing Group:** | [nodeSize](org-eclipse-elk-nodeSize)
 
 ### Description
 

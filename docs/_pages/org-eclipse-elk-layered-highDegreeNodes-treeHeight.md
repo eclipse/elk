@@ -15,7 +15,7 @@ type: option
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight
 **Dependencies:** | [org.eclipse.elk.layered.highDegreeNodes.treatment](org-eclipse-elk-layered-highDegreeNodes-treatment)
-**Containing Groups:** | [highDegreeNodes](org-eclipse-elk-layered-highDegreeNodes)
+**Containing Group:** | [highDegreeNodes](org-eclipse-elk-layered-highDegreeNodes)
 
 ### Description
 

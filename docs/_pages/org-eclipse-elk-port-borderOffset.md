@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `double`
 **Applies To:** | ports
 **Legacy Id:** | de.cau.cs.kieler.offset
-**Containing Groups:** | [port](org-eclipse-elk-port)
+**Containing Group:** | [port](org-eclipse-elk-port)
 
 ### Description
 

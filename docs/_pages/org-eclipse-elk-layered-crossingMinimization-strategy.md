@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `CrossingMinimizationStrategy.LAYER_SWEEP` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.crossMin
-**Containing Groups:** | [crossingMinimization](org-eclipse-elk-layered-crossingMinimization)
+**Containing Group:** | [crossingMinimization](org-eclipse-elk-layered-crossingMinimization)
 
 ### Description
 

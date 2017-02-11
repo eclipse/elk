@@ -1,9 +1,9 @@
 ---
 layout: page
-title: linearSegments
+title: nodePlacement.linearSegments
 type: group
 ---
-## linearSegments
+## nodePlacement.linearSegments
 
 **Identifier:** org.eclipse.elk.layered.nodePlacement.linearSegments
 

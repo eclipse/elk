@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `false` (as defined in org.eclipse.elk)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.layoutPartitions
-**Containing Groups:** | [partitioning](org-eclipse-elk-partitioning)
+**Containing Group:** | [partitioning](org-eclipse-elk-partitioning)
 
 ### Description
 

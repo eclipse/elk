@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `Integer.MAX_VALUE` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Dependencies:** | [org.eclipse.elk.layered.layering.strategy](org-eclipse-elk-layered-layering-strategy)
-**Containing Groups:** | [layering](org-eclipse-elk-layered-layering) -> [coffmanGraham](org-eclipse-elk-layered-layering-coffmanGraham)
+**Containing Group:** | [layering](org-eclipse-elk-layered-layering) -> [coffmanGraham](org-eclipse-elk-layered-layering-coffmanGraham)
 
 ### Description
 

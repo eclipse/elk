@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `0` (as defined in org.eclipse.elk.layered)
 **Lower Bound:** | `0`
 **Applies To:** | edges
-**Containing Groups:** | [priority](org-eclipse-elk-layered-priority)
+**Containing Group:** | [priority](org-eclipse-elk-layered-priority)
 
 ### Description
 

@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `ConstraintCalculationStrategy.SCANLINE` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.postCompaction.constraints
-**Containing Groups:** | [compaction](org-eclipse-elk-layered-compaction) -> [postCompaction](org-eclipse-elk-layered-compaction-postCompaction)
+**Containing Group:** | [compaction](org-eclipse-elk-layered-compaction) -> [postCompaction](org-eclipse-elk-layered-compaction-postCompaction)
 
 ### Description
 

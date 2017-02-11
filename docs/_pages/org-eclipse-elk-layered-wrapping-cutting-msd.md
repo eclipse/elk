@@ -1,9 +1,9 @@
 ---
 layout: page
-title: msd
+title: wrapping.cutting.msd
 type: group
 ---
-## msd
+## wrapping.cutting.msd
 
 **Identifier:** org.eclipse.elk.layered.wrapping.cutting.msd
 

@@ -1,9 +1,9 @@
 ---
 layout: page
-title: nodePromotion
+title: layering.nodePromotion
 type: group
 ---
-## nodePromotion
+## layering.nodePromotion
 
 **Identifier:** org.eclipse.elk.layered.layering.nodePromotion
 

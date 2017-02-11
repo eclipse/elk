@@ -13,7 +13,7 @@ type: option
 **Possible Values:** | `GENERAL`<br>`OFF`<br>`PATH_LIKE`
 **Default Value:** | `WrappingStrategy.OFF` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
-**Containing Groups:** | [wrapping](org-eclipse-elk-layered-wrapping)
+**Containing Group:** | [wrapping](org-eclipse-elk-layered-wrapping)
 
 ### Description
 

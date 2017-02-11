@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `ValidifyStrategy.GREEDY` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Dependencies:** | [org.eclipse.elk.layered.wrapping.strategy](org-eclipse-elk-layered-wrapping-strategy)
-**Containing Groups:** | [wrapping](org-eclipse-elk-layered-wrapping) -> [pathLike](org-eclipse-elk-layered-wrapping-pathLike) -> [validify](org-eclipse-elk-layered-wrapping-pathLike-validify)
+**Containing Group:** | [wrapping](org-eclipse-elk-layered-wrapping) -> [pathLike](org-eclipse-elk-layered-wrapping-pathLike) -> [validify](org-eclipse-elk-layered-wrapping-pathLike-validify)
 
 ### Description
 

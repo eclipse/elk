@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `GraphCompactionStrategy.NONE` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.postCompaction
-**Containing Groups:** | [compaction](org-eclipse-elk-layered-compaction) -> [postCompaction](org-eclipse-elk-layered-compaction-postCompaction)
+**Containing Group:** | [compaction](org-eclipse-elk-layered-compaction) -> [postCompaction](org-eclipse-elk-layered-compaction-postCompaction)
 
 ### Description
 

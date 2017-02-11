@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `GreedySwitchType.TWO_SIDED` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.greedySwitch
-**Containing Groups:** | [crossingMinimization](org-eclipse-elk-layered-crossingMinimization) -> [greedySwitch](org-eclipse-elk-layered-crossingMinimization-greedySwitch)
+**Containing Group:** | [crossingMinimization](org-eclipse-elk-layered-crossingMinimization) -> [greedySwitch](org-eclipse-elk-layered-crossingMinimization-greedySwitch)
 
 ### Description
 

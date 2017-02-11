@@ -1,9 +1,9 @@
 ---
 layout: page
-title: pathLike
+title: wrapping.pathLike
 type: group
 ---
-## pathLike
+## wrapping.pathLike
 
 **Identifier:** org.eclipse.elk.layered.wrapping.pathLike
 

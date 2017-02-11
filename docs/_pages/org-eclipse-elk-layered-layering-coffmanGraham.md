@@ -1,9 +1,9 @@
 ---
 layout: page
-title: coffmanGraham
+title: layering.coffmanGraham
 type: group
 ---
-## coffmanGraham
+## layering.coffmanGraham
 
 **Identifier:** org.eclipse.elk.layered.layering.coffmanGraham
 

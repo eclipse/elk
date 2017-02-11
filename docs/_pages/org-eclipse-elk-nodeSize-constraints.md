@@ -12,7 +12,7 @@ type: option
 **Possible Values:** | `MINIMUM_SIZE`<br>`NODE_LABELS`<br>`PORTS`<br>`PORT_LABELS`
 **Default Value:** | `EnumSet.noneOf(SizeConstraint)` (as defined in org.eclipse.elk)
 **Applies To:** | nodes
-**Containing Groups:** | [nodeSize](org-eclipse-elk-nodeSize)
+**Containing Group:** | [nodeSize](org-eclipse-elk-nodeSize)
 
 ### Description
 

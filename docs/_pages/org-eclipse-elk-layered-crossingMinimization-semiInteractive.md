@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `boolean`
 **Default Value:** | `false` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
-**Containing Groups:** | [crossingMinimization](org-eclipse-elk-layered-crossingMinimization)
+**Containing Group:** | [crossingMinimization](org-eclipse-elk-layered-crossingMinimization)
 
 ### Description
 

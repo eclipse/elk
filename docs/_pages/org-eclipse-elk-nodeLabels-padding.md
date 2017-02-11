@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `new ElkPadding()` (as defined in org.eclipse.elk)
 **Applies To:** | nodes
 **Legacy Id:** | de.cau.cs.kieler.nodeLabelInset
-**Containing Groups:** | [nodeLabels](org-eclipse-elk-nodeLabels)
+**Containing Group:** | [nodeLabels](org-eclipse-elk-nodeLabels)
 
 ### Description
 

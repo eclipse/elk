@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `LayeringStrategy.NETWORK_SIMPLEX` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.nodeLayering
-**Containing Groups:** | [layering](org-eclipse-elk-layered-layering)
+**Containing Group:** | [layering](org-eclipse-elk-layered-layering)
 
 ### Description
 

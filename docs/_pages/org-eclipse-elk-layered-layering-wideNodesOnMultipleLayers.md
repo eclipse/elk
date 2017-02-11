@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `WideNodesStrategy.OFF` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.wideNodesOnMultipleLayers
-**Containing Groups:** | [layering](org-eclipse-elk-layered-layering)
+**Containing Group:** | [layering](org-eclipse-elk-layered-layering)
 
 ### Description
 

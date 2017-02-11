@@ -1,9 +1,9 @@
 ---
 layout: page
-title: postCompaction
+title: compaction.postCompaction
 type: group
 ---
-## postCompaction
+## compaction.postCompaction
 
 **Identifier:** org.eclipse.elk.layered.compaction.postCompaction
 

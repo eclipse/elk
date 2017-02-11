@@ -14,7 +14,7 @@ type: option
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.components.compact
 **Dependencies:** | [org.eclipse.elk.separateConnectedComponents](org-eclipse-elk-separateConnectedComponents)
-**Containing Groups:** | [compaction](org-eclipse-elk-layered-compaction)
+**Containing Group:** | [compaction](org-eclipse-elk-layered-compaction)
 
 ### Description
 

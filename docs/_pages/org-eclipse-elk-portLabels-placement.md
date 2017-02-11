@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `PortLabelPlacement.OUTSIDE` (as defined in org.eclipse.elk)
 **Applies To:** | nodes
 **Legacy Id:** | de.cau.cs.kieler.portLabelPlacement
-**Containing Groups:** | [portLabels](org-eclipse-elk-portLabels)
+**Containing Group:** | [portLabels](org-eclipse-elk-portLabels)
 
 ### Description
 

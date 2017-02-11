@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `EdgeType.NONE` (as defined in org.eclipse.elk)
 **Applies To:** | edges
 **Legacy Id:** | de.cau.cs.kieler.edgeType
-**Containing Groups:** | [edge](org-eclipse-elk-edge)
+**Containing Group:** | [edge](org-eclipse-elk-edge)
 
 ### Description
 

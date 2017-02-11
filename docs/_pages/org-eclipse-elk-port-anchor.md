@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `org.eclipse.elk.core.math.KVector`
 **Applies To:** | ports
 **Legacy Id:** | de.cau.cs.kieler.portAnchor
-**Containing Groups:** | [port](org-eclipse-elk-port)
+**Containing Group:** | [port](org-eclipse-elk-port)
 
 ### Description
 

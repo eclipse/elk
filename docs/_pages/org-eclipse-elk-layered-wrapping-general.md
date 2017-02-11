@@ -1,9 +1,9 @@
 ---
 layout: page
-title: general
+title: wrapping.general
 type: group
 ---
-## general
+## wrapping.general
 
 **Identifier:** org.eclipse.elk.layered.wrapping.general
 

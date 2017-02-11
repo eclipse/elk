@@ -13,7 +13,7 @@ type: option
 **Lower Bound:** | `1`
 **Applies To:** | labels
 **Legacy Id:** | de.cau.cs.kieler.fontSize
-**Containing Groups:** | [font](org-eclipse-elk-font)
+**Containing Group:** | [font](org-eclipse-elk-font)
 
 ### Description
 

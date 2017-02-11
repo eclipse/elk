@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `false` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.highDegreeNode.treatment
-**Containing Groups:** | [highDegreeNodes](org-eclipse-elk-layered-highDegreeNodes)
+**Containing Group:** | [highDegreeNodes](org-eclipse-elk-layered-highDegreeNodes)
 
 ### Description
 

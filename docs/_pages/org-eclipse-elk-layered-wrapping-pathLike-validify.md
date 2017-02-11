@@ -1,9 +1,9 @@
 ---
 layout: page
-title: validify
+title: wrapping.pathLike.validify
 type: group
 ---
-## validify
+## wrapping.pathLike.validify
 
 **Identifier:** org.eclipse.elk.layered.wrapping.pathLike.validify
 

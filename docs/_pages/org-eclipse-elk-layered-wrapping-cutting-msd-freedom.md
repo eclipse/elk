@@ -14,7 +14,7 @@ type: option
 **Lower Bound:** | `0`
 **Applies To:** | parents
 **Dependencies:** | [org.eclipse.elk.layered.wrapping.cutting.strategy](org-eclipse-elk-layered-wrapping-cutting-strategy)
-**Containing Groups:** | [wrapping](org-eclipse-elk-layered-wrapping) -> [cutting](org-eclipse-elk-layered-wrapping-cutting) -> [msd](org-eclipse-elk-layered-wrapping-cutting-msd)
+**Containing Group:** | [wrapping](org-eclipse-elk-layered-wrapping) -> [cutting](org-eclipse-elk-layered-wrapping-cutting) -> [msd](org-eclipse-elk-layered-wrapping-cutting-msd)
 
 ### Description
 

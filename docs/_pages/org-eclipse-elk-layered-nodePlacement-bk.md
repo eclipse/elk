@@ -1,9 +1,9 @@
 ---
 layout: page
-title: bk
+title: nodePlacement.bk
 type: group
 ---
-## bk
+## nodePlacement.bk
 
 **Identifier:** org.eclipse.elk.layered.nodePlacement.bk
 

@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `java.lang.String`
 **Applies To:** | labels
 **Legacy Id:** | de.cau.cs.kieler.fontName
-**Containing Groups:** | [font](org-eclipse-elk-font)
+**Containing Group:** | [font](org-eclipse-elk-font)
 
 ### Description
 

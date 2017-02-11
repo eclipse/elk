@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `NodePlacementStrategy.BRANDES_KOEPF` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
 **Legacy Id:** | de.cau.cs.kieler.klay.layered.nodePlace
-**Containing Groups:** | [nodePlacement](org-eclipse-elk-layered-nodePlacement)
+**Containing Group:** | [nodePlacement](org-eclipse-elk-layered-nodePlacement)
 
 ### Description
 

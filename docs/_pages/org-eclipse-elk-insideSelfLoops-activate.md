@@ -13,7 +13,7 @@ type: option
 **Default Value:** | `false` (as defined in org.eclipse.elk)
 **Applies To:** | nodes
 **Legacy Id:** | de.cau.cs.kieler.selfLoopInside
-**Containing Groups:** | [insideSelfLoops](org-eclipse-elk-insideSelfLoops)
+**Containing Group:** | [insideSelfLoops](org-eclipse-elk-insideSelfLoops)
 
 ### Description
 

@@ -12,7 +12,7 @@ type: option
 **Value Type:** | `java.util.List<java.lang.Integer>`
 **Applies To:** | parents
 **Dependencies:** | [org.eclipse.elk.layered.wrapping.cutting.strategy](org-eclipse-elk-layered-wrapping-cutting-strategy)
-**Containing Groups:** | [wrapping](org-eclipse-elk-layered-wrapping) -> [cutting](org-eclipse-elk-layered-wrapping-cutting)
+**Containing Group:** | [wrapping](org-eclipse-elk-layered-wrapping) -> [cutting](org-eclipse-elk-layered-wrapping-cutting)
 
 ### Description
 

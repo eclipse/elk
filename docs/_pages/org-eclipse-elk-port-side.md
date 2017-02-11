@@ -14,7 +14,7 @@ type: option
 **Default Value:** | `PortSide.UNDEFINED` (as defined in org.eclipse.elk)
 **Applies To:** | ports
 **Legacy Id:** | de.cau.cs.kieler.portSide
-**Containing Groups:** | [port](org-eclipse-elk-port)
+**Containing Group:** | [port](org-eclipse-elk-port)
 
 ### Description
 
