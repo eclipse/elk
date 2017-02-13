@@ -8,7 +8,9 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.wrapping;
+package org.eclipse.elk.alg.layered.options;
+
+import org.eclipse.elk.alg.layered.intermediate.wrapping.ICutIndexCalculator;
 
 /**
  * The cuts calculated by a {@link ICutIndexCalculator} are not necessarily valid (when using

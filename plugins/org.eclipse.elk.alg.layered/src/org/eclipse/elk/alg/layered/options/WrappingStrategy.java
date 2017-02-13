@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.wrapping;
+package org.eclipse.elk.alg.layered.options;
 
 /**
  * Specifies the desired strategy to wrap graphs in order to improve their presentation within a drawing area of 

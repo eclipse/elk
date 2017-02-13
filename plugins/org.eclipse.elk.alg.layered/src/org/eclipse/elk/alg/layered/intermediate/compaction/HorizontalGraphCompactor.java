@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.compaction.oned.algs.ScanlineConstraintCalcul
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.WrappingStrategy;
 
 /**
  * Calculate cut indexes that are used to cut a graph's layering into multiple chunks and 'wrap' the drawing to improve

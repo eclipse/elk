@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.compaction;
+package org.eclipse.elk.alg.layered.options;
 
 /**
  * Definition of strategies for horizontal compaction.

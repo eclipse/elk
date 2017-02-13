@@ -8,9 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate.wrapping;
-
-import org.eclipse.elk.alg.layered.options.LayeredOptions;
+package org.eclipse.elk.alg.layered.options;
 
 /**
  * Specifies the strategy employed to calculate cut indexes during graph wrapping.

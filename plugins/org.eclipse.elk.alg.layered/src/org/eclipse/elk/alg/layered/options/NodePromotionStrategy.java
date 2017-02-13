@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.intermediate;
+package org.eclipse.elk.alg.layered.options;
 
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
