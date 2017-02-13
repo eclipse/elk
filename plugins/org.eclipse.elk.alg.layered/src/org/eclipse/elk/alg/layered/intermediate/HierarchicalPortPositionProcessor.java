@@ -16,9 +16,9 @@ import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -31,7 +31,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * does.
  * 
  * <p>This processor is only necessary for node placers that do not respect the
- * {@link org.eclipse.elk.alg.layered.properties.InternalProperties#PORT_RATIO_OR_POSITION}
+ * {@link org.eclipse.elk.alg.layered.options.InternalProperties#PORT_RATIO_OR_POSITION}
  * property themselves.</p>
  * 
  * <dl>

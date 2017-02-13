@@ -16,9 +16,9 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.properties.GraphProperties;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.Spacings;
+import org.eclipse.elk.alg.layered.options.GraphProperties;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.properties.PortType;
+import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.options.PortSide;
 
 /**

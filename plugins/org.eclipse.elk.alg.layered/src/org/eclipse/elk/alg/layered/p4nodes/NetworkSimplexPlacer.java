@@ -27,10 +27,10 @@ import org.eclipse.elk.alg.layered.networksimplex.NEdge;
 import org.eclipse.elk.alg.layered.networksimplex.NGraph;
 import org.eclipse.elk.alg.layered.networksimplex.NNode;
 import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
-import org.eclipse.elk.alg.layered.properties.GraphProperties;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.alg.layered.properties.Spacings;
+import org.eclipse.elk.alg.layered.options.GraphProperties;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.Spacings;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.IProperty;
@@ -343,7 +343,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
      * @return for the passed edge, the individual edge weight as specified by Gansner et al. The
      *         idea is to use a higher weight for long edge dummies such that long edges are drawn
      *         straight with higher priority. Additionally, we consider the
-     *         {@link org.eclipse.elk.alg.layered.properties.PRIORITY PRIORITY} layout option.
+     *         {@link org.eclipse.elk.alg.layered.options.PRIORITY PRIORITY} layout option.
      */
     private int getEdgeWeight(final LEdge edge) {
         

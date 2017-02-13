@@ -18,9 +18,9 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayerConstraint;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayerConstraint;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

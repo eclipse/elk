@@ -14,8 +14,8 @@ import java.util.Comparator;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.PortType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.PortType;
 
 /**
  * Compares cross-hierarchy edge segments such that they can be sorted from the start to the end

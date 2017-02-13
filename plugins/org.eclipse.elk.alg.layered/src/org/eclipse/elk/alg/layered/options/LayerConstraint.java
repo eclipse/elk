@@ -8,25 +8,31 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.properties;
+package org.eclipse.elk.alg.layered.options;
 
 /**
- * Enumeration of edge constraints. Edge constraints can be set on ports to constrain the
- * type of edges incident to that port.
- * 
+ * Enumeration of layer constraint types. May be set on nodes to constrain in which layer
+ * they may appear.
+ *
  * @see org.eclipse.elk.alg.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
  *        EdgeAndLayerConstraintEdgeReverser
- * @author cds
+ * @see org.eclipse.elk.alg.layered.intermediate.LayerConstraintProcessor
+ *        LayerConstraintProcessor
+ * @author msp
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public enum EdgeConstraint {
+public enum LayerConstraint {
     
-    /** no constraint on incident edges. */
+    /** no constraint on the layering. */
     NONE,
-    /** node may have only incoming edges. */
-    INCOMING_ONLY,
-    /** node may have only outgoing edges. */
-    OUTGOING_ONLY;
+    /** put into the first layer. */
+    FIRST,
+    /** put into a separate first layer; used internally. */
+    FIRST_SEPARATE,
+    /** put into the last layer. */
+    LAST,
+    /** put into a separate last layer; used internally. */
+    LAST_SEPARATE;
     
 }

@@ -27,8 +27,8 @@ import org.eclipse.elk.alg.layered.networksimplex.NEdge;
 import org.eclipse.elk.alg.layered.networksimplex.NGraph;
 import org.eclipse.elk.alg.layered.networksimplex.NNode;
 import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.alg.layered.properties.WideNodesStrategy;
+import org.eclipse.elk.alg.layered.options.WideNodesStrategy;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;

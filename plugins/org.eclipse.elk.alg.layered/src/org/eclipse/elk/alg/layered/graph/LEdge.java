@@ -12,9 +12,9 @@ package org.eclipse.elk.alg.layered.graph;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.alg.layered.properties.PortType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;

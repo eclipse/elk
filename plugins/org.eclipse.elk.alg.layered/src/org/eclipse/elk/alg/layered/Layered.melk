@@ -19,6 +19,14 @@ import org.eclipse.elk.alg.layered.intermediate.compaction.GraphCompactionStrate
 import org.eclipse.elk.alg.layered.intermediate.wrapping.CuttingStrategy
 import org.eclipse.elk.alg.layered.intermediate.wrapping.ValidifyStrategy
 import org.eclipse.elk.alg.layered.intermediate.wrapping.WrappingStrategy
+import org.eclipse.elk.alg.layered.options.ContentAlignment
+import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection
+import org.eclipse.elk.alg.layered.options.FixedAlignment
+import org.eclipse.elk.alg.layered.options.GreedySwitchType
+import org.eclipse.elk.alg.layered.options.InteractiveReferencePoint
+import org.eclipse.elk.alg.layered.options.LayerConstraint
+import org.eclipse.elk.alg.layered.options.SelfLoopPlacement
+import org.eclipse.elk.alg.layered.options.WideNodesStrategy
 import org.eclipse.elk.alg.layered.p1cycles.CycleBreakingStrategy
 import org.eclipse.elk.alg.layered.p2layers.LayeringStrategy
 import org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy
@@ -49,7 +57,7 @@ algorithm layered(LayeredLayoutProvider) {
 		diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
 		compound graphs with cross-hierarchy edges is supported when the respective option is
 		activated on the top level."
-	metadataClass properties.LayeredOptions
+	metadataClass options.LayeredOptions
 	category org.eclipse.elk.layered
 	features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
 	preview images/layered.png
@@ -84,7 +92,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports wrapping.cutting.strategy
     supports wrapping.cutting.cuts
     supports wrapping.cutting.msd.freedom
-    supports wrapping.pathLike.validify.strategy
+    supports wrapping.pathLike.validify.strategy 
     supports wrapping.general.improveCuts
     supports wrapping.general.distancePenalty
     supports wrapping.general.improveWrappedEdges

@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.layered.intermediate.wrapping;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 
 import com.google.common.collect.Lists;
 

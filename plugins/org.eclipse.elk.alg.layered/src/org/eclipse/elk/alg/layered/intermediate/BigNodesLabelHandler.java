@@ -16,8 +16,8 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 
 import com.google.common.base.Function;
@@ -26,7 +26,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Utility class that contains methods to split and distribute long labels on
- * {@link org.eclipse.elk.alg.layered.properties.NodeType.BIG_NODE}s.
+ * {@link org.eclipse.elk.alg.layered.options.NodeType.BIG_NODE}s.
  * 
  * @author uru
  */
@@ -277,7 +277,7 @@ public final class BigNodesLabelHandler {
 
         /**
          * Post processing function removing all created label dummies, i.e labels that do not have
-         * an {@link org.eclipse.elk.alg.layered.properties.InternalProperties#ORIGIN
+         * an {@link org.eclipse.elk.alg.layered.options.InternalProperties#ORIGIN
          * InternalProperties.ORIGIN}.
          */
         private Function<Void, Void> funRemoveLabelDummies = new Function<Void, Void>() {

@@ -14,10 +14,10 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.p3order.GraphInfoHolder;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
 

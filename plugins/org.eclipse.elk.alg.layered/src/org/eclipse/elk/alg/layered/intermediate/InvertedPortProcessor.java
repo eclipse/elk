@@ -19,11 +19,11 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.alg.layered.properties.PortType;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -44,8 +44,8 @@ import com.google.common.collect.Lists;
  * 
  * <p>
  * The dummy nodes are decorated with a
- * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions#NODE_TYPE} property. They are treated
- * just like ordinary {@link org.eclipse.elk.alg.layered.properties.NodeType#LONG_EDGE} dummy
+ * {@link org.eclipse.elk.alg.layered.options.LayeredOptions#NODE_TYPE} property. They are treated
+ * just like ordinary {@link org.eclipse.elk.alg.layered.options.NodeType#LONG_EDGE} dummy
  * nodes
  * </p>
  * 
@@ -270,8 +270,8 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
     
     /**
      * Properly sets the
-     * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions#LONG_EDGE_SOURCE} and
-     * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions#LONG_EDGE_TARGET} properties for
+     * {@link org.eclipse.elk.alg.layered.options.LayeredOptions#LONG_EDGE_SOURCE} and
+     * {@link org.eclipse.elk.alg.layered.options.LayeredOptions#LONG_EDGE_TARGET} properties for
      * the given long edge dummy. This is required for the
      * {@link org.eclipse.elk.alg.layered.intermediate.HyperedgeDummyMerger} to work correctly.
      * 

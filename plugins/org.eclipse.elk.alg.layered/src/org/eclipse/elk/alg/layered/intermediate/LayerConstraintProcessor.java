@@ -18,8 +18,8 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.properties.LayerConstraint;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayerConstraint;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.UnsupportedConfigurationException;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

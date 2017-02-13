@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.layered;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.transform.IGraphTransformer;
 import org.eclipse.elk.alg.layered.graph.transform.ElkGraphTransformer;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.util.IElkProgressMonitor;

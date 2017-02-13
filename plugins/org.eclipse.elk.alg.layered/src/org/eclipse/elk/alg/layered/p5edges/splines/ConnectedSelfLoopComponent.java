@@ -19,7 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 

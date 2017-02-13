@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.ArrayListMultimap;

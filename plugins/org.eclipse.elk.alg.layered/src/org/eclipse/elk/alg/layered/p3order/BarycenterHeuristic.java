@@ -18,9 +18,9 @@ import java.util.Random;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.PortType;
 
 import com.google.common.collect.Lists;
 

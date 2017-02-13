@@ -27,7 +27,7 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
 
     /**
      * This heuristic sweeps through the layers, trying to minimize the crossings locally. When
-     * {@link org.eclipse.elk.alg.layered.properties.LayeredOptions.HIERARCHY_HANDLING} is set to
+     * {@link org.eclipse.elk.alg.layered.options.LayeredOptions.HIERARCHY_HANDLING} is set to
      * {@link org.eclipse.elk.core.options.HierarchyHandling.INCLUDE_CHILDREN}, it sweeps into hierarchical graphs
      * during the sweep.
      */

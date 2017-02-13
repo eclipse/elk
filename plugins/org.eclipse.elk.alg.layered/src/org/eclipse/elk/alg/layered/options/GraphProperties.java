@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.properties;
+package org.eclipse.elk.alg.layered.options;
 
 /**
  * An enumeration of properties a graph may have. These can be used as part of an {@code EnumSet} to

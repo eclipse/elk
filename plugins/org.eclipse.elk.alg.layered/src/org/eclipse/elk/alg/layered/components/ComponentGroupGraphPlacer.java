@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeRouting;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2015 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,22 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.properties;
+package org.eclipse.elk.alg.layered.options;
 
 /**
- * Describes what interactive layout phases should take as reference point for comparison
- * of node positions.
- * 
- * @author cds
- * @kieler.design proposed by msp
+ * Definition of port types.
+ *
+ * @author msp
+ * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating proposed yellow by msp
  */
-public enum InteractiveReferencePoint {
+public enum PortType {
     
-    /** the node's center point. */
-    CENTER,
-    /** the node's top left corner. */
-    TOP_LEFT;
-    
+    /** undefined port type. */
+    UNDEFINED,
+    /** input port type. */
+    INPUT,
+    /** output port type. */
+    OUTPUT;
+
 }

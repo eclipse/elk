@@ -14,8 +14,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.alg.layered.properties.PortType;
+import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;

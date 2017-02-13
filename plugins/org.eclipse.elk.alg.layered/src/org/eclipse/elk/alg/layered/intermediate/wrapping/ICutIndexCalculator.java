@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 
 /**
  * Calculate cut indexes that are used to cut a graph's layering into multiple chunks and 'wrap' the drawing to improve

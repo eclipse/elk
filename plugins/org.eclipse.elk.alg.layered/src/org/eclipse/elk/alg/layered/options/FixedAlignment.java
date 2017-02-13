@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.properties;
+package org.eclipse.elk.alg.layered.options;
 
 /**
  * Layout option for the choice of candidates in the Brandes & Köpf node placement.

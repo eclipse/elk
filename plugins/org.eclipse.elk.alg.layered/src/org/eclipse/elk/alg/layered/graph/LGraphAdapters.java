@@ -15,8 +15,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;

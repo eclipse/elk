@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.wrapping;
 
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 
 /**
  * Specifies the strategy employed to calculate cut indexes during graph wrapping.

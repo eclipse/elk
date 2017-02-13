@@ -15,9 +15,9 @@ import java.util.ListIterator;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic.BarycenterState;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
 import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.LinkedHashMultimap;

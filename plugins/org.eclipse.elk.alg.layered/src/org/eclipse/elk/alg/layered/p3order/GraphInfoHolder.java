@@ -19,11 +19,11 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.intermediate.greedyswitch.GreedySwitchHeuristic;
+import org.eclipse.elk.alg.layered.options.GraphProperties;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.alg.layered.p3order.counting.AllCrossingsCounter;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
-import org.eclipse.elk.alg.layered.properties.GraphProperties;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
 
 import com.google.common.collect.Lists;
 

@@ -8,18 +8,26 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.properties;
+package org.eclipse.elk.alg.layered.options;
 
 /**
- * Enumeration to distinguish the possible ways to distribute the selfLoops around a node.
+ * Strategy to distribute wide nodes over multiple layers.
  * 
- * @author tit
+ * @author uru
  */
-public enum SelfLoopPlacement {
-    /** Distributes the loops equally around the node. */
-    EQUALLY_DISTRIBUTED,
-    /** Stacks all loops to the north side of the node. */
-    NORTH_STACKED,
-    /** Loops are placed sequentially (next to each other) to the north side of the node. */
-    NORTH_SEQUENCE;
+public enum WideNodesStrategy {
+
+    /** Do not handle wide nodes specially. */
+    OFF,
+    /**
+     * Splits wide nodes prior to the crossing minimization phase. Note that this can lead to
+     * edge-node crossings.
+     */
+    AGGRESSIVE,
+    /**
+     * Splits wide nodes after the crossing minimization phase, guaranteeing that no edge-node
+     * crossings are introduced.
+     */
+    CAREFUL,
+
 }

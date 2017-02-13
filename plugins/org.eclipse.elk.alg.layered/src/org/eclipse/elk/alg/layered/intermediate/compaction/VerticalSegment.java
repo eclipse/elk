@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.layered.intermediate.compaction;
 import org.eclipse.elk.alg.layered.compaction.oned.CNode;
 import org.eclipse.elk.alg.layered.compaction.oned.CompareFuzzy;
 import org.eclipse.elk.alg.layered.graph.LEdge;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 

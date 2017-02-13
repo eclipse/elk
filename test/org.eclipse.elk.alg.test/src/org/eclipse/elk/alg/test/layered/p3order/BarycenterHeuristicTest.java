@@ -18,12 +18,12 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.p3order.BarycenterHeuristic;
 import org.eclipse.elk.alg.layered.p3order.ForsterConstraintResolver;
 import org.eclipse.elk.alg.layered.p3order.NodeRelativePortDistributor;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
-import org.eclipse.elk.alg.layered.properties.PortType;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.TestGraphCreator;
 import org.eclipse.elk.core.options.PortSide;
 import org.junit.Before;
