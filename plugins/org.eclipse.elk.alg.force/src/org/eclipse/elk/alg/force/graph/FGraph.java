@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.force.graph;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.force.options.ForceOptions;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 import com.google.common.collect.Iterables;

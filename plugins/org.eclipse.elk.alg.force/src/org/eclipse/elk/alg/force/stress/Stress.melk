@@ -17,7 +17,7 @@ import org.eclipse.elk.alg.force.stress.StressMajorization.Dimension
  * Declarations for the ELK Stress layout algorithm.
  */
 bundle {
-    metadataClass properties.StressMetaDataProvider
+    metadataClass options.StressMetaDataProvider
     idPrefix org.eclipse.elk.stress
 }
 
@@ -29,7 +29,7 @@ algorithm stress(StressLayoutProvider) {
         nodes doesn't match their graph theoretic distance, that is, 
         the shortest path between the two nodes.
         The method allows to specify individual edge lengths."
-    metadataClass properties.StressOptions
+    metadataClass options.StressOptions
     category org.eclipse.elk.force
     
     supports org.eclipse.elk.interactive

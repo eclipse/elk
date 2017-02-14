@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.force.model;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FNode;
 import org.eclipse.elk.alg.force.graph.FParticle;
-import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.force.options.ForceOptions;
 import org.eclipse.elk.core.math.KVector;
 
 /**

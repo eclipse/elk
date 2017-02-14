@@ -18,7 +18,7 @@ import java.util.Queue;
 import org.eclipse.elk.alg.force.graph.FEdge;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FNode;
-import org.eclipse.elk.alg.force.properties.StressOptions;
+import org.eclipse.elk.alg.force.options.StressOptions;
 import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.LinkedListMultimap;

@@ -20,8 +20,8 @@ import org.eclipse.elk.alg.force.graph.FEdge;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.graph.FLabel;
 import org.eclipse.elk.alg.force.graph.FNode;
-import org.eclipse.elk.alg.force.properties.ForceOptions;
-import org.eclipse.elk.alg.force.properties.InternalProperties;
+import org.eclipse.elk.alg.force.options.ForceOptions;
+import org.eclipse.elk.alg.force.options.InternalProperties;
 import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.Lists;

@@ -14,10 +14,10 @@
    <extension
          point="org.eclipse.elk.core.layoutProviders">
       <provider
-            class="org.eclipse.elk.alg.force.properties.ForceMetaDataProvider">
+            class="org.eclipse.elk.alg.force.options.ForceMetaDataProvider">
       </provider>
       <provider
-            class="org.eclipse.elk.alg.force.properties.StressMetaDataProvider">
+            class="org.eclipse.elk.alg.force.options.StressMetaDataProvider">
       </provider>
       
    </extension>

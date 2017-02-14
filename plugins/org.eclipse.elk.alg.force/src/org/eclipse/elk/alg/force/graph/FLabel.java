@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.force.graph;
 
-import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.force.options.ForceOptions;
 import org.eclipse.elk.core.math.KVector;
 
 /**

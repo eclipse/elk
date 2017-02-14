@@ -12,14 +12,14 @@ package org.eclipse.elk.alg.force
 
 import org.eclipse.elk.alg.force.ForceLayoutProvider
 import org.eclipse.elk.alg.force.model.ForceModelStrategy
-import org.eclipse.elk.core.util.ExclusiveBounds
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.util.ExclusiveBounds
 
 /**
  * Declarations for the ELK Force layout algorithm.
  */
 bundle {
-    metadataClass properties.ForceMetaDataProvider
+    metadataClass options.ForceMetaDataProvider
     idPrefix org.eclipse.elk.force
 }
 
@@ -30,7 +30,7 @@ algorithm force(ForceLayoutProvider) {
         follow physical analogies by simulating forces that move the nodes into a balanced
         distribution. Currently the original Eades model and the Fruchterman - Reingold model are
         supported."
-    metadataClass properties.ForceOptions
+    metadataClass options.ForceOptions
     category org.eclipse.elk.force
     features multi_edges, edge_labels
     preview images/force.png

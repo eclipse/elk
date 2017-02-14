@@ -11,5 +11,5 @@ Require-Bundle: com.google.guava;bundle-version="15.0.0",
 Export-Package: org.eclipse.elk.alg.force,
  org.eclipse.elk.alg.force.graph,
  org.eclipse.elk.alg.force.model,
- org.eclipse.elk.alg.force.properties,
+ org.eclipse.elk.alg.force.options,
  org.eclipse.elk.alg.force.stress

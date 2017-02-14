@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.force.properties;
+package org.eclipse.elk.alg.force.options;
 
 import java.util.Random;
 

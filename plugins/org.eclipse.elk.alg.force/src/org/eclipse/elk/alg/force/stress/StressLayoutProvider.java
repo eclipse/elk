@@ -13,11 +13,11 @@ package org.eclipse.elk.alg.force.stress;
 import java.util.List;
 
 import org.eclipse.elk.alg.force.ComponentsProcessor;
+import org.eclipse.elk.alg.force.ElkGraphImporter;
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
 import org.eclipse.elk.alg.force.IGraphImporter;
-import org.eclipse.elk.alg.force.ElkGraphImporter;
 import org.eclipse.elk.alg.force.graph.FGraph;
-import org.eclipse.elk.alg.force.properties.StressOptions;
+import org.eclipse.elk.alg.force.options.StressOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
