@@ -439,11 +439,10 @@ public final class ElkUtil {
         for (ElkNode child : parent.getChildren()) {
             // Translate node position
             child.setLocation(child.getX() + xoffset, child.getY() + yoffset);
-            
-            // Translate edges
-            // MIGRATE This used to be outgoing edges; check if it makes sense to translate all contained edges instead
-            child.getContainedEdges().stream().forEach(edge -> translate(edge, xoffset, yoffset));
         }
+        // Translates all edges contained in the parent. This includes edges connecting the parent to its
+        // children. For these edges the start or end point might get separated from the node boundary.
+        parent.getContainedEdges().forEach(edge -> translate(edge, xoffset, yoffset));
     }
     
     /**
