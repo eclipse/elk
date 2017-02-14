@@ -8,7 +8,7 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.nodePlacement.bk.edgeStraightening
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy` (Enum)
 **Possible Values:** | `IMPROVE_STRAIGHTNESS`<br>`NONE`
 **Default Value:** | `EdgeStraighteningStrategy.IMPROVE_STRAIGHTNESS` (as defined in org.eclipse.elk.layered)

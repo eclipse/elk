@@ -7,7 +7,7 @@ type: algorithm
 
 ![](images/org-eclipse-elk-layered_preview_layered.png)
 **Identifier:** org.eclipse.elk.layered
-**Meta Data Provider:** properties.LayeredMetaDataProvider
+**Meta Data Provider:** options.LayeredMetaDataProvider
 
 ### Description
 

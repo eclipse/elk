@@ -7,7 +7,7 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.force.temperature
-**Meta Data Provider:** | properties.ForceMetaDataProvider
+**Meta Data Provider:** | options.ForceMetaDataProvider
 **Value Type:** | `double`
 **Default Value:** | `0.001` (as defined in org.eclipse.elk.force)
 **Lower Bound:** | `ExclusiveBounds.greaterThan(0)`

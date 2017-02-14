@@ -7,8 +7,8 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.layered.nodePlacement.strategy
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.p4nodes.NodePlacementStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.NodePlacementStrategy` (Enum)
 **Possible Values:** | `BRANDES_KOEPF`<br>`INTERACTIVE` (*`@AdvancedPropertyValue`*)<br>`LINEAR_SEGMENTS`<br>`NETWORK_SIMPLEX`<br>`SIMPLE`
 **Default Value:** | `NodePlacementStrategy.BRANDES_KOEPF` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

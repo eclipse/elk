@@ -7,7 +7,7 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.force.repulsivePower
-**Meta Data Provider:** | properties.ForceMetaDataProvider
+**Meta Data Provider:** | options.ForceMetaDataProvider
 **Value Type:** | `int`
 **Default Value:** | `0` (as defined in org.eclipse.elk.force)
 **Lower Bound:** | `0`

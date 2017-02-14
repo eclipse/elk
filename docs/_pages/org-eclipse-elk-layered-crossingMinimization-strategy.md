@@ -7,8 +7,8 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.layered.crossingMinimization.strategy
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.p3order.CrossingMinimizationStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy` (Enum)
 **Possible Values:** | `INTERACTIVE` (*`@AdvancedPropertyValue`*)<br>`LAYER_SWEEP`
 **Default Value:** | `CrossingMinimizationStrategy.LAYER_SWEEP` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

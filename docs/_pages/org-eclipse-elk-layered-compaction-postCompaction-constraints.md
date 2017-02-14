@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.compaction.postCompaction.constraints
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.intermediate.compaction.ConstraintCalculationStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.ConstraintCalculationStrategy` (Enum)
 **Possible Values:** | `QUADRATIC`<br>`SCANLINE`
 **Default Value:** | `ConstraintCalculationStrategy.SCANLINE` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

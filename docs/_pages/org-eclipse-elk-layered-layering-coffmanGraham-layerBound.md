@@ -8,7 +8,7 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.layering.coffmanGraham.layerBound
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `int`
 **Default Value:** | `Integer.MAX_VALUE` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.wrapping.pathLike.validify.strategy
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.intermediate.wrapping.ValidifyStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.ValidifyStrategy` (Enum)
 **Possible Values:** | `GREEDY`<br>`LOOK_BACK`<br>`NO`
 **Default Value:** | `ValidifyStrategy.GREEDY` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

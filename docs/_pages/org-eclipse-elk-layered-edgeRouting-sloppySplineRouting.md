@@ -7,7 +7,7 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.layered.edgeRouting.sloppySplineRouting
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `boolean`
 **Default Value:** | `true` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

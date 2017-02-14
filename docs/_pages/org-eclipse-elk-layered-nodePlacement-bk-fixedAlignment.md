@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.nodePlacement.bk.fixedAlignment
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.properties.FixedAlignment` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.FixedAlignment` (Enum)
 **Possible Values:** | `BALANCED`<br>`LEFTDOWN`<br>`LEFTUP`<br>`NONE`<br>`RIGHTDOWN`<br>`RIGHTUP`
 **Default Value:** | `FixedAlignment.NONE` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

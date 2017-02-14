@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.wrapping.cutting.strategy
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.intermediate.wrapping.CuttingStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.CuttingStrategy` (Enum)
 **Possible Values:** | `ARD`<br>`MANUAL`<br>`MSD`
 **Default Value:** | `CuttingStrategy.MSD` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

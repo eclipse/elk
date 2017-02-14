@@ -7,7 +7,7 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.layered.edgeRouting.sloppySplineLayerSpacing
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `double`
 **Default Value:** | `0.4` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

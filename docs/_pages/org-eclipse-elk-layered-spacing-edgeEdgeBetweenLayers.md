@@ -7,7 +7,7 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.layered.spacing.edgeEdgeBetweenLayers
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `double`
 **Default Value:** | `10` (as defined in org.eclipse.elk.layered)
 **Lower Bound:** | `0.0`

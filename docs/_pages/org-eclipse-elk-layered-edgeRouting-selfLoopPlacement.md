@@ -7,8 +7,8 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.layered.edgeRouting.selfLoopPlacement
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.properties.SelfLoopPlacement` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.SelfLoopPlacement` (Enum)
 **Possible Values:** | `EQUALLY_DISTRIBUTED`<br>`NORTH_SEQUENCE`<br>`NORTH_STACKED`
 **Default Value:** | `SelfLoopPlacement.NORTH_STACKED` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

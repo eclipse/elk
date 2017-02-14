@@ -8,7 +8,7 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.wrapping.cutting.cuts
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `java.util.List<java.lang.Integer>`
 **Applies To:** | parents
 **Dependencies:** | [org.eclipse.elk.layered.wrapping.cutting.strategy](org-eclipse-elk-layered-wrapping-cutting-strategy)

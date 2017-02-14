@@ -7,8 +7,8 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.layered.edgeLabelSideSelection
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.properties.EdgeLabelSideSelection` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection` (Enum)
 **Possible Values:** | `ALWAYS_DOWN`<br>`ALWAYS_UP`<br>`DIRECTION_DOWN`<br>`DIRECTION_UP`<br>`SMART`
 **Default Value:** | `EdgeLabelSideSelection.ALWAYS_DOWN` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

@@ -8,7 +8,7 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.nodePlacement.linearSegments.deflectionDampening
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `double`
 **Default Value:** | `0.3` (as defined in org.eclipse.elk.layered)
 **Lower Bound:** | `ExclusiveBounds.greaterThan(0)`

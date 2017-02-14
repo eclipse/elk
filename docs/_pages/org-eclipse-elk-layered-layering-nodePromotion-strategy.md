@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.layering.nodePromotion.strategy
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.intermediate.NodePromotionStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.NodePromotionStrategy` (Enum)
 **Possible Values:** | `DUMMYNODE_PERCENTAGE` (*`@AdvancedPropertyValue`*)<br>`NIKOLOV`<br>`NIKOLOV_IMPROVED` (*`@AdvancedPropertyValue`*)<br>`NIKOLOV_IMPROVED_PIXEL` (*`@AdvancedPropertyValue`*)<br>`NIKOLOV_PIXEL`<br>`NODECOUNT_PERCENTAGE` (*`@AdvancedPropertyValue`*)<br>`NONE`<br>`NO_BOUNDARY` (*`@AdvancedPropertyValue`*)
 **Default Value:** | `NodePromotionStrategy.NONE` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

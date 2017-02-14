@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.contentAlignment
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `java.util.EnumSet<org.eclipse.elk.alg.layered.properties.ContentAlignment>`
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `java.util.EnumSet<org.eclipse.elk.alg.layered.options.ContentAlignment>`
 **Possible Values:** | `H_CENTER`<br>`H_LEFT`<br>`H_RIGHT`<br>`V_BOTTOM`<br>`V_CENTER`<br>`V_TOP`
 **Default Value:** | `EnumSet.noneOf(ContentAlignment)` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

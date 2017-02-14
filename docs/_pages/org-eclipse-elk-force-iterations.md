@@ -7,7 +7,7 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.force.iterations
-**Meta Data Provider:** | properties.ForceMetaDataProvider
+**Meta Data Provider:** | options.ForceMetaDataProvider
 **Value Type:** | `int`
 **Default Value:** | `300` (as defined in org.eclipse.elk.force)
 **Lower Bound:** | `1`

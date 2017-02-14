@@ -8,7 +8,7 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.layering.minWidth.upperBoundOnWidth
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `int`
 **Default Value:** | `4` (as defined in org.eclipse.elk.layered)
 **Lower Bound:** | `-1`

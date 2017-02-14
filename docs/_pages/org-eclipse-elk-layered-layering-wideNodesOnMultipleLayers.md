@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.layering.wideNodesOnMultipleLayers
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.properties.WideNodesStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.WideNodesStrategy` (Enum)
 **Possible Values:** | `AGGRESSIVE`<br>`CAREFUL`<br>`OFF`
 **Default Value:** | `WideNodesStrategy.OFF` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

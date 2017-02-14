@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.wrapping.strategy
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.intermediate.wrapping.WrappingStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.WrappingStrategy` (Enum)
 **Possible Values:** | `GENERAL`<br>`OFF`<br>`PATH_LIKE`
 **Default Value:** | `WrappingStrategy.OFF` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

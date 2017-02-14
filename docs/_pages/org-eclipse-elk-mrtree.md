@@ -7,7 +7,7 @@ type: algorithm
 
 ![](images/org-eclipse-elk-mrtree_preview_tree.png)
 **Identifier:** org.eclipse.elk.mrtree
-**Meta Data Provider:** properties.MrTreeMetaDataProvider
+**Meta Data Provider:** options.MrTreeMetaDataProvider
 
 ### Description
 

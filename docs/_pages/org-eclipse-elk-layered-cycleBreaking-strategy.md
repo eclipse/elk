@@ -7,8 +7,8 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.layered.cycleBreaking.strategy
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.p1cycles.CycleBreakingStrategy` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.CycleBreakingStrategy` (Enum)
 **Possible Values:** | `GREEDY`<br>`INTERACTIVE` (*`@AdvancedPropertyValue`*)
 **Default Value:** | `CycleBreakingStrategy.GREEDY` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

@@ -7,7 +7,7 @@ type: option
 
 ----|----
 **Identifier:** | org.eclipse.elk.force.repulsion
-**Meta Data Provider:** | properties.ForceMetaDataProvider
+**Meta Data Provider:** | options.ForceMetaDataProvider
 **Value Type:** | `double`
 **Default Value:** | `5.0` (as defined in org.eclipse.elk.force)
 **Lower Bound:** | `ExclusiveBounds.greaterThan(0)`

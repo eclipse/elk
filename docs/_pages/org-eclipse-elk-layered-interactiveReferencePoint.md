@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.interactiveReferencePoint
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.properties.InteractiveReferencePoint` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.InteractiveReferencePoint` (Enum)
 **Possible Values:** | `CENTER`<br>`TOP_LEFT`
 **Default Value:** | `InteractiveReferencePoint.CENTER` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

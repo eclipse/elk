@@ -8,8 +8,8 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.crossingMinimization.greedySwitch.type
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
-**Value Type:** | `org.eclipse.elk.alg.layered.properties.GreedySwitchType` (Enum)
+**Meta Data Provider:** | options.LayeredMetaDataProvider
+**Value Type:** | `org.eclipse.elk.alg.layered.options.GreedySwitchType` (Enum)
 **Possible Values:** | `OFF`<br>`ONE_SIDED`<br>`TWO_SIDED`
 **Default Value:** | `GreedySwitchType.TWO_SIDED` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents

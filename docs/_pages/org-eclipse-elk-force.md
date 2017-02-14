@@ -7,7 +7,7 @@ type: algorithm
 
 ![](images/org-eclipse-elk-force_preview_force.png)
 **Identifier:** org.eclipse.elk.force
-**Meta Data Provider:** properties.ForceMetaDataProvider
+**Meta Data Provider:** options.ForceMetaDataProvider
 
 ### Description
 

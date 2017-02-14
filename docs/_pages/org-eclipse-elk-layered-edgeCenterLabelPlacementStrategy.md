@@ -8,7 +8,7 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.edgeCenterLabelPlacementStrategy
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `org.eclipse.elk.core.options.EdgeLabelPlacementStrategy` (Enum)
 **Possible Values:** | `CENTER`<br>`WIDEST_LAYER`
 **Default Value:** | `EdgeLabelPlacementStrategy.CENTER` (as defined in org.eclipse.elk.layered)

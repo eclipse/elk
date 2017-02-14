@@ -8,7 +8,7 @@ type: option
 ----|----
 **Type:** | advanced
 **Identifier:** | org.eclipse.elk.layered.feedbackEdges
-**Meta Data Provider:** | properties.LayeredMetaDataProvider
+**Meta Data Provider:** | options.LayeredMetaDataProvider
 **Value Type:** | `boolean`
 **Default Value:** | `false` (as defined in org.eclipse.elk.layered)
 **Applies To:** | parents
