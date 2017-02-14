@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.meta.jvmmodel
 
+import com.google.common.base.CharMatcher
 import com.google.common.collect.Iterables
 import java.io.PrintWriter
 import java.nio.file.Files
@@ -158,8 +159,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         if (!algorithm.description.isNullOrEmpty) {
             doc += '''
             ### Description
-            
-            «algorithm.description.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")»
+            «algorithm.description.trimNewlineTabsAndReduceToSingleSpace»
             
             '''
         }
@@ -173,7 +173,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
             
             if (!algorithm.category.description.isNullOrEmpty) {
                 doc += '''
-                «algorithm.category.description.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")»
+                «algorithm.category.description.trimNewlineTabsAndReduceToSingleSpace»
                 
                 '''
             }
@@ -308,8 +308,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                                                   + "](" + it.target.qualifiedName.replace('.', '-') + ")"].join(", ")»
         «if (!option.groups.empty) "**Containing Group:** | " + option.groups.map["[" + it.name+ "](" + 
                                                                 it.qualifiedName.replace('.', '-') + ")"].join(" -> ")»
-        «if (option.description !== null) "\n### Description\n\n" + 
-                            option.description.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")»
+        «if (option.description !== null) "\n### Description\n\n" + option.description.trimNewlineTabsAndReduceToSingleSpace»
         «if (!additionalDoc.nullOrEmpty) "\n## Additional Documentation\n\n" + additionalDoc»
         '''
 
@@ -580,5 +579,9 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                + (if (member.groups.empty) '' else '.')
                + member.groups.map[it.name].join('.') 
                + '.' + member.name
+    }
+    
+    private def String trimNewlineTabsAndReduceToSingleSpace(String string) {
+        CharMatcher.BREAKING_WHITESPACE.replaceFrom(string, ' ').replace('\t', ' ').replaceAll(" +", " ")
     }
 }
