@@ -159,6 +159,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         if (!algorithm.description.isNullOrEmpty) {
             doc += '''
             ### Description
+            
             «algorithm.description.trimNewlineTabsAndReduceToSingleSpace»
             
             '''
@@ -415,7 +416,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         var doc = ""
         
         if (!documentation.startsWith("@")) {
-            doc = documentation.replace('\n', ' ').replace('\t', ' ').replaceAll(" +", " ")
+            doc = documentation.trimNewlineTabsAndReduceToSingleSpace
         } else {
             try {
                 // AbstractFileSystemAccess2 needs an OutputConfiguration to work, that is defined in MetaDataRuntimeModule
@@ -582,6 +583,6 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
     }
     
     private def String trimNewlineTabsAndReduceToSingleSpace(String string) {
-        CharMatcher.BREAKING_WHITESPACE.replaceFrom(string, ' ').replace('\t', ' ').replaceAll(" +", " ")
+        CharMatcher.BREAKING_WHITESPACE.replaceFrom(string, ' ').replaceAll(" +", " ")
     }
 }

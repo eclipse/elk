@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.force.model;
+package org.eclipse.elk.alg.force.options;
 
 /**
  * Enumeration of available force models to use in the strategy pattern.

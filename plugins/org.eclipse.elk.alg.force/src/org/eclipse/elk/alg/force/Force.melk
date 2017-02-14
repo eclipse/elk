@@ -11,7 +11,6 @@
 package org.eclipse.elk.alg.force
 
 import org.eclipse.elk.alg.force.ForceLayoutProvider
-import org.eclipse.elk.alg.force.model.ForceModelStrategy
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.util.ExclusiveBounds
 
