@@ -43,12 +43,12 @@ import org.eclipse.elk.core.util.ExclusiveBounds
  * Declarations for the ELK Layered layout algorithm.
  */
 bundle {
-    metadataClass properties.LayeredMetaDataProvider  
+    metadataClass options.LayeredMetaDataProvider  
     idPrefix org.eclipse.elk.layered  
-}
+} 
 
 algorithm layered(LayeredLayoutProvider) {
-	label "ELK Layered"
+	label "ELK Layered" 
 	description
 		"Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
 		possible into one direction by placing nodes into subsequent layers. This implementation
