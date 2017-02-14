@@ -11,7 +11,7 @@
 package org.eclipse.elk.alg.test;
 
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
