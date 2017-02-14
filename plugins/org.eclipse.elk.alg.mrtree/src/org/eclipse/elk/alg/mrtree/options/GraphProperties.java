@@ -8,19 +8,26 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.mrtree.properties;
+package org.eclipse.elk.alg.mrtree.options;
 
 /**
- * Layout option for the choice of the weighting for the node order.
- *
+ * An enumeration of properties a graph may have. These can be used as part of an {@code EnumSet} to
+ * base decisions on graph properties. For example, self-loop processing may be skipped if the graph
+ * doesn't contain self-loops in the first place.
+ * 
+ * <p>
+ * An {@code EnumSet} for this enumeration can be attached to a graph via the
+ * {@link MrTreeOptions#GRAPH_PROPERTIES} property.
+ * </p>
+ * 
+ * TODO this is not used yet 
+ * 
  * @author sor
  * @author sgu
  */
-public enum OrderWeighting {
-    
-    /** Chooses the number of descendants for the weighting. */
-    DESCENDANTS,
-    /** Chooses maximal number of descendants at the same level. */
-    FAN;
-    
+public enum GraphProperties {
+
+    /** The graph contains self-loops. */
+    SELF_LOOPS;
+
 }

@@ -19,11 +19,11 @@ import java.util.Map;
 
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
+import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.alg.mrtree.p1treeify.DFSTreeifyer;
 import org.eclipse.elk.alg.mrtree.p2order.OrderBalance;
 import org.eclipse.elk.alg.mrtree.p3place.NodePlacer;
 import org.eclipse.elk.alg.mrtree.p4route.EdgeRouter;
-import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

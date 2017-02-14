@@ -24,9 +24,9 @@ import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
-import org.eclipse.elk.alg.mrtree.properties.OrderWeighting;
-import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
+import org.eclipse.elk.alg.mrtree.options.InternalProperties;
+import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
+import org.eclipse.elk.alg.mrtree.options.OrderWeighting;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.IProperty;
 

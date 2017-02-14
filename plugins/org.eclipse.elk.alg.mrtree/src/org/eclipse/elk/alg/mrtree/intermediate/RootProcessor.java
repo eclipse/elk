@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.elk.alg.mrtree.ILayoutProcessor;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
-import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
+import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**

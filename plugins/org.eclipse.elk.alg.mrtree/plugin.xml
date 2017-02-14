@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.elk.core.layoutProviders">
       <provider
-            class="org.eclipse.elk.alg.mrtree.properties.MrTreeMetaDataProvider">
+            class="org.eclipse.elk.alg.mrtree.options.MrTreeMetaDataProvider">
       </provider>
       
    </extension>

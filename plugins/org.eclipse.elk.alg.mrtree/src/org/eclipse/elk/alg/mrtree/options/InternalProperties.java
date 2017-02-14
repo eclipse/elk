@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.mrtree.properties;
+package org.eclipse.elk.alg.mrtree.options;
 
 import java.util.LinkedList;
 import java.util.List;

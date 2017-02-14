@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.alg.mrtree.properties.InternalProperties;
+import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 
 /**
  * A node in the T graph. Some properties are maybe null.

@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.mrtree.properties;
+package org.eclipse.elk.alg.mrtree.options;
 
 /**
  * Enumeration of treeifying order options.
