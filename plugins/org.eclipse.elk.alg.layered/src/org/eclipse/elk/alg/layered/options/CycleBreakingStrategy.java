@@ -8,35 +8,32 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p3order;
+package org.eclipse.elk.alg.layered.options;
 
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
-import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.alg.layered.p1cycles.GreedyCycleBreaker;
+import org.eclipse.elk.alg.layered.p1cycles.InteractiveCycleBreaker;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
 /**
- * Enumeration of and factory for the different available crossing minimization strategies.
+ * Enumeration of and factory for the different available cycle breaking strategies.
  * 
  * @author msp
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
+ * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
+public enum CycleBreakingStrategy implements ILayoutPhaseFactory {
 
     /**
-     * This heuristic sweeps through the layers, trying to minimize the crossings locally. When
-     * {@link org.eclipse.elk.alg.layered.options.LayeredOptions.HIERARCHY_HANDLING} is set to
-     * {@link org.eclipse.elk.core.options.HierarchyHandling.INCLUDE_CHILDREN}, it sweeps into hierarchical graphs
-     * during the sweep.
+     * Applies a greedy heuristic to minimize the number of reversed edges.
      */
-    LAYER_SWEEP,
-
+    GREEDY,
     /**
-     * Allow user interaction by considering the previous node positioning. The actual positions
+     * Reacts on user interaction by respecting initial node positions. The actual positions
      * as given in the input diagram are considered here. This means that if the user moves
-     * a node, that movement is reflected in the ordering of nodes.
+     * a node, that movement is reflected in the decision which edges to reverse.
      */
     @AdvancedPropertyValue
     INTERACTIVE;
@@ -47,15 +44,15 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
      */
     public ILayoutPhase create() {
         switch (this) {
-        case LAYER_SWEEP:
-            return new LayerSweepCrossingMinimizer(CrossMinType.BARYCENTER);
+        case GREEDY:
+            return new GreedyCycleBreaker();
             
         case INTERACTIVE:
-            return new InteractiveCrossingMinimizer();
+            return new InteractiveCycleBreaker();
             
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the crossing minimizer " + this.toString());
+                    "No implementation is available for the cycle breaker " + this.toString());
         }
     }
 

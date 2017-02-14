@@ -8,10 +8,14 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p4nodes;
+package org.eclipse.elk.alg.layered.options;
 
 import org.eclipse.elk.alg.layered.ILayoutPhase;
 import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
+import org.eclipse.elk.alg.layered.p4nodes.InteractiveNodePlacer;
+import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer;
+import org.eclipse.elk.alg.layered.p4nodes.NetworkSimplexPlacer;
+import org.eclipse.elk.alg.layered.p4nodes.SimpleNodePlacer;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKNodePlacer;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
