@@ -145,6 +145,8 @@ public enum IntermediateProcessorStrategy {
     HORIZONTAL_COMPACTOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
+    /** Place end labels on edges. */
+    END_LABEL_PROCESSOR,
     /** In hierarchical graphs, maps a child graph to its parent node. */
     HIERARCHICAL_NODE_RESIZER,
     /** Mirrors the graph to perform a right-to-left drawing. */
@@ -152,9 +154,7 @@ public enum IntermediateProcessorStrategy {
     /** Transposes the graph to perform a top-bottom drawing. */
     DOWN_DIR_POSTPROCESSOR,
     /** Mirrors and transposes the graph to perform a bottom-up drawing. */
-    UP_DIR_POSTPROCESSOR,
-    /** Place end labels on edges. */
-    END_LABEL_PROCESSOR;
+    UP_DIR_POSTPROCESSOR;
 
     /**
      * Creates an instance of the layout processor described by this instance.
