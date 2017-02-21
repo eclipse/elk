@@ -209,7 +209,7 @@ public class ElkPropertyToValueMapEntryImpl extends MinimalEObjectImpl.Container
         if (eIsProxy()) return super.toString();
 
         StringBuffer result = new StringBuffer();
-        result.append(key.getId())
+        result.append(key != null ? key.getId() : "null")
               .append(" -> ")
               .append(String.valueOf(value));
         
