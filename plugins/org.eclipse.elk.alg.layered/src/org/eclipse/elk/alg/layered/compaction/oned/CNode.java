@@ -23,10 +23,10 @@ import com.google.common.collect.Lists;
  * Internal representation of a node in the constraint graph.
  * 
  * For instance, this class is extended to handle specific
- * {@link de.cau.cs.kieler.klay.layered.graph.LGraphElement LGraphElement}s.
+ * {@link org.eclipse.elk.alg.layered.graph.LGraphElement LGraphElement}s.
  * 
- * @see de.cau.cs.kieler.klay.layered.intermediate.compaction.CLNode CLNode
- * @see de.cau.cs.kieler.klay.layered.intermediate.compaction.CLEdge CLEdge
+ * @see org.eclipse.elk.alg.layered.intermediate.compaction.CLNode CLNode
+ * @see org.eclipse.elk.alg.layered.intermediate.compaction.CLEdge CLEdge
  */
 public abstract class CNode {
     

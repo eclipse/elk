@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Compacts a previously calculated constraint graph (
- * {@link de.cau.cs.kieler.klay.layered.compaction.oned.CGraph CGraph}) by using a technique similar
+ * {@link org.eclipse.elk.alg.layered.compaction.oned.CGraph CGraph}) by using a technique similar
  * to a longest path layering.
  * 
  * The algorithm evaluates the {@link CGroup#reposition} flag.

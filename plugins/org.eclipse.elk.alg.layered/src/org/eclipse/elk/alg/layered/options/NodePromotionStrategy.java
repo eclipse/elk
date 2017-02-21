@@ -52,20 +52,17 @@ public enum NodePromotionStrategy {
     @AdvancedPropertyValue
     NIKOLOV_IMPROVED_PIXEL,
     /**
-     * Stops the promotion either if there are no more promotions to make or a certain percentage
-     * (given through {@link de.cau.cs.kieler.klay.layered.properties.Properties
-     * Properties#NODE_PROMOTION_BOUNDARY}) of dummy nodes has been reduced while promoting. If the
-     * percentage is reached there will be no more promotions made even if there are possible
-     * promotions left.
+     * Stops the promotion either if there are no more promotions to make or a certain percentage (given through
+     * {@link LayeredOptions#LAYERING_NODE_PROMOTION_MAX_ITERATIONS}) of dummy nodes has been reduced while promoting.
+     * If the percentage is reached there will be no more promotions made even if there are possible promotions left.
      */
     @AdvancedPropertyValue
     DUMMYNODE_PERCENTAGE,
     /**
      * Stops the promotion either if there are no more promotions to make or a certain number of
      * promotions were executed. The number is calculated by a percentage of
-     * {@link de.cau.cs.kieler.klay.layered.properties.Properties
-     * Properties#NODE_PROMOTION_BOUNDARY} of the number of all nodes in the graph. If the number is
-     * reached there will be no more promotions made even if there are possible promotions left.
+     * {@link LayeredOptions#LAYERING_NODE_PROMOTION_MAX_ITERATIONS} of the number of all nodes in the graph. 
+     * If the number is reached there will be no more promotions made even if there are possible promotions left.
      */
     @AdvancedPropertyValue
     NODECOUNT_PERCENTAGE,

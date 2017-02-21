@@ -256,7 +256,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
             layers.add(currentLayer);
         }
 
-        // The algorithm constructs the layering bottom up, but KlayLayered expects the list of
+        // The algorithm constructs the layering bottom up, but ElkLayered expects the list of
         // layers to be ordered top down.
         Collections.reverse(layers);
         // After the algorithm, there should be no nodes left to be put in a layer, so we're gonna

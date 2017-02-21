@@ -134,8 +134,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @return a {@code LinkedList} of {@code LinkedLists} containing all nodes of every connected
      *         component
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#connectedComponentsDFS(LNode)
-     *      connectedComponentsDFS()
+     * @see NetworkSimplexLayerer#connectedComponentsDFS(LNode) connectedComponentsDFS()
      */
     private List<List<LNode>> connectedComponents(final List<LNode> theNodes) {
         // initialize required attributes
@@ -179,10 +178,8 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      * @return a {@code LinkedList} containing all nodes reachable through a path beginning at the
      *         input node (i.e. all nodes connected to the input node)
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#connectedComponents(List)
-     *      connectedComponents()
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#componentNodes
-     *      componentNodes
+     * @see NetworkSimplexLayerer#connectedComponents(List) connectedComponents()
+     * @see NetworkSimplexLayerer#componentNodes componentNodes
      */
     private void connectedComponentsDFS(final LNode node) {
         nodeVisited[node.id] = true;
@@ -276,8 +273,6 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
      *            then filled with layers
      * @param monitor
      *            the progress monitor
-     *            
-     * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
     public void process(final LGraph theLayeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Network simplex layering", 1);

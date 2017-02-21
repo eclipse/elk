@@ -48,9 +48,9 @@ public enum NodePlacementStrategy implements ILayoutPhaseFactory {
     BRANDES_KOEPF,
     
     /**
-     * Using an auxiliary graph and the
-     * {@link de.cau.cs.kieler.klay.layered.networksimplex.NetworkSimplex NetworkSimplex} algorithm
-     * to calculate a balanced placement with straight long edges.
+     * Using an auxiliary graph and the 
+     * {@link org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex NetworkSimplex} 
+     * algorithm to calculate a balanced placement with straight long edges.
      */
     NETWORK_SIMPLEX;
     

@@ -37,7 +37,7 @@ import com.google.common.collect.Sets;
  * Compaction strategy for the {@link OneDimensionalCompactor} based on the network simplex
  * algorithm. As a consequence not the width is minimized but the edge length of the unterlying
  * network simplex graph. We model this graph, such that the edge lengths of the original
- * {@link de.cau.cs.kieler.klay.layered.graph.LGraph LGraph} are minimized.
+ * {@link org.eclipse.elk.alg.layered.graph.LGraph LGraph} are minimized.
  */
 public class NetworkSimplexCompaction implements ICompactionAlgorithm {
     

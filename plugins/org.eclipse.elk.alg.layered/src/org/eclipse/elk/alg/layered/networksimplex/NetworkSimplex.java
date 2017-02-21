@@ -260,8 +260,6 @@ public final class NetworkSimplex  {
      * 
      * @param monitor
      *            the progress monitor
-     *            
-     * @see de.cau.cs.kieler.klay.layered.p2layers.ILayerer ILayerer
      */
     public void execute(final IElkProgressMonitor monitor) {
         monitor.begin("Network simplex", 1);
@@ -399,8 +397,7 @@ public final class NetworkSimplex  {
      * non-tree nodes as well. If all nodes of the graph are contained in the spanning tree, a tight
      * tree has been found. A concluding computation of each edge's initial cut value takes place.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#tightTreeDFS(NNode)
-     *      tightTreeDFS()
+     * @see NetworkSimplex#tightTreeDFS(NNode) tightTreeDFS()
      */
     private void feasibleTree() {
         
@@ -442,7 +439,6 @@ public final class NetworkSimplex  {
      * 
      * @param initialRootNodes
      *            the roots of the topological numbering (sources or sinks, depending on the direction)
-     * @see #layer
      */
     private void layeringTopologicalNumbering(final List<NNode> initialRootNodes) {
         
@@ -476,8 +472,6 @@ public final class NetworkSimplex  {
      * @return a pair containing the length of the shortest incoming (first element) and outgoing
      *         edge (second element) incident to the input node or {@code -1} as the length, if no
      *         such edge is incident
-     * 
-     * @see de.cau.cs.kieler.core.util.Pair Pair
      */
     private Pair<Integer, Integer> minimalSpan(final NNode node) {
         int minSpanOut = Integer.MAX_VALUE;
@@ -512,9 +506,6 @@ public final class NetworkSimplex  {
      * @param node
      *            the root of the DFS-subtree
      * @return the number of nodes in the determined tight DFS-tree
-     * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#treeEdge treeEdge
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#treeNode treeNode
      */
     private int tightTreeDFS(final NNode node) {
         int nodeCount = 1;
@@ -578,9 +569,9 @@ public final class NetworkSimplex  {
      *            the root of the DFS-subtree
      * @return the lowest post-order ID of any descending edge in the depth-first-search
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#poID poID
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#lowestPoID lowestPoID
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#postOrder postOrder
+     * @see NetworkSimplex#poID poID
+     * @see NetworkSimplex#lowestPoID lowestPoID
+     * @see NetworkSimplex#postOrder postOrder
      */
     private int postorderTraversal(final NNode node) {
         int lowest = Integer.MAX_VALUE;
@@ -639,7 +630,7 @@ public final class NetworkSimplex  {
      * all edges going from the tail to the head component, including the tree edge itself, minus
      * the sum of the weights of all edges from the head to the tail component.
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#cutvalue cutvalue
+     * @see NetworkSimplex#cutvalue cutvalue
      */
     private void cutvalues() {
         // determine incident tree edges for each node
@@ -778,9 +769,8 @@ public final class NetworkSimplex  {
      * @throws IllegalArgumentException
      *             if either {@code leave} is no tree edge or {@code enter} is a tree edge already
      * 
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#enterEdge(NEdge)
-     *      enterEdge()
-     * @see de.cau.cs.kieler.klay.layered.p2layers.NetworkSimplexLayerer#leaveEdge() leaveEdge()
+     * @see NetworkSimplex#enterEdge(NEdge) enterEdge()
+     * @see NetworkSimplex#leaveEdge() leaveEdge()
      */
     private void exchange(final NEdge leave, final NEdge enter) {
         if (!leave.treeEdge) {

@@ -30,7 +30,6 @@ import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LShape;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
@@ -54,7 +53,7 @@ import com.google.common.math.DoubleMath;
  * compaction.
  * 
  * @see OneDimensionalComponentsCompaction
- * @see de.cau.cs.kieler.klay.layered.compaction.components.ComponentsToCGraphTransformer
+ * @see org.eclipse.elk.alg.layered.compaction.components.ComponentsToCGraphTransformer ComponentsToCGraphTransformer
  */
 public class ComponentsCompactor {
 
@@ -390,7 +389,7 @@ public class ComponentsCompactor {
         
         // extract the relevant margins object.
         //  there's LayoutOptions.MARGINS as well,
-        //  however, this is only used outside of klay.
+        //  however, this is only used outside of elk layered.
         LMargin margins = null;
         if (element instanceof LNode) {
             margins = ((LNode) element).getMargin();

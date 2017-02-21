@@ -37,11 +37,10 @@ public final class CLNode extends CNode {
     /**
      * Constructor, infers hitbox from position, size and margins of the {@link LNode}. Also sets
      * the {@link org.eclipse.elk.alg.layered.compaction.oned.Quadruplet CompactionLock} according
-     * to the ratio of incoming to outgoing {@link de.cau.cs.kieler.klay.layered.graph.LEdge LEdge}
+     * to the ratio of incoming to outgoing {@link org.eclipse.elk.alg.layered.graph.LEdge LEdge}
      * s. {@link NodeType#EXTERNAL_PORT external port dummy nodes} are never locked to keep the
      * graph size minimal. They are later reset to the border position by the
-     * {@link ElkGraphLayoutTransferrer.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer
-     * KGraphLayoutTransferrer}
+     * {@link ElkGraphLayoutTransferrer}
      * 
      * @param lNode
      *            the node
@@ -106,11 +105,11 @@ public final class CLNode extends CNode {
      * {@inheritDoc}
      * <p>
      * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing
-     * is 0. This works because {@link de.cau.cs.kieler.klay.layered.graph.LGraphUtil
+     * is 0. This works because {@link org.eclipse.elk.alg.layered.graph.LGraphUtil
      * LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
      * LGraphUtil.getExternalPortPosition} is called in
-     * {@link ElkGraphLayoutTransferrer.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
-     * KGraphLayoutTransferrer.applyLayout} and resets the position of the
+     * {@link org.eclipse.elk.alg.layered.graph.transform.ElkGraphLayoutTransferrer#applyLayout(LGraph)
+     * ElkGraphLayoutTransferrer.applyLayout} and resets the position of the
      * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border
      * spacing being used.
      * </p>
@@ -127,11 +126,11 @@ public final class CLNode extends CNode {
      * {@inheritDoc}
      * <p>
      * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing
-     * is 0. This works because {@link de.cau.cs.kieler.klay.layered.graph.LGraphUtil
+     * is 0. This works because {@link org.eclipse.elk.alg.layered.graph.LGraphUtil
      * LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
      * LGraphUtil.getExternalPortPosition} is called in
-     * {@link ElkGraphLayoutTransferrer.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
-     * KGraphLayoutTransferrer.applyLayout} and resets the position of the
+     * {@link org.eclipse.elk.alg.layered.graph.transform.ElkGraphLayoutTransferrer#applyLayout(LGraph)
+     * ElkGraphLayoutTransferrer.applyLayout} and resets the position of the
      * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border
      * spacing being used.
      * </p>

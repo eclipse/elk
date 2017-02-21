@@ -316,7 +316,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     
     /**
      * Applies the compacted positions to the
-     * {@link de.cau.cs.kieler.klay.layered.graph.LGraphElement LGraphElement}s represented by
+     * {@link org.eclipse.elk.alg.layered.graph.LGraphElement LGraphElement}s represented by
      * {@link CNode}s.
      */
     private void applyNodePositions() {

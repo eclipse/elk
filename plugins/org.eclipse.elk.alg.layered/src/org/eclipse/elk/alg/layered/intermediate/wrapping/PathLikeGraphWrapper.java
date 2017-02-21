@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
  * that works only on a very small subset of graphs, namely 
  * paths that have very few branches.
  * Also, it only works in conjunction with the 
- * {@link de.cau.cs.kieler.klay.layered.p2layers.LongestPathLayerer}.
+ * {@link org.eclipse.elk.alg.layered.p2layers.LongestPathLayerer LongestPathLayerer}.
  * </p>
  * 
  * <p>

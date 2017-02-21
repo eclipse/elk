@@ -96,7 +96,7 @@ import org.eclipse.elk.core.util.Pair;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2014-11-09 review KI-56 by chsch, als
  */
-public final class KlayLayered {
+public final class ElkLayered {
 
     ////////////////////////////////////////////////////////////////////////////////
     // Variables
@@ -417,7 +417,7 @@ public final class KlayLayered {
      * 
      * @param phase the phase or processor to stop after
      * @param state the current test execution state
-     * @see KlayLayered#runLayoutTestUntil(Class, boolean)
+     * @see ElkLayered#runLayoutTestUntil(Class, boolean)
      */
     public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
             final TestExecutionState state) {

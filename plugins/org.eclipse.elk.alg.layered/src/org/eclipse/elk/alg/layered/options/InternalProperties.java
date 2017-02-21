@@ -276,7 +276,7 @@ public final class InternalProperties {
      * property is set on. This is primarily used when edges are rerouted from a node to dummy
      * nodes.
      * <p>
-     * This property is currently not declared as one of the layout options offered by KLay Layered
+     * This property is currently not declared as one of the layout options offered by ELK Layered
      * and should be considered highly experimental.
      */
     public static final IProperty<List<LNode>> BARYCENTER_ASSOCIATES = new Property<List<LNode>>(
@@ -387,8 +387,7 @@ public final class InternalProperties {
 
     /**
      * Specifies if the corresponding LGraph element was added by the
-     * {@link de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor
-     * PartitionPreprocessor}.
+     * {@link org.eclipse.elk.alg.layered.intermediate.PartitionPreprocessor PartitionPreprocessor}.
      */
     public static final IProperty<Boolean> PARTITION_DUMMY = new Property<Boolean>(
             "partitionConstraint", false);

@@ -22,7 +22,7 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
  * 
- * @see KlayLayered
+ * @see ElkLayered
  * 
  * @author msp
  * @author cds
@@ -35,7 +35,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
     // Variables
 
     /** the layout algorithm used for regular layout runs. */
-    private final KlayLayered klayLayered = new KlayLayered();
+    private final ElkLayered elkLayered = new ElkLayered();
 
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -55,10 +55,10 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         // Check if hierarchy handling for a compound graph is requested
         if (elkgraph.getProperty(LayeredOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN) {
             // Layout for all hierarchy levels is requested
-            klayLayered.doCompoundLayout(layeredGraph, progressMonitor);
+            elkLayered.doCompoundLayout(layeredGraph, progressMonitor);
         } else {
             // Only the top-level graph is processed
-            klayLayered.doLayout(layeredGraph, progressMonitor);
+            elkLayered.doLayout(layeredGraph, progressMonitor);
         }
         
         if (!progressMonitor.isCanceled()) {
@@ -81,7 +81,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      * @param elkgraph the KGraph to be used for the layout test run.
      * @return an initialized test execution state
      */
-    public KlayLayered.TestExecutionState startLayoutTest(final ElkNode elkgraph) {
+    public ElkLayered.TestExecutionState startLayoutTest(final ElkNode elkgraph) {
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
         // LGraph instance, even though the IGraphImporter interface would allow null as a return
         // value)
@@ -89,7 +89,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         LGraph layeredGraph = graphImporter.importGraph(elkgraph);
         
         // Prepare a layout test and return the test execution state
-        return klayLayered.prepareLayoutTest(layeredGraph);
+        return elkLayered.prepareLayoutTest(layeredGraph);
     }
     
     /**
@@ -97,8 +97,8 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      * 
      * @return the layout algorithm
      */
-    public KlayLayered getLayoutAlgorithm() {
-        return klayLayered;
+    public ElkLayered getLayoutAlgorithm() {
+        return elkLayered;
     }
 
 }

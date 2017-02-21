@@ -32,14 +32,14 @@ import com.google.common.collect.Sets;
 
 /**
  * This processor applies additional compaction to an already routed graph and can be executed after
- * {@link de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter OrthogonalEdgeRouter}.
+ * {@link org.eclipse.elk.alg.layered.p5edges.OrthogonalEdgeRouter OrthogonalEdgeRouter}.
  * Therefore nodes and vertical segments of edges are repositioned in the specified direction where
  * the position is minimal considering the desired spacing between elements.
  * 
  * <p>
  *  Since the locking functionality in {@link CLNode} and {@link CLEdge} relies on the direction of
  *  incoming and outgoing edges, this processor is required to be executed before the
- *  {@link de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer ReversedEdgeRestorer}.
+ *  {@link org.eclipse.elk.alg.layered.intermediate.ReversedEdgeRestorer ReversedEdgeRestorer}.
  * </p>
  * 
  * <dl>
@@ -50,9 +50,9 @@ import com.google.common.collect.Sets;
  *  <dt>Slots:</dt>
  *   <dd>After phase 5.</dd>
  *  <dt>Same-slot dependencies:</dt>
- *   <dd>After {@link de.cau.cs.kieler.klay.layered.intermediate.LabelDummyRemover LabelDummyRemover}
+ *   <dd>After {@link org.eclipse.elk.alg.layered.intermediate.LabelDummyRemover LabelDummyRemover}
  *   </dd>
- *   <dd>Before {@link de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer
+ *   <dd>Before {@link org.eclipse.elk.alg.layered.intermediate.ReversedEdgeRestorer
  *       ReversedEdgeRestorer}</dd>
  * </dl>
  */
@@ -62,7 +62,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
      * Compaction algorithm based on the network simplex algorithm presented by Gansner et al. in
      * the context of layering.
      * 
-     * @see de.cau.cs.kieler.klay.layered.networksimplex.NetworkSimplex
+     * @see org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex
      */
     public static final ICompactionAlgorithm NETWORK_SIMPLEX_COMPACTION =
             new NetworkSimplexCompaction();
@@ -260,7 +260,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         
         /**
          * @return true if both passed nodes originate from the same (set) of
-         *         {@link de.cau.cs.kieler.klay.layered.graph.LEdge LEdge}.
+         *         {@link org.eclipse.elk.alg.layered.graph.LEdge LEdge}.
          */
         private boolean isVerticalSegmentsOfSameEdge(final CNode cNode1, final CNode cNode2) {
             return 

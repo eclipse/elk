@@ -19,7 +19,7 @@ import com.google.common.collect.Sets;
  * For instance, when compacting a layered graph, CGroups are used to ensure that vertical edge segments,
  * that are connected to north/south ports, are kept at the position of the port.
  * 
- * @see de.cau.cs.kieler.klay.layered.intermediate.compaction.HorizontalGraphCompactor
+ * @see org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor
  */
 public final class CGroup {
     

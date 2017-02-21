@@ -12,11 +12,11 @@ package org.eclipse.elk.alg.layered.options;
 
 /**
  * Which strategy should be used by the
- * {@link de.cau.cs.kieler.klay.layered.compaction.oned.OneDimensionalCompactor} to calculate the
+ * {@link org.eclipse.elk.alg.layered.compaction.oned.OneDimensionalCompactor OneDimensionalCompactor} to calculate the
  * constraint graph.
  * 
- * @see de.cau.cs.kieler.klay.layered.compaction.oned.algs.QuadraticConstraintCalculation
- * @see de.cau.cs.kieler.klay.layered.compaction.oned.algs.ScanlineConstraintCalculator
+ * @see org.eclipse.elk.alg.layered.compaction.oned.algs.QuadraticConstraintCalculation QuadraticConstraintCalculation
+ * @see org.eclipse.elk.alg.layered.compaction.oned.algs.ScanlineConstraintCalculator ScanlineConstraintCalculator
  */
 public enum ConstraintCalculationStrategy {
 
