@@ -113,13 +113,13 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
             }
             
             // set fixed routing for the connected edges, or leave them as they are
-            for (ElkEdge edge : node.getOutgoingEdges()) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
                 KVector maxv = processEdge(edge, edgeRouting);
                 maxx = Math.max(maxx, maxv.x);
                 maxy = Math.max(maxy, maxv.y);
             }
             
-            for (ElkEdge edge : node.getIncomingEdges()) {
+            for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
                 // MIGRATE How about hyperedges?
                 if (ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)) != layoutNode) {
                     KVector maxv = processEdge(edge, edgeRouting);
