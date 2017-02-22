@@ -74,17 +74,8 @@ public final class ElkUtil {
     }
     
     
-    
-    /**
-     * Create a unique identifier for the given graph element. Note that this identifier
-     * is not necessarily universally unique, since it uses the hash code, which
-     * usually covers only the range of heap space addresses.
-     * 
-     * @param element a graph element
-     */
-    public static void createIdentifier(final ElkGraphElement element) {
-        element.setIdentifier(Integer.toString(element.hashCode()));
-    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // LAYOUT-RELATED METHODS
 
     /**
      * Determines the port side for the given port from its relative position at
@@ -388,99 +379,6 @@ public final class ElkUtil {
     }
     
     /**
-     * Converts the given relative point to an absolute location.
-     * 
-     * @param point a relative point
-     * @param parent the parent node to which the point is relative to
-     * @return {@code point} for convenience
-     */
-    public static KVector toAbsolute(final KVector point, final ElkNode parent) {
-        ElkNode node = parent;
-        while (node != null) {
-            point.add(node.getX(), node.getY());
-            node = node.getParent();
-        }
-        return point;
-    }
-    
-    /**
-     * Converts the given absolute point to a relative location.
-     * 
-     * @param point an absolute point
-     * @param parent the parent node to which the point shall be made relative to
-     * @return {@code point} for convenience
-     */
-    public static KVector toRelative(final KVector point, final ElkNode parent) {
-        ElkNode node = parent;
-        while (node != null) {
-            point.add(-node.getX(), -node.getY());
-            node = node.getParent();
-        }
-        return point;
-    }
-    
-    /**
-     * Translates the contents of the given node by an offset.
-     * 
-     * @param parent parent node whose children shall be translated
-     * @param xoffset x coordinate offset
-     * @param yoffset y coordinate offset
-     */
-    public static void translate(final ElkNode parent, final double xoffset, final double yoffset) {
-        for (ElkNode child : parent.getChildren()) {
-            // Translate node position
-            child.setLocation(child.getX() + xoffset, child.getY() + yoffset);
-        }
-        // Translates all edges contained in the parent. This includes edges connecting the parent to its
-        // children. For these edges the start or end point might get separated from the node boundary.
-        parent.getContainedEdges().forEach(edge -> translate(edge, xoffset, yoffset));
-    }
-    
-    /**
-     * Translates the given edge by an offset. This includes all routing information, junction points (if any), and
-     * edge labels.
-     * 
-     * @param edge edge that shall be translated
-     * @param xoffset x coordinate offset
-     * @param yoffset y coordinate offset
-     */
-    public static void translate(final ElkEdge edge, final double xoffset, final double yoffset) {
-        // Edge sections
-        edge.getSections().stream().forEach(
-                s -> translate(s, xoffset, yoffset));
-        
-        // Edge labels
-        edge.getLabels().stream().forEach(
-                label -> label.setLocation(label.getX() + xoffset, label.getY() + yoffset));
-        
-        // Junction points
-        KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
-        if (junctionPoints != null) {
-            junctionPoints.offset(xoffset, yoffset);
-        }
-    }
-    
-    /**
-     * Translates the given edge section by an offset.
-     * 
-     * @param section edge section that shall be translated
-     * @param xoffset x coordinate offset
-     * @param yoffset y coordinate offset
-     */
-    public static void translate(final ElkEdgeSection section, final double xoffset, final double yoffset) {
-        // Translate source point
-        section.setStartLocation(section.getStartX() + xoffset, section.getStartY() + yoffset);
-        
-        // Translate bend points
-        for (ElkBendPoint bendPoint : section.getBendPoints()) {
-            bendPoint.set(bendPoint.getX() + xoffset, bendPoint.getY() + yoffset);
-        }
-        
-        // Translate target point
-        section.setEndLocation(section.getEndX() + xoffset, section.getEndY() + yoffset);
-    }
-    
-    /**
      * Determine the junction points of the given edge. This is done by comparing the bend points
      * of the given edge with the bend points of all other edges that are connected to the same
      * source port or the same target port.
@@ -590,6 +488,107 @@ public final class ElkUtil {
         return junctionPoints;
     }
     
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // COORDINATE TRANSLATION
+    
+    /**
+     * Translates the contents of the given node by an offset.
+     * 
+     * @param parent parent node whose children shall be translated
+     * @param xoffset x coordinate offset
+     * @param yoffset y coordinate offset
+     */
+    public static void translate(final ElkNode parent, final double xoffset, final double yoffset) {
+        for (ElkNode child : parent.getChildren()) {
+            // Translate node position
+            child.setLocation(child.getX() + xoffset, child.getY() + yoffset);
+        }
+        // Translates all edges contained in the parent. This includes edges connecting the parent to its
+        // children. For these edges the start or end point might get separated from the node boundary.
+        parent.getContainedEdges().forEach(edge -> translate(edge, xoffset, yoffset));
+    }
+    
+    /**
+     * Translates the given edge by an offset. This includes all routing information, junction points (if any), and
+     * edge labels.
+     * 
+     * @param edge edge that shall be translated
+     * @param xoffset x coordinate offset
+     * @param yoffset y coordinate offset
+     */
+    public static void translate(final ElkEdge edge, final double xoffset, final double yoffset) {
+        // Edge sections
+        edge.getSections().stream().forEach(
+                s -> translate(s, xoffset, yoffset));
+        
+        // Edge labels
+        edge.getLabels().stream().forEach(
+                label -> label.setLocation(label.getX() + xoffset, label.getY() + yoffset));
+        
+        // Junction points
+        KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
+        if (junctionPoints != null) {
+            junctionPoints.offset(xoffset, yoffset);
+        }
+    }
+    
+    /**
+     * Translates the given edge section by an offset.
+     * 
+     * @param section edge section that shall be translated
+     * @param xoffset x coordinate offset
+     * @param yoffset y coordinate offset
+     */
+    public static void translate(final ElkEdgeSection section, final double xoffset, final double yoffset) {
+        // Translate source point
+        section.setStartLocation(section.getStartX() + xoffset, section.getStartY() + yoffset);
+        
+        // Translate bend points
+        for (ElkBendPoint bendPoint : section.getBendPoints()) {
+            bendPoint.set(bendPoint.getX() + xoffset, bendPoint.getY() + yoffset);
+        }
+        
+        // Translate target point
+        section.setEndLocation(section.getEndX() + xoffset, section.getEndY() + yoffset);
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // COORDINATE-SYSTEM AND TYPE "CONVERSION"
+    
+    /**
+     * Converts the given relative point to an absolute location.
+     * 
+     * @param point a relative point
+     * @param parent the parent node to which the point is relative to
+     * @return {@code point} for convenience
+     */
+    public static KVector toAbsolute(final KVector point, final ElkNode parent) {
+        ElkNode node = parent;
+        while (node != null) {
+            point.add(node.getX(), node.getY());
+            node = node.getParent();
+        }
+        return point;
+    }
+    
+    /**
+     * Converts the given absolute point to a relative location.
+     * 
+     * @param point an absolute point
+     * @param parent the parent node to which the point shall be made relative to
+     * @return {@code point} for convenience
+     */
+    public static KVector toRelative(final KVector point, final ElkNode parent) {
+        ElkNode node = parent;
+        while (node != null) {
+            point.add(-node.getX(), -node.getY());
+            node = node.getParent();
+        }
+        return point;
+    }
+    
     /**
      * Get the edge points as an array of vectors. Note that this method requires the edge to have exactly one
      * edge section.
@@ -624,6 +623,80 @@ public final class ElkUtil {
         
         return points;
     }
+    
+    /**
+     * Creates a vector chain containing the start point, bend points, and end point of the given edge section. Note
+     * that modifying the vector chain will be of no consequence to the edge section.
+     * 
+     * @param edgeSection 
+     *            the edge section to initialize the vector chain with.
+     * @return the vector chain.
+     */
+    public static KVectorChain createVectorChain(final ElkEdgeSection edgeSection) {
+        KVectorChain chain = new KVectorChain();
+        
+        chain.add(new KVector(edgeSection.getStartX(), edgeSection.getStartY()));
+        
+        for (ElkBendPoint bendPoint : edgeSection.getBendPoints()) {
+            chain.add(new KVector(bendPoint.getX(), bendPoint.getY()));
+        }
+        
+        chain.add(new KVector(edgeSection.getEndX(), edgeSection.getEndY()));
+        
+        return chain;
+    }
+    
+    /**
+     * Applies the vector chain's vectors to the given edge section. The first and the last point of the vector chain
+     * are used as the section's new source and start point, respectively. The remaining points become the section's
+     * new bend points. The method tries to reuse as many bend points as possible instead of wiping all bend points
+     * out and creating new ones.
+     * 
+     * @param vectorChain the vector chain to apply.
+     * @param section the edge section to apply the chain to.
+     * @throws IllegalArgumentException if the vector chain contains less than two vectors.
+     */
+    public static void applyVectorChain(final KVectorChain vectorChain, final ElkEdgeSection section) {
+        // We need at least a start and an end point
+        if (vectorChain.size() < 2) {
+            throw new IllegalArgumentException("The vector chain must contain at least a source and a target point.");
+        }
+        
+        // Start point
+        KVector firstPoint = vectorChain.getFirst();
+        section.setStartLocation(firstPoint.x, firstPoint.y);
+        
+        // Reuse as many existing bend points as possible
+        ListIterator<ElkBendPoint> oldPointIter = section.getBendPoints().listIterator();
+        ListIterator<KVector> newPointIter = vectorChain.listIterator(1);
+        
+        while (newPointIter.nextIndex() < vectorChain.size() - 1) {
+            KVector nextPoint = newPointIter.next();
+            ElkBendPoint bendpoint;
+            if (oldPointIter.hasNext()) {
+                bendpoint = oldPointIter.next();
+            } else {
+                bendpoint = ElkGraphFactory.eINSTANCE.createElkBendPoint();
+                oldPointIter.add(bendpoint);
+            }
+            
+            bendpoint.set(nextPoint.x, nextPoint.y);
+        }
+        
+        // Remove existing bend points that we did not use
+        while (oldPointIter.hasNext()) {
+            oldPointIter.next();
+            oldPointIter.remove();
+        }
+        
+        // End point
+        KVector lastPoint = vectorChain.getLast();
+        section.setEndLocation(lastPoint.x, lastPoint.y);
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DEFAULT LAYOUT SETTINGS
     
     /**
      * Recursively configures default values for all child elements of the passed graph. This
@@ -720,90 +793,9 @@ public final class ElkUtil {
         }
     }
     
-    /**
-     * Print information on the given graph element to the given string builder.
-     */
-    public static void printElementPath(final ElkGraphElement element, final StringBuilder builder) {
-        if (element.eContainer() instanceof ElkGraphElement) {
-            printElementPath((ElkGraphElement) element.eContainer(), builder);
-            builder.append(" > ");
-        } else {
-            builder.append("Root ");
-        }
-        
-        String className = element.eClass().getName();
-        if (className.startsWith("Elk")) {
-            // CHECKSTYLEOFF MagicNumber
-            builder.append(className.substring(3));
-            // CHECKSTYLEON MagicNumber
-        } else {
-            builder.append(className);
-        }
-        
-        if (element instanceof ElkLabel) {
-            String text = ((ElkLabel) element).getText();
-            if (!Strings.isNullOrEmpty(text)) {
-                builder.append(' ').append(text);
-            }
-        } else  if (element instanceof ElkGraphElement) {
-            ElkGraphElement labeledElement = (ElkGraphElement) element;
-            if (!labeledElement.getLabels().isEmpty()) {
-                ElkLabel firstLabel = labeledElement.getLabels().get(0);
-                String text = firstLabel.getText();
-                if (!Strings.isNullOrEmpty(text)) {
-                    builder.append(' ').append(text);
-                }
-            }
-        }
-    }
     
-    /**
-     * Applies the vector chain's vectors to the given edge section. The first and the last point of the vector chain
-     * are used as the section's new source and start point, respectively. The remaining points become the section's
-     * new bend points. The method tries to reuse as many bend points as possible instead of wiping all bend points
-     * out and creating new ones.
-     * 
-     * @param vectorChain the vector chain to apply.
-     * @param section the edge section to apply the chain to.
-     * @throws IllegalArgumentException if the vector chain contains less than two vectors.
-     */
-    public static void applyVectorChain(final KVectorChain vectorChain, final ElkEdgeSection section) {
-        // We need at least a start and an end point
-        if (vectorChain.size() < 2) {
-            throw new IllegalArgumentException("The vector chain must contain at least a source and a target point.");
-        }
-        
-        // Start point
-        KVector firstPoint = vectorChain.getFirst();
-        section.setStartLocation(firstPoint.x, firstPoint.y);
-        
-        // Reuse as many existing bend points as possible
-        ListIterator<ElkBendPoint> oldPointIter = section.getBendPoints().listIterator();
-        ListIterator<KVector> newPointIter = vectorChain.listIterator(1);
-        
-        while (newPointIter.nextIndex() < vectorChain.size() - 1) {
-            KVector nextPoint = newPointIter.next();
-            ElkBendPoint bendpoint;
-            if (oldPointIter.hasNext()) {
-                bendpoint = oldPointIter.next();
-            } else {
-                bendpoint = ElkGraphFactory.eINSTANCE.createElkBendPoint();
-                oldPointIter.add(bendpoint);
-            }
-            
-            bendpoint.set(nextPoint.x, nextPoint.y);
-        }
-        
-        // Remove existing bend points that we did not use
-        while (oldPointIter.hasNext()) {
-            oldPointIter.next();
-            oldPointIter.remove();
-        }
-        
-        // End point
-        KVector lastPoint = vectorChain.getLast();
-        section.setEndLocation(lastPoint.x, lastPoint.y);
-    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // VISITORS
     
     /**
      * Apply the given graph element visitors to the content of the given graph. If validators are involved
@@ -873,26 +865,45 @@ public final class ElkUtil {
         }
     }
     
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DEBUGGING
+    
     /**
-     * Creates a vector chain containing the start point, bend points, and end point of the given edge section. Note
-     * that modifying the vector chain will be of no consequence to the edge section.
-     * 
-     * @param edgeSection 
-     *            the edge section to initialize the vector chain with.
-     * @return the vector chain.
+     * Print information on the given graph element to the given string builder.
      */
-    public static KVectorChain createVectorChain(final ElkEdgeSection edgeSection) {
-        KVectorChain chain = new KVectorChain();
-        
-        chain.add(new KVector(edgeSection.getStartX(), edgeSection.getStartY()));
-        
-        for (ElkBendPoint bendPoint : edgeSection.getBendPoints()) {
-            chain.add(new KVector(bendPoint.getX(), bendPoint.getY()));
+    public static void printElementPath(final ElkGraphElement element, final StringBuilder builder) {
+        if (element.eContainer() instanceof ElkGraphElement) {
+            printElementPath((ElkGraphElement) element.eContainer(), builder);
+            builder.append(" > ");
+        } else {
+            builder.append("Root ");
         }
         
-        chain.add(new KVector(edgeSection.getEndX(), edgeSection.getEndY()));
+        String className = element.eClass().getName();
+        if (className.startsWith("Elk")) {
+            // CHECKSTYLEOFF MagicNumber
+            builder.append(className.substring(3));
+            // CHECKSTYLEON MagicNumber
+        } else {
+            builder.append(className);
+        }
         
-        return chain;
+        if (element instanceof ElkLabel) {
+            String text = ((ElkLabel) element).getText();
+            if (!Strings.isNullOrEmpty(text)) {
+                builder.append(' ').append(text);
+            }
+        } else  if (element instanceof ElkGraphElement) {
+            ElkGraphElement labeledElement = (ElkGraphElement) element;
+            if (!labeledElement.getLabels().isEmpty()) {
+                ElkLabel firstLabel = labeledElement.getLabels().get(0);
+                String text = firstLabel.getText();
+                if (!Strings.isNullOrEmpty(text)) {
+                    builder.append(' ').append(text);
+                }
+            }
+        }
     }
     
     /**
@@ -933,6 +944,23 @@ public final class ElkUtil {
         } else {
             return null;
         }
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // MISCELLANEOUS
+    
+    
+    
+    /**
+     * Create a unique identifier for the given graph element. Note that this identifier
+     * is not necessarily universally unique, since it uses the hash code, which
+     * usually covers only the range of heap space addresses.
+     * 
+     * @param element a graph element
+     */
+    public static void createIdentifier(final ElkGraphElement element) {
+        element.setIdentifier(Integer.toString(element.hashCode()));
     }
     
 }
