@@ -15,6 +15,7 @@ import org.eclipse.elk.core.util.IDataObject;
 import org.eclipse.elk.core.util.internal.LayoutOptionProxy;
 import org.eclipse.elk.graph.ElkGraphPackage;
 import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.xmi.XMLResource;
@@ -52,10 +53,16 @@ final class ElkGraphXMIHelper extends XMIHelperImpl {
     }
     
     /**
-     * Asks the layout meta data service to load the property which has the given value as its ID.
+     * Asks the layout meta data service to load the property which has the given ID.
      */
-    private IProperty<?> createIPropertyFromString(final String value) {
-        return LayoutMetaDataService.getInstance().getOptionData(value);
+    private IProperty<?> createIPropertyFromString(final String id) {
+        IProperty<?> property = LayoutMetaDataService.getInstance().getOptionData(id);
+        if (property == null) {
+            // ELK doesn't know about the property (yet?)
+            property = new Property<Object>(id);
+        }
+        
+        return property;
     }
     
     /**
