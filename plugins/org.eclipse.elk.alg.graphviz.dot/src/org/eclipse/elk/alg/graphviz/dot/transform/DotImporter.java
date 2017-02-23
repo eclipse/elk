@@ -555,7 +555,7 @@ public class DotImporter {
                 applyLayout(elknode, new KVector(offset).add(elknode.getX(), elknode.getY()), graph);
             }
             
-            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
                 applyLayout(elkedge, offset, graph);
             }
         }
