@@ -842,8 +842,8 @@ public class DotExporter {
                     ElkUtil.toAbsolute(sourcePoint, referenceNode);
                     ElkUtil.toRelative(sourcePoint, sourceNode);
                     
-                    sourcePort.setX((float) sourcePoint.x - sourceNode.getX() - sourcePort.getWidth() / 2);
-                    sourcePort.setY((float) sourcePoint.y - sourceNode.getY() - sourcePort.getHeight() / 2);
+                    sourcePort.setX((float) sourcePoint.x - sourcePort.getWidth() / 2);
+                    sourcePort.setY((float) sourcePoint.y - sourcePort.getHeight() / 2);
                 }
                 
                 if (elkedge.getTargets().get(0) instanceof ElkPort) {
@@ -853,8 +853,8 @@ public class DotExporter {
                     ElkUtil.toAbsolute(targetPoint, referenceNode);
                     ElkUtil.toRelative(targetPoint, targetNode);
                     
-                    targetPort.setX(targetPoint.x - targetNode.getX() - targetPort.getWidth() / 2);
-                    targetPort.setY(targetPoint.y - targetNode.getY() - targetPort.getHeight() / 2);
+                    targetPort.setX(targetPoint.x - targetPort.getWidth() / 2);
+                    targetPort.setY(targetPoint.y - targetPort.getHeight() / 2);
                 }
             }
         }
