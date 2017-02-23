@@ -90,7 +90,7 @@ public final class GraphIdentifierGenerator {
      * 
      * @param element the element to generate an identifier for.
      */
-    private void generateIdentifiers(final ElkGraphElement element) {
+    private void generateIdentifiers(final EObject element) {
         new ElkGraphSwitch<Object>() {
             
             @Override
@@ -104,15 +104,16 @@ public final class GraphIdentifierGenerator {
                 }
                 
                 node.getLabels().stream().forEach(l -> generateIdentifiers(l));
-                node.getPorts().stream().forEach(l -> generateIdentifiers(l));
-                node.getContainedEdges().stream().forEach(l -> generateIdentifiers(l));
-                
+                node.getPorts().stream().forEach(p -> generateIdentifiers(p));
+                node.getContainedEdges().stream().forEach(e -> generateIdentifiers(e));
+                node.getChildren().stream().forEach(c -> generateIdentifiers(c));
                 return null;
             }
             
             @Override
             public Object caseElkPort(final ElkPort port) {
                 setIdentifierIfMissing(port, ElementType.PORT);
+                
                 port.getLabels().stream().forEach(l -> generateIdentifiers(l));
                 return null;
             }
@@ -120,6 +121,7 @@ public final class GraphIdentifierGenerator {
             @Override
             public Object caseElkLabel(final ElkLabel label) {
                 setIdentifierIfMissing(label, ElementType.LABEL);
+                
                 label.getLabels().stream().forEach(l -> generateIdentifiers(l));
                 return null;
             }
@@ -127,7 +129,9 @@ public final class GraphIdentifierGenerator {
             @Override
             public Object caseElkEdge(final ElkEdge edge) {
                 setIdentifierIfMissing(edge, ElementType.EDGE);
+                
                 edge.getLabels().stream().forEach(l -> generateIdentifiers(l));
+                edge.getSections().stream().forEach(s -> generateIdentifiers(s));
                 return null;
             }
             
