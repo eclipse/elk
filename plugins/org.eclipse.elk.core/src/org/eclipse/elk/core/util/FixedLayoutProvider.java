@@ -132,7 +132,7 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
         // if orthogonal routing is selected, determine the junction points
         if (edgeRouting == EdgeRouting.ORTHOGONAL) {
             for (ElkNode node : layoutNode.getChildren()) {
-                for (ElkEdge edge : node.getOutgoingEdges()) {
+                for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
                     generateJunctionPoints(edge);
                 }  
             }

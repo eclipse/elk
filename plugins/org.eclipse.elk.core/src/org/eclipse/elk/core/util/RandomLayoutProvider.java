@@ -25,6 +25,8 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+import com.google.common.collect.Iterables;
+
 /**
  * Layout provider that computes random layouts. Can be useful to demonstrate the difference
  * between a good layout and an extremely bad one.
@@ -89,7 +91,7 @@ public class RandomLayoutProvider extends AbstractLayoutProvider {
         double nodesArea = 0.0f, maxWidth = 0.0f, maxHeight = 0.0f;
         int m = 1;
         for (ElkNode node : parent.getChildren()) {
-            m += node.getOutgoingEdges().size();
+            m += Iterables.size(ElkGraphUtil.allOutgoingEdges(node));
             
             double width = node.getWidth();
             maxWidth = Math.max(maxWidth, width);

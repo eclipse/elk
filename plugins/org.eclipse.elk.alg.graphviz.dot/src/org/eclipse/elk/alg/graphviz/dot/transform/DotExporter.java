@@ -255,7 +255,7 @@ public class DotExporter {
         
         while (!nodes.isEmpty()) {
             ElkNode source = nodes.removeFirst();
-            for (ElkEdge edge : source.getOutgoingEdges()) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(source)) {
                 // We don't support hyperedges
                 if (edge.isHyperedge()) {
                     throw new UnsupportedGraphException("Hyperedges are not supported.");

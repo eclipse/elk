@@ -114,7 +114,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
      */
     private void transformEdges(final ElkNode parentNode, final FGraph fgraph, final Map<ElkNode, FNode> elemMap) {
         for (ElkNode knode : parentNode.getChildren()) {
-            for (ElkEdge kedge : knode.getOutgoingEdges()) {
+            for (ElkEdge kedge : ElkGraphUtil.allOutgoingEdges(knode)) {
                 // We don't support hyperedges
                 if (kedge.isHyperedge()) {
                     throw new UnsupportedGraphException("Graph must not contain hyperedges.");
