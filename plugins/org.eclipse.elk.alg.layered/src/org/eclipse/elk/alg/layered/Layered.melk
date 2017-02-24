@@ -598,7 +598,7 @@ group wrapping {
     }
  
     advanced option additionalEdgeSpacing: double {
-        label "Additional Wrapped Edges Spacing."
+        label "Additional Wrapped Edges Spacing"
         description 
             "To visually separate edges that are wrapped from regularly routed edges an additional spacing value 
              can be specified in form of this layout option. The spacing is added to the regular edgeNode spacing."
