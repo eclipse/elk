@@ -26,7 +26,7 @@ import org.eclipse.elk.core.meta.metaData.MdBundleMember
 import org.eclipse.elk.core.meta.metaData.MdGroup
 import org.eclipse.elk.core.meta.metaData.MdModel
 import org.eclipse.elk.core.meta.metaData.MdOption
-import org.eclipse.elk.core.options.GraphFeature
+import org.eclipse.elk.graph.properties.GraphFeature
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmEnumerationType
 import org.eclipse.xtext.common.types.JvmField

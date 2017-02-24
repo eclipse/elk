@@ -17,7 +17,6 @@ import java.util.Queue;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -26,6 +25,7 @@ import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.properties.GraphFeature;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;

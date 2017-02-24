@@ -8,10 +8,16 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.options;
+package org.eclipse.elk.graph.properties;
 
 /**
  * Graph features used for automatic recognition of the suitability of layout algorithms.
+ * 
+ * <p><em>Note:</em>
+ * Originally, this enumeration was to be found in the {@code properties} package of the core plug-in. However,
+ * the meta data compiler needs access to this enumeration. Making it depend on the core plug-in introduces an
+ * unfortunate cyclic dependency: to compile the meta-data compiler, we need to compile the core plug-in. To
+ * compile the core plug-in, we need the meta-data compiler.</p>
  *
  * @author msp
  * @author cds
