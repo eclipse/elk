@@ -12,7 +12,7 @@ and can thus also be used outside of Eclipse.
 ## More Info
 
 * [The ELK homepage](http://www.eclipse.org/elk)
-* [Our documentation](https://github.com/eclipse/elk/wiki)
+* [Our GitHub repository](https://github.com/eclipse/elk/)
 
 
 ## Repository Structure
@@ -23,6 +23,8 @@ The repository's structure is pretty straightforward. We only have a few folders
   Contains all the files necessary to build ELK in all its different forms.
 * `config`:
   Contains configuration files, such as our Checkstyle configuration.
+* `docs`:
+  Contains documentation in the form of a [Hugo](https://gohugo.io/) site.
 * `features`:
   Contains all the Eclipse features ELK consists of.
 * `plugins`:
@@ -35,25 +37,4 @@ The repository's structure is pretty straightforward. We only have a few folders
 
 ## Building ELK
 
-ELK is built using Maven.
-To build everything,
-first navigate to the `build` folder.
-
-The build itself is split into two parts.
-We first need to build and install
-our meta data language compiler
-required during the main build,
-and then trigger the main build itself:
-
-```
-mvn clean install -P elk-meta
-mvn clean package
-```
-
-If built on the Eclipse infrastructure,
-the produced artifacts can be signed
-by calling the main build as follows:
-
-```
-mvn clean verify -P elk-update-site -P sign
-```
+Information on how to build ELK and the documentation can be found [on our website](https://www.eclipse.org/elk/documentation/contributors/buildingelk.html).
