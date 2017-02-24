@@ -1,0 +1,7 @@
+{{ $title := .Get "title" }}
+
+<div class="alert alert-{{ if .Get "mode" }}{{ .Get "mode" }}{{ else }}simple{{end}}">
+  {{ with $title }}<h5>{{ $title | htmlUnescape }}</h5>{{ end }}
+
+  {{ .Inner }}
+</div>

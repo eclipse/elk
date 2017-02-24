@@ -1,0 +1,5 @@
+languageCode = "en-us"
+title = "Eclipse Layout Kernel"
+baseurl = "https://www.eclipse.org/elk/"
+canonifyURLs = true
+

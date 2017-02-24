@@ -1,0 +1,11 @@
+<p>
+  <img
+    class="img-fluid"
+    {{ if .Get "gen" }}
+      src="{{ (print "img_gen/" (.Get "src")) | absURL }}"
+    {{ else }}
+      src="{{ (print "img/" (.Get "src")) | absURL }}"
+    {{ end }}
+    {{ with .Get "alt"}} alt="{{.}}"{{ end }}
+  />
+</p>

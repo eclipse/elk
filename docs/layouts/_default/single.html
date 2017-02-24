@@ -1,0 +1,13 @@
+{{ partial "header" . }}
+
+<div class="row">
+  <div class="col-sm-9">
+    <h1>{{ .Title }}</h1>
+
+    {{ .Content }}
+  </div>
+
+  {{ partial "nav.html" . }}
+</div>
+
+{{ partial "footer" . }}

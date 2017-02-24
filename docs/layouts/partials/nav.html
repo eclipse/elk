@@ -1,0 +1,16 @@
+<div class="secnav col-sm-3">
+  <ul>
+    {{ $page := . }}
+    {{ range .Site.Menus.main }}
+      {{ if or ($page.HasMenuCurrent "main" .) ($page.IsMenuCurrent "main" .) }}
+        {{ partial "nav_recursive" (dict "menu" .Children "page" $page "site" $page.Site "level" 1) }}
+      {{ end }}
+    {{ end }}
+  </ul>
+
+  <div class="incubation-egg">
+    <a href="/projects/what-is-incubation.php">
+      <img src="https://www.eclipse.org/images/egg-incubation.png" alt="Incubation" />
+    </a>
+  </div>
+</div>

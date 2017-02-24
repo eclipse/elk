@@ -1,0 +1,87 @@
+.incubation-egg {
+  border-top: 1px solid #d4d4dd;
+  margin-top: 8ex;
+  text-align: center;
+}
+.alert-simple {
+  background-color: #f7f7f7;
+  border-color: #ededed;
+  color: #636C72;
+}
+
+/* DEFINITIONS FOR THE NAVIGATION */
+.secnav {
+  font-size: 90%;
+  padding: 0px;
+}
+.secnav .active {
+  background-color: #f1edff;
+}
+.secnav a:link, .secnav a:link, .secnav a:visited {
+  color: #292B2C;
+}
+.secnav a:hover {
+  color: #f7941e
+}
+.secnav ul {
+  padding: 0px;
+  margin: 0px;
+}
+.secnav ul li {
+  display: block;
+  padding: 5px 5px;
+}
+.secnav ul li.navlevel-1 {
+  border-top: 1px solid #d4d4dd;
+  font-weight: bold;
+}
+.secnav ul li.navlevel-2 {
+  /*padding-left: 1.5em;*/
+}
+.secnav ul li.navlevel-3 {
+  padding-left: 1.5em;
+}
+
+
+/* DEFINITIONS FOR THE FOOTER */
+footer {
+  background:no-repeat center center #242426;
+  /*font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;*/
+  -webkit-background-size:cover;
+  -moz-background-size:cover;
+  -o-background-size:cover;
+  background-size:cover;
+  padding-top:3.5em;
+  color:#a8a7a9;
+  padding-bottom:26px;
+  font-size:14px;
+  border-top:1px solid #f7941e
+}
+footer h2 {
+  color:#fff;
+  padding:0 0 7px 0;
+  margin-top:0;
+  font-weight:300;
+  font-size:21px;
+  border-bottom:2px solid #6e6d71;
+  max-width:80%
+}
+footer a:link,footer a:active,footer a:visited {
+  color:#a8a7a9;
+  font-weight:400
+}
+footer a:hover {
+  color:#f7941e
+}
+footer .logo-eclipse-white {
+  float: left;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  margin-right: 15px;
+  clear: both;
+  max-width: 161px;
+}
+footer .copyright-text {
+  padding-top: 21px;
+  text-align: right;
+}
