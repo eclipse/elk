@@ -1,5 +1,11 @@
-languageCode = "en-us"
+# General site information
 title = "Eclipse Layout Kernel"
 baseurl = "https://www.eclipse.org/elk/"
-canonifyURLs = true
+languageCode = "en-us"
 
+# These settings magically make it so that the site is browsable both
+# online and offline. We especially like the latter part, because it
+# allows us to ship our documentation with each release.
+canonifyURLs = true
+uglyURLs = true
+relativeURLs = true

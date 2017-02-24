@@ -2,9 +2,9 @@
   <img
     class="img-fluid"
     {{ if .Get "gen" }}
-      src="{{ (print "img_gen/" (.Get "src")) | absURL }}"
+      src="{{ (print "img_gen/" (.Get "src")) | relURL }}"
     {{ else }}
-      src="{{ (print "img/" (.Get "src")) | absURL }}"
+      src="{{ (print "img/" (.Get "src")) | relURL }}"
     {{ end }}
     {{ with .Get "alt"}} alt="{{.}}"{{ end }}
   />
