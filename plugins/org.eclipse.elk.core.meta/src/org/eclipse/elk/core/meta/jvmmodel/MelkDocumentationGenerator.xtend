@@ -234,7 +234,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                     )
                 }
                 
-                val optionFileLink = '''{{< ref "reference/Options/«optionFileName».md" >}}''';
+                val optionFileLink = '''{{< relref "reference/options/«optionFileName».md" >}}''';
                 
                 doc += '''[«supportedOption.option.label ?: supportedOption.option.name»](«optionFileLink»)''' +
 //                ''' | `«supportedOption.option.type?.simpleName/*?.replace("<","&lt;").replace(">","&gt;")*/»`''' +
@@ -306,7 +306,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         *Identifier:* | `«option.qualifiedName»`
         *Meta Data Provider:* | `«option.bundle.targetClass»`
         *Value Type:* | `«option.type?.identifier»`«if (option.type?.type instanceof JvmEnumerationType) " (Enum)"»
-        «if (option.type.possibleValues !== null) "**Possible Values:** | " + 
+        «if (option.type.possibleValues !== null) "*Possible Values:* | " + 
             option.type.possibleValues.map[
                 "`" + it.simpleName + "`"
                 + it.annotations?.sortBy[it.annotation?.simpleName]
@@ -320,7 +320,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         «if (!option.legacyIds.empty) "*Legacy Id:* | " + option.legacyIds.map(["`" + it + "`"]).join(", ")»
         «if (!option.dependencies.empty) "*Dependencies:* | " + option.dependencies.map["[" + it.target.qualifiedName
                                                   + "](" + it.target.qualifiedName.replace('.', '-') + ")"].join(", ")»
-        «if (!option.groups.empty) "*Containing Group:* | " + option.groups.map["[" + it.name+ "]({{< ref \"reference/Groups/" + 
+        «if (!option.groups.empty) "*Containing Group:* | " + option.groups.map["[" + it.name+ "]({{< relref \"reference/groups/" + 
                                                                 it.qualifiedName.replace('.', '-') + ".md\" >}})"].join(" -> ")»
         «if (option.description !== null) "\n### Description\n\n" + option.description.trimNewlineTabsAndReduceToSingleSpace»
         «if (!additionalDoc.nullOrEmpty) "\n## Additional Documentation\n\n" + additionalDoc»
@@ -361,9 +361,9 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         *Identifier:* | `«group.qualifiedName»`
         
         «if (!group.children.filter(MdOption).empty) "\n## Options\n\n" + group.children.filter(MdOption).map[
-            "* [" + (it.label ?: it.name) + "]({{< ref \"reference/Options/" + it.qualifiedName.replace('.', '-') + ".md\" >}})"].join("\n")»
+            "* [" + (it.label ?: it.name) + "]({{< relref \"reference/options/" + it.qualifiedName.replace('.', '-') + ".md\" >}})"].join("\n")»
         «if (!group.children.filter(MdGroup).empty) "\n## Subgroups\n\n" + group.children.filter(MdGroup).map[
-            "* [" + it.name + "]({{< ref \"reference/Groups/" + it.qualifiedName.replace('.', '-') + ".md\" >}})"].join("\n")»
+            "* [" + it.name + "]({{< relref \"reference/groups/" + it.qualifiedName.replace('.', '-') + ".md\" >}})"].join("\n")»
         «if (group.documentation !== null) "\n## Additional Documentation\n\n" 
             + group.documentation.additionalDocumentation(group.qualifiedName.replace('.', '-'))»
         '''
@@ -510,15 +510,15 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         val Path referencePath = docsOutputPath.resolve("content").resolve("reference");
         
         // Algorithms folder (remove and create to purge the thing)
-        algorithmsOutputPath = referencePath.resolve("Algorithms");
+        algorithmsOutputPath = referencePath.resolve("algorithms");
         Files.createDirectories(algorithmsOutputPath);
         
         // Layout options folder (remove and create to purge the thing)
-        optionsOutputPath = referencePath.resolve("Options");
+        optionsOutputPath = referencePath.resolve("options");
         Files.createDirectories(optionsOutputPath);
         
         // Layout option groups folder (remove and create to purge the thing)
-        optionGroupsOutputPath = referencePath.resolve("Groups");
+        optionGroupsOutputPath = referencePath.resolve("groups");
         Files.createDirectories(optionGroupsOutputPath);
         
         // Images folder (remove and create to purge the thing)
