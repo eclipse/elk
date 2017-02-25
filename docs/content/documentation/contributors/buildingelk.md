@@ -10,7 +10,7 @@ menu:
 ELK is built using [Apache Maven](https://maven.apache.org/) in conjunction with [Tycho](https://eclipse.org/tycho/) to tell Maven how to build Eclipse projects. There are two parts that can be built: the Eclipse Layout Kernel itself, and the metadata compiler used by the main ELK build. The remainder of this page assumes that you have opened a shell in the `build/` directory inside your clone of the ELK repository.
 
 
-## Building ELK
+## The Main Build Process
 
 Execute Maven using the following command line (note that the command line is split in order to improve readability):
 
@@ -31,15 +31,6 @@ Phase     | Description
 -----     | -----------
 `package` | Simply compile everything. You will find the result in the update site placed in the `org.eclipse.elk.repository/target/` directory.
 `verify`  | Compile ELK and execute the unit tests.
-
-
-### Building Documentation for ELK
-
-If the ELK build should also generate documentation from all metadata files (usually to be put into our website), Maven needs to be supplied with the path to the ELK repository's `doc/` folder (or to whereever the documentation should be placed). Do so by adding another command-line parameter to the Maven call:
-
-```bash
---define elk.metadata.documentation.outputPath=/path/to/docs/folder
-```
 
 
 ## Building the Metadata Compiler
@@ -69,3 +60,18 @@ For `ADDITIONAL_PHASES`, the following are typical choices:
 Phase     | Description
 -----     | -----------
 `deploy`  | Compile the metadata compiler and put it into a Maven repository at `META_REPOSITORY_URL`.
+
+
+## Building the Documentation
+
+The documentation website is our source of documentation. The main build can be configured to generate the reference documentation which is part of the website from our metadata files. To do so, add the following command-line argument to the main build call:
+
+```bash
+--define elk.metadata.documentation.outputPath=/path/to/docs/folder
+```
+
+The documentation website itself is built with [Hugo](https://gohugo.io/), a static website generator. The website is setup in a way to be browsable both online and offline. To actually build the documentation website, go to the repository's `docs/` folder and simply execute the following command:
+
+```bash
+hugo
+```
