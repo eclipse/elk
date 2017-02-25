@@ -1,13 +1,31 @@
 <!--
-Provides a number of targets that know what to do with built update
-sites. This includes:
+Assembles the distribution of the whole thing and publishes (fancy word for
+"copies") it at a target directory. By using only the tasks publish and purge,
+this script can also be used simply to delete directories or copy one directory
+over to a target directory. Here's the available tasks:
 
-  * copy    - Copies a complete directory ${sourceDir} (which presumably
-              contains an update site) to a target directory ${targetDir}.
-  * purge   - Purges the target directory ${targetDir}. By removing it.
-              Completely.
-  * zipIt   - Zips the content of ${sourceDir} into a ZIP file at
-              ${targetDir}/${targetZipFileName}.
+  * publish - The most important task. If only this task is called, the update
+              site (whose location is specified by ${sourceDir}) is published
+              at ${targetDir}.
+  * zipIt   - Includes a zipped version of the update site in the published
+              version.
+  * docs    - Builds the documentation website and includes a zipped version
+              of it.
+              
+  * purge   - A utility task not normally called. Simply removes the target
+              directory.
+
+The following properties are important:
+
+  * targetDir - The directory to publish everything at. This thing is emptied
+                before things get published, so be careful to lose everything.
+                This property MUST be set.
+  * version   - The ELK version. This is used to assemble ZIP file names.
+                Defaults to "nightly".
+                
+  * sourceDir - The source directory where the update site was built. Defaults
+                to where Maven builds the thing and does not usually have to
+                be set.
 -->
 <project name="Eclipse Layout Kernel" basedir=".">
 
@@ -15,25 +33,18 @@ sites. This includes:
     <!-- P R O P E R T I E S                                               -->
     <!-- ================================================================= -->
     <property name="sourceDir" value="target/repository/" />
-    <property name="targetZipFileName" value="elk-nightly.zip" />
+    <property name="version" value="nightly" />
     <!-- The targetDir property must be set externally. -->
+	
+	<property name="updateSiteZipFileName" value="elk-${version}.zip" />
+	<property name="docsSiteZipFileName" value="elk-${version}-docs.zip" />
 
 
     <!-- ================================================================= -->
-    <!-- P U R G E                                                         -->
+    <!-- P U B L I S H                                                     -->
     <!-- ================================================================= -->
-    <target name="purge"
-            description="Purges the target directory by removing it.">
-
-        <delete dir="${targetDir}" />
-    </target>
-
-
-    <!-- ================================================================= -->
-    <!-- C O P Y                                                           -->
-    <!-- ================================================================= -->
-    <target name="copy"
-            description="Copies a source directory to a target directory.">
+    <target name="publish"
+            description="Publishes the content of a source directory in a target directory.">
 
         <!-- Empty the target directory -->
         <delete dir="${targetDir}" />
@@ -58,12 +69,41 @@ sites. This includes:
     <!-- Z I P   I T                                                       -->
     <!-- ================================================================= -->
     <target name="zipIt"
-            description="Produces a zip file from the source directory.">
+            description="Produces a zip file from the update site directory.">
 
         <!-- Produce a zip archive of the update site -->
-        <zip zipfile="${sourceDir}/${targetZipFileName}" update="false">
-            <zipfileset dir="${sourceDir}" />
-        </zip>
+    	<zip destfile="${sourceDir}/${updateSiteZipFileName}"
+    	     basedir="${sourceDir}"
+    		 excludes="${docsSiteZipFileName}"
+    	/>
+    </target>
+
+
+    <!-- ================================================================= -->
+    <!-- D O C S                                                           -->
+    <!-- ================================================================= -->
+    <target name="docs"
+            description="Compiles and zips the documentation website.">
+        
+    	<!-- Invoke hugo to compile our documentation website -->
+    	<exec executable="hugo"
+    	      dir="../../docs/"
+        />
+    	
+        <!-- Produce a zip archive of the documentation site -->
+        <zip destfile="${sourceDir}/${docsSiteZipFileName}"
+             basedir="../../docs/public/"
+        />
+    </target>
+
+
+    <!-- ================================================================= -->
+    <!-- P U R G E                                                         -->
+    <!-- ================================================================= -->
+    <target name="purge"
+            description="Purges the target directory by removing it.">
+
+        <delete dir="${targetDir}" />
     </target>
 
 </project>
