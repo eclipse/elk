@@ -1,0 +1,27 @@
+{{ partial "header" . }}
+
+<div class="row">
+  <div class="col-sm-9">
+    <h1>{{ .Title }}</h1>
+
+    {{ .Content }}
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>{{ .Title }}</th>
+          <th>Identifier</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {{ partial "datalist" (dict "menu" .Site.Menus.main "page" . )}}
+
+      </tbody>
+    </table>
+  </div>
+
+  {{ partial "nav.html" . }}
+</div>
+
+{{ partial "footer" . }}

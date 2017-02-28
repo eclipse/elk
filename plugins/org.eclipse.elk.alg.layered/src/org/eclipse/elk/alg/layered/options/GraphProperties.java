@@ -18,7 +18,7 @@ package org.eclipse.elk.alg.layered.options;
  * <p>An {@code EnumSet} for this enumeration can be attached to a graph via the
  * {@link LayeredOptions#GRAPH_PROPERTIES} property.</p>
  * 
- * <p>{@link org.eclipse.elk.core.options.GraphFeature GraphFeature} serves a similar purpose in ELK.
+ * <p>{@link org.eclipse.elk.graph.properties.GraphFeature GraphFeature} serves a similar purpose in ELK.
  * However, since this enumeration is more specific to what KLay Layered supports, the two should stay
  * separate.
  * 

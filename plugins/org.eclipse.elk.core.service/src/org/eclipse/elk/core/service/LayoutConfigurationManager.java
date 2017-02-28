@@ -20,9 +20,9 @@ import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.GraphFeature;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.properties.GraphFeature;
 import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Iterators;

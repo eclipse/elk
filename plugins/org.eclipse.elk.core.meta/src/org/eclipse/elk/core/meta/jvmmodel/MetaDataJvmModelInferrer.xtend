@@ -395,7 +395,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             «IF algorithm.supportedFeatures.empty»
                 null
             «ELSE»
-                «EnumSet».of(«FOR f : algorithm.supportedFeatures SEPARATOR ', '»org.eclipse.elk.core.options.GraphFeature.«f.toString.toUpperCase»«ENDFOR»)
+                «EnumSet».of(«FOR f : algorithm.supportedFeatures SEPARATOR ', '»org.eclipse.elk.graph.properties.GraphFeature.«f.toString.toUpperCase»«ENDFOR»)
             «ENDIF»
         ));
         «FOR support : algorithm.supportedOptions»

@@ -1,0 +1,100 @@
+{{ partial "header" . }}
+
+<div class="container px-3 py-5">
+
+  <div class="row mb-3"><div class="col"><div class="jumbotron">
+    <h1 class="display-4">Eclipse Layout Kernel</h1>
+    <p class="lead">
+      Ever feel like you spend most of your time getting a diagram’s layout right instead of its content?
+    </p>
+    <a href="./downloads.html" class="btn btn-success">Download</a>
+    <a href="./documentation.html" class="btn btn-info">Documentation</a>
+    <a href="./support.html" class="btn btn-warning">Support</a>
+    <hr class="my-4">
+    <p class="lead">
+      Happy Users
+    </p>
+
+    <div class="row">
+      <div class="col-4">
+        <div class="card">
+          <img class="card-img-top img-fluid" src="./img/reel_klassviz.jpg" alt="KlassViz">
+          <div class="card-block">
+            <h4 class="card-title">KlassViz</h4>
+            <p class="card-text">
+              <a href="https://github.com/OpenKieler/klassviz">KlassViz</a>
+              uses automatic layout to generate class diagrams in Eclipse on the fly.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <img class="card-img-top img-fluid" src="./img/reel_debukviz.jpg" alt="DebuKViz">
+          <div class="card-block">
+            <h4 class="card-title">DebuKViz</h4>
+            <p class="card-text">
+              <a href="https://github.com/OpenKieler/debukviz">DebuKViz</a>
+              uses automatic layout to generate visualizations of variables
+              in your Java programs while debugging.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="card">
+          <img class="card-img-top img-fluid" src="./img/reel_ptolemy.jpg" alt="Ptolemy II">
+          <div class="card-block">
+            <h4 class="card-title">Ptolemy II</h4>
+            <p class="card-text">
+              <a href="http://ptolemy.eecs.berkeley.edu/ptolemyII/index.htm">Ptolemy II</a>
+              uses automatic layout to make developing models graphically easier.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div></div>
+
+  <div class="row"><div class="col">
+    <div class="card-deck">
+      <div class="card">
+        <div class="card-block">
+          <h4 class="card-title">Automatic Layout?</h4>
+          <p class="card-text">
+             Diagrams are great for visualizing concepts and systems.
+             Without a good layout, however, they are worthless.
+             The <em>Eclipse Layout Kernel</em> (ELK) provides layout algorithms
+             and the infrastructure to connect them to diagram editors.
+          </p>
+          <a href="./documentation.html" class="btn btn-primary">Learn More</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-block">
+          <h4 class="card-title">Anatomy of an Elk</h4>
+          <p class="card-text">
+            The <em>Eclipse Layout Kernel</em> consists of two things:
+            a number of layout algorithms based on academic research,
+            and an infrastructure to easily integrate them into your application.
+          </p>
+          <a href="./downloads.html" class="btn btn-primary">Download</a>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-block">
+          <h4 class="card-title">Is This for Me?</h4>
+          <p class="card-text">
+            Yes, if you're a tool developer
+            who wants to enhance their graphical editors and viewers
+            with automatic layout.
+          </p>
+          <a href="./gettingstarted.html" class="btn btn-primary">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+</div>
+
+{{ partial "footer" . }}

@@ -79,13 +79,6 @@
         vm="true">
       <description>Set the heap space needed to work with the projects of ${scope.project.label}</description>
     </setupTask>
-    <setupTask
-        xsi:type="setup:EclipseIniTask"
-        option="-Delk.metadata.documentation.folder"
-        value="=${git.clone.location/docs}"
-        vm="true">
-      <description>Sets the path the melk file documentation should be generated to.</description>
-    </setupTask>
     <description></description>
   </setupTask>
   <setupTask

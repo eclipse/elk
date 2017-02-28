@@ -26,7 +26,7 @@ import org.eclipse.elk.core.meta.metaData.MdBundleMember
 import org.eclipse.elk.core.meta.metaData.MdGroup
 import org.eclipse.elk.core.meta.metaData.MdModel
 import org.eclipse.elk.core.meta.metaData.MdOption
-import org.eclipse.elk.core.options.GraphFeature
+import org.eclipse.elk.graph.properties.GraphFeature
 import org.eclipse.xtext.common.types.JvmDeclaredType
 import org.eclipse.xtext.common.types.JvmEnumerationType
 import org.eclipse.xtext.common.types.JvmField
@@ -50,18 +50,19 @@ import org.eclipse.xtext.xbase.compiler.JvmModelGenerator
  * @author dag
  */
 class MelkDocumentationGenerator extends JvmModelGenerator {
-    /** The directory relative to {@code outputPath} where images are stored. */
-    private static val IMAGES_OUTPUT_FOLDER = "images"
-    /** The base package all ELK classes are placed under. */
-    private static val ELK_BASE_PACKAGE = "org.eclipse.elk"
-    
     /** The {@code IFileSystemAccess} used to read additional documentation files stored within
      *  the eclipse project that contains the model. */
     private IFileSystemAccess fsa
-    /** The place where the generated documentation is stored. */
-    private Path outputPath
+    /** The place where the generated algorithm documentation is stored. */
+    private Path algorithmsOutputPath
+    /** The place where the generated layout option documentation is stored. */
+    private Path optionsOutputPath
+    /** The place where the generated layout option group documentation is stored. */
+    private Path optionGroupsOutputPath
+    /** The place where images are stored. */
+    private Path imageOutputPath
     /** The directory containing additional documentation files. */
-    private Path documentationFolder
+    private Path projectDocumentationSourceFolder
     
     /**
      * The method {@code internalDoGenerate} is called for each {@link MdModel} derived from a *.melk file.
@@ -73,28 +74,19 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      */
     def dispatch void internalDoGenerate(MdModel model, IFileSystemAccess fsa) {
         this.fsa = fsa;
-        //TODO maybe move retrieval of system property into constructor
         
         // The property is set as a vm argument in the eclipse.ini and holds the output folder for documentation.
-        val propertyOutputFolder = System.getProperty("elk.metadata.documentation.folder")
+        val propertyOutputPath = System.getProperty("elk.metadata.documentation.outputPath")
         // If the property is not set, don't generate any documentation.
-        if (propertyOutputFolder === null) {
+        if (propertyOutputPath === null) {
             return
         }
-        
-        outputPath = Paths.get(propertyOutputFolder).resolve("_pages")
-        // create directory if necessary
-        if (Files.notExists(outputPath)) {
-            Files.createDirectories(outputPath)
-        }
+
+        // Make sure the output paths exist and are empty
+        setupOutputPaths(propertyOutputPath);
         
         // If the model has no name or no bundle section, nothing can be generated.
         if (model.name === null || model.bundle === null) {
-            return
-        }
-        
-        // We currently don't generate documentation unless the model is part of the ELK project
-        if (!model.name.startsWith(ELK_BASE_PACKAGE)) {
             return
         }
         
@@ -104,16 +96,23 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         // The {@code documentationFolder} in the bundle section tells us where to look for additional 
         // documentation files.
         if (bundle.documentationFolder !== null) {
-            documentationFolder = Paths.get(bundle.documentationFolder)
+            projectDocumentationSourceFolder = Paths.get(bundle.documentationFolder)
         } else {
             // The default folder for additional documentation is a docs folder on project level.
-            documentationFolder = Paths.get("docs")
+            projectDocumentationSourceFolder = Paths.get("docs")
         }
 
         // write documentation for layout algorithms, groups and options
-        for (member : Iterables.concat(members.filter(MdAlgorithm), members.allGroupDefinitions,
-            members.allOptionDefinitions)) {
-            member.writeDoc
+        for (algorithm : members.filter(MdAlgorithm)) {
+            algorithm.writeDoc(algorithmsOutputPath)
+        }
+        
+        for (option : members.allOptionDefinitions) {
+            option.writeDoc(optionsOutputPath)
+        }
+        
+        for (group : members.allGroupDefinitions) {
+            group.writeDoc(optionGroupsOutputPath)
         }
     }
 
@@ -134,31 +133,35 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         // The frontmatter header (between dashes) tells the static-site-generator how to render this document.
         var doc = '''
         ---
-        layout: page
-        title: «algorithm.label ?: algorithm.name»
-        type: algorithm
+        title: "«algorithm.label ?: algorithm.name»"
+        menu:
+          main:
+            identifier: "«algorithm.qualifiedName»"
+            parent: "Algorithms"
         ---
-        ## «algorithm.label ?: algorithm.name»
         
         '''
         
         if (algorithm.previewImage !== null) {
             val newFileName = algorithm.qualifiedName.replace('.', '-') + "_preview_" 
                                 + algorithm.previewImage.substring(algorithm.previewImage.lastIndexOf('/') + 1)
+                                
             // copy previewImage into images folder within the rest of the documentation
             algorithm.previewImage.copyImageToOutputPath(newFileName)
-            doc += "![](" + IMAGES_OUTPUT_FOLDER + "/" + newFileName + ")\n"
+            doc += "{{< image src=\"" + newFileName + "\" alt=\"Preview Image\" gen=\"1\" >}}\n\n"
         }
         
         doc += '''
-        **Identifier:** «algorithm.qualifiedName»
-        **Meta Data Provider:** «algorithm.bundle.targetClass»
+        Property | Value
+        -------- | -----
+        *Identifier:* | `«algorithm.qualifiedName»`
+        *Meta Data Provider:* | `«algorithm.bundle.targetClass»`
         
         '''
         
         if (!algorithm.description.isNullOrEmpty) {
             doc += '''
-            ### Description
+            ## Description
             
             «algorithm.description.trimNewlineTabsAndReduceToSingleSpace»
             
@@ -210,8 +213,8 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
             doc += '''
             ## Supported Options
             
-            Option | Type | Default Value | Identifier
-            ----|----|----|----
+            Option | Default Value
+            ----|----
             '''
             for (supportedOption : algorithm.supportedOptions.sortBy[(it.option.label ?: it.option.name).toLowerCase]) {
                 var optionFileName = supportedOption.option.qualifiedName.replace('.', '-')
@@ -219,10 +222,11 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                 // therefore an alternative file is created for the option documentation that differs from the general
                 // documentation.
                 if (supportedOption.documentation !== null) {
-                    optionFileName = supportedOption.option.qualifiedName.replace('.', '-') + "(" +
-                        algorithm.qualifiedName + ")"
+                    optionFileName = supportedOption.option.qualifiedName.replace('.', '-') + "_" +
+                        algorithm.qualifiedName.replace('.', '-')
                     writeDoc(
                         optionFileName,
+                        optionsOutputPath,
                         supportedOption.option.generateDoc(
                             (supportedOption.option.label ?: supportedOption.option.name) + " ("
                                 + (algorithm.label ?: algorithm.name) + ")",
@@ -230,11 +234,13 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                     )
                 }
                 
-                doc += '''[«supportedOption.option.label ?: supportedOption.option.name»](«optionFileName»)''' +
-                ''' | `«supportedOption.option.type?.simpleName/*?.replace("<","&lt;").replace(">","&gt;")*/»`''' +
+                val optionFileLink = '''{{< relref "reference/options/«optionFileName».md" >}}''';
+                
+                doc += '''[«supportedOption.option.label ?: supportedOption.option.name»](«optionFileLink»)''' +
+//                ''' | `«supportedOption.option.type?.simpleName/*?.replace("<","&lt;").replace(">","&gt;")*/»`''' +
                 ''' | `«supportedOption.value?.text ?: supportedOption.option.defaultValue.text»`''' +
-                ''' | «supportedOption.option.qualifiedName.replace(".", "&#8203;.")»
-                '''
+//                ''' | «supportedOption.option.qualifiedName.replace(".", "&#8203;.")»''' +
+                "\n"
             }
             doc += "\n"
         }
@@ -276,39 +282,46 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         // The frontmatter header (between dashes) tells the static-site-generator how to render this document.
         var doc = '''
         ---
-        layout: page
-        title: «title»
-        type: option
+        title: "«title»"
+        menu:
+          main:
+            identifier: "«option.qualifiedName»"
+            parent: "LayoutOptions"
         ---
-        ## «if (option.deprecated) '''~~«title»~~''' else title»
+        
         '''
         
-        val kinds = #["deprecated"->option.deprecated, "advanced"->option.advanced, "programmatic"->option.programmatic,
-                        "output"->option.output, "global"->option.global].filter[it.value]
+        val kinds = #[
+            "deprecated"->option.deprecated,
+            "advanced"->option.advanced,
+            "programmatic"->option.programmatic,
+            "output"->option.output,
+            "global"->option.global].filter[it.value]
         
         doc += '''
         
-        ----|----
-        «if (!kinds.empty) '''**Type:** | «kinds.map[it.key].join(", ")»'''»
-        **Identifier:** | «option.qualifiedName»
-        **Meta Data Provider:** | «option.bundle.targetClass»
-        **Value Type:** | `«option.type?.identifier»`«if (option.type?.type instanceof JvmEnumerationType) " (Enum)"»
-        «if (option.type.possibleValues !== null) "**Possible Values:** | " + 
+        Property | Value
+        -------- | -----
+        «if (!kinds.empty) '''*Type:* | «kinds.map[it.key].join(", ")»'''»
+        *Identifier:* | `«option.qualifiedName»`
+        *Meta Data Provider:* | `«option.bundle.targetClass»`
+        *Value Type:* | `«option.type?.identifier»`«if (option.type?.type instanceof JvmEnumerationType) " (Enum)"»
+        «if (option.type.possibleValues !== null) "*Possible Values:* | " + 
             option.type.possibleValues.map[
                 "`" + it.simpleName + "`"
                 + it.annotations?.sortBy[it.annotation?.simpleName]
                         .join(" (", " and ", ")",["*`@" + it.annotation?.simpleName + "`*"])
                 ].join("<br>")»
-        «if (option.defaultValue !== null) '''**Default Value:** | `«option.defaultValue.text
-                    »` (as defined in «option.bundle.idPrefix ?: (option.bundle.eContainer as MdModel).name»)'''»
-        «if (option.lowerBound !== null) '''**Lower Bound:** | `«option.lowerBound.text»`'''»
-        «if (option.upperBound !== null) '''**Upper Bound:** | `«option.upperBound.text»`'''»
-        «if (!option.targets.empty) "**Applies To:** | " + option.targets.map[it.literal].join(", ")»
-        «if (!option.legacyIds.empty) "**Legacy Id:** | " + option.legacyIds.join(", ")»
-        «if (!option.dependencies.empty) "**Dependencies:** | " + option.dependencies.map["[" + it.target.qualifiedName
+        «if (option.defaultValue !== null) '''*Default Value:* | `«option.defaultValue.text
+                    »` (as defined in `«option.bundle.idPrefix ?: (option.bundle.eContainer as MdModel).name»`)'''»
+        «if (option.lowerBound !== null) '''*Lower Bound:* | `«option.lowerBound.text»`'''»
+        «if (option.upperBound !== null) '''*Upper Bound:* | `«option.upperBound.text»`'''»
+        «if (!option.targets.empty) "*Applies To:* | " + option.targets.map[it.literal].join(", ")»
+        «if (!option.legacyIds.empty) "*Legacy Id:* | " + option.legacyIds.map(["`" + it + "`"]).join(", ")»
+        «if (!option.dependencies.empty) "*Dependencies:* | " + option.dependencies.map["[" + it.target.qualifiedName
                                                   + "](" + it.target.qualifiedName.replace('.', '-') + ")"].join(", ")»
-        «if (!option.groups.empty) "**Containing Group:** | " + option.groups.map["[" + it.name+ "](" + 
-                                                                it.qualifiedName.replace('.', '-') + ")"].join(" -> ")»
+        «if (!option.groups.empty) "*Containing Group:* | " + option.groups.map["[" + it.name+ "]({{< relref \"reference/groups/" + 
+                                                                it.qualifiedName.replace('.', '-') + ".md\" >}})"].join(" -> ")»
         «if (option.description !== null) "\n### Description\n\n" + option.description.trimNewlineTabsAndReduceToSingleSpace»
         «if (!additionalDoc.nullOrEmpty) "\n## Additional Documentation\n\n" + additionalDoc»
         '''
@@ -336,17 +349,21 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         
         var doc = '''
         ---
-        layout: page
-        title: «title.toString()»
-        type: group
+        title: "«title.toString()»"
+        menu:
+          main:
+            identifier: "«group.qualifiedName»"
+            parent: "LayoutOptionGroups"
         ---
-        ## «title.toString()»
         
-        **Identifier:** «group.qualifiedName»
-        «if (!group.children.filter(MdOption).empty) "\n### Options:\n\n" + group.children.filter(MdOption).map[
-            "[" + (it.label ?: it.name) + "](" + it.qualifiedName.replace('.', '-') + ")"].join("\n")»
-        «if (!group.children.filter(MdGroup).empty) "\n### Subgroups:\n\n" + group.children.filter(MdGroup).map[
-            "[" + it.name + "](" + it.qualifiedName.replace('.', '-') + ")"].join("\n")»
+        Property | Value
+        -------- | -----
+        *Identifier:* | `«group.qualifiedName»`
+        
+        «if (!group.children.filter(MdOption).empty) "\n## Options\n\n" + group.children.filter(MdOption).map[
+            "* [" + (it.label ?: it.name) + "]({{< relref \"reference/options/" + it.qualifiedName.replace('.', '-') + ".md\" >}})"].join("\n")»
+        «if (!group.children.filter(MdGroup).empty) "\n## Subgroups\n\n" + group.children.filter(MdGroup).map[
+            "* [" + it.name + "]({{< relref \"reference/groups/" + it.qualifiedName.replace('.', '-') + ".md\" >}})"].join("\n")»
         «if (group.documentation !== null) "\n## Additional Documentation\n\n" 
             + group.documentation.additionalDocumentation(group.qualifiedName.replace('.', '-'))»
         '''
@@ -359,10 +376,12 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      * 
      * @param member
      *      the {@link MdBundleMember} that documentation is generated for
+     * @param outputPath
+     *      the folder the bundle member's documentation is to be generated into
      */
-    private def void writeDoc(MdBundleMember member) {
+    private def void writeDoc(MdBundleMember member, Path outputPath) {
         val fileName = member.qualifiedName.replace('.', '-')
-        writeDoc(fileName, member.generateDoc)
+        writeDoc(fileName, outputPath, member.generateDoc)
     }
     
     /**
@@ -370,10 +389,12 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      * 
      * @param fileName
      *      name of the file
+     * @param outputPath
+     *      the folder the bundle member's documentation is to be generated into
      * @param documentation
      *      generated markdown string
      */
-    private def void writeDoc(String fileName, String documentation) {
+    private def void writeDoc(String fileName, Path outputPath, String documentation) {
         var file = fileName
         // add file extension for Markdown
         if (!file.endsWith(".md")) {
@@ -421,7 +442,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
             try {
                 // AbstractFileSystemAccess2 needs an OutputConfiguration to work, that is defined in MetaDataRuntimeModule
                 doc = (fsa as AbstractFileSystemAccess2).readTextFile(
-                    documentationFolder.resolve(documentation.substring(1)).toString,
+                    projectDocumentationSourceFolder.resolve(documentation.substring(1)).toString,
                     MelkOutputConfigurationProvider.AD_INPUT).toString
             } catch (Exception exception) {
                 exception.printStackTrace
@@ -463,9 +484,9 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                 }
                 // copy file into images folder within the rest of the documentation
                 val newFileName = fileNamePrefix + "_" + path.substring(path.lastIndexOf('/') + 1)
-                documentationFolder.resolve(path).toString.copyImageToOutputPath(newFileName)
+                projectDocumentationSourceFolder.resolve(path).toString.copyImageToOutputPath(newFileName)
                 // replace the URL with the new path
-                res += IMAGES_OUTPUT_FOLDER + "/" + newFileName + imgTitle
+//                res += IMAGES_OUTPUT_FOLDER + "/" + newFileName + imgTitle
             }
         }
         
@@ -474,6 +495,36 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
     
     ////////////////////////////////////////////////////////////////////////////////
     // utility functions
+    
+    /**
+     * Sets up the documentation output paths. Normally, we would try and purge the directories first to be sure that
+     * there is no old content. However, in a typical automatic build this generator will be invoked multiple times. If
+     * each invocation purged the output directories, there wouldn't be much documentation left.
+     * 
+     * @param docsOutputFolder the folder the documentation should be generated into.
+     */
+    private def setupOutputPaths(String docsOutputPathString) {
+        val Path docsOutputPath = Paths.get(docsOutputPathString);
+        
+        // Inside the documentation folder, we need to obtain access to the content/reference subfolder
+        val Path referencePath = docsOutputPath.resolve("content").resolve("reference");
+        
+        // Algorithms folder (remove and create to purge the thing)
+        algorithmsOutputPath = referencePath.resolve("algorithms");
+        Files.createDirectories(algorithmsOutputPath);
+        
+        // Layout options folder (remove and create to purge the thing)
+        optionsOutputPath = referencePath.resolve("options");
+        Files.createDirectories(optionsOutputPath);
+        
+        // Layout option groups folder (remove and create to purge the thing)
+        optionGroupsOutputPath = referencePath.resolve("groups");
+        Files.createDirectories(optionGroupsOutputPath);
+        
+        // Images folder (remove and create to purge the thing)
+        imageOutputPath = docsOutputPath.resolve("static").resolve("img_gen");
+        Files.createDirectories(imageOutputPath);
+    }
     
     /**
      * Copies images or any file from within the project to the place where the generated documentation is located.
@@ -491,12 +542,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         try {
             var iStream = (fsa as AbstractFileSystemAccess2).readBinaryFile(path,
                 MelkOutputConfigurationProvider.AD_INPUT)
-            val imgFolder = outputPath.resolve(IMAGES_OUTPUT_FOLDER)
-            // create directory if necessary
-            if (Files.notExists(imgFolder)) {
-                Files.createDirectory(imgFolder)
-            }
-            Files.copy(iStream, imgFolder.resolve(newFileName), StandardCopyOption.REPLACE_EXISTING)
+            Files.copy(iStream, imageOutputPath.resolve(newFileName), StandardCopyOption.REPLACE_EXISTING)
         } catch (Exception exception) {
             exception.printStackTrace
         }

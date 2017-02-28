@@ -1,0 +1,20 @@
+{{ $page := .page }}
+{{ $level := .level }}
+
+{{ range .menu }}
+  {{ $is := $page.IsMenuCurrent "main" . }}
+  {{ $has := $page.HasMenuCurrent "main" . }}
+
+  {{ if $is }}
+    {{ range .Children }}
+      <tr>
+        <td><a href="{{ .URL }}">{{ .Name }}</a></td>
+        <td><code>{{ .Identifier }}</code></td>
+      </tr>
+    {{ end }}
+  {{ else }}
+    {{ if $has }}
+      {{ partial "datalist" (dict "menu" .Children "page" $page) }}
+    {{ end }}
+  {{ end }}
+{{ end }}

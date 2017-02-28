@@ -1,0 +1,16 @@
+{{ $page := .page }}
+{{ $site := .site }}
+{{ $level := .level }}
+
+{{ range .menu }}
+  {{ $is := $page.IsMenuCurrent "main" . }}
+  <a href="{{ .URL }}">
+    <li class="navlevel-{{ $level }}{{ if $is }} active{{ end }}">
+      {{ .Name }}
+    </li>
+  </a>
+  {{ if .HasChildren }}
+    <!-- If the menu item has children, include this partial template again (recursively) -->
+    {{ partial "nav_recursive" (dict "menu" .Children "page" $page "site" $site "level" (add $level 1)) }}
+  {{ end }}
+{{ end }}
