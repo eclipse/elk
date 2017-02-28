@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.eclipse.elk</groupId>
   <artifactId>parent</artifactId>
+  <groupId>org.eclipse.elk</groupId>
   <name>Eclipse Layout Kernel</name>
+  <url>https://www.eclipse.org/elk/</url>
   <version>0.3.0-SNAPSHOT</version>
+  <description>An infrastructure for automatic graph layout and implementations of different layout algorithms.</description>
   <packaging>pom</packaging>
 
 
@@ -27,10 +30,8 @@
     <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
   </properties>
 
-  <!-- Define one profile for each output target we have.
-       Granted, for the moment this is just one. But that may change, and when it
-       does, the one who wants to add new profiles will be thankful that we
-       already thought of him from the beginning. Mark my words! -->
+
+  <!-- Define one profile for each output target we have -->
   <profiles>
 
     <!-- The ELK Update Site. -->
@@ -100,26 +101,11 @@
   </profiles>
 
 
-  <!-- Maven plugin repositories -->
-  <pluginRepositories>
-    <pluginRepository>
-      <id>eclipse-cbi</id>
-      <name>Eclipse Common Build Infrastructure Maven Repository</name>
-      <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
-    </pluginRepository>
-
-    <pluginRepository>
-      <id>eclipse-elk-meta</id>
-      <name>ELK Meta Data Language Compiler Maven Repository</name>
-      <url>${elkMeta.repositoryUrl}</url>
-    </pluginRepository>
-  </pluginRepositories>
-
-
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
   <build>
     <plugins>
-      <!-- We need tycho plugin to build eclipse plugins -->
+    
+      <!-- We need tycho to build eclipse plugins -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-maven-plugin</artifactId>
@@ -127,7 +113,7 @@
         <extensions>true</extensions>
       </plugin>
 
-      <!-- Setup our target platform definition file. -->
+      <!-- Setup our target platform for the build -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>target-platform-configuration</artifactId>
@@ -143,7 +129,7 @@
         </configuration>
       </plugin>
 
-      <!-- Build source plugin bundles. -->
+      <!-- Build source plugin bundles -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-source-plugin</artifactId>
@@ -158,7 +144,7 @@
         </executions>
       </plugin>
 
-      <!-- Enable java assertions during junit test runs. -->
+      <!-- Enable Java assertions during JUnit test runs. -->
       <!-- The "enableAssertions" property is only available in the maven-surefire plugin. -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
@@ -173,7 +159,8 @@
 
     <pluginManagement>
       <plugins>
-
+        
+        <!--  Compile MELK files to options classes -->
         <plugin>
           <groupId>org.eclipse.xtext</groupId>
           <artifactId>xtext-maven-plugin</artifactId>
@@ -211,7 +198,7 @@
           </dependencies>
         </plugin>
 
-        <!-- maven xtend plugin to tell maven how to compile xtend code -->
+        <!-- Maven Xtend plugin to tell maven how to compile Xtend code -->
         <plugin>
           <groupId>org.eclipse.xtend</groupId>
           <artifactId>xtend-maven-plugin</artifactId>
@@ -228,7 +215,7 @@
           </executions>
         </plugin>
 
-        <!-- add src-gen and xtend-gen to source-directories -->
+        <!-- Add src-gen and xtend-gen to source-directories -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
@@ -250,7 +237,7 @@
           </executions>
         </plugin>
 
-        <!-- generated code needs cleanup too -->
+        <!-- Generated code needs cleanup too -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.0.0</version>
@@ -266,7 +253,7 @@
           </configuration>
         </plugin>
 
-        <!-- child projects may use this to be excempted from inclusion in the Maven repository -->
+        <!-- Child projects may use this to be excempted from inclusion in the Maven repository -->
         <plugin>
            <groupId>org.apache.maven.plugins</groupId>
            <artifactId>maven-deploy-plugin</artifactId>
@@ -276,4 +263,69 @@
       </plugins>
     </pluginManagement>
   </build>
+
+
+  <!-- Maven plugin repositories -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>eclipse-cbi</id>
+      <name>Eclipse Common Build Infrastructure Maven Repository</name>
+      <url>https://repo.eclipse.org/content/repositories/cbi-releases/</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>eclipse-elk-meta</id>
+      <name>ELK Meta Data Language Compiler Maven Repository</name>
+      <url>${elkMeta.repositoryUrl}</url>
+    </pluginRepository>
+  </pluginRepositories>
+  
+  
+  <!-- Information about where the ELK code lives. -->
+  <scm>
+    <connection>scm:git:git://github.com/eclipse/elk.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:eclipse/elk.git</developerConnection>
+    <url>https://github.com/eclipse/elk.git</url>
+  </scm>
+  
+  
+  <!-- The license ELK is available as. -->
+  <licenses>
+    <license>
+      <name>Eclipse Public License - v 1.0</name>
+      <url>http://www.eclipse.org/legal/epl-v10.html</url>
+    </license>
+  </licenses>
+  
+  
+  <!-- Our developers. -->
+  <developers>
+    <developer>
+      <id>christoph.schulze</id>
+      <name>Christoph Daniel Schulze</name>
+      <email>cds@informatik.uni-kiel.de</email>
+      <organization>Kiel University</organization>
+      <organizationUrl>https://www.rtsys.informatik.uni-kiel.de/</organizationUrl>
+      <roles>
+        <role>project lead</role>
+      </roles>
+    </developer>
+    
+    <developer>
+      <id>ulf.rueegg</id>
+      <name>Ulf Rüegg</name>
+      <email>uru@informatik.uni-kiel.de</email>
+      <organization>Kiel University</organization>
+      <organizationUrl>https://www.rtsys.informatik.uni-kiel.de/</organizationUrl>
+    </developer>
+    
+    <developer>
+      <id>miro.spoenemann</id>
+      <name>Miro Spönemann</name>
+      <email>miro.spoenemann@typefox.io</email>
+      <organization>TypeFox</organization>
+      <organizationUrl>http://typefox.io</organizationUrl>
+    </developer>
+  </developers>
+  
 </project>

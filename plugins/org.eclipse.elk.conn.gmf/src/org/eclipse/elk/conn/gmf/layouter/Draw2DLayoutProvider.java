@@ -121,7 +121,7 @@ public class Draw2DLayoutProvider extends AbstractLayoutProvider {
         // add edges to the graph
         for (ElkNode source : layoutNode.getChildren()) {
             Node draw2dSource = nodeMap.get(source);
-            for (ElkEdge kedge : source.getOutgoingEdges()) {
+            for (ElkEdge kedge : ElkGraphUtil.allOutgoingEdges(source)) {
                 // we don't support hyperedges
                 if (kedge.isHyperedge()) {
                     continue;

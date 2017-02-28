@@ -111,7 +111,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
      */
     private void transformEdges(final ElkNode parentNode, final TGraph tGraph, final Map<ElkNode, TNode> elemMap) {
         for (ElkNode elknode : parentNode.getChildren()) {
-            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
                 // exclude hyperedges, edges that pass hierarchy bounds, and self-loops
                 if (!elkedge.isHierarchical() && !elkedge.isHierarchical() && !elkedge.isSelfloop()) {
                     // find the corresponding source and target tNode of edge
