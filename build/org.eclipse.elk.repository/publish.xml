@@ -15,27 +15,41 @@ over to a target directory. Here's the available tasks:
   * purge   - A utility task not normally called. Simply removes the target
               directory.
 
-The following properties are important:
+Mandatory properties:
 
   * targetDir - The directory to publish everything at. This thing is emptied
                 before things get published, so be careful to lose everything.
                 This property MUST be set.
+
+Important properties:
+
   * version   - The ELK version. This is used to assemble ZIP file names.
                 Defaults to "nightly".
+
+Optional properties:
                 
   * sourceDir - The source directory where the update site was built. Defaults
                 to where Maven builds the thing and does not usually have to
                 be set.
+  * hugoPath  - Path to the Hugo executable. If Hugo is on the path, this does
+                not need to be set at all. If it is not, the full path needs
+                to be supplied to this script. Only used to execute the docs
+                task.
 -->
 <project name="Eclipse Layout Kernel" basedir=".">
 
     <!-- ================================================================= -->
     <!-- P R O P E R T I E S                                               -->
     <!-- ================================================================= -->
-    <property name="sourceDir" value="target/repository/" />
+    
+	<!-- Important -->
     <property name="version" value="nightly" />
-    <!-- The targetDir property must be set externally. -->
 	
+	<!-- Optional -->
+	<property name="sourceDir" value="target/repository/" />
+	<property name="hugo" value="hugo" />
+    
+	<!-- Internal -->
 	<property name="updateSiteZipFileName" value="elk-${version}.zip" />
 	<property name="docsSiteZipFileName" value="elk-${version}-docs.zip" />
 
@@ -86,7 +100,7 @@ The following properties are important:
             description="Compiles and zips the documentation website.">
         
     	<!-- Invoke hugo to compile our documentation website -->
-    	<exec executable="hugo"
+    	<exec executable="${hugo}"
     	      dir="../../docs/"
         />
     	
