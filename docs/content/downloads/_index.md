@@ -39,3 +39,4 @@ All downloads are provided under the terms and conditions of the [Eclipse Founda
 * [Nightly update site](http://build.eclipse.org/modeling/elk/updates/nightly)
 * [Zipped nightly update site](http://build.eclipse.org/modeling/elk/updates/nightly/elk-nightly.zip) (for offline use)
 * [Maven Repository](http://build.eclipse.org/modeling/elk/maven/meta/nightly) (for meta data language compiler)
+* [Documentation](http://build.eclipse.org/modeling/elk/updates/nightly/elk-nightly-docs.zip)
