@@ -167,7 +167,7 @@ advanced option alignment: Alignment {
 		the exact meaning depends on the used algorithm."
 	default = Alignment.AUTOMATIC
 	targets nodes
-	legacyIds de.cau.cs.kieler.animate
+	legacyIds de.cau.cs.kieler.alignment
 }
 
 advanced option aspectRatio: double {
