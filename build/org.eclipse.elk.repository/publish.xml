@@ -11,7 +11,7 @@ over to a target directory. Here's the available tasks:
               version.
   * docs    - Builds the documentation website and includes a zipped version
               of it.
-              
+
   * purge   - A utility task not normally called. Simply removes the target
               directory.
 
@@ -27,7 +27,7 @@ Important properties:
                 Defaults to "nightly".
 
 Optional properties:
-                
+
   * sourceDir - The source directory where the update site was built. Defaults
                 to where Maven builds the thing and does not usually have to
                 be set.
@@ -41,14 +41,14 @@ Optional properties:
     <!-- ================================================================= -->
     <!-- P R O P E R T I E S                                               -->
     <!-- ================================================================= -->
-    
+
 	<!-- Important -->
     <property name="version" value="nightly" />
-	
+
 	<!-- Optional -->
 	<property name="sourceDir" value="target/repository/" />
 	<property name="hugo" value="hugo" />
-    
+
 	<!-- Internal -->
 	<property name="updateSiteZipFileName" value="elk-${version}.zip" />
 	<property name="docsSiteZipFileName" value="elk-${version}-docs.zip" />
@@ -98,12 +98,15 @@ Optional properties:
     <!-- ================================================================= -->
     <target name="docs"
             description="Compiles and zips the documentation website.">
-        
+
+      <!-- Empty the compilation directory -->
+      <delete dir="../../docs/public/" />
+
     	<!-- Invoke hugo to compile our documentation website -->
     	<exec executable="${hugo}"
     	      dir="../../docs/"
         />
-    	
+
         <!-- Produce a zip archive of the documentation site -->
         <zip destfile="${sourceDir}/${docsSiteZipFileName}"
              basedir="../../docs/public/"
