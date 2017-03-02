@@ -18,7 +18,7 @@ then
 fi
 
 # Produce a shallow clone of the repository
-git clone --depth 1 /gitroot/www.eclipse.org/elk.git website
+git clone --depth 1 file:///gitroot/www.eclipse.org/elk.git website
 
 # Synchronize the website over to the repository
 rsync -crv --delete --exclude=".*/" --exclude=".*" elk/docs/public/ website
@@ -27,7 +27,7 @@ rsync -crv --delete --exclude=".*/" --exclude=".*" elk/docs/public/ website
 cd website
 
 # If nothing has changed, abort
-if ! git diff-files --quiet --ignore-submodules --
+if git diff-files --quiet --ignore-submodules --
 then
   echo "The documentation website has not changed. Won't push stuff."
   exit 0
