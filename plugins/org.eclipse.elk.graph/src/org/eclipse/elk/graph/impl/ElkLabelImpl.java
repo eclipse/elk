@@ -24,6 +24,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import com.google.common.base.Strings;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Elk Label</b></em>'.
@@ -261,11 +263,17 @@ public class ElkLabelImpl extends ElkShapeImpl implements ElkLabel {
     public String toString() {
         if (eIsProxy()) return super.toString();
 
-        StringBuffer result = new StringBuffer(super.toString());
-        result.append(" (text: ");
-        result.append(text);
-        result.append(')');
-        return result.toString();
+        StringBuilder builder = new StringBuilder("ElkLabel");
+        // Label text
+        if (Strings.isNullOrEmpty(text)) {
+            builder.append(" \"").append(text).append("\"");
+        }
+        // Position
+        builder
+            .append(" (").append(x).append(",").append(y).append(" | ")
+            .append(width).append(",").append(height).append(")");
+
+        return builder.toString();
     }
 
 } //ElkLabelImpl

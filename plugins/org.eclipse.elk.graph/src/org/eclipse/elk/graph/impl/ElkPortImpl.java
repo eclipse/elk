@@ -24,6 +24,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import com.google.common.base.Strings;
+
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Elk Port</b></em>'.
@@ -198,6 +200,33 @@ public class ElkPortImpl extends ElkConnectableShapeImpl implements ElkPort {
                 return getParent() != null;
         }
         return super.eIsSet(featureID);
+    }
+    
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    @Override
+    public String toString() {
+        if (eIsProxy()) return super.toString();
+        
+        StringBuilder builder = new StringBuilder("ElkPort");
+        // Use identifier or labels
+        String id = getIdentifier();
+        if (!Strings.isNullOrEmpty(id)) {
+            builder.append(" \"").append(id).append("\"");
+        } else if (getLabels().size() > 0) {
+            String text = getLabels().get(0).getText();
+            if (!Strings.isNullOrEmpty(text)) {
+                builder.append(" \"").append(text).append("\"");
+            }
+        }
+        // position and dimension
+        builder.append(" (").append(x).append(",").append(y).append(" | ")
+               .append(width).append(",").append(height).append(")");
+
+        return builder.toString();
     }
 
 } //ElkPortImpl

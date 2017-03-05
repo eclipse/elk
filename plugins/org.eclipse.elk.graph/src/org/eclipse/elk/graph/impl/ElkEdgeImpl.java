@@ -11,6 +11,7 @@
 package org.eclipse.elk.graph.impl;
 
 import java.util.Collection;
+
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -27,6 +28,9 @@ import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 
 /**
  * <!-- begin-user-doc -->
@@ -447,4 +451,47 @@ public class ElkEdgeImpl extends ElkGraphElementImpl implements ElkEdge {
         return super.eIsSet(featureID);
     }
 
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated NOT
+     */
+    @Override
+    public String toString() {
+        if (eIsProxy()) return super.toString();
+
+        StringBuilder builder = new StringBuilder("ElkEdge");
+        // Use identifier or labels
+        String id = getIdentifier();
+        if (!Strings.isNullOrEmpty(id)) {
+            builder.append(" \"").append(id).append("\"");
+        } else if (getLabels().size() > 0) {
+            String text = getLabels().get(0).getText();
+            if (!Strings.isNullOrEmpty(text)) {
+                builder.append(" \"").append(text).append("\"");
+            }
+        }
+        
+        boolean hyperedge = isHyperedge();
+        if (hyperedge) {
+            builder.append(" [");
+        } else {
+            builder.append(" ");
+        }
+        builder.append(Joiner.on(", ").join(sources));
+        if (hyperedge) {
+            builder.append("]");
+        }
+        builder.append(" -> ");
+        if (hyperedge) {
+            builder.append("[");
+        }
+        builder.append(Joiner.on(", ").join(targets));
+        if (hyperedge) {
+            builder.append("]");
+        }
+        
+        return builder.toString();
+    }
+    
 } //ElkEdgeImpl
