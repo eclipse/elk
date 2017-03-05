@@ -492,6 +492,17 @@ public final class ElkGraphUtil {
     }
     
     /**
+     * Returns an iterable which contains all edges incident to a node, whether directly connected or
+     * through a port.
+     * 
+     * @param node the node whose incident edges to gather.
+     * @return iterable with all incident edges.
+     */
+    public static Iterable<ElkEdge> allIncidentEdges(final ElkNode node) {
+        return Iterables.concat(allOutgoingEdges(node), allIncomingEdges(node));
+    }
+    
+    /**
      * Returns an iterable which contains all connectable shapes the given edge is incident to.
      * 
      * @param edge the edge whose end points to return.
