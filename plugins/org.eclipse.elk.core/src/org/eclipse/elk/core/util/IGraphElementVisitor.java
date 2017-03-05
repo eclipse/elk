@@ -15,6 +15,7 @@ import org.eclipse.elk.graph.ElkGraphElement;
 /**
  * A graph element visitor is applied to all elements of a graph.
  */
+@FunctionalInterface
 public interface IGraphElementVisitor {
 
     /**
