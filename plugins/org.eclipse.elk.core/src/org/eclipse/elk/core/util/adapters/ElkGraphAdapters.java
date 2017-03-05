@@ -295,8 +295,8 @@ public final class ElkGraphAdapters {
          */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             if (incomingEdgeAdapters == null) {
-                incomingEdgeAdapters = Lists.newArrayListWithExpectedSize(element.getIncomingEdges().size());
-                for (ElkEdge e : element.getIncomingEdges()) {
+                incomingEdgeAdapters = Lists.newArrayList();
+                for (ElkEdge e : ElkGraphUtil.allIncomingEdges(element)) {
                     incomingEdgeAdapters.add(new ElkEdgeAdapter(e));
                 }
             }
@@ -308,8 +308,8 @@ public final class ElkGraphAdapters {
          */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
             if (outgoingEdgeAdapters == null) {
-                outgoingEdgeAdapters = Lists.newArrayListWithExpectedSize(element.getOutgoingEdges().size());
-                for (ElkEdge e : element.getOutgoingEdges()) {
+                outgoingEdgeAdapters = Lists.newArrayList();
+                for (ElkEdge e : ElkGraphUtil.allOutgoingEdges(element)) {
                     outgoingEdgeAdapters.add(new ElkEdgeAdapter(e));
                 }
             }
