@@ -29,7 +29,7 @@ The most important implementation of `IProperty` is the `Property` class. Chance
 
 ### Property Holders
 
-Classes that implement `IPropertyHolder` are basically maps from properties (described by `IProperty` instances) to property values (objects whose type depends on the property). All graph elements are usually annotated with an instance of `KLayoutData`, which implements the `IPropertyHolder` interface (this will actually change with the upcoming iteration of our graph data structure, in which all elements are `IPropertyHolders` themselves, which will make working with them a lot easier). Thus, every graph element has properties associated with it.
+Classes that implement `IPropertyHolder` are basically maps from properties (described by `IProperty` instances) to property values (objects whose type depends on the property). All graph elements implement the `IPropertyHolder` interface. Thus, every graph element has properties associated with it.
 
 Here's one more detail that will become interesting when we talk about retrieving property values. We just said that property holders are maps from properties to property values. But if properties are described by `IProperty` instances, why not simply say that property holders map `IProperty` instances to property values? To answer that question we have to return to what actually identifies a property: its identifier. Accordingly, if multiple `IProperty` instances share the same identifier, they effectively describe the same property and are treated by property holders as such. Why this is important will become clearer once we get around to retrieving property values below.
 
@@ -67,12 +67,8 @@ Of course, since `IProperty` is a generic type, there is no explicit type castin
 When the `getProperty(...)` method determines that the property whose value it should retrieve is not actually configured, it asks the passed `IProperty` instance for the default value to be returned. This has an important consequence. Consider the following code:
 
 ```java
-final IProperty<Boolean> FALSE_DEFAULT = new Property<>(
-    "an.excellent.example.property",
-    false);
-final IProperty<Boolean> TRUE_DEFAULT = new Property<>(
-    "an.excellent.example.property",
-    true);
+final IProperty<Boolean> FALSE_DEFAULT = new Property<>("an.excellent.example.property", false);
+final IProperty<Boolean> TRUE_DEFAULT = new Property<>("an.excellent.example.property", true);
 
 // Setting the property value to null effectively undefines the
 // property for the property holder
