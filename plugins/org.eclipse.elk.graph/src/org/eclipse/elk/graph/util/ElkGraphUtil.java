@@ -616,7 +616,35 @@ public final class ElkGraphUtil {
         }
     }
     
+    /**
+     * Returns the source node of the passed simple edge. That is, the passed edge must have 
+     * exactly one source and one target. 
+     * 
+     * @param simpleEdge the edge whose source node to return.
+     * @return the source node of the edge, regardless whether the actual source is a port or a node.
+     * @throws IllegalArgumentException if {@code simpleEdge} is not 'simple'.
+     */
+    public static ElkNode getSourceNode(final ElkEdge simpleEdge) {
+        if (simpleEdge.getSources().size() != 1 || simpleEdge.getTargets().size() != 1) {
+            throw new IllegalArgumentException("Passed edge is not 'simple'.");
+        }
+        return connectableShapeToNode(simpleEdge.getSources().get(0));
+    }
     
+    /**
+     * Returns the target node of the passed simple edge. That is, the passed edge must have 
+     * exactly one source and one target. 
+     * 
+     * @param simpleEdge the edge whose target node to return.
+     * @return the source node of the edge, regardless whether the actual source is a port or a node.
+     * @throws IllegalArgumentException if {@code simpleEdge} is not 'simple'.
+     */
+    public static ElkNode getTargetNode(final ElkEdge simpleEdge) {
+        if (simpleEdge.getSources().size() != 1 || simpleEdge.getTargets().size() != 1) {
+            throw new IllegalArgumentException("Passed edge is not 'simple'.");
+        }
+        return connectableShapeToNode(simpleEdge.getTargets().get(0));
+    }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Iteration
