@@ -11,17 +11,12 @@
 package org.eclipse.elk.graph.impl;
 
 import org.eclipse.elk.graph.ElkGraphPackage;
-
 import org.eclipse.elk.graph.properties.IProperty;
-
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.EMap;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
@@ -206,9 +201,10 @@ public class ElkPropertyToValueMapEntryImpl extends MinimalEObjectImpl.Container
      */
     @Override
     public String toString() {
-        if (eIsProxy()) return super.toString();
+        if (eIsProxy())
+            return super.toString();
 
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append(key != null ? key.getId() : "null")
               .append(" -> ")
               .append(String.valueOf(value));
