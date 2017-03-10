@@ -44,7 +44,8 @@ final class ElkGraphXMISave extends XMISaveImpl {
             
             // Check if the property's data type is deserializable
             IProperty<?> property = ((ElkPropertyToValueMapEntryImpl) o).getKey();
-            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(property.getId());
+            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(
+                    property != null ? property.getId() : null);
             
             // Check if the value we want to serialize here will be parsable later so we can deserialize it
             // again properly; if this is not the case, there is no point serializing it in the first place

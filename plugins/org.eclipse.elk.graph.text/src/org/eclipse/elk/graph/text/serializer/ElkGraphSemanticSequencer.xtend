@@ -9,16 +9,17 @@ package org.eclipse.elk.graph.text.serializer
 
 import java.util.Map
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
-import org.eclipse.xtext.serializer.ISerializationContext
 import org.eclipse.elk.graph.properties.IPropertyValueProxy
+import org.eclipse.xtext.serializer.ISerializationContext
 
 class ElkGraphSemanticSequencer extends AbstractElkGraphSemanticSequencer {
     
     override protected sequence_Property(ISerializationContext context, Map.Entry semanticObject) {
         if (semanticObject instanceof ElkPropertyToValueMapEntryImpl) {
+            val key = semanticObject.key
             val value = semanticObject.value
-            if (value instanceof IPropertyValueProxy && semanticObject.key !== null) {
-                val resolvedValue = (value as IPropertyValueProxy).resolveValue(semanticObject.key)
+            if (value instanceof IPropertyValueProxy && key !== null) {
+                val resolvedValue = (value as IPropertyValueProxy).resolveValue(key)
                 if (resolvedValue !== null)
                     semanticObject.value = resolvedValue
             }
