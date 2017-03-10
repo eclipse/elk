@@ -23,6 +23,8 @@ import org.eclipse.xtext.formatting2.IFormattableDocument
 import org.eclipse.xtext.formatting2.IHiddenRegionFormatter
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1
 
+import static org.eclipse.elk.graph.ElkGraphPackage.Literals.*
+
 class ElkGraphFormatter extends AbstractFormatter2 {
     
     static val Procedure1<? super IHiddenRegionFormatter> no_space = [noSpace]
@@ -72,11 +74,7 @@ class ElkGraphFormatter extends AbstractFormatter2 {
             edge.regionFor.keyword(elkEdgeAccess.rightCurlyBracketKeyword_7_4),
             [indent]
         )
-        interior(
-            edge.regionFor.keyword(edgeLayoutAccess.leftSquareBracketKeyword_1).prepend(one_space).append(new_line),
-            edge.regionFor.keyword(edgeLayoutAccess.rightSquareBracketKeyword_3).append(new_lines),
-            [indent]
-        )
+        edge.formatEdgeLayout(document)
         for (section : edge.sections) {
             section.format
             if (section.identifier !== null)
@@ -127,24 +125,32 @@ class ElkGraphFormatter extends AbstractFormatter2 {
     def dispatch void format(ElkEdgeSection section, extension IFormattableDocument document) {
         section.regionFor.keywords(':', ',').forEach[prepend(no_space).append(one_space)]
         if (section.identifier === null) {
+            // This is a single edge section without 'section' keyword
             section.regionFor.assignment(elkSingleEdgeSectionAccess.incomingShapeAssignment_1_0_0_2).append(new_line)
             section.regionFor.assignment(elkSingleEdgeSectionAccess.outgoingShapeAssignment_1_0_1_2).append(new_line)
             section.regionFor.assignment(elkSingleEdgeSectionAccess.startYAssignment_1_0_2_4).append(new_line)
             section.regionFor.assignment(elkSingleEdgeSectionAccess.endYAssignment_1_0_3_4).append(new_line)
             section.regionFor.keywords(elkSingleEdgeSectionAccess.verticalLineKeyword_1_1_3_0).forEach[prepend(one_space).append(one_space)]
         } else {
+            // The section has square brackets surrounding a list of properties
             section.regionFor.keyword(elkEdgeSectionAccess.sectionKeyword_0).append(one_space)
             section.regionFor.keyword(elkEdgeSectionAccess.hyphenMinusGreaterThanSignKeyword_2_0).prepend(one_space).append(one_space)
-            interior(
-                section.regionFor.keyword(elkEdgeSectionAccess.leftSquareBracketKeyword_3).prepend(one_space).append(new_line),
-                section.regionFor.keyword(elkEdgeSectionAccess.rightSquareBracketKeyword_5),
-                [indent]
-            )
-            section.regionFor.assignment(elkEdgeSectionAccess.incomingShapeAssignment_4_0_0_2).append(new_line)
-            section.regionFor.assignment(elkEdgeSectionAccess.outgoingShapeAssignment_4_0_1_2).append(new_line)
-            section.regionFor.assignment(elkEdgeSectionAccess.startYAssignment_4_0_2_4).append(new_line)
-            section.regionFor.assignment(elkEdgeSectionAccess.endYAssignment_4_0_3_4).append(new_line)
-            section.regionFor.keywords(elkEdgeSectionAccess.verticalLineKeyword_4_1_3_0).forEach[prepend(one_space).append(one_space)]
+            if (section.hasAtLeastOneProperty) {
+                interior(
+                    section.regionFor.keyword(elkEdgeSectionAccess.leftSquareBracketKeyword_3).prepend(one_space).append(new_line),
+                    section.regionFor.keyword(elkEdgeSectionAccess.rightSquareBracketKeyword_5),
+                    [indent]
+                )
+                section.regionFor.assignment(elkEdgeSectionAccess.incomingShapeAssignment_4_0_0_2).append(new_line)
+                section.regionFor.assignment(elkEdgeSectionAccess.outgoingShapeAssignment_4_0_1_2).append(new_line)
+                section.regionFor.assignment(elkEdgeSectionAccess.startYAssignment_4_0_2_4).append(new_line)
+                section.regionFor.assignment(elkEdgeSectionAccess.endYAssignment_4_0_3_4).append(new_line)
+                section.regionFor.keywords(elkEdgeSectionAccess.verticalLineKeyword_4_1_3_0).forEach[prepend(one_space).append(one_space)]
+            } else {
+                // The section is empty
+                section.regionFor.keyword(elkEdgeSectionAccess.leftSquareBracketKeyword_3).prepend(one_space)
+                section.regionFor.keyword(elkEdgeSectionAccess.rightSquareBracketKeyword_5).prepend(no_space)
+            }
         }
         section.bendPoints.last.append(new_line)
         for (point : section.bendPoints) {
@@ -153,6 +159,15 @@ class ElkGraphFormatter extends AbstractFormatter2 {
         for (property : section.properties) {
             property.format
         }
+    }
+    
+    private def hasAtLeastOneProperty(ElkEdgeSection section) {
+        section.eIsSet(ELK_EDGE_SECTION__INCOMING_SHAPE)
+            || section.eIsSet(ELK_EDGE_SECTION__OUTGOING_SHAPE)
+            || section.eIsSet(ELK_EDGE_SECTION__START_X) || section.eIsSet(ELK_EDGE_SECTION__START_Y)
+            || section.eIsSet(ELK_EDGE_SECTION__END_X) || section.eIsSet(ELK_EDGE_SECTION__END_Y)
+            || !section.bendPoints.empty
+            || !section.properties.empty
     }
     
     def dispatch void format(ElkBendPoint bendPoint, extension IFormattableDocument document) {
@@ -169,13 +184,44 @@ class ElkGraphFormatter extends AbstractFormatter2 {
     }
     
     private def void formatShapeLayout(ElkShape shape, extension IFormattableDocument document) {
-        interior(
-            shape.regionFor.keyword(shapeLayoutAccess.leftSquareBracketKeyword_1).prepend(one_space).append(new_line),
-            shape.regionFor.keyword(shapeLayoutAccess.rightSquareBracketKeyword_3).append(new_lines),
-            [indent]
-        )
-        shape.regionFor.assignment(shapeLayoutAccess.YAssignment_2_0_4).append(new_line)
-        shape.regionFor.assignment(shapeLayoutAccess.heightAssignment_2_1_4).append(new_line)
+        var propCount = 0
+        if (shape.eIsSet(ELK_SHAPE__X) || shape.eIsSet(ELK_SHAPE__Y))
+            propCount++
+        if (shape.eIsSet(ELK_SHAPE__WIDTH) || shape.eIsSet(ELK_SHAPE__HEIGHT))
+            propCount++
+        if (propCount == 0) {
+            shape.regionFor.keyword(shapeLayoutAccess.leftSquareBracketKeyword_1).prepend(one_space)
+            shape.regionFor.keyword(shapeLayoutAccess.rightSquareBracketKeyword_3).prepend(no_space).append(new_lines)
+        } else if (propCount == 1) {
+            // Format in one line
+            shape.regionFor.keyword(shapeLayoutAccess.leftSquareBracketKeyword_1).prepend(one_space)
+            shape.regionFor.keyword(shapeLayoutAccess.rightSquareBracketKeyword_3).prepend(one_space).append(new_lines)
+            shape.regionFor.keyword(shapeLayoutAccess.positionKeyword_2_0_0).prepend(one_space)
+            shape.regionFor.keyword(shapeLayoutAccess.sizeKeyword_2_1_0).prepend(one_space)
+        } else {
+            // Format in multiple lines
+            interior(
+                shape.regionFor.keyword(shapeLayoutAccess.leftSquareBracketKeyword_1).prepend(one_space).append(new_line),
+                shape.regionFor.keyword(shapeLayoutAccess.rightSquareBracketKeyword_3).append(new_lines),
+                [indent]
+            )
+            shape.regionFor.assignment(shapeLayoutAccess.YAssignment_2_0_4).append(new_line)
+            shape.regionFor.assignment(shapeLayoutAccess.heightAssignment_2_1_4).append(new_line)
+        }
+    }
+    
+    private def void formatEdgeLayout(ElkEdge edge, extension IFormattableDocument document) {
+        val sectionCount = edge.sections.size
+        if (sectionCount == 0) {
+            edge.regionFor.keyword(edgeLayoutAccess.leftSquareBracketKeyword_1).prepend(one_space)
+            edge.regionFor.keyword(edgeLayoutAccess.rightSquareBracketKeyword_3).prepend(no_space).append(new_lines)
+        } else {
+            interior(
+                edge.regionFor.keyword(edgeLayoutAccess.leftSquareBracketKeyword_1).prepend(one_space).append(new_line),
+                edge.regionFor.keyword(edgeLayoutAccess.rightSquareBracketKeyword_3).append(new_lines),
+                [indent]
+            )
+        }
     }
     
 }
