@@ -17,48 +17,12 @@
 
   <build>
     <plugins>
-      <!-- This plug-in generates a nice index.html for our update site and adds associate update
-           sites, which is at the time of writing not possible with Tycho alone. For how this stuff
-           works, see the bottom two links in comment 6 on this ticket:
-           https://bugs.eclipse.org/bugs/show_bug.cgi?id=391033-->
+      <!-- Don't publish this artifact to Maven repositories. -->
       <plugin>
-        <groupId>org.jboss.tools.tycho-plugins</groupId>
-        <artifactId>repository-utils</artifactId>
-        <version>0.16.0.CR1</version>
-        <executions>
-          <execution>
-            <id>generate-facade</id>
-            <phase>package</phase>
-            <goals>
-              <goal>generate-repository-facade</goal>
-            </goals>
-            <configuration>
-
-              <!-- CHANGE ASSOCIATED UPDATE SITES -->
-              <!-- This is pretty much the only reason we're actually using this plug-in,
-                   apart from placing some of the legal stuff in the siteTemplate folder
-                   which spares us from configuring the Maven resource plug-in. -->
-              <associateSites>
-                <!-- Eclipse Mars -->
-                <associateSite>http://download.eclipse.org/releases/mars</associateSite>
-                <!-- Google Guava -->
-                <associateSite>http://guava-osgi.googlecode.com/svn/trunk/repository/</associateSite>
-                <!-- Graphiti -->
-                <associateSite>http://download.eclipse.org/graphiti/updates/0.10.2</associateSite>
-              </associateSites>
-
-              <siteTemplateFolder>siteTemplate</siteTemplateFolder>
-
-              <!-- CHANGE UPDATE SITE INFORMATION -->
-              <symbols>
-                <update.site.name>Eclipse Layout Kernel</update.site.name>
-                <update.site.description>Release</update.site.description>
-                <update.site.version>0.2.0</update.site.version>
-                <target.eclipse.version>4.6 (Neon)</target.eclipse.version>
-              </symbols>
-            </configuration>
-          </execution>
-        </executions>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
       </plugin>
     </plugins>
   </build>

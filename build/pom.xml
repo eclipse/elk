@@ -71,6 +71,55 @@
         <downloadUrl>${elkMeta.repositoryUrl}</downloadUrl>
       </distributionManagement>
     </profile>
+    
+    <!-- The Maven publishing configuration. -->
+    <profile>
+      <id>maven-publish</id>
+
+      <distributionManagement>
+        <snapshotRepository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+      </distributionManagement>
+      <build>
+        <plugins>
+          <!-- Create Javadoc jars. -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.10.4</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Create GPG signatures. -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
     <!-- Activate to have the generated artifacts signed by Eclipse. -->
     <!-- Only works if the build is run on the Eclipse infrastructure. -->
@@ -284,7 +333,7 @@
   <scm>
     <connection>scm:git:git://github.com/eclipse/elk.git</connection>
     <developerConnection>scm:git:ssh://git@github.com:eclipse/elk.git</developerConnection>
-    <url>https://github.com/eclipse/elk.git</url>
+    <url>https://github.com/eclipse/elk</url>
   </scm>
 
 

@@ -65,6 +65,14 @@
           </execution>
         </executions>
       </plugin>
+      
+      <!-- Don't publish any Eclipse feature to Maven repositories. -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

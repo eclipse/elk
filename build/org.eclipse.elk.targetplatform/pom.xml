@@ -17,13 +17,13 @@
 
   <build>
     <plugins>
-      <!-- The target platform doesn't have to be deployed. -->
+      <!-- Don't publish this artifact to Maven repositories. -->
       <plugin>
-         <artifactId>maven-deploy-plugin</artifactId>
-         <configuration>
-           <skip>true</skip>
-         </configuration>
-       </plugin>
-     </plugins>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

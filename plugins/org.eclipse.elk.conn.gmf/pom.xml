@@ -31,6 +31,14 @@
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>xtext-maven-plugin</artifactId>
       </plugin>
+      
+      <!-- Don't publish this bundle to Maven repositories. -->
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
