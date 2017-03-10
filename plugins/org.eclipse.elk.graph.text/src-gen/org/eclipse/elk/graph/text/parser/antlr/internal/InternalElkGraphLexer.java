@@ -18,6 +18,7 @@ public class InternalElkGraphLexer extends Lexer {
     public static final int T__15=15;
     public static final int T__37=37;
     public static final int T__16=16;
+    public static final int T__38=38;
     public static final int T__17=17;
     public static final int T__18=18;
     public static final int T__33=33;
@@ -541,10 +542,10 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = T__36;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:34:7: ( 'true' )
-            // InternalElkGraph.g:34:9: 'true'
+            // InternalElkGraph.g:34:7: ( 'null' )
+            // InternalElkGraph.g:34:9: 'null'
             {
-            match("true"); 
+            match("null"); 
 
 
             }
@@ -562,10 +563,10 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = T__37;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:35:7: ( 'false' )
-            // InternalElkGraph.g:35:9: 'false'
+            // InternalElkGraph.g:35:7: ( 'true' )
+            // InternalElkGraph.g:35:9: 'true'
             {
-            match("false"); 
+            match("true"); 
 
 
             }
@@ -578,15 +579,36 @@ public class InternalElkGraphLexer extends Lexer {
     }
     // $ANTLR end "T__37"
 
+    // $ANTLR start "T__38"
+    public final void mT__38() throws RecognitionException {
+        try {
+            int _type = T__38;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalElkGraph.g:36:7: ( 'false' )
+            // InternalElkGraph.g:36:9: 'false'
+            {
+            match("false"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__38"
+
     // $ANTLR start "RULE_SIGNED_INT"
     public final void mRULE_SIGNED_INT() throws RecognitionException {
         try {
             int _type = RULE_SIGNED_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:2121:17: ( ( '+' | '-' )? RULE_INT )
-            // InternalElkGraph.g:2121:19: ( '+' | '-' )? RULE_INT
+            // InternalElkGraph.g:2139:17: ( ( '+' | '-' )? RULE_INT )
+            // InternalElkGraph.g:2139:19: ( '+' | '-' )? RULE_INT
             {
-            // InternalElkGraph.g:2121:19: ( '+' | '-' )?
+            // InternalElkGraph.g:2139:19: ( '+' | '-' )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -629,10 +651,10 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = RULE_FLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:2123:12: ( ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT ) )
-            // InternalElkGraph.g:2123:14: ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
+            // InternalElkGraph.g:2141:12: ( ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT ) )
+            // InternalElkGraph.g:2141:14: ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
             {
-            // InternalElkGraph.g:2123:14: ( '+' | '-' )?
+            // InternalElkGraph.g:2141:14: ( '+' | '-' )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -658,12 +680,12 @@ public class InternalElkGraphLexer extends Lexer {
 
             }
 
-            // InternalElkGraph.g:2123:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
+            // InternalElkGraph.g:2141:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
             int alt5=2;
             alt5 = dfa5.predict(input);
             switch (alt5) {
                 case 1 :
-                    // InternalElkGraph.g:2123:26: RULE_INT '.' RULE_INT
+                    // InternalElkGraph.g:2141:26: RULE_INT '.' RULE_INT
                     {
                     mRULE_INT(); 
                     match('.'); 
@@ -672,10 +694,10 @@ public class InternalElkGraphLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalElkGraph.g:2123:48: RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
+                    // InternalElkGraph.g:2141:48: RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
                     {
                     mRULE_INT(); 
-                    // InternalElkGraph.g:2123:57: ( '.' RULE_INT )?
+                    // InternalElkGraph.g:2141:57: ( '.' RULE_INT )?
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -684,7 +706,7 @@ public class InternalElkGraphLexer extends Lexer {
                     }
                     switch (alt3) {
                         case 1 :
-                            // InternalElkGraph.g:2123:58: '.' RULE_INT
+                            // InternalElkGraph.g:2141:58: '.' RULE_INT
                             {
                             match('.'); 
                             mRULE_INT(); 
@@ -703,7 +725,7 @@ public class InternalElkGraphLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // InternalElkGraph.g:2123:83: ( '+' | '-' )?
+                    // InternalElkGraph.g:2141:83: ( '+' | '-' )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -752,10 +774,10 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:2125:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalElkGraph.g:2125:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalElkGraph.g:2143:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalElkGraph.g:2143:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalElkGraph.g:2125:11: ( '^' )?
+            // InternalElkGraph.g:2143:11: ( '^' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -764,7 +786,7 @@ public class InternalElkGraphLexer extends Lexer {
             }
             switch (alt6) {
                 case 1 :
-                    // InternalElkGraph.g:2125:11: '^'
+                    // InternalElkGraph.g:2143:11: '^'
                     {
                     match('^'); 
 
@@ -782,7 +804,7 @@ public class InternalElkGraphLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalElkGraph.g:2125:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalElkGraph.g:2143:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop7:
             do {
                 int alt7=2;
@@ -829,10 +851,10 @@ public class InternalElkGraphLexer extends Lexer {
     // $ANTLR start "RULE_INT"
     public final void mRULE_INT() throws RecognitionException {
         try {
-            // InternalElkGraph.g:2127:19: ( ( '0' .. '9' )+ )
-            // InternalElkGraph.g:2127:21: ( '0' .. '9' )+
+            // InternalElkGraph.g:2145:19: ( ( '0' .. '9' )+ )
+            // InternalElkGraph.g:2145:21: ( '0' .. '9' )+
             {
-            // InternalElkGraph.g:2127:21: ( '0' .. '9' )+
+            // InternalElkGraph.g:2145:21: ( '0' .. '9' )+
             int cnt8=0;
             loop8:
             do {
@@ -846,7 +868,7 @@ public class InternalElkGraphLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // InternalElkGraph.g:2127:22: '0' .. '9'
+            	    // InternalElkGraph.g:2145:22: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -876,10 +898,10 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:2129:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // InternalElkGraph.g:2129:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalElkGraph.g:2147:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalElkGraph.g:2147:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // InternalElkGraph.g:2129:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalElkGraph.g:2147:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -897,10 +919,10 @@ public class InternalElkGraphLexer extends Lexer {
             }
             switch (alt11) {
                 case 1 :
-                    // InternalElkGraph.g:2129:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalElkGraph.g:2147:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // InternalElkGraph.g:2129:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalElkGraph.g:2147:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop9:
                     do {
                         int alt9=3;
@@ -916,7 +938,7 @@ public class InternalElkGraphLexer extends Lexer {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // InternalElkGraph.g:2129:21: '\\\\' .
+                    	    // InternalElkGraph.g:2147:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -924,7 +946,7 @@ public class InternalElkGraphLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalElkGraph.g:2129:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalElkGraph.g:2147:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -949,10 +971,10 @@ public class InternalElkGraphLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalElkGraph.g:2129:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalElkGraph.g:2147:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // InternalElkGraph.g:2129:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalElkGraph.g:2147:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop10:
                     do {
                         int alt10=3;
@@ -968,7 +990,7 @@ public class InternalElkGraphLexer extends Lexer {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // InternalElkGraph.g:2129:54: '\\\\' .
+                    	    // InternalElkGraph.g:2147:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -976,7 +998,7 @@ public class InternalElkGraphLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalElkGraph.g:2129:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalElkGraph.g:2147:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1019,12 +1041,12 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:2131:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalElkGraph.g:2131:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalElkGraph.g:2149:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalElkGraph.g:2149:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalElkGraph.g:2131:24: ( options {greedy=false; } : . )*
+            // InternalElkGraph.g:2149:24: ( options {greedy=false; } : . )*
             loop12:
             do {
                 int alt12=2;
@@ -1049,7 +1071,7 @@ public class InternalElkGraphLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // InternalElkGraph.g:2131:52: .
+            	    // InternalElkGraph.g:2149:52: .
             	    {
             	    matchAny(); 
 
@@ -1079,12 +1101,12 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:2133:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalElkGraph.g:2133:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalElkGraph.g:2151:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalElkGraph.g:2151:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalElkGraph.g:2133:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalElkGraph.g:2151:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop13:
             do {
                 int alt13=2;
@@ -1097,7 +1119,7 @@ public class InternalElkGraphLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // InternalElkGraph.g:2133:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalElkGraph.g:2151:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1117,7 +1139,7 @@ public class InternalElkGraphLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalElkGraph.g:2133:40: ( ( '\\r' )? '\\n' )?
+            // InternalElkGraph.g:2151:40: ( ( '\\r' )? '\\n' )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1126,9 +1148,9 @@ public class InternalElkGraphLexer extends Lexer {
             }
             switch (alt15) {
                 case 1 :
-                    // InternalElkGraph.g:2133:41: ( '\\r' )? '\\n'
+                    // InternalElkGraph.g:2151:41: ( '\\r' )? '\\n'
                     {
-                    // InternalElkGraph.g:2133:41: ( '\\r' )?
+                    // InternalElkGraph.g:2151:41: ( '\\r' )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -1137,7 +1159,7 @@ public class InternalElkGraphLexer extends Lexer {
                     }
                     switch (alt14) {
                         case 1 :
-                            // InternalElkGraph.g:2133:41: '\\r'
+                            // InternalElkGraph.g:2151:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1169,10 +1191,10 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:2135:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalElkGraph.g:2135:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalElkGraph.g:2153:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalElkGraph.g:2153:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalElkGraph.g:2135:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalElkGraph.g:2153:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt16=0;
             loop16:
             do {
@@ -1226,8 +1248,8 @@ public class InternalElkGraphLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalElkGraph.g:2137:16: ( . )
-            // InternalElkGraph.g:2137:18: .
+            // InternalElkGraph.g:2155:16: ( . )
+            // InternalElkGraph.g:2155:18: .
             {
             matchAny(); 
 
@@ -1242,8 +1264,8 @@ public class InternalElkGraphLexer extends Lexer {
     // $ANTLR end "RULE_ANY_OTHER"
 
     public void mTokens() throws RecognitionException {
-        // InternalElkGraph.g:1:8: ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | RULE_SIGNED_INT | RULE_FLOAT | RULE_ID | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
-        int alt17=33;
+        // InternalElkGraph.g:1:8: ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | RULE_SIGNED_INT | RULE_FLOAT | RULE_ID | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        int alt17=34;
         alt17 = dfa17.predict(input);
         switch (alt17) {
             case 1 :
@@ -1422,56 +1444,63 @@ public class InternalElkGraphLexer extends Lexer {
                 }
                 break;
             case 26 :
-                // InternalElkGraph.g:1:160: RULE_SIGNED_INT
+                // InternalElkGraph.g:1:160: T__38
+                {
+                mT__38(); 
+
+                }
+                break;
+            case 27 :
+                // InternalElkGraph.g:1:166: RULE_SIGNED_INT
                 {
                 mRULE_SIGNED_INT(); 
 
                 }
                 break;
-            case 27 :
-                // InternalElkGraph.g:1:176: RULE_FLOAT
+            case 28 :
+                // InternalElkGraph.g:1:182: RULE_FLOAT
                 {
                 mRULE_FLOAT(); 
 
                 }
                 break;
-            case 28 :
-                // InternalElkGraph.g:1:187: RULE_ID
+            case 29 :
+                // InternalElkGraph.g:1:193: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
-            case 29 :
-                // InternalElkGraph.g:1:195: RULE_STRING
+            case 30 :
+                // InternalElkGraph.g:1:201: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
-            case 30 :
-                // InternalElkGraph.g:1:207: RULE_ML_COMMENT
+            case 31 :
+                // InternalElkGraph.g:1:213: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
-            case 31 :
-                // InternalElkGraph.g:1:223: RULE_SL_COMMENT
+            case 32 :
+                // InternalElkGraph.g:1:229: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
-            case 32 :
-                // InternalElkGraph.g:1:239: RULE_WS
+            case 33 :
+                // InternalElkGraph.g:1:245: RULE_WS
                 {
                 mRULE_WS(); 
 
                 }
                 break;
-            case 33 :
-                // InternalElkGraph.g:1:247: RULE_ANY_OTHER
+            case 34 :
+                // InternalElkGraph.g:1:253: RULE_ANY_OTHER
                 {
                 mRULE_ANY_OTHER(); 
 
@@ -1536,85 +1565,84 @@ public class InternalElkGraphLexer extends Lexer {
             this.transition = DFA5_transition;
         }
         public String getDescription() {
-            return "2123:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )";
+            return "2141:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )";
         }
     }
     static final String DFA17_eotS =
-        "\1\uffff\2\37\2\uffff\1\37\1\uffff\1\37\2\uffff\1\37\1\uffff\1\37\1\35\3\37\2\uffff\2\37\1\35\1\67\1\35\1\uffff\3\35\2\uffff\1\37\1\uffff\1\37\2\uffff\1\37\1\uffff\1\37\2\uffff\3\37\1\uffff\2\37\1\uffff\1\67\3\37\2\uffff\2\37\6\uffff\12\37\1\127\6\37\1\136\2\37\1\141\1\37\1\143\2\37\1\146\1\uffff\3\37\1\152\1\37\1\154\1\uffff\1\155\1\37\1\uffff\1\37\1\uffff\1\160\1\37\1\uffff\2\37\1\164\1\uffff\1\165\2\uffff\1\166\1\37\1\uffff\3\37\3\uffff\1\37\1\174\2\37\1\177\1\uffff\1\u0080\1\u0081\3\uffff";
+        "\1\uffff\2\37\2\uffff\1\37\1\uffff\1\37\2\uffff\1\37\1\uffff\1\37\1\35\3\37\2\uffff\2\37\1\35\1\70\1\35\1\uffff\3\35\2\uffff\1\37\1\uffff\2\37\2\uffff\1\37\1\uffff\1\37\2\uffff\3\37\1\uffff\2\37\1\uffff\1\70\3\37\2\uffff\2\37\6\uffff\13\37\1\132\6\37\1\141\1\142\2\37\1\145\1\37\1\147\2\37\1\152\1\uffff\3\37\1\156\1\37\1\160\2\uffff\1\161\1\37\1\uffff\1\37\1\uffff\1\164\1\37\1\uffff\2\37\1\170\1\uffff\1\171\2\uffff\1\172\1\37\1\uffff\3\37\3\uffff\1\37\1\u0080\2\37\1\u0083\1\uffff\1\u0084\1\u0085\3\uffff";
     static final String DFA17_eofS =
-        "\u0082\uffff";
+        "\u0086\uffff";
     static final String DFA17_minS =
-        "\1\0\1\162\1\157\2\uffff\1\141\1\uffff\1\157\2\uffff\1\145\1\uffff\1\144\1\60\1\156\1\165\1\145\2\uffff\1\162\1\141\1\60\1\56\1\101\1\uffff\2\0\1\52\2\uffff\1\141\1\uffff\1\144\2\uffff\1\142\1\uffff\1\162\2\uffff\1\172\1\141\1\143\1\uffff\1\147\1\144\1\uffff\1\56\1\143\1\164\1\156\2\uffff\1\165\1\154\6\uffff\1\160\2\145\1\157\1\164\1\151\1\145\1\162\1\164\1\145\1\60\1\157\1\147\1\144\1\145\1\163\1\150\1\60\1\154\1\165\1\60\1\164\1\60\1\164\1\151\1\60\1\uffff\1\155\1\157\1\163\1\60\1\145\1\60\1\uffff\1\60\1\164\1\uffff\1\151\1\uffff\1\60\1\157\1\uffff\2\151\1\60\1\uffff\1\60\2\uffff\1\60\1\157\1\uffff\3\156\3\uffff\1\156\1\60\2\147\1\60\1\uffff\2\60\3\uffff";
+        "\1\0\1\162\1\157\2\uffff\1\141\1\uffff\1\157\2\uffff\1\145\1\uffff\1\144\1\60\1\156\1\165\1\145\2\uffff\1\162\1\141\1\60\1\56\1\101\1\uffff\2\0\1\52\2\uffff\1\141\1\uffff\1\144\1\154\2\uffff\1\142\1\uffff\1\162\2\uffff\1\172\1\141\1\143\1\uffff\1\147\1\144\1\uffff\1\56\1\143\1\164\1\156\2\uffff\1\165\1\154\6\uffff\1\160\1\145\1\154\1\145\1\157\1\164\1\151\1\145\1\162\1\164\1\145\1\60\1\157\1\147\1\144\1\145\1\163\1\150\2\60\1\154\1\165\1\60\1\164\1\60\1\164\1\151\1\60\1\uffff\1\155\1\157\1\163\1\60\1\145\1\60\2\uffff\1\60\1\164\1\uffff\1\151\1\uffff\1\60\1\157\1\uffff\2\151\1\60\1\uffff\1\60\2\uffff\1\60\1\157\1\uffff\3\156\3\uffff\1\156\1\60\2\147\1\60\1\uffff\2\60\3\uffff";
     static final String DFA17_maxS =
-        "\1\uffff\1\162\1\157\2\uffff\1\141\1\uffff\1\157\2\uffff\1\164\1\uffff\1\156\1\76\1\156\1\165\1\145\2\uffff\1\162\1\141\1\71\1\145\1\172\1\uffff\2\uffff\1\57\2\uffff\1\141\1\uffff\1\144\2\uffff\1\171\1\uffff\1\163\2\uffff\1\172\1\141\1\143\1\uffff\1\147\1\144\1\uffff\1\145\1\143\1\164\1\156\2\uffff\1\165\1\154\6\uffff\1\160\2\145\1\157\1\164\1\151\1\145\1\162\1\164\1\145\1\172\1\157\1\147\1\144\1\145\1\163\1\150\1\172\1\154\1\165\1\172\1\164\1\172\1\164\1\151\1\172\1\uffff\1\155\1\157\1\163\1\172\1\145\1\172\1\uffff\1\172\1\164\1\uffff\1\151\1\uffff\1\172\1\157\1\uffff\2\151\1\172\1\uffff\1\172\2\uffff\1\172\1\157\1\uffff\3\156\3\uffff\1\156\1\172\2\147\1\172\1\uffff\2\172\3\uffff";
+        "\1\uffff\1\162\1\165\2\uffff\1\141\1\uffff\1\157\2\uffff\1\164\1\uffff\1\156\1\76\1\156\1\165\1\145\2\uffff\1\162\1\141\1\71\1\145\1\172\1\uffff\2\uffff\1\57\2\uffff\1\141\1\uffff\1\144\1\154\2\uffff\1\171\1\uffff\1\163\2\uffff\1\172\1\141\1\143\1\uffff\1\147\1\144\1\uffff\1\145\1\143\1\164\1\156\2\uffff\1\165\1\154\6\uffff\1\160\1\145\1\154\1\145\1\157\1\164\1\151\1\145\1\162\1\164\1\145\1\172\1\157\1\147\1\144\1\145\1\163\1\150\2\172\1\154\1\165\1\172\1\164\1\172\1\164\1\151\1\172\1\uffff\1\155\1\157\1\163\1\172\1\145\1\172\2\uffff\1\172\1\164\1\uffff\1\151\1\uffff\1\172\1\157\1\uffff\2\151\1\172\1\uffff\1\172\2\uffff\1\172\1\157\1\uffff\3\156\3\uffff\1\156\1\172\2\147\1\172\1\uffff\2\172\3\uffff";
     static final String DFA17_acceptS =
-        "\3\uffff\1\3\1\4\1\uffff\1\6\1\uffff\1\11\1\13\1\uffff\1\15\5\uffff\1\25\1\27\5\uffff\1\34\3\uffff\1\40\1\41\1\uffff\1\34\1\uffff\1\3\1\4\1\uffff\1\6\1\uffff\1\11\1\13\3\uffff\1\15\2\uffff\1\17\4\uffff\1\25\1\27\2\uffff\1\32\1\33\1\35\1\36\1\37\1\40\32\uffff\1\23\6\uffff\1\2\2\uffff\1\7\1\uffff\1\14\2\uffff\1\16\3\uffff\1\30\1\uffff\1\1\1\5\2\uffff\1\22\3\uffff\1\24\1\31\1\10\5\uffff\1\26\2\uffff\1\12\1\20\1\21";
+        "\3\uffff\1\3\1\4\1\uffff\1\6\1\uffff\1\11\1\13\1\uffff\1\15\5\uffff\1\25\1\27\5\uffff\1\35\3\uffff\1\41\1\42\1\uffff\1\35\2\uffff\1\3\1\4\1\uffff\1\6\1\uffff\1\11\1\13\3\uffff\1\15\2\uffff\1\17\4\uffff\1\25\1\27\2\uffff\1\33\1\34\1\36\1\37\1\40\1\41\34\uffff\1\23\6\uffff\1\2\1\30\2\uffff\1\7\1\uffff\1\14\2\uffff\1\16\3\uffff\1\31\1\uffff\1\1\1\5\2\uffff\1\22\3\uffff\1\24\1\32\1\10\5\uffff\1\26\2\uffff\1\12\1\20\1\21";
     static final String DFA17_specialS =
-        "\1\1\30\uffff\1\2\1\0\147\uffff}>";
+        "\1\2\30\uffff\1\0\1\1\153\uffff}>";
     static final String[] DFA17_transitionS = {
             "\11\35\2\34\2\35\1\34\22\35\1\34\1\35\1\31\4\35\1\32\3\35\1\25\1\11\1\15\1\22\1\33\12\26\1\6\6\35\32\30\1\10\1\35\1\13\1\27\1\30\1\35\1\30\1\20\2\30\1\14\1\24\1\1\1\30\1\16\2\30\1\5\1\30\1\2\1\17\1\7\2\30\1\12\1\23\6\30\1\3\1\21\1\4\uff82\35",
             "\1\36",
-            "\1\40",
+            "\1\40\5\uffff\1\41",
             "",
             "",
-            "\1\43",
+            "\1\44",
             "",
-            "\1\45",
+            "\1\46",
             "",
             "",
-            "\1\52\3\uffff\1\50\12\uffff\1\51",
+            "\1\53\3\uffff\1\51\12\uffff\1\52",
             "",
-            "\1\54\11\uffff\1\55",
-            "\12\57\4\uffff\1\56",
-            "\1\60",
+            "\1\55\11\uffff\1\56",
+            "\12\60\4\uffff\1\57",
             "\1\61",
             "\1\62",
+            "\1\63",
             "",
             "",
-            "\1\65",
             "\1\66",
-            "\12\57",
-            "\1\70\1\uffff\12\57\13\uffff\1\70\37\uffff\1\70",
+            "\1\67",
+            "\12\60",
+            "\1\71\1\uffff\12\60\13\uffff\1\71\37\uffff\1\71",
             "\32\37\4\uffff\1\37\1\uffff\32\37",
             "",
-            "\0\71",
-            "\0\71",
-            "\1\72\4\uffff\1\73",
+            "\0\72",
+            "\0\72",
+            "\1\73\4\uffff\1\74",
             "",
-            "",
-            "\1\75",
             "",
             "\1\76",
             "",
-            "",
-            "\1\77\26\uffff\1\100",
-            "",
-            "\1\101\1\102",
+            "\1\77",
+            "\1\100",
             "",
             "",
-            "\1\103",
-            "\1\104",
+            "\1\101\26\uffff\1\102",
+            "",
+            "\1\103\1\104",
+            "",
+            "",
             "\1\105",
-            "",
             "\1\106",
             "\1\107",
             "",
-            "\1\70\1\uffff\12\57\13\uffff\1\70\37\uffff\1\70",
             "\1\110",
             "\1\111",
+            "",
+            "\1\71\1\uffff\12\60\13\uffff\1\71\37\uffff\1\71",
             "\1\112",
-            "",
-            "",
             "\1\113",
             "\1\114",
             "",
             "",
-            "",
-            "",
-            "",
-            "",
             "\1\115",
             "\1\116",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\117",
             "\1\120",
             "\1\121",
@@ -1623,58 +1651,63 @@ public class InternalElkGraphLexer extends Lexer {
             "\1\124",
             "\1\125",
             "\1\126",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\127",
             "\1\130",
             "\1\131",
-            "\1\132",
+            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\133",
             "\1\134",
             "\1\135",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\136",
             "\1\137",
             "\1\140",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "\1\142",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\143",
             "\1\144",
-            "\1\145",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "",
-            "\1\147",
+            "\1\146",
+            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "\1\150",
             "\1\151",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "",
             "\1\153",
+            "\1\154",
+            "\1\155",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "\1\156",
-            "",
             "\1\157",
+            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "",
             "",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
-            "\1\161",
-            "",
             "\1\162",
+            "",
             "\1\163",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\165",
             "",
-            "",
-            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\166",
             "\1\167",
-            "",
-            "\1\170",
-            "\1\171",
-            "\1\172",
-            "",
-            "",
-            "",
-            "\1\173",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "",
+            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "",
+            "",
+            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\173",
+            "",
+            "\1\174",
             "\1\175",
             "\1\176",
+            "",
+            "",
+            "",
+            "\1\177",
+            "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
+            "\1\u0081",
+            "\1\u0082",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
             "",
             "\12\37\7\uffff\32\37\4\uffff\1\37\1\uffff\32\37",
@@ -1714,23 +1747,33 @@ public class InternalElkGraphLexer extends Lexer {
             this.transition = DFA17_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | RULE_SIGNED_INT | RULE_FLOAT | RULE_ID | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
+            return "1:1: Tokens : ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | RULE_SIGNED_INT | RULE_FLOAT | RULE_ID | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             IntStream input = _input;
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA17_26 = input.LA(1);
+                        int LA17_25 = input.LA(1);
 
                         s = -1;
-                        if ( ((LA17_26>='\u0000' && LA17_26<='\uFFFF')) ) {s = 57;}
+                        if ( ((LA17_25>='\u0000' && LA17_25<='\uFFFF')) ) {s = 58;}
 
                         else s = 29;
 
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
+                        int LA17_26 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA17_26>='\u0000' && LA17_26<='\uFFFF')) ) {s = 58;}
+
+                        else s = 29;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
                         int LA17_0 = input.LA(1);
 
                         s = -1;
@@ -1791,16 +1834,6 @@ public class InternalElkGraphLexer extends Lexer {
                         else if ( ((LA17_0>='\t' && LA17_0<='\n')||LA17_0=='\r'||LA17_0==' ') ) {s = 28;}
 
                         else if ( ((LA17_0>='\u0000' && LA17_0<='\b')||(LA17_0>='\u000B' && LA17_0<='\f')||(LA17_0>='\u000E' && LA17_0<='\u001F')||LA17_0=='!'||(LA17_0>='#' && LA17_0<='&')||(LA17_0>='(' && LA17_0<='*')||(LA17_0>=';' && LA17_0<='@')||LA17_0=='\\'||LA17_0=='`'||(LA17_0>='~' && LA17_0<='\uFFFF')) ) {s = 29;}
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 2 : 
-                        int LA17_25 = input.LA(1);
-
-                        s = -1;
-                        if ( ((LA17_25>='\u0000' && LA17_25<='\uFFFF')) ) {s = 57;}
-
-                        else s = 29;
 
                         if ( s>=0 ) return s;
                         break;

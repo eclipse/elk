@@ -67,7 +67,7 @@ public abstract class AbstractElkGraphSemanticSequencer extends AbstractDelegati
 					return; 
 				}
 				else if (rule == grammarAccess.getRootNodeRule()) {
-					sequence_RootNode(context, (ElkNode) semanticObject); 
+					sequence_RootNode_ShapeLayout(context, (ElkNode) semanticObject); 
 					return; 
 				}
 				else break;
@@ -212,7 +212,7 @@ public abstract class AbstractElkGraphSemanticSequencer extends AbstractDelegati
 	 *     Property returns ElkPropertyToValueMapEntry
 	 *
 	 * Constraint:
-	 *     (key=PropertyKey (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue))
+	 *     (key=PropertyKey (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)?)
 	 */
 	protected void sequence_Property(ISerializationContext context, Map.Entry semanticObject) {
 		genericSequencer.createSequence(context, (EObject) semanticObject);
@@ -224,9 +224,14 @@ public abstract class AbstractElkGraphSemanticSequencer extends AbstractDelegati
 	 *     RootNode returns ElkNode
 	 *
 	 * Constraint:
-	 *     (identifier=ID? properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*)
+	 *     (
+	 *         identifier=ID? 
+	 *         ((x=Number y=Number) | (width=Number height=Number))* 
+	 *         properties+=Property* 
+	 *         (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
+	 *     )
 	 */
-	protected void sequence_RootNode(ISerializationContext context, ElkNode semanticObject) {
+	protected void sequence_RootNode_ShapeLayout(ISerializationContext context, ElkNode semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

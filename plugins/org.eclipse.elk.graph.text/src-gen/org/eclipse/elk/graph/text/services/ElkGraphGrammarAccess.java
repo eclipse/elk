@@ -37,25 +37,27 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cGraphKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Assignment cIdentifierAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cIdentifierIDTerminalRuleCall_1_1_0 = (RuleCall)cIdentifierAssignment_1_1.eContents().get(0);
-		private final Assignment cPropertiesAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cPropertiesPropertyParserRuleCall_2_0 = (RuleCall)cPropertiesAssignment_2.eContents().get(0);
-		private final Alternatives cAlternatives_3 = (Alternatives)cGroup.eContents().get(3);
-		private final Assignment cLabelsAssignment_3_0 = (Assignment)cAlternatives_3.eContents().get(0);
-		private final RuleCall cLabelsElkLabelParserRuleCall_3_0_0 = (RuleCall)cLabelsAssignment_3_0.eContents().get(0);
-		private final Assignment cPortsAssignment_3_1 = (Assignment)cAlternatives_3.eContents().get(1);
-		private final RuleCall cPortsElkPortParserRuleCall_3_1_0 = (RuleCall)cPortsAssignment_3_1.eContents().get(0);
-		private final Assignment cChildrenAssignment_3_2 = (Assignment)cAlternatives_3.eContents().get(2);
-		private final RuleCall cChildrenElkNodeParserRuleCall_3_2_0 = (RuleCall)cChildrenAssignment_3_2.eContents().get(0);
-		private final Assignment cContainedEdgesAssignment_3_3 = (Assignment)cAlternatives_3.eContents().get(3);
-		private final RuleCall cContainedEdgesElkEdgeParserRuleCall_3_3_0 = (RuleCall)cContainedEdgesAssignment_3_3.eContents().get(0);
+		private final RuleCall cShapeLayoutParserRuleCall_2 = (RuleCall)cGroup.eContents().get(2);
+		private final Assignment cPropertiesAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cPropertiesPropertyParserRuleCall_3_0 = (RuleCall)cPropertiesAssignment_3.eContents().get(0);
+		private final Alternatives cAlternatives_4 = (Alternatives)cGroup.eContents().get(4);
+		private final Assignment cLabelsAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
+		private final RuleCall cLabelsElkLabelParserRuleCall_4_0_0 = (RuleCall)cLabelsAssignment_4_0.eContents().get(0);
+		private final Assignment cPortsAssignment_4_1 = (Assignment)cAlternatives_4.eContents().get(1);
+		private final RuleCall cPortsElkPortParserRuleCall_4_1_0 = (RuleCall)cPortsAssignment_4_1.eContents().get(0);
+		private final Assignment cChildrenAssignment_4_2 = (Assignment)cAlternatives_4.eContents().get(2);
+		private final RuleCall cChildrenElkNodeParserRuleCall_4_2_0 = (RuleCall)cChildrenAssignment_4_2.eContents().get(0);
+		private final Assignment cContainedEdgesAssignment_4_3 = (Assignment)cAlternatives_4.eContents().get(3);
+		private final RuleCall cContainedEdgesElkEdgeParserRuleCall_4_3_0 = (RuleCall)cContainedEdgesAssignment_4_3.eContents().get(0);
 		
 		//RootNode ElkNode:
 		//	{ElkNode} ('graph' identifier=ID)?
+		//	ShapeLayout?
 		//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{ElkNode} ('graph' identifier=ID)? properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode |
-		//containedEdges+=ElkEdge)*
+		//{ElkNode} ('graph' identifier=ID)? ShapeLayout? properties+=Property* (labels+=ElkLabel | ports+=ElkPort |
+		//children+=ElkNode | containedEdges+=ElkEdge)*
 		public Group getGroup() { return cGroup; }
 		
 		//{ElkNode}
@@ -73,38 +75,41 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getIdentifierIDTerminalRuleCall_1_1_0() { return cIdentifierIDTerminalRuleCall_1_1_0; }
 		
+		//ShapeLayout?
+		public RuleCall getShapeLayoutParserRuleCall_2() { return cShapeLayoutParserRuleCall_2; }
+		
 		//properties+=Property*
-		public Assignment getPropertiesAssignment_2() { return cPropertiesAssignment_2; }
+		public Assignment getPropertiesAssignment_3() { return cPropertiesAssignment_3; }
 		
 		//Property
-		public RuleCall getPropertiesPropertyParserRuleCall_2_0() { return cPropertiesPropertyParserRuleCall_2_0; }
+		public RuleCall getPropertiesPropertyParserRuleCall_3_0() { return cPropertiesPropertyParserRuleCall_3_0; }
 		
 		//(labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
-		public Alternatives getAlternatives_3() { return cAlternatives_3; }
+		public Alternatives getAlternatives_4() { return cAlternatives_4; }
 		
 		//labels+=ElkLabel
-		public Assignment getLabelsAssignment_3_0() { return cLabelsAssignment_3_0; }
+		public Assignment getLabelsAssignment_4_0() { return cLabelsAssignment_4_0; }
 		
 		//ElkLabel
-		public RuleCall getLabelsElkLabelParserRuleCall_3_0_0() { return cLabelsElkLabelParserRuleCall_3_0_0; }
+		public RuleCall getLabelsElkLabelParserRuleCall_4_0_0() { return cLabelsElkLabelParserRuleCall_4_0_0; }
 		
 		//ports+=ElkPort
-		public Assignment getPortsAssignment_3_1() { return cPortsAssignment_3_1; }
+		public Assignment getPortsAssignment_4_1() { return cPortsAssignment_4_1; }
 		
 		//ElkPort
-		public RuleCall getPortsElkPortParserRuleCall_3_1_0() { return cPortsElkPortParserRuleCall_3_1_0; }
+		public RuleCall getPortsElkPortParserRuleCall_4_1_0() { return cPortsElkPortParserRuleCall_4_1_0; }
 		
 		//children+=ElkNode
-		public Assignment getChildrenAssignment_3_2() { return cChildrenAssignment_3_2; }
+		public Assignment getChildrenAssignment_4_2() { return cChildrenAssignment_4_2; }
 		
 		//ElkNode
-		public RuleCall getChildrenElkNodeParserRuleCall_3_2_0() { return cChildrenElkNodeParserRuleCall_3_2_0; }
+		public RuleCall getChildrenElkNodeParserRuleCall_4_2_0() { return cChildrenElkNodeParserRuleCall_4_2_0; }
 		
 		//containedEdges+=ElkEdge
-		public Assignment getContainedEdgesAssignment_3_3() { return cContainedEdgesAssignment_3_3; }
+		public Assignment getContainedEdgesAssignment_4_3() { return cContainedEdgesAssignment_4_3; }
 		
 		//ElkEdge
-		public RuleCall getContainedEdgesElkEdgeParserRuleCall_3_3_0() { return cContainedEdgesElkEdgeParserRuleCall_3_3_0; }
+		public RuleCall getContainedEdgesElkEdgeParserRuleCall_4_3_0() { return cContainedEdgesElkEdgeParserRuleCall_4_3_0; }
 	}
 	public class ElkNodeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.ElkNode");
@@ -1134,12 +1139,13 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueNumberValueParserRuleCall_2_2_0 = (RuleCall)cValueAssignment_2_2.eContents().get(0);
 		private final Assignment cValueAssignment_2_3 = (Assignment)cAlternatives_2.eContents().get(3);
 		private final RuleCall cValueBooleanValueParserRuleCall_2_3_0 = (RuleCall)cValueAssignment_2_3.eContents().get(0);
+		private final Keyword cNullKeyword_2_4 = (Keyword)cAlternatives_2.eContents().get(4);
 		
 		//Property ElkPropertyToValueMapEntry:
-		//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+		//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
 		@Override public ParserRule getRule() { return rule; }
 		
-		//key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+		//key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
 		public Group getGroup() { return cGroup; }
 		
 		//key=PropertyKey
@@ -1151,7 +1157,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//':'
 		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
 		
-		//(value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+		//(value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 		
 		//value=StringValue
@@ -1177,6 +1183,9 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//BooleanValue
 		public RuleCall getValueBooleanValueParserRuleCall_2_3_0() { return cValueBooleanValueParserRuleCall_2_3_0; }
+		
+		//'null'
+		public Keyword getNullKeyword_2_4() { return cNullKeyword_2_4; }
 	}
 	public class PropertyKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.eclipse.elk.graph.text.ElkGraph.PropertyKey");
@@ -1348,6 +1357,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//RootNode ElkNode:
 	//	{ElkNode} ('graph' identifier=ID)?
+	//	ShapeLayout?
 	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	public RootNodeElements getRootNodeAccess() {
 		return pRootNode;
@@ -1495,7 +1505,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Property ElkPropertyToValueMapEntry:
-	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
 	public PropertyElements getPropertyAccess() {
 		return pProperty;
 	}

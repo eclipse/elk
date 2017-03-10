@@ -112,11 +112,24 @@ ruleRootNode returns [EObject current=null]
 			)
 		)?
 		(
+			{
+				if ($current==null) {
+					$current = createModelElement(grammarAccess.getRootNodeRule());
+				}
+				newCompositeNode(grammarAccess.getRootNodeAccess().getShapeLayoutParserRuleCall_2());
+			}
+			this_ShapeLayout_3=ruleShapeLayout[$current]
+			{
+				$current = $this_ShapeLayout_3.current;
+				afterParserOrEnumRuleCall();
+			}
+		)?
+		(
 			(
 				{
-					newCompositeNode(grammarAccess.getRootNodeAccess().getPropertiesPropertyParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getRootNodeAccess().getPropertiesPropertyParserRuleCall_3_0());
 				}
-				lv_properties_3_0=ruleProperty
+				lv_properties_4_0=ruleProperty
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getRootNodeRule());
@@ -124,7 +137,7 @@ ruleRootNode returns [EObject current=null]
 					add(
 						$current,
 						"properties",
-						lv_properties_3_0,
+						lv_properties_4_0,
 						"org.eclipse.elk.graph.text.ElkGraph.Property");
 					afterParserOrEnumRuleCall();
 				}
@@ -134,9 +147,9 @@ ruleRootNode returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getRootNodeAccess().getLabelsElkLabelParserRuleCall_3_0_0());
+						newCompositeNode(grammarAccess.getRootNodeAccess().getLabelsElkLabelParserRuleCall_4_0_0());
 					}
-					lv_labels_4_0=ruleElkLabel
+					lv_labels_5_0=ruleElkLabel
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getRootNodeRule());
@@ -144,7 +157,7 @@ ruleRootNode returns [EObject current=null]
 						add(
 							$current,
 							"labels",
-							lv_labels_4_0,
+							lv_labels_5_0,
 							"org.eclipse.elk.graph.text.ElkGraph.ElkLabel");
 						afterParserOrEnumRuleCall();
 					}
@@ -154,9 +167,9 @@ ruleRootNode returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getRootNodeAccess().getPortsElkPortParserRuleCall_3_1_0());
+						newCompositeNode(grammarAccess.getRootNodeAccess().getPortsElkPortParserRuleCall_4_1_0());
 					}
-					lv_ports_5_0=ruleElkPort
+					lv_ports_6_0=ruleElkPort
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getRootNodeRule());
@@ -164,7 +177,7 @@ ruleRootNode returns [EObject current=null]
 						add(
 							$current,
 							"ports",
-							lv_ports_5_0,
+							lv_ports_6_0,
 							"org.eclipse.elk.graph.text.ElkGraph.ElkPort");
 						afterParserOrEnumRuleCall();
 					}
@@ -174,9 +187,9 @@ ruleRootNode returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getRootNodeAccess().getChildrenElkNodeParserRuleCall_3_2_0());
+						newCompositeNode(grammarAccess.getRootNodeAccess().getChildrenElkNodeParserRuleCall_4_2_0());
 					}
-					lv_children_6_0=ruleElkNode
+					lv_children_7_0=ruleElkNode
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getRootNodeRule());
@@ -184,7 +197,7 @@ ruleRootNode returns [EObject current=null]
 						add(
 							$current,
 							"children",
-							lv_children_6_0,
+							lv_children_7_0,
 							"org.eclipse.elk.graph.text.ElkGraph.ElkNode");
 						afterParserOrEnumRuleCall();
 					}
@@ -194,9 +207,9 @@ ruleRootNode returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getRootNodeAccess().getContainedEdgesElkEdgeParserRuleCall_3_3_0());
+						newCompositeNode(grammarAccess.getRootNodeAccess().getContainedEdgesElkEdgeParserRuleCall_4_3_0());
 					}
-					lv_containedEdges_7_0=ruleElkEdge
+					lv_containedEdges_8_0=ruleElkEdge
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getRootNodeRule());
@@ -204,7 +217,7 @@ ruleRootNode returns [EObject current=null]
 						add(
 							$current,
 							"containedEdges",
-							lv_containedEdges_7_0,
+							lv_containedEdges_8_0,
 							"org.eclipse.elk.graph.text.ElkGraph.ElkEdge");
 						afterParserOrEnumRuleCall();
 					}
@@ -1950,6 +1963,11 @@ ruleProperty returns [EObject current=null]
 					}
 				)
 			)
+			    |
+			otherlv_6='null'
+			{
+				newLeafNode(otherlv_6, grammarAccess.getPropertyAccess().getNullKeyword_2_4());
+			}
 		)
 	)
 ;

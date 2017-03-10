@@ -12,6 +12,7 @@ import "http://www.eclipse.org/elk/ElkGraph"
 
 RootNode returns ElkNode:
     {ElkNode} ('graph' identifier=ID)?
+    ShapeLayout?
     properties+=Property*
     (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*;
 
@@ -88,7 +89,7 @@ Number returns ecore::EDouble:
     SIGNED_INT | FLOAT;
 
 Property returns ElkPropertyToValueMapEntry:
-    key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue);
+    key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null');
 
 PropertyKey returns IProperty hidden():
     ID ('.' ID)*;

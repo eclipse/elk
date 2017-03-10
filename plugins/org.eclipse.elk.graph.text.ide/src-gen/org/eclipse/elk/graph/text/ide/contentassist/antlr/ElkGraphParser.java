@@ -39,7 +39,7 @@ public class ElkGraphParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
-					put(grammarAccess.getRootNodeAccess().getAlternatives_3(), "rule__RootNode__Alternatives_3");
+					put(grammarAccess.getRootNodeAccess().getAlternatives_4(), "rule__RootNode__Alternatives_4");
 					put(grammarAccess.getElkNodeAccess().getAlternatives_2_3(), "rule__ElkNode__Alternatives_2_3");
 					put(grammarAccess.getEdgeLayoutAccess().getAlternatives_2(), "rule__EdgeLayout__Alternatives_2");
 					put(grammarAccess.getNumberAccess().getAlternatives(), "rule__Number__Alternatives");
@@ -89,11 +89,11 @@ public class ElkGraphParser extends AbstractContentAssistParser {
 					put(grammarAccess.getPropertyKeyAccess().getGroup(), "rule__PropertyKey__Group__0");
 					put(grammarAccess.getPropertyKeyAccess().getGroup_1(), "rule__PropertyKey__Group_1__0");
 					put(grammarAccess.getRootNodeAccess().getIdentifierAssignment_1_1(), "rule__RootNode__IdentifierAssignment_1_1");
-					put(grammarAccess.getRootNodeAccess().getPropertiesAssignment_2(), "rule__RootNode__PropertiesAssignment_2");
-					put(grammarAccess.getRootNodeAccess().getLabelsAssignment_3_0(), "rule__RootNode__LabelsAssignment_3_0");
-					put(grammarAccess.getRootNodeAccess().getPortsAssignment_3_1(), "rule__RootNode__PortsAssignment_3_1");
-					put(grammarAccess.getRootNodeAccess().getChildrenAssignment_3_2(), "rule__RootNode__ChildrenAssignment_3_2");
-					put(grammarAccess.getRootNodeAccess().getContainedEdgesAssignment_3_3(), "rule__RootNode__ContainedEdgesAssignment_3_3");
+					put(grammarAccess.getRootNodeAccess().getPropertiesAssignment_3(), "rule__RootNode__PropertiesAssignment_3");
+					put(grammarAccess.getRootNodeAccess().getLabelsAssignment_4_0(), "rule__RootNode__LabelsAssignment_4_0");
+					put(grammarAccess.getRootNodeAccess().getPortsAssignment_4_1(), "rule__RootNode__PortsAssignment_4_1");
+					put(grammarAccess.getRootNodeAccess().getChildrenAssignment_4_2(), "rule__RootNode__ChildrenAssignment_4_2");
+					put(grammarAccess.getRootNodeAccess().getContainedEdgesAssignment_4_3(), "rule__RootNode__ContainedEdgesAssignment_4_3");
 					put(grammarAccess.getElkNodeAccess().getIdentifierAssignment_1(), "rule__ElkNode__IdentifierAssignment_1");
 					put(grammarAccess.getElkNodeAccess().getPropertiesAssignment_2_2(), "rule__ElkNode__PropertiesAssignment_2_2");
 					put(grammarAccess.getElkNodeAccess().getLabelsAssignment_2_3_0(), "rule__ElkNode__LabelsAssignment_2_3_0");
