@@ -12,13 +12,11 @@ package org.eclipse.elk.alg.mrtree.p2order;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.alg.mrtree.ILayoutPhase;
-import org.eclipse.elk.alg.mrtree.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.mrtree.TreeLayoutPhases;
 import org.eclipse.elk.alg.mrtree.TreeUtil;
 import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
@@ -27,6 +25,8 @@ import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.alg.mrtree.options.OrderWeighting;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.IProperty;
 
@@ -41,28 +41,27 @@ import org.eclipse.elk.graph.properties.IProperty;
  * @author sor
  * @author sgu
  */
-public class OrderBalance implements ILayoutPhase {
+public class OrderBalance implements ILayoutPhase<TreeLayoutPhases, TGraph> {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION
-            = new IntermediateProcessingConfiguration(
-                    IntermediateProcessingConfiguration.BEFORE_PHASE_2,
-                    EnumSet.of(
-                            IntermediateProcessorStrategy.ROOT_PROC,
-                            IntermediateProcessorStrategy.FAN_PROC,
-                            IntermediateProcessorStrategy.NEIGHBORS_PROC));
+    private static final LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> INTERMEDIATE_PROCESSING_CONFIG =
+            LayoutProcessorConfiguration.<TreeLayoutPhases, TGraph>create()
+                    .before(TreeLayoutPhases.P2_NODE_ORDERING)
+                        .add(IntermediateProcessorStrategy.ROOT_PROC)
+                        .add(IntermediateProcessorStrategy.FAN_PROC)
+                        .add(IntermediateProcessorStrategy.NEIGHBORS_PROC);
 
     /**
      * Tells the node order which weighting it should use.
      */
     private IProperty<Integer> weighting;
-    
+
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final TGraph graph) {
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    @Override
+    public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
+        return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
     /**

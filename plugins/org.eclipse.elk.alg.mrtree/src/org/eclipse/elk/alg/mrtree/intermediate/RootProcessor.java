@@ -12,10 +12,10 @@ package org.eclipse.elk.alg.mrtree.intermediate;
 
 import java.util.ArrayList;
 
-import org.eclipse.elk.alg.mrtree.ILayoutProcessor;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -25,7 +25,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @author sor
  * @author sgu
  */
-public class RootProcessor implements ILayoutProcessor {
+public class RootProcessor implements ILayoutProcessor<TGraph> {
 
     private ArrayList<TNode> roots = new ArrayList<TNode>();
 

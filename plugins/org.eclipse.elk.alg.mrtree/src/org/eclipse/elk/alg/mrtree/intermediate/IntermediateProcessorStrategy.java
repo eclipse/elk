@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.intermediate;
 
-import org.eclipse.elk.alg.mrtree.ILayoutProcessor;
+import org.eclipse.elk.alg.mrtree.graph.TGraph;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 
 /**
  * Definition of available intermediate layout processors for the tree layouter. This enumeration
@@ -19,7 +21,7 @@ import org.eclipse.elk.alg.mrtree.ILayoutProcessor;
  * @author sor
  * @author sgu
  */
-public enum IntermediateProcessorStrategy {
+public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<TGraph> {
 
     /**
      * In this enumeration, intermediate layout processors are listed by the earliest slot in which
@@ -54,7 +56,7 @@ public enum IntermediateProcessorStrategy {
      * 
      * @return the layout processor.
      */
-    public ILayoutProcessor create() {
+    public ILayoutProcessor<TGraph> create() {
 
         switch (this) {
 

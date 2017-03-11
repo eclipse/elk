@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.p3place;
 
-import java.util.EnumSet;
 import java.util.LinkedList;
 
-import org.eclipse.elk.alg.mrtree.ILayoutPhase;
-import org.eclipse.elk.alg.mrtree.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.mrtree.TreeLayoutPhases;
 import org.eclipse.elk.alg.mrtree.TreeUtil;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -55,7 +55,16 @@ import com.google.common.collect.Iterables;
  * @author sor
  * @author sgu
  */
-public class NodePlacer implements ILayoutPhase {
+public class NodePlacer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
+
+    /** intermediate processing configuration. */
+    private static final LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> INTERMEDIATE_PROCESSING_CONFIG =
+            LayoutProcessorConfiguration.<TreeLayoutPhases, TGraph>create()
+                    .addBefore(TreeLayoutPhases.P2_NODE_ORDERING, IntermediateProcessorStrategy.ROOT_PROC)
+                    .before(TreeLayoutPhases.P3_NODE_PLACEMENT)
+                        .add(IntermediateProcessorStrategy.LEVEL_HEIGHT)
+                        .add(IntermediateProcessorStrategy.NEIGHBORS_PROC)
+                    .addBefore(TreeLayoutPhases.P4_EDGE_ROUTING, IntermediateProcessorStrategy.NODE_POSITION_PROC);
 
     private double spacing;
 
@@ -66,21 +75,10 @@ public class NodePlacer implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final TGraph tGraph) {
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    @Override
+    public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
+        return INTERMEDIATE_PROCESSING_CONFIG;
     }
-
-    /**
-     * intermediate processing configuration. The neighbors processor needs to run again right
-     * before the phase to get the actual order
-     */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION
-            = new IntermediateProcessingConfiguration(null,
-                    EnumSet.of(IntermediateProcessorStrategy.ROOT_PROC),
-                    EnumSet.of(IntermediateProcessorStrategy.LEVEL_HEIGHT,
-                            IntermediateProcessorStrategy.NEIGHBORS_PROC),
-                    EnumSet.of(IntermediateProcessorStrategy.NODE_POSITION_PROC));
 
     /**
      * {@inheritDoc}

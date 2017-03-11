@@ -17,10 +17,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.alg.mrtree.ILayoutProcessor;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -30,7 +30,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @author sor
  * @author sgu
  */
-public class FanProcessor implements ILayoutProcessor {
+public class FanProcessor implements ILayoutProcessor<TGraph> {
 
     /** this map temporarily contains the maximal fan of each node in the given graph. */
     private Map<String, Integer> gloFanMap = new HashMap<String, Integer>();
