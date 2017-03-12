@@ -12,7 +12,7 @@ import org.junit.Test;
 public class AlgorithmAssemblerTest {
 
     /**
-     * Test method for {@link org.eclipse.elk.core.alg.AlgorithmAssembler#enableCaching()}.
+     * Test method for {@link org.eclipse.elk.core.alg.AlgorithmAssembler#withCaching(boolean)}.
      */
     @Test
     public void testEnableCaching() {
@@ -33,12 +33,12 @@ public class AlgorithmAssemblerTest {
     }
 
     /**
-     * Test method for {@link org.eclipse.elk.core.alg.AlgorithmAssembler#disableCaching()}.
+     * Test method for {@link org.eclipse.elk.core.alg.AlgorithmAssembler#withCaching(boolean)}.
      */
     @Test
     public void testDisableCaching() {
         AlgorithmAssembler<TestPhases, StringBuffer> assembler = AlgorithmAssembler.create(TestPhases.class);
-        assembler.disableCaching();
+        assembler.withCaching(false);
         assembler.setPhase(TestPhases.PHASE_1, TestPhases.PHASE_1);
         assembler.setPhase(TestPhases.PHASE_2, TestPhases.PHASE_2);
         
@@ -54,7 +54,7 @@ public class AlgorithmAssemblerTest {
     }
 
     /**
-     * Test method for {@link org.eclipse.elk.core.alg.AlgorithmAssembler#failOnMissingPhase()}.
+     * Test method for {@link org.eclipse.elk.core.alg.AlgorithmAssembler#withFailOnMissingPhase(boolean)}.
      */
     @Test(expected = IllegalStateException.class)
     public void testFailOnMissingPhase() {
@@ -65,12 +65,12 @@ public class AlgorithmAssemblerTest {
     }
 
     /**
-     * Test method for {@link org.eclipse.elk.core.alg.AlgorithmAssembler#dontFailOnMissingPhase()}.
+     * Test method for {@link org.eclipse.elk.core.alg.AlgorithmAssembler#withFailOnMissingPhase(boolean)}.
      */
     @Test
     public void testDontFailOnMissingPhase() {
         AlgorithmAssembler<TestPhases, StringBuffer> assembler = AlgorithmAssembler.create(TestPhases.class);
-        assembler.dontFailOnMissingPhase();
+        assembler.withFailOnMissingPhase(false);
         assembler.setPhase(TestPhases.PHASE_1, TestPhases.PHASE_1);
         assertTrue(assembler.build(null).size() > 0);
     }
@@ -81,7 +81,7 @@ public class AlgorithmAssemblerTest {
     @Test
     public void testClearCache() {
         AlgorithmAssembler<TestPhases, StringBuffer> assembler = AlgorithmAssembler.create(TestPhases.class);
-        assembler.enableCaching();
+        assembler.withCaching(true);
         assembler.setPhase(TestPhases.PHASE_1, TestPhases.PHASE_1);
         assembler.setPhase(TestPhases.PHASE_2, TestPhases.PHASE_2);
         
@@ -104,7 +104,7 @@ public class AlgorithmAssemblerTest {
     @Test(expected = IllegalStateException.class)
     public void testResetWithFailOnMissingPhase() {
         AlgorithmAssembler<TestPhases, StringBuffer> assembler = AlgorithmAssembler.create(TestPhases.class);
-        assembler.failOnMissingPhase();
+        assembler.withFailOnMissingPhase(true);
         assembler.setPhase(TestPhases.PHASE_1, TestPhases.PHASE_1);
         assembler.setPhase(TestPhases.PHASE_2, TestPhases.PHASE_2);
         
@@ -119,7 +119,7 @@ public class AlgorithmAssemblerTest {
     @Test
     public void testResetWithoutFailOnMissingPhase() {
         AlgorithmAssembler<TestPhases, StringBuffer> assembler = AlgorithmAssembler.create(TestPhases.class);
-        assembler.dontFailOnMissingPhase();
+        assembler.withFailOnMissingPhase(false);
         assembler.setPhase(TestPhases.PHASE_1, TestPhases.PHASE_1);
         assembler.setPhase(TestPhases.PHASE_2, TestPhases.PHASE_2);
         

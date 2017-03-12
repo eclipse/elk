@@ -19,7 +19,7 @@ import com.google.common.collect.Sets;
  * processing slots before, in between, and after the phases of a layout algorithm. Layout processor configurations are
  * typically specified by {@link ILayoutPhase layout phases} to specify their processor dependencies. The information
  * can be used by an {@link AlgorithmAssembler} to assemble the layout algorithm. Each processor is only ever added once
- * to each processing slot.
+ * to each processing slot, but can be part of several different slots.
  * 
  * <p>
  * Use this class by first obtaining an instance through the {@link #create()} method and then calling
@@ -31,7 +31,8 @@ import com.google.common.collect.Sets;
  * 
  * <p>
  * Note that this class provides access to the configured processors in each slot through sets, meaning that they are
- * not sorted according to inter-processor dependencies.
+ * not sorted according to inter-processor dependencies. If used with {@link AlgorithmAssembler}, the assembler
+ * determines the correct order.
  * </p>
  * 
  * @param <P>

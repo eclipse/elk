@@ -21,7 +21,7 @@ import com.google.common.collect.Maps;
 
 /**
  * A builder class for algorithms which are structured into phases and intermediate processing slots. The assembler
- * views layout algorithms as lists of {@link ILayoutPhaselayout phases} and {@code ILayoutProcessor layout processors}
+ * views layout algorithms as lists of {@link ILayoutPhase layout phases} and {@code ILayoutProcessor layout processors}
  * which, executed in order, as a pipeline, implements the algorithm.
  * 
  * <p>
@@ -37,7 +37,7 @@ import com.google.common.collect.Maps;
  * <h3>Requirements</h3>
  * 
  * <p>
- * To use this class, the following are necessary:
+ * To use this class, the following things are necessary:
  * </p>
  * <ul>
  * <li>An enumeration of the phases the algorithm is structured into. The type of this enumeration is one of the type
@@ -151,45 +151,28 @@ public final class AlgorithmAssembler<P extends Enum<P>, G>
     // Configuration
 
     /**
-     * Enables caching of layout phases and processors obtained from the factories. Caching is enabled by default.
+     * Determines whether caching of layout phases and processors obtained from the factories should be enabled or not.
+     * Caching is enabled by default.
      * 
+     * @param enabled
+     *            {@code true} if caching should be enabled.
      * @return this assembler to enable method chaining.
      */
-    public AlgorithmAssembler<P, G> enableCaching() {
-        enableCaching = true;
+    public AlgorithmAssembler<P, G> withCaching(final boolean enabled) {
+        enableCaching = enabled;
         return this;
     }
 
     /**
-     * Disables caching of layout phases and processors obtained from the factories. Doing so will require the factories
-     * to return new instances upon each call to the {@link #build(Object)} method.
+     * Determines whether to fail upon calling the {@link #build(Object)} method if not all phases have implementations
+     * configured by calling {@link #setPhase(Enum, ILayoutPhaseFactory)}. The default is to fail.
      * 
+     * @param fail 
+     *            {@code true} if the assembler should fail upon encountering unconfigured phases.
      * @return this assembler to enable method chaining.
      */
-    public AlgorithmAssembler<P, G> disableCaching() {
-        enableCaching = false;
-        return this;
-    }
-
-    /**
-     * Configures the assembler to fail upon calling the {@link #build(Object)} method if not all phases have
-     * implementations configured by calling {@link #setPhase(Enum, ILayoutPhaseFactory)}. This behavior is the default.
-     * 
-     * @return this assembler to enable method chaining.
-     */
-    public AlgorithmAssembler<P, G> failOnMissingPhase() {
-        failOnMissingPhase = true;
-        return this;
-    }
-
-    /**
-     * Configures the assembler to not fail upon calling the {@link #build(Object)} method if not all phases have
-     * implementations configured by calling {@link #setPhase(Enum, ILayoutPhaseFactory)}.
-     * 
-     * @return this assembler to enable method chaining.
-     */
-    public AlgorithmAssembler<P, G> dontFailOnMissingPhase() {
-        failOnMissingPhase = false;
+    public AlgorithmAssembler<P, G> withFailOnMissingPhase(final boolean fail) {
+        failOnMissingPhase = fail;
         return this;
     }
 
@@ -294,10 +277,12 @@ public final class AlgorithmAssembler<P extends Enum<P>, G>
             }
         }
 
-        // Assemble a defintive processor configuration
+        // Assemble a definitive processor configuration
         LayoutProcessorConfiguration<P, G> processorConfiguration = LayoutProcessorConfiguration.create();
-        phaseImplementations.stream().filter(phase -> phase != null)
-                .map(phase -> phase.getLayoutProcessorConfiguration(graph)).filter(config -> config != null)
+        phaseImplementations.stream()
+                .filter(phase -> phase != null)
+                .map(phase -> phase.getLayoutProcessorConfiguration(graph))
+                .filter(config -> config != null)
                 .forEach(config -> processorConfiguration.addAll(config));
         processorConfiguration.addAll(additionalProcessors);
 
@@ -346,7 +331,9 @@ public final class AlgorithmAssembler<P extends Enum<P>, G>
      */
     private List<ILayoutProcessor<G>> retrieveProcessors(final Set<ILayoutProcessorFactory<G>> factories) {
         List<ILayoutProcessor<G>> processors = Lists.newArrayListWithCapacity(factories.size());
-        factories.stream().sorted(processorComparator).forEach(factory -> processors.add(retrieveProcessor(factory)));
+        factories.stream()
+            .sorted(processorComparator)
+            .forEach(factory -> processors.add(retrieveProcessor(factory)));
         return processors;
     }
 

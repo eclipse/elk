@@ -35,8 +35,8 @@ package org.eclipse.elk.core.alg;
 public interface ILayoutPhase<P extends Enum<P>, G> extends ILayoutProcessor<G> {
 
     /**
-     * Returns a layout processor configuration which specifies which {@link ILayoutProcessor layout processors} this
-     * phase qould require to be executed at which point in the algorithm to process the given graph.
+     * Returns a layout processor configuration that specifies which {@link ILayoutProcessor layout processors} this
+     * phase would require to be executed at which point in the algorithm to process the given graph.
      * 
      * @param graph
      *            the graph for which to return a configuration.
