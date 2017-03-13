@@ -18,8 +18,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
@@ -31,8 +30,10 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p5edges.PolylineEdgeRouter;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p5edges.PolylineEdgeRouter;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
@@ -60,7 +61,7 @@ import com.google.common.collect.Sets;
  * 
  * @author tit
  */
-public final class SplineEdgeRouter implements ILayoutPhase {
+public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGraph> {
     
     // /////////////////////////////////////////////////////////////////////////////
     // Constants and Variables
@@ -96,36 +97,37 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     // Intermediate processing configurations
     
     /** additional processor dependencies for graphs with self-loops. */
-    private static final IntermediateProcessingConfiguration SELF_LOOP_PROCESSING_ADDITIONS =
-            IntermediateProcessingConfiguration.createEmpty()
-                    .addBeforePhase1(IntermediateProcessorStrategy.SPLINE_SELF_LOOP_PREPROCESSOR)
-                    .addBeforePhase4(IntermediateProcessorStrategy.SPLINE_SELF_LOOP_POSITIONER)
-                    .addBeforePhase4(IntermediateProcessorStrategy.SPLINE_SELF_LOOP_ROUTER);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> SELF_LOOP_PROCESSING_ADDITIONS =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.SPLINE_SELF_LOOP_PREPROCESSOR)
+                .before(LayeredPhases.P4_NODE_PLACEMENT)
+                    .add(IntermediateProcessorStrategy.SPLINE_SELF_LOOP_POSITIONER)
+                    .add(IntermediateProcessorStrategy.SPLINE_SELF_LOOP_ROUTER);
 
     /** additional processor dependencies for graphs with center edge labels. */
-    private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
-            IntermediateProcessingConfiguration.createEmpty()
-                    .addBeforePhase2(IntermediateProcessorStrategy.LABEL_DUMMY_INSERTER)
-                    .addBeforePhase3(IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER)
-                    .addBeforePhase4(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
-                    .addAfterPhase5(IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                .addBefore(LayeredPhases.P2_LAYERING, IntermediateProcessorStrategy.LABEL_DUMMY_INSERTER)
+                .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER)
+                .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
+                .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER);
 
     /** additional processor dependencies for graphs with possible inverted ports. */
-    private static final IntermediateProcessingConfiguration INVERTED_PORT_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.INVERTED_PORT_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INVERTED_PORT_PROCESSING_ADDITIONS =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.INVERTED_PORT_PROCESSOR);
     
     /** additional processor dependencies for graphs with northern / southern non-free ports. */
-    private static final IntermediateProcessingConfiguration NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR)
+                .addBefore(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR);
 
     /** additional processor dependencies for graphs with head or tail edge labels. */
-    private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase4(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.END_LABEL_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> END_EDGE_LABEL_PROCESSING_ADDITIONS =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
+                .addBefore(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_PROCESSOR);
     
     //////////////////////////////////////////////////
 
@@ -340,11 +342,10 @@ public final class SplineEdgeRouter implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         // Basic configuration
-        final IntermediateProcessingConfiguration configuration =
-                IntermediateProcessingConfiguration.createEmpty();
+        final LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
+                LayoutProcessorConfiguration.<LayeredPhases, LGraph>create();
 
         final Set<GraphProperties> graphProperties =
                 graph.getProperty(InternalProperties.GRAPH_PROPERTIES);

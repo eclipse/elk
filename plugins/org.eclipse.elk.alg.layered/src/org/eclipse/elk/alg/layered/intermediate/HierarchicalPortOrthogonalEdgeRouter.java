@@ -15,17 +15,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortConstraints;
@@ -73,7 +73,7 @@ import com.google.common.collect.Sets;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProcessor {
+public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProcessor<LGraph> {
     
     // VARIABLES
     

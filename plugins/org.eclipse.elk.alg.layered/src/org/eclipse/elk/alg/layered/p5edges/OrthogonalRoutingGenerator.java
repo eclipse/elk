@@ -83,7 +83,7 @@ public final class OrthogonalRoutingGenerator {
          * @param port the port.
          * @return the port's coordinate on the hyper edge axis.
          */
-        double getPortPositionOnHyperNode(final LPort port);
+        double getPortPositionOnHyperNode(LPort port);
         
         /**
          * Returns the side of ports that should be considered on a source layer. For a
@@ -112,7 +112,7 @@ public final class OrthogonalRoutingGenerator {
          *                 layers. This position, together with the current hyper node's
          *                 rank allows the calculation of the hyper node's trunk's position.
          */
-        void calculateBendPoints(final HyperNode hyperNode, final double startPos);
+        void calculateBendPoints(HyperNode hyperNode, double startPos);
     }
     
     /**

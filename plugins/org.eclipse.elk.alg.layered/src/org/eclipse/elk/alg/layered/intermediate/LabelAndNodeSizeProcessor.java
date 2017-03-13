@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 
@@ -42,7 +42,7 @@ import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
  * @see LabelSideSelector
  * @author cds
  */
-public final class LabelAndNodeSizeProcessor implements ILayoutProcessor {
+public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph> {
     
     /**
      * {@inheritDoc}

@@ -12,15 +12,15 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayerConstraint;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -52,7 +52,7 @@ import com.google.common.collect.Lists;
  * 
  * @author uru
  */
-public class BigNodesIntermediateProcessor implements ILayoutProcessor {
+public class BigNodesIntermediateProcessor implements ILayoutProcessor<LGraph> {
 
     private LGraph layeredGraph;
 

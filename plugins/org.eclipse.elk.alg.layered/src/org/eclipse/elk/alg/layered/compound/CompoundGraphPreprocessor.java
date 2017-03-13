@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
@@ -26,15 +25,15 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
@@ -83,7 +82,7 @@ import com.google.common.collect.Multimap;
  * @kieler.design proposed by cds
  * @kieler.rating proposed yellow by cds
  */
-public class CompoundGraphPreprocessor implements ILayoutProcessor {
+public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
     
     ////////////////////////////////////////////////////////////////////////////////////////////
     // Variables

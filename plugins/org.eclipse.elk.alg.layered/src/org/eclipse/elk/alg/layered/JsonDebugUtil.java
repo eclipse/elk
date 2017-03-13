@@ -21,12 +21,13 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer.LinearSegment;
 import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.Dependency;
 import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.graph.properties.IProperty;
@@ -650,10 +651,10 @@ public final class JsonDebugUtil {
     @SuppressWarnings("unchecked")
     private static String getValueRepresentation(final IProperty<?> property, final Object value) {
         if (property.getId().equals(InternalProperties.PROCESSORS.getId())) {
-            Iterator<ILayoutProcessor> processors = ((List<ILayoutProcessor>) value).iterator();
+            Iterator<ILayoutProcessor<LGraph>> processors = ((List<ILayoutProcessor<LGraph>>) value).iterator();
             StringBuffer result = new StringBuffer("[");
             while (processors.hasNext()) {
-                ILayoutProcessor processor = processors.next();
+                ILayoutProcessor<LGraph> processor = processors.next();
                 result.append(processor.getClass().getSimpleName());
                 if (processors.hasNext()) {
                     result.append(", ");

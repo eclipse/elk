@@ -11,17 +11,17 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InLayerConstraint;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayerConstraint;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -48,7 +48,7 @@ import com.google.common.base.Optional;
  * 
  * @author uru
  */
-public class InteractiveExternalPortPositioner implements ILayoutProcessor {
+public class InteractiveExternalPortPositioner implements ILayoutProcessor<LGraph> {
 
     /** An arbitrarily chosen spacing value to separate external port dummies from other nodes. */
     private static final int ARBITRARY_SPACING = 10;

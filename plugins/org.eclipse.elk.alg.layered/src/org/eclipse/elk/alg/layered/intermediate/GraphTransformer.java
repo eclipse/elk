@@ -14,21 +14,21 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPadding;
+import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.graph.LShape;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.layered.options.InLayerConstraint;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayerConstraint;
-import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.graph.LShape;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Alignment;
@@ -45,7 +45,7 @@ import com.google.common.collect.Lists;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public final class GraphTransformer implements ILayoutProcessor {
+public final class GraphTransformer implements ILayoutProcessor<LGraph> {
 
     /** definition of transformation modes. */
     public enum Mode {

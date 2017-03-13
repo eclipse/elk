@@ -15,14 +15,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.PriorityQueue;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -46,7 +47,7 @@ import com.google.common.collect.Lists;
  *     layer bound is met.</dd>
  * </dl>
  */
-public class CoffmanGrahamLayerer implements ILayoutPhase {
+public class CoffmanGrahamLayerer implements ILayoutPhase<LayeredPhases, LGraph> {
 
     /** Used during dfs of the transitive reduction algorithm. */
     private boolean[] nodeMark;
@@ -284,16 +285,17 @@ public class CoffmanGrahamLayerer implements ILayoutPhase {
      * ---------------------------------------------------------------------------------------------------------- */
     
     /** basic intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase1(IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
-            .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);    
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BASELINE_PROCESSING_CONFIGURATION =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
+                    IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);    
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(final LGraph graph) {
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return BASELINE_PROCESSING_CONFIGURATION;
     }
     

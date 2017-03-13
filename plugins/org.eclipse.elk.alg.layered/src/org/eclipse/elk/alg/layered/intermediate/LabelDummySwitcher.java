@@ -13,21 +13,20 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.List;
 import java.util.function.Function;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -78,7 +77,7 @@ import com.google.common.collect.Lists;
  * @author cds
  * @kieler.rating yellow proposed cds
  */
-public final class LabelDummySwitcher implements ILayoutProcessor {
+public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     
     /** Width of all layers. */
     private double[] layerWidths;

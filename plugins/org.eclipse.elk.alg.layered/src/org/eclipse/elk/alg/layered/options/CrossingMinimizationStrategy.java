@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.options;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
+import org.eclipse.elk.alg.layered.LayeredPhases;
+import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p3order.InteractiveCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
 /**
@@ -25,7 +27,7 @@ import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
+public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory<LayeredPhases, LGraph> {
 
     /**
      * This heuristic sweeps through the layers, trying to minimize the crossings locally. When
@@ -47,7 +49,7 @@ public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory {
     /**
      * {@inheritDoc}
      */
-    public ILayoutPhase create() {
+    public ILayoutPhase<LayeredPhases, LGraph> create() {
         switch (this) {
         case LAYER_SWEEP:
             return new LayerSweepCrossingMinimizer(CrossMinType.BARYCENTER);

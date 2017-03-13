@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.elk.alg.layered.DebugUtil;
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -27,8 +26,10 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.Spacings;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -57,7 +58,7 @@ import com.google.common.collect.Lists;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public final class LinearSegmentsNodePlacer implements ILayoutPhase {
+public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
 
     /**
      * A linear segment contains a single regular node or all dummy nodes of a long edge.
@@ -162,18 +163,16 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     }
     
     /** additional processor dependencies for graphs with hierarchical ports. */
-    private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HIERARCHY_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P5_EDGE_ROUTING,
+                    IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-        
-        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES)
-                .contains(GraphProperties.EXTERNAL_PORTS)) {
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
+        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;
         } else {
             return null;

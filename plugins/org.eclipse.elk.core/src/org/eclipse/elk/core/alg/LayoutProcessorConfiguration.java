@@ -60,6 +60,19 @@ public final class LayoutProcessorConfiguration<P extends Enum<P>, G>
     public static <P extends Enum<P>, G> LayoutProcessorConfiguration<P, G> create() {
         return new LayoutProcessorConfiguration<>();
     }
+    
+    /**
+     * Creates a new instance which is a copy of the given instance.
+     * 
+     * @param source
+     *            the existing configuration to copy.
+     * @return new layout processor configuration.
+     */
+    public static <P extends Enum<P>, G> LayoutProcessorConfiguration<P, G> createFrom(
+            final LayoutProcessorConfiguration<P, G> source) {
+        
+        return new LayoutProcessorConfiguration<P, G>().addAll(source);
+    }
 
     private LayoutProcessorConfiguration() {
         // Le private constructor.

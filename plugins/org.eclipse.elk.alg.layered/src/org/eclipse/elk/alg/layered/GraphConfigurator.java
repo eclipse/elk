@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -24,16 +21,15 @@ import org.eclipse.elk.alg.layered.options.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.Spacings;
-import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
+import org.eclipse.elk.alg.layered.options.Spacings;
+import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
+import org.eclipse.elk.core.alg.AlgorithmAssembler;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * The configurator configures a graph in preparation for layout. This includes making sure that a
@@ -51,29 +47,26 @@ final class GraphConfigurator {
     ////////////////////////////////////////////////////////////////////////////////
     // Constants
     
-    /** initial size of the list that will contain the processors that make up the algorithm. */
-    private static final int INITIAL_CONFIGURATION_SIZE = 30;
-    
     /** intermediate processing configuration for basic graphs. */
-    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase4(IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR)
-            .addBeforePhase4(IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
-            .addBeforePhase5(IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BASELINE_PROCESSING_CONFIGURATION =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.NODE_MARGIN_CALCULATOR)
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_AND_NODE_SIZE_PROCESSOR)
+            .addBefore(LayeredPhases.P5_EDGE_ROUTING,
+                    IntermediateProcessorStrategy.LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR);
+    
     /** intermediate processors for label management. */
-    private static final IntermediateProcessingConfiguration LABEL_MANAGEMENT_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.LABEL_MANAGEMENT_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> LABEL_MANAGEMENT_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LABEL_MANAGEMENT_PROCESSOR);
 
     
     ////////////////////////////////////////////////////////////////////////////////
     // Processor Caching
     
-    /** cache of instantiated layout phases, from enumeration values to phase instances. */
-    private final Map<Object, ILayoutPhase> phaseCache = Maps.newHashMap();
-    /** cache of instantiated intermediate processors. */
-    private final Map<IntermediateProcessorStrategy, ILayoutProcessor> intermediateProcessorCache =
-            Maps.newHashMap();
+    /** The algorithm assembler we use to assemble our algorithm configurations. */
+    private final AlgorithmAssembler<LayeredPhases, LGraph> algorithmAssembler =
+            AlgorithmAssembler.<LayeredPhases, LGraph>create(LayeredPhases.class);
     
     
     ////////////////////////////////////////////////////////////////////////////////
@@ -137,94 +130,23 @@ final class GraphConfigurator {
         // Make sure the graph properties are sensible
         configureGraphProperties(lgraph);
         
-        // get instances for the different phases of our algorithm
-        ILayoutPhase cycleBreaker = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY));
-        ILayoutPhase layerer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.LAYERING_STRATEGY));
-        ILayoutPhase crossingMinimizer = cachedLayoutPhase(lgraph.getProperty(
-                LayeredOptions.CROSSING_MINIMIZATION_STRATEGY));
-        ILayoutPhase nodePlacer = cachedLayoutPhase(lgraph.getProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY));
-        ILayoutPhase edgeRouter = cachedLayoutPhase(
+        // Setup the algorithm assembler
+        algorithmAssembler.reset();
+        
+        algorithmAssembler.setPhase(LayeredPhases.P1_CYCLE_BREAKING,
+                lgraph.getProperty(LayeredOptions.CYCLE_BREAKING_STRATEGY));
+        algorithmAssembler.setPhase(LayeredPhases.P2_LAYERING,
+                lgraph.getProperty(LayeredOptions.LAYERING_STRATEGY));
+        algorithmAssembler.setPhase(LayeredPhases.P3_NODE_ORDERING,
+                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY));
+        algorithmAssembler.setPhase(LayeredPhases.P4_NODE_PLACEMENT,
+                lgraph.getProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY));
+        algorithmAssembler.setPhase(LayeredPhases.P5_EDGE_ROUTING,
                 EdgeRouterFactory.factoryFor(lgraph.getProperty(LayeredOptions.EDGE_ROUTING)));
-
-        // determine intermediate processor configuration
-        IntermediateProcessingConfiguration intermediateProcessingConfiguration =
-                IntermediateProcessingConfiguration.createEmpty();
-        lgraph.setProperty(InternalProperties.CONFIGURATION, intermediateProcessingConfiguration);
-        intermediateProcessingConfiguration
-                .addAll(cycleBreaker.getIntermediateProcessingConfiguration(lgraph))
-                .addAll(layerer.getIntermediateProcessingConfiguration(lgraph))
-                .addAll(crossingMinimizer.getIntermediateProcessingConfiguration(lgraph))
-                .addAll(nodePlacer.getIntermediateProcessingConfiguration(lgraph))
-                .addAll(edgeRouter.getIntermediateProcessingConfiguration(lgraph))
-                .addAll(this.getPhaseIndependentIntermediateProcessingConfiguration(lgraph));
-
-        // construct the list of processors that make up the algorithm
-        List<ILayoutProcessor> algorithm = Lists.newArrayListWithCapacity(INITIAL_CONFIGURATION_SIZE);
-        lgraph.setProperty(InternalProperties.PROCESSORS, algorithm);
-        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_1));
-        algorithm.add(cycleBreaker);
-        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_2));
-        algorithm.add(layerer);
-        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_3));
-        algorithm.add(crossingMinimizer);
-        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_4));
-        algorithm.add(nodePlacer);
-        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.BEFORE_PHASE_5));
-        algorithm.add(edgeRouter);
-        algorithm.addAll(getIntermediateProcessorList(intermediateProcessingConfiguration,
-                        IntermediateProcessingConfiguration.Slot.AFTER_PHASE_5));
-    }
-    
-    private ILayoutPhase cachedLayoutPhase(final ILayoutPhaseFactory factory) {
-        ILayoutPhase layoutPhase = phaseCache.get(factory);
         
-        if (layoutPhase == null) {
-            layoutPhase = factory.create();
-            phaseCache.put(factory, layoutPhase);
-        }
+        algorithmAssembler.addProcessorConfiguration(getPhaseIndependentLayoutProcessorConfiguration(lgraph));
         
-        return layoutPhase;
-    }
-
-    /**
-     * Returns a list of layout processor instances for the given intermediate layout processing slot.
-     * 
-     * @param configuration the intermediate processing configuration
-     * @param slot the intermediate processing slot whose list of processors to return.
-     * @return list of layout processors.
-     */
-    private List<ILayoutProcessor> getIntermediateProcessorList(
-            final IntermediateProcessingConfiguration configuration,
-            final IntermediateProcessingConfiguration.Slot slot) {
-        
-        // fetch the set of layout processors configured for the given slot
-        Set<IntermediateProcessorStrategy> processors = configuration.getProcessors(slot);
-        List<ILayoutProcessor> result = new ArrayList<ILayoutProcessor>(processors.size());
-
-        // iterate through the layout processors and add them to the result list; the processors set
-        // guarantees that we iterate over the processors in the order in which they occur in
-        // the LayoutProcessorStrategy, thereby satisfying all of their runtime order
-        // dependencies without having to sort them in any way
-        for (IntermediateProcessorStrategy processor : processors) {
-            // check if an instance of the given layout processor is already in the cache
-            ILayoutProcessor processorImpl = intermediateProcessorCache.get(processor);
-
-            if (processorImpl == null) {
-                // It's not in the cache, so create it and put it in the cache
-                processorImpl = processor.create();
-                intermediateProcessorCache.put(processor, processorImpl);
-            }
-
-            // add the layout processor to the list of processors for this slot
-            result.add(processorImpl);
-        }
-
-        return result;
+        lgraph.setProperty(InternalProperties.PROCESSORS, algorithmAssembler.build(lgraph));
     }
     
     /**
@@ -234,20 +156,20 @@ final class GraphConfigurator {
      *               properties of the graph.
      * @return intermediate processing configuration. May be {@code null}.
      */
-    private IntermediateProcessingConfiguration getPhaseIndependentIntermediateProcessingConfiguration(
+    private LayoutProcessorConfiguration<LayeredPhases, LGraph> getPhaseIndependentLayoutProcessorConfiguration(
             final LGraph lgraph) {
 
         Set<GraphProperties> graphProperties = lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
         // Basic configuration
-        IntermediateProcessingConfiguration configuration =
-                IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
+        LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
+                LayoutProcessorConfiguration.createFrom(BASELINE_PROCESSING_CONFIGURATION);
 
-        // port side processor, put to first slot only if requested and routing is orthogonal
+        // Port side processor, put to first slot only if requested and routing is orthogonal
         if (lgraph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
-            configuration.addBeforePhase1(IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
+            configuration.addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
         } else {
-            configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
+            configuration.addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.PORT_SIDE_PROCESSOR);
         }
         
         // If the graph has a label manager, so add label management additions
@@ -259,18 +181,18 @@ final class GraphConfigurator {
         switch (lgraph.getProperty(LayeredOptions.DIRECTION)) {
         case LEFT:
             configuration
-                .addBeforePhase1(IntermediateProcessorStrategy.LEFT_DIR_PREPROCESSOR)
-                .addAfterPhase5(IntermediateProcessorStrategy.LEFT_DIR_POSTPROCESSOR);
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.LEFT_DIR_PREPROCESSOR)
+                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.LEFT_DIR_POSTPROCESSOR);
             break;
         case DOWN:
             configuration
-                .addBeforePhase1(IntermediateProcessorStrategy.DOWN_DIR_PREPROCESSOR)
-                .addAfterPhase5(IntermediateProcessorStrategy.DOWN_DIR_POSTPROCESSOR);
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.DOWN_DIR_PREPROCESSOR)
+                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.DOWN_DIR_POSTPROCESSOR);
             break;
         case UP:
             configuration
-                .addBeforePhase1(IntermediateProcessorStrategy.UP_DIR_PREPROCESSOR)
-                .addAfterPhase5(IntermediateProcessorStrategy.UP_DIR_POSTPROCESSOR);
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.UP_DIR_PREPROCESSOR)
+                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.UP_DIR_POSTPROCESSOR);
             break;
         default:
             // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we
@@ -281,35 +203,39 @@ final class GraphConfigurator {
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.COMMENTS)) {
             configuration
-                .addBeforePhase1(IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
-                .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
+                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
         
         // Node-Promotion application for reduction of dummy nodes after layering
         if (lgraph.getProperty(LayeredOptions.LAYERING_NODE_PROMOTION_STRATEGY) != NodePromotionStrategy.NONE) {
-            configuration.addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
+            configuration.addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.NODE_PROMOTION);
         }
 
         // Preserve certain partitions during layering
         if (graphProperties.contains(GraphProperties.PARTITIONS)) {
-            configuration.addBeforePhase1(IntermediateProcessorStrategy.PARTITION_PREPROCESSOR);
-            configuration.addBeforePhase3(IntermediateProcessorStrategy.PARTITION_POSTPROCESSOR);
+            configuration.addBefore(LayeredPhases.P1_CYCLE_BREAKING,
+                    IntermediateProcessorStrategy.PARTITION_PREPROCESSOR);
+            configuration.addBefore(LayeredPhases.P3_NODE_ORDERING,
+                    IntermediateProcessorStrategy.PARTITION_POSTPROCESSOR);
         }
         
         // Additional horizontal compaction depends on orthogonal edge routing
         if (lgraph.getProperty(LayeredOptions.COMPACTION_POST_COMPACTION_STRATEGY) != GraphCompactionStrategy.NONE
               && lgraph.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
-            configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
+            configuration.addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
         }
         
         // Move trees of high degree nodes to separate layers
         if (lgraph.getProperty(LayeredOptions.HIGH_DEGREE_NODES_TREATMENT)) {
-            configuration.addBeforePhase3(IntermediateProcessorStrategy.HIGH_DEGREE_NODE_LAYER_PROCESSOR);
+            configuration.addBefore(LayeredPhases.P3_NODE_ORDERING,
+                    IntermediateProcessorStrategy.HIGH_DEGREE_NODE_LAYER_PROCESSOR);
         }
         
         // Introduce in-layer constraints to preserve the order of regular nodes
         if (lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE)) {
-            configuration.addBeforePhase3(IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
+            configuration.addBefore(LayeredPhases.P3_NODE_ORDERING,
+                    IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
         }
 
         // Configure greedy switch, activate it if the following holds true
@@ -330,18 +256,21 @@ final class GraphConfigurator {
                     greedySwitchType == GreedySwitchType.ONE_SIDED
                         ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
                         : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
-            configuration.addBeforePhase4(internalGreedyType);
+            configuration.addBefore(LayeredPhases.P4_NODE_PLACEMENT, internalGreedyType);
         }
 
         // Wrapping of graphs
         switch (lgraph.getProperty(LayeredOptions.WRAPPING_STRATEGY)) {
         case PATH_LIKE:
-            configuration.addBeforePhase4(IntermediateProcessorStrategy.PATH_LIKE_GRAPH_WRAPPER);
+            configuration.addBefore(LayeredPhases.P4_NODE_PLACEMENT,
+                    IntermediateProcessorStrategy.PATH_LIKE_GRAPH_WRAPPER);
             break;
         case GENERAL:
-            configuration.addBeforePhase3(IntermediateProcessorStrategy.BREAKING_POINT_INSERTER)
-                    .addBeforePhase4(IntermediateProcessorStrategy.BREAKING_POINT_PROCESSOR)
-                    .addAfterPhase5(IntermediateProcessorStrategy.BREAKING_POINT_REMOVER);
+            configuration
+                    .addBefore(LayeredPhases.P3_NODE_ORDERING,
+                            IntermediateProcessorStrategy.BREAKING_POINT_INSERTER)
+                    .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.BREAKING_POINT_PROCESSOR)
+                    .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.BREAKING_POINT_REMOVER);
             break;
         default: // OFF
         }

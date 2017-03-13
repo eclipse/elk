@@ -12,17 +12,16 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -54,7 +53,7 @@ import com.google.common.collect.Maps;
  * @author jjc
  * @kieler.rating proposed yellow cds
  */
-public final class EndLabelProcessor implements ILayoutProcessor {
+public final class EndLabelProcessor implements ILayoutProcessor<LGraph> {
 
     /**
      * In case of northern ports, labels have to be stacked to avoid overlaps.

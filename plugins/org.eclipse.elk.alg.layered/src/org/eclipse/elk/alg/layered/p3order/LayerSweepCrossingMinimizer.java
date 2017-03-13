@@ -16,17 +16,18 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration.Slot;
+import org.eclipse.elk.alg.layered.IHierarchyAwareLayoutProcessor;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -70,7 +71,9 @@ import com.google.common.collect.Sets;
  * @author alan
  *
  */
-public class LayerSweepCrossingMinimizer implements ILayoutPhase {
+public class LayerSweepCrossingMinimizer
+    implements ILayoutPhase<LayeredPhases, LGraph>, IHierarchyAwareLayoutProcessor {
+    
     /** Collected information about each graph. */
     private List<GraphInfoHolder> graphInfoHolders;
     /** We only need to save the orders of graphs if their node order actually changed. */
@@ -87,11 +90,6 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
      */
     public LayerSweepCrossingMinimizer(final CrossMinType cT) {
         crossMinType = cT;
-    }
-
-    @Override
-    public boolean operatesOnFullHierarchy() {
-        return true;
     }
 
     @Override
@@ -414,11 +412,10 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
      * {@inheritDoc}
      */
     @Override
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-        IntermediateProcessingConfiguration configuration = IntermediateProcessingConfiguration
-                .fromExisting(INTERMEDIATE_PROCESSING_CONFIGURATION);
-        configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_LIST_SORTER);
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
+        LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
+                LayoutProcessorConfiguration.createFrom(INTERMEDIATE_PROCESSING_CONFIGURATION);
+        configuration.addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.PORT_LIST_SORTER);
 
         return configuration;
     }
@@ -444,13 +441,14 @@ public class LayerSweepCrossingMinimizer implements ILayoutPhase {
     }
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
-            IntermediateProcessingConfiguration.createEmpty()
-                    .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
-                    .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
-                    .addAll(Slot.AFTER_PHASE_5,
-                            Lists.newArrayList(IntermediateProcessorStrategy.LONG_EDGE_JOINER,
-                                    IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER));
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INTERMEDIATE_PROCESSING_CONFIGURATION =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                    .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
+                    .addBefore(LayeredPhases.P4_NODE_PLACEMENT,
+                            IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
+                    .after(LayeredPhases.P5_EDGE_ROUTING)
+                        .add(IntermediateProcessorStrategy.LONG_EDGE_JOINER)
+                        .add(IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER);
     
     /**
      * TODO Java 8 api not supported yet and Guava's Void is much much uglier.

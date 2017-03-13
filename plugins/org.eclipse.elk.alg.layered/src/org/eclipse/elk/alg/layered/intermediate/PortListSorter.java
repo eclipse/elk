@@ -13,12 +13,12 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.Collections;
 import java.util.Comparator;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -47,7 +47,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public final class PortListSorter implements ILayoutProcessor {
+public final class PortListSorter implements ILayoutProcessor<LGraph> {
 
     /**
      * A comparer for ports. Ports are sorted by side (north, east, south, west) in clockwise order,

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -37,7 +37,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public final class ReversedEdgeRestorer implements ILayoutProcessor {
+public final class ReversedEdgeRestorer implements ILayoutProcessor<LGraph> {
 
     /**
      * {@inheritDoc}

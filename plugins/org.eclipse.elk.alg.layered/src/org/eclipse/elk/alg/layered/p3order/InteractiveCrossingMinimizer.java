@@ -16,8 +16,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -28,6 +27,8 @@ import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p3order.counting.IInitializable;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -51,27 +52,24 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public final class InteractiveCrossingMinimizer implements ILayoutPhase {
+public final class InteractiveCrossingMinimizer implements ILayoutPhase<LayeredPhases, LGraph> {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
-            .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INTERMEDIATE_PROCESSING_CONFIGURATION =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.LONG_EDGE_JOINER);
     
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-        IntermediateProcessingConfiguration configuration =
-                IntermediateProcessingConfiguration.fromExisting(INTERMEDIATE_PROCESSING_CONFIGURATION);
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
+        LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
+                LayoutProcessorConfiguration.createFrom(INTERMEDIATE_PROCESSING_CONFIGURATION);
         
-        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
-                GraphProperties.NON_FREE_PORTS)) {
-            
-            configuration.addBeforePhase3(IntermediateProcessorStrategy.PORT_LIST_SORTER);
+        if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.NON_FREE_PORTS)) {
+            configuration.addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.PORT_LIST_SORTER);
         }
         
         return configuration;

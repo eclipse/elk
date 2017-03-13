@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.compaction;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.compaction.oned.CNode;
 import org.eclipse.elk.alg.layered.compaction.oned.ISpacingsHandler;
 import org.eclipse.elk.alg.layered.compaction.oned.OneDimensionalCompactor;
@@ -22,8 +21,9 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.Spacings;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -56,7 +56,7 @@ import com.google.common.collect.Sets;
  *       ReversedEdgeRestorer}</dd>
  * </dl>
  */
-public class HorizontalGraphCompactor implements ILayoutProcessor {
+public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
 
     /**
      * Compaction algorithm based on the network simplex algorithm presented by Gansner et al. in

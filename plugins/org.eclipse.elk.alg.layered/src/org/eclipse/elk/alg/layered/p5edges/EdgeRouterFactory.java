@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
+import org.eclipse.elk.alg.layered.LayeredPhases;
+import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.core.options.EdgeRouting;
 
 /**
@@ -23,7 +25,7 @@ import org.eclipse.elk.core.options.EdgeRouting;
  * @kieler.design proposed by cds
  * @kieler.rating proposed yellow by cds
  */
-public final class EdgeRouterFactory implements ILayoutPhaseFactory {
+public final class EdgeRouterFactory implements ILayoutPhaseFactory<LayeredPhases, LGraph> {
     
     /** the edge routing this factory uses to decide which implementation to return. */
     private EdgeRouting edgeRoutingStrategy;
@@ -45,7 +47,7 @@ public final class EdgeRouterFactory implements ILayoutPhaseFactory {
     /**
      * {@inheritDoc}
      */
-    public ILayoutPhase create() {
+    public ILayoutPhase<LayeredPhases, LGraph> create() {
         switch (edgeRoutingStrategy) {
         case POLYLINE:
             return new PolylineEdgeRouter();

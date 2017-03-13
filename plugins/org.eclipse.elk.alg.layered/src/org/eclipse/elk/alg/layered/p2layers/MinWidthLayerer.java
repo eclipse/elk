@@ -16,8 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -25,6 +24,8 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -85,7 +86,7 @@ import com.google.common.collect.Sets;
  * increasing indices</dd>
  * </dl>
  */
-public final class MinWidthLayerer implements ILayoutPhase {
+public final class MinWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> {
 
     /**
      * Recommended values for the algorithm suggested bei Nikolov et al. after a parameter study,
@@ -122,13 +123,11 @@ public final class MinWidthLayerer implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-        return IntermediateProcessingConfiguration
-                .createEmpty()
-                .addBeforePhase1(
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
+        return LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
                         IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
-                .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
+                .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     }
 
     /**

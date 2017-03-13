@@ -23,14 +23,15 @@ import org.eclipse.elk.alg.layered.components.ComponentsProcessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPostprocessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPreprocessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.graph.LPadding;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.ContentAlignment;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -87,7 +88,7 @@ import org.eclipse.elk.core.util.Pair;
  *       algorithm has stopped previously.</li>
  * </ol>
  * 
- * @see ILayoutPhase
+ * @see ILayeredLayoutPhase
  * @see ILayoutProcessor
  * @see GraphConfigurator
  * 
@@ -204,28 +205,28 @@ public final class ElkLayered {
         // Get list of processors for each graph, since they can be different.
         // Iterators are used, so that processing of a graph can be paused and continued easily.
         int work = 0;
-        List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphsAndAlgorithms = new ArrayList<>();
+        List<Pair<LGraph, Iterator<ILayoutProcessor<LGraph>>>> graphsAndAlgorithms = new ArrayList<>();
         for (LGraph g : graphs) {
             graphConfigurator.prepareGraphForLayout(g);
-            List<ILayoutProcessor> processors = g.getProperty(InternalProperties.PROCESSORS);
+            List<ILayoutProcessor<LGraph>> processors = g.getProperty(InternalProperties.PROCESSORS);
             work += processors.size();
-            Iterator<ILayoutProcessor> algorithm = processors.iterator();
+            Iterator<ILayoutProcessor<LGraph>> algorithm = processors.iterator();
             graphsAndAlgorithms.add(Pair.of(g, algorithm));
         }
 
         monitor.begin("Recursive Hierarchical layout", work);
 
         // When the root graph has finished layout, the layout is complete.
-        Iterator<ILayoutProcessor> rootProcessors = getProcessorsForRootGraph(graphsAndAlgorithms);
+        Iterator<ILayoutProcessor<LGraph>> rootProcessors = getProcessorsForRootGraph(graphsAndAlgorithms);
         while (rootProcessors.hasNext()) {
             // Layout from bottom up
-            for (Pair<LGraph, Iterator<ILayoutProcessor>> graphAndAlgorithm : graphsAndAlgorithms) {
-                Iterator<ILayoutProcessor> processors = graphAndAlgorithm.getSecond();
+            for (Pair<LGraph, Iterator<ILayoutProcessor<LGraph>>> graphAndAlgorithm : graphsAndAlgorithms) {
+                Iterator<ILayoutProcessor<LGraph>> processors = graphAndAlgorithm.getSecond();
                 LGraph graph = graphAndAlgorithm.getFirst();
 
                 while (processors.hasNext()) {
-                    ILayoutProcessor processor = processors.next();
-                    if (!processor.operatesOnFullHierarchy()) {
+                    ILayoutProcessor<LGraph> processor = processors.next();
+                    if (!(processor instanceof IHierarchyAwareLayoutProcessor)) {
                         processor.process(graph, monitor.subTask(1));
                     } else if (isRoot(graph)) {
                         // If processor operates on the full hierarchy, it must be executed on the
@@ -271,8 +272,8 @@ public final class ElkLayered {
         return collectedGraphs;
     }
 
-    private Iterator<ILayoutProcessor> getProcessorsForRootGraph(
-            final List<Pair<LGraph, Iterator<ILayoutProcessor>>> graphsAndAlgorithms) {
+    private Iterator<ILayoutProcessor<LGraph>> getProcessorsForRootGraph(
+            final List<Pair<LGraph, Iterator<ILayoutProcessor<LGraph>>>> graphsAndAlgorithms) {
         return graphsAndAlgorithms.get(graphsAndAlgorithms.size() - 1).getSecond();
     }
 
@@ -351,7 +352,7 @@ public final class ElkLayered {
      */
     public boolean isLayoutTestFinished(final TestExecutionState state) {
         LGraph graph = state.graphs.get(0);
-        List<ILayoutProcessor> algorithm = graph.getProperty(InternalProperties.PROCESSORS);
+        List<ILayoutProcessor<LGraph>> algorithm = graph.getProperty(InternalProperties.PROCESSORS);
         return algorithm != null && state.step >= algorithm.size();
     }
 
@@ -369,15 +370,14 @@ public final class ElkLayered {
      *             if the given layout processor is not part of the processors that are still to be
      *             executed.
      */
-    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
+    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor<LGraph>> phase,
             final boolean inclusive, final TestExecutionState state) {
         
-        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
-                InternalProperties.PROCESSORS);
+        List<ILayoutProcessor<LGraph>> algorithm = state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
 
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
-        ListIterator<ILayoutProcessor> algorithmIterator = algorithm.listIterator(state.step);
+        ListIterator<ILayoutProcessor<LGraph>> algorithmIterator = algorithm.listIterator(state.step);
         int phaseIndex = state.step;
         
         while (algorithmIterator.hasNext() && !phaseExists) {
@@ -419,7 +419,7 @@ public final class ElkLayered {
      * @param state the current test execution state
      * @see ElkLayered#runLayoutTestUntil(Class, boolean)
      */
-    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor> phase,
+    public void runLayoutTestUntil(final Class<? extends ILayoutProcessor<LGraph>> phase,
             final TestExecutionState state) {
         
         runLayoutTestUntil(phase, true, state);
@@ -438,8 +438,7 @@ public final class ElkLayered {
         }
 
         // perform the next layout step
-        List<ILayoutProcessor> algorithm = state.graphs.get(0).getProperty(
-                InternalProperties.PROCESSORS);
+        List<ILayoutProcessor<LGraph>> algorithm = state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
         layoutTest(state.graphs, algorithm.get(state.step));
         state.step++;
     }
@@ -451,7 +450,7 @@ public final class ElkLayered {
      * @param state the current test execution state
      * @return the algorithm's current configuration.
      */
-    public List<ILayoutProcessor> getLayoutTestConfiguration(final TestExecutionState state) {
+    public List<ILayoutProcessor<LGraph>> getLayoutTestConfiguration(final TestExecutionState state) {
         return state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
     }
     
@@ -470,7 +469,7 @@ public final class ElkLayered {
         if (!monitorStarted) {
             monitor.begin("Component Layout", 1);
         }
-        List<ILayoutProcessor> algorithm = lgraph.getProperty(InternalProperties.PROCESSORS);
+        List<ILayoutProcessor<LGraph>> algorithm = lgraph.getProperty(InternalProperties.PROCESSORS);
         float monitorProgress = 1.0f / algorithm.size();
 
         if (lgraph.getProperty(LayeredOptions.DEBUG_MODE)) {
@@ -480,14 +479,14 @@ public final class ElkLayered {
 
             System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
             int i = 0;
-            for (ILayoutProcessor processor : algorithm) {
+            for (ILayoutProcessor<LGraph> processor : algorithm) {
                 System.out.println("   Slot " + String.format("%1$02d", i++) + ": "
                         + processor.getClass().getName());
             }
 
             // Invoke each layout processor
             int slotIndex = 0;
-            for (ILayoutProcessor processor : algorithm) {
+            for (ILayoutProcessor<LGraph> processor : algorithm) {
                 if (monitor.isCanceled()) {
                     return;
                 }
@@ -501,7 +500,7 @@ public final class ElkLayered {
             DebugUtil.writeDebugGraph(lgraph, slotIndex, "finished");
         } else {
             // Invoke each layout processor
-            for (ILayoutProcessor processor : algorithm) {
+            for (ILayoutProcessor<LGraph> processor : algorithm) {
                 if (monitor.isCanceled()) {
                     return;
                 }
@@ -532,7 +531,7 @@ public final class ElkLayered {
      * @param monitor a progress monitor.
      * @param processor processor to execute.
      */
-    private void layoutTest(final List<LGraph> lgraphs, final ILayoutProcessor processor) {
+    private void layoutTest(final List<LGraph> lgraphs, final ILayoutProcessor<LGraph> processor) {
         // invoke the layout processor on each of the given graphs
         for (LGraph graph : lgraphs) {
             processor.process(graph, new BasicProgressMonitor());

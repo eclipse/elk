@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -23,8 +22,10 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.Spacings;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
@@ -56,7 +57,7 @@ import com.google.common.collect.Iterables;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public final class OrthogonalEdgeRouter implements ILayoutPhase {
+public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, LGraph> {
     
     /* The basic processing strategy for this phase is empty. Depending on the graph features,
      * dependencies on intermediate processors are added dynamically as follows:
@@ -109,63 +110,64 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
      */
     
     /** additional processor dependencies for graphs with hyperedges. */
-    private static final IntermediateProcessingConfiguration HYPEREDGE_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase4(IntermediateProcessorStrategy.HYPEREDGE_DUMMY_MERGER);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HYPEREDGE_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.HYPEREDGE_DUMMY_MERGER);
     
     /** additional processor dependencies for graphs with possible inverted ports. */
-    private static final IntermediateProcessingConfiguration INVERTED_PORT_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.INVERTED_PORT_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INVERTED_PORT_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.INVERTED_PORT_PROCESSOR);
     
     /** additional processor dependencies for graphs with northern / southern non-free ports. */
-    private static final IntermediateProcessingConfiguration NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> NORTH_SOUTH_PORT_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR);
     
     /** additional processor dependencies for graphs with hierarchical ports. */
-    private static final IntermediateProcessingConfiguration HIERARCHICAL_PORT_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR)
-            .addBeforePhase4(IntermediateProcessorStrategy.HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HIERARCHICAL_PORT_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P3_NODE_ORDERING,
+                    IntermediateProcessorStrategy.HIERARCHICAL_PORT_CONSTRAINT_PROCESSOR)
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT,
+                    IntermediateProcessorStrategy.HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING,
+                    IntermediateProcessorStrategy.HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER);
     
     /** additional processor dependencies for graphs with self-loops. */
-    private static final IntermediateProcessingConfiguration SELF_LOOP_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.SELF_LOOP_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> SELF_LOOP_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.SELF_LOOP_PROCESSOR);
     
     /** additional processor dependencies for graphs with hypernodes. */
-    private static final IntermediateProcessingConfiguration HYPERNODE_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addAfterPhase5(IntermediateProcessorStrategy.HYPERNODE_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HYPERNODE_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.HYPERNODE_PROCESSOR);
     
     /** additional processor dependencies for graphs with center edge labels. */
-    private static final IntermediateProcessingConfiguration CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase2(IntermediateProcessorStrategy.LABEL_DUMMY_INSERTER)
-            .addBeforePhase3(IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER)
-            .addBeforePhase4(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P2_LAYERING, IntermediateProcessorStrategy.LABEL_DUMMY_INSERTER)
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER)
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER);
     
     /** additional processor dependencies for graphs with head or tail edge labels. */
-    private static final IntermediateProcessingConfiguration END_EDGE_LABEL_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase4(IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.END_LABEL_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> END_EDGE_LABEL_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_PROCESSOR);
     
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-        
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         
         // Basic configuration
-        IntermediateProcessingConfiguration configuration =
-                IntermediateProcessingConfiguration.createEmpty();
+        LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
+                LayoutProcessorConfiguration.<LayeredPhases, LGraph>create();
         
         // Additional dependencies
         if (graphProperties.contains(GraphProperties.HYPEREDGES)) {

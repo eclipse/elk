@@ -13,14 +13,14 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
@@ -63,7 +63,7 @@ import com.google.common.collect.Lists;
  * 
  * @author uru
  */
-public class BigNodesPreProcessor implements ILayoutProcessor {
+public class BigNodesPreProcessor implements ILayoutProcessor<LGraph> {
 
     /**
      * Minimal width into which nodes are split, the smaller this value, the more big node dummy

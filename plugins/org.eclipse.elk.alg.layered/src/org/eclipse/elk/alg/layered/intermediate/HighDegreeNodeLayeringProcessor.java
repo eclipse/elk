@@ -13,12 +13,12 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -49,7 +49,7 @@ import com.google.common.collect.Lists;
  *         since it is still some kind of layering algorithm.</dd>
  * </dl>
  */
-public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor {
+public class HighDegreeNodeLayeringProcessor implements ILayoutProcessor<LGraph> {
 
     private static final Function<LNode, Iterable<LEdge>> INCOMING_EDGES = n -> n.getIncomingEdges();
     private static final Function<LNode, Iterable<LEdge>> OUTGOING_EDGES = n -> n.getOutgoingEdges();

@@ -13,8 +13,7 @@ package org.eclipse.elk.alg.layered.p2layers;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -22,6 +21,8 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
@@ -41,17 +42,17 @@ import com.google.common.collect.Lists;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public final class InteractiveLayerer implements ILayoutPhase {
+public final class InteractiveLayerer implements ILayoutPhase<LayeredPhases, LGraph> {
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-
-        return IntermediateProcessingConfiguration.createEmpty()
-                .addBeforePhase1(IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
-                .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
+        return LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
+                        IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
+                .addBefore(LayeredPhases.P3_NODE_ORDERING,
+                        IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     }
     
     /** Utility class for marking horizontal regions that are already covered by some nodes. */

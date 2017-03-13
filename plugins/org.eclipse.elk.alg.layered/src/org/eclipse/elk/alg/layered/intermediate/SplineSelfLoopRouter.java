@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
@@ -30,6 +29,7 @@ import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
 import org.eclipse.elk.alg.layered.p5edges.splines.NubsSelfLoop;
 import org.eclipse.elk.alg.layered.p5edges.splines.Rectangle;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -57,7 +57,7 @@ import com.google.common.collect.Sets;
  * 
  * @author tit
  */
-public final class SplineSelfLoopRouter implements ILayoutProcessor {
+public final class SplineSelfLoopRouter implements ILayoutProcessor<LGraph> {
     // Constants to manipulate the layout.
     /** Minimum height of a self-loop laying on a straight edge of the node. */
     private static final double MIN_SIDE_HEIGHT = 15.0;

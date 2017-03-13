@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
@@ -24,8 +23,9 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p5edges.OrthogonalRoutingGenerator;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -53,7 +53,7 @@ import com.google.common.collect.Sets;
  * @kieler.design proposed by cds
  * @kieler.rating proposed yellow by cds
  */
-public class CompoundGraphPostprocessor implements ILayoutProcessor {
+public class CompoundGraphPostprocessor implements ILayoutProcessor<LGraph> {
     
     /**
      * A predicate that checks if a given cross hierarchy edge has junction points.

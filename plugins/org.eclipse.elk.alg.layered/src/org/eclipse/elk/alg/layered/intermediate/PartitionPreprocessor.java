@@ -13,13 +13,13 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -47,7 +47,7 @@ import com.google.common.collect.Lists;
  *
  * @see PartitionPostprocessor
  */
-public class PartitionPreprocessor implements ILayoutProcessor {
+public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
 
     /** The priority to set on added constraint edges. */
     private static final int PARTITION_CONSTRAINT_EDGE_PRIORITY = 20;

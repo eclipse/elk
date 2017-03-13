@@ -14,8 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -29,8 +28,10 @@ import org.eclipse.elk.alg.layered.networksimplex.NNode;
 import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.Spacings;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.IProperty;
@@ -93,12 +94,13 @@ import com.google.common.collect.Maps;
  * to introduce the straightness dummies. In other words, vertical segments of north/south edges may be elongated 
  * for straighter horizontal edges.
  */
-public class NetworkSimplexPlacer implements ILayoutPhase {
+public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph> {
     
     /** Additional processor dependencies for graphs with hierarchical ports. */
-    private static final IntermediateProcessingConfiguration HIERARCHY_PROCESSING_ADDITIONS =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase5(IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HIERARCHY_PROCESSING_ADDITIONS =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P5_EDGE_ROUTING,
+                    IntermediateProcessorStrategy.HIERARCHICAL_PORT_POSITION_PROCESSOR);
 
     /** Internal property to associate dummy {@link NNode}s with {@link LEdge}s. */
     private static final IProperty<NNode> EDGE_NNODE = new Property<>("nodePlace.ns.edgeNNode");
@@ -121,9 +123,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-        
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         if (graph.getProperty(InternalProperties.GRAPH_PROPERTIES)
                 .contains(GraphProperties.EXTERNAL_PORTS)) {
             return HIERARCHY_PROCESSING_ADDITIONS;

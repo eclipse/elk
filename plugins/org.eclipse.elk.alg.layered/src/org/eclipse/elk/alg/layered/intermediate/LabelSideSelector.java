@@ -15,17 +15,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
@@ -63,7 +63,7 @@ import com.google.common.collect.Maps;
  * @kieler.design proposed by cds
  * @kieler.rating proposed yellow by cds
  */
-public final class LabelSideSelector implements ILayoutProcessor {
+public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
 
     private static final LabelSide DEFAULT_LABEL_SIDE = LabelSide.BELOW;
 

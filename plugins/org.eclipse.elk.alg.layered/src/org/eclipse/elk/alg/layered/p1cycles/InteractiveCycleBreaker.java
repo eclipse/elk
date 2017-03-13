@@ -12,14 +12,15 @@ package org.eclipse.elk.alg.layered.p1cycles;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
@@ -37,20 +38,19 @@ import com.google.common.collect.Lists;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
-public final class InteractiveCycleBreaker implements ILayoutPhase {
+public final class InteractiveCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase1(IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
-            .addAfterPhase5(IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> INTERMEDIATE_PROCESSING_CONFIGURATION =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
+                    IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final LGraph graph) {
-        
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 

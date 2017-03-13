@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -22,6 +21,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.ICutIndexCalculator.ManualCutIndexCalculator;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
@@ -57,7 +57,7 @@ import com.google.common.collect.Lists;
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>
  * </dl>
  */
-public class PathLikeGraphWrapper implements ILayoutProcessor {
+public class PathLikeGraphWrapper implements ILayoutProcessor<LGraph> {
 
     /**
      * {@inheritDoc}

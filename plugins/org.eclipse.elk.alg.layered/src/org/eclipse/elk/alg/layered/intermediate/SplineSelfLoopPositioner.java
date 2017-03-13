@@ -22,17 +22,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.SelfLoopPlacement;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
-import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -66,7 +66,7 @@ import com.google.common.collect.Sets;
  * @author tit
  * @see SplineSelfLoopPreProcessor
  */
-public final class SplineSelfLoopPositioner implements ILayoutProcessor {
+public final class SplineSelfLoopPositioner implements ILayoutProcessor<LGraph> {
     
     /**
      * {@inheritDoc}

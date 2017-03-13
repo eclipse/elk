@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.compound.CrossHierarchyEdge;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -27,6 +26,8 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -62,16 +63,9 @@ public final class InternalProperties {
     public static final IProperty<LGraph> COORDINATE_SYSTEM_ORIGIN = new Property<>("coordinateOrigin");
 
     /**
-     * The intermediate processing configuration for an input graph.
-     */
-    public static final IProperty<IntermediateProcessingConfiguration> CONFIGURATION =
-            new Property<IntermediateProcessingConfiguration>("processingConfiguration");
-
-    /**
      * The list of layout processors executed for an input graph.
      */
-    public static final IProperty<List<ILayoutProcessor>> PROCESSORS =
-            new Property<List<ILayoutProcessor>>("processors");
+    public static final IProperty<List<ILayoutProcessor<LGraph>>> PROCESSORS = new Property<>("processors");
 
     /**
      * Whether the original node an LNode was created from was a compound node or not. This might

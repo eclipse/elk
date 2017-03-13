@@ -10,21 +10,23 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.options;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.ILayoutPhaseFactory;
+import org.eclipse.elk.alg.layered.LayeredPhases;
+import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p2layers.CoffmanGrahamLayerer;
 import org.eclipse.elk.alg.layered.p2layers.InteractiveLayerer;
 import org.eclipse.elk.alg.layered.p2layers.LongestPathLayerer;
 import org.eclipse.elk.alg.layered.p2layers.MinWidthLayerer;
 import org.eclipse.elk.alg.layered.p2layers.NetworkSimplexLayerer;
 import org.eclipse.elk.alg.layered.p2layers.StretchWidthLayerer;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 import org.eclipse.elk.graph.properties.ExperimentalPropertyValue;
 
 /**
  * Enumeration of and factory for the different available layering strategies.
  */
-public enum LayeringStrategy implements ILayoutPhaseFactory {
+public enum LayeringStrategy implements ILayoutPhaseFactory<LayeredPhases, LGraph> {
 
     /**
      * All nodes will be layered with minimal edge length by using the network-simplex-algorithm.
@@ -64,7 +66,7 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
     /**
      * {@inheritDoc}
      */
-    public ILayoutPhase create() {
+    public ILayoutPhase<LayeredPhases, LGraph> create() {
         switch (this) {
         case NETWORK_SIMPLEX:
             return new NetworkSimplexLayerer();

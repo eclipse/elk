@@ -15,8 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.ILayoutPhase;
-import org.eclipse.elk.alg.layered.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -27,8 +26,10 @@ import org.eclipse.elk.alg.layered.networksimplex.NEdge;
 import org.eclipse.elk.alg.layered.networksimplex.NGraph;
 import org.eclipse.elk.alg.layered.networksimplex.NNode;
 import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
-import org.eclipse.elk.alg.layered.options.WideNodesStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.WideNodesStrategy;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
@@ -55,26 +56,28 @@ import com.google.common.collect.Maps;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public final class NetworkSimplexLayerer implements ILayoutPhase {
+public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, LGraph> {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration BASELINE_PROCESSING_CONFIGURATION =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase1(IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
-            .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BASELINE_PROCESSING_CONFIGURATION =
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addBefore(LayeredPhases.P1_CYCLE_BREAKING,
+                    IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
+            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
 
     /** additional processor dependencies for handling big nodes. */
-    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE =
-            IntermediateProcessingConfiguration.createEmpty()
-                    .addBeforePhase2(IntermediateProcessorStrategy.BIG_NODES_PREPROCESSOR)
-                    .addBeforePhase3(IntermediateProcessorStrategy.BIG_NODES_INTERMEDIATEPROCESSOR)
-                    .addAfterPhase5(IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                    .addBefore(LayeredPhases.P2_LAYERING, IntermediateProcessorStrategy.BIG_NODES_PREPROCESSOR)
+                    .addBefore(LayeredPhases.P3_NODE_ORDERING,
+                            IntermediateProcessorStrategy.BIG_NODES_INTERMEDIATEPROCESSOR)
+                    .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
 
     /** additional processor dependencies for handling big nodes after cross min. */
-    private static final IntermediateProcessingConfiguration BIG_NODES_PROCESSING_ADDITIONS_CAREFUL =
-            IntermediateProcessingConfiguration.createEmpty()
-                    .addBeforePhase4(IntermediateProcessorStrategy.BIG_NODES_SPLITTER)
-                    .addAfterPhase5(IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BIG_NODES_PROCESSING_ADDITIONS_CAREFUL =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                    .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.BIG_NODES_SPLITTER)
+                    .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.BIG_NODES_POSTPROCESSOR);
 
 
     // ================================== Attributes ==============================================
@@ -105,10 +108,10 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(final LGraph graph) {
+    public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         // Basic strategy
-        IntermediateProcessingConfiguration strategy =
-                IntermediateProcessingConfiguration.fromExisting(BASELINE_PROCESSING_CONFIGURATION);
+        LayoutProcessorConfiguration<LayeredPhases, LGraph> strategy =
+                LayoutProcessorConfiguration.createFrom(BASELINE_PROCESSING_CONFIGURATION);
 
         // Additional dependencies
         if (graph.getProperty(LayeredOptions.LAYERING_WIDE_NODES_ON_MULTIPLE_LAYERS) == WideNodesStrategy.AGGRESSIVE) {

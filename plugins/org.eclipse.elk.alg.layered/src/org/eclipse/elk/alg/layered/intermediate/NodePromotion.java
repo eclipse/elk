@@ -14,13 +14,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -59,7 +59,7 @@ import com.google.common.collect.Lists;
  * promote nodes.</li>
  * </ul>
  */
-public class NodePromotion implements ILayoutProcessor {
+public class NodePromotion implements ILayoutProcessor<LGraph> {
 
     /** The layered graph to which the promotion is applied. */
     private LGraph masterGraph;

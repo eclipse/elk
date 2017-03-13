@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
+import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointProcessor;
@@ -18,6 +18,8 @@ import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointRemover;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.PathLikeGraphWrapper;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter. This enumeration also serves as a
@@ -28,7 +30,7 @@ import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinT
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public enum IntermediateProcessorStrategy {
+public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGraph> {
 
     /*
      * In this enumeration, intermediate layout processors are listed by the earliest slot in which
@@ -172,7 +174,7 @@ public enum IntermediateProcessorStrategy {
      * @return the layout processor.
      */
     // SUPPRESS CHECKSTYLE NEXT MethodLength
-    public ILayoutProcessor create() {
+    public ILayoutProcessor<LGraph> create() {
         switch (this) {
 
         case BIG_NODES_INTERMEDIATEPROCESSOR:

@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.layered.intermediate.wrapping;
 
 import java.util.Collection;
 
-import org.eclipse.elk.alg.layered.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
@@ -22,6 +21,7 @@ import org.eclipse.elk.alg.layered.intermediate.ReversedEdgeRestorer;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter.BPInfo;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -55,7 +55,7 @@ import com.google.common.collect.Lists;
  * @see BreakingPointInserter
  * @see BreakingPointProcessor
  */
-public class BreakingPointRemover implements ILayoutProcessor {
+public class BreakingPointRemover implements ILayoutProcessor<LGraph> {
 
     private EdgeRouting edgeRouting;
     
