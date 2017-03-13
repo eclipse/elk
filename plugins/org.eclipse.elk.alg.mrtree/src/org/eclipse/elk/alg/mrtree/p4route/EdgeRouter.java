@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.p4route;
 
-import org.eclipse.elk.alg.mrtree.ILayoutPhase;
-import org.eclipse.elk.alg.mrtree.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.mrtree.TreeLayoutPhases;
 import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -26,18 +27,18 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @author sgu
  * 
  */
-public class EdgeRouter implements ILayoutPhase {
+public class EdgeRouter implements ILayoutPhase<TreeLayoutPhases, TGraph> {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
-            new IntermediateProcessingConfiguration();
+    private static final LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> INTERMEDIATE_PROCESSING_CONFIG =
+            LayoutProcessorConfiguration.<TreeLayoutPhases, TGraph>create();
 
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final TGraph tGraph) {
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    @Override
+    public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
+        return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
     /**

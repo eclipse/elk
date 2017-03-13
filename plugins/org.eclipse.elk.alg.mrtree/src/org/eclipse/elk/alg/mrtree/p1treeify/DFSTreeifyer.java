@@ -13,8 +13,7 @@ package org.eclipse.elk.alg.mrtree.p1treeify;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.alg.mrtree.ILayoutPhase;
-import org.eclipse.elk.alg.mrtree.IntermediateProcessingConfiguration;
+import org.eclipse.elk.alg.mrtree.TreeLayoutPhases;
 import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
@@ -22,6 +21,8 @@ import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.alg.mrtree.options.TreeifyingOrder;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -36,12 +37,12 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @author sgu
  * @author msp
  */
-public class DFSTreeifyer implements ILayoutPhase {
+public class DFSTreeifyer implements ILayoutPhase<TreeLayoutPhases, TGraph> {
 
     /** intermediate processing configuration. */
-    private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION = 
-            new IntermediateProcessingConfiguration(IntermediateProcessingConfiguration.AFTER_PHASE_4,
-                    IntermediateProcessorStrategy.DETREEIFYING_PROC);
+    private static final LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> INTERMEDIATE_PROCESSING_CONFIG =
+            LayoutProcessorConfiguration.<TreeLayoutPhases, TGraph>create()
+                    .addAfter(TreeLayoutPhases.P4_EDGE_ROUTING, IntermediateProcessorStrategy.DETREEIFYING_PROC);
 
     /**
      * {@inheritDoc}
@@ -60,9 +61,9 @@ public class DFSTreeifyer implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
-            final TGraph tGraph) {
-        return INTERMEDIATE_PROCESSING_CONFIGURATION;
+    @Override
+    public LayoutProcessorConfiguration<TreeLayoutPhases, TGraph> getLayoutProcessorConfiguration(final TGraph graph) {
+        return INTERMEDIATE_PROCESSING_CONFIG;
     }
 
     /** marks the nodes that have been visited during DFS. */

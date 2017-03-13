@@ -12,10 +12,10 @@ package org.eclipse.elk.alg.mrtree.intermediate;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.mrtree.ILayoutProcessor;
 import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -26,7 +26,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @author sor
  * @author sgu
  */
-public class Untreeifyer implements ILayoutProcessor {
+public class Untreeifyer implements ILayoutProcessor<TGraph> {
 
     /**
      * {@inheritDoc}
