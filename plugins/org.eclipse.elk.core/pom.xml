@@ -26,6 +26,19 @@
   <description>The Core of the Eclipse Layout Kernel.</description>
   <packaging>eclipse-plugin</packaging>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.elk</groupId>
+      <artifactId>org.eclipse.elk.graph</artifactId>
+      <version>0.2.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+      <version>2.12.0</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <!-- Generate code from .melk files. -->

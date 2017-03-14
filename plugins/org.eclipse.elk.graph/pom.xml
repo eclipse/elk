@@ -19,6 +19,19 @@
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>[15.0,19.0)</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore</artifactId>
+      <version>2.12.0</version>
+    </dependency>
+  </dependencies>
+
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.graph</artifactId>
   <name>ELK Graph Model</name>
