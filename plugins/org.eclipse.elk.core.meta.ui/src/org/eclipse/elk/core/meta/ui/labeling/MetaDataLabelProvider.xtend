@@ -11,26 +11,43 @@
 package org.eclipse.elk.core.meta.ui.labeling
 
 import com.google.inject.Inject
+import org.eclipse.elk.core.meta.metaData.MdAlgorithm
+import org.eclipse.elk.core.meta.metaData.MdCategory
+import org.eclipse.elk.core.meta.metaData.MdGroup
+import org.eclipse.elk.core.meta.metaData.MdOption
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
-import org.eclipse.xtext.xbase.ui.labeling.XbaseLabelProvider
+import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
 
 /**
  * Provides labels for EObjects.
  * 
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#label-provider
  */
-class MetaDataLabelProvider extends XbaseLabelProvider {
+class MetaDataLabelProvider extends DefaultEObjectLabelProvider {
 
 	@Inject
 	new(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
 
-	// Labels and icons can be computed like this:
 	
-//	def text(Greeting ele) {
-//		'A greeting to ' + ele.name
-//	}
+	def text(MdAlgorithm algorithm) {
+	    'Algorithm: ' + algorithm.name;
+	}
+	
+	def text(MdCategory category) {
+	    'Category: ' + category.name;
+	}
+	
+	def text(MdGroup group) {
+	    'Group: ' + group.name;
+	}
+	
+	def text(MdOption option) {
+	    'Option: ' + option.name;
+	}
+	
+	// Labels and icons can be computed like this:
 //
 //	def image(Greeting ele) {
 //		'Greeting.gif'
