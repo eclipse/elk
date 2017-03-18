@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 /**
  * An implementation of {@link IPropertyHolder} based on a {@link HashMap}.
  *
@@ -35,13 +37,10 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
      */
     @Override
     public <T> MapPropertyHolder setProperty(final IProperty<? super T> property, final T value) {
-        if (propertyMap == null) {
-            propertyMap = new HashMap<IProperty<?>, Object>();
-        }
         if (value == null) {
-            propertyMap.remove(property);
+            getProperties().remove(property);
         } else {
-            propertyMap.put(property, value);
+            getProperties().put(property, value);
         }
         
         return this;
@@ -51,13 +50,17 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getProperty(final IProperty<T> property) {
-        if (propertyMap != null) {
-            @SuppressWarnings("unchecked")
-            T value = (T) propertyMap.get(property);
+        Object value = getProperties().get(property);
+        if (value instanceof IPropertyValueProxy) {
+            value = ((IPropertyValueProxy) value).resolveValue(property);
             if (value != null) {
-                return value;
+                getProperties().put(property, value);
+                return (T) value;
             }
+        } else if (value != null) {
+            return (T) value;
         }
 
         // the reason for the side effect below is that if a default value has been returned 
@@ -67,6 +70,8 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
         // Retrieve the default value and memorize it for our property
         T defaultValue = property.getDefault();
         if (defaultValue instanceof Cloneable) {
+            // We are now dealing with a clone of the default value which me may safely store away
+            // for further modification
             setProperty(property, defaultValue);
         }
         return defaultValue;
@@ -111,6 +116,18 @@ public class MapPropertyHolder implements IPropertyHolder, Serializable {
         } else {
             return propertyMap;
         }
+    }
+    
+    /**
+     * Returns the property map, creating a new map if there hasn't been one so far.
+     * 
+     * @return the property map.
+     */
+    private Map<IProperty<?>, Object> getProperties() {
+        if (propertyMap == null) {
+            propertyMap = Maps.newHashMap();
+        }
+        return propertyMap;
     }
     
 }

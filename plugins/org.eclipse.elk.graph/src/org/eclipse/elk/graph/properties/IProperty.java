@@ -24,7 +24,8 @@ package org.eclipse.elk.graph.properties;
 public interface IProperty<T> {
     
     /**
-     * Returns the default value of this property.
+     * Returns the default value of this property. If the default value implements {@link Cloneable}, this method
+     * should indeed return a clone to allow clients to modify it without messing with the original default.
      * 
      * @return the default value, or {@code null} if the property has no default value
      */

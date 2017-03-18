@@ -112,9 +112,15 @@ public abstract class EMapPropertyHolderImpl extends MinimalEObjectImpl.Containe
         } else if (value != null) {
             return (T) value;
         }
+
+        // the reason for the side effect below is that if a default value has been returned 
+        // and the object is altered by the user, the user expects the altered object to be 
+        // the value of the property in case he asks for the property again
         
         T defaultValue = property.getDefault();
         if (defaultValue instanceof Cloneable) {
+            // We are now dealing with a clone of the default value which me may safely store away
+            // for further modification
             setProperty(property, defaultValue);
         }
         
