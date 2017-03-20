@@ -11,6 +11,11 @@
 package org.eclipse.elk.core.util;
 
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
@@ -18,5 +23,72 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
  * element this object is set on, which is done through the {@link CoreOptions#SPACING_INDIVIDUAL_OVERRIDE} property.
  */
 public class IndividualSpacings extends MapPropertyHolder {
+
+    /** Serialization identifier. */
+    private static final long serialVersionUID = 737614242607924309L;
+    
+    
+    /**
+     * Returns the value of the given property as it applies to the given node. First checks whether an individual
+     * override is set on the node that has the given property configured. If so, the configured value is returned.
+     * Otherwise, the node's parent node, if any, is queried.
+     * 
+     * @param node
+     *            the node whose property value to return.
+     * @param property
+     *            the property.
+     * @return the individual override for the property or the default value inherited by the parent node.
+     */
+    public static <T> T getIndividualOrInherited(final ElkNode node, final IProperty<T> property) {
+        T result = null;
+        
+        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
+            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE);
+            if (individualSpacings.hasProperty(property)) {
+                result = individualSpacings.getProperty(property);
+            }
+        }
+        
+        // use the common value
+        if (result == null && node.getParent() != null) {
+            result = node.getParent().getProperty(property);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Returns the value of the given property as it applies to the given node. First checks whether an individual
+     * override is set on the node that has the given property configured. If so, the configured value is returned.
+     * Otherwise, the graph the node is part of, if any, is queried.
+     * 
+     * @param graph
+     *            the graph the node is part of. May be {@code null}, although that would somewhat defeat the point
+     *            of the whole thing. Still, be my guest.
+     * @param node
+     *            the node whose property value to return.
+     * @param property
+     *            the property.
+     * @return the individual override for the property or the default value inherited by the parent node.
+     */
+    public static <T> T getIndividualOrInherited(final GraphAdapter<?> graph, final NodeAdapter<?> node,
+            final IProperty<T> property) {
+        
+        T result = null;
+        
+        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
+            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE);
+            if (individualSpacings.hasProperty(property)) {
+                result = individualSpacings.getProperty(property);
+            }
+        }
+        
+        // use the common value
+        if (result == null && graph != null) {
+            result = graph.getProperty(property);
+        }
+        
+        return result;
+    }
 
 }

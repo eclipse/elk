@@ -120,6 +120,14 @@ public final class ElkGraphAdapters {
             
             return element.getProperty(prop);
         }
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <P> boolean hasProperty(final IProperty<P> prop) {
+            return element.hasProperty(prop);
+        }
 
         /**
          * {@inheritDoc}

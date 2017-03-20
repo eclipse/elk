@@ -139,6 +139,13 @@ public final class LGraphAdapters {
         /**
          * {@inheritDoc}
          */
+        public <P> boolean hasProperty(final IProperty<P> prop) {
+            return element.hasProperty(prop);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
         public int getVolatileId() {
             return element.id;
         }
@@ -215,6 +222,13 @@ public final class LGraphAdapters {
          */
         public <P> P getProperty(final IProperty<P> prop) {
             return element.getProperty(prop);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public <P> boolean hasProperty(final IProperty<P> prop) {
+            return element.hasProperty(prop);
         }
 
         /**

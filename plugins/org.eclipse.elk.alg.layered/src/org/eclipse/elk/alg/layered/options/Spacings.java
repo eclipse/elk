@@ -235,9 +235,9 @@ public final class Spacings {
     private double getIndividualOrDefault(final LNode node, final IProperty<Double> layoutOption) {
         Double s1 = null;
         // check for individual value
-        if (node.getAllProperties().containsKey(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
+        if (node.hasProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
             IPropertyHolder is1 = node.getProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE);
-            if (is1.getAllProperties().containsKey(layoutOption)) {
+            if (is1.hasProperty(layoutOption)) {
                 s1 = is1.getProperty(layoutOption);
             }
         }

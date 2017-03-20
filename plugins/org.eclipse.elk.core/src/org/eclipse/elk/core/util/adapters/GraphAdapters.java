@@ -77,6 +77,12 @@ public interface GraphAdapters {
          * 
          */
         <P> P getProperty(IProperty<P> prop);
+        
+        /**
+         * @param prop the property for whose existence to check.
+         * @return {@code true} if the property is configured, {@code false} otherwise.
+         */
+        <P> boolean hasProperty(IProperty<P> prop);
 
         /**
          * Returns the volatile ID for this element that can be used arbitrarily by layout
