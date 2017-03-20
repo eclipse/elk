@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util.labelspacing;
 
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
+import org.eclipse.elk.core.math.ElkRectangle;
 
 /**
- * Information wrapper for size and position of a group of labels. Basically a {@link Rectangle}
+ * Information wrapper for size and position of a group of labels. Basically a {@link ElkRectangle}
  * with an additional field for the current y-offset inside the group, used while placing the
  * labels.
  * 
  * @author csp
  */
-public final class LabelGroup extends Rectangle {
+public final class LabelGroup extends ElkRectangle {
 
     /** Next free y position. */
     // SUPPRESS CHECKSTYLE NEXT 1 |

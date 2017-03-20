@@ -13,8 +13,8 @@ package org.eclipse.elk.alg.layered.compaction.components;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
 /**
  * A component represents, for instance, a set of nodes that are fully connected. In other words,
@@ -31,7 +31,7 @@ public interface IComponent<N, E> {
      * @return a hull the nodes of this connected component. This, for instance, can be a
      *         rectilinear convex hull or a polyomino.
      */
-    List<Rectangle> getHull();
+    List<ElkRectangle> getHull();
 
     /**
      * @return a list with external extensions of this component.

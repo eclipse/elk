@@ -34,11 +34,11 @@ import org.eclipse.elk.alg.layered.compaction.oned.CGroup;
 import org.eclipse.elk.alg.layered.compaction.oned.CNode;
 import org.eclipse.elk.alg.layered.compaction.oned.ICGraphTransformer;
 import org.eclipse.elk.alg.layered.compaction.oned.ISpacingsHandler;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -137,7 +137,7 @@ public class ComponentsToCGraphTransformer<N, E> implements
             cGraph.cGroups.add(group);
 
             // convert the hull of the graph's elements without external edges
-            for (Rectangle rect : comp.getHull()) {
+            for (ElkRectangle rect : comp.getHull()) {
 
                 CRectNode rectNode = new CRectNode(rect);
                 setLock(rectNode, comp.getExternalExtensionSides());
@@ -282,21 +282,21 @@ public class ComponentsToCGraphTransformer<N, E> implements
     }
 
     /**
-     * {@link CNode} implementation for {@link Rectangle}s representing 
+     * {@link CNode} implementation for {@link ElkRectangle}s representing 
      * parts of the rectangular convex hull of a connected IComponent.
      */
     private final class CRectNode extends CNode {
 
-        private Rectangle rect;
+        private ElkRectangle rect;
         private Double individualSpacing;
 
-        private CRectNode(final Rectangle rect) {
+        private CRectNode(final ElkRectangle rect) {
             this(rect, null);
         }
         
-        private CRectNode(final Rectangle rect, final Double spacing) {
+        private CRectNode(final ElkRectangle rect, final Double spacing) {
             this.rect = rect;
-            this.hitbox = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+            this.hitbox = new ElkRectangle(rect.x, rect.y, rect.width, rect.height);
             this.individualSpacing = spacing;
         }
 

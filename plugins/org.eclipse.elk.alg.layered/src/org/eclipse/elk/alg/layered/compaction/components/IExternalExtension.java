@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.compaction.components;
 
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
 /**
  * Container class for edges that represent external edges, i.e. edges that connect to ports that
@@ -30,19 +30,19 @@ public interface IExternalExtension<E> {
     /**
      * @return the rectangle that represents the external extension.
      */
-    Rectangle getRepresentor();
+    ElkRectangle getRepresentor();
     
     /**
      * @return an optional placeholder along the original diagram's boundary.
      */
-    default Rectangle getPlaceholder() {
+    default ElkRectangle getPlaceholder() {
         return null;
     }
     
     /**
      * @return the rectangle to which this extension (conceptually) connects.
      */
-    Rectangle getParent();
+    ElkRectangle getParent();
 
     /**
      * @return the direction into which this extension points.

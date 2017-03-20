@@ -33,13 +33,13 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LShape;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -228,15 +228,15 @@ public class ComponentsCompactor {
             double max = outerSegments.max[ps.ordinal()];
             double extent = outerSegments.extent[ps.ordinal()];
             
-            Rectangle extension = null;
-            Rectangle placeholder = null;
+            ElkRectangle extension = null;
+            ElkRectangle placeholder = null;
             switch (ps) {
             case WEST:
-                extension = new Rectangle(graphTopLeft.x,
+                extension = new ElkRectangle(graphTopLeft.x,
                                           min,
                                           hullPoints.topLeft.x - graphTopLeft.x,
                                           max - min);
-                placeholder = new Rectangle(graphTopLeft.x,
+                placeholder = new ElkRectangle(graphTopLeft.x,
                                             min,
                                             extent,
                                             max - min);
@@ -245,11 +245,11 @@ public class ComponentsCompactor {
                 break;
                 
             case EAST: 
-                extension = new Rectangle(hullPoints.bottomRight.x,
+                extension = new ElkRectangle(hullPoints.bottomRight.x,
                                           min,
                                           graphBottomRight.x - hullPoints.bottomRight.x,
                                           max - min);
-                placeholder = new Rectangle(graphBottomRight.x - extent,
+                placeholder = new ElkRectangle(graphBottomRight.x - extent,
                                             min,
                                             extent,
                                             max - min);
@@ -258,11 +258,11 @@ public class ComponentsCompactor {
                 break;
                 
             case NORTH:
-                extension = new Rectangle(min, 
+                extension = new ElkRectangle(min, 
                                           graphTopLeft.y,
                                           max - min,
                                           hullPoints.topLeft.y - graphTopLeft.y);
-                placeholder = new Rectangle(min, 
+                placeholder = new ElkRectangle(min, 
                                             graphTopLeft.y,
                                             max - min,
                                             extent);
@@ -271,11 +271,11 @@ public class ComponentsCompactor {
                 break;
                 
             case SOUTH: 
-                extension = new Rectangle(min, 
+                extension = new ElkRectangle(min, 
                                           hullPoints.bottomRight.y, 
                                           max - min, 
                                           graphBottomRight.y - hullPoints.bottomRight.y);
-                placeholder = new Rectangle(min, 
+                placeholder = new ElkRectangle(min, 
                                             graphBottomRight.y - extent, 
                                             max - min, 
                                             extent);
@@ -432,7 +432,7 @@ public class ComponentsCompactor {
         // #2 all 'inner' segments contribute to the hull (consider the edge's thickness)
         double thickness = Math.max(externalEdge.getProperty(LayeredOptions.EDGE_THICKNESS).doubleValue(), 1);
         for (Pair<KVector, KVector> segment : segments.innerSegments) {
-            Rectangle rect = segmentToRectangle(segment.getFirst(), segment.getSecond(), thickness);
+            ElkRectangle rect = segmentToRectangle(segment.getFirst(), segment.getSecond(), thickness);
             hullPoints.add(rect);
         }
         
@@ -440,7 +440,7 @@ public class ComponentsCompactor {
         //    contributes to the 'union external segment' that we create 
         //    for one direction of the component
         PortSide side = externalExtension.externalPortSide;
-        Rectangle outerSegmentRect =
+        ElkRectangle outerSegmentRect =
                 segmentToRectangle(segments.outerSegment.getFirst(),
                         segments.outerSegment.getSecond(), thickness);
         if (side == PortSide.WEST || side == PortSide.EAST) {
@@ -481,8 +481,8 @@ public class ComponentsCompactor {
     //                                   Auxiliary stuff
     // ------------------------------------------------------------------------------------------------
     
-    private Rectangle segmentToRectangle(final KVector p1, final KVector p2, final double extent) {
-        return new Rectangle(Math.min(p1.x, p2.x) - extent / 2f,
+    private ElkRectangle segmentToRectangle(final KVector p1, final KVector p2, final double extent) {
+        return new ElkRectangle(Math.min(p1.x, p2.x) - extent / 2f,
                              Math.min(p1.y, p2.y) - extent / 2f,
                              Math.abs(p1.x - p2.x) + extent,
                              Math.abs(p1.y - p2.y) + extent);
@@ -618,7 +618,7 @@ public class ComponentsCompactor {
         private LGraph graph;
         private boolean containsRegularNodes;
 
-        private List<Rectangle> rectilinearConvexHull;
+        private List<ElkRectangle> rectilinearConvexHull;
         private List<IExternalExtension<Set<LEdge>>> externalExtensions = Lists.newArrayList();
         
         public InternalComponent(final LGraph graph) {
@@ -636,7 +636,7 @@ public class ComponentsCompactor {
         }
         
         @Override
-        public List<Rectangle> getHull() {
+        public List<ElkRectangle> getHull() {
             return rectilinearConvexHull;
         }
         
@@ -665,8 +665,8 @@ public class ComponentsCompactor {
 
         private Set<LEdge> edges = Sets.newHashSet();
         private PortSide side;
-        private Rectangle extension;
-        private Rectangle placeholder;
+        private ElkRectangle extension;
+        private ElkRectangle placeholder;
         
         @Override
         public Set<LEdge> getRepresentative() {
@@ -674,12 +674,12 @@ public class ComponentsCompactor {
         }
 
         @Override
-        public Rectangle getRepresentor() {
+        public ElkRectangle getRepresentor() {
             return extension;
         }
 
         @Override
-        public Rectangle getParent() {
+        public ElkRectangle getParent() {
             throw new UnsupportedOperationException();
         }
 
@@ -689,7 +689,7 @@ public class ComponentsCompactor {
         }
 
         @Override
-        public Rectangle getPlaceholder() {
+        public ElkRectangle getPlaceholder() {
             return placeholder;
         }
         
@@ -715,8 +715,8 @@ public class ComponentsCompactor {
         private PortSide externalPortSide;
         
         // the following are calculated 
-        private Rectangle externalExtension;
-        private Rectangle parent;
+        private ElkRectangle externalExtension;
+        private ElkRectangle parent;
         
         public InternalExternalExtension(final LEdge edge) {
             // housekeeping
@@ -745,12 +745,12 @@ public class ComponentsCompactor {
         }
 
         @Override
-        public Rectangle getRepresentor() {
+        public ElkRectangle getRepresentor() {
             return externalExtension;
         }
         
         @Override
-        public Rectangle getParent() {
+        public ElkRectangle getParent() {
             return parent;
         }
     }
@@ -784,7 +784,7 @@ public class ComponentsCompactor {
             return add(Point.from(e));
         }
         
-        public boolean add(final Rectangle rect) {
+        public boolean add(final ElkRectangle rect) {
             boolean returnVal = true;
             returnVal &= add(rect.getPosition());
             returnVal &= add(rect.getPosition().add(rect.width, 0));

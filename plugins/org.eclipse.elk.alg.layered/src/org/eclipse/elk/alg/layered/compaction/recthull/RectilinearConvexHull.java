@@ -17,7 +17,7 @@ import java.util.ListIterator;
 
 import org.eclipse.elk.alg.layered.compaction.recthull.Point.Quadrant;
 import org.eclipse.elk.alg.layered.compaction.recthull.Scanline.EventHandler;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
+import org.eclipse.elk.core.math.ElkRectangle;
 
 import com.google.common.collect.Lists;
 
@@ -139,11 +139,11 @@ public final class RectilinearConvexHull {
     }
 
     /**
-     * @return the rectilinear convex hull represented by a set of non-overlapping {@link Rectangle}s.
+     * @return the rectilinear convex hull represented by a set of non-overlapping {@link ElkRectangle}s.
      *         The rectangles are determined using a scanline from left-to-right creating a new
      *         rectangle each time a "vertical" segment is detected in the rectilinear convex hull.
      */
-    public List<Rectangle> splitIntoRectangles() {
+    public List<ElkRectangle> splitIntoRectangles() {
 
         RectangleEventHandler handler = new RectangleEventHandler();
         Scanline.execute(hull, RIGHT_SPECIAL_ORDER, handler);
@@ -301,14 +301,14 @@ public final class RectilinearConvexHull {
      */
     private class RectangleEventHandler implements EventHandler<Point> {
 
-        private List<Rectangle> rects = Lists.newArrayList();
+        private List<ElkRectangle> rects = Lists.newArrayList();
 
         private Point minY = null;
         private Point maxY = null;
 
         private double lastX = Math.min(xMin1.x, xMin2.x);
 
-        private Rectangle queued = null;
+        private ElkRectangle queued = null;
         private Point queuedPnt = null;
 
         @Override
@@ -336,7 +336,7 @@ public final class RectilinearConvexHull {
 
                 // queue a possible rect
                 if (minY != null && maxY != null) { // FIXME else?
-                    Rectangle r = new Rectangle(lastX, minY.y, p.x - lastX, maxY.y - minY.y);
+                    ElkRectangle r = new ElkRectangle(lastX, minY.y, p.x - lastX, maxY.y - minY.y);
                     queued = r;
                     queuedPnt = p;
                 }

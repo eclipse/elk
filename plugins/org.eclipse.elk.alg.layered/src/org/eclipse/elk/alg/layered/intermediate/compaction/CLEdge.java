@@ -18,10 +18,10 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
 import com.google.common.collect.Sets;
 
@@ -59,7 +59,7 @@ public final class CLEdge extends CNode {
         
         bends = new KVectorChain();
         juctionPoints = new KVectorChain();
-        hitbox = new Rectangle(vSeg.x1, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
+        hitbox = new ElkRectangle(vSeg.x1, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
         parentNode = vSeg.parentNode;
         cGroupOffset.x = vSeg.relativePosition;
         

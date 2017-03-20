@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortAlignment;
@@ -43,7 +44,6 @@ import com.google.common.collect.ImmutableList;
 /**
  * Calculates node sizes, places ports, and places node and port labels.
  *
- * @see LabelSideSelector
  * @author cds
  * @author uru
  * @author csp
@@ -376,7 +376,7 @@ public class LabelAndNodeSizeProcessor {
         // Get the port's labels, if any
         final Iterable<LabelAdapter<?>> labels = port.getLabels();
         if (labels.iterator().hasNext()) {
-            final Rectangle portBox = new Rectangle(
+            final ElkRectangle portBox = new ElkRectangle(
                     0.0,
                     0.0,
                     port.getSize().x,
@@ -384,7 +384,7 @@ public class LabelAndNodeSizeProcessor {
 
             // Add all labels to the port's bounding box
             for (final LabelAdapter<?> label : labels) {
-                final Rectangle labelBox = new Rectangle(
+                final ElkRectangle labelBox = new ElkRectangle(
                         label.getPosition().x,
                         label.getPosition().y,
                         label.getSize().x,
@@ -675,7 +675,7 @@ public class LabelAndNodeSizeProcessor {
         double sumWidthInsideBottom  = 0; // sum of widths of the 3 inside vertical bottom label groups
 
         for (final Entry<LabelLocation, LabelGroup> entry : data.labelGroupsBoundingBoxes.entrySet()) {
-            final Rectangle boundingBox = entry.getValue();
+            final ElkRectangle boundingBox = entry.getValue();
             switch (entry.getKey()) {
             // Inside groups
             case IN_T_L:
@@ -1315,7 +1315,7 @@ public class LabelAndNodeSizeProcessor {
         
         // For each present location, calculate the position of the top left corner of the label group
         for (final Entry<LabelLocation, LabelGroup> entry : data.labelGroupsBoundingBoxes.entrySet()) {
-            final Rectangle boundingBox = entry.getValue();
+            final ElkRectangle boundingBox = entry.getValue();
             // Prepare available horizontal and vertical space for centering objects
             double horizontalSpace =
                     data.node.getSize().x - data.nodeLabelPadding.left - data.nodeLabelPadding.right;

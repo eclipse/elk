@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.elk.core.util.nodespacing;
 
 import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
@@ -23,21 +24,15 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 
 /**
  * Sets the node margins. Node margins are influenced by both port positions and sizes
- * and label positions and sizes. Furthermore, comment boxes that are put directly
- * above or below a node also increase the margin.
+ * and label positions and sizes.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
- *     <dd>A layered graph.</dd>
  *     <dd>Ports have fixed port positions.</dd>
  *     <dd>Labels have fixed positions.</dd>
  *   <dt>Postcondition:</dt>
  *     <dd>The node margins are properly set to form a bounding box around the node and its ports and
  *         labels.</dd>
- *   <dt>Slots:</dt>
- *     <dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt>
- *     <dd>{@link LabelAndNodeSizeProcessor}</dd>
  * </dl>
  *
  * @see LabelAndNodeSizeProcessor
@@ -133,14 +128,14 @@ public final class NodeMarginCalculator  {
     private void processNode(final NodeAdapter<?> node, final double labelSpacing) {
         // This will be our bounding box. We'll start with one that's the same size
         // as our node, and at the same position.
-        Rectangle boundingBox = new Rectangle(
+        ElkRectangle boundingBox = new ElkRectangle(
                 node.getPosition().x,
                 node.getPosition().y,
                 node.getSize().x,
                 node.getSize().y);
         
         // We'll reuse this rectangle as our box for elements to add to the bounding box
-        Rectangle elementBox = new Rectangle();
+        ElkRectangle elementBox = new ElkRectangle();
         
         // Put the node's labels into the bounding box
         if (includeLabels) {
@@ -230,12 +225,12 @@ public final class NodeMarginCalculator  {
      *                               place the port's labels.
      * @param labelSpacing label spacing.
      */
-    private void processEdgeHeadTailLabels(final Rectangle boundingBox,
+    private void processEdgeHeadTailLabels(final ElkRectangle boundingBox,
             final Iterable<EdgeAdapter<?>> outgoingEdges, final Iterable<EdgeAdapter<?>> incomingEdges,
             final NodeAdapter<?> node, final PortAdapter<?> port, final KVector portLabelSpace,
             final double labelSpacing) {
         
-        Rectangle labelBox = new Rectangle();
+        ElkRectangle labelBox = new ElkRectangle();
         
         // For each edge, the tail labels of outgoing edges ...
         for (EdgeAdapter<?> edge : outgoingEdges) {
@@ -272,7 +267,7 @@ public final class NodeMarginCalculator  {
      *                       place the port's labels.
      * @param labelSpacing label spacing.
      */
-    private void computeLabelBox(final Rectangle labelBox, final LabelAdapter<?> label,
+    private void computeLabelBox(final ElkRectangle labelBox, final LabelAdapter<?> label,
             final boolean incomingEdge, final NodeAdapter<?> node, final PortAdapter<?> port,
             final KVector portLabelSpace, final double labelSpacing) {
         

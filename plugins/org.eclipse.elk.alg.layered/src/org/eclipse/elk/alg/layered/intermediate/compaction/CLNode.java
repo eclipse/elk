@@ -16,8 +16,8 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
 import com.google.common.collect.Iterables;
 
@@ -55,7 +55,7 @@ public final class CLNode extends CNode {
         // calculating the necessary hitbox dimensions
         this.lNode = lNode;
         hitbox =
-                new Rectangle(
+                new ElkRectangle(
                         lNode.getPosition().x - lNode.getMargin().left, 
                         lNode.getPosition().y - lNode.getMargin().top, 
                         lNode.getSize().x + lNode.getMargin().left + lNode.getMargin().right, 

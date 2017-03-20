@@ -16,11 +16,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
 /**
  * Utility class for node label space calculation.
@@ -104,7 +104,7 @@ public final class LabelSpaceCalculation {
             label.setVolatileId(labelPlacement.ordinal());
             
             // Create or retrieve the label group for the current label.
-            final Rectangle boundingBox = retrieveLabelGroupsBoundingBox(labelGroupsBoundingBoxes, labelPlacement);
+            final ElkRectangle boundingBox = retrieveLabelGroupsBoundingBox(labelGroupsBoundingBoxes, labelPlacement);
             boundingBox.width = Math.max(boundingBox.width, label.getSize().x);
             boundingBox.height += label.getSize().y + labelSpacing;
         }
@@ -116,7 +116,7 @@ public final class LabelSpaceCalculation {
         // Calculate the node label space required inside the node (only label groups on the inside
         // are relevant here).
         for (final Entry<LabelLocation, LabelGroup> entry : labelGroupsBoundingBoxes.entrySet()) {
-            final Rectangle boundingBox = entry.getValue();
+            final ElkRectangle boundingBox = entry.getValue();
             
             // From each existing label group, remove the last superfluous label spacing
             // (the mere existence of a label group implies that it contains at least one label)
@@ -219,7 +219,7 @@ public final class LabelSpaceCalculation {
      *            the location for which to retrieve the bounding box.
      * @return the corresponding bounding box.
      */
-    private static Rectangle retrieveLabelGroupsBoundingBox(
+    private static ElkRectangle retrieveLabelGroupsBoundingBox(
             final Map<LabelLocation, LabelGroup> labelGroupsBoundingBoxes,
             final LabelLocation location) {
         if (!labelGroupsBoundingBoxes.containsKey(location)) {

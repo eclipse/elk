@@ -13,8 +13,8 @@ package org.eclipse.elk.alg.layered.compaction.oned;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.util.nodespacing.Rectangle;
 
 import com.google.common.collect.Lists;
 
@@ -39,7 +39,7 @@ public abstract class CNode {
     /** representation of constraints. */
     public List<CNode> constraints = Lists.newArrayList();
     /** the area occupied by this element including margins for ports and labels. */
-    public Rectangle hitbox;
+    public ElkRectangle hitbox;
     /** offset to the root position of the containing {@link CGroup} . */
     public KVector cGroupOffset = new KVector();
     /** leftmost possible position for this {@link CNode} to be drawn. 

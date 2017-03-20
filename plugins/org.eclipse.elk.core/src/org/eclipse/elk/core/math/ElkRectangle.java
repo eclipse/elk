@@ -8,19 +8,17 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing;
+package org.eclipse.elk.core.math;
 
 import java.util.Objects;
 
-import org.eclipse.elk.core.math.KVector;
-
 /**
  * Class resembles basic functionality of {@link java.awt.geom.Rectangle2D}. This way it is possible
- * to avoid awt dependencies in klay layered's code.
+ * to avoid awt dependencies in ELK Layered's code.
  * 
  * @author msp
  */
-public class Rectangle {
+public class ElkRectangle {
 
     // CHECKSTYLEOFF VisibilityModifier
 
@@ -40,7 +38,7 @@ public class Rectangle {
      * Constructs a new <code>Rectangle</code>, initialized to location (0,&nbsp;0) and size
      * (0,&nbsp;0).
      */
-    public Rectangle() {
+    public ElkRectangle() {
         this(0, 0, 0, 0);
     }
 
@@ -59,7 +57,7 @@ public class Rectangle {
      * @param h
      *            the height of the newly constructed <code>Rectangle</code>
      */
-    public Rectangle(final double x, final double y, final double w, final double h) {
+    public ElkRectangle(final double x, final double y, final double w, final double h) {
         this.x = x;
         this.y = y;
         this.width = w;
@@ -128,7 +126,7 @@ public class Rectangle {
      * @param other
      *            the <code>Rectangle</code> to be combined with this instance
      */
-    public void union(final Rectangle other) {
+    public void union(final ElkRectangle other) {
         double x1 = Math.min(this.x, other.x);
         double y1 = Math.min(this.y, other.y);
         double x2 = Math.max(this.x + this.width, other.x + other.width);
@@ -159,10 +157,10 @@ public class Rectangle {
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof Rectangle)) {
+        if (obj == null || !(obj instanceof ElkRectangle)) {
             return false;
         }
-        Rectangle other = (Rectangle) obj;
+        ElkRectangle other = (ElkRectangle) obj;
         return Objects.equals(x, other.x) && Objects.equals(y, other.y)
                 && Objects.equals(width, other.width) && Objects.equals(height, other.height);
     }
