@@ -17,13 +17,15 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.NodeFlexibility;
+import org.eclipse.elk.alg.layered.options.NodePlacementStrategy;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -157,7 +159,10 @@ class ElkGraphLayoutTransferrer {
         
         // Set the node size, if necessary
         if (!elknode.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS).isEmpty()
-                || lnode.getProperty(InternalProperties.NESTED_LGRAPH) != null) {
+                || lnode.getProperty(InternalProperties.NESTED_LGRAPH) != null
+                || (lnode.getGraph().getProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY) 
+                        == NodePlacementStrategy.NETWORK_SIMPLEX 
+                    && NodeFlexibility.getNodeFlexibility(lnode).isFlexibleSizeWhereSpacePermits())) {
             
             elknode.setWidth(lnode.getSize().x);
             elknode.setHeight(lnode.getSize().y);

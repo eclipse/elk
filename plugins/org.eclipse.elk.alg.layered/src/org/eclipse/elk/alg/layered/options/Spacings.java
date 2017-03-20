@@ -69,7 +69,7 @@ public final class Spacings {
         nodeTypeSpacing(NodeType.NORMAL, NodeType.EXTERNAL_PORT,
                 LayeredOptions.SPACING_EDGE_NODE); // TODO
         nodeTypeSpacing(NodeType.NORMAL, NodeType.LABEL,
-                LayeredOptions.SPACING_LABEL_NODE);
+                LayeredOptions.SPACING_EDGE_NODE);
         nodeTypeSpacing(NodeType.NORMAL, NodeType.BIG_NODE,
                 LayeredOptions.SPACING_NODE_NODE,
                 LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
@@ -107,10 +107,10 @@ public final class Spacings {
                 LayeredOptions.SPACING_PORT_PORT); // actually shouldnt exist
         
         // label
-        nodeTypeSpacing(NodeType.LABEL, 
-                LayeredOptions.SPACING_LABEL_NODE);
+        nodeTypeSpacing(NodeType.LABEL,
+                LayeredOptions.SPACING_EDGE_EDGE); 
         nodeTypeSpacing(NodeType.LABEL, NodeType.BIG_NODE, 
-                LayeredOptions.SPACING_LABEL_NODE);
+                LayeredOptions.SPACING_EDGE_NODE);
         
         // bignode
         nodeTypeSpacing(NodeType.BIG_NODE, 
@@ -232,20 +232,20 @@ public final class Spacings {
         return graph.getProperty(layoutOption);
     }
 
-    private double getIndividualOrDefault(final LNode node, final IProperty<Double> layoutOption) {
-        Double s1 = null;
+    public static double getIndividualOrDefault(final LNode node, final IProperty<Double> layoutOption) {
+        Double spacing = null;
         // check for individual value
         if (node.hasProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
             IPropertyHolder is1 = node.getProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE);
             if (is1.hasProperty(layoutOption)) {
-                s1 = is1.getProperty(layoutOption);
+                spacing = is1.getProperty(layoutOption);
             }
         }
         // use the common value
-        if (s1 == null) {
-            s1 = graph.getProperty(layoutOption);
+        if (spacing == null) {
+            spacing = node.getGraph().getProperty(layoutOption);
         }
-        return s1;
+        return spacing;
     }
 
     /**

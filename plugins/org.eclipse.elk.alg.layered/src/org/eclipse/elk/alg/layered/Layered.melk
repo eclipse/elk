@@ -78,6 +78,9 @@ algorithm layered(LayeredLayoutProvider) {
     supports wrapping.general.improveCuts
     supports wrapping.general.distancePenalty
     supports wrapping.general.improveWrappedEdges
+    // flexible nodes during node placement
+    supports nodePlacement.networkSimplex.nodeFlexibility
+    supports nodePlacement.networkSimplex.nodeFlexibility.^default
 	// other options
 	supports org.eclipse.elk.padding = new ElkPadding(12)
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
@@ -153,7 +156,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports edgeRouting.sloppySplineLayerSpacing
     supports layering.coffmanGraham.layerBound
     supports nodePlacement.favorStraightEdges
-   
+    supports org.eclipse.elk.spacing.portSurrounding
 }
 
 
@@ -397,6 +400,30 @@ group nodePlacement {
             requires org.eclipse.elk.alg.layered.nodePlacement.strategy == NodePlacementStrategy.LINEAR_SEGMENTS
         }
         
+    }
+    
+    group networkSimplex {
+        
+        advanced option nodeFlexibility: NodeFlexibility {
+            label "Node Flexibility"
+            description 
+                "Aims at shorter and straighter edges. Two configurations are possible: 
+                 (a) allow ports to move freely on the side they are assigned to (the order is always defined beforehand),
+                 (b) additionally allow to enlarge a node wherever it helps. 
+                 If this option is not configured for a node, the 'nodeFlexibility.default' value is used, 
+                 which is specified for the node's parent."
+            targets nodes
+            requires nodePlacement.strategy == NodePlacementStrategy.NETWORK_SIMPLEX
+        }
+        
+        group nodeFlexibility {
+            advanced option ^default: NodeFlexibility {
+                label "Node Flexibility Default"
+                description "Default value of the 'nodeFlexibility' option for the children of a hierarchical node."
+                default = NodeFlexibility.NONE
+                targets parents        
+            }
+        }
     }
 }
 
