@@ -54,6 +54,7 @@ import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -526,7 +527,7 @@ class ElkGraphImporter {
         
         // Transform all of the port's labels
         for (ElkLabel elklabel : elkport.getLabels()) {
-            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT)) {
+            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT) && !Strings.isNullOrEmpty(elklabel.getText())) {
                 LLabel llabel = transformLabel(elklabel);
                 dummyPort.getLabels().add(llabel);
                 
@@ -660,7 +661,7 @@ class ElkGraphImporter {
 
         // add the node's labels
         for (ElkLabel elklabel : elknode.getLabels()) {
-            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT)) {
+            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT) && !Strings.isNullOrEmpty(elklabel.getText())) {
                 lnode.getLabels().add(transformLabel(elklabel));
             }
         }
@@ -751,7 +752,7 @@ class ElkGraphImporter {
 
         // create the port's labels
         for (ElkLabel elklabel : elkport.getLabels()) {
-            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT)) {
+            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT) && !Strings.isNullOrEmpty(elklabel.getText())) {
                 lport.getLabels().add(transformLabel(elklabel));
             }
         }
@@ -900,7 +901,7 @@ class ElkGraphImporter {
 
         // Transform the edge's labels
         for (ElkLabel elklabel : elkedge.getLabels()) {
-            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT)) {
+            if (!elklabel.getProperty(LayeredOptions.NO_LAYOUT) && !Strings.isNullOrEmpty(elklabel.getText())) {
                 LLabel llabel = transformLabel(elklabel);
                 ledge.getLabels().add(llabel);
                 
