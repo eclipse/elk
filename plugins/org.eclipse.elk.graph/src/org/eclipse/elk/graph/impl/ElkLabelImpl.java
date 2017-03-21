@@ -265,7 +265,7 @@ public class ElkLabelImpl extends ElkShapeImpl implements ElkLabel {
 
         StringBuilder builder = new StringBuilder("ElkLabel");
         // Label text
-        if (Strings.isNullOrEmpty(text)) {
+        if (!Strings.isNullOrEmpty(text)) {
             builder.append(" \"").append(text).append("\"");
         }
         // Position
