@@ -30,7 +30,7 @@ public enum SizeOptions {
     DEFAULT_MINIMUM_SIZE,
     
     /**
-     * If this option is set and padding are computed by the algorithm, the minimum size plus the
+     * If this option is set and paddings are computed by the algorithm, the minimum size plus the
      * computed padding are a lower bound on the node size. If this option is not set, the minimum size
      * will be applied to the node's whole size regardless of any computed padding. Note that,
      * depending on the algorithm, this option may only apply to non-hierarchical nodes. This option
@@ -46,7 +46,14 @@ public enum SizeOptions {
      * This options is also independent from {@link #APPLY_ADDITIONAL_PADDING}. If both are set, one has to deal
      * with the effectively doubled padding.
      */
-    COMPUTE_PADDING;
+    COMPUTE_PADDING,
+    
+    /**
+     * If node labels influence the size of a node, setting this option causes the node to be at least as wide as the
+     * widest node label placed outside the node, above or below it. If this option is not set, node labels above or
+     * below the node can be wider than the node itself.
+     */
+    OUTSIDE_NODE_LABELS_INFLUENCE_SIZE;
     
     /**
      * Returns the enumeration value related to the given ordinal.

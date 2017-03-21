@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 /**
- * Enumeration for the definition of a side of the edge to place the (edge) label to. Currently
- * supported in orthogonal edge routing.
+ * Enumeration for the definition of a side of the edge to place the (edge) label to.
  * 
  * @author jjc
  */
