@@ -80,6 +80,8 @@ public final class NodeContext {
     
     /** How much space the ports (and possibly their labels) require on each side, if they influence node size. */
     public Spacing requiredPortSpace = null;
+    /** If ports extend into the node's insides, this is by how much. */
+    public ElkPadding requiredInsidePortSpace = null;
     /** How much space inside port labels require on each side, if they influence node size. */
     public ElkPadding requiredInsidePortLabelSpace = null;
     /** The rows of inside node labels and the client area. */

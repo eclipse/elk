@@ -12,16 +12,20 @@ package org.eclipse.elk.core.util.nodespacing;
 
 import java.util.Set;
 
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
+import org.eclipse.elk.core.options.PortLabelPlacement;
+import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 import org.eclipse.elk.core.util.nodespacing.internal.LabelLocation;
 import org.eclipse.elk.core.util.nodespacing.internal.LabelLocationContext;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
@@ -73,6 +77,13 @@ public class NodeLabelAndSizeCalculator {
         setupNodeLabelRectangles(nodeContext);
         
         
+        /* PORTS EXTENDING INTO THE NODE
+         * Ports can have a negative port border offset, which will cause them to extend into the node itself. We need
+         * to remember how far to move inside port labels inwards and to extend the node size to adjust for the ports.
+         */
+        calculateInsidePortSpace(nodeContext);
+        
+        
         /* CLIENT AREA AND INSIDE NODE LABELS
          * The client area may have a minimum size, which then needs to be taken into account. Also, inside and
          * outside node labels may influence the node size, which, if they to, need to be taken into account as well.
@@ -85,13 +96,19 @@ public class NodeLabelAndSizeCalculator {
         handleNodeLabelSize(nodeContext);
         
         
+        /* EASTERN AND WESTERN INSIDE PORT LABELS
+         * If port labels are to be placed on the inside, the space required for eastern and western labels can now
+         * be calculated.
+         */
+        handleInsidePortLabelsAreasEastWest(nodeContext);
+        
+        
         /* PORTS AND PORT LABELS
          * Depending on the size constraints, ports and port labels will influence the node's size. If they do, the
          * following call will calculate how much space they need on each side, and possibly inside the node as well
          * if we have inside port labels.
          */
         calculatePortAndPortLabelSpace(nodeContext);
-        
         
         
         // TODO Ensure somewhere that the node's minimum size is respected if that applies to the whole node
@@ -101,11 +118,17 @@ public class NodeLabelAndSizeCalculator {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // LABEL GROUPING
-    
+
     /**
      * Initializes {@link PortContext#labelSpace} for each of the node's ports.
      */
     private void setupPortLabelRectangles(final NodeContext nodeContext) {
+        // If port labels are fixed instead of being inside or outside, we simply ignore all labels by not inviting
+        // them to our little party over here
+        if (nodeContext.portLabelsPlacement == PortLabelPlacement.FIXED) {
+            return;
+        }
+        
         nodeContext.portContexts.values().forEach(portContext -> setupPortLabelRectangles(portContext));
     }
     
@@ -139,13 +162,20 @@ public class NodeLabelAndSizeCalculator {
      * rectangle.
      */
     private void setupNodeLabelRectangles(final NodeContext nodeContext) {
-        // Go over all of the node's labels
+        // Go over all of the node's labels (even if the node's default node label placement is to not place the
+        // buggers, individual labels may have a proper node label location assigned, so we always need to iterate
+        // over them all)
         for (LabelAdapter<?> nodeLabel : nodeContext.node.getLabels()) {
             // Find the effective label location
             Set<NodeLabelPlacement> labelPlacement = nodeLabel.hasProperty(CoreOptions.NODE_LABELS_PLACEMENT)
                     ? nodeLabel.getProperty(CoreOptions.NODE_LABELS_PLACEMENT)
                     : nodeContext.nodeLabelPlacement;
             LabelLocation labelLocation = LabelLocation.fromNodeLabelPlacement(labelPlacement);
+            
+            // If the label has its location fixed, we will ignore it
+            if (labelLocation == LabelLocation.UNDEFINED) {
+                continue;
+            }
             
             // Retrieve the associated label location context and add the label to it
             LabelLocationContext labelLocationContext = nodeContext.labelLocationContexts.get(labelLocation);
@@ -164,6 +194,53 @@ public class NodeLabelAndSizeCalculator {
             // If this is not the first label, we need some label-to-label space
             if (labelLocationContext.labels.size() > 1) {
                 labelLocationContext.labelSpace.y += nodeContext.labelLabelSpacing;
+            }
+        }
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // PORTS EXTENDING INTO THE NODE
+    
+    /**
+     * Calculates {@link NodeContext#requiredInsidePortSpace} for ports that extend into the node.
+     */
+    private void calculateInsidePortSpace(final NodeContext nodeContext) {
+        nodeContext.requiredInsidePortSpace = new ElkPadding();
+        
+        for (PortContext portContext : nodeContext.portContexts.values()) {
+            // If the port extends into the node, ensure the inside port space is enough
+            if (portContext.port.hasProperty(CoreOptions.PORT_BORDER_OFFSET)) {
+                double portBorderOffset = portContext.port.getProperty(CoreOptions.PORT_BORDER_OFFSET);
+                
+                if (portBorderOffset < 0) {
+                    // The port does extend into the node, by -portBorderOffset
+                    switch (portContext.port.getSide()) {
+                    case NORTH:
+                        nodeContext.requiredInsidePortSpace.top = Math.max(
+                                nodeContext.requiredInsidePortSpace.top,
+                                -portBorderOffset);
+                        break;
+                        
+                    case SOUTH:
+                        nodeContext.requiredInsidePortSpace.bottom = Math.max(
+                                nodeContext.requiredInsidePortSpace.bottom,
+                                -portBorderOffset);
+                        break;
+                        
+                    case EAST:
+                        nodeContext.requiredInsidePortSpace.right = Math.max(
+                                nodeContext.requiredInsidePortSpace.right,
+                                -portBorderOffset);
+                        break;
+                        
+                    case WEST:
+                        nodeContext.requiredInsidePortSpace.left = Math.max(
+                                nodeContext.requiredInsidePortSpace.left,
+                                -portBorderOffset);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -370,6 +447,56 @@ public class NodeLabelAndSizeCalculator {
             nodeContext.requiredOutsideRightNodeLabelRows =
                     new ThreeRowsOrColumns(nodeContext.labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL_UNLESS_SINGLE);
         }
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // EASTERN AND WESTERN INSIDE PORT LABELS
+    
+    /**
+     * Calculates the eastern and western inside port label areas.
+     */
+    private void handleInsidePortLabelsAreasEastWest(final NodeContext nodeContext) {
+        // If we don't take port labels into account when calculating the size, or if port labels are not to be placed
+        // inside the node, we're done here
+        if (!nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS)
+                || nodeContext.portLabelsPlacement != PortLabelPlacement.INSIDE) {
+            
+            return;
+        }
+        
+        // Ensure the data structure's existence
+        if (nodeContext.requiredInsidePortLabelSpace == null) {
+            nodeContext.requiredInsidePortLabelSpace = new ElkPadding();
+        }
+        
+        nodeContext.requiredInsidePortLabelSpace.right =
+                calculateRequiredEasternOrWesternPortLabelSpace(nodeContext, PortSide.EAST);
+        nodeContext.requiredInsidePortLabelSpace.left =
+                calculateRequiredEasternOrWesternPortLabelSpace(nodeContext, PortSide.WEST);
+    }
+    
+    /**
+     * Calculates the inside port label space required by nodes on the given side. This method can only be sensibly
+     * called if {@code side} is either {@link PortSide#EAST} or {@link PortSide#WEST}.
+     */
+    private double calculateRequiredEasternOrWesternPortLabelSpace(final NodeContext nodeContext, final PortSide side) {
+        double maximumSpace = 0.0;
+        
+        for (PortContext portContext : nodeContext.portContexts.values()) {
+            // Iterate over all ports on the given side
+            if (portContext.port.getSide() != side) {
+                continue;
+            }
+            
+            // If the port has labels, remember the required space
+            if (portContext.labelSpace != null && portContext.labelSpace.width > 0) {
+                double spaceRequiredByCurrentPort = nodeContext.portLabelSpacing + portContext.labelSpace.width;
+                maximumSpace = Math.max(maximumSpace, spaceRequiredByCurrentPort);
+            }
+        }
+        
+        return maximumSpace;
     }
     
     

@@ -104,7 +104,8 @@ public class ThreeRowsOrColumns {
     
     /**
      * Enlarges the whole thing enough for it to be at least the given size. This method prefers to enlarge the center
-     * row or column.
+     * row or column. It should probably only be called if all calls to {@link #enlargeIfNecessary(RowOrColumn, double)}
+     * have been made.
      * 
      * @param size
      *            the new size.
@@ -116,24 +117,37 @@ public class ThreeRowsOrColumns {
             return;
         }
         
-        // If the center row or column exists, simply enlarge it
+        // We have different cases depending on which of the cells exists
         if (exists(RowOrColumn.CENTER)) {
+            // The simplest case: the center cell exists. Simply enlarge that and leave everything else untouched
             sizes[RowOrColumn.CENTER.arrayIndex] += delta;
-        } else {
-            // The center column would have to be added. If the outer rows or columns exist, this will add another gap
-            // and thus only makes sense if the delta is more than the gap or else we will actually exceed the target
-            // size
-            if (exists(RowOrColumn.LEFT)) {
-                if (delta > gap) {
-                    // The delta is large enough to leave a > 0 size for the center thing if the gap is subtracted
-                    sizes[RowOrColumn.CENTER.arrayIndex] = delta - gap;
-                } else {
-                    // Simply add half the delta to the outer things
-                    sizes[RowOrColumn.LEFT.arrayIndex] += delta / 2;
-                }
+            
+        } else if (!exists(RowOrColumn.LEFT) && !exists(RowOrColumn.CENTER) && !exists(RowOrColumn.RIGHT)) {
+            // None of the cells exist, so simply create the center cell
+            sizes[RowOrColumn.CENTER.arrayIndex] = delta;
+            
+        } else if (exists(RowOrColumn.LEFT) && exists(RowOrColumn.RIGHT)) {
+            // Both of the outer cells exist; add half the delta to both outer cells, which will work for all symmetry
+            // modes
+            sizes[RowOrColumn.LEFT.arrayIndex] += delta / 2;
+            sizes[RowOrColumn.RIGHT.arrayIndex] += delta / 2;
+            
+        } else if (exists(RowOrColumn.LEFT)) {
+            // Only the left cell exists. What happens depends on the symmetry mode
+            if (symmetry == OuterSymmetry.SYMMETRICAL) {
+                // Only add half the delta; the other half will appear in the right cell
+                sizes[RowOrColumn.LEFT.arrayIndex] += delta / 2;
             } else {
-                // Nothing exists, so no gap will be added
-                sizes[RowOrColumn.CENTER.arrayIndex] = delta;
+                sizes[RowOrColumn.LEFT.arrayIndex] += delta;
+            }
+            
+        } else if (exists(RowOrColumn.RIGHT)) {
+            // Only the right cell exists. What happens depends on the symmetry mode
+            if (symmetry == OuterSymmetry.SYMMETRICAL) {
+                // Only add half the delta; the other half will appear in the left cell
+                sizes[RowOrColumn.RIGHT.arrayIndex] += delta / 2;
+            } else {
+                sizes[RowOrColumn.RIGHT.arrayIndex] += delta;
             }
         }
     }
@@ -164,6 +178,9 @@ public class ThreeRowsOrColumns {
         }
     }
     
+    /**
+     * Implements {@link #getSize()} for the asymmetrical case.
+     */
     private double getAsymmetricalSize() {
         return addUpSizes(
                 sizes[RowOrColumn.LEFT.arrayIndex],
@@ -171,6 +188,9 @@ public class ThreeRowsOrColumns {
                 sizes[RowOrColumn.RIGHT.arrayIndex]);
     }
     
+    /**
+     * Implements {@link #getSize()} for the symmetrical case.
+     */
     private double getSymmetricalSize() {
         double outerSize = Math.max(sizes[RowOrColumn.LEFT.arrayIndex], sizes[RowOrColumn.RIGHT.arrayIndex]);
         return addUpSizes(
@@ -179,6 +199,9 @@ public class ThreeRowsOrColumns {
                 outerSize);
     }
     
+    /**
+     * Implements {@link #getSize()} for the symmetrical case, unless only a single cell is filled.
+     */
     private double getSymmetricalUnlessSingleSize() {
         // We need to find out how many things exist
         int existingThings = 0;

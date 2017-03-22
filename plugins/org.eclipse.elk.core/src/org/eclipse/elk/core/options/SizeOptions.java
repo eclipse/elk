@@ -53,7 +53,14 @@ public enum SizeOptions {
      * widest node label placed outside the node, above or below it. If this option is not set, node labels above or
      * below the node can be wider than the node itself.
      */
-    OUTSIDE_NODE_LABELS_INFLUENCE_SIZE;
+    OUTSIDE_NODE_LABELS_INFLUENCE_SIZE,
+    
+    /**
+     * If port labels are taken into consideration, differently sized labels can result in a different amount of space
+     * between different pairs of ports. This option causes all ports to be evenly spaced by enlarging the space
+     * between every pair of ports to the larges amount of space between any pair of ports.
+     */
+    UNIFORM_PORT_SPACING;
     
     /**
      * Returns the enumeration value related to the given ordinal.
