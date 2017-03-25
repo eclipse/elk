@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util.nodespacing.internal;
 
+import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 
@@ -33,9 +34,14 @@ public final class PortContext {
 
     /////////////////////////////////////////////////////////////////////////////////
     // Calculated Things
-
+    
+    /**
+     * Margin aroung the port to assume when placing the port. If node labels are taken into consideration, this will
+     * for example include the label space. When placing the ports, this is the size the port will be assumed to have.
+     */
+    public ElkMargin portMargin = new ElkMargin();
     /** Amount of space required for all of the port's labels, and the position. */
-    public ElkRectangle labelSpace = null;
+    public ElkRectangle labelSpace = new ElkRectangle();
     /** How labels are aligned inside the label space. */
     public LabelAlignment labelAlignment = null;
     

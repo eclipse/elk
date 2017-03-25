@@ -20,6 +20,7 @@ import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
+import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
@@ -160,6 +161,54 @@ public final class NodeContext {
         
         Arrays.stream(LabelLocation.values())
             .forEach(location -> labelLocationContexts.put(location, new LabelLocationContext(this, location)));
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // Utility Methods
+    
+    /**
+     * Returns the port alignment that applies to the given side of the node.
+     * 
+     * @param portSide
+     *            the side.
+     * @return the side's port alignment.
+     */
+    public PortAlignment getPortAlignment(final PortSide portSide) {
+        PortAlignment alignment = null;
+        
+        switch (portSide) {
+        case NORTH:
+            if (node.hasProperty(CoreOptions.PORT_ALIGNMENT_NORTH)) {
+                alignment = node.getProperty(CoreOptions.PORT_ALIGNMENT_NORTH);
+            }
+            break;
+
+        case SOUTH:
+            if (node.hasProperty(CoreOptions.PORT_ALIGNMENT_SOUTH)) {
+                alignment = node.getProperty(CoreOptions.PORT_ALIGNMENT_SOUTH);
+            }
+            break;
+
+        case EAST:
+            if (node.hasProperty(CoreOptions.PORT_ALIGNMENT_EAST)) {
+                alignment = node.getProperty(CoreOptions.PORT_ALIGNMENT_EAST);
+            }
+            break;
+
+        case WEST:
+            if (node.hasProperty(CoreOptions.PORT_ALIGNMENT_WEST)) {
+                alignment = node.getProperty(CoreOptions.PORT_ALIGNMENT_WEST);
+            }
+            break;
+        }
+        
+        // Fall back to basic port alignment if we haven't found a more specific one yet
+        if (alignment == null) {
+            alignment = node.getProperty(CoreOptions.PORT_ALIGNMENT_BASIC);
+        }
+        
+        return alignment;
     }
     
     
