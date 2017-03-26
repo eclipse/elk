@@ -17,7 +17,6 @@ import java.util.Set;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
-import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortAlignment;
@@ -95,8 +94,14 @@ public final class NodeContext {
     /////////////////////////////////////////////////////////////////////////////////
     // Calculated Things
     
-    /** The minimum node size required for ports along the horizontal and vertical borders. */
-    public final KVector nodeSizeRequiredByPortPlacement = new KVector();
+    /** The minimum node width required for northern ports. */
+    public double nodeWidthRequiredByNorthPorts = 0;
+    /** The minimum node width required for southern ports. */
+    public double nodeWidthRequiredBySouthPorts = 0;
+    /** The minimum node height required for eastern ports. */
+    public double nodeHeightRequiredByEastPorts = 0;
+    /** The minimum node height required for western ports. */
+    public double nodeHeightRequiredByWestPorts = 0;
     /** If ports extend into the node's insides, this is by how much. */
     public final ElkPadding insidePortSpace = new ElkPadding();
     /** The rows of inside node labels and the client area. */

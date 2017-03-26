@@ -28,10 +28,12 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
+import org.eclipse.elk.core.util.nodespacing.internal.LabelGroupCalculator;
 import org.eclipse.elk.core.util.nodespacing.internal.LabelLocation;
 import org.eclipse.elk.core.util.nodespacing.internal.LabelLocationContext;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.PortLabelPlacer;
 import org.eclipse.elk.core.util.nodespacing.internal.ThreeRowsOrColumns;
 import org.eclipse.elk.core.util.nodespacing.internal.ThreeRowsOrColumns.OuterSymmetry;
 import org.eclipse.elk.core.util.nodespacing.internal.ThreeRowsOrColumns.RowOrColumn;
@@ -91,8 +93,7 @@ public class NodeLabelAndSizeCalculator {
          * possible node label locations (9 inside, 12 outside) as well as for all ports. Rectangles can be null if
          * there are no labels at a particular location.
          */
-        setupPortLabelRectangles(nodeContext);
-        setupNodeLabelRectangles(nodeContext);
+        LabelGroupCalculator.setupNodeAndPortLabelGroups(nodeContext);
         
         
         /* PORTS EXTENDING INTO THE NODE
@@ -138,99 +139,29 @@ public class NodeLabelAndSizeCalculator {
         placeHorizontalPortsAndPortLabels(nodeContext);
         
         
+        
+        
+        
+        /* SET NODE HEIGHT AND PLACE VERTICAL PORTS
+         * We can now calculate the node's height and place the ports (and port labels) along the vertical sides. Also,
+         * since we now know the node's height, we can finally correct the southern port positions.
+         */
+        // TODO: Remove this once we can properly calculate the required node height
+        nodeContext.node.setSize(new KVector(nodeContext.node.getSize().x, 50));
+        offsetSouthernPortsByNodeSize(nodeContext);
+        
+        
+        
         // TODO Ensure somewhere that the node's minimum size is respected if that applies to the whole node
         //      instead of only the center area
         
-        // TODO Offset southern ports by the node's height
         
         // TODO This code currently requires ports to have their port side explicitly set. Document somewhere?
         
         // TODO In case of FIXED_RATIO, this code currently requires ports to have their ratio set. Document somewhere?
         
-        nodeContext.node.setSize(new KVector(nodeContext.node.getSize().x, 50));
-    }
-    
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // LABEL GROUPING
-
-    /**
-     * Initializes {@link PortContext#labelSpace} for each of the node's ports.
-     */
-    private void setupPortLabelRectangles(final NodeContext nodeContext) {
-        // If port labels are fixed instead of being inside or outside, we simply ignore all labels by not inviting
-        // them to our little party over here
-        if (nodeContext.portLabelsPlacement == PortLabelPlacement.FIXED) {
-            return;
-        }
+        // TODO Make east/west and north/south inside port spaces equally large to improve symmetry?
         
-        nodeContext.portContexts.values().forEach(portContext -> setupPortLabelRectangles(portContext));
-    }
-    
-    /**
-     * Initializes {@link PortContext#labelSpace} for the port.
-     */
-    private void setupPortLabelRectangles(final PortContext portContext) {
-        ElkRectangle labelRectangle = new ElkRectangle();
-        int labelCount = 0;
-        
-        // Iterate over the port's labels and add the required space to the label rectangle (space between labels
-        // will be added afterwards)
-        for (LabelAdapter<?> label : portContext.port.getLabels()) {
-            labelCount++;
-            
-            KVector labelSize = label.getSize();
-            labelRectangle.height += labelSize.y;
-            labelRectangle.width = Math.max(labelRectangle.width, labelSize.x);
-        }
-        
-        // Include label-label space if there are labels between which there could be space...
-        if (labelCount > 1) {
-            labelRectangle.height += portContext.parentNodeContext.labelLabelSpacing * (labelCount - 1);
-        }
-        
-        portContext.labelSpace = labelRectangle;
-    }
-    
-    /**
-     * Adds each label to the correct label location context and calculate the size of the context's label space
-     * rectangle.
-     */
-    private void setupNodeLabelRectangles(final NodeContext nodeContext) {
-        // Go over all of the node's labels (even if the node's default node label placement is to not place the
-        // buggers, individual labels may have a proper node label location assigned, so we always need to iterate
-        // over them all)
-        for (LabelAdapter<?> nodeLabel : nodeContext.node.getLabels()) {
-            // Find the effective label location
-            Set<NodeLabelPlacement> labelPlacement = nodeLabel.hasProperty(CoreOptions.NODE_LABELS_PLACEMENT)
-                    ? nodeLabel.getProperty(CoreOptions.NODE_LABELS_PLACEMENT)
-                    : nodeContext.nodeLabelPlacement;
-            LabelLocation labelLocation = LabelLocation.fromNodeLabelPlacement(labelPlacement);
-            
-            // If the label has its location fixed, we will ignore it
-            if (labelLocation == LabelLocation.UNDEFINED) {
-                continue;
-            }
-            
-            // Retrieve the associated label location context and add the label to it
-            LabelLocationContext labelLocationContext = nodeContext.labelLocationContexts.get(labelLocation);
-            labelLocationContext.labels.add(nodeLabel);
-            
-            // Ensure there is a label space rectangle
-            if (labelLocationContext.labelSpace == null) {
-                labelLocationContext.labelSpace = new ElkRectangle();
-            }
-            
-            // Enlarge the rectangle
-            KVector nodeLabelSize = nodeLabel.getSize();
-            labelLocationContext.labelSpace.height += nodeLabelSize.y;
-            labelLocationContext.labelSpace.width = Math.max(labelLocationContext.labelSpace.width, nodeLabelSize.x);
-            
-            // If this is not the first label, we need some label-to-label space
-            if (labelLocationContext.labels.size() > 1) {
-                labelLocationContext.labelSpace.y += nodeContext.labelLabelSpacing;
-            }
-        }
     }
     
     
@@ -382,8 +313,8 @@ public class NodeLabelAndSizeCalculator {
                     new ThreeRowsOrColumns(nodeContext.labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
         }
 
-        if (nodeContext.insideNodeLabelRows == null) {
-            nodeContext.insideNodeLabelRows =
+        if (nodeContext.insideNodeLabelColumns == null) {
+            nodeContext.insideNodeLabelColumns =
                     new ThreeRowsOrColumns(nodeContext.labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
         }
     }
@@ -548,34 +479,31 @@ public class NodeLabelAndSizeCalculator {
     private void calculateHorizontalNodeSizeRequiredByPorts(final NodeContext nodeContext) {
         // We need to calculate the space required by the ports even if ports are not part of the size constraints,
         // since we will use that later to place them
-        
-        // Space northern and southern ports require (we will later take the maximum)
-        double northPortSpace = 0;
-        double southPortSpace = 0;
-        
-        // Check how much freedom we have in placing our ports
         switch (nodeContext.portConstraints) {
         case FIXED_POS:
             // We don't have any freedom at all, so simply calculate where the rightmost port is on each side
-            northPortSpace = calculateHorizontalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.NORTH);
-            southPortSpace = calculateHorizontalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.SOUTH);
+            nodeContext.nodeWidthRequiredByNorthPorts =
+                    calculateHorizontalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.NORTH);
+            nodeContext.nodeWidthRequiredBySouthPorts =
+                    calculateHorizontalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.SOUTH);
             break;
             
         case FIXED_RATIO:
             // We can require the node to be large enough to avoid spacing violations with fixed ratio ports
-            northPortSpace = calculateHorizontalNodeSizeRequiredByFixedRatioPorts(nodeContext, PortSide.NORTH);
-            southPortSpace = calculateHorizontalNodeSizeRequiredByFixedRatioPorts(nodeContext, PortSide.SOUTH);
+            nodeContext.nodeWidthRequiredByNorthPorts =
+                    calculateHorizontalNodeSizeRequiredByFixedRatioPorts(nodeContext, PortSide.NORTH);
+            nodeContext.nodeWidthRequiredBySouthPorts =
+                    calculateHorizontalNodeSizeRequiredByFixedRatioPorts(nodeContext, PortSide.SOUTH);
             break;
             
         default:
             // If we are free to place things, make the node large enough to place everything properly
-            northPortSpace = calculateHorizontalNodeSizeRequiredByFreePorts(nodeContext, PortSide.NORTH);
-            southPortSpace = calculateHorizontalNodeSizeRequiredByFreePorts(nodeContext, PortSide.SOUTH);
+            nodeContext.nodeWidthRequiredByNorthPorts =
+                    calculateHorizontalNodeSizeRequiredByFreePorts(nodeContext, PortSide.NORTH);
+            nodeContext.nodeWidthRequiredBySouthPorts =
+                    calculateHorizontalNodeSizeRequiredByFreePorts(nodeContext, PortSide.SOUTH);
             break;
         }
-        
-        // Take the maximum amount of space required by northern and southern ports
-        nodeContext.nodeSizeRequiredByPortPlacement.x = Math.max(northPortSpace, southPortSpace);
     }
     
     /**
@@ -619,7 +547,7 @@ public class NodeLabelAndSizeCalculator {
             final PortSide portSide) {
         
         // Handle the common case first: if there are no ports, we're done here
-        if (nodeContext.portContexts.get(portSide).size() == 0) {
+        if (nodeContext.portContexts.get(portSide).isEmpty()) {
             return 0.0;
         }
         
@@ -791,34 +719,31 @@ public class NodeLabelAndSizeCalculator {
     private void calculateVerticalNodeSizeRequiredByPorts(final NodeContext nodeContext) {
         // We need to calculate the space required by the ports even if ports are not part of the size constraints,
         // since we will use that later to place them
-        
-        // Space eastern and western ports require (we will later take the maximum)
-        double eastPortSpace = 0;
-        double westPortSpace = 0;
-        
-        // Check how much freedom we have in placing our ports
         switch (nodeContext.portConstraints) {
         case FIXED_POS:
             // We don't have any freedom at all, so simply calculate where the bottommost port is on each side
-            eastPortSpace = calculateVerticalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.EAST);
-            westPortSpace = calculateVerticalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.WEST);
+            nodeContext.nodeHeightRequiredByEastPorts =
+                    calculateVerticalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.EAST);
+            nodeContext.nodeHeightRequiredByWestPorts =
+                    calculateVerticalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.WEST);
             break;
             
         case FIXED_RATIO:
             // We can require the node to be large enough to avoid spacing violations with fixed ratio ports
-            eastPortSpace = calculateVerticalNodeSizeRequiredByFixedRatioPorts(nodeContext, PortSide.EAST);
-            westPortSpace = calculateVerticalNodeSizeRequiredByFixedRatioPorts(nodeContext, PortSide.WEST);
+            nodeContext.nodeHeightRequiredByEastPorts =
+                    calculateVerticalNodeSizeRequiredByFixedRatioPorts(nodeContext, PortSide.EAST);
+            nodeContext.nodeHeightRequiredByWestPorts =
+                    calculateVerticalNodeSizeRequiredByFixedRatioPorts(nodeContext, PortSide.WEST);
             break;
             
         default:
             // If we are free to place things, make the node large enough to place everything properly
-            eastPortSpace = calculateVerticalNodeSizeRequiredByFreePorts(nodeContext, PortSide.EAST);
-            westPortSpace = calculateVerticalNodeSizeRequiredByFreePorts(nodeContext, PortSide.WEST);
+            nodeContext.nodeHeightRequiredByEastPorts =
+                    calculateVerticalNodeSizeRequiredByFreePorts(nodeContext, PortSide.EAST);
+            nodeContext.nodeHeightRequiredByWestPorts =
+                    calculateVerticalNodeSizeRequiredByFreePorts(nodeContext, PortSide.WEST);
             break;
         }
-        
-        // Take the maximum amount of space required by eastern and western ports
-        nodeContext.nodeSizeRequiredByPortPlacement.x = Math.max(eastPortSpace, westPortSpace);
     }
     
     /**
@@ -1085,7 +1010,9 @@ public class NodeLabelAndSizeCalculator {
             width += nodeContext.insidePortSpace.left + nodeContext.insidePortSpace.right;
             
             // ...make sure horizontal ports have enough space to be placed
-            width = Math.max(width, nodeContext.nodeSizeRequiredByPortPlacement.x);
+            double widthRequiredByPorts = Math.max(
+                    nodeContext.nodeWidthRequiredByNorthPorts, nodeContext.nodeWidthRequiredBySouthPorts);
+            width = Math.max(width, widthRequiredByPorts);
         }
         
         // If we have a minimum node width, apply that
@@ -1140,7 +1067,18 @@ public class NodeLabelAndSizeCalculator {
             break;
         }
         
-        // TODO Place labels
+        // Check whether we can simply place labels at their default locations without any fear of overlap or whether
+        // we need to employ the big guns
+        if (nodeContext.sizeConstraints.contains(SizeConstraint.NODE_LABELS)
+                && !nodeContext.portConstraints.isPosFixed()) {
+            
+            PortLabelPlacer.simplePortLabelPlacement(nodeContext, PortSide.NORTH);
+            PortLabelPlacer.simplePortLabelPlacement(nodeContext, PortSide.SOUTH);
+        } else {
+            // TODO Employ big guns
+            PortLabelPlacer.simplePortLabelPlacement(nodeContext, PortSide.NORTH);
+            PortLabelPlacer.simplePortLabelPlacement(nodeContext, PortSide.SOUTH);
+        }
     }
 
     /**
@@ -1189,6 +1127,9 @@ public class NodeLabelAndSizeCalculator {
         // Note that we don't have to distinguish any cases here because the port margins already include space
         // required for labels, if such space is to be reserved. Yay!
         PortAlignment portAlignment = nodeContext.getPortAlignment(portSide);
+        double calculatedPortPlacementWidth = portSide == PortSide.NORTH
+                ? nodeContext.nodeWidthRequiredByNorthPorts
+                : nodeContext.nodeWidthRequiredBySouthPorts;
         double currentXPos = nodeContext.surroundingPortMargins.left;
         double spaceBetweenPorts = nodeContext.portPortSpacing;
         
@@ -1202,18 +1143,18 @@ public class NodeLabelAndSizeCalculator {
             
         case CENTER:
             currentXPos = nodeContext.surroundingPortMargins.left
-                    + (nodeContext.node.getSize().x - nodeContext.nodeSizeRequiredByPortPlacement.x) / 2;
+                    + (nodeContext.node.getSize().x - calculatedPortPlacementWidth) / 2;
             break;
             
         case END:
             currentXPos = nodeContext.node.getSize().x
-                    - nodeContext.nodeSizeRequiredByPortPlacement.x
+                    - calculatedPortPlacementWidth
                     + nodeContext.surroundingPortMargins.left;
             break;
             
         case JUSTIFIED:
             currentXPos = nodeContext.surroundingPortMargins.left;
-            spaceBetweenPorts = (nodeContext.node.getSize().x - nodeContext.nodeSizeRequiredByPortPlacement.x)
+            spaceBetweenPorts = (nodeContext.node.getSize().x - calculatedPortPlacementWidth)
                     / (nodeContext.portContexts.get(portSide).size());
             break;
         }
@@ -1299,8 +1240,19 @@ public class NodeLabelAndSizeCalculator {
     
     
     
-    
-    
+    /**
+     * Offsets all southern ports, previously placed relative to vertical coordinate 0, by the node's size to place
+     * them along the node's southern border.
+     */
+    private void offsetSouthernPortsByNodeSize(final NodeContext nodeContext) {
+        double nodeHeight = nodeContext.node.getSize().y;
+        
+        for (PortContext portContext : nodeContext.portContexts.get(PortSide.SOUTH)) {
+            KVector portPosition = portContext.port.getPosition();
+            portPosition.y += nodeHeight;
+            portContext.port.setPosition(portPosition);
+        }
+    }
     
     
     
