@@ -15,14 +15,14 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>plugins</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
   </parent>
-  
+
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.alg.test</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.1-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
-  
+
   <build>
     <plugins>
       <!-- Don't publish this artifact to Maven repositories. -->

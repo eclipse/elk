@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.1-SNAPSHOT</version>
   <artifactId>org.eclipse.elk.targetplatform</artifactId>
   <packaging>eclipse-target-definition</packaging>
   <name>Eclipse Layout Kernel Target Platform</name>
@@ -11,7 +11,7 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

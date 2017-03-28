@@ -6,7 +6,7 @@
   <artifactId>parent</artifactId>
   <groupId>org.eclipse.elk</groupId>
   <name>Eclipse Layout Kernel</name>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>0.2.1-SNAPSHOT</version>
   <url>https://www.eclipse.org/elk/</url>
   <description>An infrastructure for automatic graph layout and implementations of different layout algorithms.</description>
   <packaging>pom</packaging>
@@ -71,7 +71,7 @@
         <downloadUrl>${elkMeta.repositoryUrl}</downloadUrl>
       </distributionManagement>
     </profile>
-    
+
     <!-- The Maven publishing configuration. -->
     <profile>
       <id>maven-publish</id>
@@ -174,7 +174,7 @@
             <artifact>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.targetplatform</artifactId>
-              <version>0.2.0-SNAPSHOT</version>
+              <version>0.2.1-SNAPSHOT</version>
             </artifact>
           </target>
         </configuration>
@@ -239,12 +239,12 @@
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.graph</artifactId>
-              <version>0.2.0-SNAPSHOT</version>
+              <version>0.2.1-SNAPSHOT</version>
             </dependency>
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.core.meta</artifactId>
-              <version>0.2.0-SNAPSHOT</version>
+              <version>0.2.1-SNAPSHOT</version>
             </dependency>
           </dependencies>
         </plugin>
