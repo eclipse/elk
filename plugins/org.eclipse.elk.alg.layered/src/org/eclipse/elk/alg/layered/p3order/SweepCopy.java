@@ -18,6 +18,11 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.core.options.PortSide;
+
+import com.google.common.collect.Lists;
 
 /**
  * Stores node and port order for a sweep.
@@ -76,15 +81,61 @@ class SweepCopy {
      * @param lGraph
      */
     public void transferNodeAndPortOrdersToGraph(final LGraph lGraph) {
+        
+        // the 'NORTH_OR_SOUTH_PORT' option allows the crossing minimizer to decide 
+        // the side a corresponding dummy node is placed on in order to reduce the number of crossings
+        // as a consequence the configured port side may not be valid anymore and has to be corrected
+        List<LNode> northSouthPortDummies = Lists.newArrayList();
+
+        // iterate the layers
         List<Layer> layers = lGraph.getLayers();
         for (int i = 0; i < layers.size(); i++) {
             List<LNode> nodes = layers.get(i).getNodes();
+            northSouthPortDummies.clear();
+            
+            // iterate and order the nodes within the layer
             for (int j = 0; j < nodes.size(); j++) {
                 LNode node = nodeOrder[i][j];
+                // use the id field to remember the order within the layer
+                node.id = j;
+                if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
+                    northSouthPortDummies.add(node);
+                }
+                
                 lGraph.getLayers().get(i).getNodes().set(j, node);
+                // order ports as computed
                 node.getPorts().clear();
                 node.getPorts().addAll(portOrders.get(i).get(j));
             }
+            
+            // assert that the port side is set properly
+            for (LNode node : northSouthPortDummies) {
+                assertCorrectPortSides(node);
+            }
         }
     }
+
+    private void assertCorrectPortSides(final LNode node) {
+        assert node.getType() == NodeType.NORTH_SOUTH_PORT;
+
+        LNode origin = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+
+        // a north south port dummy has exactly one port
+        List<LPort> dummyPorts = node.getPorts();
+        LPort dummyPort = dummyPorts.get(0);
+
+        // find the corresponding port on the regular node
+        for (LPort port : origin.getPorts()) {
+            if (port.equals(dummyPort.getProperty(InternalProperties.ORIGIN))) {
+                // switch the port's side if necessary
+                if ((port.getSide() == PortSide.NORTH) && (node.id > origin.id)) {
+                    port.setSide(PortSide.SOUTH);
+                } else if ((port.getSide() == PortSide.SOUTH) && (origin.id > node.id)) {
+                    port.setSide(PortSide.NORTH);
+                }
+                break;
+            }
+        }
+    }
+    
 }
