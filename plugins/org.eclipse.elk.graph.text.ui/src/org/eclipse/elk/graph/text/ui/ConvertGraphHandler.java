@@ -149,7 +149,10 @@ public class ConvertGraphHandler extends AbstractHandler {
         
         if (targetExtension.equals(EXT_ELK_TEXT) && copy instanceof ElkNode) {
             // we want to convert to the textual format, so write missing identifiers into the graph
-            GraphIdentifierGenerator.generate((ElkNode) copy);
+            GraphIdentifierGenerator.forGraph((ElkNode) copy)
+                .assertExists()
+                .assertUnique()
+                .execute();
         }
         
         return copy;

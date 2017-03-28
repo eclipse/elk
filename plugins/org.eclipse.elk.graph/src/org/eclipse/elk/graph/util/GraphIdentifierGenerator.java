@@ -22,12 +22,59 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
+
 /**
  * Generates identifiers for graph elements where missing. Inside ELK, this class is mainly used to generate
  * proper identifiers before a graph is serialized using the textual graph languages, which uses identifiers for
  * elements referencing each other.
  */
 public final class GraphIdentifierGenerator {
+    
+    private ElkNode graph;
+    private boolean generate = false;
+    private boolean unique = false;
+    
+    /**
+     * @param graph the graph for which to generate identifiers. 
+     * @return a new {@link GraphIdentifierGenerator} instance that can be configured and finally executed. 
+     * 
+     * @see #assertExists()
+     * @see #assertUnique()
+     * @see #execute()
+     */
+    public static GraphIdentifierGenerator forGraph(final ElkNode graph) {
+        return new GraphIdentifierGenerator(graph);
+    }
+    
+    /**
+     * Generates identifiers for the graph's elements, where missing.
+     */
+    public GraphIdentifierGenerator assertExists() {
+        generate = true;
+        return this;
+    }
+    
+    /**
+     * Makes sure existing identifiers are unique by appending a "_" to non-unique ones. 
+     */
+    public GraphIdentifierGenerator assertUnique() {
+        unique = true;
+        return this;
+    }
+    
+    /**
+     * Execute this generator. 
+     */
+    public void execute() {
+        if (generate) {
+            generateIdentifiers(graph);
+        }
+        if (unique) {
+            assertAllIdsUnique(graph);
+        }
+    }
     
     /**
      * Enumeration of possible graph elements that can receive identifiers.
@@ -56,6 +103,7 @@ public final class GraphIdentifierGenerator {
      * Constructor is only called from the inside.
      */
     private GraphIdentifierGenerator(final ElkNode graph) {
+        this.graph = graph;
         Iterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject currentEObject = iterator.next();
@@ -73,24 +121,13 @@ public final class GraphIdentifierGenerator {
             }
         }
     }
-    
-    
-    /**
-     * Generates identifiers for the graph's elements, where missing.
-     * 
-     * @param graph the graph to generate identifiers for.
-     */
-    public static void generate(final ElkNode graph) {
-        new GraphIdentifierGenerator(graph).generateIdentifiers(graph);
-    }
-    
-    
+   
     /**
      * Recursively generates identifiers for the given element and its child elements.
      * 
      * @param element the element to generate an identifier for.
      */
-    private void generateIdentifiers(final EObject element) {
+    private GraphIdentifierGenerator generateIdentifiers(final EObject element) {
         new ElkGraphSwitch<Object>() {
             
             @Override
@@ -142,6 +179,8 @@ public final class GraphIdentifierGenerator {
             }
             
         }.doSwitch(element);
+        
+        return this;
     }
     
     /**
@@ -174,6 +213,20 @@ public final class GraphIdentifierGenerator {
         } while (existingIdentifiers.contains(identifier));
         
         return identifier;
+    }
+    
+    private GraphIdentifierGenerator assertAllIdsUnique(final EObject element) {
+        Set<String> knownIds = Sets.newHashSet();
+        Iterator<ElkGraphElement> elementIt = Iterators.filter(element.eAllContents(), ElkGraphElement.class);
+        while (elementIt.hasNext()) {
+            ElkGraphElement e = elementIt.next();
+            while (knownIds.contains(e.getIdentifier())) {
+                e.setIdentifier(e.getIdentifier() + "_");
+            }
+            knownIds.add(e.getIdentifier());
+        }
+        
+        return this;
     }
     
 }
