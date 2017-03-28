@@ -43,7 +43,7 @@ public final class PortContext {
     /** Amount of space required for all of the port's labels, and the position. */
     public ElkRectangle labelSpace = new ElkRectangle();
     /** How labels are aligned inside the label space. */
-    public LabelAlignment labelAlignment = null;
+    public HorizontalLabelAlignment labelAlignment = null;
     
     
     /////////////////////////////////////////////////////////////////////////////////

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util.nodespacing.internal;
 
+import org.eclipse.elk.core.math.ElkRectangle;
+
 /**
  * Represents three rows or columns in a row- or column-based layout. Offers utility methods to add rectangles to each
  * of the rows / columns that increase sizes. The outer rows / columns will always have the same size so that the
@@ -63,7 +65,7 @@ public class ThreeRowsOrColumns {
     
     /** Width of the rows or height of the columns. */
     private final double[] sizes = { 0.0, 0.0, 0.0 };
-    /** Gap between the rows or columns. Used to determine final coordinates. */
+    /** Gap between the rows or columns. Used to determine the required size. */
     private final double gap;
     /** The symmetry between outer rows or columns. */
     private final OuterSymmetry symmetry;
@@ -154,7 +156,61 @@ public class ThreeRowsOrColumns {
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // DATA RETRIEVAL
+    // INDIVIDUAL SIZES
+    
+    /**
+     * Returns the height or width of the given row or column, respectively.
+     * 
+     * @param rowOrColumn
+     *            the row or column.
+     * @return the height or width.
+     */
+    public double getSize(final RowOrColumn rowOrColumn) {
+        // The center row or column always works directly
+        if (rowOrColumn == RowOrColumn.CENTER || symmetry == OuterSymmetry.ASYMMETRICAL) {
+            return sizes[rowOrColumn.arrayIndex];
+        }
+        
+        // The outer ones require a bit more work
+        switch (symmetry) {
+        case SYMMETRICAL:
+            return getSymmetricalSize(rowOrColumn);
+            
+        case SYMMETRICAL_UNLESS_SINGLE:
+            return getSymmetricalUnlessSingleSize(rowOrColumn);
+        
+        default:
+            assert false;
+            return 0.0;
+        }
+    }
+    
+    /**
+     * Implements {@link #getSize(RowOrColumn)} for the symmetrical case.
+     */
+    private double getSymmetricalSize(final RowOrColumn rowOrColumn) {
+        assert rowOrColumn != RowOrColumn.CENTER;
+        
+        return Math.max(
+                sizes[RowOrColumn.LEFT.arrayIndex],
+                sizes[RowOrColumn.RIGHT.arrayIndex]);
+    }
+    
+    /**
+     * Implements {@link #getSize(RowOrColumn)} for the symmetrical case, unless only a single cell is filled.
+     */
+    private double getSymmetricalUnlessSingleSize(final RowOrColumn rowOrColumn) {
+        assert rowOrColumn != RowOrColumn.CENTER;
+        
+        // If more than one thing exists, we do out symmetrical thing; otherwise, we are asymmetrical
+        return countExistingThings() > 1
+                ? getSymmetricalSize(rowOrColumn)
+                : sizes[rowOrColumn.arrayIndex]; 
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // TOTAL SIZE
     
     /**
      * Returns the whole width of all columns or whole height of all rows, including gaps.
@@ -203,23 +259,8 @@ public class ThreeRowsOrColumns {
      * Implements {@link #getSize()} for the symmetrical case, unless only a single cell is filled.
      */
     private double getSymmetricalUnlessSingleSize() {
-        // We need to find out how many things exist
-        int existingThings = 0;
-        
-        if (exists(RowOrColumn.LEFT)) {
-            existingThings++;
-        }
-        
-        if (exists(RowOrColumn.CENTER)) {
-            existingThings++;
-        }
-        
-        if (exists(RowOrColumn.RIGHT)) {
-            existingThings++;
-        }
-        
         // If more than one thing exists, we do out symmetrical thing; otherwise, we are asymmetrical
-        return existingThings > 1
+        return countExistingThings() > 1
                 ? getSymmetricalSize()
                 : getAsymmetricalSize(); 
     }
@@ -252,6 +293,128 @@ public class ThreeRowsOrColumns {
         
         return size;
     }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // APPLICATION TO RECTANGLES
+    
+    /**
+     * Applies the settings of this object to the given three rectangles.
+     * 
+     * @param row
+     *            if {@code true}, the rectangles represent a row of things and will be assigned widths and x
+     *            coordinates. Otherwise, they will be assigned heights and y coordinates.
+     * @param startCoordinate
+     *            coordinate of the first rectangle.
+     * @param rect1
+     *            first rectangle.
+     * @param rect2
+     *            second rectangle.
+     * @param rect3
+     *            third rectangle.
+     */
+    public void applyToRectangles(final boolean row, final double startCoordinate, final ElkRectangle rect1,
+            final ElkRectangle rect2, final ElkRectangle rect3) {
+        
+        if (row) {
+            applyToRowOfRectangles(startCoordinate, rect1, rect2, rect3);
+        } else {
+            applyToColumnOfRectangles(startCoordinate, rect1, rect2, rect3);
+        }
+    }
+
+    /**
+     * Implements {@link #applyToRectangles(boolean, double, ElkRectangle, ElkRectangle, ElkRectangle)} for the row
+     * case.
+     */
+    private void applyToRowOfRectangles(final double startCoordinate, final ElkRectangle rect1,
+            final ElkRectangle rect2, final ElkRectangle rect3) {
+        
+        double x = startCoordinate;
+        
+        rect1.x = x;
+        if (exists(RowOrColumn.LEFT)) {
+            rect1.width = getSize(RowOrColumn.LEFT);
+            x += rect1.width + gap;
+        } else {
+            rect1.width = 0;
+        }
+        
+        rect2.x = x;
+        if (exists(RowOrColumn.CENTER)) {
+            rect2.width = getSize(RowOrColumn.CENTER);
+            x += rect2.width + gap;
+        } else {
+            rect2.width = 0;
+        }
+        
+        rect3.x = x;
+        if (exists(RowOrColumn.RIGHT)) {
+            rect3.width = getSize(RowOrColumn.RIGHT);
+        } else {
+            rect3.width = 0;
+        }
+    }
+
+    /**
+     * Implements {@link #applyToRectangles(boolean, double, ElkRectangle, ElkRectangle, ElkRectangle)} for the column
+     * case.
+     */
+    private void applyToColumnOfRectangles(final double startCoordinate, final ElkRectangle rect1,
+            final ElkRectangle rect2, final ElkRectangle rect3) {
+        
+        double y = startCoordinate;
+        
+        rect1.y = y;
+        if (exists(RowOrColumn.TOP)) {
+            rect1.height = getSize(RowOrColumn.TOP);
+            y += rect1.height + gap;
+        } else {
+            rect1.height = 0;
+        }
+        
+        rect2.y = y;
+        if (exists(RowOrColumn.CENTER)) {
+            rect2.height = getSize(RowOrColumn.CENTER);
+            y += rect2.height + gap;
+        } else {
+            rect2.height = 0;
+        }
+        
+        rect3.y = y;
+        if (exists(RowOrColumn.BOTTOM)) {
+            rect3.height = getSize(RowOrColumn.BOTTOM);
+        } else {
+            rect3.height = 0;
+        }
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // UTILITIES
+    
+    /**
+     * Counts how many rows or columns exist in this thing.
+     * 
+     * @return number of existing rows or columns.
+     */
+    public int countExistingThings() {
+        int existingThings = 0;
+        
+        if (exists(RowOrColumn.LEFT)) {
+            existingThings++;
+        }
+        
+        if (exists(RowOrColumn.CENTER)) {
+            existingThings++;
+        }
+        
+        if (exists(RowOrColumn.RIGHT)) {
+            existingThings++;
+        }
+        
+        return existingThings;
+    }
     
     /**
      * Checks whether the given row or column's size is bigger than zero.
@@ -261,7 +424,7 @@ public class ThreeRowsOrColumns {
      * @return {@code true} if it exists.
      */
     public boolean exists(final RowOrColumn rowOrColumn) {
-        return sizes[RowOrColumn.RIGHT.arrayIndex] > 0.0;
+        return sizes[rowOrColumn.arrayIndex] > 0.0;
     }
     
 }

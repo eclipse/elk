@@ -28,7 +28,8 @@ import com.google.common.collect.Lists;
 @SuppressWarnings("unchecked")
 public enum LabelLocation {
     /** Outside top left. */
-    OUT_T_L(LabelAlignment.LEFT,
+    OUT_T_L(HorizontalLabelAlignment.LEFT,
+            VerticalLabelAlignment.BOTTOM,
             RowOrColumn.TOP,
             RowOrColumn.LEFT,
             EnumSet.of(
@@ -37,7 +38,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_LEFT)),
             
     /** Outside top center. */
-    OUT_T_C(LabelAlignment.CENTER,
+    OUT_T_C(HorizontalLabelAlignment.CENTER,
+            VerticalLabelAlignment.BOTTOM,
             RowOrColumn.TOP,
             RowOrColumn.CENTER,
             EnumSet.of(
@@ -51,7 +53,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Outside top right. */
-    OUT_T_R(LabelAlignment.RIGHT,
+    OUT_T_R(HorizontalLabelAlignment.RIGHT,
+            VerticalLabelAlignment.BOTTOM,
             RowOrColumn.TOP,
             RowOrColumn.RIGHT,
             EnumSet.of(
@@ -60,7 +63,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_RIGHT)),
     
     /** Outside bottom left. */
-    OUT_B_L(LabelAlignment.LEFT,
+    OUT_B_L(HorizontalLabelAlignment.LEFT,
+            VerticalLabelAlignment.TOP,
             RowOrColumn.BOTTOM,
             RowOrColumn.LEFT,
             EnumSet.of(
@@ -69,7 +73,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_LEFT)),
     
     /** Outside bottom center. */
-    OUT_B_C(LabelAlignment.CENTER,
+    OUT_B_C(HorizontalLabelAlignment.CENTER,
+            VerticalLabelAlignment.TOP,
             RowOrColumn.BOTTOM,
             RowOrColumn.CENTER,
             EnumSet.of(
@@ -83,7 +88,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Outside bottom right. */
-    OUT_B_R(LabelAlignment.RIGHT,
+    OUT_B_R(HorizontalLabelAlignment.RIGHT,
+            VerticalLabelAlignment.TOP,
             RowOrColumn.BOTTOM,
             RowOrColumn.RIGHT,
             EnumSet.of(
@@ -92,7 +98,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_RIGHT)),
 
     /** Outside left top. */
-    OUT_L_T(LabelAlignment.RIGHT,
+    OUT_L_T(HorizontalLabelAlignment.RIGHT,
+            VerticalLabelAlignment.TOP,
             RowOrColumn.TOP,
             RowOrColumn.LEFT,
             EnumSet.of(
@@ -102,7 +109,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Outside left center. */
-    OUT_L_C(LabelAlignment.RIGHT,
+    OUT_L_C(HorizontalLabelAlignment.RIGHT,
+            VerticalLabelAlignment.CENTER,
             RowOrColumn.CENTER,
             RowOrColumn.LEFT,
             EnumSet.of(
@@ -116,7 +124,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Outside left bottom. */
-    OUT_L_B(LabelAlignment.RIGHT,
+    OUT_L_B(HorizontalLabelAlignment.RIGHT,
+            VerticalLabelAlignment.BOTTOM,
             RowOrColumn.BOTTOM,
             RowOrColumn.LEFT,
             EnumSet.of(
@@ -126,7 +135,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Outside right top. */
-    OUT_R_T(LabelAlignment.LEFT,
+    OUT_R_T(HorizontalLabelAlignment.LEFT,
+            VerticalLabelAlignment.TOP,
             RowOrColumn.TOP,
             RowOrColumn.RIGHT,
             EnumSet.of(
@@ -136,7 +146,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Outside right center. */
-    OUT_R_C(LabelAlignment.LEFT,
+    OUT_R_C(HorizontalLabelAlignment.LEFT,
+            VerticalLabelAlignment.CENTER,
             RowOrColumn.CENTER,
             RowOrColumn.RIGHT,
             EnumSet.of(
@@ -150,7 +161,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Outside right bottom. */
-    OUT_R_B(LabelAlignment.LEFT,
+    OUT_R_B(HorizontalLabelAlignment.LEFT,
+            VerticalLabelAlignment.BOTTOM,
             RowOrColumn.BOTTOM,
             RowOrColumn.RIGHT,
             EnumSet.of(
@@ -160,7 +172,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Inside top left. */
-    IN_T_L(LabelAlignment.LEFT,
+    IN_T_L(HorizontalLabelAlignment.LEFT,
+            VerticalLabelAlignment.TOP,
             RowOrColumn.TOP,
             RowOrColumn.LEFT,
             EnumSet.of(
@@ -174,7 +187,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Inside top center. */
-    IN_T_C(LabelAlignment.CENTER,
+    IN_T_C(HorizontalLabelAlignment.CENTER,
+            VerticalLabelAlignment.TOP,
             RowOrColumn.TOP,
             RowOrColumn.CENTER,
             EnumSet.of(
@@ -188,7 +202,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Inside top right. */
-    IN_T_R(LabelAlignment.RIGHT,
+    IN_T_R(HorizontalLabelAlignment.RIGHT,
+            VerticalLabelAlignment.TOP,
             RowOrColumn.TOP,
             RowOrColumn.RIGHT,
             EnumSet.of(
@@ -202,7 +217,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Inside center left. */
-    IN_C_L(LabelAlignment.LEFT,
+    IN_C_L(HorizontalLabelAlignment.LEFT,
+            VerticalLabelAlignment.CENTER,
             RowOrColumn.CENTER,
             RowOrColumn.LEFT,
             EnumSet.of(
@@ -216,7 +232,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
 
     /** Inside center center. */
-    IN_C_C(LabelAlignment.CENTER,
+    IN_C_C(HorizontalLabelAlignment.CENTER,
+            VerticalLabelAlignment.CENTER,
             RowOrColumn.CENTER,
             RowOrColumn.CENTER,
             EnumSet.of(
@@ -230,7 +247,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
 
     /** Inside center right. */
-    IN_C_R(LabelAlignment.RIGHT,
+    IN_C_R(HorizontalLabelAlignment.RIGHT,
+            VerticalLabelAlignment.CENTER,
             RowOrColumn.CENTER,
             RowOrColumn.RIGHT,
             EnumSet.of(
@@ -244,7 +262,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
 
     /** Inside bottom left. */
-    IN_B_L(LabelAlignment.LEFT,
+    IN_B_L(HorizontalLabelAlignment.LEFT,
+            VerticalLabelAlignment.BOTTOM,
             RowOrColumn.BOTTOM,
             RowOrColumn.LEFT,
             EnumSet.of(
@@ -258,7 +277,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
 
     /** Inside bottom center. */
-    IN_B_C(LabelAlignment.CENTER,
+    IN_B_C(HorizontalLabelAlignment.CENTER,
+            VerticalLabelAlignment.BOTTOM,
             RowOrColumn.BOTTOM,
             RowOrColumn.CENTER,
             EnumSet.of(
@@ -272,7 +292,8 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
 
     /** Inside bottom right. */
-    IN_B_R(LabelAlignment.RIGHT,
+    IN_B_R(HorizontalLabelAlignment.RIGHT,
+            VerticalLabelAlignment.BOTTOM,
             RowOrColumn.BOTTOM,
             RowOrColumn.RIGHT,
             EnumSet.of(
@@ -286,7 +307,7 @@ public enum LabelLocation {
                     NodeLabelPlacement.H_PRIORITY)),
     
     /** Undefined or not decidable. */
-    UNDEFINED(null, null, null);
+    UNDEFINED(null, null, null, null);
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -295,7 +316,9 @@ public enum LabelLocation {
     /** The corresponding placements to this location. */
     private final List<? extends Set<NodeLabelPlacement>> assignedPlacements;
     /** The horizontal text alignment for this location. */
-    private final LabelAlignment horizontalAlignment;
+    private final HorizontalLabelAlignment horizontalAlignment;
+    /** The vertical text alignment for this location. */
+    private final VerticalLabelAlignment verticalAlignment;
     /** The appropriate label row in a {@link ThreeRowsOrColumns} instance. */
     private final RowOrColumn threeRowsRow;
     /** The appropriate label column in a {@link ThreeRowsOrColumns} instance. */
@@ -310,6 +333,8 @@ public enum LabelLocation {
      *
      * @param horizontalAlignment
      *            the horizontal label alignment for this location.
+     * @param verticalAlignment
+     *            the vertical label alignment for this location.
      * @param row
      *            the appropriate row in a {@link ThreeRowsOrColumns} instance.
      * @param column
@@ -317,10 +342,11 @@ public enum LabelLocation {
      * @param assignedPlacements
      *            the valid {@link NodeLabelPlacement}s for this location.
      */
-    LabelLocation(final LabelAlignment horizontalAlignment, final RowOrColumn row, final RowOrColumn column,
-            final Set<NodeLabelPlacement>... assignedPlacements) {
+    LabelLocation(final HorizontalLabelAlignment horizontalAlignment, final VerticalLabelAlignment verticalAlignment,
+            final RowOrColumn row, final RowOrColumn column, final Set<NodeLabelPlacement>... assignedPlacements) {
         
         this.horizontalAlignment = horizontalAlignment;
+        this.verticalAlignment = verticalAlignment;
         this.threeRowsRow = row;
         this.threeColumnsColumn = column;
         this.assignedPlacements = Lists.newArrayList(assignedPlacements);
@@ -352,8 +378,17 @@ public enum LabelLocation {
      * 
      * @return the horizontalAlignment
      */
-    public LabelAlignment getHorizontalAlignment() {
+    public HorizontalLabelAlignment getHorizontalAlignment() {
         return horizontalAlignment;
+    }
+
+    /**
+     * Returns the vertical text alignment for this location.
+     * 
+     * @return the verticalAlignment
+     */
+    public VerticalLabelAlignment getVerticalAlignment() {
+        return verticalAlignment;
     }
 
     /**

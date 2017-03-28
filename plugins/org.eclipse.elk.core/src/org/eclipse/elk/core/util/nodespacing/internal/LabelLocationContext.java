@@ -13,6 +13,7 @@ package org.eclipse.elk.core.util.nodespacing.internal;
 import java.util.List;
 
 import org.eclipse.elk.core.math.ElkRectangle;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 
 import com.google.common.collect.Lists;
@@ -40,8 +41,10 @@ public class LabelLocationContext {
     
     /** List of labels to be placed at this location. */
     public final List<LabelAdapter<?>> labels = Lists.newArrayList();
-    /** Rectangle that represents the space occupied by the labels at this location. */
-    public ElkRectangle labelSpace;
+    /** Space taken up by all labels in this location. */
+    public final KVector labelSpace = new KVector();
+    /** The exact area these labels will be placed in. */
+    public final ElkRectangle labelPlacementArea = new ElkRectangle();
     
     
     /////////////////////////////////////////////////////////////////////////////////

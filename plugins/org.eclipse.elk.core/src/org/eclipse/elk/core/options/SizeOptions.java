@@ -49,11 +49,10 @@ public enum SizeOptions {
     COMPUTE_PADDING,
     
     /**
-     * If node labels influence the size of a node, setting this option causes the node to be at least as wide as the
-     * widest node label placed outside the node, above or below it. If this option is not set, node labels above or
-     * below the node can be wider than the node itself.
+     * If node labels influence the node size, but outside node labels are allowed to overhang, only inside node labels
+     * actually influence node size.
      */
-    OUTSIDE_NODE_LABELS_INFLUENCE_SIZE,
+    OUTSIDE_NODE_LABELS_OVERHANG,
     
     /**
      * If port labels are taken into consideration, differently sized labels can result in a different amount of space

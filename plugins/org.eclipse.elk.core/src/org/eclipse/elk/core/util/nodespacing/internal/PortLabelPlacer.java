@@ -12,6 +12,7 @@ package org.eclipse.elk.core.util.nodespacing.internal;
 
 import java.util.Collection;
 
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortLabelPlacement;
@@ -36,17 +37,33 @@ public final class PortLabelPlacer {
     
     /**
      * Places port labels at their default locations, assuming that there will be enough space for them not to overlap.
+     * If port labels are placed on the inside, 
      */
     public static void simplePortLabelPlacement(final NodeContext nodeContext, final PortSide portSide) {
         // Delegate to the appropriate methods
         if (nodeContext.portLabelsPlacement == PortLabelPlacement.INSIDE) {
+            ensureNorthSouthInsidePortLabelAreaExistence(nodeContext);
             simpleInsidePortLabelPlacement(nodeContext, portSide);
         } else if (nodeContext.portLabelsPlacement == PortLabelPlacement.OUTSIDE) {
             simpleOutsidePortLabelPlacement(nodeContext, portSide);
         }
     }
-
     
+    /**
+     * @param nodeContext
+     */
+    private static void ensureNorthSouthInsidePortLabelAreaExistence(final NodeContext nodeContext) {
+        // Ensure the data structure's existence
+        if (nodeContext.insidePortLabelAreas.get(PortSide.NORTH) == null) {
+            nodeContext.insidePortLabelAreas.put(PortSide.NORTH, new ElkRectangle());
+        }
+
+        if (nodeContext.insidePortLabelAreas.get(PortSide.SOUTH) == null) {
+            nodeContext.insidePortLabelAreas.put(PortSide.SOUTH, new ElkRectangle());
+        }
+    }
+
+
     ///////////////////////////////////////////////////////////
     // Inside Port Label Placement
     
@@ -54,6 +71,8 @@ public final class PortLabelPlacer {
      * Implementation of {@link #simplePortLabelPlacement(NodeContext, PortSide)} for inside port label placement.
      */
     private static void simpleInsidePortLabelPlacement(final NodeContext nodeContext, final PortSide portSide) {
+        double insideNorthOrSouthPortLabelAreaHeight = 0;
+        
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
             // If the port doesn't have labels, skip
             if (portContext.labelSpace == null || portContext.labelSpace.height == 0) {
@@ -71,39 +90,59 @@ public final class PortLabelPlacer {
                 portContext.labelSpace.x = -(portContext.labelSpace.width - portSize.x) / 2;
                 portContext.labelSpace.y = portSize.y + portOffset + nodeContext.insidePortSpace.top
                         + nodeContext.portLabelSpacing;
-                portContext.labelAlignment = LabelAlignment.CENTER;
+                portContext.labelAlignment = HorizontalLabelAlignment.CENTER;
                 break;
                 
             case SOUTH:
                 portContext.labelSpace.x = -(portContext.labelSpace.width - portSize.x) / 2;
                 portContext.labelSpace.y = -portOffset - nodeContext.insidePortSpace.bottom
                         - nodeContext.portLabelSpacing - portContext.labelSpace.height;
-                portContext.labelAlignment = LabelAlignment.CENTER;
+                portContext.labelAlignment = HorizontalLabelAlignment.CENTER;
                 break;
                 
             case EAST:
                 portContext.labelSpace.x = -portOffset - nodeContext.insidePortSpace.right
                         - nodeContext.portLabelSpacing - portContext.labelSpace.width;
                 portContext.labelSpace.y = -(portContext.labelSpace.height - portSize.y) / 2;
-                portContext.labelAlignment = LabelAlignment.RIGHT;
+                portContext.labelAlignment = HorizontalLabelAlignment.RIGHT;
                 break;
                 
             case WEST:
                 portContext.labelSpace.x = portSize.x + portOffset + nodeContext.insidePortSpace.left
                         + nodeContext.portLabelSpacing;
                 portContext.labelSpace.y = -(portContext.labelSpace.height - portSize.y) / 2;
-                portContext.labelAlignment = LabelAlignment.LEFT;
+                portContext.labelAlignment = HorizontalLabelAlignment.LEFT;
                 break;
             }
             
             // Place the labels
             double yPos = portContext.labelSpace.y;
+            double combinedLabelHeight = 0;
+            int labelCount = 0;
             for (LabelAdapter<?> label : portContext.port.getLabels()) {
                 doPlaceLabel(label, portContext, yPos);
                 
                 // Update y coordinate
-                yPos += label.getSize().y + nodeContext.labelLabelSpacing;
+                double labelHeight = label.getSize().y;
+                yPos += labelHeight + nodeContext.labelLabelSpacing;
+                
+                combinedLabelHeight += labelHeight;
+                labelCount++;
+                
             }
+            
+            // Possibly update the required label space
+            if (portSide == PortSide.NORTH || portSide == PortSide.SOUTH) {
+                combinedLabelHeight += (labelCount - 1) * nodeContext.labelLabelSpacing;
+                insideNorthOrSouthPortLabelAreaHeight = Math.max(
+                        insideNorthOrSouthPortLabelAreaHeight,
+                        combinedLabelHeight);
+            }
+        }
+        
+        // If we have a northern or southern label area height, apply it
+        if (insideNorthOrSouthPortLabelAreaHeight > 0) {
+            nodeContext.insidePortLabelAreas.get(portSide).height = insideNorthOrSouthPortLabelAreaHeight;
         }
     }
 
@@ -135,10 +174,10 @@ public final class PortLabelPlacer {
             case NORTH:
                 if (portWithSpecialNeeds) {
                     portContext.labelSpace.x = -portContext.labelSpace.width - nodeContext.portLabelSpacing;
-                    portContext.labelAlignment = LabelAlignment.RIGHT;
+                    portContext.labelAlignment = HorizontalLabelAlignment.RIGHT;
                 } else {
                     portContext.labelSpace.x = portSize.x + nodeContext.portLabelSpacing;
-                    portContext.labelAlignment = LabelAlignment.LEFT;
+                    portContext.labelAlignment = HorizontalLabelAlignment.LEFT;
                 }
                 portContext.labelSpace.y = -portContext.labelSpace.height - nodeContext.portLabelSpacing;
                 break;
@@ -146,10 +185,10 @@ public final class PortLabelPlacer {
             case SOUTH:
                 if (portWithSpecialNeeds) {
                     portContext.labelSpace.x = -portContext.labelSpace.width - nodeContext.portLabelSpacing;
-                    portContext.labelAlignment = LabelAlignment.RIGHT;
+                    portContext.labelAlignment = HorizontalLabelAlignment.RIGHT;
                 } else {
                     portContext.labelSpace.x = portSize.x + nodeContext.portLabelSpacing;
-                    portContext.labelAlignment = LabelAlignment.LEFT;
+                    portContext.labelAlignment = HorizontalLabelAlignment.LEFT;
                 }
                 portContext.labelSpace.y = portSize.y + nodeContext.portLabelSpacing;
                 break;
@@ -161,7 +200,7 @@ public final class PortLabelPlacer {
                 } else {
                     portContext.labelSpace.y = portSize.y + nodeContext.portLabelSpacing;
                 }
-                portContext.labelAlignment = LabelAlignment.LEFT;
+                portContext.labelAlignment = HorizontalLabelAlignment.LEFT;
                 
                 break;
                 
@@ -172,7 +211,7 @@ public final class PortLabelPlacer {
                 } else {
                     portContext.labelSpace.y = portSize.y + nodeContext.portLabelSpacing;
                 }
-                portContext.labelAlignment = LabelAlignment.RIGHT;
+                portContext.labelAlignment = HorizontalLabelAlignment.RIGHT;
                 break;
             }
             

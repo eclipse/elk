@@ -69,15 +69,10 @@ public final class LabelGroupCalculator {
             LabelLocationContext labelLocationContext = nodeContext.labelLocationContexts.get(labelLocation);
             labelLocationContext.labels.add(nodeLabel);
             
-            // Ensure there is a label space rectangle
-            if (labelLocationContext.labelSpace == null) {
-                labelLocationContext.labelSpace = new ElkRectangle();
-            }
-            
-            // Enlarge the rectangle
+            // Enlarge the label space
             KVector nodeLabelSize = nodeLabel.getSize();
-            labelLocationContext.labelSpace.height += nodeLabelSize.y;
-            labelLocationContext.labelSpace.width = Math.max(labelLocationContext.labelSpace.width, nodeLabelSize.x);
+            labelLocationContext.labelSpace.y += nodeLabelSize.y;
+            labelLocationContext.labelSpace.x = Math.max(labelLocationContext.labelSpace.x, nodeLabelSize.x);
             
             // If this is not the first label, we need some label-to-label space
             if (labelLocationContext.labels.size() > 1) {

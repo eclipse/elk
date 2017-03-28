@@ -13,7 +13,7 @@ package org.eclipse.elk.core.util.nodespacing.internal;
 /**
  * Horizontal alignment of labels.
  */
-public enum LabelAlignment {
+public enum HorizontalLabelAlignment {
     
     /** Labels are left-aligned. */
     LEFT,

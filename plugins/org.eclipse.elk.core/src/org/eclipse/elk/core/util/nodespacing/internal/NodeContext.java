@@ -29,6 +29,7 @@ import org.eclipse.elk.core.util.IndividualSpacings;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
+import org.eclipse.elk.core.util.nodespacing.internal.ThreeRowsOrColumns.OuterSymmetry;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -87,8 +88,6 @@ public final class NodeContext {
     
     /** The areas where inside port labels are going to be placed. */
     public final Map<PortSide, ElkRectangle> insidePortLabelAreas = Maps.newEnumMap(PortSide.class);
-    /** The areas where inside port labels are going to be placed. */
-    public final Map<LabelLocation, ElkRectangle> insideNodeLabelAreas = Maps.newEnumMap(LabelLocation.class);
     
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -105,17 +104,19 @@ public final class NodeContext {
     /** If ports extend into the node's insides, this is by how much. */
     public final ElkPadding insidePortSpace = new ElkPadding();
     /** The rows of inside node labels and the client area. */
-    public ThreeRowsOrColumns insideNodeLabelRows = null;
+    public final ThreeRowsOrColumns insideNodeLabelRows;
     /** The columns of inside ndoe labels and the client area. */
-    public ThreeRowsOrColumns insideNodeLabelColumns = null;
+    public final ThreeRowsOrColumns insideNodeLabelColumns;
     /** The columns of outside top node labels. */
-    public ThreeRowsOrColumns outsideTopNodeLabelColumns = null;
+    public final ThreeRowsOrColumns outsideTopNodeLabelColumns;
     /** The columns of outside bottom node labels. */
-    public ThreeRowsOrColumns outsideBottomNodeLabelColumns = null;
+    public final ThreeRowsOrColumns outsideBottomNodeLabelColumns;
     /** The rows of outside left node labels. */
-    public ThreeRowsOrColumns outsideLeftNodeLabelRows = null;
+    public final ThreeRowsOrColumns outsideLeftNodeLabelRows;
     /** The rows of outside right node labels. */
-    public ThreeRowsOrColumns outsideRightNodeLabelRows = null;
+    public final ThreeRowsOrColumns outsideRightNodeLabelRows;
+    /** The final padding on the node's insides, caused by inside port labels and things. */
+    public final ElkPadding effectiveNodePadding = new ElkPadding();
     
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -151,8 +152,16 @@ public final class NodeContext {
         surroundingPortMargins = IndividualSpacings.getIndividualOrInherited(
                 parentGraph, node, CoreOptions.SPACING_PORT_SURROUNDING);
         
-        // Create contexts, count the number of ports on each side, and assign volatile IDs to the ports to be able
-        // to properly sort them later
+        // Create rows and columns for inside node labels
+        insideNodeLabelRows = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
+        insideNodeLabelColumns = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
+        outsideTopNodeLabelColumns = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
+        outsideBottomNodeLabelColumns = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
+        outsideLeftNodeLabelRows = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
+        outsideRightNodeLabelRows = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
+        
+        // Create port contexts, count the number of ports on each side, and assign volatile IDs to the ports to be
+        // able to properly sort them later
         int volatileId = 0;
         for (PortAdapter<?> port : node.getPorts()) {
             if (port.getSide() == PortSide.UNDEFINED) {
@@ -164,6 +173,7 @@ public final class NodeContext {
             portContexts.put(port.getSide(), new PortContext(this, port));
         }
         
+        // Craete label location contexts
         Arrays.stream(LabelLocation.values())
             .forEach(location -> labelLocationContexts.put(location, new LabelLocationContext(this, location)));
     }
