@@ -111,6 +111,8 @@ class SweepCopy {
             // assert that the port side is set properly
             for (LNode node : northSouthPortDummies) {
                 assertCorrectPortSides(node);
+                // the order of the ports may have changed, update the port index cache
+                node.cachePortSides();
             }
         }
     }
