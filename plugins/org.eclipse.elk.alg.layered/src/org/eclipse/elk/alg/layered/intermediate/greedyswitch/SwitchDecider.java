@@ -191,17 +191,23 @@ public final class SwitchDecider {
         // then the layout units must be equal for a switch to be allowed.
         LNode upperLayoutUnit = upperNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
         LNode lowerLayoutUnit = lowerNode.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+        
+        boolean areInDifferentLayoutUnits = upperLayoutUnit != lowerLayoutUnit;
+
+        // FIXME the following predicate is problematic, layout units are represented by a regular node,
+        // thus 'upperNode' can be 'upperLayoutUnit' and still have more nodes in the layout unit
         boolean nodesHaveLayoutUnits =
                 partOfMultiNodeLayoutUnit(upperNode, upperLayoutUnit)
                         || partOfMultiNodeLayoutUnit(lowerNode, lowerLayoutUnit);
-        boolean areInDifferentLayoutUnits = upperLayoutUnit != lowerLayoutUnit;
 
         boolean upperNodeHasNorthernEdges = hasEdgesOnSide(upperNode, PortSide.NORTH);
         boolean lowerNodeHasSouthernEdges = hasEdgesOnSide(lowerNode, PortSide.SOUTH);
 
-        boolean hasLayoutUnitConstraint =
-                nodesHaveLayoutUnits && areInDifferentLayoutUnits || upperNodeHasNorthernEdges
-                        || lowerNodeHasSouthernEdges;
+        // hotfix for #162, if north or south edges are present, there must be a layout unit
+        nodesHaveLayoutUnits |= hasEdgesOnSide(upperNode, PortSide.SOUTH) || hasEdgesOnSide(lowerNode, PortSide.NORTH); 
+
+        boolean hasLayoutUnitConstraint = (nodesHaveLayoutUnits && areInDifferentLayoutUnits)
+                || (upperNodeHasNorthernEdges || lowerNodeHasSouthernEdges);
 
         return neitherNodeIsLongEdgeDummy && hasLayoutUnitConstraint;
     }
