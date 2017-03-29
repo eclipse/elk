@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.compound.CrossHierarchyEdge;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -27,7 +26,6 @@ import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -174,6 +172,8 @@ public final class InternalProperties {
      * a set of nodes between which no nodes belonging to other layout units may be placed. Nodes
      * not belonging to any layout unit may be placed arbitrarily between nodes of a layout unit.
      * Layer layout units are identified through one of their nodes.
+     * The idea behind the latter is that for instance long edge dummies can be placed between 
+     * an original node and one of its north port dummy nodes. It results in an edge crossing. 
      */
     public static final IProperty<LNode> IN_LAYER_LAYOUT_UNIT = new Property<LNode>(
             "inLayerLayoutUnit");
