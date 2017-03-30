@@ -20,19 +20,17 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
-import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.NodePlacementStrategy;
+import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
-import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Direction;
@@ -42,8 +40,6 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
-import org.eclipse.elk.core.util.labelspacing.LabelSpaceCalculation;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -372,16 +368,17 @@ class ElkGraphImporter {
         
         // Adjust the padding to respect inside labels.
         double labelSpacing = lgraph.getProperty(LayeredOptions.SPACING_LABEL_NODE);
-        ElkPadding padding = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
-                ElkGraphAdapters.adaptSingleNode(elkgraph), labelSpacing);
-
-        // 'padding' already contains the node's padding that represents the elkgraph
-        // copy it to the lgraph ...
-        LPadding lPadding = lgraph.getPadding();
-        lPadding.left = padding.left;
-        lPadding.right = padding.right;
-        lPadding.top = padding.top;
-        lPadding.bottom = padding.bottom;
+        // TODO Implement
+//        ElkPadding padding = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
+//                ElkGraphAdapters.adaptSingleNode(elkgraph), labelSpacing);
+//
+//        // 'padding' already contains the node's padding that represents the elkgraph
+//        // copy it to the lgraph ...
+//        LPadding lPadding = lgraph.getPadding();
+//        lPadding.left = padding.left;
+//        lPadding.right = padding.right;
+//        lPadding.top = padding.top;
+//        lPadding.bottom = padding.bottom;
 
         return lgraph;
     }

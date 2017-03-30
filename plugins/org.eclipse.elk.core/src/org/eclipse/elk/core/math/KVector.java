@@ -175,6 +175,18 @@ public final class KVector implements IDataObject, Cloneable {
         this.y = 0.0;
         return this;
     }
+    
+    /**
+     * Resets this vector to the value of the other vector.
+     * 
+     * @param other the vector whose values to copy.
+     * @return {@code this}
+     */
+    public KVector reset(final KVector other) {
+        this.x = other.x;
+        this.y = other.y;
+        return this;
+    }
 
     /**
      * Vector addition.

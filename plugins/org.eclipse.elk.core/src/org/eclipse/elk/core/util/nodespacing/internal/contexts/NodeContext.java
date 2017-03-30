@@ -8,15 +8,13 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal;
+package org.eclipse.elk.core.util.nodespacing.internal.contexts;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.EnumMap;
 import java.util.Set;
 
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
-import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortAlignment;
@@ -28,8 +26,13 @@ import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.IndividualSpacings;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
-import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
-import org.eclipse.elk.core.util.nodespacing.internal.ThreeRowsOrColumns.OuterSymmetry;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
+import org.eclipse.elk.core.util.nodespacing.internal.cells.AtomicCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cells.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.internal.cells.StripContainerCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cells.StripContainerCell.Strip;
+import org.eclipse.elk.core.util.nodespacing.internal.cells.GridContainerCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cells.LabelCell;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -79,44 +82,28 @@ public final class NodeContext {
     /** Context objects that hold more information about each port. Sorted left-to-right / top-to-bottom. */
     public final Multimap<PortSide, PortContext> portContexts = TreeMultimap.create(
             NodeContext::comparePortSides, NodeContext::comparePortContexts);
-    /** Map of all label locations to their location contexts. */
-    public final Map<LabelLocation, LabelLocationContext> labelLocationContexts = Maps.newEnumMap(LabelLocation.class);
     
     
     /////////////////////////////////////////////////////////////////////////////////
-    // Different Areas of the Node
+    // The Cell System
     
-    /** The areas where inside port labels are going to be placed. */
-    public final Map<PortSide, ElkRectangle> insidePortLabelAreas = Maps.newEnumMap(PortSide.class);
-    
-    
-    /////////////////////////////////////////////////////////////////////////////////
-    // Calculated Things
-    
-    /** The minimum node width required for northern ports. */
-    public double nodeWidthRequiredByNorthPorts = 0;
-    /** The minimum node width required for southern ports. */
-    public double nodeWidthRequiredBySouthPorts = 0;
-    /** The minimum node height required for eastern ports. */
-    public double nodeHeightRequiredByEastPorts = 0;
-    /** The minimum node height required for western ports. */
-    public double nodeHeightRequiredByWestPorts = 0;
-    /** If ports extend into the node's insides, this is by how much. */
-    public final ElkPadding insidePortSpace = new ElkPadding();
-    /** The rows of inside node labels and the client area. */
-    public final ThreeRowsOrColumns insideNodeLabelRows;
-    /** The columns of inside ndoe labels and the client area. */
-    public final ThreeRowsOrColumns insideNodeLabelColumns;
-    /** The columns of outside top node labels. */
-    public final ThreeRowsOrColumns outsideTopNodeLabelColumns;
-    /** The columns of outside bottom node labels. */
-    public final ThreeRowsOrColumns outsideBottomNodeLabelColumns;
-    /** The rows of outside left node labels. */
-    public final ThreeRowsOrColumns outsideLeftNodeLabelRows;
-    /** The rows of outside right node labels. */
-    public final ThreeRowsOrColumns outsideRightNodeLabelRows;
-    /** The final padding on the node's insides, caused by inside port labels and things. */
-    public final ElkPadding effectiveNodePadding = new ElkPadding();
+    /** The main cell that holds all the cells that make up the node. */
+    public final StripContainerCell nodeContainer;
+    /** The main cell's middle row, which will contain further cells. */
+    public final StripContainerCell nodeContainerMiddleRow;
+    /** The grid container that represents the node's area reserved for inside node labels (and the client area). */
+    public GridContainerCell insideNodeLabelContainer;
+    /**
+     * All cells that will describe the space required for ports and for inside port labels. The paddings on these
+     * things not only describe the space to be left between ports and their inside labels, but also the space to be
+     * left between ports and the node border (the additional port spacing). These paddings will be updated as we
+     * calculate more information over the course of the algorithm.
+     */
+    public final EnumMap<PortSide, AtomicCell> insidePortLabelCells = Maps.newEnumMap(PortSide.class);
+    /** All container cells that will hold label cells for outside node labels. */
+    public final EnumMap<PortSide, StripContainerCell> outsideNodeLabelContainers = Maps.newEnumMap(PortSide.class);
+    /** All of the label cells created for possible node labels, both inside and outside. */
+    public final EnumMap<NodeLabelLocation, LabelCell> nodeLabelCells = Maps.newEnumMap(NodeLabelLocation.class);
     
     
     /////////////////////////////////////////////////////////////////////////////////
@@ -152,30 +139,11 @@ public final class NodeContext {
         surroundingPortMargins = IndividualSpacings.getIndividualOrInherited(
                 parentGraph, node, CoreOptions.SPACING_PORT_SURROUNDING);
         
-        // Create rows and columns for inside node labels
-        insideNodeLabelRows = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
-        insideNodeLabelColumns = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
-        outsideTopNodeLabelColumns = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
-        outsideBottomNodeLabelColumns = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
-        outsideLeftNodeLabelRows = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
-        outsideRightNodeLabelRows = new ThreeRowsOrColumns(labelLabelSpacing * 2, OuterSymmetry.SYMMETRICAL);
+        // Create main cells (the others will be created later)
+        nodeContainer = new StripContainerCell(Strip.VERTICAL, 0);
         
-        // Create port contexts, count the number of ports on each side, and assign volatile IDs to the ports to be
-        // able to properly sort them later
-        int volatileId = 0;
-        for (PortAdapter<?> port : node.getPorts()) {
-            if (port.getSide() == PortSide.UNDEFINED) {
-                throw new IllegalArgumentException("Label and node size calculator can only be used with ports that "
-                        + "have port sides assigned.");
-            }
-            
-            port.setVolatileId(volatileId++);
-            portContexts.put(port.getSide(), new PortContext(this, port));
-        }
-        
-        // Craete label location contexts
-        Arrays.stream(LabelLocation.values())
-            .forEach(location -> labelLocationContexts.put(location, new LabelLocationContext(this, location)));
+        nodeContainerMiddleRow = new StripContainerCell(Strip.HORIZONTAL, 0);
+        nodeContainer.setCell(ContainerArea.CENTER, nodeContainerMiddleRow);
     }
     
     
