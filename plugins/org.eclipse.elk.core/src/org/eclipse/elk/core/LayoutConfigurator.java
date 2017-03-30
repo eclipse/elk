@@ -82,6 +82,13 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     }
     
     /**
+     * Returns the filter that has been set via {@link #setFilter(Predicate)}, or {@code null}.
+     */
+    protected Predicate<Pair<ElkGraphElement, IProperty<?>>> getFilter() {
+        return optionFilter;
+    }
+    
+    /**
      * Add and return a property holder for the given element. If such a property holder is
      * already present, the previous instance is returned.
      */
@@ -125,35 +132,32 @@ public class LayoutConfigurator implements IGraphElementVisitor {
         return classOptionMap.get(elementClass);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Apply this layout configurator to the given graph element.
+     */
     @Override
     public void visit(final ElkGraphElement element) {
         if (clearLayout) {
             element.getProperties().clear();
         }
-        MapPropertyHolder classProperties = findClassOptions(element);
-        MapPropertyHolder elementProperties = elementOptionMap.get(element);
-        if (optionFilter != null) {
-            if (classProperties != null) {
-                for (Map.Entry<IProperty<?>, Object> entry : classProperties.getAllProperties().entrySet()) {
+        applyProperties(element, findClassOptions(element));
+        applyProperties(element, getProperties(element));
+    }
+    
+    /**
+     * Apply all properties held in {@code properties} to {@code element}.
+     */
+    @SuppressWarnings("unchecked")
+    protected void applyProperties(final ElkGraphElement element, IPropertyHolder properties) {
+        if (properties != null) {
+            if (optionFilter != null) {
+                for (Map.Entry<IProperty<?>, Object> entry : properties.getAllProperties().entrySet()) {
                     if (optionFilter.apply(Pair.of(element, entry.getKey()))) {
                         element.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
                     }
                 }
-            }
-            if (elementProperties != null) {
-                for (Map.Entry<IProperty<?>, Object> entry : elementProperties.getAllProperties().entrySet()) {
-                    if (optionFilter.apply(Pair.of(element, entry.getKey()))) {
-                        element.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
-                    }
-                }
-            }
-        } else {
-            if (classProperties != null) {
-                element.copyProperties(classProperties);
-            }
-            if (elementProperties != null) {
-                element.copyProperties(elementProperties);
+            } else {
+                element.copyProperties(properties);
             }
         }
     }
