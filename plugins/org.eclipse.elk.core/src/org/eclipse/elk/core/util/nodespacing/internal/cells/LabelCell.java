@@ -137,7 +137,7 @@ public class LabelCell extends Cell {
     @Override
     public double getMinimumHeight() {
         ElkPadding padding = getPadding();
-        return minimumContentAreaSize.x + padding.top + padding.bottom;
+        return minimumContentAreaSize.y + padding.top + padding.bottom;
     }
     
 

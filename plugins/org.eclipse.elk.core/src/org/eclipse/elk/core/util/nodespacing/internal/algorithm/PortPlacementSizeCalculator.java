@@ -279,8 +279,8 @@ public final class PortPlacementSizeCalculator {
         switch (nodeContext.portConstraints) {
         case FIXED_POS:
             // We don't have any freedom at all, so simply calculate where the bottommost port is on each side
-            calculateVerticalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.NORTH);
-            calculateVerticalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.SOUTH);
+            calculateVerticalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.EAST);
+            calculateVerticalNodeSizeRequiredByFixedPosPorts(nodeContext, PortSide.WEST);
             break;
             
         case FIXED_RATIO:
@@ -290,8 +290,8 @@ public final class PortPlacementSizeCalculator {
             
         default:
             // If we are free to place things, make the node large enough to place everything properly
-            calculateVerticalNodeSizeRequiredByFreePorts(nodeContext, PortSide.NORTH);
-            calculateVerticalNodeSizeRequiredByFreePorts(nodeContext, PortSide.SOUTH);
+            calculateVerticalNodeSizeRequiredByFreePorts(nodeContext, PortSide.EAST);
+            calculateVerticalNodeSizeRequiredByFreePorts(nodeContext, PortSide.WEST);
             break;
         }
     }
@@ -344,7 +344,7 @@ public final class PortPlacementSizeCalculator {
         if (!includePortLabels || (twoPorts && portLabelsOutside)) {
             // We ignore port labels or we have only two ports whose labels won't be placed between them. The space
             // between the ports is a function of their combined height, number, and the port-port spacing
-            height = portWidthPlusPortPortSpacing(nodeContext, portSide, false, false);
+            height = portHeightPlusPortPortSpacing(nodeContext, portSide, false, false);
             
         } else if (portLabelsOutside) {
             // Each port contributes its own amount of space, along with its labels (except for the bottommost port).
