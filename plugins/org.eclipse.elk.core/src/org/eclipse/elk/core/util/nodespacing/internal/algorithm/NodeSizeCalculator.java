@@ -16,7 +16,7 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.NodeContext;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 
 /**
  * Configures the cell system according to the node size constraints and determines the ultimate node size.

@@ -11,14 +11,15 @@
 package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
 
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
+import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 
 /**
  * Various little methods that didn't quite fit into any of the other classes.
@@ -94,6 +95,28 @@ public final class NodeLabelAndSizeUtilities {
             portPosition.y += nodeHeight;
             portContext.port.setPosition(portPosition);
         }
+    }
+    
+    /**
+     * Calculates and stores the node padding, if requested by layout options.
+     */
+    public static void setNodePadding(final NodeContext nodeContext) {
+        if (!nodeContext.sizeOptions.contains(SizeOptions.COMPUTE_PADDING)) {
+            return;
+        }
+        
+        ElkRectangle nodeRect = nodeContext.nodeContainer.getCellRectangle();
+        ElkRectangle clientArea = nodeContext.insideNodeLabelContainer.getCenterCellRectangle();
+        ElkPadding nodePadding = new ElkPadding();
+        
+        // The following code assumes that the client area rectangle lies fully inside the node rectangle, which should
+        // always be the case because of how the client area rectangle is computed
+        nodePadding.left = clientArea.x - nodeRect.x;
+        nodePadding.top = clientArea.y - nodeRect.y;
+        nodePadding.right = (nodeRect.x + nodeRect.width) - (clientArea.x + clientArea.width);
+        nodePadding.bottom = (nodeRect.y + nodeRect.height) - (clientArea.y + clientArea.height);
+        
+        nodeContext.node.setPadding(nodePadding);
     }
     
 

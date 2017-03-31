@@ -16,9 +16,9 @@ import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
+import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
 
 /**
  * Calculates the space required to setup port labels.
@@ -100,6 +100,10 @@ public final class PortPlacementSizeCalculator {
             cell.getPadding().right = 0;
             return;
         }
+        
+        // Set the padding to match the surrounding port space
+        cell.getPadding().left = nodeContext.surroundingPortMargins.left;
+        cell.getPadding().right = nodeContext.surroundingPortMargins.right;
         
         // A few convenience variables
         boolean includePortLabels = nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS);
@@ -332,6 +336,10 @@ public final class PortPlacementSizeCalculator {
             cell.getPadding().right = 0;
             return;
         }
+        
+        // Set the padding to match the surrounding port space
+        cell.getPadding().top = nodeContext.surroundingPortMargins.top;
+        cell.getPadding().bottom = nodeContext.surroundingPortMargins.bottom;
         
         // A few convenience variables
         boolean includePortLabels = nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS);

@@ -14,10 +14,10 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.NodeContext;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
 
 /**
  * Configures constraints of the cell system such that the various cells contribute properly to the node size
@@ -85,7 +85,7 @@ public final class CellSystemConfigurator {
             nodeContext.insideNodeLabelContainer.setContributesToMinimumWidth(true);
             
             nodeContext.nodeContainerMiddleRow.setContributesToMinimumHeight(true);
-            nodeContext.nodeContainerMiddleRow.setContributesToMinimumHeight(true);
+            nodeContext.nodeContainerMiddleRow.setContributesToMinimumWidth(true);
             
             // All node label cells need to contribute height and width, but outside node labels only do so unless they
             // are configured to overhang
@@ -113,6 +113,9 @@ public final class CellSystemConfigurator {
             nodeContext.nodeContainerMiddleRow.setContributesToMinimumHeight(true);
             nodeContext.nodeContainerMiddleRow.setContributesToMinimumHeight(true);
             
+            // If the inside node label container is not already contributing to the minimum height and width, node
+            // labels are not to be regarded. In that case, turn size contributions on, but limit them to the node
+            // label container's center cell
             if (!nodeContext.insideNodeLabelContainer.isContributingToMinimumHeight()) {
                 nodeContext.insideNodeLabelContainer.setContributesToMinimumHeight(true);
                 nodeContext.insideNodeLabelContainer.setContributesToMinimumWidth(true);
@@ -142,10 +145,10 @@ public final class CellSystemConfigurator {
         // Calculate where the east and west port cells will end up
         double topBorderOffset = nodeContext.nodeContainer.getPadding().top
                 + nodeContext.insidePortLabelCells.get(PortSide.NORTH).getMinimumHeight()
-                + nodeContext.labelLabelSpacing * 2;
+                + nodeContext.labelCellSpacing;
         double bottomBorderOffset = nodeContext.nodeContainer.getPadding().bottom
                 + nodeContext.insidePortLabelCells.get(PortSide.SOUTH).getMinimumHeight()
-                + nodeContext.labelLabelSpacing * 2;
+                + nodeContext.labelCellSpacing;
         
         AtomicCell eastCell = nodeContext.insidePortLabelCells.get(PortSide.EAST);
         AtomicCell westCell = nodeContext.insidePortLabelCells.get(PortSide.WEST);

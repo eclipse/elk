@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.cells;
+package org.eclipse.elk.core.util.nodespacing.internal.cellsystem;
 
 import java.util.Arrays;
 
@@ -18,9 +18,9 @@ import org.eclipse.elk.core.math.ElkRectangle;
 /**
  * A container cell that lays its children out along a strip. The strip can be horizontal (in which case the children
  * can be interpreted as columns) or vertical (in which case the children can be interpreted as rows). A strip
- * container will always make its outer cells the larger of their minimum sizes. Whatever remains of its content area
- * will be given to the center cell, which will always be at least its minimum size, even if that causes it to
- * overlap with the outer cells.
+ * container will always make its outer cells the larger of their minimum sizes and left/right- or top/bottom-align
+ * them. Whatever remains of its content area after that will be given to the center cell, but the center cell will
+ * always be at least its minimum size, even if that causes it to overlap with the outer cells.
  */
 public class StripContainerCell extends ContainerCell {
     
@@ -197,7 +197,7 @@ public class StripContainerCell extends ContainerCell {
                     cellRectangle.x + cellPadding.left,
                     minWidthOuterCells);
             applyHorizontalLayout(cells[2],
-                    cellRectangle.width - cellPadding.right - minWidthOuterCells,
+                    cellRectangle.x + cellRectangle.width - cellPadding.right - minWidthOuterCells,
                     minWidthOuterCells);
             
             // Size of the content area and size of the available space in the content area
@@ -244,7 +244,7 @@ public class StripContainerCell extends ContainerCell {
                     cellRectangle.y + cellPadding.top,
                     minHeightOuterCells);
             applyVerticalLayout(cells[2],
-                    cellRectangle.height - cellPadding.bottom - minHeightOuterCells,
+                    cellRectangle.y + cellRectangle.height - cellPadding.bottom - minHeightOuterCells,
                     minHeightOuterCells);
             
             // Size of the content area and size of the available space in the content area

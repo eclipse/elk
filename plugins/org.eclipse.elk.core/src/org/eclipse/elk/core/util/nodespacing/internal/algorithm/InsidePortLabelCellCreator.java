@@ -16,10 +16,10 @@ import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
+import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
 
 /**
  * Sets up the inside port label cells. These are set up even when there are no inside port labels since they also

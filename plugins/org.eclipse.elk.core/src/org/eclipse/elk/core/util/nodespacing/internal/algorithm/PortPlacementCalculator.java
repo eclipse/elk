@@ -18,9 +18,9 @@ import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
+import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 

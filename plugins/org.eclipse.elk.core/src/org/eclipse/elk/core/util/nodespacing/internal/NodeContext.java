@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.contexts;
+package org.eclipse.elk.core.util.nodespacing.internal;
 
 import java.util.EnumMap;
 import java.util.Set;
@@ -26,13 +26,12 @@ import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.IndividualSpacings;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.StripContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.StripContainerCell.Strip;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.GridContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.LabelCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.GridContainerCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.StripContainerCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.StripContainerCell.Strip;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -68,6 +67,8 @@ public final class NodeContext {
     public final double nodeLabelSpacing;
     /** Space between two labels. */
     public final double labelLabelSpacing;
+    /** Space between two different label cells. */
+    public final double labelCellSpacing;
     /** Space between a port and another port. */
     public final double portPortSpacing;
     /** Space between a port and its labels. */
@@ -132,6 +133,7 @@ public final class NodeContext {
                 parentGraph, node, CoreOptions.SPACING_LABEL_NODE);
         labelLabelSpacing = IndividualSpacings.getIndividualOrInherited(
                 parentGraph, node, CoreOptions.SPACING_LABEL_LABEL);
+        labelCellSpacing = 2 * labelLabelSpacing;
         portPortSpacing = IndividualSpacings.getIndividualOrInherited(
                 parentGraph, node, CoreOptions.SPACING_PORT_PORT);
         portLabelSpacing = IndividualSpacings.getIndividualOrInherited(

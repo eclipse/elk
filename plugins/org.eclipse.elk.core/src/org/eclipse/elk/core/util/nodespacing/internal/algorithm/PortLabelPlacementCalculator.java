@@ -19,10 +19,10 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.nodespacing.internal.HorizontalLabelAlignment;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
+import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.util.nodespacing.internal.VerticalLabelAlignment;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.PortContext;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
 
 /**
  * Knows how to place port labels.

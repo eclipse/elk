@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.cells;
+package org.eclipse.elk.core.util.nodespacing.internal.cellsystem;
 
 /**
  * Enumeration of the three possible cells inside container cells.

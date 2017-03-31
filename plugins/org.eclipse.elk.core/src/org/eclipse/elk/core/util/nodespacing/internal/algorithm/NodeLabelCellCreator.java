@@ -16,13 +16,13 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
+import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.StripContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.GridContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cells.StripContainerCell.Strip;
-import org.eclipse.elk.core.util.nodespacing.internal.contexts.NodeContext;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.GridContainerCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.StripContainerCell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.StripContainerCell.Strip;
 
 /**
  * Knows how to take all of a node's labels and create the appropriate grid cells.
@@ -79,26 +79,26 @@ public final class NodeLabelCellCreator {
      */
     private static void createNodeLabelCellContainers(final NodeContext nodeContext) {
         // Inside container
-        nodeContext.insideNodeLabelContainer = new GridContainerCell(nodeContext.labelLabelSpacing * 2);
+        nodeContext.insideNodeLabelContainer = new GridContainerCell(nodeContext.labelCellSpacing);
         if (nodeContext.nodeLabelsPadding != null) {
             nodeContext.insideNodeLabelContainer.getPadding().copy(nodeContext.nodeLabelsPadding);
         }
         nodeContext.nodeContainerMiddleRow.setCell(ContainerArea.CENTER, nodeContext.insideNodeLabelContainer);
         
         // Outside containers
-        StripContainerCell northContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelLabelSpacing * 2);
+        StripContainerCell northContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelCellSpacing);
         northContainer.getPadding().bottom = nodeContext.nodeLabelSpacing;
         nodeContext.outsideNodeLabelContainers.put(PortSide.NORTH, northContainer);
 
-        StripContainerCell southContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelLabelSpacing * 2);
+        StripContainerCell southContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelCellSpacing);
         southContainer.getPadding().top = nodeContext.nodeLabelSpacing;
         nodeContext.outsideNodeLabelContainers.put(PortSide.SOUTH, southContainer);
 
-        StripContainerCell westContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelLabelSpacing * 2);
+        StripContainerCell westContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelCellSpacing);
         westContainer.getPadding().right = nodeContext.nodeLabelSpacing;
         nodeContext.outsideNodeLabelContainers.put(PortSide.WEST, westContainer);
 
-        StripContainerCell eastContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelLabelSpacing * 2);
+        StripContainerCell eastContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelCellSpacing);
         eastContainer.getPadding().left = nodeContext.nodeLabelSpacing;
         nodeContext.outsideNodeLabelContainers.put(PortSide.EAST, eastContainer);
     }

@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.cells;
+package org.eclipse.elk.core.util.nodespacing.internal.cellsystem;
 
 import java.util.Collections;
 import java.util.List;
@@ -209,7 +209,7 @@ public class LabelCell extends Cell {
                 break;
                 
             case CENTER:
-                labelPos.x = cellRect.x + cellPadding.left + (minimumContentAreaSize.x - labelSize.x) / 2;
+                labelPos.x = cellRect.x + cellPadding.left + (cellRect.width - labelSize.x) / 2;
                 break;
                 
             case RIGHT:
