@@ -14,6 +14,7 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.CellSystemConfigurator;
+import org.eclipse.elk.core.util.nodespacing.internal.algorithm.HorizontalPortPlacementSizeCalculator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.InsidePortLabelCellCreator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.LabelPlacer;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.NodeLabelAndSizeUtilities;
@@ -22,7 +23,7 @@ import org.eclipse.elk.core.util.nodespacing.internal.algorithm.NodeSizeCalculat
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortContextCreator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortLabelPlacementCalculator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortPlacementCalculator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortPlacementSizeCalculator;
+import org.eclipse.elk.core.util.nodespacing.internal.algorithm.VerticalPortPlacementSizeCalculator;
 
 
 /**
@@ -101,8 +102,8 @@ public class NodeLabelAndSizeCalculator {
          * east / west inside port label cells. Since the east / west cells are surrounded by the north / south cells,
          * their height may be updated later once we know how hight the north / south cells will be.
          */
-        PortPlacementSizeCalculator.calculateHorizontalPortPlacementSize(nodeContext);
-        PortPlacementSizeCalculator.calculateVerticalPortPlacementSize(nodeContext);
+        HorizontalPortPlacementSizeCalculator.calculateHorizontalPortPlacementSize(nodeContext);
+        VerticalPortPlacementSizeCalculator.calculateVerticalPortPlacementSize(nodeContext);
         
         
         /* PHASE 4: DAMNABLE DUCKLING
