@@ -28,6 +28,10 @@ import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortPlacementSiz
 /**
  * Knows how to calculate the size of a node and how to place its ports. Takes all size constraints and options into
  * account.
+ * 
+ * <p>This calculator internally understands the layout of the node as a grid-like system of cells which different
+ * labels and ports are placed in. Each cell has a padding and a minimum size, which may or may not be taken into
+ * account when calculating the minimum size of the node.</p>
  */
 public class NodeLabelAndSizeCalculator {
     
@@ -51,65 +55,71 @@ public class NodeLabelAndSizeCalculator {
      */
     public void process(final GraphAdapter<?> graph, final NodeAdapter<?> node) {
         // Note that, upon Miro's request, each phase of the algorithm was given a code name in the first version of
-        // this code. We happily carry on fulfilling this request in the second version.
+        // this code. We happily carry on fulfilling this request in this, the second version.
 
-        /* PREPARATIONS
+        /* PREPARATORY PREPARATIONS
          * 
-         * Create new context object containing all relevant context information, including pointers to all the
-         * components of the cell system. The different method calls will often just update information in the context
-         * object (or nested objects) that subsequent method calls will make use of. Creating this context object will
-         * already cause it to initialize some information contained in it for more convenient access.
+         * Create the context objects that hold all of the information relevant to our calculations, including pointers
+         * to all the components of the cell system. The different method calls will often just update information in
+         * the context object (or nested objects) that subsequent method calls will make use of. Creating the port
+         * contexts will also create label cells for each port that has labels.
          */
         NodeContext nodeContext = new NodeContext(graph, node);
         PortContextCreator.createPortContexts(nodeContext);
         
         
-        /* PHASE 1: Sad Duck
+        /* PHASE 1: WONDEROUS WATERFOWL
          *          Setup All Cells
          * 
-         * Create all container cells that can hold node label containers, both for the outside and for the inside.
-         * Also, create all the relevant label cells. For inside port label cells, the height or width (and relevant
-         * offset) is calculated under the assumption that ports can be placed freely. The information may later be
-         * overwritten if inside port label placement actually needs more space.
+         * Create all the label cells that will hold node labels, as well as the cell containers that will hold them,
+         * for both inside and outside node labels. Also, assign node labels to the relevant label cells. If port
+         * labels are to be placed on the inside, setup the inside port label cells with the appropriate paddings, and
+         * set the width of the eastern and western ones to the maximum width of the labels they will contain. We can't
+         * do that for the northern and southern cells yet because port label placement is more complicated there.
          */
         NodeLabelCellCreator.createNodeLabelCells(nodeContext);
         InsidePortLabelCellCreator.createInsidePortLabelCells(nodeContext);
         
         
-        /* PHASE 2: Dynamic Donald
+        /* PHASE 2: DEFECTIVE DUCK
          *          Setup Client Area Space and Node Cell Padding
          * 
          * Apply the minimum client area size to the central grid container cell. Also, reserve space for ports that
-         * extend inside the node due to negative port border offsets.
+         * extend inside the node due to negative port border offsets by setting up appropriate paddings on the main
+         * node container cell.
          */
         NodeLabelAndSizeUtilities.setupMinimumClientAreaSize(nodeContext);
         NodeLabelAndSizeUtilities.setupNodePaddingForPortsWithOffset(nodeContext);
         
         
-        /* PHASE 3: Dangerous Duckling
+        /* PHASE 3: SALVAGEABLE SWAN
          *          Minimum Space Required to Place Ports
          * 
          * It is now time to find out how large the node needs to be if all ports are to be placed in a way that
-         * satisfies all spacing constraints. This may or may not include the labels of ports.
+         * satisfies all spacing constraints. This may or may not include the labels of ports. We remember these
+         * information by setting the minimum width of north / south inside port label cells and the minimum height of
+         * east / west inside port label cells. Since the east / west cells are surrounded by the north / south cells,
+         * their height may be updated later once we know how hight the north / south cells will be.
          */
         PortPlacementSizeCalculator.calculateHorizontalPortPlacementSize(nodeContext);
         PortPlacementSizeCalculator.calculateVerticalPortPlacementSize(nodeContext);
         
         
-        /* PHASE 4: Duck and Cover
+        /* PHASE 4: DAMNABLE DUCKLING
          *          Setup Cell System Size Contribution Flags
          * 
          * Depending on the size constraints, the different cells may contribute to the height or to the width of the
-         * node. In this phase, we setup the size contribution flags according to the size constraints.
+         * node. In this phase, we setup the size contribution flags according to the size constraints. This lays the
+         * groundwork for letting the cell system calculate stuff.
          */
         CellSystemConfigurator.configureCellSystemSizeContributions(nodeContext);
         
         
-        /* PHASE 5: Happy Duck
+        /* PHASE 5: DUCK AND COVER
          *          Set Node Width and Place Horizontal Ports
          * 
          * We can now set the node's width and place the ports (and port labels) along the horizontal sides. Since we
-         * have no idea how large the node is going to be yet, we place southern ports with the assumption that the
+         * have no idea how high the node is going to be yet, we place southern ports with the assumption that the
          * node has a height of 0. We will later have to offset those ports by the node's height. Setting the node
          * width has the side effect of computing a horizontal layout for the cell system.
          */
@@ -119,13 +129,13 @@ public class NodeLabelAndSizeCalculator {
         PortLabelPlacementCalculator.placeHorizontalPortLabels(nodeContext);
         
         
-        /* PHASE 6: Gentle Geese
+        /* PHASE 6: GIGANTIC GOOSE
          *          Set Node Height and Place Vertical Ports
          * 
          * We can now calculate the node's height and place the ports (and port labels) along the vertical sides. Also,
          * since we now know the node's height, we can finally correct the southern port positions. Before we can do
-         * all that, however, we might need to update the settings of the eastern and western inside port label cells
-         * to be sure that free ports are positioned properly.
+         * all that, however, we might need to update the height and padding of the eastern and western inside port
+         * label cells to be sure that free ports are positioned properly.
          */
         CellSystemConfigurator.updateVerticalInsidePortLabelCellPadding(nodeContext);
         NodeSizeCalculator.setNodeHeight(nodeContext);
@@ -135,7 +145,7 @@ public class NodeLabelAndSizeCalculator {
         PortLabelPlacementCalculator.placeVerticalPortLabels(nodeContext);
         
         
-        /* PHASE 7: Thanksgiving
+        /* PHASE 7: THANKSGIVING
          *          Place Labels
          * 
          * Since we now have the node's final size, we can now calculate the positions of the containers for outer node

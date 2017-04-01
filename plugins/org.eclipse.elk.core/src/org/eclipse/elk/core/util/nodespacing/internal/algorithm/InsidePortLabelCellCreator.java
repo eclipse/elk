@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
 
-import java.util.Arrays;
-
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortLabelPlacement;
@@ -69,55 +67,36 @@ public final class InsidePortLabelCellCreator {
         }
     }
     
+
+    /////////////////////////////////////////////////////////////////
+    // North or South
+    
     /**
-     * Calculates size and paddings for the cell.
+     * Sets up all paddings of this cell. We cannot calculate a height yet because that will only become known once
+     * inside node label placement has finished.
      */
     private static void setupNorthOrSouthPortLabelCell(final NodeContext nodeContext, final PortSide portSide) {
-        calculateHeightDueToLabels(nodeContext, portSide);
-        setupLeftAndRightPadding(nodeContext, portSide);
-    }
-
-    /**
-     * Calculates the cell's height to fit the largest label in there. If there actually is a label, also setup the
-     * cell's top or bottom padding to ensure enough space between ports and labels.
-     */
-    private static void calculateHeightDueToLabels(final NodeContext nodeContext, final PortSide portSide) {
-        // Retrieve the appropriate cell
-        AtomicCell theAppropriateCell = nodeContext.insidePortLabelCells.get(portSide);
-        KVector minCellSize = theAppropriateCell.getMinimumContentAreaSize();
+        ElkPadding padding = nodeContext.insidePortLabelCells.get(portSide).getPadding();
         
-        for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
-            // Update the maximum label height
-            if (portContext.portLabelCell != null) {
-                minCellSize.y = Math.max(minCellSize.y, portContext.portLabelCell.getMinimumHeight());
-            }
+        switch (portSide) {
+        case NORTH:
+            padding.top = nodeContext.portLabelSpacing;
+            break;
+            
+        case SOUTH:
+            padding.bottom = nodeContext.portLabelSpacing;
+            break;
         }
         
-        // If the cell has a minimum height by now, that means we actually have labels in there. Which, in turn, means
-        // that we need to add a padding to the cell to ensure enough space between ports and their inside labels
-        if (minCellSize.y > 0) {
-            switch (portSide) {
-            case NORTH:
-                theAppropriateCell.getPadding().top = nodeContext.portLabelSpacing;
-                break;
-                
-            case SOUTH:
-                theAppropriateCell.getPadding().bottom = nodeContext.portLabelSpacing;
-                break;
-            }
-        }
-    }
-
-    /**
-     * Sets up the cell's left and right padding to match the surrounding port margins.
-     */
-    private static void setupLeftAndRightPadding(final NodeContext nodeContext, final PortSide portSide) {
         if (nodeContext.surroundingPortMargins != null) {
-            ElkPadding padding = nodeContext.insidePortLabelCells.get(portSide).getPadding();
             padding.left = nodeContext.surroundingPortMargins.left;
             padding.right = nodeContext.surroundingPortMargins.right;
         }
     }
+    
+
+    /////////////////////////////////////////////////////////////////
+    // East or West
     
     /**
      * Does the work for {@link #calculatePortLabelWidth(NodeContext)} for the given port side.
