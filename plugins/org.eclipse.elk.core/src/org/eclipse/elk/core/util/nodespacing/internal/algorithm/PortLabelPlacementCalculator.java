@@ -23,6 +23,8 @@ import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.util.nodespacing.internal.VerticalLabelAlignment;
 import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
+import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover;
+import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover.OverlapRemovalDirection;
 
 /**
  * Knows how to place port labels.
@@ -75,8 +77,7 @@ public final class PortLabelPlacementCalculator {
             
         case OUTSIDE:
             if (constrainedPlacement) {
-                // TODO: Employ the big guns!
-                simpleOutsidePortLabelPlacement(nodeContext, portSide);
+                constrainedOutsidePortLabelPlacement(nodeContext, portSide);
             } else {
                 simpleOutsidePortLabelPlacement(nodeContext, portSide);
             }
@@ -86,7 +87,7 @@ public final class PortLabelPlacementCalculator {
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Inside Port Labels
+    // Simple Inside Port Labels
     
     /**
      * Place the port label cells on the node's insides.
@@ -189,7 +190,7 @@ public final class PortLabelPlacementCalculator {
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Outside Port Labels
+    // Simple Outside Port Labels
 
     /**
      * Place the port label cells outside of the node.
@@ -271,6 +272,94 @@ public final class PortLabelPlacementCalculator {
             
             // The next port definitely doesn't have special needs anymore
             portWithSpecialNeeds = false;
+        }
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constrained Outside Port Labels
+
+    /**
+     * Place the port label cells outside of the node in the knowledge that there might not be enough space to place
+     * them without overlaps.
+     */
+    private static void constrainedOutsidePortLabelPlacement(final NodeContext nodeContext, final PortSide portSide) {
+        Collection<PortContext> portContexts = nodeContext.portContexts.get(portSide);
+    
+        // If there are only two ports on this port side, or if it's neither the northern nor the southern side, simply
+        // revert to simple port label placement
+        if (portContexts.size() == 2 || portSide == PortSide.EAST || portSide == PortSide.WEST) {
+            simpleOutsidePortLabelPlacement(nodeContext, portSide);
+            return;
+        }
+        
+        // Prepare things
+        OverlapRemovalDirection overlapRemovalDirection = portSide == PortSide.NORTH
+                ? OverlapRemovalDirection.UP
+                : OverlapRemovalDirection.DOWN;
+        VerticalLabelAlignment verticalLabelAlignment = portSide == PortSide.NORTH
+                ? VerticalLabelAlignment.BOTTOM
+                : VerticalLabelAlignment.TOP;
+        
+        // Obtain a rectangle strip overlap remover, which will actually do most of the work
+        RectangleStripOverlapRemover overlapRemover = RectangleStripOverlapRemover
+                .createForDirection(overlapRemovalDirection)
+                .withGap(nodeContext.portLabelSpacing);
+        
+        // Iterate over our ports and add rectangles to the overlap remover. Also, calculate the start coordinate
+        double startCoordinate = portSide == PortSide.NORTH
+                ? Double.MAX_VALUE
+                : Double.MIN_VALUE;
+        
+        for (PortContext portContext : portContexts) {
+            if (portContext.portLabelCell == null || !portContext.portLabelCell.hasLabels()) {
+                continue;
+            }
+            
+            KVector portSize = portContext.port.getSize();
+            KVector portPosition = portContext.port.getPosition();
+            LabelCell portLabelCell = portContext.portLabelCell;
+            ElkRectangle portLabelCellRect = portLabelCell.getCellRectangle();
+            
+            // Setup the label cell's cell rectangle
+            portLabelCellRect.width = portLabelCell.getMinimumWidth();
+            portLabelCellRect.height = portLabelCell.getMinimumHeight();
+            portLabelCellRect.x = portPosition.x + portSize.x + nodeContext.portLabelSpacing;
+            
+            portLabelCell.setVerticalAlignment(verticalLabelAlignment);
+            portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
+            
+            // Add the rectangle to the overlap remover
+            overlapRemover.addRectangle(portLabelCellRect);
+            
+            // Update start coordinate
+            startCoordinate = portSide == PortSide.NORTH
+                    ? Math.min(startCoordinate, portContext.port.getPosition().y)
+                    : Math.max(startCoordinate, portContext.port.getPosition().y + portContext.port.getSize().y);
+        }
+        
+        // The start coordinate needs to be offset by the port-label space
+        startCoordinate += portSide == PortSide.NORTH
+                ? -nodeContext.portLabelSpacing
+                : nodeContext.portLabelSpacing;
+        
+        // Invoke the overlap remover
+        overlapRemover
+            .withStartCoordinate(startCoordinate)
+            .removeOverlaps();
+        
+        // We need to update the label cell's coordinates to be relative to the ports
+        for (PortContext portContext : portContexts) {
+            if (portContext.portLabelCell == null || !portContext.portLabelCell.hasLabels()) {
+                continue;
+            }
+            
+            KVector portPosition = portContext.port.getPosition();
+            ElkRectangle portLabelCellRect = portContext.portLabelCell.getCellRectangle();
+            
+            // Setup the label cell's cell rectangle
+            portLabelCellRect.x -= portPosition.x;
+            portLabelCellRect.y -= portPosition.y;
         }
     }
     

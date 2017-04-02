@@ -164,6 +164,12 @@ public final class VerticalPortPlacementSizeCalculator {
         if (nodeContext.surroundingPortMargins != null && nodeContext.surroundingPortMargins.bottom > 0) {
             // We're using the port's bare width here because we don't care about label sizes on the bottommost port
             double requiredSpace = previousPortHeight + nodeContext.surroundingPortMargins.bottom;
+            
+            // We're only interested in the port's bottom margin if it's label is placed inside
+            if (portLabelsInside) {
+                requiredSpace += previousPortContext.portMargin.bottom;
+            }
+            
             minHeight = Math.max(
                     minHeight,
                     HorizontalPortPlacementSizeCalculator.minSizeRequiredToRespectSpacing(

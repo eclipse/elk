@@ -162,8 +162,13 @@ public final class HorizontalPortPlacementSizeCalculator {
         
         // if there are right surrounding port margins, apply those as well
         if (nodeContext.surroundingPortMargins != null && nodeContext.surroundingPortMargins.right > 0) {
-            // We're using the port's bare width here because we don't care about label sizes on the rightmost port
             double requiredSpace = previousPortWidth + nodeContext.surroundingPortMargins.right;
+            
+            // We're only interested in the port's right margin if it's label is placed inside
+            if (portLabelsInside) {
+                requiredSpace += previousPortContext.portMargin.right;
+            }
+            
             minWidth = Math.max(
                     minWidth,
                     minSizeRequiredToRespectSpacing(

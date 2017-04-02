@@ -57,14 +57,10 @@ public final class InsidePortLabelCellCreator {
         nodeContext.nodeContainerMiddleRow.setCell(ContainerArea.END, eastCell);
         nodeContext.insidePortLabelCells.put(PortSide.EAST, eastCell);
         
-        // If we have inside port labels, go ahead and reserve enough space for them
-        if (nodeContext.portLabelsPlacement == PortLabelPlacement.INSIDE) {
-            setupNorthOrSouthPortLabelCell(nodeContext, PortSide.NORTH);
-            setupNorthOrSouthPortLabelCell(nodeContext, PortSide.SOUTH);
-            
-            setupEastOrWestPortLabelCell(nodeContext, PortSide.EAST);
-            setupEastOrWestPortLabelCell(nodeContext, PortSide.WEST);
-        }
+        setupNorthOrSouthPortLabelCell(nodeContext, PortSide.NORTH);
+        setupNorthOrSouthPortLabelCell(nodeContext, PortSide.SOUTH);
+        setupEastOrWestPortLabelCell(nodeContext, PortSide.EAST);
+        setupEastOrWestPortLabelCell(nodeContext, PortSide.WEST);
     }
     
 
@@ -102,7 +98,9 @@ public final class InsidePortLabelCellCreator {
      * Does the work for {@link #calculatePortLabelWidth(NodeContext)} for the given port side.
      */
     private static void setupEastOrWestPortLabelCell(final NodeContext nodeContext, final PortSide portSide) {
-        calculateWidthDueToLabels(nodeContext, portSide);
+        if (nodeContext.portLabelsPlacement == PortLabelPlacement.INSIDE) {
+            calculateWidthDueToLabels(nodeContext, portSide);   
+        }
         setupTopAndBottomPadding(nodeContext, portSide);
     }
 
