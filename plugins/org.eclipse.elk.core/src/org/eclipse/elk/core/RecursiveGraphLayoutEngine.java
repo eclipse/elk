@@ -373,6 +373,9 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             for (final ElkBendPoint bend : section.getBendPoints()) {
                 bend.set(bend.getX() + xOffset, bend.getY() + yOffset);
             }
+            
+            // Offset junction points by the node position
+            selfLoop.getProperty(CoreOptions.JUNCTION_POINTS).offset(xOffset, yOffset);
         }
     }
 
