@@ -84,6 +84,9 @@ public final class Pair<F, S> implements Iterable<Object> {
     
     /**
      * Comparator that uses the first element as base.
+     * 
+     * @param <F> comparable type of first pair element.
+     * @param <S> type of second pair element.
      */
     public static class FirstComparator<F extends Comparable<F>, S> implements Comparator<Pair<F, S>>,
             Serializable {
@@ -99,6 +102,9 @@ public final class Pair<F, S> implements Iterable<Object> {
 
     /**
      * Comparator that uses the second element as base.
+     * 
+     * @param <F> type of first pair element.
+     * @param <S> comparable type of second pair element.
      */
     public static class SecondComparator<F, S extends Comparable<S>> implements Comparator<Pair<F, S>>,
             Serializable {
