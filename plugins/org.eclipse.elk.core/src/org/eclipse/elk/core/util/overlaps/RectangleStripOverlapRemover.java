@@ -20,14 +20,41 @@ import com.google.common.collect.Sets;
 
 /**
  * Main class for removing overlaps between rectangles that have a fixed position along one of the two dimsions. Yes,
- * only two dimensions. Sorry.
+ * only two dimensions. Sorry. A typical use case is to place labels of northern ports that might not be placed such
+ * that there is enough space for labels, which can result in overlaps. This is resolved by choosing y positions that
+ * avoid overlaps.</p>
  * 
- * <p>To give an example of the typical use case, this thing might be used for labels of northern ports. Their x
- * position is fixed, which can result in overlaps. This is resolved by choosing y positions that remove overlaps.</p>
+ * <p>This class can be used to remove horizontal or vertical overlaps. The first case will move labels along the
+ * vertical axis to remove overlaps, the second case will move labels along the horizontal axis. The computations are
+ * customized through a number of settings:</p>
+ * 
+ * <ul>
+ *   <li>The way in which labels are moved is specified by the {@link OverlapRemovalDirection} that must be specified
+ *       when optaining a new {@link RectangleStripOverlapRemover} instance.</li>
+ *   <li>The gap defines how close labels can be before they are considered to be overlapping. After overlap removal,
+ *       the gap is a lower bound on the distance between labels.</li>
+ *   <li>The start coordinate will be the coordinate of the label that is the first to be encountered when moving along
+ *       the overlap removal direction. For example, if we have a {@link OverlapRemovalDirection#DOWN downward}
+ *       direction, the topmost labels will have that start coordinate as their y coordinate. If the overlap removal
+ *       direction is {@link OverlapRemovalDirection#RIGHT rightwards}, the leftmost labels will have that start
+ *       coordinate as their x coordinate.</li>
+ * </ul>
+ * 
+ * <p>Follow these steps to use the {@link RectangleStripOverlapRemover}:</p>
+ * 
+ * <ol>
+ *   <li>Obtain a new instance by calling {@link #createForDirection(OverlapRemovalDirection}.</li>
+ *   <li>Configure overlap removal by calling the {@code withX(...)} methods.</li>
+ *   <li>Add rectangles to remove overlaps between by calling {@link #addRectangle(ElkRectangle)}.</li>
+ *   <li>Call {@link #removeOverlaps()}. The method will return the amount of space needed along the overlap removal
+ *       direction that is required to remove overlaps.</li>
+ * </ol>
  * 
  * <p>This class is in charge of the main overlap removal configuration and of building the overlap graph, in which
  * each label is represented by a node and nodes are connected if their labels overlap. The actual overlap removal is
- * performed by overlap removal strategies.</p>
+ * performed by overlap removal strategies. An overlap strategy can work in a coordinate system where horizontal
+ * overlaps are removed by increasing the y coordinate of labels, with the first row of labels placed at y coordinate
+ * zero. All cases are transformed to this coordinate system, and the results are transformed back by this class.</p>
  */
 public final class RectangleStripOverlapRemover {
 
