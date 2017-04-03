@@ -50,8 +50,7 @@ public final class RectangleStripOverlapRemover {
     /** The overlap strategy to use to actually remove overlaps. */
     private IRectangleStripOverlapRemovalStrategy overlapRemovalStrategy;
     /** Rectangle nodes sorted by the x coordinate of their rectangle. */
-    private SortedSet<RectangleNode> rectangleNodes = Sets.newTreeSet(
-            RectangleStripOverlapRemover::compareLeftRectangleBorders);
+    private List<RectangleNode> rectangleNodes = Lists.newArrayList();
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +124,7 @@ public final class RectangleStripOverlapRemover {
     /**
      * Returns the set of rectangle nodes in the rectangle overlap graph, sorted by their rectangle's x coordinate.
      */
-    public SortedSet<RectangleNode> getRectangleNodes() {
+    public List<RectangleNode> getRectangleNodes() {
         return rectangleNodes;
     }
 
@@ -200,6 +199,9 @@ public final class RectangleStripOverlapRemover {
         if (overlapRemovalStrategy == null) {
             overlapRemovalStrategy = new GreedyRectangleStripOverlapRemover();
         }
+        
+        // Sort the list of rectangles
+        rectangleNodes.sort(RectangleStripOverlapRemover::compareLeftRectangleBorders);
         
         // Compute and remove overlaps
         computeOverlaps();

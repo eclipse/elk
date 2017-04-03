@@ -12,6 +12,7 @@ package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
 
 import java.util.Collection;
 
+import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -22,6 +23,7 @@ import org.eclipse.elk.core.util.nodespacing.internal.HorizontalLabelAlignment;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.util.nodespacing.internal.VerticalLabelAlignment;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
 import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
 import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover;
 import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover.OverlapRemovalDirection;
@@ -68,8 +70,7 @@ public final class PortLabelPlacementCalculator {
         switch (nodeContext.portLabelsPlacement) {
         case INSIDE:
             if (constrainedPlacement) {
-                // TODO: Employ the big guns!
-                simpleInsidePortLabelPlacement(nodeContext, portSide);
+                constrainedInsidePortLabelPlacement(nodeContext, portSide);
             } else {
                 simpleInsidePortLabelPlacement(nodeContext, portSide);
             }
@@ -189,6 +190,136 @@ public final class PortLabelPlacementCalculator {
     }
     
     
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constrained Inside Port Labels
+
+    /**
+     * Place the port label cells outside of the node in the knowledge that there might not be enough space to place
+     * them without overlaps.
+     */
+    private static void constrainedInsidePortLabelPlacement(final NodeContext nodeContext, final PortSide portSide) {
+        Collection<PortContext> portContexts = nodeContext.portContexts.get(portSide);
+    
+        // If it's neither the northern nor the southern side, simply revert to simple port label placement
+        if (portSide == PortSide.EAST || portSide == PortSide.WEST) {
+            simpleOutsidePortLabelPlacement(nodeContext, portSide);
+            return;
+        }
+        
+        // Prepare things
+        OverlapRemovalDirection overlapRemovalDirection = portSide == PortSide.NORTH
+                ? OverlapRemovalDirection.DOWN
+                : OverlapRemovalDirection.UP;
+        VerticalLabelAlignment verticalLabelAlignment = portSide == PortSide.NORTH
+                ? VerticalLabelAlignment.TOP
+                : VerticalLabelAlignment.BOTTOM;
+        
+        // To keep labels from extending over the content area of the inside port label container, we need to know
+        // where its content area's left and right boundaries are. We also make sure to always keep a bit of space to
+        // the node border
+        AtomicCell insidePortLabelContainer = nodeContext.insidePortLabelCells.get(portSide);
+        ElkRectangle labelContainerRect = insidePortLabelContainer.getCellRectangle();
+        double leftBorder = labelContainerRect.x + ElkMath.maxd(
+                insidePortLabelContainer.getPadding().left,
+                nodeContext.surroundingPortMargins.left,
+                nodeContext.nodeLabelSpacing);
+        double rightBorder = labelContainerRect.x + labelContainerRect.width - ElkMath.maxd(
+                insidePortLabelContainer.getPadding().right,
+                nodeContext.surroundingPortMargins.right,
+                nodeContext.nodeLabelSpacing);
+        
+        // Obtain a rectangle strip overlap remover, which will actually do most of the work
+        RectangleStripOverlapRemover overlapRemover = RectangleStripOverlapRemover
+                .createForDirection(overlapRemovalDirection)
+                .withGap(nodeContext.portLabelSpacing);
+        
+        // Iterate over our ports and add rectangles to the overlap remover. Also, calculate the start coordinate
+        double startCoordinate = portSide == PortSide.NORTH
+                ? Double.MIN_VALUE
+                : Double.MAX_VALUE;
+        
+        for (PortContext portContext : portContexts) {
+            if (portContext.portLabelCell == null || !portContext.portLabelCell.hasLabels()) {
+                continue;
+            }
+            
+            KVector portSize = portContext.port.getSize();
+            KVector portPosition = portContext.port.getPosition();
+            LabelCell portLabelCell = portContext.portLabelCell;
+            ElkRectangle portLabelCellRect = portLabelCell.getCellRectangle();
+            
+            // Setup the less interesting cell properties
+            portLabelCellRect.width = portLabelCell.getMinimumWidth();
+            portLabelCellRect.height = portLabelCell.getMinimumHeight();
+            
+            portLabelCell.setVerticalAlignment(verticalLabelAlignment);
+            portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
+            
+            // Center the label, but make sure it doesn't hang over the node boundaries
+            centerPortLabel(portLabelCellRect, portPosition, portSize, leftBorder, rightBorder);
+            
+            // Add the rectangle to the overlap remover
+            overlapRemover.addRectangle(portLabelCellRect);
+            
+            // Update start coordinate
+            startCoordinate = portSide == PortSide.NORTH
+                    ? Math.max(startCoordinate, portContext.port.getPosition().y + portContext.port.getSize().y)
+                    : Math.min(startCoordinate, portContext.port.getPosition().y);
+        }
+        
+        // The start coordinate needs to be offset by the port-label space
+        startCoordinate += portSide == PortSide.NORTH
+                ? nodeContext.portLabelSpacing
+                : -nodeContext.portLabelSpacing;
+        
+        // Invoke the overlap remover
+        double stripHeight = overlapRemover
+            .withStartCoordinate(startCoordinate)
+            .removeOverlaps();
+        
+        if (stripHeight > 0) {
+            nodeContext.insidePortLabelCells.get(portSide).getMinimumContentAreaSize().y = stripHeight;
+        }
+        
+        // We need to update the label cell's coordinates to be relative to the ports
+        for (PortContext portContext : portContexts) {
+            if (portContext.portLabelCell == null || !portContext.portLabelCell.hasLabels()) {
+                continue;
+            }
+            
+            KVector portPosition = portContext.port.getPosition();
+            ElkRectangle portLabelCellRect = portContext.portLabelCell.getCellRectangle();
+            
+            // Setup the label cell's cell rectangle
+            portLabelCellRect.x -= portPosition.x;
+            portLabelCellRect.y -= portPosition.y;
+        }
+    }
+    
+    
+    /**
+     * Centers the given label under its port, but makes an effort to keep it from hanging over the given minimum and
+     * maximum coordinates. The label position is absolute, not relative to the port.
+     */
+    private static void centerPortLabel(final ElkRectangle portLabelCellRect, final KVector portPosition,
+            final KVector portSize, final double minX, final double maxX) {
+        
+        // Center the label
+        portLabelCellRect.x = portPosition.x - (portLabelCellRect.width - portSize.x) / 2;
+        
+        // Make sure that the label won't slide past the port
+        double actualMinX = Math.min(minX, portPosition.x);
+        double actualMaxX = Math.max(maxX, portPosition.x + portSize.x);
+        
+        // Make sure that the label stays inside the boundaries, but only correct in one of the two possible directions
+        if (portLabelCellRect.x < actualMinX) {
+            portLabelCellRect.x = actualMinX;
+        } else if (portLabelCellRect.x + portLabelCellRect.width > actualMaxX) {
+            portLabelCellRect.x = actualMaxX - portLabelCellRect.width;
+        }
+    }
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Simple Outside Port Labels
 
