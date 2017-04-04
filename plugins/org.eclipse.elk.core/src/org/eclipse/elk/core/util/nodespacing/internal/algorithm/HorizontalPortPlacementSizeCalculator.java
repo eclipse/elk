@@ -271,7 +271,7 @@ public final class HorizontalPortPlacementSizeCalculator {
             // or its label's width plus port-port spacing to the whole requested width
             if (uniformPortSpacing) {
                 // Since ports could in theory be bigger than labels
-                int ports = nodeContext.portContexts.get(portSide).size() - 1;
+                int ports = nodeContext.portContexts.get(portSide).size();
                 double maxPortOrLabelWidth = maximumPortOrLabelWidth(nodeContext, portSide);
                 width = maxPortOrLabelWidth * ports + nodeContext.portPortSpacing * (ports - 1);
                 

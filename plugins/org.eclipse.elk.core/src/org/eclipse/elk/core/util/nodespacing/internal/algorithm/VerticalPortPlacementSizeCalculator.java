@@ -247,7 +247,7 @@ public final class VerticalPortPlacementSizeCalculator {
             // or its label's height plus port-port spacing to the whole requested height
             if (uniformPortSpacing) {
                 // Since ports could in theory be bigger than labels
-                int ports = nodeContext.portContexts.get(portSide).size() - 1;
+                int ports = nodeContext.portContexts.get(portSide).size();
                 double maxPortOrLabelHeight = maximumPortOrLabelHeight(nodeContext, portSide);
                 height = maxPortOrLabelHeight * ports + nodeContext.portPortSpacing * (ports - 1);
                 
