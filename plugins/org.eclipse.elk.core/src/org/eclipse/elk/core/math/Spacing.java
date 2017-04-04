@@ -135,6 +135,26 @@ public abstract class Spacing implements IDataObject, Cloneable {
         this.left = left;
     }
     
+    /**
+     * Sets both the left and the right spacing to the same value.
+     * 
+     * @param val the new value.
+     */
+    public void setLeftRight(final double val) {
+        this.left = val;
+        this.right = val;
+    }
+    
+    /**
+     * Sets both the top and the bottom spacing to the same value.
+     * 
+     * @param val the new value.
+     */
+    public void setTopBottom(final double val) {
+        this.top = val;
+        this.bottom = val;
+    }
+    
     /** 
      * @return the combined horizontal padding, i.e. {@link #getLeft()} + {@link #getRight()}.   
      */ 

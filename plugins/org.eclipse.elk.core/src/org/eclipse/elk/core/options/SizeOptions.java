@@ -59,7 +59,15 @@ public enum SizeOptions {
      * between different pairs of ports. This option causes all ports to be evenly spaced by enlarging the space
      * between every pair of ports to the larges amount of space between any pair of ports.
      */
-    UNIFORM_PORT_SPACING;
+    UNIFORM_PORT_SPACING,
+    
+    /**
+     * If this option is set, the node sizing and label placement code will make an attempt to achieve a symmetrical
+     * layout. With this option active, for example, the space reserved for left inside port labels will be the same
+     * as for right inside port labels, which would not be the case otherwise. Activating this option will also ensure
+     * that center node labels will actually be placed in the center.
+     */
+    SYMMETRY;
     
     /**
      * Returns the enumeration value related to the given ordinal.

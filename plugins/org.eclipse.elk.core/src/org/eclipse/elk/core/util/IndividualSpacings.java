@@ -88,6 +88,9 @@ public class IndividualSpacings extends MapPropertyHolder {
             result = graph.getProperty(property);
         }
         
+        // if the result is still null, we need the property's default value
+        result = property.getDefault();
+        
         return result;
     }
 

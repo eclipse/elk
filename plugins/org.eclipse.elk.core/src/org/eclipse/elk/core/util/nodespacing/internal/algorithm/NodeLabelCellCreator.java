@@ -42,20 +42,25 @@ public final class NodeLabelCellCreator {
      * 
      * @param nodeContext
      *            the node context to work with.
+     * @param onlyInside
+     *            {@code true} if only inside node labels should be assigned to their respective label cells. Used for
+     *            computing the space required for inside node label cells, but nothing else.
      */
-    public static void createNodeLabelCells(final NodeContext nodeContext) {
+    public static void createNodeLabelCells(final NodeContext nodeContext, final boolean onlyInside) {
         // Make sure all the relevant containers exist
-        createNodeLabelCellContainers(nodeContext);
+        createNodeLabelCellContainers(nodeContext, onlyInside);
         
         // Handle each of the node's labels
-        nodeContext.node.getLabels().forEach(label -> handleNodeLabel(nodeContext, label));
+        nodeContext.node.getLabels().forEach(label -> handleNodeLabel(nodeContext, label, onlyInside));
     }
     
     /**
      * Handles the given node label by adding it to the corresponding node label cell. If such a cell doesn't exist
      * yet, it is created and added to the correct container cell.
      */
-    private static void handleNodeLabel(final NodeContext nodeContext, final LabelAdapter<?> label) {
+    private static void handleNodeLabel(final NodeContext nodeContext, final LabelAdapter<?> label,
+            final boolean onlyInside) {
+        
         // Find the effective label location
         Set<NodeLabelPlacement> labelPlacement = label.hasProperty(CoreOptions.NODE_LABELS_PLACEMENT)
                 ? label.getProperty(CoreOptions.NODE_LABELS_PLACEMENT)
@@ -64,6 +69,11 @@ public final class NodeLabelCellCreator {
         
         // If the label has its location fixed, we will ignore it
         if (labelLocation == NodeLabelLocation.UNDEFINED) {
+            return;
+        }
+        
+        // If the label's location is on the node's outside but we only want inside node labels, we will ignore it
+        if (onlyInside && !labelLocation.isInsideLocation()) {
             return;
         }
         
@@ -77,7 +87,7 @@ public final class NodeLabelCellCreator {
     /**
      * Creates all node label containers.
      */
-    private static void createNodeLabelCellContainers(final NodeContext nodeContext) {
+    private static void createNodeLabelCellContainers(final NodeContext nodeContext, final boolean onlyInside) {
         // Inside container
         nodeContext.insideNodeLabelContainer = new GridContainerCell(nodeContext.labelCellSpacing);
         if (nodeContext.nodeLabelsPadding != null) {
@@ -85,22 +95,24 @@ public final class NodeLabelCellCreator {
         }
         nodeContext.nodeContainerMiddleRow.setCell(ContainerArea.CENTER, nodeContext.insideNodeLabelContainer);
         
-        // Outside containers
-        StripContainerCell northContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelCellSpacing);
-        northContainer.getPadding().bottom = nodeContext.nodeLabelSpacing;
-        nodeContext.outsideNodeLabelContainers.put(PortSide.NORTH, northContainer);
-
-        StripContainerCell southContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelCellSpacing);
-        southContainer.getPadding().top = nodeContext.nodeLabelSpacing;
-        nodeContext.outsideNodeLabelContainers.put(PortSide.SOUTH, southContainer);
-
-        StripContainerCell westContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelCellSpacing);
-        westContainer.getPadding().right = nodeContext.nodeLabelSpacing;
-        nodeContext.outsideNodeLabelContainers.put(PortSide.WEST, westContainer);
-
-        StripContainerCell eastContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelCellSpacing);
-        eastContainer.getPadding().left = nodeContext.nodeLabelSpacing;
-        nodeContext.outsideNodeLabelContainers.put(PortSide.EAST, eastContainer);
+        // Outside containers, if requested
+        if (!onlyInside) {
+            StripContainerCell northContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelCellSpacing);
+            northContainer.getPadding().bottom = nodeContext.nodeLabelSpacing;
+            nodeContext.outsideNodeLabelContainers.put(PortSide.NORTH, northContainer);
+            
+            StripContainerCell southContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelCellSpacing);
+            southContainer.getPadding().top = nodeContext.nodeLabelSpacing;
+            nodeContext.outsideNodeLabelContainers.put(PortSide.SOUTH, southContainer);
+            
+            StripContainerCell westContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelCellSpacing);
+            westContainer.getPadding().right = nodeContext.nodeLabelSpacing;
+            nodeContext.outsideNodeLabelContainers.put(PortSide.WEST, westContainer);
+            
+            StripContainerCell eastContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelCellSpacing);
+            eastContainer.getPadding().left = nodeContext.nodeLabelSpacing;
+            nodeContext.outsideNodeLabelContainers.put(PortSide.EAST, eastContainer);
+        }
     }
     
     /**

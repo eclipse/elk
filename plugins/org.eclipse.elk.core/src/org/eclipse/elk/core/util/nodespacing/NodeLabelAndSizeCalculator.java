@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util.nodespacing;
 
+import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
@@ -24,6 +26,9 @@ import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortContextCreat
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortLabelPlacementCalculator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortPlacementCalculator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.VerticalPortPlacementSizeCalculator;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.Cell;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.GridContainerCell;
 
 
 /**
@@ -34,27 +39,37 @@ import org.eclipse.elk.core.util.nodespacing.internal.algorithm.VerticalPortPlac
  * labels and ports are placed in. Each cell has a padding and a minimum size, which may or may not be taken into
  * account when calculating the minimum size of the node.</p>
  */
-public class NodeLabelAndSizeCalculator {
+public final class NodeLabelAndSizeCalculator {
+    
+    /**
+     * No instance required.
+     */
+    private NodeLabelAndSizeCalculator() {
+        
+    }
+    
     
     /**
      * Processes all direct children of the given graph.
      * 
      * @param graph the graph.
      */
-    public void process(final GraphAdapter<?> graph) {
+    public static void process(final GraphAdapter<?> graph) {
         // Process all of the graph's direct children
         graph.getNodes().forEach(node -> process(graph, node));
     }
     
     /**
-     * Processes the given node which is assumed to be a child of the given graph. Note that this method does not
-     * check whether or not this is the case. The worst that can happen, however, is that wrong spacing values are
-     * applied during processing.
+     * Processes the given node which is assumed to be a child of the given graph. Note that this method does not check
+     * whether or not this is the case. The worst that can happen, however, is that wrong spacing values are applied
+     * during processing.
      * 
-     * @param graph the node's parent graph.
-     * @param node the node to process.
+     * @param graph
+     *            the node's parent graph.
+     * @param node
+     *            the node to process.
      */
-    public void process(final GraphAdapter<?> graph, final NodeAdapter<?> node) {
+    public static void process(final GraphAdapter<?> graph, final NodeAdapter<?> node) {
         // Note that, upon Miro's request, each phase of the algorithm was given a code name in the first version of
         // this code. We happily carry on fulfilling this request in this, the second version.
 
@@ -78,7 +93,7 @@ public class NodeLabelAndSizeCalculator {
          * set the width of the eastern and western ones to the maximum width of the labels they will contain. We can't
          * do that for the northern and southern cells yet because port label placement is more complicated there.
          */
-        NodeLabelCellCreator.createNodeLabelCells(nodeContext);
+        NodeLabelCellCreator.createNodeLabelCells(nodeContext, false);
         InsidePortLabelCellCreator.createInsidePortLabelCells(nodeContext);
         
         
@@ -155,6 +170,86 @@ public class NodeLabelAndSizeCalculator {
          */
         LabelPlacer.placeLabels(nodeContext);
         NodeLabelAndSizeUtilities.setNodePadding(nodeContext);
+    }
+    
+    /**
+     * Computes the padding required to place inside non-center node labels. This can be used to reserve space around
+     * a hierarchical node while laying out its content.
+     * 
+     * @param graph
+     *            the node's parent graph.
+     * @param node
+     *            the node to process.
+     * @return the padding required for inside node labels.
+     */
+    public static ElkPadding computeInsideNodeLabelPadding(final GraphAdapter<?> graph, final NodeAdapter<?> node) {
+        // Create a node context and fill it with all the inside node labels
+        NodeContext nodeContext = new NodeContext(null, node);
+        NodeLabelCellCreator.createNodeLabelCells(nodeContext, true);
+        
+        GridContainerCell labelCellContainer = nodeContext.insideNodeLabelContainer;
+        ElkPadding padding = new ElkPadding();
+        
+        // Top
+        for (ContainerArea col : ContainerArea.values()) {
+            Cell labelCell = labelCellContainer.getCell(ContainerArea.BEGIN, col);
+            if (labelCell != null) {
+                padding.top = Math.max(padding.top, labelCell.getMinimumHeight());
+            }
+        }
+
+        // Bottom
+        for (ContainerArea col : ContainerArea.values()) {
+            Cell labelCell = labelCellContainer.getCell(ContainerArea.END, col);
+            if (labelCell != null) {
+                padding.bottom = Math.max(padding.bottom, labelCell.getMinimumHeight());
+            }
+        }
+
+        // Left
+        for (ContainerArea row : ContainerArea.values()) {
+            Cell labelCell = labelCellContainer.getCell(row, ContainerArea.BEGIN);
+            if (labelCell != null) {
+                padding.left = Math.max(padding.left, labelCell.getMinimumWidth());
+            }
+        }
+
+        // Right
+        for (ContainerArea row : ContainerArea.values()) {
+            Cell labelCell = labelCellContainer.getCell(row, ContainerArea.END);
+            if (labelCell != null) {
+                padding.right = Math.max(padding.right, labelCell.getMinimumWidth());
+            }
+        }
+        
+        // Check if we need to adjust the padding to respect symmetry
+        if (nodeContext.sizeOptions.contains(SizeOptions.SYMMETRY)) {
+            padding.setTopBottom(Math.max(padding.top, padding.bottom));
+            padding.setLeftRight(Math.max(padding.left, padding.right));
+        }
+        
+        // Apply insets and gap where necessary
+        if (padding.top > 0) {
+            padding.top += labelCellContainer.getPadding().top;
+            padding.top += labelCellContainer.getGap();
+        }
+
+        if (padding.bottom > 0) {
+            padding.bottom += labelCellContainer.getPadding().bottom;
+            padding.bottom += labelCellContainer.getGap();
+        }
+
+        if (padding.left > 0) {
+            padding.left += labelCellContainer.getPadding().left;
+            padding.left += labelCellContainer.getGap();
+        }
+
+        if (padding.right > 0) {
+            padding.right += labelCellContainer.getPadding().right;
+            padding.right += labelCellContainer.getGap();
+        }
+        
+        return padding;
     }
     
 }

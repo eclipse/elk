@@ -40,7 +40,7 @@ public final class NodeDimensionCalculation {
      *            the graphs type, e.g. a root KNode
      */
     public static <T> void calculateLabelAndNodeSizes(final GraphAdapter<T> adapter) {
-        new NodeLabelAndSizeCalculator().process(adapter);
+        NodeLabelAndSizeCalculator.process(adapter);
     }
 
     /**
