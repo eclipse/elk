@@ -89,7 +89,9 @@ public class IndividualSpacings extends MapPropertyHolder {
         }
         
         // if the result is still null, we need the property's default value
-        result = property.getDefault();
+        if (result == null) {
+            result = property.getDefault();
+        }
         
         return result;
     }

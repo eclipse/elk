@@ -222,12 +222,6 @@ public final class NodeLabelAndSizeCalculator {
             }
         }
         
-        // Check if we need to adjust the padding to respect symmetry
-        if (nodeContext.sizeOptions.contains(SizeOptions.SYMMETRY)) {
-            padding.setTopBottom(Math.max(padding.top, padding.bottom));
-            padding.setLeftRight(Math.max(padding.left, padding.right));
-        }
-        
         // Apply insets and gap where necessary
         if (padding.top > 0) {
             padding.top += labelCellContainer.getPadding().top;

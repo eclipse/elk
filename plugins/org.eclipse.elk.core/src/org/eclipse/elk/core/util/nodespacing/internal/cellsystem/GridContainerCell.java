@@ -39,6 +39,8 @@ public class GridContainerCell extends ContainerCell {
     
     /** A container cell can include gaps between its children when calculating its preferred size. */
     private final double gap;
+    /** Whether the outer columns should be the same width and the outer rows be the same height. */
+    private final boolean symmetrical;
     /** A container cell consists of a table of cells that make up its content. */
     private final Cell[][] cells = new Cell[ROWS][COLUMNS];
     /**
@@ -61,10 +63,13 @@ public class GridContainerCell extends ContainerCell {
     /**
      * Creates a new instance with the given settings.
      * 
+     * @param symmetrical
+     *            whether the outer columns should be the same width and the outer rows be the same height.
      * @param gap
      *            the gap inserted between each pair of consecutive cells.
      */
-    public GridContainerCell(final double gap) {
+    public GridContainerCell(final boolean symmetrical, final double gap) {
+        this.symmetrical = symmetrical;
         this.gap = gap;
     }
     
@@ -147,21 +152,21 @@ public class GridContainerCell extends ContainerCell {
         if (onlyCenterCellContributesToMinimumSize && centerCellMinimumSize != null) {
             width = centerCellMinimumSize.x;
         } else {
-            // Minimum widths of the center column and the outer columns
-            double minWidthCenterColumn = minWidthOfColumn(ContainerArea.CENTER, true);
-            double minWidthOuterColumns = Math.max(
-                    minWidthOfColumn(ContainerArea.BEGIN, true),
-                    minWidthOfColumn(ContainerArea.END, true));
+            // Minimum widths of the different columns
+            double[] colWidths = minColumnWidths(true);
             
-            // We need to distinguish which cells exist
-            if (minWidthOuterColumns == 0) {
-                width = minWidthCenterColumn;
-            } else {
-                if (minWidthCenterColumn != 0) {
-                    width = minWidthCenterColumn + 2 * (minWidthOuterColumns + gap);
-                } else {
-                    width = 2 * minWidthOuterColumns + gap;
+            // Keep track of how many columns we have
+            int activeColumns = 0;
+            for (double colWidth : colWidths) {
+                if (colWidth > 0) {
+                    width += colWidth;
+                    activeColumns++;
                 }
+            }
+            
+            // If there is more than a single cell, add necessary gaps
+            if (activeColumns > 1) {
+                width += gap * (activeColumns - 1);
             }
         }
         
@@ -182,21 +187,21 @@ public class GridContainerCell extends ContainerCell {
         if (onlyCenterCellContributesToMinimumSize && centerCellMinimumSize != null) {
             height = centerCellMinimumSize.y;
         } else {
-            // Minimum heights of the center row and the outer rows
-            double minHeightCenterRow = minHeightOfRow(ContainerArea.CENTER, true);
-            double minHeightOuterRows = Math.max(
-                    minHeightOfRow(ContainerArea.BEGIN, true),
-                    minHeightOfRow(ContainerArea.END, true));
+            // Minimum height of the different rows
+            double[] rowHeights = minRowHeights(true);
             
-            // We need to distinguish which cells exist
-            if (minHeightOuterRows == 0) {
-                height = minHeightCenterRow;
-            } else {
-                if (minHeightCenterRow != 0) {
-                    height = minHeightCenterRow + 2 * (minHeightOuterRows + gap);
-                } else {
-                    height = 2 * minHeightOuterRows + gap;
+            // Keep track of how many columns we have
+            int activeRows = 0;
+            for (double rowHeight : rowHeights) {
+                if (rowHeight > 0) {
+                    height += rowHeight;
+                    activeRows++;
                 }
+            }
+            
+            // If there is more than a single cell, add necessary gaps
+            if (activeRows > 1) {
+                height += gap * (activeRows - 1);
             }
         }
         
@@ -214,37 +219,40 @@ public class GridContainerCell extends ContainerCell {
         ElkRectangle cellRectangle = getCellRectangle();
         ElkPadding cellPadding = getPadding();
         
-        double minWidthLeftColumn = minWidthOfColumn(ContainerArea.BEGIN, false);
-        double minWidthCenterColumn = minWidthOfColumn(ContainerArea.CENTER, false);
-        double minWidthRightColumn = minWidthOfColumn(ContainerArea.END, false);
-        double minWidthOuterColumns = Math.max(minWidthLeftColumn, minWidthRightColumn);
+        double[] colWidths = minColumnWidths(false);
         
         // Left column is left-aligned with our content area, right column is right-aligned
         applyHorizontalLayout(ContainerArea.BEGIN,
                 cellRectangle.x + cellPadding.left,
-                minWidthOuterColumns);
+                colWidths);
         applyHorizontalLayout(ContainerArea.END,
-                cellRectangle.x + cellRectangle.width - cellPadding.right - minWidthOuterColumns,
-                minWidthOuterColumns);
+                cellRectangle.x + cellRectangle.width - cellPadding.right - colWidths[2],
+                colWidths);
         
         // Size of the content area and size of the available space in the content area
-        double contentAreaWidth = cellRectangle.width - cellPadding.left - cellPadding.right;
+        double freeContentAreaWidth = cellRectangle.width - cellPadding.left - cellPadding.right;
         
-        double contentAreaFreeWidth = contentAreaWidth;
-        if (minWidthOuterColumns > 0) {
-            contentAreaFreeWidth -= 2 * (minWidthOuterColumns + gap);
+        if (colWidths[0] > 0) {
+            colWidths[0] += gap;
+            freeContentAreaWidth -= colWidths[0];
         }
         
+        if (colWidths[2] > 0) {
+            colWidths[2] += gap;
+            freeContentAreaWidth -= colWidths[2];
+        }
+        
+        // Compute the center cell rectangle
+        centerCellRect.width = Math.max(0, freeContentAreaWidth);
+        centerCellRect.x = cellRectangle.x + cellPadding.left + (centerCellRect.width - freeContentAreaWidth) / 2;
+        
         // If the available space is larger than the current size of the center cell, enlarge that thing
-        minWidthCenterColumn = Math.max(minWidthCenterColumn, contentAreaFreeWidth);
+        colWidths[1] = Math.max(colWidths[1], freeContentAreaWidth);
 
         // Place the center cell, possibly enlarging it in the process
         applyHorizontalLayout(ContainerArea.CENTER,
-                cellRectangle.x + cellPadding.left + (contentAreaWidth - minWidthCenterColumn) / 2,
-                minWidthCenterColumn);
-        
-        // Update x coordinate and width of the center cell rectangle
-        computeCenterCellRectangleHorizontally(minWidthOuterColumns);
+                cellRectangle.x + cellPadding.left + colWidths[0] - (colWidths[1] - freeContentAreaWidth) / 2,
+                colWidths);
     }
     
     /* (non-Javadoc)
@@ -255,42 +263,83 @@ public class GridContainerCell extends ContainerCell {
         ElkRectangle cellRectangle = getCellRectangle();
         ElkPadding cellPadding = getPadding();
         
-        double minHeightTopRow = minHeightOfRow(ContainerArea.BEGIN, false);
-        double minHeightCenterRow = minHeightOfRow(ContainerArea.CENTER, false);
-        double minHeightBottomRow = minHeightOfRow(ContainerArea.END, false);
-        double minHeightOuterRows = Math.max(minHeightTopRow, minHeightBottomRow);
+        double[] rowHeights = minRowHeights(false);
         
-        //Top row is top-aligned with our content area, bottom row is bottom-aligned
+        // Top row is top-aligned with our content area, bottom row is bottom-aligned
         applyVerticalLayout(ContainerArea.BEGIN,
                 cellRectangle.y + cellPadding.top,
-                minHeightOuterRows);
+                rowHeights);
         applyVerticalLayout(ContainerArea.END,
-                cellRectangle.y + cellRectangle.height - cellPadding.bottom - minHeightOuterRows,
-                minHeightOuterRows);
+                cellRectangle.y + cellRectangle.height - cellPadding.bottom - rowHeights[2],
+                rowHeights);
         
         // Size of the content area and size of the available space in the content area
-        double contentAreaHeight = cellRectangle.height - cellPadding.top - cellPadding.bottom;
+        double freeContentAreaHeight = cellRectangle.height - cellPadding.top - cellPadding.bottom;
         
-        double contentAreaFreeHeight = contentAreaHeight;
-        if (minHeightOuterRows > 0) {
-            contentAreaFreeHeight -= 2 * (minHeightOuterRows + gap);
+        if (rowHeights[0] > 0) {
+            rowHeights[0] += gap;
+            freeContentAreaHeight -= rowHeights[0];
         }
         
+        if (rowHeights[2] > 0) {
+            rowHeights[2] += gap;
+            freeContentAreaHeight -= rowHeights[2];
+        }
+        
+        // Compute the center cell rectangle
+        centerCellRect.height = Math.max(0, freeContentAreaHeight);
+        centerCellRect.y = cellRectangle.y + cellPadding.top + (centerCellRect.height - freeContentAreaHeight) / 2;
+        
         // If the available space is larger than the current size of the center cell, enlarge that thing
-        minHeightCenterRow = Math.max(minHeightCenterRow, contentAreaFreeHeight);
+        rowHeights[1] = Math.max(rowHeights[1], freeContentAreaHeight);
 
         // Place the center cell, possibly enlarging it in the process
         applyVerticalLayout(ContainerArea.CENTER,
-                cellRectangle.y + cellPadding.top + (contentAreaHeight - minHeightCenterRow) / 2,
-                minHeightCenterRow);
-        
-        // Update y coordinate and height of the center cell rectangle
-        computeCenterCellRectangleVertically(minHeightOuterRows);
+                cellRectangle.y + cellPadding.top + rowHeights[0] - (rowHeights[1] - freeContentAreaHeight) / 2,
+                rowHeights);
     }
     
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Utility Methods
+    
+    /**
+     * Returns an array containing the width of each column, with symmetry applied if activated.
+     */
+    private double[] minColumnWidths(final boolean respectContributionFlag) {
+        double[] colWidths = {
+                minWidthOfColumn(ContainerArea.BEGIN, respectContributionFlag),
+                minWidthOfColumn(ContainerArea.CENTER, respectContributionFlag),
+                minWidthOfColumn(ContainerArea.END, respectContributionFlag)
+        };
+        
+        // If we are to be symmetrical, the outer cells need to be the same size
+        if (symmetrical) {
+            colWidths[0] = Math.max(colWidths[0], colWidths[2]);
+            colWidths[2] = colWidths[0];
+        }
+        
+        return colWidths;
+    }
+    
+    /**
+     * Returns an array containing the height of each row, with symmetry applied if activated.
+     */
+    private double[] minRowHeights(final boolean respectContributionFlag) {
+        double[] rowHeights = {
+                minHeightOfRow(ContainerArea.BEGIN, respectContributionFlag),
+                minHeightOfRow(ContainerArea.CENTER, respectContributionFlag),
+                minHeightOfRow(ContainerArea.END, respectContributionFlag)
+        };
+        
+        // If we are to be symmetrical, the outer cells need to be the same size
+        if (symmetrical) {
+            rowHeights[0] = Math.max(rowHeights[0], rowHeights[2]);
+            rowHeights[2] = rowHeights[0];
+        }
+        
+        return rowHeights;
+    }
     
     /**
      * Returns the minimum width of the given column.
@@ -334,9 +383,9 @@ public class GridContainerCell extends ContainerCell {
      * Calls {@link ContainerCell#applyHorizontalLayout(Cell, double, double)} with the given information on all cells
      * in the given column.
      */
-    private void applyHorizontalLayout(final ContainerArea column, final double x, final double width) {
+    private void applyHorizontalLayout(final ContainerArea column, final double x, final double[] colWidths) {
         for (int row = 0; row < ROWS; row++) {
-            applyHorizontalLayout(cells[row][column.ordinal()], x, width);
+            applyHorizontalLayout(cells[row][column.ordinal()], x, colWidths[column.ordinal()]);
         }
     }
     
@@ -344,56 +393,10 @@ public class GridContainerCell extends ContainerCell {
      * Calls {@link ContainerCell#applyVerticalLayout(Cell, double, double)} with the given information on all cells
      * in the given row.
      */
-    private void applyVerticalLayout(final ContainerArea row, final double y, final double height) {
+    private void applyVerticalLayout(final ContainerArea row, final double y, final double[] rowHeights) {
         for (int column = 0; column < COLUMNS; column++) {
-            applyVerticalLayout(cells[row.ordinal()][column], y, height);
+            applyVerticalLayout(cells[row.ordinal()][column], y, rowHeights[row.ordinal()]);
         }
-    }
-    
-    /**
-     * Computes the width and the x coordinate of the center cell rectangle.
-     */
-    private void computeCenterCellRectangleHorizontally(final double outerColumnWidth) {
-        ElkRectangle cellRect = this.getCellRectangle();
-        ElkPadding cellPadding = this.getPadding();
-        
-        // If there are outer columns, we need to include the gap
-        double effectiveOuterColumnWidth = outerColumnWidth == 0
-                ? 0
-                : outerColumnWidth + gap;
-        
-        // Calculate how much space we really have for the grid
-        double effectiveGridWidth = cellRect.width - cellPadding.left - cellPadding.right;
-        
-        // The width is basically what remains when we subtract the grid's padding and the outer columns from the
-        // grid's width
-        centerCellRect.width = Math.max(
-                0,
-                effectiveGridWidth - 2 * effectiveOuterColumnWidth);
-        centerCellRect.x = cellRect.x + cellPadding.left + (effectiveGridWidth - centerCellRect.width) / 2;
-    }
-    
-    /**
-     * Computes the height and the y coordinate of the center cell rectangle.
-     */
-    private void computeCenterCellRectangleVertically(final double outerRowHeight) {
-        ElkRectangle cellRect = this.getCellRectangle();
-        ElkPadding cellPadding = this.getPadding();
-        
-        // If there are outer columns, we need to include the gap
-        double effectiveOuterRowHeight = outerRowHeight == 0
-                ? 0
-                : outerRowHeight + gap;
-        
-        // Calculate how much space we really have for the grid
-        double effectiveGridHeight = cellRect.height - cellPadding.top - cellPadding.bottom;
-        
-        // The height is basically what remains when we subtract the grid's padding and the outer rows from the
-        // grid's height
-        centerCellRect.height = Math.max(
-                0,
-                effectiveGridHeight - 2 * effectiveOuterRowHeight);
-        centerCellRect.y = cellRect.y + cellPadding.top + (effectiveGridHeight - centerCellRect.height) / 2;
     }
     
 }

@@ -133,7 +133,6 @@ public final class NodeContext {
                 parentGraph, node, CoreOptions.SPACING_LABEL_NODE);
         labelLabelSpacing = IndividualSpacings.getIndividualOrInherited(
                 parentGraph, node, CoreOptions.SPACING_LABEL_LABEL);
-        labelCellSpacing = 2 * labelLabelSpacing;
         portPortSpacing = IndividualSpacings.getIndividualOrInherited(
                 parentGraph, node, CoreOptions.SPACING_PORT_PORT);
         portLabelSpacing = IndividualSpacings.getIndividualOrInherited(
@@ -141,10 +140,13 @@ public final class NodeContext {
         surroundingPortMargins = IndividualSpacings.getIndividualOrInherited(
                 parentGraph, node, CoreOptions.SPACING_PORT_SURROUNDING);
         
-        // Create main cells (the others will be created later)
-        nodeContainer = new StripContainerCell(Strip.VERTICAL, 0);
+        labelCellSpacing = 2 * labelLabelSpacing;
         
-        nodeContainerMiddleRow = new StripContainerCell(Strip.HORIZONTAL, 0);
+        // Create main cells (the others will be created later)
+        boolean symmetry = !sizeOptions.contains(SizeOptions.ASYMMETRICAL);
+        nodeContainer = new StripContainerCell(Strip.VERTICAL, symmetry, 0);
+        
+        nodeContainerMiddleRow = new StripContainerCell(Strip.HORIZONTAL, symmetry, 0);
         nodeContainer.setCell(ContainerArea.CENTER, nodeContainerMiddleRow);
     }
     

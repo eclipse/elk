@@ -15,6 +15,7 @@ import java.util.Set;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
@@ -88,8 +89,10 @@ public final class NodeLabelCellCreator {
      * Creates all node label containers.
      */
     private static void createNodeLabelCellContainers(final NodeContext nodeContext, final boolean onlyInside) {
+        boolean symmetry = !nodeContext.sizeOptions.contains(SizeOptions.ASYMMETRICAL);
+        
         // Inside container
-        nodeContext.insideNodeLabelContainer = new GridContainerCell(nodeContext.labelCellSpacing);
+        nodeContext.insideNodeLabelContainer = new GridContainerCell(symmetry, nodeContext.labelCellSpacing);
         if (nodeContext.nodeLabelsPadding != null) {
             nodeContext.insideNodeLabelContainer.getPadding().copy(nodeContext.nodeLabelsPadding);
         }
@@ -97,19 +100,23 @@ public final class NodeLabelCellCreator {
         
         // Outside containers, if requested
         if (!onlyInside) {
-            StripContainerCell northContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelCellSpacing);
+            StripContainerCell northContainer = new StripContainerCell(
+                    Strip.HORIZONTAL, symmetry, nodeContext.labelCellSpacing);
             northContainer.getPadding().bottom = nodeContext.nodeLabelSpacing;
             nodeContext.outsideNodeLabelContainers.put(PortSide.NORTH, northContainer);
             
-            StripContainerCell southContainer = new StripContainerCell(Strip.HORIZONTAL, nodeContext.labelCellSpacing);
+            StripContainerCell southContainer = new StripContainerCell(
+                    Strip.HORIZONTAL, symmetry, nodeContext.labelCellSpacing);
             southContainer.getPadding().top = nodeContext.nodeLabelSpacing;
             nodeContext.outsideNodeLabelContainers.put(PortSide.SOUTH, southContainer);
             
-            StripContainerCell westContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelCellSpacing);
+            StripContainerCell westContainer = new StripContainerCell(
+                    Strip.VERTICAL, symmetry, nodeContext.labelCellSpacing);
             westContainer.getPadding().right = nodeContext.nodeLabelSpacing;
             nodeContext.outsideNodeLabelContainers.put(PortSide.WEST, westContainer);
             
-            StripContainerCell eastContainer = new StripContainerCell(Strip.VERTICAL, nodeContext.labelCellSpacing);
+            StripContainerCell eastContainer = new StripContainerCell(
+                    Strip.VERTICAL, symmetry, nodeContext.labelCellSpacing);
             eastContainer.getPadding().left = nodeContext.nodeLabelSpacing;
             nodeContext.outsideNodeLabelContainers.put(PortSide.EAST, eastContainer);
         }

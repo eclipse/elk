@@ -62,12 +62,12 @@ public enum SizeOptions {
     UNIFORM_PORT_SPACING,
     
     /**
-     * If this option is set, the node sizing and label placement code will make an attempt to achieve a symmetrical
-     * layout. With this option active, for example, the space reserved for left inside port labels will be the same
-     * as for right inside port labels, which would not be the case otherwise. Activating this option will also ensure
+     * If this option is set, the node sizing and label placement code will not make an attempt to achieve a symmetrical
+     * layout. With this option inactive, for example, the space reserved for left inside port labels will be the same
+     * as for right inside port labels, which would not be the case otherwise. Deactivating this option will also ensure
      * that center node labels will actually be placed in the center.
      */
-    SYMMETRY;
+    ASYMMETRICAL;
     
     /**
      * Returns the enumeration value related to the given ordinal.

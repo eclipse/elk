@@ -29,6 +29,8 @@ public class StripContainerCell extends ContainerCell {
     
     /** Whether we lay children out in rows or columns. */
     private final Strip containerMode;
+    /** Whether the outer cells should be the same width org height. */
+    private final boolean symmetrical;
     /** A container cell can include gaps between its children when calculating its preferred size. */
     private final double gap;
     /** A container cell consists of a number of cells that make up its content. */
@@ -43,11 +45,14 @@ public class StripContainerCell extends ContainerCell {
      * 
      * @param mode
      *            whether to lay out children as rows or as columns.
+     * @param symmetrical
+     *            whether the outer columns should be the same width and the outer rows be the same height.
      * @param gap
      *            the gap inserted between each pair of consecutive cells.
      */
-    public StripContainerCell(final Strip mode, final double gap) {
+    public StripContainerCell(final Strip mode, final boolean symmetrical, final double gap) {
         this.containerMode = mode;
+        this.symmetrical = symmetrical;
         this.gap = gap;
     }
     
@@ -111,19 +116,21 @@ public class StripContainerCell extends ContainerCell {
                     .max()
                     .orElse(0);
         } else {
-            // Minimum widths of the center cell and the outer cells
-            double minWidthCenterCell = minWidthOfCell(cells[1], true);
-            double minWidthOuterCells = Math.max(minWidthOfCell(cells[0], true), minWidthOfCell(cells[2], true));
+            // Minimum widths of the different cells
+            double[] cellWidths = minCellWidths(true);
             
-            // We need to distinguish which cells exist
-            if (minWidthOuterCells == 0) {
-                width = minWidthCenterCell;
-            } else {
-                if (minWidthCenterCell != 0) {
-                    width = minWidthCenterCell + 2 * (minWidthOuterCells + gap);
-                } else {
-                    width = 2 * minWidthOuterCells + gap;
+            // Keep track of how many cells we have
+            int activeCells = 0;
+            for (double cellWidth : cellWidths) {
+                if (cellWidth > 0) {
+                    width += cellWidth;
+                    activeCells++;
                 }
+            }
+            
+            // If there is more than a single cell, add necessary gaps
+            if (activeCells > 1) {
+                width += gap * (activeCells - 1);
             }
         }
         
@@ -141,19 +148,21 @@ public class StripContainerCell extends ContainerCell {
         double height = 0;
         
         if (containerMode == Strip.VERTICAL) {
-            // Minimum heights of the center cell and the outer cells
-            double minHeightCenterCell = minHeightOfCell(cells[1], true);
-            double minHeightOuterCells = Math.max(minHeightOfCell(cells[0], true), minHeightOfCell(cells[2], true));
+            // Minimum heights of the different cells
+            double[] cellHeights = minCellHeights(true);
             
-            // We need to distinguish which cells exist
-            if (minHeightOuterCells == 0) {
-                height = minHeightCenterCell;
-            } else {
-                if (minHeightCenterCell != 0) {
-                    height = minHeightCenterCell + 2 * (minHeightOuterCells + gap);
-                } else {
-                    height = 2 * minHeightOuterCells + gap;
+            // Keep track of how many cells we have
+            int activeCells = 0;
+            for (double cellHeight : cellHeights) {
+                if (cellHeight > 0) {
+                    height += cellHeight;
+                    activeCells++;
                 }
+            }
+            
+            // If there is more than a single cell, add necessary gaps
+            if (activeCells > 1) {
+                height += gap * (activeCells - 1);
             }
         } else {
             // Take the maximum of the child cells
@@ -187,34 +196,37 @@ public class StripContainerCell extends ContainerCell {
                 applyHorizontalLayout(childCell, xPos, width);
             }
         } else {
-            double minWidthLeftCell = minWidthOfCell(cells[0], false);
-            double minWidthCenterCell = minWidthOfCell(cells[1], false);
-            double minWidthRightCell = minWidthOfCell(cells[2], false);
-            double minWidthOuterCells = Math.max(minWidthLeftCell, minWidthRightCell);
+            double[] cellWidths = minCellWidths(false);
             
             // Left cell is left-aligned with our content area, right cell is right-aligned
             applyHorizontalLayout(cells[0],
                     cellRectangle.x + cellPadding.left,
-                    minWidthOuterCells);
+                    cellWidths[0]);
             applyHorizontalLayout(cells[2],
-                    cellRectangle.x + cellRectangle.width - cellPadding.right - minWidthOuterCells,
-                    minWidthOuterCells);
+                    cellRectangle.x + cellRectangle.width - cellPadding.right - cellWidths[2],
+                    cellWidths[2]);
             
             // Size of the content area and size of the available space in the content area
-            double contentAreaWidth = cellRectangle.width - cellPadding.left - cellPadding.right;
+            double freeContentAreaWidth = cellRectangle.width - cellPadding.left - cellPadding.right;
             
-            double contentAreaFreeWidth = contentAreaWidth;
-            if (minWidthOuterCells > 0) {
-                contentAreaFreeWidth -= 2 * (minWidthOuterCells + gap);
+            if (cellWidths[0] > 0) {
+                freeContentAreaWidth -= cellWidths[0] + gap;
+                
+                // We add the gap here because that will spare us to check if cellWidths[0] is zero later on
+                cellWidths[0] += gap;
+            }
+
+            if (cellWidths[2] > 0) {
+                freeContentAreaWidth -= cellWidths[2] + gap;
             }
             
             // If the available space is larger than the current size of the center cell, enlarge that thing
-            minWidthCenterCell = Math.max(minWidthCenterCell, contentAreaFreeWidth);
+            cellWidths[1] = Math.max(cellWidths[1], freeContentAreaWidth);
 
             // Place the center cell, possibly enlarging it in the process
             applyHorizontalLayout(cells[1],
-                    cellRectangle.x + cellPadding.left + (contentAreaWidth - minWidthCenterCell) / 2,
-                    minWidthCenterCell);
+                    cellRectangle.x + cellPadding.left + cellWidths[0] - (cellWidths[1] - freeContentAreaWidth) / 2,
+                    cellWidths[1]);
         }
         
         // Layout container cells recursively
@@ -234,34 +246,37 @@ public class StripContainerCell extends ContainerCell {
         ElkPadding cellPadding = getPadding();
         
         if (containerMode == Strip.VERTICAL) {
-            double minHeightLeftCell = minHeightOfCell(cells[0], false);
-            double minHeightCenterCell = minHeightOfCell(cells[1], false);
-            double minHeightRightCell = minHeightOfCell(cells[2], false);
-            double minHeightOuterCells = Math.max(minHeightLeftCell, minHeightRightCell);
+            double[] cellHeights = minCellHeights(false);
             
             // Top cell is top-aligned with our content area, bottom cell is bottom-aligned
             applyVerticalLayout(cells[0],
                     cellRectangle.y + cellPadding.top,
-                    minHeightOuterCells);
+                    cellHeights[0]);
             applyVerticalLayout(cells[2],
-                    cellRectangle.y + cellRectangle.height - cellPadding.bottom - minHeightOuterCells,
-                    minHeightOuterCells);
+                    cellRectangle.y + cellRectangle.height - cellPadding.bottom - cellHeights[2],
+                    cellHeights[2]);
             
             // Size of the content area and size of the available space in the content area
             double contentAreaHeight = cellRectangle.height - cellPadding.top - cellPadding.bottom;
-            
             double contentAreaFreeHeight = contentAreaHeight;
-            if (minHeightOuterCells > 0) {
-                contentAreaFreeHeight -= 2 * (minHeightOuterCells + gap);
+            
+            if (cellHeights[0] > 0) {
+                // We add the gap here because that will spare us to check if cellHeights[0] is zero later on
+                cellHeights[0] += gap;
+                contentAreaFreeHeight -= cellHeights[0];
+            }
+
+            if (cellHeights[2] > 0) {
+                contentAreaFreeHeight -= cellHeights[2] + gap;
             }
             
             // If the available space is larger than the current size of the center cell, enlarge that thing
-            minHeightCenterCell = Math.max(minHeightCenterCell, contentAreaFreeHeight);
+            cellHeights[1] = Math.max(cellHeights[1], contentAreaFreeHeight);
 
             // Place the center cell, possibly enlarging it in the process
             applyVerticalLayout(cells[1],
-                    cellRectangle.y + cellPadding.top + (contentAreaHeight - minHeightCenterCell) / 2,
-                    minHeightCenterCell);
+                    cellRectangle.y + cellPadding.top + cellHeights[0] - (cellHeights[1] - contentAreaFreeHeight) / 2,
+                    cellHeights[1]);
         } else {
             // Each child cell begins at our top border (plus padding) and is as large as our content area
             double yPos = cellRectangle.y + cellPadding.top;
@@ -282,7 +297,45 @@ public class StripContainerCell extends ContainerCell {
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Utility Classes
+    // Utilities
+    
+    /**
+     * Returns an array containing the width of each cell, with symmetry applied if activated.
+     */
+    private double[] minCellWidths(final boolean respectContributionFlag) {
+        double[] cellWidths = {
+                minWidthOfCell(cells[0], respectContributionFlag),
+                minWidthOfCell(cells[1], respectContributionFlag),
+                minWidthOfCell(cells[2], respectContributionFlag)
+        };
+        
+        // If we are to be symmetrical, the outer cells need to be the same size
+        if (symmetrical) {
+            cellWidths[0] = Math.max(cellWidths[0], cellWidths[2]);
+            cellWidths[2] = cellWidths[0];
+        }
+        
+        return cellWidths;
+    }
+    
+    /**
+     * Returns an array containing the height of each cell, with symmetry applied if activated.
+     */
+    private double[] minCellHeights(final boolean respectContributionFlag) {
+        double[] cellHeights = {
+                minHeightOfCell(cells[0], respectContributionFlag),
+                minHeightOfCell(cells[1], respectContributionFlag),
+                minHeightOfCell(cells[2], respectContributionFlag)
+        };
+        
+        // If we are to be symmetrical, the outer cells need to be the same size
+        if (symmetrical) {
+            cellHeights[0] = Math.max(cellHeights[0], cellHeights[2]);
+            cellHeights[2] = cellHeights[0];
+        }
+        
+        return cellHeights;
+    }
 
     /**
      * The mode of a {@link StripContainerCell} describes whether its child cells are to be regarded as rows or as
