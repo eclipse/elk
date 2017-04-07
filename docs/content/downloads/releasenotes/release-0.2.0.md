@@ -1,10 +1,18 @@
 ---
-title: "Release 0.2.0"
+title: "0.2.0"
 menu:
   main:
     parent: "ReleaseNotes"
     weight: 20
 ---
+
+* [Release log](https://projects.eclipse.org/projects/modeling.elk/releases/0.2.0)
+* [Update site](http://download.eclipse.org/elk/updates/releases/0.2.0/)
+* [Zipped update site](http://download.eclipse.org/elk/updates/releases/0.2.0/elk-0.2.0.zip) (for offline use)
+* [Maven Repository](http://download.eclipse.org/elk/maven/releases/0.2.0) (for meta data language compiler)
+
+
+## DEtails
 
 A major overhaul of ELK's infrastructure. This is an API breaking release. The following are probably the biggest issues we tackled:
 

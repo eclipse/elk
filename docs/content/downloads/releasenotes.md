@@ -1,5 +1,5 @@
 ---
-title: "Release Notes"
+title: "Releases"
 menu:
   main:
     identifier: "ReleaseNotes"

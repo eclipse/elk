@@ -1,10 +1,18 @@
 ---
-title: "Release 0.1.1"
+title: "0.1.1"
 menu:
   main:
     parent: "ReleaseNotes"
     weight: 11
 ---
+
+* [Release log](https://projects.eclipse.org/projects/modeling.elk/releases/0.1.1)
+* [Update site](http://download.eclipse.org/elk/updates/releases/0.1.1/)
+* [Zipped update site](http://download.eclipse.org/elk/updates/releases/0.1.1/elk-0.1.1.zip) (for offline use)
+* [Maven Repository](http://download.eclipse.org/elk/maven/releases/0.1.1) (for meta data language compiler)
+
+
+## Details
 
 A bugfix release.
 
