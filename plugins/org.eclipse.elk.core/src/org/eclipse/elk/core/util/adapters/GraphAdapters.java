@@ -127,6 +127,11 @@ public interface GraphAdapters {
     public interface NodeAdapter<T> extends GraphElementAdapter<T> {
         
         /**
+         * @return the node's parent graph. Can be {@code null} if the node has no parent graph.
+         */
+        GraphAdapter<?> getGraph();
+        
+        /**
          * @return the labels of the node wrapped in adapters.
          */
         Iterable<LabelAdapter<?>> getLabels();

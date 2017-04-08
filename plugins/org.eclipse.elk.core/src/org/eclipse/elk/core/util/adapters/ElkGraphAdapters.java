@@ -71,7 +71,7 @@ public final class ElkGraphAdapters {
      * @return an {@link ElkNodeAdapter} for the passed node.
      */
     public static ElkNodeAdapter adaptSingleNode(final ElkNode node) {
-        return new ElkNodeAdapter(node);
+        return new ElkNodeAdapter(null, node);
     }
 
     /**
@@ -238,7 +238,7 @@ public final class ElkGraphAdapters {
             if (childNodes == null) {
                 childNodes = Lists.newArrayListWithExpectedSize(element.getChildren().size());
                 for (ElkNode n : element.getChildren()) {
-                    childNodes.add(new ElkNodeAdapter(n));
+                    childNodes.add(new ElkNodeAdapter(this, n));
                 }
             }
             return childNodes;
@@ -251,6 +251,8 @@ public final class ElkGraphAdapters {
     public static final class ElkNodeAdapter extends AbstractElkGraphElementAdapter<ElkNode> implements
             NodeAdapter<ElkNode> {
         
+        /** The graph adapter that created this node adapter. */
+        private ElkGraphAdapter parentGraphAdapter = null;
         /** Cached list of label adapters. */
         private List<LabelAdapter<?>> labelAdapters = null;
         /** Cached list of port adapters. */
@@ -264,14 +266,24 @@ public final class ElkGraphAdapters {
         /**
          * Creates a new adapter for the given node.
          * 
+         * @param parent
+         *            the graph adapter that created this thing.
          * @param node
          *            the node to adapt.
          */
-        private ElkNodeAdapter(final ElkNode node) {
+        private ElkNodeAdapter(final ElkGraphAdapter parent, final ElkNode node) {
             super(node);
+            parentGraphAdapter = parent;
         }
         
 
+        /**
+         * {@inheritDoc}
+         */
+        public GraphAdapter<?> getGraph() {
+            return parentGraphAdapter;
+        }
+        
         /**
          * {@inheritDoc}
          */
