@@ -97,8 +97,12 @@ public final class PortLabelPlacementCalculator {
         // For northern and southern port labels, we need to set the inside port label cell's client height later
         double insideNorthOrSouthPortLabelAreaHeight = 0;
         
-        // Retrieve the port border offset for the given port side
+        // If the node is a compound node, we make an effort to place port labels such that edges won't cross them
+        boolean compoundNodeMode = nodeContext.node.isCompoundNode();
+        
+        // Some spacings we may need later
         double labelBorderOffset = portLabelBorderOffsetForPortSide(nodeContext, portSide);
+        double portLabelSpacing = nodeContext.portLabelSpacing;
         
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
             // If the port doesn't have labels, skip
@@ -122,14 +126,14 @@ public final class PortLabelPlacementCalculator {
             // Calculate the position of the port's label cell
             switch (portSide) {
             case NORTH:
-                portLabelCellRect.x = -(portLabelCellRect.width - portSize.x) / 2;
+                portLabelCellRect.x = (portSize.x - portLabelCellRect.width) / 2;
                 portLabelCellRect.y = portSize.y + portBorderOffset + labelBorderOffset;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.TOP);
                 break;
                 
             case SOUTH:
-                portLabelCellRect.x = -(portLabelCellRect.width - portSize.x) / 2;
+                portLabelCellRect.x = (portSize.x - portLabelCellRect.width) / 2;
                 portLabelCellRect.y = -portBorderOffset - labelBorderOffset - portLabelCellRect.height;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.CENTER);
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
@@ -137,14 +141,18 @@ public final class PortLabelPlacementCalculator {
                 
             case EAST:
                 portLabelCellRect.x = -portBorderOffset - labelBorderOffset - portLabelCellRect.width;
-                portLabelCellRect.y = -(portLabelCellRect.height - portSize.y) / 2;
+                portLabelCellRect.y = compoundNodeMode
+                        ? portSize.y + portLabelSpacing
+                        : (portSize.y - portLabelCellRect.height) / 2;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
                 break;
                 
             case WEST:
                 portLabelCellRect.x = portSize.x + portBorderOffset + labelBorderOffset;
-                portLabelCellRect.y = -(portLabelCellRect.height - portSize.y) / 2;
+                portLabelCellRect.y = compoundNodeMode
+                        ? portSize.y + portLabelSpacing
+                        : (portSize.y - portLabelCellRect.height) / 2;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.LEFT);
                 portLabelCell.setVerticalAlignment(VerticalLabelAlignment.CENTER);
                 break;
@@ -202,7 +210,7 @@ public final class PortLabelPlacementCalculator {
     
         // If it's neither the northern nor the southern side, simply revert to simple port label placement
         if (portSide == PortSide.EAST || portSide == PortSide.WEST) {
-            simpleOutsidePortLabelPlacement(nodeContext, portSide);
+            simpleInsidePortLabelPlacement(nodeContext, portSide);
             return;
         }
         
