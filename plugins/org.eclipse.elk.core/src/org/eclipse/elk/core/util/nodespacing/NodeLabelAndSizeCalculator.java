@@ -11,7 +11,6 @@
 package org.eclipse.elk.core.util.nodespacing;
 
 import org.eclipse.elk.core.math.ElkPadding;
-import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
