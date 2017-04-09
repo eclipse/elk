@@ -18,6 +18,7 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IFactory;
 import org.eclipse.elk.core.util.InstancePool;
 import org.eclipse.elk.graph.properties.GraphFeature;
+import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Maps;
 
@@ -47,8 +48,8 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     /** Set of supported graph features. */
     private final Set<GraphFeature> supportedFeatures;
     
-    /** Map of known layout options. Keys are option data, values are the default values. */
-    private final Map<LayoutOptionData, Object> knownOptions = Maps.newHashMap();
+    /** Map of known layout options. Keys are option IDs, values are the default values. */
+    private final Map<String, Object> knownOptions = Maps.newHashMap();
     
     /**
      * Create a layout algorithm data entry.
@@ -99,31 +100,60 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
      * Sets the knowledge status of the given layout option. This method should be called only from
      * {@link ILayoutMetaDataProvider} implementations.
      * 
-     * @param optionData layout option data
+     * @param property layout option
      * @param defaultValue the default value, or {@code null} if none is specified
      */
-    public void addKnownOption(final LayoutOptionData optionData, final Object defaultValue) {
-        knownOptions.put(optionData, defaultValue);
+    public void addKnownOption(final IProperty<?> property, final Object defaultValue) {
+        knownOptions.put(property.getId(), defaultValue);
+    }
+    
+    /**
+     * Returns the set of IDs of layout options declared to be known by this algorithm.
+     * 
+     * @return set of known layout option IDs.
+     */
+    public Set<String> getKnownOptionIds() {
+        return knownOptions.keySet();
     }
     
     /**
      * Determines whether the layout algorithm knows the given layout option.
      * 
-     * @param optionData layout option data
+     * @param property layout option
      * @return true if the associated layout algorithm knows the option
      */
-    public boolean knowsOption(final LayoutOptionData optionData) {
-        return knownOptions.containsKey(optionData);
+    public boolean knowsOption(final IProperty<?> property) {
+        return knowsOption(property.getId());
+    }
+    
+    /**
+     * Determines whether the layout algorithm knows the given layout option.
+     * 
+     * @param propertyId layout option id.
+     * @return true if the associated layout algorithm knows the option
+     */
+    public boolean knowsOption(final String propertyId) {
+        return knownOptions.containsKey(propertyId);
     }
     
     /**
      * Returns the layout algorithm's default value for the given option.
      * 
-     * @param optionData layout option data
+     * @param property layout option
      * @return the associated default value, or {@code null} if there is none
      */
-    public Object getDefaultValue(final LayoutOptionData optionData) {
-        return knownOptions.get(optionData);
+    public Object getDefaultValue(final IProperty<?> property) {
+        return getDefaultValue(property.getId());
+    }
+    
+    /**
+     * Returns the layout algorithm's default value for the given option.
+     * 
+     * @param propertyId layout option id.
+     * @return the associated default value, or {@code null} if there is none
+     */
+    public Object getDefaultValue(final String propertyId) {
+        return knownOptions.get(propertyId);
     }
     
     /**

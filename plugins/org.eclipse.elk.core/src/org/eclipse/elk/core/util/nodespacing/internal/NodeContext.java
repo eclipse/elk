@@ -127,18 +127,13 @@ public final class NodeContext {
         nodeLabelPlacement = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
         
         // Copy spacings for convenience
-        nodeLabelsPadding = IndividualSpacings.getIndividualOrInherited(
-                parentGraph, node, CoreOptions.NODE_LABELS_PADDING);
-        nodeLabelSpacing = IndividualSpacings.getIndividualOrInherited(
-                parentGraph, node, CoreOptions.SPACING_LABEL_NODE);
-        labelLabelSpacing = IndividualSpacings.getIndividualOrInherited(
-                parentGraph, node, CoreOptions.SPACING_LABEL_LABEL);
-        portPortSpacing = IndividualSpacings.getIndividualOrInherited(
-                parentGraph, node, CoreOptions.SPACING_PORT_PORT);
-        portLabelSpacing = IndividualSpacings.getIndividualOrInherited(
-                parentGraph, node, CoreOptions.SPACING_LABEL_PORT);
+        nodeLabelsPadding = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.NODE_LABELS_PADDING);
+        nodeLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_NODE);
+        labelLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_LABEL);
+        portPortSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_PORT_PORT);
+        portLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_PORT);
         surroundingPortMargins = IndividualSpacings.getIndividualOrInherited(
-                parentGraph, node, CoreOptions.SPACING_PORT_SURROUNDING);
+                node, CoreOptions.SPACING_PORT_SURROUNDING);
         
         labelCellSpacing = 2 * labelLabelSpacing;
         
