@@ -47,7 +47,7 @@ public class PlainLayoutTest {
 
         // initialize the meta data service with ELK Layered's meta data
         LayoutMetaDataService service = LayoutMetaDataService.getInstance();
-        service.registerLayoutMetaDataProvider(new LayeredOptions());
+        service.registerLayoutMetaDataProviders(new LayeredOptions());
 
         // instantiate a recursive graph layout engine and execute layout
         RecursiveGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();

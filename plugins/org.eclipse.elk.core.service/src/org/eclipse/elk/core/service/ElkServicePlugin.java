@@ -125,7 +125,7 @@ public final class ElkServicePlugin extends AbstractUIPlugin {
                             element.createExecutableExtension(ATTRIBUTE_CLASS);
                     
                     if (provider != null) {
-                        service.registerLayoutMetaDataProvider(provider);
+                        service.registerLayoutMetaDataProviders(provider);
                     }
                 }
             } catch (CoreException exception) {

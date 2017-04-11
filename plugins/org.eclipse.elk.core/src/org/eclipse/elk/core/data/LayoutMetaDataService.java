@@ -44,7 +44,7 @@ public class LayoutMetaDataService {
             instance = new LayoutMetaDataService();
             
             // We always load our core options
-            instance.registerLayoutMetaDataProvider(new CoreOptions());
+            instance.registerLayoutMetaDataProviders(new CoreOptions());
 
             // Try to make the ELK service plug-in load the extension point data
             try {
@@ -97,17 +97,19 @@ public class LayoutMetaDataService {
     private final Map<String, LayoutOptionData> optionSuffixMap = Maps.newHashMap();
 
     /**
-     * Registers the data provided by the given meta data provider with the meta data service. This method doesn't need
-     * to be called if ELK is used in an Eclipse context, since the service plug-in automatically registers all
+     * Registers the data provided by the given meta data providers with the meta data service. This method doesn't
+     * need to be called if ELK is used in an Eclipse context, since the service plug-in automatically registers all
      * providers known through the {@code layoutProviders} extension point.
      * 
-     * @param provider
-     *            the provider.
+     * @param providers
+     *            the providers to register.
      */
-    public final void registerLayoutMetaDataProvider(final ILayoutMetaDataProvider provider) {
-        Registry registry = new Registry();
-        provider.apply(registry);
-        registry.applyDependencies();
+    public final void registerLayoutMetaDataProviders(final ILayoutMetaDataProvider... providers) {
+        for (ILayoutMetaDataProvider provider : providers) {
+            Registry registry = new Registry();
+            provider.apply(registry);
+            registry.applyDependencies();
+        }
     }
 
     /**
