@@ -326,7 +326,7 @@ group spacing {
 	    description 
 	       "Spacing to be preserved between labels and the ports they are associated with. 
             Note that the placement of a label is influenced by the 'portlabels.placement' option."
-        default = 3
+        default = 1
         lowerBound = 0.0
         targets parents
 	}
@@ -365,7 +365,7 @@ group spacing {
 			this option can reserve additional space before and after the ports on each side. For
 			example, a top spacing of 20 makes sure that the first port on the western and eastern
 			side is 20 units away from the northern border."
-		default = new ElkMargin()
+		default = new ElkMargin(4)
 		targets nodes
 	}
 }
