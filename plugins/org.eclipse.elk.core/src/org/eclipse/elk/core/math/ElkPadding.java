@@ -47,16 +47,6 @@ public class ElkPadding extends Spacing {
     public ElkPadding(final double leftRight, final double topBottom) {
         super(topBottom, leftRight, topBottom, leftRight);
     }
-    
-    /**
-     * Creates a new instance with all fields set to the value of {@code other}.
-     * 
-     * @param other
-     *            paddings object from which to copy the values.
-     */
-    public ElkPadding(final ElkPadding other) {
-        super(other.top, other.right, other.bottom, other.left);
-    }
 
     /**
      * Creates a new instance initialized with the given values.
@@ -72,5 +62,15 @@ public class ElkPadding extends Spacing {
      */
     public ElkPadding(final double top, final double right, final double bottom, final double left) {
         super(top, right, bottom, left);
+    }
+    
+    /**
+     * Creates a new instance with all fields set to the value of {@code other}.
+     * 
+     * @param other
+     *            paddings object from which to copy the values.
+     */
+    public ElkPadding(final ElkPadding other) {
+        super(other.top, other.right, other.bottom, other.left);
     }
 }
