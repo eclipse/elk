@@ -29,7 +29,6 @@ import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.Cell;
 import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
 import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.GridContainerCell;
 
-
 /**
  * Knows how to calculate the size of a node and how to place its ports. Takes all size constraints and options into
  * account.
