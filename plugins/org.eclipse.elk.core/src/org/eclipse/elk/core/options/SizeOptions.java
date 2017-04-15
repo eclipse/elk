@@ -55,6 +55,12 @@ public enum SizeOptions {
     OUTSIDE_NODE_LABELS_OVERHANG,
     
     /**
+     * By default, ports only use the space available to them, even if that means violating port spacing settings. If
+     * this option is active, port spacings are adhered to, even if that means ports extend beyond node boundaries.
+     */
+    PORTS_OVERHANG,
+    
+    /**
      * If port labels are taken into consideration, differently sized labels can result in a different amount of space
      * between different pairs of ports. This option causes all ports to be evenly spaced by enlarging the space
      * between every pair of ports to the larges amount of space between any pair of ports.

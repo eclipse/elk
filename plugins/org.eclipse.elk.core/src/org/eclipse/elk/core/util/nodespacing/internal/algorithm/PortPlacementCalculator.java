@@ -17,6 +17,7 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
@@ -137,26 +138,38 @@ public final class PortPlacementCalculator {
             portAlignment = PortAlignment.CENTER;
         }
         
-        // Calculate where we need to start placing ports (note that the node size required by the port placement
-        // includes left and right surrounding port margins, which changes the formulas a bit from what you'd
-        // otherwise expect)
-        switch (portAlignment) {
-        case BEGIN:
-            // There's nothing to do here
-            break;
+        // If there is not enough space to place the ports, we may have to adjust the port spacing to ensure we stay
+        // inside the boundaries
+        if (availableSpace < calculatedPortPlacementWidth
+                && !nodeContext.sizeOptions.contains(SizeOptions.PORTS_OVERHANG)) {
             
-        case CENTER:
-            currentXPos += (availableSpace - calculatedPortPlacementWidth) / 2;
-            break;
-            
-        case END:
-            currentXPos += availableSpace - calculatedPortPlacementWidth;
-            break;
-            
-        case JUSTIFIED:
             spaceBetweenPorts += (availableSpace - calculatedPortPlacementWidth)
                     / (nodeContext.portContexts.get(portSide).size() - 1);
-            break;
+        } else {
+            // Calculate where we need to start placing ports (note that the node size required by the port placement
+            // includes left and right surrounding port margins, which changes the formulas a bit from what you'd
+            // otherwise expect)
+            switch (portAlignment) {
+            case BEGIN:
+                // There's nothing to do here
+                break;
+                
+            case CENTER:
+                currentXPos += (availableSpace - calculatedPortPlacementWidth) / 2;
+                break;
+                
+            case END:
+                currentXPos += availableSpace - calculatedPortPlacementWidth;
+                break;
+                
+            case JUSTIFIED:
+                // In this case, if there is not enough space available to place the ports, we are allowed to overhang.
+                // We thus need to ensure that we're only ever increasing the port spacing here
+                double additionalSpaceBetweenPorts = (availableSpace - calculatedPortPlacementWidth)
+                        / (nodeContext.portContexts.get(portSide).size() - 1);
+                spaceBetweenPorts += Math.max(0, additionalSpaceBetweenPorts);
+                break;
+            }
         }
         
         // Iterate over all ports and place them
@@ -285,26 +298,38 @@ public final class PortPlacementCalculator {
             portAlignment = PortAlignment.CENTER;
         }
         
-        // Calculate where we need to start placing ports (note that the node size required by the port placement
-        // includes left and right surrounding port margins, which changes the formulas a bit from what you'd
-        // otherwise expect)
-        switch (portAlignment) {
-        case BEGIN:
-            // There's nothing to do here
-            break;
+        // If there is not enough space to place the ports, we may have to adjust the port spacing to ensure we stay
+        // inside the boundaries
+        if (availableSpace < calculatedPortPlacementHeight
+                && !nodeContext.sizeOptions.contains(SizeOptions.PORTS_OVERHANG)) {
             
-        case CENTER:
-            currentYPos += (availableSpace - calculatedPortPlacementHeight) / 2;
-            break;
-            
-        case END:
-            currentYPos += availableSpace - calculatedPortPlacementHeight;
-            break;
-            
-        case JUSTIFIED:
             spaceBetweenPorts += (availableSpace - calculatedPortPlacementHeight)
                     / (nodeContext.portContexts.get(portSide).size() - 1);
-            break;
+        } else {
+            // Calculate where we need to start placing ports (note that the node size required by the port placement
+            // includes left and right surrounding port margins, which changes the formulas a bit from what you'd
+            // otherwise expect)
+            switch (portAlignment) {
+            case BEGIN:
+                // There's nothing to do here
+                break;
+                
+            case CENTER:
+                currentYPos += (availableSpace - calculatedPortPlacementHeight) / 2;
+                break;
+                
+            case END:
+                currentYPos += availableSpace - calculatedPortPlacementHeight;
+                break;
+                
+            case JUSTIFIED:
+                // In this case, if there is not enough space available to place the ports, we are allowed to overhang.
+                // We thus need to ensure that we're only ever increasing the port spacing here
+                double additionalSpaceBetweenPorts = (availableSpace - calculatedPortPlacementHeight)
+                        / (nodeContext.portContexts.get(portSide).size() - 1);
+                spaceBetweenPorts += Math.max(0, additionalSpaceBetweenPorts);
+                break;
+            }
         }
         
         // Iterate over all ports and place them
