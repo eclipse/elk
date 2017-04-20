@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util.selection;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.elk.graph.ElkConnectableShape;
@@ -76,7 +77,7 @@ public class DefaultSelectionIterator extends SelectionIterator {
                 // return an empty iterator if no target/source port is configured
                 // or if the target/source port has been visited already, in order
                 // to break infinite loops
-                return Iterators.<ElkGraphElement>emptyIterator();
+                return Collections.emptyIterator();
             }
             
             ElkPort port = (ElkPort) connectedShape;
@@ -96,7 +97,7 @@ public class DefaultSelectionIterator extends SelectionIterator {
                 return resultEdges;
             }
         } else {
-            return Iterators.<ElkGraphElement>emptyIterator();
+            return Collections.emptyIterator();
         }
     }
 }
