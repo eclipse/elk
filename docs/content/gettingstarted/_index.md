@@ -26,7 +26,7 @@ First off, you will have to actually install ELK. Head over to our downloads sec
 
 Congratulations, you have just installed ELK! (wasn't that hard, I know) Now it's time to actually enable automatic layout for your editor. How this is done exactly differs depending on the technology your editor is based on.
 
-ELK works with a graph data structure called the KGraph. To enable layout, it needs to know how to extract the KGraph corresponding to the diagram the current editor shows. This is done by looking for an `IDiagramLayoutManager` registered for the current editor and asking it to provide the KGraph.
+ELK works with a graph data structure called the ElkGraph. To enable layout, it needs to know how to extract the ElkGraph corresponding to the diagram the current editor shows. This is done by looking for an `IDiagramLayoutManager` registered for the current editor and asking it to provide the ElkGraph.
 
 What exactly you need to do to connect ELK to your editor depends on the technology your editor is based on.
 
@@ -40,7 +40,7 @@ If your editor is GMF-based, you probably won't be having a hard time: ELK alrea
 
 ### Graphiti-Based Editors
 
-If your editor is based on Graphiti, you're in a similar situation as the GMF people: it may just work out of the box. However, the GraphitiDiagramLayoutManager that comes with ELK may not always make the right choices. In fact, you will most likely need to subclass it to customize how exactly the KGraph is built, and then register it with ELK so your custom manager is used for your editor. See the next section for how that is done.
+If your editor is based on Graphiti, you're in a similar situation as the GMF people: it may just work out of the box. However, the GraphitiDiagramLayoutManager that comes with ELK may not always make the right choices. In fact, you will most likely need to subclass it to customize how exactly the ElkGraph is built, and then register it with ELK so your custom manager is used for your editor. See the next section for how that is done.
 
 
 ### Custom Editors

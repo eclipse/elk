@@ -16,7 +16,7 @@ The rest of this page tries to give you an idea of what types ELK will request a
 
 * **`IDiagramLayoutConnector`**
 
-    This is the one interface you will definitely want to implement. Your connector will tell ELK how to turn your diagrams into a KGraph that ELK knows how to work with. Also, your connector knows how to apply the computed layout information back to your diagram.
+    This is the one interface you will definitely want to implement. Your connector will tell ELK how to turn your diagrams into an ElkGraph that ELK knows how to work with. Also, your connector knows how to apply the computed layout information back to your diagram.
 
 ## Nice to Have
 

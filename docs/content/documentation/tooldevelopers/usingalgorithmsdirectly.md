@@ -24,7 +24,7 @@ void dispose();
 
 Each layout algorithm provides a subclass of `AbstractLayoutProvider` that is the entry point to the algorithm. Using it is a matter of doing the following:
 
-1. Create an ElkGraph to be laid out (see our [graph documentation]({{< relref "documentation/tooldevelopers/graphdatastructure.md" >}}) for how to do so). The KGraph will be based on the diagram you want your application to display.
+1. Create an ElkGraph to be laid out (see our [graph documentation]({{< relref "documentation/tooldevelopers/graphdatastructure.md" >}}) for how to do so). The ElkGraph will be based on the diagram you want your application to display.
 
 1. Configure how the layout algorithm should layout your graph by setting [layout options]({{< relref "documentation/tooldevelopers/graphdatastructure/layoutoptions.md" >}}) on the graph's elements. Check the documentation of the layout algorithm you want to use for which layout options it supports and what they do, exactly.
 

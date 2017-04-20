@@ -6,7 +6,7 @@ menu:
     weight: 20
 ---
 
-What we have learned so far about how automatic layout in Eclipse works was comparatively straightforward: the diagram layout engine looks for a diagram layout connector to get its hands at a configured KGraph, invokes the recursive graph layout engine, and asks the diagram layout connector to apply the results back to the original diagram. As you will have guessed, things _can_ become quite a bit more complex than that.
+What we have learned so far about how automatic layout in Eclipse works was comparatively straightforward: the diagram layout engine looks for a diagram layout connector to get its hands at a configured ElkGraph, invokes the recursive graph layout engine, and asks the diagram layout connector to apply the results back to the original diagram. As you will have guessed, things _can_ become quite a bit more complex than that.
 
 On this page, we will look at customizing how layout runs are executed, including more advanced options as well as building up chains of layout algorithms executed in series as part of a single layout run.
 
@@ -21,7 +21,7 @@ Let us examine the `Parameters` class a bit more closely. Here's what it can do:
 
 * ELK distinguishes layout options that layout algorithms care about from layout options that may have more meaning for the layout engine or your layout connectors. The latter are called _global settings_ and are stored in the parameters as well. This may for example include settings such as whether to animate the application of layout results, so that your diagram's elements neatly morph into their new places. Of course you are free to introduce your own global settings and feed them into your parameters.
 
-Let's come back to layout configurators and see how they work. Basically, each layout configurator added to your parameters can set an arbitrary number of layout options on different elements of your KGraph. Also, it can be configured to clear all previous configuration stored in the graph. To specify the options to set, there are two possibilities. First, you can specify concrete objects in the graph structure to set options on. And second, you can specify whole classes of graph elements to set options on. Here's some example code that should make everything a bit clearer:
+Let's come back to layout configurators and see how they work. Basically, each layout configurator added to your parameters can set an arbitrary number of layout options on different elements of your ElkGraph. Also, it can be configured to clear all previous configuration stored in the graph. To specify the options to set, there are two possibilities. First, you can specify concrete objects in the graph structure to set options on. And second, you can specify whole classes of graph elements to set options on. Here's some example code that should make everything a bit clearer:
 
 ```java
 LayoutConfigurator configurator = new LayoutConfigurator();
@@ -45,11 +45,11 @@ params.addLayoutRun(configurator);
 DiagramLayoutEngine.invokeLayout(workbenchPart, diagramPart, params);
 ```
 
-The concept of using layout configurators to set layout options on your KGraph seems to contradict what we have said so far: that the layout connector is responsible for producing a KGraph with options already set. In fact, these do not contradict each other, but are simply two different (but combinable) ways of doing things. There are basically three ways of going about it:
+The concept of using layout configurators to set layout options on your ElkGraph seems to contradict what we have said so far: that the layout connector is responsible for producing an ElkGraph with options already set. In fact, these do not contradict each other, but are simply two different (but combinable) ways of doing things. There are basically three ways of going about it:
 
-1. Having your layout connector set all options on your KGraph, and not using any layout configurator. This is the approach we first learned about.
+1. Having your layout connector set all options on your ElkGraph, and not using any layout configurator. This is the approach we first learned about.
 
-1. Having your layout connector set only some of the options on your KGraph and using at least one layout configurator to fill in the rest.
+1. Having your layout connector set only some of the options on your ElkGraph and using at least one layout configurator to fill in the rest.
 
 1. Having your layout connector set no options at all and using at least one layout configurator to configure everything.
 

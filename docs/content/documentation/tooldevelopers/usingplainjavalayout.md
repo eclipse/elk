@@ -40,7 +40,7 @@ void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor);
 
 This method provides the entry point to automatic layout and applies the layout algorithms as configured in the layout graph (more details below). To get everything working, follow these steps after you have populated the layout meta data service:
 
-1. Create an ElkGraph to be laid out (see our [graph documentation]({{< relref "documentation/tooldevelopers/graphdatastructure.md" >}}) for how to do so). The KGraph will be based on the diagram you want your application to display.
+1. Create an ElkGraph to be laid out (see our [graph documentation]({{< relref "documentation/tooldevelopers/graphdatastructure.md" >}}) for how to do so). The ElkGraph will be based on the diagram you want your application to display.
 
 1. Configure which layout algorithm should be used to layout your graph and how the layout algorithm should layout your graph by setting [layout options]({{< relref "documentation/tooldevelopers/graphdatastructure/layoutoptions.md" >}}) on the graph's elements. Check the documentation of the layout algorithm you want to use for which layout properties it supports and what they do, exactly.
 
