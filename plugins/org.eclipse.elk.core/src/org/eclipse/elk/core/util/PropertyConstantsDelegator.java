@@ -29,7 +29,7 @@ import com.google.common.collect.Maps;
  * This class is a workaround for the fact that algorithm-independent layout code only has {@link CoreOptions} property
  * constants to work with, along with the defaults configured therein. An algorithm can change the default value, which
  * is reflected in the algorithm's set of property constants, which (and this is the big problem) the independent code
- * doesn't knwo about. Instances of this class can be supplied by layout algorithms to independent code to replace its
+ * doesn't know about. Instances of this class can be supplied by layout algorithms to independent code to replace its
  * {@link CoreOptions} property constants with the algorithm-specific constants.
  * 
  * <p>This class can be used in one of two ways:</p>

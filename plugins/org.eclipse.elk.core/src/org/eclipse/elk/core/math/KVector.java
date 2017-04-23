@@ -182,7 +182,7 @@ public final class KVector implements IDataObject, Cloneable {
      * @param other the vector whose values to copy.
      * @return {@code this}
      */
-    public KVector reset(final KVector other) {
+    public KVector set(final KVector other) {
         this.x = other.x;
         this.y = other.y;
         return this;

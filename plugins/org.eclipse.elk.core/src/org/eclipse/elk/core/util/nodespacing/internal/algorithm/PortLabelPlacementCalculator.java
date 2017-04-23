@@ -63,7 +63,7 @@ public final class PortLabelPlacementCalculator {
      */
     private static void placePortLabels(final NodeContext nodeContext, final PortSide portSide) {
         // If port labels were not taken into account when calculating the node size or if port placement was set to
-        // fixed positions, we don't have an arbitrary amound of freedom to place our labels
+        // fixed positions, we don't have an arbitrary amount of freedom to place our labels
         boolean constrainedPlacement = !nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS)
                 || nodeContext.portConstraints == PortConstraints.FIXED_POS;
         

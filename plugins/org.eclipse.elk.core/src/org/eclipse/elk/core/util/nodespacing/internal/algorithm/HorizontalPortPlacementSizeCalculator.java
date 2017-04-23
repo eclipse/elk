@@ -21,6 +21,8 @@ import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
 
+import com.google.common.math.DoubleMath;
+
 /**
  * Calculates the space required to setup port labels.
  */
@@ -182,6 +184,9 @@ public final class HorizontalPortPlacementSizeCalculator {
         cell.getMinimumContentAreaSize().x = minWidth;
     }
     
+    /** Fuzzyness allowed to still consider two double values to be equal. */
+    private static final double EQUALITY_TOLERANCE = 0.01;
+    
     /**
      * Returns the minimum width that will satisfy the given spacing between the two ratios multiplied by the result
      * width.
@@ -200,10 +205,10 @@ public final class HorizontalPortPlacementSizeCalculator {
         assert secondRatio >= firstRatio;
         
         // Some failsafing
-        if (secondRatio - firstRatio == 0) {
+        if (DoubleMath.fuzzyEquals(firstRatio, secondRatio, EQUALITY_TOLERANCE)) {
             return 0;
         } else {
-            return (spacing) / (secondRatio - firstRatio);
+            return spacing / (secondRatio - firstRatio);
         }
     }
     
@@ -319,15 +324,10 @@ public final class HorizontalPortPlacementSizeCalculator {
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
             if (portContext.portLabelCell != null) {
                 double labelWidth = portContext.portLabelCell.getMinimumWidth();
-                
-                if (labelWidth > maxResult) {
-                    maxResult = labelWidth;
-                }
+                maxResult = Math.max(maxResult, labelWidth);
             }
             
-            if (portContext.port.getSize().x > maxResult) {
-                maxResult = portContext.port.getSize().x;
-            }
+            maxResult = Math.max(maxResult, portContext.port.getSize().x);
         }
         
         return maxResult;

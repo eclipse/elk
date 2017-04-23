@@ -18,6 +18,7 @@ import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
 import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.StripContainerCell;
 
 /**
  * Sets up the inside port label cells. These are set up even when there are no inside port labels since they also
@@ -41,26 +42,28 @@ public final class InsidePortLabelCellCreator {
      */
     public static void createInsidePortLabelCells(final NodeContext nodeContext) {
         // Create all inside port label cells
-        AtomicCell northCell = new AtomicCell();
-        nodeContext.nodeContainer.setCell(ContainerArea.BEGIN, northCell);
-        nodeContext.insidePortLabelCells.put(PortSide.NORTH, northCell);
+        createInsidePortLabelCell(nodeContext, nodeContext.nodeContainer, ContainerArea.BEGIN, PortSide.NORTH);
+        createInsidePortLabelCell(nodeContext, nodeContext.nodeContainer, ContainerArea.END, PortSide.SOUTH);
 
-        AtomicCell southCell = new AtomicCell();
-        nodeContext.nodeContainer.setCell(ContainerArea.END, southCell);
-        nodeContext.insidePortLabelCells.put(PortSide.SOUTH, southCell);
-
-        AtomicCell westCell = new AtomicCell();
-        nodeContext.nodeContainerMiddleRow.setCell(ContainerArea.BEGIN, westCell);
-        nodeContext.insidePortLabelCells.put(PortSide.WEST, westCell);
-
-        AtomicCell eastCell = new AtomicCell();
-        nodeContext.nodeContainerMiddleRow.setCell(ContainerArea.END, eastCell);
-        nodeContext.insidePortLabelCells.put(PortSide.EAST, eastCell);
+        createInsidePortLabelCell(nodeContext, nodeContext.nodeContainerMiddleRow, ContainerArea.BEGIN, PortSide.WEST);
+        createInsidePortLabelCell(nodeContext, nodeContext.nodeContainerMiddleRow, ContainerArea.END, PortSide.EAST);
         
         setupNorthOrSouthPortLabelCell(nodeContext, PortSide.NORTH);
         setupNorthOrSouthPortLabelCell(nodeContext, PortSide.SOUTH);
         setupEastOrWestPortLabelCell(nodeContext, PortSide.EAST);
         setupEastOrWestPortLabelCell(nodeContext, PortSide.WEST);
+    }
+    
+    /**
+     * Creates a new {@link AtomicCell} for inside port labels. The cell is placed in the given area of the given
+     * container cell. Also, the cell is registered to be responsible for ports of the given side.
+     */
+    private static void createInsidePortLabelCell(final NodeContext nodeContext, final StripContainerCell container,
+            final ContainerArea containerArea, final PortSide portSide) {
+        
+        AtomicCell portLabelCell = new AtomicCell();
+        container.setCell(containerArea, portLabelCell);
+        nodeContext.insidePortLabelCells.put(portSide, portLabelCell);
     }
     
 

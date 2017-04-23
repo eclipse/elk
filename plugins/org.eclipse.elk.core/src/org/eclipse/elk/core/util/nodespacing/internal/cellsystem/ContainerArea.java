@@ -11,7 +11,7 @@
 package org.eclipse.elk.core.util.nodespacing.internal.cellsystem;
 
 /**
- * Enumeration of the three possible cells inside container cells.
+ * Enumeration of three container areas that can be used by containers that use three areas.
  * 
  * @see StripContainerCell
  * @see GridContainerCell

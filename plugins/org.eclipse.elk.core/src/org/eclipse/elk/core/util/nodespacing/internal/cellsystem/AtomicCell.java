@@ -51,7 +51,7 @@ public class AtomicCell extends Cell {
             this.minimumContentAreaSize.x = newMinimumContentAreaSize.x - padding.left - padding.right;
             this.minimumContentAreaSize.y = newMinimumContentAreaSize.y - padding.top - padding.bottom;
         } else {
-            this.minimumContentAreaSize.reset(newMinimumContentAreaSize);
+            this.minimumContentAreaSize.set(newMinimumContentAreaSize);
         }
     }
     

@@ -30,11 +30,12 @@ import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
 import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.GridContainerCell;
 
 /**
- * Knows how to calculate the size of a node and how to place its ports. Takes all size constraints and options into
- * account.
+ * Knows how to calculate the size of a node and how to place its ports. Takes all
+ * {@link org.eclipse.elk.core.options.SizeConstraint size constraints} and
+ * {@link org.eclipse.elk.core.options.SizeOptions options} into account.
  * 
- * <p>This calculator internally understands the layout of the node as a grid-like system of cells which different
- * labels and ports are placed in. Each cell has a padding and a minimum size, which may or may not be taken into
+ * <p>This calculator internally understands the layout of the node as a grid-like system of cells in which different
+ * labels and ports are placed. Each cell has a padding and a minimum size, which may or may not be taken into
  * account when calculating the minimum size of the node.</p>
  */
 public final class NodeLabelAndSizeCalculator {

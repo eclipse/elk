@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 /**
  * A cell which manages the size and placement of labels. It inserts a customizable gap between each of the labels and
  * calculates its minimum size to be the area required to place all of its labels. The horizontal and vertical
- * alignment control what happens if the cell's actual size is larger than required or with smaller labels. Call
+ * alignment control what happens if the cell's actual size is larger than required by its labels. Call
  * {@link #applyLabelLayout()} to cause the cell to go ahead and assign positions to all of its labels.
  */
 public class LabelCell extends Cell {

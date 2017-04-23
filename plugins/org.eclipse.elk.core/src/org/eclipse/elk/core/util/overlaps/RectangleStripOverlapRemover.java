@@ -249,7 +249,7 @@ public final class RectangleStripOverlapRemover {
     private void computeOverlaps() {
         SortedSet<RectangleNode> intersectingNodes = Sets.newTreeSet(
                 RectangleStripOverlapRemover::compareRightRectangleBorders);
-        double scanlinePos = Double.MIN_VALUE;
+        double scanlinePos = Double.NEGATIVE_INFINITY;
         
         // We iterate over the nodes according to their x coordinate
         for (RectangleNode currNode : rectangleNodes) {
