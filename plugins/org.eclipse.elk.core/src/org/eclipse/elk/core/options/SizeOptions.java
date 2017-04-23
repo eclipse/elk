@@ -30,7 +30,7 @@ public enum SizeOptions {
     DEFAULT_MINIMUM_SIZE,
     
     /**
-     * If this option is set and padding are computed by the algorithm, the minimum size plus the
+     * If this option is set and paddings are computed by the algorithm, the minimum size plus the
      * computed padding are a lower bound on the node size. If this option is not set, the minimum size
      * will be applied to the node's whole size regardless of any computed padding. Note that,
      * depending on the algorithm, this option may only apply to non-hierarchical nodes. This option
@@ -46,7 +46,34 @@ public enum SizeOptions {
      * This options is also independent from {@link #APPLY_ADDITIONAL_PADDING}. If both are set, one has to deal
      * with the effectively doubled padding.
      */
-    COMPUTE_PADDING;
+    COMPUTE_PADDING,
+    
+    /**
+     * If node labels influence the node size, but outside node labels are allowed to overhang, only inside node labels
+     * actually influence node size.
+     */
+    OUTSIDE_NODE_LABELS_OVERHANG,
+    
+    /**
+     * By default, ports only use the space available to them, even if that means violating port spacing settings. If
+     * this option is active, port spacings are adhered to, even if that means ports extend beyond node boundaries.
+     */
+    PORTS_OVERHANG,
+    
+    /**
+     * If port labels are taken into consideration, differently sized labels can result in a different amount of space
+     * between different pairs of ports. This option causes all ports to be evenly spaced by enlarging the space
+     * between every pair of ports to the larges amount of space between any pair of ports.
+     */
+    UNIFORM_PORT_SPACING,
+    
+    /**
+     * If this option is set, the node sizing and label placement code will not make an attempt to achieve a symmetrical
+     * layout. With this option inactive, for example, the space reserved for left inside port labels will be the same
+     * as for right inside port labels, which would not be the case otherwise. Deactivating this option will also ensure
+     * that center node labels will actually be placed in the center.
+     */
+    ASYMMETRICAL;
     
     /**
      * Returns the enumeration value related to the given ordinal.

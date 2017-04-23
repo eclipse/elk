@@ -11,7 +11,6 @@
 package org.eclipse.elk.core.util;
 
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
@@ -62,18 +61,13 @@ public class IndividualSpacings extends MapPropertyHolder {
      * override is set on the node that has the given property configured. If so, the configured value is returned.
      * Otherwise, the graph the node is part of, if any, is queried.
      * 
-     * @param graph
-     *            the graph the node is part of. May be {@code null}, although that would somewhat defeat the point
-     *            of the whole thing. Still, be my guest.
      * @param node
      *            the node whose property value to return.
      * @param property
      *            the property.
      * @return the individual override for the property or the default value inherited by the parent node.
      */
-    public static <T> T getIndividualOrInherited(final GraphAdapter<?> graph, final NodeAdapter<?> node,
-            final IProperty<T> property) {
-        
+    public static <T> T getIndividualOrInherited(final NodeAdapter<?> node, final IProperty<T> property) {
         T result = null;
         
         if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
@@ -84,8 +78,13 @@ public class IndividualSpacings extends MapPropertyHolder {
         }
         
         // use the common value
-        if (result == null && graph != null) {
-            result = graph.getProperty(property);
+        if (result == null && node.getGraph() != null) {
+            result = node.getGraph().getProperty(property);
+        }
+        
+        // if the result is still null, we need the property's default value
+        if (result == null) {
+            result = property.getDefault();
         }
         
         return result;

@@ -65,6 +65,19 @@ public class ElkRectangle {
     }
 
     /**
+     * Constructs and initializes a <code>Rectangle</code> from the specified instance.
+     * 
+     * @param rect
+     *            the existing rectangle whose values to copy.
+     */
+    public ElkRectangle(final ElkRectangle rect) {
+        this.x = rect.x;
+        this.y = rect.y;
+        this.width = rect.width;
+        this.height = rect.height;
+    }
+
+    /**
      * Sets the location and size of this <code>Rectangle</code> to the specified
      * <code>double</code> values.
      * 

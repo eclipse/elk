@@ -241,7 +241,7 @@ public final class LGraphAdapters {
                 // to anyone using these adapters
                 for (Layer l : element.getLayers()) {
                     for (LNode n : l.getNodes()) {
-                        nodeAdapters.add(new LNodeAdapter(n, transparentNorthSouthEdges));
+                        nodeAdapters.add(new LNodeAdapter(this, n, transparentNorthSouthEdges));
                     }
                 }
             }
@@ -267,6 +267,8 @@ public final class LGraphAdapters {
      * Adapter for {@link LNode}s.
      */
     static final class LNodeAdapter extends AbstractLShapeAdapter<LNode> implements NodeAdapter<LNode> {
+        /** The parent graph adapter that created this thing. */
+        private LGraphAdapter parentGraphAdapter = null;
         /** List of cached label adapters. */
         private List<LabelAdapter<?>> labelAdapters = null;
         /** List of cached port adapters. */
@@ -280,17 +282,27 @@ public final class LGraphAdapters {
         /**
          * Creates a new adapter for the given node.
          * 
+         * @param parent
+         *            the graph adapter that created us.
          * @param element
          *            the node to be adapted.
          * @param transparentNorthSouthEdges
          *            whether to simulate that edges are directly connected to north south ports
          *            instead of to north/south port dummies.
          */
-        LNodeAdapter(final LNode element, final boolean transparentNorthSouthEdges) {
+        LNodeAdapter(final LGraphAdapter parent, final LNode element, final boolean transparentNorthSouthEdges) {
             super(element);
+            this.parentGraphAdapter = parent;
             this.transparentNorthSouthEdges = transparentNorthSouthEdges;
         }
         
+        
+        /**
+         * {@inheritDoc}
+         */
+        public GraphAdapter<?> getGraph() {
+            return parentGraphAdapter;
+        }
 
         /**
          * {@inheritDoc}

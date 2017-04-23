@@ -69,8 +69,7 @@ public abstract class Spacing implements IDataObject, Cloneable {
      * @param newRight
      *            the spacing from the right.
      */
-    public void set(final double newTop, final double newRight, final double newBottom,
-            final double newLeft) {
+    public void set(final double newTop, final double newRight, final double newBottom, final double newLeft) {
         if (newTop < 0 || newRight < 0 || newBottom < 0 || newLeft < 0) {
             throw new IllegalArgumentException("Negative padding value not allowed");
         }
@@ -134,6 +133,26 @@ public abstract class Spacing implements IDataObject, Cloneable {
      */
     public void setLeft(final double left) {
         this.left = left;
+    }
+    
+    /**
+     * Sets both the left and the right spacing to the same value.
+     * 
+     * @param val the new value.
+     */
+    public void setLeftRight(final double val) {
+        this.left = val;
+        this.right = val;
+    }
+    
+    /**
+     * Sets both the top and the bottom spacing to the same value.
+     * 
+     * @param val the new value.
+     */
+    public void setTopBottom(final double val) {
+        this.top = val;
+        this.bottom = val;
     }
     
     /** 
@@ -260,6 +279,21 @@ public abstract class Spacing implements IDataObject, Cloneable {
         this.right = other.right;
         this.top = other.top;
         this.bottom = other.bottom;
+        return this;
+    }
+    
+    /**
+     * Adds spacings values from another double valued spacings.
+     * 
+     * @param other
+     *            another spacings.
+     * @return this instance.
+     */
+    public Spacing add(final Spacing other) {
+        this.left += other.left;
+        this.right += other.right;
+        this.top += other.top;
+        this.bottom += other.bottom;
         return this;
     }
     

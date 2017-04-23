@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kiel University and others.
+ * Copyright (c) 2015, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,18 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.labelspacing;
+package org.eclipse.elk.core.util.nodespacing.internal;
 
 /**
- * Enumeration for horizontal alignment of text.
- *
- * @author csp
+ * Horizontal alignment of labels.
  */
-public enum TextAlignment {
-    /** Text is left-aligned. */
+public enum HorizontalLabelAlignment {
+    
+    /** Labels are left-aligned. */
     LEFT,
-    /** Text is centered. */
+    /** Labels are centered. */
     CENTER,
-    /** Text is right-aligned. */
+    /** Labels are right-aligned. */
     RIGHT;
+    
 }

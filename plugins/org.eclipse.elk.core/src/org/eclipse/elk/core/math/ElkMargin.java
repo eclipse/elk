@@ -25,15 +25,27 @@ public class ElkMargin extends Spacing {
     public ElkMargin() {
         super();
     }
+    
+    /**
+     * Create new margin using the same value for every side.
+     * 
+     * @param any
+     *            margin value for every side.
+     */
+    public ElkMargin(final double any) {
+        super(any, any, any, any);
+    }
 
     /**
-     * Creates a new instance with all fields set to the value of {@code other}.
+     * Create new margin using the same margin for both sides of a common dimension.
      * 
-     * @param other
-     *            margins object from which to copy the values.
+     * @param leftRight
+     *            value used for the left and right margin.
+     * @param topBottom
+     *            value used for the top and bottom margin.
      */
-    public ElkMargin(final ElkMargin other) {
-        super(other.top, other.right, other.bottom, other.left);
+    public ElkMargin(final double leftRight, final double topBottom) {
+        super(topBottom, leftRight, topBottom, leftRight);
     }
 
     /**
@@ -50,5 +62,15 @@ public class ElkMargin extends Spacing {
      */
     public ElkMargin(final double top, final double right, final double bottom, final double left) {
         super(top, right, bottom, left);
+    }
+
+    /**
+     * Creates a new instance with all fields set to the value of {@code other}.
+     * 
+     * @param other
+     *            margins object from which to copy the values.
+     */
+    public ElkMargin(final ElkMargin other) {
+        super(other.top, other.right, other.bottom, other.left);
     }
 }
