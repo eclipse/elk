@@ -393,12 +393,13 @@ public class DiagramLayoutEngine {
                     if (!monitor.isCanceled()) {
                         stopEarlierOperations(target, getTimestamp());
                     }
+                    
+                    monitor.done();
                 } else {
                     status = new Status(Status.WARNING, ElkServicePlugin.PLUGIN_ID,
                             "Unable to build the layout graph from the given selection.");
                 }
                 
-                monitor.done();
                 return status;
             }
 
