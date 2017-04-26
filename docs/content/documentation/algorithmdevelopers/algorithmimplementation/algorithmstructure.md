@@ -247,7 +247,7 @@ public List<ILayoutProcessor<ElkNode>> assembleAlgorithm(ElkNode graph) {
     algorithmAssembler.addProcessorConfiguration(OTHER_PROCESSORS);
 
     // Assemble the algorithm
-    algorithm = algorithmAssembler.build(graph);
+    return algorithmAssembler.build(graph);
 }
 ```
 
