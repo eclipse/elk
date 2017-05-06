@@ -33,6 +33,9 @@ public final class GreedyRectangleStripOverlapRemover implements IRectangleStrip
             // We start with an initial y coordinate of zero
             double yPos = 0;
             
+            // Sort the node's list of overlapping nodes by y coordinate
+            currNode.getOverlappingNodes().sort(GreedyRectangleStripOverlapRemover::compareByYCoordinate);
+            
             // We now iterate over every conflicting rectangle node that we have already placed to see if the current
             // coordinate would cause an overlap
             for (RectangleNode overlapNode : currNode.getOverlappingNodes()) {
@@ -58,6 +61,18 @@ public final class GreedyRectangleStripOverlapRemover implements IRectangleStrip
         }
         
         return stripSize;
+    }
+    
+    /**
+     * Compares two rectangle nodes by the y coordinates of their rectangles.
+     * 
+     * @param node1
+     *            first node.
+     * @param node2
+     *            second node.
+     */
+    public static int compareByYCoordinate(final RectangleNode node1, final RectangleNode node2) {
+        return Double.compare(node1.getRectangle().y, node2.getRectangle().y);
     }
 
 }
