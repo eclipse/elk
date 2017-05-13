@@ -38,9 +38,9 @@ public final class EnumBasedFactoryComparator<G> implements Comparator<ILayoutPr
 
             throw new UnsupportedOperationException("This comparator can only compare enumeration "
                     + "constants that are part of the same enumeration.");
-        } else {
-            return ((Enum) factory1).compareTo((Enum) factory2);
         }
+        
+        return ((Enum) factory1).compareTo((Enum) factory2);
     }
 
 }
