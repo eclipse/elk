@@ -1,0 +1,27 @@
+algorithm:twopi
+edge node1-> node2
+edge node2-> node3
+edge node3-> node4
+edge node4-> node5
+edge node5-> node6
+edge node7-> node8
+edge node8-> node4
+edge node4-> node10
+edge node10-> node11
+edge node4-> node12
+edge node4-> node13
+edge node12-> node13
+edge node2 -> node10
+
+node node1
+node node2
+node node3
+node node4
+node node5
+node node6
+node node7
+node node8
+node node10
+node node11
+node node12
+node node13

@@ -1,0 +1,33 @@
+algorithm: mrtree
+
+//horizontal edges
+edge node1 -> node4
+edge node1 -> node7
+edge node7 -> node8
+edge node1 -> node12
+
+edge node4 -> node5
+edge node5 -> node6
+
+edge node4 -> node9
+
+edge node4 -> node13
+edge node13 -> node2
+edge node13 -> node3
+
+edge node4 -> node10
+edge node10 -> node11
+
+node node1
+node node2
+node node3
+node node4
+node node5
+node node6
+node node7
+node node8
+node node9
+node node10
+node node11
+node node12
+node node13
