@@ -17,7 +17,7 @@ import java.util.List;
  * Base class for implementations of progress monitors. This class performs
  * execution time measurement, keeps track of the amount of completed work, and
  * handles sub-tasks properly.
- * 
+ *
  * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
  * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
@@ -57,12 +57,12 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         this.maxLevels = -1;
         this.measureExecutionTime = true;
     }
-    
+
     /**
      * Creates a progress monitor with the given maximal number of hierarchy levels. If the
      * number is negative, the hierarchy levels are infinite. Otherwise progress is
      * reported to parent monitors only up to the specified number of levels.
-     * 
+     *
      * @param themaxLevels the maximal number of hierarchy levels for which progress is
      *     reported
      */
@@ -70,13 +70,13 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         this.maxLevels = themaxLevels;
         this.measureExecutionTime = true;
     }
-    
+
     /**
      * Creates a progress monitor with the given maximal number of hierarchy levels. If the
      * number is negative, the hierarchy levels are infinite. Otherwise progress is
      * reported to parent monitors only up to the specified number of levels. Furthermore, the
      * second parameter controls whether any execution time measurements shall be performed.
-     * 
+     *
      * @param maxLevels the maximal number of hierarchy levels for which progress is reported
      * @param measureExecutionTime whether the execution time shall be measured when the task is done
      */
@@ -101,7 +101,9 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
             this.totalWork = thetotalWork;
             doBegin(name, thetotalWork, parentMonitor == null, maxLevels);
             if (measureExecutionTime) {
+                // elkjs-exclude-start
                 startTime = System.nanoTime();
+                // elkjs-exclude-end
             }
             return true;
         }
@@ -110,7 +112,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     /**
      * Invoked when a task begins, to be overridden by subclasses. This
      * implementation does nothing.
-     * 
+     *
      * @param name task name
      * @param newTotalWork total amount of work for the new task
      * @param topInstance if true, this progress monitor is the top instance
@@ -140,7 +142,9 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
         }
         if (!closed) {
             if (measureExecutionTime) {
+                // elkjs-exclude-start
                 totalTime = (System.nanoTime() - startTime) * NANO_FACT;
+                // elkjs-exclude-end
             }
             if (completedWork < totalWork) {
                 internalWorked(totalWork - completedWork);
@@ -153,7 +157,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     /**
      * Invoked when a task ends, to be overridden by subclasses. This
      * implementation does nothing.
-     * 
+     *
      * @param topInstance if true, this progress monitor is the top instance
      * @param maxHierarchyLevels the maximal number of reported hierarchy levels, or -1
      *     for infinite levels
@@ -191,7 +195,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
 
     /**
      * This implementation always returns {@code false}.
-     * 
+     *
      * @return {@code false}
      */
     public boolean isCanceled() {
@@ -216,7 +220,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     /**
      * Invoked when a sub-task is created, to be overridden by subclasses. This
      * implementation creates a new {@code BasicProgressMonitor} instance.
-     * 
+     *
      * @param work amount of work that is completed in the current monitor
      *         instance when the sub-task ends
      * @param maxHierarchyLevels the maximal number of reported hierarchy levels for the parent
@@ -244,7 +248,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
 
     /**
      * Sets the current work counters of this monitor and all parent monitors.
-     * 
+     *
      * @param work amount of work that has been completed
      */
     private void internalWorked(final float work) {
@@ -260,7 +264,7 @@ public class BasicProgressMonitor implements IElkProgressMonitor {
     /**
      * Invoked when work is done for this progress monitor, to be overridden by
      * subclasses. This implementation does nothing.
-     * 
+     *
      * @param thecompletedWork total number of work that is done for this task
      * @param thetotalWork total number of work that is targeted for completion
      * @param topInstance if true, this progress monitor is the top instance

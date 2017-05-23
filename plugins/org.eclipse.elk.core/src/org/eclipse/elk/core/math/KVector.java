@@ -16,7 +16,7 @@ import org.eclipse.elk.core.util.IDataObject;
 
 /**
  * A simple 2D vector class which supports translation, scaling, normalization etc.
- * 
+ *
  * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
  * @kieler.rating 2011-01-13 proposed yellow msp
  * @author uru
@@ -24,10 +24,10 @@ import org.eclipse.elk.core.util.IDataObject;
  * @author cds
  */
 public final class KVector implements IDataObject, Cloneable {
-    
+
     /** the default fuzzyness used when comparing two vectors fuzzily. */
     private static final double DEFAULT_FUZZYNESS = 0.05;
-    
+
     /** the serial version UID. */
     private static final long serialVersionUID = -4780985519832787684L;
 
@@ -48,7 +48,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Constructs a new vector from given values.
-     * 
+     *
      * @param thex
      *            x value
      * @param they
@@ -61,7 +61,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Creates an exact copy of a given vector v.
-     * 
+     *
      * @param v
      *            existing vector
      */
@@ -72,7 +72,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Creates a normalized vector for the passed angle in radians.
-     * 
+     *
      * @param angle
      *            angle in radians.
      */
@@ -83,10 +83,12 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Returns an exact copy of this vector.
-     * 
+     *
      * @return identical vector
      */
+    // elkjs-exclude-start
     @Override
+    // elkjs-exclude-end
     public KVector clone() {
         return new KVector(x, y);
     }
@@ -111,10 +113,10 @@ public final class KVector implements IDataObject, Cloneable {
             return false;
         }
     }
-    
+
     /**
      * Calls {@link #equalsFuzzily(KVector, double)} with a default fuzzyness.
-     * 
+     *
      * @param other
      *            the vector to compare this vector to.
      * @return {@code true} if the vectors are approximately equal, {@code false} otherwise.
@@ -122,12 +124,12 @@ public final class KVector implements IDataObject, Cloneable {
     public boolean equalsFuzzily(final KVector other) {
         return equalsFuzzily(other, DEFAULT_FUZZYNESS);
     }
-    
+
     /**
      * Compares if this and the given vector are approximately equal. What <i>approximately</i>
      * means is defined by the fuzzyness: for both x and y coordinate, the two vectors may only
      * differ by at most the fuzzyness to still be considered equal.
-     * 
+     *
      * @param other
      *            the vector to compare this vector to.
      * @param fuzzyness
@@ -149,7 +151,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * returns this vector's length.
-     * 
+     *
      * @return Math.sqrt(x*x + y*y)
      */
     public double length() {
@@ -158,7 +160,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * returns square length of this vector.
-     * 
+     *
      * @return x*x + y*y
      */
     public double squareLength() {
@@ -167,7 +169,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Set vector to (0,0).
-     * 
+     *
      * @return {@code this}
      */
     public KVector reset() {
@@ -175,10 +177,10 @@ public final class KVector implements IDataObject, Cloneable {
         this.y = 0.0;
         return this;
     }
-    
+
     /**
      * Resets this vector to the value of the other vector.
-     * 
+     *
      * @param other the vector whose values to copy.
      * @return {@code this}
      */
@@ -190,7 +192,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Vector addition.
-     * 
+     *
      * @param v
      *            vector to add
      * @return <code>this + v</code>
@@ -203,7 +205,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Translate the vector by adding the given amount.
-     * 
+     *
      * @param dx
      *            the x offset
      * @param dy
@@ -218,7 +220,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Returns the sum of arbitrarily many vectors as a new vector instance.
-     * 
+     *
      * @param vs vectors to be added
      * @return a new vector containing the sum of given vectors
      */
@@ -233,7 +235,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Vector subtraction.
-     * 
+     *
      * @param v
      *            vector to subtract
      * @return {@code this}
@@ -246,7 +248,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Translate the vector by subtracting the given amount.
-     * 
+     *
      * @param dx
      *            the x offset
      * @param dy
@@ -261,7 +263,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Scale the vector.
-     * 
+     *
      * @param scale
      *            scaling factor
      * @return {@code this}
@@ -274,7 +276,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Scale the vector with different values for X and Y coordinate.
-     * 
+     *
      * @param scalex
      *            the x scaling factor
      * @param scaley
@@ -289,7 +291,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Normalize the vector.
-     * 
+     *
      * @return {@code this}
      */
     public KVector normalize() {
@@ -303,7 +305,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * scales this vector to the passed length.
-     * 
+     *
      * @param length
      *            length to scale to
      * @return {@code this}
@@ -316,7 +318,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Negate the vector.
-     * 
+     *
      * @return {@code this}
      */
     public KVector negate() {
@@ -327,16 +329,16 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Returns angle representation of this vector in degree. The length of the vector must not be 0.
-     * 
+     *
      * @return value within [0,360)
      */
     public double toDegrees() {
         return Math.toDegrees(toRadians());
     }
-    
+
     /**
      * Returns angle representation of this vector in radians. The length of the vector must not be 0.
-     * 
+     *
      * @return value within [0,2*pi)
      */
     public double toRadians() {
@@ -354,7 +356,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Add some "noise" to this vector.
-     * 
+     *
      * @param random
      *            the random number generator
      * @param amount
@@ -367,7 +369,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Returns the distance between two vectors.
-     * 
+     *
      * @param v2
      *            second vector
      * @return distance between this and second vector
@@ -380,7 +382,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Returns the dot product of the two given vectors.
-     * 
+     *
      * @param v2
      *            second vector
      * @return (this.x * this.x) + (v1.y * v2.y)
@@ -391,7 +393,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Apply the given bounds to this vector.
-     * 
+     *
      * @param lowx
      *            the lower bound for x coordinate
      * @param lowy
@@ -422,19 +424,19 @@ public final class KVector implements IDataObject, Cloneable {
         }
         return this;
     }
-    
+
     /**
      * Determine whether any of the two values are NaN.
-     * 
+     *
      * @return true if x is NaN or y is NaN
      */
     public boolean isNaN() {
         return Double.isNaN(x) || Double.isNaN(y);
     }
-    
+
     /**
      * Determine whether any of the two values are infinite.
-     * 
+     *
      * @return true if x is infinite or y is infinite
      */
     public boolean isInfinite() {
@@ -472,7 +474,7 @@ public final class KVector implements IDataObject, Cloneable {
 
     /**
      * Determine whether the given character is a delimiter.
-     * 
+     *
      * @param c
      *            a character
      * @param delims

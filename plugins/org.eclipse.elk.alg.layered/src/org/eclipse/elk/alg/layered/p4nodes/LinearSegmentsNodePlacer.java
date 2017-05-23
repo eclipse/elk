@@ -41,7 +41,7 @@ import com.google.common.collect.Lists;
  *   <li>Georg Sander, A fast heuristic for hierarchical Manhattan layout. In <i>Proceedings of the
  *     Symposium on Graph Drawing (GD'95)</i>, LNCS vol. 1027, pp. 447-458, Springer, 1996.</li>
  * </ul>
- * 
+ *
  * <dl>
  * <dt>Precondition:</dt>
  * <dd>the graph has a proper layering with optimized nodes ordering; ports are properly arranged</dd>
@@ -50,7 +50,7 @@ import com.google.common.collect.Lists;
  * layer is set according to the area occupied by contained nodes; the height of the graph is set to
  * the maximal layer height</dd>
  * </dl>
- * 
+ *
  * @author msp
  * @author grh
  * @author cds
@@ -81,10 +81,10 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         private LinearSegment refSegment;
         /** The nodetype contained in this linear segment. */
         private NodeType nodeType;
-        
+
         /**
          * Determine the reference segment for the region to which this segment is associated.
-         * 
+         *
          * @return the region segment
          */
         LinearSegment region() {
@@ -99,7 +99,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
          * Splits this linear segment before the given node. The returned segment contains all nodes
          * from the given node onward, with their ID set to the new segment's ID. Those nodes are
          * removed from this segment.
-         * 
+         *
          * @param node
          *            the node to split the segment at.
          * @param newId
@@ -139,7 +139,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         public int compareTo(final LinearSegment other) {
             return this.id - other.id;
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -151,7 +151,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             }
             return false;
         }
-        
+
         /**
          * {@inheritDoc}
          */
@@ -159,9 +159,9 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         public int hashCode() {
             return id;
         }
-        
+
     }
-    
+
     /** additional processor dependencies for graphs with hierarchical ports. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HIERARCHY_PROCESSING_ADDITIONS =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
@@ -178,7 +178,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             return null;
         }
     }
-    
+
     /** property for maximal priority of incoming edges. */
     private static final Property<Integer> INPUT_PRIO = new Property<Integer>(
             "linearSegments.inputPrio", 0);
@@ -188,7 +188,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
 
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
-    
+
     /** Spacing values. */
     private Spacings spacings;
 
@@ -199,7 +199,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         monitor.begin("Linear segments node placement", 1);
 
         spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
-        
+
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
 
@@ -224,7 +224,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
     /**
      * Sorts the linear segments of the given layered graph by finding a topological ordering in the
      * corresponding segment ordering graph.
-     * 
+     *
      * @param layeredGraph
      *            layered graph to process
      * @return a sorted array of linear segments
@@ -250,7 +250,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
                 node.setProperty(OUTPUT_PRIO, outprio);
             }
         }
-        
+
         // create linear segments for the layered graph, ignoring odd port side dummies
         int nextLinearSegmentID = 0;
         for (Layer layer : layeredGraph) {
@@ -332,7 +332,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
     /**
      * Fills the dependency graph with dependencies. If a dependency would introduce a cycle, the
      * offending linear segment is split into two linear segments.
-     * 
+     *
      * @param layeredGraph
      *            the layered graph.
      * @param segmentList
@@ -352,7 +352,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
          * through all the layers, from left to right. In each layer, we go through all the nodes.
          * For each node, we retrieve the linear segment it's part of and add a dependency to the
          * next node's linear segment. So far so good.
-         * 
+         *
          * This works perfectly fine as long as we assume that the relative order of linear segments
          * doesn't change from one layer to the next. However, since the introduction of north /
          * south port dummies, it can. We now have to avoid creating cycles in the dependency graph.
@@ -455,14 +455,16 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         }
 
         // Write debug output graph
+        // elkjs-exclude-start
         if (layeredGraph.getProperty(LayeredOptions.DEBUG_MODE)) {
             DebugUtil.writeDebugGraph(layeredGraph, segmentList, outgoingList);
         }
+        // elkjs-exclude-end
     }
 
     /**
      * Put a node into the given linear segment and check for following parts of a long edge.
-     * 
+     *
      * @param node
      *            the node to put into the linear segment
      * @param segment
@@ -472,16 +474,16 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
      */
     private boolean fillSegment(final LNode node, final LinearSegment segment) {
         NodeType nodeType = node.getType();
-        
+
         // handle initial big nodes as big node type
         if (node.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
             nodeType = NodeType.BIG_NODE;
         }
-        
+
         if (node.id >= 0) {
             // The node is already part of another linear segment
             return false;
-        } else if (segment.nodeType != null 
+        } else if (segment.nodeType != null
                 && (nodeType == NodeType.BIG_NODE && nodeType != segment.nodeType)) {
             // Big nodes are not allowed to share a linear segment with other dummy nodes
             return false;
@@ -491,14 +493,14 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             segment.nodes.add(node);
         }
         segment.nodeType = nodeType;
-        
-        if (nodeType == NodeType.LONG_EDGE 
+
+        if (nodeType == NodeType.LONG_EDGE
                 || nodeType == NodeType.NORTH_SOUTH_PORT
                 || nodeType == NodeType.BIG_NODE) {
-            
+
             // This is a LONG_EDGE, NORTH_SOUTH_PORT or BIG_NODE dummy; check if any of its
             // successors are of one of these types too. If so, we can form a linear segment
-            // with one of them. (not with more than one, though) 
+            // with one of them. (not with more than one, though)
             // Note 1: LONG_EDGES and NORTH_SOUTH_PORTs can share a common linear segment
             // Note 2: we must take care not to make a segment out of nodes that are in the same layer
             // Note 3: for BIG_NODEs also the first BIG_NODE_INITIAL which is no actual dummy node has
@@ -542,7 +544,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
 
     /**
      * Creates an unbalanced placement for the sorted linear segments.
-     * 
+     *
      * @param layeredGraph
      *            the layered graph to create an unbalanced placement for.
      */
@@ -591,7 +593,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         }
     }
 
-    
+
     // /////////////////////////////////////////////////////////////////////////////
     // Balanced Placement
 
@@ -601,14 +603,14 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         BACKW_PENDULUM,
         RUBBER;
     }
-    
+
     /** factor for threshold after which balancing is aborted. */
     private static final double THRESHOLD_FACTOR = 20.0;
     /** the minimal number of iterations in pendulum mode. */
     private static final int PENDULUM_ITERS = 4;
     /** the number of additional iterations after the abort condition was met. */
     private static final int FINAL_ITERS = 3;
-    
+
     /**
      * Balance the initial placement by force-based movement of regions. First perform <em>pendulum</em>
      * iterations, where only one direction of edges is considered, then <em>rubber</em> iterations,
@@ -617,13 +619,13 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
      * a balanced placement with respect to its adjacent segments. Then merge regions that touch each
      * other, building mean values of the involved deflections, and finally apply the resulting
      * deflection values to all segments. The iterations stop when no further improvement is done.
-     * 
+     *
      * @param layeredGraph a layered graph
      */
     private void balancePlacement(final LGraph layeredGraph) {
         double deflectionDampening = layeredGraph.getProperty(
                 LayeredOptions.NODE_PLACEMENT_LINEAR_SEGMENTS_DEFLECTION_DAMPENING).doubleValue();
-        
+
         // Determine a suitable number of pendulum iterations
         int thoroughness = layeredGraph.getProperty(LayeredOptions.THOROUGHNESS);
         int pendulumIters = PENDULUM_ITERS;
@@ -635,7 +637,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         Mode mode = Mode.FORW_PENDULUM;
         double lastTotalDeflection = Integer.MAX_VALUE;
         do {
-            
+
             // Calculate force for every linear segment
             boolean incoming = mode != Mode.BACKW_PENDULUM;
             boolean outgoing = mode != Mode.FORW_PENDULUM;
@@ -645,7 +647,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
                 calcDeflection(segment, incoming, outgoing, deflectionDampening);
                 totalDeflection += Math.abs(segment.deflection);
             }
-            
+
             // Merge linear segments to form regions
             boolean merged;
             do {
@@ -661,7 +663,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
                     }
                 }
             }
-            
+
             // Update the balancing mode
             if (mode == Mode.FORW_PENDULUM || mode == Mode.BACKW_PENDULUM) {
                 pendulumIters--;
@@ -686,11 +688,11 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             }
         } while (!(ready && finalIters <= 0));
     }
-    
+
     /**
      * Calculate the force acting on the given linear segment. The force is stored in the segment's
      * deflection field.
-     * 
+     *
      * @param segment the linear segment whose force is to be calculated
      * @param incoming whether incoming edges should be considered
      * @param outgoing whether outgoing edges should be considered
@@ -698,7 +700,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
      */
     private void calcDeflection(final LinearSegment segment, final boolean incoming,
             final boolean outgoing, final double deflectionDampening) {
-        
+
         double segmentDeflection = 0;
         int nodeWeightSum = 0;
         for (LNode node : segment.nodes) {
@@ -762,7 +764,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             segment.weight = 0;
         }
     }
-    
+
     /**
      * Factor for threshold within which node overlapping is detected. This factor should reflect
      * the epsilon used in the {@link NodePlacerTest}.
@@ -771,12 +773,12 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
 
     /**
      * Merge regions by testing whether they would overlap after applying the deflection.
-     * 
+     *
      * @param layeredGraph the layered graph
      * @return true if any two regions have been merged
      */
     private boolean mergeRegions(final LGraph layeredGraph) {
-        
+
         boolean changed = false;
         double nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
         double threshold = OVERLAP_DETECT * nodeSpacing;
@@ -796,12 +798,12 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
                 if (region1 != region2) {
                     // Calculate how much space is allowed between the nodes
                     double spacing = spacings.getVerticalSpacing(node1, node2);
-                    
+
                     double node1Extent = node1.getPosition().y + node1.getSize().y
                             + node1.getMargin().bottom + region1.deflection + spacing;
                     double node2Extent = node2.getPosition().y - node2.getMargin().top
                             + region2.deflection;
-    
+
                     // Test if the nodes are overlapping
                     if (node1Extent > node2Extent + threshold) {
                         // Merge the first region under the second top level segment
@@ -821,7 +823,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         }
         return changed;
     }
-    
+
 
     // /////////////////////////////////////////////////////////////////////////////
     // Post Processing for Correction
@@ -829,7 +831,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
     /**
      * Post-process the balanced placement by moving linear segments where obvious improvements can
      * be made.
-     * 
+     *
      * @param layeredGraph
      *            the layered graph
      */
@@ -912,5 +914,5 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
             }
         }
     }
-    
+
 }

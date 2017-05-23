@@ -24,7 +24,7 @@ import com.google.common.collect.Maps;
 /**
  * Singleton class for access to the ELK layout meta data. This class is used globally to retrieve meta data for
  * automatic layout through ELK, which is given through the {@code layoutProviders} extension point.
- * 
+ *
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
@@ -36,22 +36,24 @@ public class LayoutMetaDataService {
 
     /**
      * Returns the singleton instance of the layout data service.
-     * 
+     *
      * @return the singleton instance
      */
     public static synchronized LayoutMetaDataService getInstance() {
         if (instance == null) {
             instance = new LayoutMetaDataService();
-            
+
             // We always load our core options
             instance.registerLayoutMetaDataProviders(new CoreOptions());
 
             // Try to make the ELK service plug-in load the extension point data
+            // elkjs-exclude-start
             try {
                 Class.forName("org.eclipse.elk.core.service.ElkServicePlugin");
             } catch (Exception e) {
                 // If the service plug-in is not available, that's no problem; we'll simply use our default factory
             }
+            // elkjs-exclude-end
         }
 
         return instance;
@@ -79,7 +81,7 @@ public class LayoutMetaDataService {
     private final Map<String, LayoutOptionData> layoutOptionMap = Maps.newLinkedHashMap();
     /**
      * Mapping of legacy layout option identifiers to their data instances. Note that the actual layout option data
-     * contain the new identifiers. 
+     * contain the new identifiers.
      */
     private final Map<String, LayoutOptionData> legacyLayoutOptionMap = Maps.newLinkedHashMap();
     /**
@@ -100,7 +102,7 @@ public class LayoutMetaDataService {
      * Registers the data provided by the given meta data providers with the meta data service. This method doesn't
      * need to be called if ELK is used in an Eclipse context, since the service plug-in automatically registers all
      * providers known through the {@code layoutProviders} extension point.
-     * 
+     *
      * @param providers
      *            the providers to register.
      */
@@ -114,7 +116,7 @@ public class LayoutMetaDataService {
 
     /**
      * Returns the layout algorithm data associated with the given identifier.
-     * 
+     *
      * @param id
      *            layout algorithm identifier
      * @return the corresponding layout algorithm data, or {@code null} if there is no algorithm with the given
@@ -126,7 +128,7 @@ public class LayoutMetaDataService {
 
     /**
      * Returns a data collection for all registered layout algorithms. The collection is unmodifiable.
-     * 
+     *
      * @return collection of registered layout algorithms
      */
     public final Collection<LayoutAlgorithmData> getAlgorithmData() {
@@ -135,7 +137,7 @@ public class LayoutMetaDataService {
 
     /**
      * Returns a layout algorithm data that has the given suffix in its identifier.
-     * 
+     *
      * @param suffix
      *            a layout algorithm identifier suffix
      * @return the first layout algorithm data that has the given suffix, or {@code null} if no algorithm has that
@@ -146,7 +148,7 @@ public class LayoutMetaDataService {
             return null;
         }
         LayoutAlgorithmData data = algorithmSuffixMap.get(suffix);
-        
+
         if (data == null) {
             // Nothing found? Try to find a suitable suffix
             for (LayoutAlgorithmData d : layoutAlgorithmMap.values()) {
@@ -160,19 +162,19 @@ public class LayoutMetaDataService {
                     data = d;
                 }
             }
-            
+
             if (data != null) {
                 algorithmSuffixMap.put(suffix, data);
             }
         }
-        
+
         return data;
     }
 
     /**
      * Returns the layout algorithm data associated with the given suffix. If none is found, the algorithm with the
      * given default suffix is returned. If that is not found either, returns {@code null}.
-     * 
+     *
      * @param algorithmId
      *            layout algorithm identifier.
      * @param defaultId
@@ -182,20 +184,20 @@ public class LayoutMetaDataService {
      */
     public final LayoutAlgorithmData getAlgorithmDataBySuffixOrDefault(final String algorithmId,
             final String defaultId) {
-        
+
         // First, look for the requested algorithm
         if (algorithmId != null && !algorithmId.trim().isEmpty()) {
             LayoutAlgorithmData algorithmIdData = getAlgorithmDataBySuffix(algorithmId);
-            
+
             if (algorithmIdData != null) {
                 return algorithmIdData;
             }
         }
-        
+
         // We haven't found the requested algorithm, so look for the requested default algorithm, if any
         if (defaultId != null && !defaultId.trim().isEmpty()) {
             LayoutAlgorithmData defaultIdData = getAlgorithmDataBySuffix(defaultId);
-            
+
             if (defaultIdData != null) {
                 return defaultIdData;
             }
@@ -207,7 +209,7 @@ public class LayoutMetaDataService {
 
     /**
      * Returns the layout option data associated with the given identifier. The identifier may be a legacy identifier.
-     * 
+     *
      * @param id
      *            layout option identifier
      * @return the corresponding layout option data, or {@code null} if there is no option with the given identifier
@@ -219,7 +221,7 @@ public class LayoutMetaDataService {
 
     /**
      * Returns a data collection for all registered layout options. The collection is unmodifiable.
-     * 
+     *
      * @return collection of registered layout options
      */
     public final Collection<LayoutOptionData> getOptionData() {
@@ -229,7 +231,7 @@ public class LayoutMetaDataService {
     /**
      * Returns a layout option data that has the given suffix in its identifier. The identifier may be a legacy
      * identifier.
-     * 
+     *
      * @param suffix
      *            a layout option identifier suffix
      * @return the first layout option data that has the given suffix, or {@code null} if no option has that suffix
@@ -240,7 +242,7 @@ public class LayoutMetaDataService {
             return null;
         }
         LayoutOptionData data = optionSuffixMap.get(suffix);
-        
+
         if (data == null) {
             // Nothing found? Try to find a suitable suffix
             for (LayoutOptionData d : layoutOptionMap.values()) {
@@ -254,7 +256,7 @@ public class LayoutMetaDataService {
                     data = d;
                 }
             }
-            
+
             if (data == null) {
                 // Still not lucky? Maybe it's a suffix of a legacy id (we should stop supporting these one day...)
                 for (LayoutOptionData d : layoutOptionMap.values()) {
@@ -273,19 +275,19 @@ public class LayoutMetaDataService {
                     }
                 }
             }
-            
+
             if (data != null) {
                 optionSuffixMap.put(suffix, data);
             }
         }
-        
+
         return data;
     }
 
     /**
      * Returns a list of layout options that are suitable for the given layout algorithm and layout option target. The
      * layout algorithm must know the layout options and the target must be active for each option.
-     * 
+     *
      * @param algorithmData
      *            layout algorithm data
      * @param targetType
@@ -294,7 +296,7 @@ public class LayoutMetaDataService {
      */
     public final List<LayoutOptionData> getOptionData(final LayoutAlgorithmData algorithmData,
             final LayoutOptionData.Target targetType) {
-        
+
         List<LayoutOptionData> optionDataList = new LinkedList<LayoutOptionData>();
         for (LayoutOptionData optionData : layoutOptionMap.values()) {
             if (algorithmData.knowsOption(optionData) || CoreOptions.ALGORITHM.equals(optionData)) {
@@ -308,7 +310,7 @@ public class LayoutMetaDataService {
 
     /**
      * Returns the data instance of the layout category with given identifier.
-     * 
+     *
      * @param id
      *            identifier of the category
      * @return layout category data instance with given identifier, or {@code null} if the layout category is not
@@ -321,7 +323,7 @@ public class LayoutMetaDataService {
     /**
      * Returns a list of layout category identifiers and names. The first string in each entry is the identifier, and
      * the second string is the name.
-     * 
+     *
      * @return a list of all layout categories
      */
     public final Collection<LayoutCategoryData> getCategoryData() {
@@ -407,7 +409,7 @@ public class LayoutMetaDataService {
                     category.getLayouters().add(algorithm);
                 }
             }
-            
+
             // Apply layout option dependencies registered with this registry (contrary to the code above, this code
             // requires that layout options we depend on have already been registered)
             for (Triple dep : optionDependencies) {
@@ -418,7 +420,7 @@ public class LayoutMetaDataService {
                 }
             }
             optionDependencies.clear();
-            
+
             // Apply support information for supported layout options (contrary to the code above the code above, this
             // code requires that layout options we want to support have already been registered)
             for (Triple sup : optionSupport) {
@@ -430,10 +432,10 @@ public class LayoutMetaDataService {
             }
             optionSupport.clear();
         }
-        
+
         /**
          * Returns the "Other" category. If there is none yet, creates one.
-         * 
+         *
          * @return the "Other" category.
          */
         private LayoutCategoryData retrieveBackupCategory() {
@@ -442,7 +444,7 @@ public class LayoutMetaDataService {
                 otherCategory = new LayoutCategoryData("", "Other", null);
                 layoutCategoryMap.put("", otherCategory);
             }
-            
+
             return otherCategory;
         }
 

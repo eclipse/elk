@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p2layers;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -36,7 +37,7 @@ import com.google.common.collect.Sets;
  * Heuristics for Minimum-Width Graph Layering with Consideration of Dummy Nodes written by Nikolas
  * S. Nikolov, Alexandre Tarassov, and Jürgen Branke It is designed to create a layering as small as
  * possible.
- * 
+ *
  * Precondition: the graph has no cycles, but may contain self-loops Postcondition: all nodes have
  * been assigned to a layer such that edges connect only nodes from one layer to another layer
  */
@@ -123,11 +124,11 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
         // reset variables
         widthCurrent = 0;
         widthUp = 0;
-        // initialize min and max node sizes to 1,  
-        // since 0 or negative values to not make sense 
-        minimumNodeSize = Double.POSITIVE_INFINITY; 
-        maximumNodeSize = Double.NEGATIVE_INFINITY; 
-         
+        // initialize min and max node sizes to 1,
+        // since 0 or negative values to not make sense
+        minimumNodeSize = Double.POSITIVE_INFINITY;
+        maximumNodeSize = Double.NEGATIVE_INFINITY;
+
         // initialize the dummy size with the spacing properties
         dummySize = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE).doubleValue();
         // Sort the nodes at beginning, since the rank will not change.
@@ -146,7 +147,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
         // make sure the values are reasonable
         minimumNodeSize = Math.max(1, minimumNodeSize);
         maximumNodeSize = Math.max(1, maximumNodeSize);
-        
+
         // normalize dummy size
         dummySize = dummySize / minimumNodeSize;
         maxWidth = maximumNodeSize / minimumNodeSize;
@@ -161,7 +162,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
         // Copy the sorted layerless nodes so we don't overwrite it in the reset case
         tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
         // Copy the outDegree Array
-        remainingOutGoing = outDegree.clone();
+        remainingOutGoing = Arrays.copyOf(outDegree, outDegree.length);
 
         while (!tempLayerlessNodes.isEmpty()) {
             // Select a node to be placed
@@ -191,7 +192,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
                     // create the new first layer;
                     currentLayer = new Layer(currentGraph);
                     currentGraph.getLayers().add(currentLayer);
-                    // reset variables 
+                    // reset variables
                     widthCurrent = 0;
                     widthUp = 0;
                     alreadyPlacedNodes.clear();
@@ -201,7 +202,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
                     // reset layerless nodes
                     tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
                     // reset successors
-                    remainingOutGoing = outDegree.clone();
+                    remainingOutGoing = Arrays.copyOf(outDegree, outDegree.length);
 
                 } else {
                     // add node to current layer //
@@ -226,12 +227,12 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
     /**
      * Checks the effects of the hypothetical placement of the selected node and whether the
      * algorithm should rather go up than placing the node.
-     * 
+     *
      * @return true, if the algorithm should go to the next layer, false otherwise
      */
     private boolean conditionGoUp() {
         boolean a = ((widthCurrent - (outDegree[selectedNode.id] * dummySize) + normSize[selectedNode.id]) > maxWidth);
-        boolean b = ((widthUp + inDegree[selectedNode.id] * dummySize) > (maxWidth * upperLayerInfluence * dummySize)); 
+        boolean b = ((widthUp + inDegree[selectedNode.id] * dummySize) > (maxWidth * upperLayerInfluence * dummySize));
         return a || b;
     }
 
@@ -239,7 +240,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
      * Selects a node from the sorted list of layerless nodes. The selection is done according to
      * the rank of the node and only if all of its successors are already in the
      * {@link #alreadyPlacedInOtherLayers} set.
-     * 
+     *
      * @return node to be placed in the current layer, or null if no appropriate node was found
      */
     private LNode selectNode() {
@@ -285,7 +286,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
     /**
      * Computes the rank of a node. The rank is defined as max(d⁺(v),max(d⁺(u):(u,v)∈ E)), where
      * d⁺(v) is the number of outgoing edges of a node v.
-     * 
+     *
      * @param node
      *            to compute the rank for
      * @return rank of the node
@@ -362,7 +363,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
 
     /**
      * Computes the average normalized node size.
-     * 
+     *
      * @return average normalized node size
      */
     @SuppressWarnings("unused")
@@ -389,7 +390,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
     /**
      * Computes the average out-degree of the graph. Should be computed before changing the
      * layerlessNodes list.
-     * 
+     *
      * @return average out-degree of the Graph
      */
     private float getAverageOutDegree() {
@@ -403,7 +404,7 @@ public class StretchWidthLayerer implements ILayoutPhase<LayeredPhases, LGraph> 
     /**
      * Updates the information of the nodes, telling which has successors that are not placed. Is used when one layer is
      * finished, to eliminate edges in the same layer.
-     * 
+     *
      * @param currentLayer
      *            which is about to be finished
      */

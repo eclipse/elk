@@ -49,7 +49,7 @@ import org.eclipse.elk.core.util.Pair;
  * or post processing. Implementations of the different main phases specify the intermediate layout
  * processors they require, which are automatically collected and inserted between the main phases.
  * The layout provider itself also specifies some dependencies.
- * 
+ *
  * <pre>
  *           Intermediate Layout Processors
  * ---------------------------------------------------
@@ -62,7 +62,7 @@ import org.eclipse.elk.core.util.Pair;
  *     ---       ---       ---       ---       ---
  *   Phase 1   Phase 2   Phase 3   Phase 4   Phase 5
  * </pre>
- * 
+ *
  * <p>To use KLay Layered to layout a given graph, there are three possibilities depending on the kind
  * of graph that is to be laid out:</p>
  * <ol>
@@ -87,11 +87,11 @@ import org.eclipse.elk.core.util.Pair;
  *       given layout processor starts executing). All of these methods resume execution from where the
  *       algorithm has stopped previously.</li>
  * </ol>
- * 
+ *
  * @see ILayoutProcessor
  * @see GraphConfigurator
  * @see IHierarchyAwareLayoutProcessor
- * 
+ *
  * @author msp
  * @author cds
  * @kieler.design 2012-08-10 chsch grh
@@ -110,7 +110,7 @@ public final class ElkLayered {
     private final CompoundGraphPreprocessor compoundGraphPreprocessor = new CompoundGraphPreprocessor();
     /** compound graph postprocessor. */
     private final CompoundGraphPostprocessor compoundGraphPostprocessor = new CompoundGraphPostprocessor();
-    
+
 
     ////////////////////////////////////////////////////////////////////////////////
     // Regular Layout
@@ -118,7 +118,7 @@ public final class ElkLayered {
     /**
      * Does a layout on the given graph. If the graph contains compound nodes (see class documentation),
      * the nested graphs are ignored.
-     * 
+     *
      * @param lgraph the graph to layout
      * @param monitor a progress monitor to show progress information in, or {@code null}
      * @see #doCompoundLayout(LGraph, IElkProgressMonitor)
@@ -149,13 +149,13 @@ public final class ElkLayered {
             }
         }
         componentsProcessor.combine(components, lgraph);
-        
+
         // Resize the resulting graph, according to minimal size constraints and such
         resizeGraph(lgraph);
 
         theMonitor.done();
     }
-    
+
 
     ////////////////////////////////////////////////////////////////////////////////
     // Compound Graph Layout
@@ -163,7 +163,7 @@ public final class ElkLayered {
     /**
      * Does a layout on the given compound graph. Connected components processing is currently not
      * supported.
-     * 
+     *
      * @param lgraph the graph to layout
      * @param monitor a progress monitor to show progress information in, or {@code null}
      */
@@ -184,11 +184,11 @@ public final class ElkLayered {
 
         theMonitor.done();
     }
-    
+
     /**
      * Processors can be marked as operating on the full hierarchy using
      * {@link ILayoutProcessor#operatesOnFullHierarchy()}.
-     * 
+     *
      * All graphs are collected using a breadth first search and this list is reversed, so that for each graph, all
      * following graphs are on the same hierarchy level or higher, i.e. closer to the parent graph. Each graph then has
      * a unique configuration of ELK Layered, which is comprised of a sequence of processors. The processors can vary
@@ -244,11 +244,11 @@ public final class ElkLayered {
 
         monitor.done();
     }
-    
+
     /**
      * Implements a breadth first search in compound graphs with reversed order. This way the
      * innermost graphs are first in the list, followed by one level further up, etc.
-     * 
+     *
      * @param root
      *            the root graph
      * @return Graphs in breadth first search in compound graphs in reverse order.
@@ -295,7 +295,7 @@ public final class ElkLayered {
 
     ////////////////////////////////////////////////////////////////////////////////
     // Layout Testing
-    
+
     /**
      * The state of a test execution is held in an instance of this class.
      */
@@ -304,19 +304,19 @@ public final class ElkLayered {
         private List<LGraph> graphs;
         /** index of the processor that is to be executed next during a layout test. */
         private int step;
-        
+
         /**
          * Return the list of graphs that are currently being laid out.
-         * 
+         *
          * @return the graphs under test
          */
         public List<LGraph> getGraphs() {
             return graphs;
         }
-        
+
         /**
          * Return the index of the processor that is to be executed next during a layout test.
-         * 
+         *
          * @return the index of the next step
          */
         public int getStep() {
@@ -327,25 +327,25 @@ public final class ElkLayered {
     /**
      * Prepares a test run of the layout algorithm. After this method has run, call
      * {@link #layoutTestStep()} as often as there are layout processors.
-     * 
+     *
      * @param lgraph the input graph to initialize the test run with.
      * @return the test execution state
      */
     public TestExecutionState prepareLayoutTest(final LGraph lgraph) {
         TestExecutionState state = new TestExecutionState();
-        
+
         // update the modules depending on user options
         graphConfigurator.prepareGraphForLayout(lgraph);
 
         // split the input graph into components
         state.graphs = componentsProcessor.split(lgraph);
-        
+
         return state;
     }
 
     /**
      * Checks if the current test run still has processors to be executed for the algorithm to finish.
-     * 
+     *
      * @param state the current test execution state
      * @return {@code true} if the current test run has not finished yet. If there is no current
      *         test run, the result is undefined.
@@ -362,7 +362,7 @@ public final class ElkLayered {
      * or other layout test methods, execution is resumed from there. If the given phase or
      * processor is not among those processors that have not yet executed, an exception is thrown.
      * Also, if there is no current layout test run, an exception is thrown.
-     * 
+     *
      * @param phase the phase or processor to stop after
      * @param inclusive {@code true} if the specified phase should be executed as well
      * @param state the current test execution state
@@ -372,18 +372,18 @@ public final class ElkLayered {
      */
     public void runLayoutTestUntil(final Class<? extends ILayoutProcessor<LGraph>> phase,
             final boolean inclusive, final TestExecutionState state) {
-        
+
         List<ILayoutProcessor<LGraph>> algorithm = state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
 
         // check if the given phase exists in our current algorithm configuration
         boolean phaseExists = false;
         ListIterator<ILayoutProcessor<LGraph>> algorithmIterator = algorithm.listIterator(state.step);
         int phaseIndex = state.step;
-        
+
         while (algorithmIterator.hasNext() && !phaseExists) {
             if (algorithmIterator.next().getClass().equals(phase)) {
                 phaseExists = true;
-                
+
                 if (inclusive) {
                     phaseIndex++;
                 }
@@ -414,21 +414,21 @@ public final class ElkLayered {
     /**
      * Performs the {@link #runLayoutTestUntil(Class, boolean)} methods with {@code inclusive} set
      * to {@code true}.
-     * 
+     *
      * @param phase the phase or processor to stop after
      * @param state the current test execution state
      * @see ElkLayered#runLayoutTestUntil(Class, boolean)
      */
     public void runLayoutTestUntil(final Class<? extends ILayoutProcessor<LGraph>> phase,
             final TestExecutionState state) {
-        
+
         runLayoutTestUntil(phase, true, state);
     }
 
     /**
      * Runs the next step of the current layout test run. Throws exceptions if no layout test run is
      * currently active or if the current run has finished.
-     * 
+     *
      * @param state the current test execution state
      * @throws IllegalStateException if the given state has finished executing
      */
@@ -446,21 +446,21 @@ public final class ElkLayered {
     /**
      * Returns the current list of layout processors that make up the algorithm. This list is only
      * valid and meaningful while a layout test is being run.
-     * 
+     *
      * @param state the current test execution state
      * @return the algorithm's current configuration.
      */
     public List<ILayoutProcessor<LGraph>> getLayoutTestConfiguration(final TestExecutionState state) {
         return state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
     }
-    
+
 
     ////////////////////////////////////////////////////////////////////////////////
     // Actual Layout
 
     /**
      * Perform the five phases of the layered layouter.
-     * 
+     *
      * @param lgraph the graph that is to be laid out
      * @param monitor a progress monitor
      */
@@ -480,7 +480,8 @@ public final class ElkLayered {
             System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
             int i = 0;
             for (ILayoutProcessor<LGraph> processor : algorithm) {
-                System.out.println("   Slot " + String.format("%1$02d", i++) + ": "
+                String slot = (i < 10 ? "0" : "") + (i++);
+                System.out.println("   Slot " + slot + ": "
                         + processor.getClass().getName());
             }
 
@@ -491,13 +492,17 @@ public final class ElkLayered {
                     return;
                 }
                 // Graph debug output
+                // elkjs-exclude-start
                 DebugUtil.writeDebugGraph(lgraph, slotIndex++, processor.getClass().getSimpleName());
+                // elkjs-exclude-end
 
                 processor.process(lgraph, monitor.subTask(monitorProgress));
             }
 
             // Graph debug output
+            // elkjs-exclude-start
             DebugUtil.writeDebugGraph(lgraph, slotIndex, "finished");
+            // elkjs-exclude-end
         } else {
             // Invoke each layout processor
             for (ILayoutProcessor<LGraph> processor : algorithm) {
@@ -507,7 +512,7 @@ public final class ElkLayered {
                 processor.process(lgraph, monitor.subTask(monitorProgress));
             }
         }
-        
+
         // Move all nodes away from the layers (we need to remove nodes from their current layer in a
         // second loop to avoid ConcurrentModificationExceptions)
         for (Layer layer : lgraph) {
@@ -526,7 +531,7 @@ public final class ElkLayered {
 
     /**
      * Executes the given layout processor on the given list of graphs.
-     * 
+     *
      * @param lgraphs the list of graphs to be laid out.
      * @param monitor a progress monitor.
      * @param processor processor to execute.
@@ -537,51 +542,51 @@ public final class ElkLayered {
             processor.process(graph, new BasicProgressMonitor());
         }
     }
-    
+
 
     ////////////////////////////////////////////////////////////////////////////////
     // Graph Postprocessing (Size and External Ports)
-    
+
     /**
      * Sets the size of the given graph such that size constraints are adhered to.
      * Furthermore, the border spacing is added to the graph size and the graph offset.
      * Afterwards, the border spacing property is reset to 0.
-     * 
+     *
      * <p>Major parts of this method are adapted from
      * {@link ElkUtil#resizeNode(org.eclipse.elk.graph.KNode, float, float, boolean)}.</p>
-     * 
+     *
      * <p>Note: This method doesn't care about labels of compound nodes since those labels are not
      * attached to the graph.</p>
-     * 
+     *
      * @param lgraph the graph to resize.
      */
     private void resizeGraph(final LGraph lgraph) {
         Set<SizeConstraint> sizeConstraint = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
         Set<SizeOptions> sizeOptions = lgraph.getProperty(LayeredOptions.NODE_SIZE_OPTIONS);
-        
+
         KVector calculatedSize = lgraph.getActualSize();
         KVector adjustedSize = new KVector(calculatedSize);
-        
+
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             KVector minSize = lgraph.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
-            
+
             // if minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minSize.x <= 0) {
                     minSize.x = ElkUtil.DEFAULT_MIN_WIDTH;
                 }
-                
+
                 if (minSize.y <= 0) {
                     minSize.y = ElkUtil.DEFAULT_MIN_HEIGHT;
                 }
             }
-            
+
             // apply new size including border spacing
             adjustedSize.x = Math.max(calculatedSize.x, minSize.x);
             adjustedSize.y = Math.max(calculatedSize.y, minSize.y);
         }
-        
+
         resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);
     }
 
@@ -590,7 +595,7 @@ public final class ElkLayered {
      * Applies a new effective size to a graph that previously had an old size calculated by the
      * layout algorithm. This method takes care of adjusting content alignments as well as external
      * ports that would be misplaced if the new size is larger than the old one.
-     * 
+     *
      * @param lgraph
      *            the graph to apply the size to.
      * @param oldSize
@@ -600,11 +605,11 @@ public final class ElkLayered {
      */
     private void resizeGraphNoReallyIMeanIt(final LGraph lgraph, final KVector oldSize,
             final KVector newSize) {
-        
+
         // obey to specified alignment constraints
         Set<ContentAlignment> contentAlignment =
                 lgraph.getProperty(LayeredOptions.CONTENT_ALIGNMENT);
-        
+
         // horizontal alignment
         if (newSize.x > oldSize.x) {
             if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
@@ -613,7 +618,7 @@ public final class ElkLayered {
                 lgraph.getOffset().x += newSize.x - oldSize.x;
             }
         }
-        
+
         // vertical alignment
         if (newSize.y > oldSize.y) {
             if (contentAlignment.contains(ContentAlignment.V_CENTER)) {
@@ -622,12 +627,12 @@ public final class ElkLayered {
                 lgraph.getOffset().y += newSize.y - oldSize.y;
             }
         }
-        
+
         // correct the position of eastern and southern hierarchical ports, if necessary
         if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                 GraphProperties.EXTERNAL_PORTS)
                 && (newSize.x > oldSize.x || newSize.y > oldSize.y)) {
-            
+
             // iterate over the graph's nodes, looking for eastern / southern external ports
             // (at this point, the graph's nodes are not divided into layers anymore)
             for (LNode node : lgraph.getLayerlessNodes()) {
@@ -643,11 +648,11 @@ public final class ElkLayered {
                 }
             }
         }
-        
+
         // Actually apply the new size
         LPadding lPadding = lgraph.getPadding();
         lgraph.getSize().x = newSize.x - lPadding.left - lPadding.right;
         lgraph.getSize().y = newSize.y - lPadding.top - lPadding.bottom;
     }
-    
+
 }

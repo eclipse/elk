@@ -33,13 +33,15 @@ public final class EnumBasedFactoryComparator<G> implements Comparator<ILayoutPr
         Class<?> factory1Class = factory1.getClass();
         Class<?> factory2Class = factory2.getClass();
 
+        // elkjs-exclude-start
         if (!factory1Class.isEnum() || (factory1Class.getClass() != factory2Class.getClass()
                 && factory1Class.getDeclaringClass() != factory2Class.getDeclaringClass())) {
 
             throw new UnsupportedOperationException("This comparator can only compare enumeration "
                     + "constants that are part of the same enumeration.");
         }
-        
+        // elkjs-exclude-end
+
         return ((Enum) factory1).compareTo((Enum) factory2);
     }
 

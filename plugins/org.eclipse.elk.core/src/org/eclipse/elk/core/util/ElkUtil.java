@@ -48,39 +48,39 @@ import com.google.common.collect.Iterators;
 
 /**
  * Utility methods for layout-related things.
- * 
+ *
  * @author msp
  * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating 2009-12-11 proposed yellow msp
  */
 public final class ElkUtil {
-    
+
     /**
      * Default minimal width for nodes.
      */
     public static final float DEFAULT_MIN_WIDTH = 20.0f;
-    
+
     /**
      * Default minimal height for nodes.
      */
     public static final float DEFAULT_MIN_HEIGHT = 20.0f;
-    
+
 
     /**
      * Hidden constructor to avoid instantiation.
      */
     private ElkUtil() {
     }
-    
-    
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // LAYOUT-RELATED METHODS
 
     /**
      * Determines the port side for the given port from its relative position at
      * its corresponding node.
-     * 
+     *
      * @param port port to analyze
      * @param direction the overall layout direction
      * @return the port side relative to its containing node
@@ -90,7 +90,7 @@ public final class ElkUtil {
         if (port.getParent() == null) {
             throw new IllegalStateException("port must have a parent node to calculate the port side");
         }
-        
+
         // if the node has zero size, we cannot decide anything
         ElkNode node = port.getParent();
         double nodeWidth = node.getWidth(), nodeHeight = node.getHeight();
@@ -117,7 +117,7 @@ public final class ElkUtil {
                 return PortSide.SOUTH;
             }
         }
-        
+
         // check general criterion
         double widthPercent = (xpos + port.getWidth() / 2) / nodeWidth;
         double heightPercent = (ypos + port.getHeight() / 2) / nodeHeight;
@@ -135,12 +135,12 @@ public final class ElkUtil {
             return PortSide.SOUTH;
         }
     }
-    
+
     /**
      * Calculate the offset for a port, that is the amount by which it is moved outside of the node.
      * An offset value of 0 means the port has no intersection with the node and touches the outside
      * border of the node.
-     * 
+     *
      * @param port a port
      * @param side the side on the node for the given port
      * @return the offset on the side
@@ -150,7 +150,7 @@ public final class ElkUtil {
         if (port.getParent() == null) {
             throw new IllegalStateException("port must have a parent node to calculate the port side");
         }
-        
+
         ElkNode node = port.getParent();
         switch (side) {
         case NORTH:
@@ -168,7 +168,7 @@ public final class ElkUtil {
     /**
      * Sets the size of a given node, depending on the minimal size, the number of ports
      * on each side and the label.
-     * 
+     *
      * @param node the node that shall be resized
      * @return a vector holding the width and height resizing ratio, or {@code null} if the size
      *     constraint is set to {@code FIXED}
@@ -178,7 +178,7 @@ public final class ElkUtil {
         if (sizeConstraint.isEmpty()) {
             return null;
         }
-        
+
         double newWidth = 0, newHeight = 0;
 
         if (sizeConstraint.contains(SizeConstraint.PORTS)) {
@@ -225,17 +225,17 @@ public final class ElkUtil {
                     }
                 }
             }
-            
+
             newWidth = Math.max(minNorth, minSouth);
             newHeight = Math.max(minEast, minWest);
         }
-        
+
         return resizeNode(node, newWidth, newHeight, true, true);
     }
-    
+
     /**
      * Resize a node to the given width and height, adjusting port and label positions if needed.
-     * 
+     *
      * @param node a node
      * @param newWidth the new width to set
      * @param newHeight the new height to set
@@ -245,17 +245,17 @@ public final class ElkUtil {
      */
     public static KVector resizeNode(final ElkNode node, final double newWidth, final double newHeight,
             final boolean movePorts, final boolean moveLabels) {
-        
+
         Set<SizeConstraint> sizeConstraint = node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
-        
+
         KVector oldSize = new KVector(node.getWidth(), node.getHeight());
         KVector newSize;
-        
+
         // Calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
             Set<SizeOptions> sizeOptions = node.getProperty(CoreOptions.NODE_SIZE_OPTIONS);
             KVector minSize = node.getProperty(CoreOptions.NODE_SIZE_MINIMUM);
-            
+
             // If minimum width or height are not set, maybe default to default values
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {
                 if (minSize.x <= 0) {
@@ -265,12 +265,12 @@ public final class ElkUtil {
                     minSize.y = DEFAULT_MIN_HEIGHT;
                 }
             }
-            
+
             newSize = new KVector(Math.max(newWidth, minSize.x), Math.max(newHeight, minSize.y));
         } else {
             newSize = new KVector(newWidth, newHeight);
         }
-        
+
         double widthRatio = newSize.x / oldSize.x;
         double heightRatio = newSize.y / oldSize.y;
         double widthDiff = newSize.x - oldSize.x;
@@ -282,15 +282,15 @@ public final class ElkUtil {
                     ? node.getProperty(CoreOptions.DIRECTION)
                     : node.getParent().getProperty(CoreOptions.DIRECTION);
             boolean fixedPorts = node.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.FIXED_POS;
-            
+
             for (ElkPort port : node.getPorts()) {
                 PortSide portSide = port.getProperty(CoreOptions.PORT_SIDE);
-                
+
                 if (portSide == PortSide.UNDEFINED) {
                     portSide = calcPortSide(port, direction);
                     port.setProperty(CoreOptions.PORT_SIDE, portSide);
                 }
-                
+
                 switch (portSide) {
                 case NORTH:
                     if (!fixedPorts) {
@@ -317,10 +317,10 @@ public final class ElkUtil {
                 }
             }
         }
-        
+
         // resize the node AFTER ports have been placed, since calcPortSide needs the old size
         node.setDimensions(newSize.x, newSize.y);
-        
+
         // update label positions
         if (moveLabels) {
             for (ElkLabel label : node.getLabels()) {
@@ -328,7 +328,7 @@ public final class ElkUtil {
                 double midy = label.getY() + label.getHeight() / 2;
                 double widthPercent = midx / oldSize.x;
                 double heightPercent = midy / oldSize.y;
-                
+
                 if (widthPercent + heightPercent >= 1) {
                     if (widthPercent - heightPercent > 0 && midy >= 0) {
                         // label is on the right
@@ -342,10 +342,10 @@ public final class ElkUtil {
                 }
             }
         }
-        
+
         // set fixed size option for the node: now the size is assumed to stay as determined here
         node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
-        
+
         return new KVector(widthRatio, heightRatio);
     }
 
@@ -354,7 +354,7 @@ public final class ElkUtil {
      * size data, and updates the layout data of {@code node}'s ports and labels accordingly.<br>
      * <b>Note:</b> The scaled layout data won't be reverted during the layout process, see
      * {@link CoreOptions#SCALE_FACTOR}.
-     * 
+     *
      * @param node
      *            the node to be scaled
      */
@@ -369,7 +369,7 @@ public final class ElkUtil {
         for (ElkShape shape : Iterables.concat(node.getPorts(), node.getLabels())) {
             shape.setLocation(scalingFactor * shape.getX(), scalingFactor * shape.getY());
             shape.setDimensions(scalingFactor * shape.getWidth(), scalingFactor * shape.getHeight());
-            
+
             final KVector anchor = shape.getProperty(CoreOptions.PORT_ANCHOR);
             if (anchor != null) {
                 anchor.x *= scalingFactor;
@@ -377,23 +377,23 @@ public final class ElkUtil {
             }
         }
     }
-    
+
     /**
      * Determine the junction points of the given edge. This is done by comparing the bend points
      * of the given edge with the bend points of all other edges that are connected to the same
      * source port or the same target port.
-     * 
+     *
      * @param edge an edge
      * @return a list of junction points
      */
     public static KVectorChain determineJunctionPoints(final ElkEdge edge) {
         // MIGRATE This method will have to take different coordinate systems resulting from different edge containments into account
-        
+
         KVectorChain junctionPoints = new KVectorChain();
-        
+
 //        Map<KEdge, KVector[]> pointsMap = Maps.newHashMap();
 //        pointsMap.put(edge, getPoints(edge));
-//        
+//
 //        // for each connected port p
 //        List<KPort> connectedPorts = Lists.newArrayListWithCapacity(2);
 //        if (edge.getSourcePort() != null) {
@@ -403,7 +403,7 @@ public final class ElkUtil {
 //            connectedPorts.add(edge.getTargetPort());
 //        }
 //        for (KPort p : connectedPorts) {
-//            
+//
 //            // let allConnectedEdges be the set of edges connected to p without the main edge
 //            List<KEdge> allConnectedEdges = Lists.newLinkedList();
 //            allConnectedEdges.addAll(p.getEdges());
@@ -411,7 +411,7 @@ public final class ElkUtil {
 //            if (!allConnectedEdges.isEmpty()) {
 //                KVector[] thisPoints = pointsMap.get(edge);
 //                boolean reverse;
-//                
+//
 //                // let p1 be the start point
 //                KVector p1;
 //                if (p == edge.getTargetPort()) {
@@ -421,7 +421,7 @@ public final class ElkUtil {
 //                    p1 = thisPoints[0];
 //                    reverse = false;
 //                }
-//                
+//
 //                // for all bend points of this connection
 //                for (int i = 1; i < thisPoints.length; i++) {
 //                    // let p2 be the next bend point on this connection
@@ -431,7 +431,7 @@ public final class ElkUtil {
 //                    } else {
 //                        p2 = thisPoints[i];
 //                    }
-//                    
+//
 //                    // for all other connections that are still on the same track as this one
 //                    Iterator<KEdge> allEdgeIter = allConnectedEdges.iterator();
 //                    while (allEdgeIter.hasNext()) {
@@ -444,7 +444,7 @@ public final class ElkUtil {
 //                        if (otherPoints.length <= i) {
 //                            allEdgeIter.remove();
 //                        } else {
-//                            
+//
 //                            // let p3 be the next bend point of the other connection
 //                            KVector p3;
 //                            if (reverse) {
@@ -461,14 +461,14 @@ public final class ElkUtil {
 //                                if ((dx3 * dy2) == (dy3 * dx2)
 //                                        && signum(dx2) == signum(dx3)
 //                                        && signum(dy2) == signum(dy3)) {
-//                                    
+//
 //                                    // the points p1, p2, p3 form a straight line,
 //                                    // now check whether p2 is between p1 and p3
 //                                    if (Math.abs(dx2) < Math.abs(dx3)
 //                                            || Math.abs(dy2) < Math.abs(dy3)) {
 //                                        junctionPoints.add(p2);
 //                                    }
-//                                    
+//
 //                                } else if (i > 1) {
 //                                    // p2 and p3 have diverged, so the last common point is p1
 //                                    junctionPoints.add(p1);
@@ -484,17 +484,17 @@ public final class ElkUtil {
 //                }
 //            }
 //        }
-        
+
         return junctionPoints;
     }
-    
-    
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // COORDINATE TRANSLATION
-    
+
     /**
      * Translates the contents of the given node by an offset.
-     * 
+     *
      * @param parent parent node whose children shall be translated
      * @param xoffset x coordinate offset
      * @param yoffset y coordinate offset
@@ -508,11 +508,11 @@ public final class ElkUtil {
         // children. For these edges the start or end point might get separated from the node boundary.
         parent.getContainedEdges().forEach(edge -> translate(edge, xoffset, yoffset));
     }
-    
+
     /**
      * Translates the given edge by an offset. This includes all routing information, junction points (if any), and
      * edge labels.
-     * 
+     *
      * @param edge edge that shall be translated
      * @param xoffset x coordinate offset
      * @param yoffset y coordinate offset
@@ -521,21 +521,21 @@ public final class ElkUtil {
         // Edge sections
         edge.getSections().stream().forEach(
                 s -> translate(s, xoffset, yoffset));
-        
+
         // Edge labels
         edge.getLabels().stream().forEach(
                 label -> label.setLocation(label.getX() + xoffset, label.getY() + yoffset));
-        
+
         // Junction points
         KVectorChain junctionPoints = edge.getProperty(CoreOptions.JUNCTION_POINTS);
         if (junctionPoints != null) {
             junctionPoints.offset(xoffset, yoffset);
         }
     }
-    
+
     /**
      * Translates the given edge section by an offset.
-     * 
+     *
      * @param section edge section that shall be translated
      * @param xoffset x coordinate offset
      * @param yoffset y coordinate offset
@@ -543,23 +543,23 @@ public final class ElkUtil {
     public static void translate(final ElkEdgeSection section, final double xoffset, final double yoffset) {
         // Translate source point
         section.setStartLocation(section.getStartX() + xoffset, section.getStartY() + yoffset);
-        
+
         // Translate bend points
         for (ElkBendPoint bendPoint : section.getBendPoints()) {
             bendPoint.set(bendPoint.getX() + xoffset, bendPoint.getY() + yoffset);
         }
-        
+
         // Translate target point
         section.setEndLocation(section.getEndX() + xoffset, section.getEndY() + yoffset);
     }
-    
-    
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // COORDINATE-SYSTEM AND TYPE "CONVERSION"
-    
+
     /**
      * Converts the given relative point to an absolute location.
-     * 
+     *
      * @param point a relative point
      * @param parent the parent node to which the point is relative to
      * @return {@code point} for convenience
@@ -572,10 +572,10 @@ public final class ElkUtil {
         }
         return point;
     }
-    
+
     /**
      * Converts the given absolute point to a relative location.
-     * 
+     *
      * @param point an absolute point
      * @param parent the parent node to which the point shall be made relative to
      * @return {@code point} for convenience
@@ -588,11 +588,11 @@ public final class ElkUtil {
         }
         return point;
     }
-    
+
     /**
      * Get the edge points as an array of vectors. Note that this method requires the edge to have exactly one
      * edge section.
-     * 
+     *
      * @param edge an edge
      * @return an array with all edge points
      * @throws IllegalArgumentException if the edge has no or more than one edge section.
@@ -602,56 +602,56 @@ public final class ElkUtil {
             throw new IllegalArgumentException("The edge needs to have exactly one edge section. Found: "
                     + edge.getSections().size());
         }
-        
+
         ElkEdgeSection section = edge.getSections().get(0);
-        
+
         int n = section.getBendPoints().size() + 2;
         KVector[] points = new KVector[n];
-        
+
         // Source point
         points[0] = new KVector(section.getStartX(), section.getStartY());
-        
+
         // Bend points
         ListIterator<ElkBendPoint> pointIter = section.getBendPoints().listIterator();
         while (pointIter.hasNext()) {
             ElkBendPoint bendPoint = pointIter.next();
             points[pointIter.nextIndex()] = new KVector(bendPoint.getX(), bendPoint.getY());
         }
-        
+
         // Target point
         points[n - 1] = new KVector(section.getEndX(), section.getEndY());
-        
+
         return points;
     }
-    
+
     /**
      * Creates a vector chain containing the start point, bend points, and end point of the given edge section. Note
      * that modifying the vector chain will be of no consequence to the edge section.
-     * 
-     * @param edgeSection 
+     *
+     * @param edgeSection
      *            the edge section to initialize the vector chain with.
      * @return the vector chain.
      */
     public static KVectorChain createVectorChain(final ElkEdgeSection edgeSection) {
         KVectorChain chain = new KVectorChain();
-        
+
         chain.add(new KVector(edgeSection.getStartX(), edgeSection.getStartY()));
-        
+
         for (ElkBendPoint bendPoint : edgeSection.getBendPoints()) {
             chain.add(new KVector(bendPoint.getX(), bendPoint.getY()));
         }
-        
+
         chain.add(new KVector(edgeSection.getEndX(), edgeSection.getEndY()));
-        
+
         return chain;
     }
-    
+
     /**
      * Applies the vector chain's vectors to the given edge section. The first and the last point of the vector chain
      * are used as the section's new source and start point, respectively. The remaining points become the section's
      * new bend points. The method tries to reuse as many bend points as possible instead of wiping all bend points
      * out and creating new ones.
-     * 
+     *
      * @param vectorChain the vector chain to apply.
      * @param section the edge section to apply the chain to.
      * @throws IllegalArgumentException if the vector chain contains less than two vectors.
@@ -661,15 +661,15 @@ public final class ElkUtil {
         if (vectorChain.size() < 2) {
             throw new IllegalArgumentException("The vector chain must contain at least a source and a target point.");
         }
-        
+
         // Start point
         KVector firstPoint = vectorChain.getFirst();
         section.setStartLocation(firstPoint.x, firstPoint.y);
-        
+
         // Reuse as many existing bend points as possible
         ListIterator<ElkBendPoint> oldPointIter = section.getBendPoints().listIterator();
         ListIterator<KVector> newPointIter = vectorChain.listIterator(1);
-        
+
         while (newPointIter.nextIndex() < vectorChain.size() - 1) {
             KVector nextPoint = newPointIter.next();
             ElkBendPoint bendpoint;
@@ -679,38 +679,41 @@ public final class ElkUtil {
                 bendpoint = ElkGraphFactory.eINSTANCE.createElkBendPoint();
                 oldPointIter.add(bendpoint);
             }
-            
+
             bendpoint.set(nextPoint.x, nextPoint.y);
         }
-        
+
         // Remove existing bend points that we did not use
         while (oldPointIter.hasNext()) {
             oldPointIter.next();
             oldPointIter.remove();
         }
-        
+
         // End point
         KVector lastPoint = vectorChain.getLast();
         section.setEndLocation(lastPoint.x, lastPoint.y);
     }
-    
-    
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // DEFAULT LAYOUT SETTINGS
-    
+
     /**
      * Recursively configures default values for all child elements of the passed graph. This
      * includes node, ports, and edges.
-     * 
+     *
      * Note that it is <b>not</b> checked whether the defaults flag is set on the graph.
-     * 
+     *
      * @param graph
      *            the graph to configure.
      */
     public static void configureDefaultsRecursively(final ElkNode graph) {
-        Iterator<ElkGraphElement> kgeIt = Iterators.filter(graph.eAllContents(), ElkGraphElement.class);
+        // note that Iterators#filter(Iterator, Class) isn't used on purpose since
+        // it's incompatible with gwt
+        Iterator<EObject> kgeIt = Iterators.filter(graph.eAllContents(),
+            e -> e instanceof ElkGraphElement);
         while (kgeIt.hasNext()) {
-            ElkGraphElement kge = kgeIt.next();
+            EObject kge = kgeIt.next();
             if (kge instanceof ElkNode) {
                 configureWithDefaultValues((ElkNode) kge);
             } else if (kge instanceof ElkPort) {
@@ -720,41 +723,41 @@ public final class ElkUtil {
             }
         }
     }
-    
+
     /**
      * Adds some default values to the passed node. This includes a reasonable size, a label based
      * on the node's identifier and a inside center node label placement.
-     * 
+     *
      * Such default values are useful for fast test case generation.
-     * 
+     *
      * @param node
      *            a node of a graph
      */
     public static void configureWithDefaultValues(final ElkNode node) {
         // Make sure the node has a size if the size constraints are fixed
         Set<SizeConstraint> sc = node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
-        
+
         if (sc.equals(SizeConstraint.fixed()) && node.getWidth() == 0f && node.getHeight() == 0f) {
             node.setWidth(DEFAULT_MIN_WIDTH * 2 * 2);
             node.setHeight(DEFAULT_MIN_HEIGHT * 2 * 2);
         }
-        
+
         // label
         ensureLabel(node);
-        
+
         Set<NodeLabelPlacement> nlp = node.getProperty(CoreOptions.NODE_LABELS_PLACEMENT);
         if (nlp.equals(NodeLabelPlacement.fixed())) {
             node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideCenter());
         }
-        
+
     }
-    
+
     /**
-     * Adds some default values to the passed port. This includes a reasonable size 
+     * Adds some default values to the passed port. This includes a reasonable size
      * and a label based on the port's identifier.
-     * 
+     *
      * Such default values are useful for fast test case generation.
-     * 
+     *
      * @param port
      *            a port of a node of a graph
      */
@@ -763,13 +766,13 @@ public final class ElkUtil {
             port.setWidth(DEFAULT_MIN_WIDTH / 2 / 2);
             port.setHeight(DEFAULT_MIN_HEIGHT / 2 / 2);
         }
-        
+
         ensureLabel(port);
     }
-    
+
     /**
      * Configures the {@link EdgeLabelPlacement} of the passed edge to be center of the edge.
-     * 
+     *
      * @param edge
      *            an edge of a graph
      */
@@ -779,7 +782,7 @@ public final class ElkUtil {
             edge.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT, EdgeLabelPlacement.CENTER);
         }
     }
-    
+
     /**
      * If the element does not already own a label, a label is created based on the element's
      * identifier.
@@ -792,15 +795,15 @@ public final class ElkUtil {
             }
         }
     }
-    
-    
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // VISITORS
-    
+
     /**
      * Apply the given graph element visitors to the content of the given graph. If validators are involved
      * they are not queried about errors.
-     * 
+     *
      * @param graph the graph the visitors shall be applied to.
      * @param visitors the visitors to apply.
      */
@@ -811,7 +814,7 @@ public final class ElkUtil {
         Iterator<EObject> allElements = ElkGraphUtil.propertiesSkippingIteratorFor(graph, true);
         while (allElements.hasNext()) {
             EObject nextElement = allElements.next();
-            
+
             if (nextElement instanceof ElkGraphElement) {
                 ElkGraphElement graphElement = (ElkGraphElement) nextElement;
                 for (int i = 0; i < visitors.length; i++) {
@@ -820,20 +823,20 @@ public final class ElkUtil {
             }
         }
     }
-    
+
     /**
      * Apply the given graph element visitors to the content of the given graph. If validators are involved
      * and at least one error is found, a {@link GraphValidationException} is thrown.
-     * 
+     *
      * @param graph the graph the visitors shall be applied to.
      * @param visitors the visitors to apply.
      * @throws GraphValidationException if an error is found while validating the graph
      */
     public static void applyVisitorsWithValidation(final ElkNode graph, final IGraphElementVisitor... visitors)
                 throws GraphValidationException {
-        
+
         applyVisitors(graph, visitors);
-        
+
         // Gather validator results and generate an error message
         List<GraphIssue> allIssues = null;
         for (int i = 0; i < visitors.length; i++) {
@@ -848,7 +851,7 @@ public final class ElkUtil {
                 }
             }
         }
-        
+
         if (allIssues != null) {
             StringBuilder message = new StringBuilder();
             for (GraphIssue issue : allIssues) {
@@ -864,11 +867,11 @@ public final class ElkUtil {
             throw new GraphValidationException(message.toString(), allIssues);
         }
     }
-    
-    
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // DEBUGGING
-    
+
     /**
      * Print information on the given graph element to the given string builder.
      */
@@ -879,7 +882,7 @@ public final class ElkUtil {
         } else {
             builder.append("Root ");
         }
-        
+
         String className = element.eClass().getName();
         if (className.startsWith("Elk")) {
             // CHECKSTYLEOFF MagicNumber
@@ -888,7 +891,7 @@ public final class ElkUtil {
         } else {
             builder.append(className);
         }
-        
+
         if (element instanceof ElkLabel) {
             String text = ((ElkLabel) element).getText();
             if (!Strings.isNullOrEmpty(text)) {
@@ -905,12 +908,12 @@ public final class ElkUtil {
             }
         }
     }
-    
+
     /**
      * Returns a path where debug files can be stored. All debug folders end up in an ELK-specific folder placed
      * inside the user's home folder. The returned path can either be that ELK-specific folder itself or a
      * subfolder.
-     * 
+     *
      * @param subfolder optional subfolder name. Can be {@code null} or empty, in which case the ELK-specific
      *                  subfolder of the user's home folder is returned.
      * @return debug folder path, including a trailing separator character. Can return {@code null} if the user's
@@ -918,49 +921,51 @@ public final class ElkUtil {
      */
     public static String debugFolderPath(final String subfolder) {
         String userHome = System.getProperty("user.home");
-        
+
+        // elkjs-exclude-start
         if (userHome != null) {
             StringBuilder path = new StringBuilder(userHome);
-            
+
             // Make sure we end the path with a separator character
             if (path.charAt(path.length() - 1) != File.separatorChar) {
                 path.append(File.separatorChar);
             }
-            
+
             // The ELK debug directory
             path.append("elk").append(File.separatorChar);
-            
+
             // Append the subfolder name, if any
             if (!Strings.isNullOrEmpty(subfolder)) {
                 path.append(subfolder);
             }
-            
+
             // Again, make sure we end with a separator
             if (path.charAt(path.length() - 1) != File.separatorChar) {
                 path.append(File.separatorChar);
             }
-            
+
             return path.toString();
-        } else {
-            return null;
         }
+        // elkjs-exclude-end
+
+        return null;
     }
-    
-    
+
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // MISCELLANEOUS
-    
-    
-    
+
+
+
     /**
      * Create a unique identifier for the given graph element. Note that this identifier
      * is not necessarily universally unique, since it uses the hash code, which
      * usually covers only the range of heap space addresses.
-     * 
+     *
      * @param element a graph element
      */
     public static void createIdentifier(final ElkGraphElement element) {
         element.setIdentifier(Integer.toString(element.hashCode()));
     }
-    
+
 }
