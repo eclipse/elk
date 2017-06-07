@@ -112,7 +112,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                     }
                 }
             }
-            
+                        
             // 3. Implementation of ILayoutMetaDataProvider#apply(Registry)
             members += bundle.toMethod('apply', typeRef(void)) [
                 parameters += bundle.toParameter('registry', typeRef("org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry"))
@@ -314,7 +314,35 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 members += support.toSupportedOptionConstant
             }
             
-            // 2. Implementation of ILayoutMetaDataProvider#apply(Registry)
+            // 2. Create a dedicated factory for the algorithm's layout provider.
+            //    The generic 'AlgorithmFactory' isn't used on purpose: it's not supported by elk.js
+            members += algorithm.toClass(algorithm.toFactoryClass) [
+                superTypes += typeRef("org.eclipse.elk.core.util.IFactory<AbstractLayoutProvider>")
+                static = true
+                documentation = '''
+                Layouter-specific algorithm factory.'''
+                
+                // Implementation of AbstractLayoutProvider#create()
+                members += algorithm.toMethod('create', typeRef('org.eclipse.elk.core.AbstractLayoutProvider')) [
+                    visibility = JvmVisibility.PUBLIC
+                    body = '''
+                        AbstractLayoutProvider provider = new «algorithm.provider»();
+                        provider.initialize("«algorithm.parameter»");
+                        return provider;
+                    '''
+                ]
+                
+                // Implementation of AbstractLayoutProvider#destroy(AbstractLayoutProvider)
+                members += algorithm.toMethod('destroy', typeRef(void)) [
+                    parameters += algorithm.toParameter('obj', typeRef('org.eclipse.elk.core.AbstractLayoutProvider'))
+                    body = '''
+                        obj.dispose();
+                    '''
+                ]
+                
+            ]
+            
+            // 3. Implementation of ILayoutMetaDataProvider#apply(Registry)
             members += algorithm.toMethod('apply', typeRef(void)) [
                 parameters += algorithm.toParameter('registry', typeRef("org.eclipse.elk.core.data.ILayoutMetaDataProvider.Registry"))
                 body = '''
@@ -322,6 +350,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
                 '''
             ]
         ]
+    }
+    
+    private def toFactoryClass(MdAlgorithm algorithm) {
+        return algorithm.name.toFirstUpper + 'Factory'
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -388,7 +420,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             «algorithm.qualifiedName.toCodeString»,
             «(algorithm.label ?: algorithm.name).shrinkWhiteSpace.toCodeString»,
             «algorithm.description.shrinkWhiteSpace.toCodeString»,
-            new org.eclipse.elk.core.util.AlgorithmFactory(«algorithm.provider».class, "«algorithm.parameter»"),
+            new «algorithm.toFactoryClass»(),
             «algorithm.category?.qualifiedName.toCodeString»,
             «algorithm.bundle?.label.toCodeString»,
             «algorithm.previewImage.toCodeString»,
