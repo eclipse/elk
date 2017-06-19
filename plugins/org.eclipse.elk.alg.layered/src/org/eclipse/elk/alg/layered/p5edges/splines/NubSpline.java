@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
  * @author tit
  * 
  */
- class NubSpline {
+ public class NubSpline {
     /** Default dimension of the spline. */
     protected static final int DIM = 3;
     /** Doubles with a difference less than this value will be assumed to be equal. */

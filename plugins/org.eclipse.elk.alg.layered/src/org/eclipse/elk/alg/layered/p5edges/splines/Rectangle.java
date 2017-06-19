@@ -24,7 +24,7 @@ import com.google.common.collect.Iterables;
 
 /**
  * This class is representing a rectangle and provides some comfort methods to work with the
- * rectangle. Special about this implementation is that there is no width and height is stored. This
+ * rectangle. Special about this implementation is that there is no width and height stored. This
  * improves the performance of unions and accesses to the right/top side.
  * 
  * @author tit

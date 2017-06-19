@@ -155,6 +155,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     /** Moves nodes and vertical edge segments in horizontal direction to close some gaps that are a
       * result of the layering. */
     HORIZONTAL_COMPACTOR,
+    /** Processor that calculates final control points for splines as intended by the 
+     * {@link org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter SplineEdgeRouter}. */
+    FINAL_SPLINE_BENDPOINTS_CALCULATOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Place end labels on edges. */
@@ -214,6 +217,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case END_LABEL_PROCESSOR:
             return new EndLabelProcessor();
+            
+        case FINAL_SPLINE_BENDPOINTS_CALCULATOR:
+            return new FinalSplineBendpointsCalculator();
 
         case ONE_SIDED_GREEDY_SWITCH:
             return new LayerSweepCrossingMinimizer(CrossMinType.ONE_SIDED_GREEDY_SWITCH);
