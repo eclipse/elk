@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK Compaction Algorithms Tests
+Bundle-SymbolicName: org.eclipse.elk.graph.test;singleton:=true
+Bundle-Version: 0.3.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Eclipse Modeling Project
+Require-Bundle: com.google.guava;bundle-version="15.0.0",
+ org.eclipse.elk.core,
+ org.eclipse.elk.alg.common.compaction,
+ org.junit;bundle-version="4.12.0"
