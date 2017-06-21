@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.compaction;
 
-import org.eclipse.elk.alg.layered.compaction.oned.CNode;
-import org.eclipse.elk.alg.layered.compaction.oned.ISpacingsHandler;
-import org.eclipse.elk.alg.layered.compaction.oned.OneDimensionalCompactor;
-import org.eclipse.elk.alg.layered.compaction.oned.algs.ICompactionAlgorithm;
-import org.eclipse.elk.alg.layered.compaction.oned.algs.IConstraintCalculationAlgorithm;
-import org.eclipse.elk.alg.layered.compaction.oned.algs.ScanlineConstraintCalculator;
+import java.util.Collections;
+
+import org.eclipse.elk.alg.common.compaction.oned.CNode;
+import org.eclipse.elk.alg.common.compaction.oned.ICompactionAlgorithm;
+import org.eclipse.elk.alg.common.compaction.oned.ISpacingsHandler;
+import org.eclipse.elk.alg.common.compaction.oned.OneDimensionalCompactor;
+import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
@@ -27,9 +28,6 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Sets;
-
 /**
  * This processor applies additional compaction to an already routed graph and can be executed after
  * {@link org.eclipse.elk.alg.layered.p5edges.OrthogonalEdgeRouter OrthogonalEdgeRouter}.
@@ -37,20 +35,21 @@ import com.google.common.collect.Sets;
  * the position is minimal considering the desired spacing between elements.
  * 
  * <p>
- *  Since the locking functionality in {@link CLNode} and {@link CLEdge} relies on the direction of
+ *  Since the used <em>locking</em> functionality relies on the direction of
  *  incoming and outgoing edges, this processor is required to be executed before the
  *  {@link org.eclipse.elk.alg.layered.intermediate.ReversedEdgeRestorer ReversedEdgeRestorer}.
  * </p>
  * 
  * <dl>
  *  <dt>Precondition:</dt>
- *   <dd>The edges are routed orthogonally</dd>
+ *   <dd>The edges have been routed</dd>
  *  <dt>Postcondition:</dt>
  *   <dd>Nodes and edges are positioned compact without colliding.</dd>
  *  <dt>Slots:</dt>
  *   <dd>After phase 5.</dd>
  *  <dt>Same-slot dependencies:</dt>
- *   <dd>After {@link org.eclipse.elk.alg.layered.intermediate.LabelDummyRemover LabelDummyRemover}
+ *   <dd>Before {@link org.eclipse.elk.alg.layered.intermediate.LabelDummyRemover LabelDummyRemover}.
+ *   Otherwise labels would be ignored during compaction.
  *   </dd>
  *   <dd>Before {@link org.eclipse.elk.alg.layered.intermediate.ReversedEdgeRestorer
  *       ReversedEdgeRestorer}</dd>
@@ -66,9 +65,6 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
      */
     public static final ICompactionAlgorithm NETWORK_SIMPLEX_COMPACTION =
             new NetworkSimplexCompaction();
-    
-    private static final IConstraintCalculationAlgorithm EDGE_AWARE_SCANLINE_CONSTRAINTS =
-            new EdgeAwareScanlineConstraintCalculation();
     
     private LGraph lGraph;
     
@@ -90,6 +86,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
         OneDimensionalCompactor odc =
                 new OneDimensionalCompactor(transformer.transform(layeredGraph));
         
+        // consider special spacing requirements of the lgraph's nodes and edges
         odc.setSpacingsHandler(specialSpacingsHandler);
         
         // ---
@@ -97,12 +94,12 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
         // - 
         switch (layeredGraph.getProperty(LayeredOptions.COMPACTION_POST_COMPACTION_CONSTRAINTS)) {
             case SCANLINE:
-                odc.setConstraintAlgorithm(EDGE_AWARE_SCANLINE_CONSTRAINTS);
+                odc.setConstraintAlgorithm(new EdgeAwareScanlineConstraintCalculation(lGraph));
                 break;
             default:
                 odc.setConstraintAlgorithm(OneDimensionalCompactor.QUADRATIC_CONSTRAINTS);
         }
-
+        
         // ---
         // select compaction strategy
         // - 
@@ -117,10 +114,10 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
             break;
             
         case LEFT_RIGHT_CONSTRAINT_LOCKING:
-            // the default locking strategy locks CNodes if they are not constrained
+            // lock CNodes if they are not constrained
             odc.compact()
                .changeDirection(Direction.RIGHT)
-               .applyLockingStrategy()
+               .setLockFunction((node, dir) -> node.cGroup.outDegreeReal == 0)
                .compact();
             break;
             
@@ -129,13 +126,11 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
             // then compacting right to shorten unnecessary long edges
             odc.compact()
                .changeDirection(Direction.RIGHT)
-               .setLockingStrategy((pair) -> !pair.getFirst().lock.get(pair.getSecond()))
-               .applyLockingStrategy()
+               .setLockFunction((node, dir) -> transformer.getLockMap().get(node).get(dir))
                .compact();
             break;
          
         case EDGE_LENGTH:
-            
             odc.setCompactionAlgorithm(NETWORK_SIMPLEX_COMPACTION)
                .compact();
             break;
@@ -147,7 +142,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
         
         // since changeDirection may transform hitboxes, the final direction has to be LEFT again
         odc.finish();
-        
+
         // applying the compacted positions to the LGraph and updating its size and offset
         transformer.applyLayout();
         
@@ -155,50 +150,46 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
     }
     
     /**
-     * An extended scanline procedure that is able to properly handle different spacing values
-     * between nodes and edges.
+     * @return true if both passed nodes originate from the same (set) of
+     *         {@link org.eclipse.elk.alg.layered.graph.LEdge LEdge}.
      */
-    private static final class EdgeAwareScanlineConstraintCalculation extends
-            ScanlineConstraintCalculator {
-
-        private final Function<CNode, Double> defaultSpacingFun = n -> compactor.direction
-                .isHorizontal() ? n.getVerticalSpacing() : n.getHorizontalSpacing();
-
-        public void calculateConstraints(final OneDimensionalCompactor theCompactor) {
-
-            this.compactor = theCompactor;
-
-            // constraints between vertical segments
-            sweep(n -> n instanceof CLEdge, defaultSpacingFun);
-            // constraints between regular nodes
-            sweep(n -> n instanceof CLNode, defaultSpacingFun);
-
-            // find the minimum spacing
-            double minSpacing = Double.POSITIVE_INFINITY;
-            for (CNode n : compactor.cGraph.cNodes) {
-                // ignore external ports since their spacing is internally set to 0
-                if (n instanceof CLNode
-                        && ((CLNode) n).getlNode().getType() == NodeType.EXTERNAL_PORT) {
-                    continue;
-                }
-                minSpacing = Math.min(minSpacing, defaultSpacingFun.apply(n));
-            }
-            // solitary external edges may exist ... 
-            if (minSpacing == Double.POSITIVE_INFINITY) {
-                minSpacing = 0;
-            }
-            final double finalMinSpacing = minSpacing;
-            // constraints between nodes and vertical segments
-            sweep(n -> true, n -> finalMinSpacing);
+    public static boolean isVerticalSegmentsOfSameEdge(final CNode cNode1, final CNode cNode2) {
+        VerticalSegment v1 = getVerticalSegmentOrNull(cNode1);
+        VerticalSegment v2 = getVerticalSegmentOrNull(cNode2);
+        return
+            // if we only want north/south segments we could use the following
+            (v1 != null && v2 != null)
+            // this might seem quite expensive but in most cases the sets
+            // contain only one element
+            && !Collections.disjoint(v1.representedLEdges, v2.representedLEdges);
+    }
+    
+    /**
+     * @return the represented {@link LNode} (if set as {@link CNode#origin}, or {@code null}.
+     */
+    public static LNode getLNodeOrNull(final CNode cNode) {
+        if (cNode.origin instanceof LNode) {
+            return (LNode) cNode.origin;
         }
+        return null;
+    }
+
+    /**
+     * @return the represented {@link VerticalSegment} (if set as {@link CNode#origin}, or {@code null}.
+     */
+    public static VerticalSegment getVerticalSegmentOrNull(final CNode cNode) {
+        if (cNode.origin instanceof VerticalSegment) {
+            return (VerticalSegment) cNode.origin;
+        }
+        return null;
     }
     
     /**
      * An implementation of a {@link ISpacingsHandler} that is able to cope with the special
      * requirements of {@link LGraph}s. For instance, there are special cases for the spacing
-     * between {@link CLEdge}s as opposed to {@link CLNode}s.
+     * between {@link LEdge}s as opposed to {@link LNode}s.
      */
-    private final ISpacingsHandler<CNode> specialSpacingsHandler = new ISpacingsHandler<CNode>() {
+    private final ISpacingsHandler specialSpacingsHandler = new ISpacingsHandler() {
         
         /**
          * {@inheritDoc}
@@ -212,16 +203,9 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
                 return 0;
             }
             
-            // at this point we know that the passed CNodes are either a CLNode or a CLEdge
-            
-            LNode node1 = null;
-            if (cNode1 instanceof CLNode) {
-                node1 = ((CLNode) cNode1).getlNode();
-            }
-            LNode node2 = null;
-            if (cNode2 instanceof CLNode) {
-                node2 = ((CLNode) cNode2).getlNode();
-            } 
+            // get the underlying LNodes 
+            LNode node1 = getLNodeOrNull(cNode1);
+            LNode node2 = getLNodeOrNull(cNode2);
 
             // if either of the two involved nodes represents an external port,
             //  it's ok to move the port as close as possible since it will be 
@@ -248,6 +232,9 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
         @Override
         public double getVerticalSpacing(final CNode cNode1, final CNode cNode2) {
 
+            // Note that this method is only called when the quadratic constraint calculation is used
+            //  (not if the edge aware scaline procedure is used).
+            
             // joining north/south segments that belong to the same edge 
             // by setting their vertical spacing to 1, 
             // i.e. they overlap in the y dimension which results in a constraint
@@ -255,22 +242,16 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
                 return 1;
             }
 
-            return Math.min(cNode1.getVerticalSpacing(), cNode2.getVerticalSpacing());
-        }
-        
-        /**
-         * @return true if both passed nodes originate from the same (set) of
-         *         {@link org.eclipse.elk.alg.layered.graph.LEdge LEdge}.
-         */
-        private boolean isVerticalSegmentsOfSameEdge(final CNode cNode1, final CNode cNode2) {
-            return 
-                    // if we only want north/south segments we could use the following
-                    // cNode1.parentNode != null && cNode2.parentNode != null
-                    (cNode1 instanceof CLEdge && cNode2 instanceof CLEdge)
-                    // this might seem quite expensive but in most cases the sets 
-                    // contain only one element
-                    && !Sets.intersection(((CLEdge) cNode1).originalLEdges,
-                            ((CLEdge) cNode2).originalLEdges).isEmpty();
+            // get the underlying LNodes
+            LNode node1 = getLNodeOrNull(cNode1);
+            LNode node2 = getLNodeOrNull(cNode2);
+
+            // default behavior, query the Spacings object
+            Spacings spacings = lGraph.getProperty(InternalProperties.SPACINGS);
+
+            return spacings.getVerticalSpacing(
+                    node1 != null ? node1.getType() : NodeType.LONG_EDGE, 
+                    node2 != null ? node2.getType() : NodeType.LONG_EDGE);
         }
     };
 
