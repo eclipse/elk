@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.layered.intermediate;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.EdgeConstraint;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -32,12 +33,20 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * nodes with fixed port sides for which all ports are reversed, i.e. input ports are on the
  * right and output ports are on the left. All incident edges are reversed in such cases.
  * 
+ * <p>Special handling applies to nodes that are to be placed in the {@code FIRST} or {@code LAST}
+ * layer if they have incoming or outgoing edges with labels, respectively. The labels are
+ * represented by label dummy nodes, which will later be placed in a separate layer between
+ * {@code FIRST_SEPARATE} and {@code FIRST} (or {@code LAST} and {@code LAST_SEPARATE}).
+ * 
  * <dl>
- *   <dt>Precondition:</dt><dd>an unlayered graph.</dd>
- *   <dt>Postcondition:</dt><dd>nodes with layer constraints have only incoming or
- *     only outgoing edges, as appropriate.</dd>
- *   <dt>Slots:</dt><dd>Before phase 1.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>an unlayered graph.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>nodes with layer constraints have only incoming or only outgoing edges, as appropriate.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 1.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>None.</dd>
  * </dl>
  * 
  * @see LayerConstraintProcessor
@@ -85,7 +94,7 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
                 // If the port sides are fixed, but all ports are reversed, that probably means that we
                 // have a feedback node. Normally, the connected edges would be routed around the node,
                 // but that hides the feedback node character. We thus simply reverse all connected
-                // edges and thus make KLay Layered think we have a regular node
+                // edges and thus make ELK Layered think we have a regular node
                 //
                 // Note that this behavior is only desired if none of the connected nodes have 
                 // layer constraints set. Otherwise this processing causes issues with an external 
@@ -156,19 +165,11 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
         for (LPort port : ports) {
             // Only incoming edges
             if (type != PortType.INPUT) {
-                LEdge[] outgoing = port.getOutgoingEdges().toArray(
-                        new LEdge[port.getOutgoingEdges().size()]);
+                LEdge[] outgoing = port.getOutgoingEdges().toArray(new LEdge[port.getOutgoingEdges().size()]);
                 
                 for (LEdge edge : outgoing) {
-                    LayerConstraint targetLayerConstraint = edge.getTarget().getNode().getProperty(
-                            LayeredOptions.LAYERING_LAYER_CONSTRAINT);
-                    
-                    // We leave an edge untouched if it has already been reversed or if it runs from a
-                    // LAST to a LAST_SEPARATE node (such outgoing edges are allowed for LAST nodes)
-                    if (!edge.getProperty(InternalProperties.REVERSED)
-                            && !(nodeLayerConstraint == LayerConstraint.LAST
-                                && targetLayerConstraint == LayerConstraint.LAST_SEPARATE)) {
-                        
+                    // Reverse the edge if we're allowed to do so
+                    if (canReverseOutgoingEdge(nodeLayerConstraint, edge)) {
                         edge.reverse(layeredGraph, true);
                     }
                 }
@@ -176,24 +177,92 @@ public final class EdgeAndLayerConstraintEdgeReverser implements ILayoutProcesso
             
             // Only outgoing edges
             if (type != PortType.OUTPUT) {
-                LEdge[] incoming = port.getIncomingEdges().toArray(
-                        new LEdge[port.getIncomingEdges().size()]);
+                LEdge[] incoming = port.getIncomingEdges().toArray(new LEdge[port.getIncomingEdges().size()]);
                 
                 for (LEdge edge : incoming) {
-                    LayerConstraint sourceLayerConstraint = edge.getSource().getNode().getProperty(
-                            LayeredOptions.LAYERING_LAYER_CONSTRAINT);
-                    
-                    // We leave an edge untouched if it has already been reversed or if it runs from a
-                    // FIRST_SEPARATE to a FIRST node (such incoming edges are allowed for FIRST nodes)
-                    if (!edge.getProperty(InternalProperties.REVERSED)
-                            && !(nodeLayerConstraint == LayerConstraint.FIRST
-                                && sourceLayerConstraint == LayerConstraint.FIRST_SEPARATE)) {
-                        
+                    // Reverse the edge if we're allowed to do so
+                    if (canReverseIncomingEdge(nodeLayerConstraint, edge)) {
                         edge.reverse(layeredGraph, true);
                     }
                 }
             }
         }
+    }
+    
+    /**
+     * Checks whether or not a given edge outgoing edge can actually be reversed. It cannot be reversed if it already
+     * has been, or if it connects a node in the {@code LAST} layer to either a node in the {@code LAST_SEPARATE} layer
+     * or to a label dummy node.
+     * 
+     * @param nodeLayerConstraint
+     *            the source node's layer constraint.
+     * @param edge
+     *            the edge to possibly be reversed.
+     * @return {@code true} if it's okay to reverse the edge.
+     */
+    private boolean canReverseOutgoingEdge(final LayerConstraint nodeLayerConstraint, final LEdge edge) {
+        // The layer constraint that gets passed to us
+        assert nodeLayerConstraint == edge.getSource().getNode().getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
+        
+        // If the edge is already reversed, we don't want to reverse it again
+        if (edge.getProperty(InternalProperties.REVERSED)) {
+            return false;
+        }
+        
+        // If the node is supposed to be in the lAST layer...
+        if (nodeLayerConstraint == LayerConstraint.LAST) {
+            // ...and is connected to a label dummy, we won't reverse it
+            LNode targetNode = edge.getTarget().getNode();
+            if (targetNode.getType() == NodeType.LABEL) {
+                return false;
+            }
+            
+            // ...and  is connected to a node in the LAST_SEPARATE layer, we won't reverse it
+            LayerConstraint targetLayerConstraint = targetNode.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
+            if (targetLayerConstraint == LayerConstraint.LAST_SEPARATE) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Checks whether or not a given edge incoming edge can actually be reversed. It cannot be reversed if it already
+     * has been, or if it connects a node in the {@code FIRST} layer to either a node in the {@code FIRST_SEPARATE}
+     * layer or to a label dummy node.
+     * 
+     * @param nodeLayerConstraint
+     *            the target node's layer constraint.
+     * @param edge
+     *            the edge to possibly be reversed.
+     * @return {@code true} if it's okay to reverse the edge.
+     */
+    private boolean canReverseIncomingEdge(final LayerConstraint nodeLayerConstraint, final LEdge edge) {
+        // The layer constraint that gets passed to us
+        assert nodeLayerConstraint == edge.getTarget().getNode().getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
+        
+        // If the edge is already reversed, we don't want to reverse it again
+        if (edge.getProperty(InternalProperties.REVERSED)) {
+            return false;
+        }
+        
+        // If the node is supposed to be in the FIRST layer...
+        if (nodeLayerConstraint == LayerConstraint.FIRST) {
+            // ...and is connected to a label dummy, we won't reverse it
+            LNode sourceNode = edge.getSource().getNode();
+            if (sourceNode.getType() == NodeType.LABEL) {
+                return false;
+            }
+            
+            // ...and  is connected to a node in the FIRST_SEPARATE layer, we won't reverse it
+            LayerConstraint sourceLayerConstraint = sourceNode.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT);
+            if (sourceLayerConstraint == LayerConstraint.FIRST_SEPARATE) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
 }
