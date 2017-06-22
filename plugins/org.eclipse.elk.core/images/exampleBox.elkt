@@ -1,0 +1,25 @@
+algorithm: box
+spacing.nodeNode: 2.0
+//horizontal edges
+	node node2{
+		layout [ size: 30, 30 ]
+	}
+	node node3{
+		layout [ size: 20, 20 ]
+	}
+	node node4{
+		layout [ size: 19, 19 ]
+	}
+	node node5{
+		layout [ size: 11, 11 ]
+	}
+	node node6
+	node node7{
+		layout [ size: 15, 15 ]
+	}
+	node node8
+	node node10
+	node node11{
+		layout [ size: 18, 18 ]
+	}
+	node node13
