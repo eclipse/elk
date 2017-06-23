@@ -67,91 +67,111 @@ public class LabelAndNodeSizeProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final GraphAdapter<?> layeredGraph) {
-        final double labelSpacing = layeredGraph.getProperty(CoreOptions.SPACING_LABEL_NODE).doubleValue();
-
+    public void process(final GraphAdapter<?> graph) {
         // Iterate over all the graph's nodes
-        for (final NodeAdapter<?> node : layeredGraph.getNodes()) {
-            /* Note that, upon Miro's request, each phase of the algorithm was given a code name. */
-
-            /*
-             * PREPARATIONS:
-             * Create new NodeData containing all relevant context information.
-             */
-            final NodeData data = new NodeData(node);
-            data.labelSpacing = labelSpacing;
-            data.portSpacing = node.getProperty(CoreOptions.SPACING_PORT_PORT).doubleValue();
-            data.nodeLabelPadding = node.getProperty(CoreOptions.NODE_LABELS_PADDING);
-
-            /*
-             * PHASE 1 (SAD DUCK):
-             * PLACE PORT LABELS Port labels are placed and port margins are calculated.
-             */
-            final PortLabelPlacement labelPlacement =
-                    node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT);
-            final boolean compoundNodeMode = node.isCompoundNode();
-
-            // Place port labels and calculate the margins
-            for (final PortAdapter<?> port : node.getPorts()) {
-                placePortLabels(port, labelPlacement, compoundNodeMode, labelSpacing);
-                calculateAndSetPortMargins(port);
-            }
-
-            // Count ports on each side and calculate how much space they require
-            calculatePortInformation(data, node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS)
-                    .contains(SizeConstraint.PORT_LABELS));
-
-            /*
-             * PHASE 2 (DYNAMIC DONALD):
-             * CALCULATE PADDING We know the sides the ports will be placed at and we know where node
-             * labels are to be placed. Calculate the node's padding accordingly. Also compute the
-             * amount of space the node labels will need if stacked vertically. Note that we don't
-             * have to know the final position of ports and of node labels to calculate all this
-             * stuff.
-             * 
-             * IMPORTANT NOTE:
-             * From this point on, the labels' ID fields are used to assign the location of the labels.
-             */
-            calculateRequiredPortLabelSpace(data);
-            calculateRequiredNodeLabelSpace(data);
-
-            /*
-             * PHASE 3 (DANGEROUS DUCKLING):
-             * RESIZE NODE If the node has labels, the node padding might have to be adjusted to
-             * reserve space for them, which is what this phase does.
-             */
-            resizeNode(data);
-
-            /*
-             * PHASE 4 (DUCK AND COVER):
-             * PLACE PORTS The node is resized, taking all node size constraints into account. The
-             * port spacing is not required for port placement since the placement will be based on
-             * the node's size (if it is not fixed anyway).
-             */
-            placePorts(data);
-
-            /*
-             * PHASE 5 (HAPPY DUCK):
-             * PLACE NODE LABELS With space reserved for the node labels, the labels are placed.
-             */
-            placeNodeLabels(data);
-
-            /*
-             * CLEANUP (THANKSGIVING):
-             * SET NODE PADDING Set the node padding to include space required for port and node
-             * labels. If the labels were not taken into account when calculating the node's size,
-             * this may result in padding that, taken together, are larger than the node's actual
-             * size.
-             */
-            final ElkPadding nodePadding = new ElkPadding(node.getPadding());
-            nodePadding.left = data.requiredNodeLabelSpace.left + data.requiredPortLabelSpace.left;
-            nodePadding.right =
-                    data.requiredNodeLabelSpace.right + data.requiredPortLabelSpace.right;
-            nodePadding.top = data.requiredNodeLabelSpace.top + data.requiredPortLabelSpace.top;
-            nodePadding.bottom =
-                    data.requiredNodeLabelSpace.bottom + data.requiredPortLabelSpace.bottom;
-            node.setPadding(nodePadding);
+        for (final NodeAdapter<?> node : graph.getNodes()) {
+            processNode(graph, node, true);
         }
+    }
+    
+    /**
+     * Calculates size information for the given node and possibly applies them (and port and label positions).
+     * 
+     * @param parentGraph
+     *            graph the given node is contained in.
+     * @param node
+     *            the node to calculate things for.
+     * @param applyStuff
+     *            {@code true} if the node should actually be resized and have its ports and labels positioned.
+     *            {@code false} if only the size should be returned that would be applied.
+     * @return node size.
+     */
+    public KVector processNode(final GraphAdapter<?> parentGraph, final NodeAdapter<?> node, final boolean applyStuff) {
+        /* Note that, upon Miro's request, each phase of the algorithm was given a code name. */
+        final double labelSpacing = parentGraph.getProperty(CoreOptions.SPACING_LABEL_NODE).doubleValue();
+
+        /*
+         * PREPARATIONS:
+         * Create new NodeData containing all relevant context information.
+         */
+        final NodeData data = new NodeData(node);
+        data.labelSpacing = labelSpacing;
+        data.portSpacing = node.getProperty(CoreOptions.SPACING_PORT_PORT).doubleValue();
+        data.nodeLabelPadding = node.getProperty(CoreOptions.NODE_LABELS_PADDING);
+
+        /*
+         * PHASE 1 (SAD DUCK):
+         * PLACE PORT LABELS Port labels are placed and port margins are calculated.
+         */
+        final PortLabelPlacement labelPlacement =
+                node.getProperty(CoreOptions.PORT_LABELS_PLACEMENT);
+        final boolean compoundNodeMode = node.isCompoundNode();
+
+        // Place port labels and calculate the margins
+        for (final PortAdapter<?> port : node.getPorts()) {
+            placePortLabels(port, labelPlacement, compoundNodeMode, labelSpacing);
+            calculateAndSetPortMargins(port);
+        }
+
+        // Count ports on each side and calculate how much space they require
+        calculatePortInformation(data, node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS)
+                .contains(SizeConstraint.PORT_LABELS));
+
+        /*
+         * PHASE 2 (DYNAMIC DONALD):
+         * CALCULATE PADDING We know the sides the ports will be placed at and we know where node
+         * labels are to be placed. Calculate the node's padding accordingly. Also compute the
+         * amount of space the node labels will need if stacked vertically. Note that we don't
+         * have to know the final position of ports and of node labels to calculate all this
+         * stuff.
+         * 
+         * IMPORTANT NOTE:
+         * From this point on, the labels' ID fields are used to assign the location of the labels.
+         */
+        calculateRequiredPortLabelSpace(data);
+        calculateRequiredNodeLabelSpace(data);
+
+        /*
+         * PHASE 3 (DANGEROUS DUCKLING):
+         * RESIZE NODE If the node has labels, the node padding might have to be adjusted to
+         * reserve space for them, which is what this phase does.
+         */
+        KVector nodeSize = calculateNodeSize(data);
+        if (!applyStuff) {
+            return nodeSize;
+        }
+        data.node.setSize(nodeSize);
+
+        /*
+         * PHASE 4 (DUCK AND COVER):
+         * PLACE PORTS The node is resized, taking all node size constraints into account. The
+         * port spacing is not required for port placement since the placement will be based on
+         * the node's size (if it is not fixed anyway).
+         */
+        placePorts(data);
+
+        /*
+         * PHASE 5 (HAPPY DUCK):
+         * PLACE NODE LABELS With space reserved for the node labels, the labels are placed.
+         */
+        placeNodeLabels(data);
+
+        /*
+         * CLEANUP (THANKSGIVING):
+         * SET NODE PADDING Set the node padding to include space required for port and node
+         * labels. If the labels were not taken into account when calculating the node's size,
+         * this may result in padding that, taken together, are larger than the node's actual
+         * size.
+         */
+        final ElkPadding nodePadding = new ElkPadding(node.getPadding());
+        nodePadding.left = data.requiredNodeLabelSpace.left + data.requiredPortLabelSpace.left;
+        nodePadding.right =
+                data.requiredNodeLabelSpace.right + data.requiredPortLabelSpace.right;
+        nodePadding.top = data.requiredNodeLabelSpace.top + data.requiredPortLabelSpace.top;
+        nodePadding.bottom =
+                data.requiredNodeLabelSpace.bottom + data.requiredPortLabelSpace.bottom;
+        node.setPadding(nodePadding);
+        return nodeSize;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -527,8 +547,7 @@ public class LabelAndNodeSizeProcessor {
      * @param data
      *            the data containing the node to resize.
      */
-    private void resizeNode(final NodeData data) {
-
+    private KVector calculateNodeSize(final NodeData data) {
         final KVector nodeSize = data.node.getSize();
         final KVector originalNodeSize = new KVector(nodeSize);
         final EnumSet<SizeConstraint> sizeConstraint =
@@ -540,7 +559,7 @@ public class LabelAndNodeSizeProcessor {
 
         // If the size constraint is empty, we can't do anything
         if (sizeConstraint.isEmpty()) {
-            return;
+            return nodeSize;
         }
 
         // It's not empty, so we will change the node size; we start by resetting the size to zero
@@ -643,8 +662,8 @@ public class LabelAndNodeSizeProcessor {
                 }
             }
         }
-        // apply the calculated node size back to the wrapped node
-        data.node.setSize(nodeSize);
+        
+        return nodeSize;
     }
 
     /**
