@@ -71,7 +71,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
-        EdgeLabelSideSelection mode = layeredGraph.getProperty(LayeredOptions.EDGE_LABEL_SIDE_SELECTION);
+        EdgeLabelSideSelection mode = layeredGraph.getProperty(LayeredOptions.EDGE_LABELS_SIDE_SELECTION);
         monitor.begin("Label side selection (" + mode + ")", 1);
         
         // Calculate all label sides depending on the given strategy

@@ -98,7 +98,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         List<LNode> rightLongEdgeDummies = Lists.newArrayList();
 
         CenterEdgeLabelPlacementStrategy strategy =
-                layeredGraph.getProperty(LayeredOptions.EDGE_CENTER_LABEL_PLACEMENT_STRATEGY);
+                layeredGraph.getProperty(LayeredOptions.EDGE_LABELS_CENTER_LABEL_PLACEMENT_STRATEGY);
         if (strategy == CenterEdgeLabelPlacementStrategy.WIDEST_LAYER) {
             // Gather all layer widths and setup layer IDs for array indexing
             final List<Layer> layers = layeredGraph.getLayers();
