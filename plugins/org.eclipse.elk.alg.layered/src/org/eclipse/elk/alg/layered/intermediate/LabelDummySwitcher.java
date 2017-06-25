@@ -20,11 +20,11 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.CenterEdgeLabelPlacementStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
 /**
  * Processor that tries to move label dummy nodes into an "optimal" layer their long edges crosses. This
  * is done by switching the order of long edge dummies and label dummies. There are
- * {@link EdgeLabelPlacementStrategy different strategies} available to determine the "optimal" layer.
+ * {@link CenterEdgeLabelPlacementStrategy different strategies} available to determine the "optimal" layer.
  * 
  * <p>
  * If this is the only thing we did we could end up in situations where multiple edges forming a
@@ -72,7 +72,7 @@ import com.google.common.collect.Lists;
  *     <dd>{@link LongEdgeSplitter}</dd>
  * </dl>
  * 
- * @see EdgeLabelPlacementStrategy
+ * @see CenterEdgeLabelPlacementStrategy
  * @author jjc
  * @author cds
  * @kieler.rating yellow proposed cds
@@ -97,9 +97,9 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         List<LNode> leftLongEdgeDummies = Lists.newArrayList();
         List<LNode> rightLongEdgeDummies = Lists.newArrayList();
 
-        EdgeLabelPlacementStrategy strategy =
+        CenterEdgeLabelPlacementStrategy strategy =
                 layeredGraph.getProperty(LayeredOptions.EDGE_CENTER_LABEL_PLACEMENT_STRATEGY);
-        if (strategy == EdgeLabelPlacementStrategy.WIDEST_LAYER) {
+        if (strategy == CenterEdgeLabelPlacementStrategy.WIDEST_LAYER) {
             // Gather all layer widths and setup layer IDs for array indexing
             final List<Layer> layers = layeredGraph.getLayers();
             layerWidths = new double[layers.size()];
@@ -142,7 +142,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                         findSwapCandidateForWidestLayer(node, leftLongEdgeDummies,
                                 rightLongEdgeDummies, nodesToSwap);
                         break;
-                    case CENTER:
+                    case MEDIAN_LAYER:
                     default:
                         findSwapCandidateCenter(node, leftLongEdgeDummies, rightLongEdgeDummies,
                                 nodesToSwap);

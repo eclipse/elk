@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,16 +8,17 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.options;
+package org.eclipse.elk.alg.layered.options;
 
 /**
- * Available strategies to place long edge center labels.
+ * Strategies regarding how to place center edge labels. Implementation-wise, the placement strategy influences which
+ * layer a center edge label dummy is moved into.
  */
-public enum EdgeLabelPlacementStrategy {
+public enum CenterEdgeLabelPlacementStrategy {
     
-    /** Place long edge labels in the center layer their edge crosses. */
-    CENTER,
-    /** Place long edge labels in the widest layer their edge crosses. */
+    /** Consider all layers a labeled edge crosses and place its label dummy in the one at the median spot. */
+    MEDIAN_LAYER,
+    /** Place a label dummy in the widest of all layers its edge crosses. */
     WIDEST_LAYER;
     
 }

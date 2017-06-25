@@ -16,10 +16,10 @@ import org.eclipse.elk.alg.layered.LayeredLayoutProvider
 import org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.Direction
-import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.alg.layered.options.CenterEdgeLabelPlacementStrategy
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -725,10 +725,10 @@ advanced option contentAlignment: EnumSet<ContentAlignment> {
 	legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
 }
 
-advanced option edgeCenterLabelPlacementStrategy: EdgeLabelPlacementStrategy {
+advanced option edgeCenterLabelPlacementStrategy: CenterEdgeLabelPlacementStrategy {
 	label "Edge Label Placement Strategy"
 	description "Determines in which layer center labels of long edges should be placed."
-	default = EdgeLabelPlacementStrategy.CENTER
+	default = CenterEdgeLabelPlacementStrategy.MEDIAN_LAYER
 	targets parents
 	legacyIds de.cau.cs.kieler.edgeLabelPlacementStrategy
 }
