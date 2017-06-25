@@ -1,4 +1,6 @@
-algorithm:circo
+// Uncomment the following configuration to use this file properly
+//algorithm:circo
+
 edge node1-> node2
 edge node2-> node3
 edge node3-> node4
@@ -19,8 +21,6 @@ edge node8 -> node13
 edge node13-> node14
 edge node14 -> node15
 edge node15 -> node13
-
-
 
 node node1
 node node2

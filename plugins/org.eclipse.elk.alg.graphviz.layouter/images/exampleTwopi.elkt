@@ -1,4 +1,6 @@
-algorithm:twopi
+// Uncomment the following configuration to use this file properly
+//algorithm:twopi
+
 edge node1-> node2
 edge node2-> node3
 edge node3-> node4

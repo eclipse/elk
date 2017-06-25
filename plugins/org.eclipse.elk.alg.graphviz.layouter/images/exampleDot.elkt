@@ -1,9 +1,9 @@
-algorithm: dot
-elk.direction:RIGHT 
-edgeRouting:SPLINES
-spacing.nodeNode:10
-layerSpacingFactor:3
-
+// Uncomment the following configuration to use this file properly
+//algorithm: dot
+//elk.direction:RIGHT 
+//edgeRouting:SPLINES
+//spacing.nodeNode:10
+//layerSpacingFactor:3
 
 edge node1 -> node2
 edge node2 -> node4
@@ -14,7 +14,6 @@ edge node6 -> node12
 edge node7-> node10
 edge node7-> node11
 edge node10-> node12
-
 
 edge node3 -> node4
 edge node3 -> node5
