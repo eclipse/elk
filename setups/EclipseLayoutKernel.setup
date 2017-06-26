@@ -97,7 +97,7 @@
         name="org.eclipse.jdt.feature.group"/>
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"
-        versionRange="[2.10.0,2.11.0)"/>
+        versionRange="[2.12.0,2.13.0)"/>
     <requirement
         name="org.eclipse.mylyn.ide_feature.feature.group"/>
     <requirement
@@ -125,7 +125,7 @@
     <requirement
         name="net.sf.eclipsecs.feature.group"/>
     <repository
-        url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.10.0"/>
+        url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0"/>
     <repository
         url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/checkstyle"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
@@ -301,7 +301,7 @@
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.10.0,2.11.0)"/>
+            versionRange="[2.12.0,2.13.0)"/>
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
@@ -318,6 +318,8 @@
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
           <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
+          <repository
               url="http://download.itemis.com/updates/releases/"/>
         </repositoryList>
         <repositoryList
@@ -326,6 +328,8 @@
               url="http://download.eclipse.org/releases/neon"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
           <repository
               url="http://download.itemis.com/updates/releases/2.1.1/"/>
         </repositoryList>
@@ -391,7 +395,7 @@
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.10.0,2.11.0)"/>
+            versionRange="[2.12.0,2.13.0)"/>
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
@@ -481,7 +485,7 @@
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.10.0,2.11.0)"/>
+            versionRange="[2.12.0,2.13.0)"/>
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
@@ -571,7 +575,7 @@
             name="org.eclipse.emf.sdk.feature.group"/>
         <requirement
             name="org.eclipse.xtext.sdk.feature.group"
-            versionRange="[2.10.0,2.11.0)"/>
+            versionRange="[2.12.0,2.13.0)"/>
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
