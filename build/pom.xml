@@ -272,12 +272,12 @@
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.graph</artifactId>
-              <version>${elk-version}-SNAPSHOT</version>
+              <version>[${elk-version}-SNAPSHOT]</version>
             </dependency>
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.core.meta</artifactId>
-              <version>${elk-version}-SNAPSHOT</version>
+              <version>[${elk-version}-SNAPSHOT]</version>
             </dependency>
           </dependencies>
         </plugin>
