@@ -16,7 +16,7 @@
   <properties>
     <targetJdk>1.8</targetJdk>
     <tycho-version>0.26.0</tycho-version>
-    <xtext-version>2.10.0</xtext-version>
+    <xtext-version>[2.12.0,2.13.0)</xtext-version>
     <elk-version>0.3.0</elk-version>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
