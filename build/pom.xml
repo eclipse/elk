@@ -96,6 +96,38 @@
             <version>2.10.4</version>
             <configuration>
               <failOnError>false</failOnError>
+              <tags>
+                <tag>
+                  <name>model</name>
+                  <placement>a</placement>
+                  <head>Model</head>
+                </tag>
+                <tag>
+                  <name>generated</name>
+                  <placement>a</placement>
+                  <head>Generated</head>
+                </tag>
+                <tag>
+                  <name>ordered</name>
+                  <placement>a</placement>
+                  <head>Ordered</head>
+                </tag>
+                <tag>
+                  <name>kieler.design</name>
+                  <placement>t</placement>
+                  <head>Design Review:</head>
+                </tag>
+                <tag>
+                  <name>kieler.rating</name>
+                  <placement>t</placement>
+                  <head>Code Review:</head>
+                </tag>
+                <tag>
+                  <name>implSpec</name>
+                  <placement>a</placement>
+                  <head>Implementation Specification</head>
+                </tag>
+              </tags>
             </configuration>
             <executions>
               <execution>
