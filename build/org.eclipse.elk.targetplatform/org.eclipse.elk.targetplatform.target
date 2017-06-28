@@ -8,7 +8,7 @@
       <unit id="org.eclipse.gmf.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-      <repository location="http://download.eclipse.org/releases/mars"/>
+      <repository location="http://download.eclipse.org/releases/neon"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
       <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
