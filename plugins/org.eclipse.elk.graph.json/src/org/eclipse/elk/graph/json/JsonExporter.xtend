@@ -35,7 +35,7 @@ public final class JsonExporter {
 
     private val BiMap<ElkNode, String> nodeIdMap = HashBiMap.create()
     private val BiMap<ElkPort, String> portIdMap = HashBiMap.create()
-    private val Map<ElkEdge, String> edgeIdMap = Maps.newHashMap
+    private val BiMap<ElkEdge, String> edgeIdMap = HashBiMap.create()
     private val BiMap<ElkEdgeSection, String> edgeSectionIdMap = HashBiMap.create()
 
     private val Map<ElkNode, Object> nodeJsonMap = Maps.newHashMap
@@ -152,7 +152,7 @@ public final class JsonExporter {
             node.containedEdges.forEach[ it.transformEdge(edges) ]
         }
 
-        // children
+        // edges of children
         node.children.forEach[ it.transformEdges ]
     }
 
@@ -249,6 +249,7 @@ public final class JsonExporter {
         if (!label.identifier.nullOrEmpty) {
             jsonLabel.addProperty("id", label.identifier)
         }
+        array.toJsonArray.addJsonArr(jsonLabel)
 
         // properties and things
         label.transformProperties(jsonLabel)
@@ -299,7 +300,10 @@ public final class JsonExporter {
      */
     private def createAndRegister(ElkNode node) {
         val obj = newJsonObject
-        val id = node.identifier ?: ("n" + nodeIdCounter)
+        var id = node.identifier ?: ("n" + nodeIdCounter)
+        while (nodeIdMap.inverse.containsKey(id)) {
+            id += "_"
+        }
         obj.addProperty("id", id)
         nodeIdCounter = nodeIdCounter + 1
 
@@ -311,7 +315,10 @@ public final class JsonExporter {
 
     private def createAndRegister(ElkPort port) {
         val obj = newJsonObject
-        val id = port.identifier ?: ("p" + portIdCounter)
+        var id = port.identifier ?: ("p" + portIdCounter)
+        while (portIdMap.inverse.containsKey(id)) {
+            id += "_"
+        }
         obj.addProperty("id", id)
         portIdCounter = portIdCounter + 1
 
@@ -323,7 +330,10 @@ public final class JsonExporter {
 
     private def createAndRegister(ElkEdge edge) {
         val obj = newJsonObject
-        val id = edge.identifier ?: ("e" + edgeIdCounter)
+        var id = edge.identifier ?: ("e" + edgeIdCounter)
+        while (edgeIdMap.inverse.containsKey(id)) {
+            id += "_"
+        }
         obj.addProperty("id", id)
         edgeIdCounter = edgeIdCounter + 1
 
@@ -335,7 +345,10 @@ public final class JsonExporter {
 
     private def createAndRegister(ElkEdgeSection section) {
         val obj = newJsonObject
-        val id = section.identifier ?: ("s" + edgeSectionIdCounter)
+        var id = section.identifier ?: ("s" + edgeSectionIdCounter)
+        while (edgeSectionIdMap.inverse.containsKey(id)) {
+            id += "_"
+        }
         obj.addProperty("id", id)
         edgeSectionIdCounter = edgeIdCounter + 1
 
