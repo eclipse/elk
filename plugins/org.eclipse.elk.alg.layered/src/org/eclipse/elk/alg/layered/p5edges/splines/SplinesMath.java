@@ -125,7 +125,7 @@ public final class SplinesMath {
     }
 
     
-    // GWTExcludeStart
+    // elkjs-exclude-start
     // DecimalFormat not available in gwt
     /** Option for debug formating. */
     private static final DecimalFormat DEC_FORMAT = new DecimalFormat("#0.0");
@@ -179,7 +179,7 @@ public final class SplinesMath {
 
         return retVal.substring(0, retVal.length() - 2);
     }
-    // GWTExcludeEnd
+    // elkjs-exclude-end
 
     /**
      * Calculates a vector of given direction up to the coordinate, where it's perpendicular through 

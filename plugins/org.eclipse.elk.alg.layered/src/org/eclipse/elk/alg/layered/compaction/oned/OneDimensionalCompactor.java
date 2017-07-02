@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.compaction.oned;
 
-// GWTExcludeStart
+// elkjs-exclude-start
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-// GWTExcludeEnd
+// elkjs-exclude-end
 import java.util.List;
 import java.util.Map;
 
@@ -539,7 +539,7 @@ public final class OneDimensionalCompactor {
      * ////////////////////////////////////////// DEBUGGING //////////////////////////////////////////
      * ----------------------------------------------------------------------------------------------- */
     
-    // GWTExcludeStart
+    // elkjs-exclude-start
     /**
      * For debugging. Writes hitboxes to svg.
      * 
@@ -601,6 +601,6 @@ public final class OneDimensionalCompactor {
         }
         return this;
     }
-    // GWTExcludeEnd
+    // elkjs-exclude-end
     
 }
