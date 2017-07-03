@@ -119,6 +119,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                     rightLongEdgeDummies.clear();
 
                     // Gather long edge dummies left of the label dummy
+                    // TODO: This list is in reversed order, which is decidedly counter-intuitive
                     LNode source = node;
                     do {
                         source = source.getIncomingEdges().iterator().next().getSource().getNode();
@@ -139,13 +140,12 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                     // Determine the nodes to swap according to the given strategy
                     switch (strategy) {
                     case WIDEST_LAYER:
-                        findSwapCandidateForWidestLayer(node, leftLongEdgeDummies,
-                                rightLongEdgeDummies, nodesToSwap);
+                        findSwapCandidateForWidestLayer(node, leftLongEdgeDummies, rightLongEdgeDummies, nodesToSwap);
                         break;
                     case MEDIAN_LAYER:
                     default:
-                        findSwapCandidateCenter(node, leftLongEdgeDummies, rightLongEdgeDummies,
-                                nodesToSwap);
+                        findSwapCandidateMedian(
+                                node, Lists.reverse(leftLongEdgeDummies), rightLongEdgeDummies, nodesToSwap);
                         break;
                     }
                 }
@@ -163,6 +163,10 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         layerWidths = null;
         monitor.done();
     }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Widest Layer
 
     /**
      * Find a long edge dummy and add it to the list of nodes to swap to move the given node in the
@@ -196,6 +200,10 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             nodesToSwap.add(new Pair<LNode, LNode>(node, swapCandidate));
         }
     }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Median Layer
 
     /**
      * Find a long edge dummy and add it to the list of nodes to swap to move the given node in the
@@ -210,22 +218,28 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
      * @param nodesToSwap
      *            list of nodes to swap.
      */
-    private void findSwapCandidateCenter(final LNode node,
-            final List<LNode> leftLongEdgeDummies, final List<LNode> rightLongEdgeDummies,
-            final List<Pair<LNode, LNode>> nodesToSwap) {
+    private void findSwapCandidateMedian(final LNode node, final List<LNode> leftLongEdgeDummies,
+            final List<LNode> rightLongEdgeDummies, final List<Pair<LNode, LNode>> nodesToSwap) {
 
-        // Check whether the label dummy should be switched
-        int leftSize = leftLongEdgeDummies.size();
-        int rightSize = rightLongEdgeDummies.size();
-
-        if (leftSize > rightSize + 1) {
-            int pos = (leftSize + rightSize) / 2;
-            nodesToSwap.add(new Pair<LNode, LNode>(node, leftLongEdgeDummies.get(pos)));
-        } else if (rightSize > leftSize + 1) {
-            int pos = (rightSize - leftSize) / 2 - 1;
-            nodesToSwap.add(new Pair<LNode, LNode>(node, rightLongEdgeDummies.get(pos)));
+        int leftDummies = leftLongEdgeDummies.size();
+        int rightDummies = rightLongEdgeDummies.size();
+        
+        // Find the median of the layers spanned by the long edge this label dummy is part of
+        int layers = leftDummies + rightDummies + 1;
+        int lowerMedian = (layers - 1) / 2;
+        
+        if (lowerMedian < leftDummies) {
+            // The label dummy is not in the desired layer, but one of the left long edge dummies is
+            nodesToSwap.add(new Pair<LNode, LNode>(node, leftLongEdgeDummies.get(lowerMedian)));
+        } else if (lowerMedian > leftDummies) {
+            // The label dummy is not in the desired layer, but one of the right long edge dummies is
+            nodesToSwap.add(new Pair<LNode, LNode>(node, rightLongEdgeDummies.get(lowerMedian - leftDummies - 1)));
         }
     }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Actual Swapping
 
     /**
      * Swaps the two given dummy nodes.
