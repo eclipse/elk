@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.intermediate;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
@@ -19,7 +20,6 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 /**
@@ -87,7 +87,7 @@ public class LevelHeightProcessor implements ILayoutProcessor<TGraph> {
             Iterable<TNode> nextLevel = new Iterable<TNode>() {
 
                 public Iterator<TNode> iterator() {
-                    return Iterators.emptyIterator();
+                    return Collections.emptyIterator();
                 }
             };
 
