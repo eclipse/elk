@@ -18,6 +18,13 @@
     <version>0.3.0-SNAPSHOT</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
+    
+  <groupId>org.eclipse.elk</groupId>
+  <artifactId>org.eclipse.elk.graph.json</artifactId>
+  <name>ELK Graph JSON</name>
+  <description>JSON Format of the ELK Graph</description>
+  <version>0.3.0-SNAPSHOT</version>
+  <packaging>eclipse-plugin</packaging>
   
   <dependencies>
     <dependency>
@@ -30,12 +37,30 @@
       <artifactId>gson</artifactId>
       <version>2.2.4</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.elk</groupId>
+      <artifactId>org.eclipse.elk.core</artifactId>
+      <version>[${project.version}]</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.xtext</groupId>
+	  <artifactId>org.eclipse.xtext.xbase.lib</artifactId>
+	  <version>${xtext-version}</version>
+	</dependency>
+	<dependency>
+	  <groupId>org.eclipse.xtend</groupId>
+	  <artifactId>org.eclipse.xtend.lib</artifactId>
+	  <version>${xtext-version}</version>
+	</dependency>
   </dependencies>
   
-  <groupId>org.eclipse.elk</groupId>
-  <artifactId>org.eclipse.elk.graph.json</artifactId>
-  <name>ELK Graph JSON</name>
-  <description>JSON Format of the ELK Graph</description>
-  <version>0.3.0-SNAPSHOT</version>
-  <packaging>eclipse-plugin</packaging>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.xtend</groupId>
+        <artifactId>xtend-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>

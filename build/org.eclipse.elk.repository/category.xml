@@ -39,6 +39,12 @@
    <feature url="features/org.eclipse.elk.ui.source_0.3.0.qualifier.jar" id="org.eclipse.elk.ui.feature.source" version="0.3.0.qualifier">
       <category name="elk"/>
    </feature>
+   <feature url="features/org.eclipse.elk.graph.json_0.3.0.qualifier.jar" id="org.eclipse.elk.graph.json.feature" version="0.3.0.qualifier">
+      <category name="elk"/>
+   </feature>
+   <feature url="features/org.eclipse.elk.graph.json.source_0.3.0.qualifier.jar" id="org.eclipse.elk.graph.json.feature.source" version="0.3.0.qualifier">
+      <category name="elk"/>
+   </feature>
    <category-def name="elk" label="Eclipse Layout Kernel">
       <description>
          Eclipse Layout Kernel components for the automatic layout of diagrams.
