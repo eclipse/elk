@@ -217,12 +217,12 @@ public final class JsonExporter {
         }
         
         // Incoming shape
-        if (section.incomingShape != null) {
+        if (section.incomingShape !== null) {
             jsonObj.addProperty("incomingShape", idByElement(section.incomingShape))
         }
         
         // Outgoing shape
-        if (section.outgoingShape != null) {
+        if (section.outgoingShape !== null) {
             jsonObj.addProperty("outgoingShape", idByElement(section.outgoingShape))
         }
         
