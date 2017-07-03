@@ -22,5 +22,9 @@
       <unit id="de.itemis.xtext.antlr.sdk.feature.group" version="0.0.0"/>
       <repository location="http://xtext.github.io/download/updates/releases/2.1.1/"/>
     </location>
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+      <unit id="com.google.gson" version="0.0.0"/>
+      <repository location="http://download.eclipse.org/tools/orbit/R-builds/R20170307180635/repository/"/>
+    </location>
   </locations>
 </target>
