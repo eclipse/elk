@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+ * Copyright (c) 2009, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.core.data;
 
-import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +18,7 @@ import org.eclipse.elk.core.util.IDataObject;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkReflect;
 
 import com.google.common.collect.Lists;
 
@@ -158,18 +158,21 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
      * @return an instance of the data object
      */
     private IDataObject createDataInstance() {
-        if (clazz == null || !IDataObject.class.isAssignableFrom(clazz)) {
+        if (clazz == null 
+                // elkjs-exclude-start
+                // If this is a problem, it should be observed in the Java world, omit the check for GWT
+                || !IDataObject.class.isAssignableFrom(clazz)
+                // elkjs-exclude-end
+                ) {
             throw new IllegalStateException("IDataType class expected for layout option " + id);
         }
-        try {
-            return (IDataObject) clazz.newInstance();
-        } catch (InstantiationException exception) {
-            throw new IllegalStateException("The data object for layout option " + id
-                    + " cannot be instantiated.", exception);
-        } catch (IllegalAccessException exception) {
-            throw new IllegalStateException("The data object for layout option " + id
-                    + " cannot be accessed.", exception);
+        Object instance = ElkReflect.newInstance(clazz);
+        if (instance == null) {
+            throw new IllegalStateException("Couldn't create new instance of property '" + id + "'. "
+                    + "Make sure it's type is registered with the " + ElkReflect.class.getSimpleName()
+                    + " utility class.");
         }
+        return (IDataObject) instance;
     }
     
     /**
@@ -219,7 +222,12 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
          if (type == Type.UNDEFINED) {
              return false;
          } else if (type == Type.OBJECT) {
-             return clazz != null && IDataObject.class.isAssignableFrom(clazz);
+             return clazz != null 
+                     // elkjs-exclude-start
+                     // If this is a problem, it should be observed in the Java world, omit the check for GWT  
+                     && IDataObject.class.isAssignableFrom(clazz)
+                     // elkjs-exclude-end
+                     ; // SUPPRESS CHECKSTYLE Whitespace
          } else {
              return true;
          }
@@ -298,10 +306,13 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
      * @param leString the string to convert.
      * @return the enumeration set.
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private <E extends Enum<E>> EnumSet<E> enumSetForStringArray(final Class<E> leClazz,
             final String leString) {
         
-        EnumSet<E> set = EnumSet.noneOf(leClazz);
+        // raw type for gwt compilation 
+        //  (avoid a reflections cast in the 'set.add(o)' below)
+        EnumSet set = EnumSet.noneOf(leClazz);
         
         // break the value string into its different components and iterate over them;
         // the string will be of the form "[a, b, c]"
@@ -320,7 +331,7 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
                 return null;
             } else {
                 // add the enumeration object to the set
-                set.add(leClazz.cast(o));
+                set.add(o);
             }
         }
         
@@ -530,18 +541,20 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
      * @return the default value.
      */
     public Object getDefault() {
-        // Clone the default value if it's a Cloneable. We need to use reflection for this to work
+        // Clone the default value if it's a Cloneable. One would have to use reflection for this to work
         // properly (classes implementing Cloneable are not required to make their clone() method
         // public, so we need to check if they have such a method and invoke it via reflection, which
         // results in ugly and unchecked type casting)
+        // HOWEVER, since GWT doesn't support reflection, a helper class is used that is able to clone 
+        // those objects that are viable as property values
         if (defaultValue instanceof Cloneable) {
-            try {
-                Method cloneMethod = defaultValue.getClass().getMethod("clone");
-                return cloneMethod.invoke(defaultValue);
-            } catch (Exception e) {
-                // Give up cloning and return the default instance
-                return defaultValue;
+            Object clone = ElkReflect.clone(defaultValue);
+            if (clone == null) {
+                throw new IllegalStateException(
+                        "Couldn't clone property '" + id + "'. " + "Make sure it's type is registered with the "
+                                + ElkReflect.class.getSimpleName() + " utility class.");
             }
+            return clone;
         } else {
             return defaultValue;
         }

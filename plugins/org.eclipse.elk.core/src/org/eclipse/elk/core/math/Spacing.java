@@ -297,4 +297,8 @@ public abstract class Spacing implements IDataObject, Cloneable {
         return this;
     }
 
+    /**
+     * Return a new instance of the concrete class. 
+     */
+    public abstract Spacing clone();
 }

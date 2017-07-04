@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Kiel University and others.
+ * Copyright (c) 2008, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,27 @@
  *******************************************************************************/
 package org.eclipse.elk.core.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
+import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.util.ElkReflect;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Singleton class for access to the ELK layout meta data. This class is used globally to retrieve meta data for
@@ -29,11 +40,50 @@ import com.google.common.collect.Maps;
  * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
-public class LayoutMetaDataService {
+public final class LayoutMetaDataService {
 
     /** the layout data service instance, which is created lazily. */
     private static LayoutMetaDataService instance;
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private LayoutMetaDataService() {
+        
+        // every class that implements IDataObject 
+        // or is used for internal properties must be registered here
+        
+        // IDataObject
+        ElkReflect.register(KVector.class, 
+                () -> new KVector(), 
+                (v) -> ((KVector) v).clone());
+        ElkReflect.register(KVectorChain.class, 
+                () -> new KVectorChain(), 
+                (vc) -> new KVectorChain((KVectorChain) vc));
+        ElkReflect.register(ElkMargin.class, 
+                () -> new ElkMargin(),
+                (m) -> new ElkMargin((ElkMargin) m));
+        ElkReflect.register(ElkPadding.class, 
+                () -> new ElkPadding(),
+                (p) -> new ElkPadding((ElkPadding) p));
+        
+        // Commonly used classes for internal properties
+        ElkReflect.register(ArrayList.class, 
+                () -> new ArrayList(),
+                (al) -> ((ArrayList) al).clone());
+        ElkReflect.register(LinkedList.class, 
+                () -> new LinkedList(),
+                (ll) -> Lists.newLinkedList((LinkedList) ll));
+        ElkReflect.register(HashSet.class, 
+                () -> new HashSet(),
+                (hs) -> Sets.newHashSet((HashSet) hs));
+        ElkReflect.register(LinkedHashSet.class, 
+                () -> new LinkedHashSet(),
+                (hs) -> Sets.newLinkedHashSet((HashSet) hs));
+        ElkReflect.register(TreeSet.class, 
+                () -> new TreeSet(),
+                (ts) -> Sets.newTreeSet((TreeSet) ts));
+        
+    }
+    
     /**
      * Returns the singleton instance of the layout data service.
      *
