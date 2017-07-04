@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.LayoutConfigurator.IOptionFilter;
 import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
@@ -52,7 +53,6 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Multimap;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Inject;
@@ -139,7 +139,7 @@ public class DiagramLayoutEngine {
          */
         public LayoutConfigurator addLayoutRun(final LayoutConfigurator configurator) {
             configurators.add(configurator);
-            configurator.setFilter(OPTION_TARGET_FILTER);
+            configurator.addFilter(OPTION_TARGET_FILTER);
             return configurator;
         }
         
@@ -160,11 +160,10 @@ public class DiagramLayoutEngine {
      * Filter for {@link LayoutConfigurator} that checks for each option whether its configured targets
      * match the input element.
      */
-    public static final Predicate<Pair<ElkGraphElement, IProperty<?>>> OPTION_TARGET_FILTER =
-        (Pair<ElkGraphElement, IProperty<?>> input) -> {
-            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(input.getSecond().getId());
+    public static final IOptionFilter OPTION_TARGET_FILTER =
+        (e, property) -> {
+            LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(property.getId());
             if (optionData != null) {
-                ElkGraphElement e = input.getFirst();
                 Set<LayoutOptionData.Target> targets = optionData.getTargets();
                 if (e instanceof ElkNode) {
                     if (!((ElkNode) e).isHierarchical()) {
