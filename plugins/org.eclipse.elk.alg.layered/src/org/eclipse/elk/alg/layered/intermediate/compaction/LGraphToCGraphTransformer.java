@@ -34,6 +34,7 @@ import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
@@ -190,6 +191,9 @@ public final class LGraphToCGraphTransformer {
             case ORTHOGONAL:
                 verticalSegments = collectVerticalSegmentsOrthogonal();
                 break;
+            case SPLINES: 
+                verticalSegments = collectVerticalSegmentsSplines();
+                break;
             default:
                 throw new IllegalStateException("Compaction not supported for " + style + " edges.");
         }
@@ -318,6 +322,38 @@ public final class LGraphToCGraphTransformer {
         return verticalSegments;
     }
     
+    private List<VerticalSegment> collectVerticalSegmentsSplines() {
+        List<VerticalSegment> verticalSegments = Lists.newArrayList();
+        
+        layeredGraph.getLayers().stream()
+            .flatMap(l -> l.getNodes().stream())
+            .flatMap(n -> StreamSupport.stream(n.getOutgoingEdges().spliterator(), false))
+            .map(out -> out.getProperty(InternalProperties.SPLINE_ROUTE_START))
+            .filter(Objects::nonNull) 
+            .forEach(spline -> {
+                VerticalSegment lastVs = null;
+                for (SplineSegment s : spline) {
+                    if (s.isStraight) {
+                        continue;
+                    }
+                    KVector leftTop = s.boundingBox.getTopLeft();
+                    KVector rightBottom = s.boundingBox.getBottomRight();
+
+                    VerticalSegment vs = new VerticalSegment(leftTop, rightBottom, null, s.edges.iterator().next());
+                    vs.affectedBoundingBoxes.add(s.boundingBox);
+
+                    verticalSegments.add(vs);
+                    
+                    // remember that there has to be a constraint between the two (non-straight) segments
+                    if (lastVs != null) {
+                        lastVs.constraints.add(vs);
+                    } 
+                    lastVs = vs;
+                }
+            });
+        
+        return verticalSegments;
+    }
     
     private void mergeVerticalSegments(final List<VerticalSegment> verticalSegments) {
         if (verticalSegments.isEmpty()) {
@@ -416,6 +452,34 @@ public final class LGraphToCGraphTransformer {
                 vs.junctionPoints.forEach(jp -> jp.x += deltaX);
             });
         
+        // special treatment of spline edge routes
+        //  1) self loops have already been routed and are not part of the compaction graph, 
+        //     their positions have to be adjusted
+        //  2) control points of straight parts of a spline have to be offset to 
+        //     be properly located in between non-straight parts
+        if (edgeRouting == EdgeRouting.SPLINES) {
+            
+            // offset selfloops of splines
+            nodesMap.keySet().stream()
+                .flatMap(n -> StreamSupport.stream(n.getOutgoingEdges().spliterator(), false))
+                .filter(e -> e.isSelfLoop())
+                .forEach(sl -> {
+                   LNode lNode = sl.getSource().getNode();
+                   CNode cNode = nodesMap.get(lNode);
+                   double deltaX = cNode.hitbox.x - cNode.hitboxPreCompaction.x;
+                   sl.getBendPoints().offset(deltaX, 0);
+                });
+            
+            // offset straight segments
+            layeredGraph.getLayers().stream()
+                .flatMap(l -> l.getNodes().stream())
+                .flatMap(n -> StreamSupport.stream(n.getOutgoingEdges().spliterator(), false))
+                .map(e -> e.getProperty(InternalProperties.SPLINE_ROUTE_START))
+                .filter(chain -> chain != null && !chain.isEmpty())
+                .forEach(spline -> adjustSplineControlPoints(spline));
+            
+        }
+        
         // calculating new graph size and offset
         KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -433,6 +497,114 @@ public final class LGraphToCGraphTransformer {
         applyExternalPortPositions(topLeft, bottomRight);
         
         cleanup();
+    }
+    
+    /**
+     * Adjust the control points of the straight segments of the passed spline. The control points of non-straight
+     * segments are directly represented by {@link CNode}s during compaction and thus adjusted during the compaction
+     * process.
+     */
+    private void adjustSplineControlPoints(final List<SplineSegment> spline) {
+        if (spline.isEmpty()) {
+            return;
+        }
+        
+        SplineSegment lastSeg = spline.get(0);
+
+        // first case: a signle segment
+        if (spline.size() == 1) {
+            // the two indexes are selected such that the method's loop runs exactly once
+            adjustControlPointBetweenSegments(lastSeg, lastSeg, 1, 0, spline);
+            return;
+        }
+
+        // ... more than one segment
+        int i = 1;
+        while (i < spline.size()) {
+            if (lastSeg.initialSegment || !lastSeg.isStraight) {
+                
+                // find the next non-straight segment (or the very last segment of this spline)
+                Pair<Integer, SplineSegment> needle = firstNonStraightSegment(spline, i);
+                if (needle != null) {
+                    int j = needle.getFirst();
+                    SplineSegment nextSeg = needle.getSecond();
+                    
+                    adjustControlPointBetweenSegments(lastSeg, nextSeg, i, j, spline);
+                    
+                    i = j + 1; 
+                    lastSeg = nextSeg;
+                }
+            }
+        }
+    }
+
+    /**
+     * Finds the next non-straight segment of {@code spline}, starting at {@code index} (inclusive), or the very last
+     * segment of the spline.
+     * 
+     * @return a {@link Pair} of the found segment's index and the segment. {@code null} if
+     *         {@code index < 0 || index >= spline.size()}.
+     */
+    private Pair<Integer, SplineSegment> firstNonStraightSegment(final List<SplineSegment> spline, final int index) {
+        if (index < 0 || index >= spline.size()) {
+            return null;
+        }
+        for (int i = index; i < spline.size(); ++i) {
+            SplineSegment seg = spline.get(i);
+            if ((i == spline.size() - 1) || !seg.isStraight) {
+                return Pair.of(i, seg);
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Adjust the control points of the sequence of spline segments {@code left, ..., right}. The {@code left} and
+     * {@code right} segments do not have to be straight in which case they are dropped from the sequence and their
+     * positions remain unaltered. For the remaining sequence of length {@code n}, the left-most and right-most
+     * coordinate of the straight path are determined. The center control points of the sequence's segments are then
+     * distributed equidistantly on this path.
+     */
+    private void adjustControlPointBetweenSegments(final SplineSegment left, final SplineSegment right, 
+            final int leftIdx, final int rightIdx,
+            final List<SplineSegment> spline) {
+        
+        // check if the initial segment of the spline is a straight one
+        double startX;
+        int idx1 = leftIdx;
+        if (left.initialSegment && left.isStraight) {
+            CNode n = nodesMap.get(left.sourceNode);
+            startX = n.hitbox.x + n.hitbox.width;
+            idx1--;
+        } else {
+            startX = left.boundingBox.x + left.boundingBox.width;
+        }
+        
+        // ... the same for the last segment
+        double endX;
+        int idx2 = rightIdx;
+        if (right.lastSegment && right.isStraight) {
+            CNode n = nodesMap.get(right.targetNode);
+            endX = n.hitbox.x;
+            idx2++;
+        } else {
+            endX = right.boundingBox.x;
+        }
+        
+        // divide the available space into equidistant chunks 
+        double strip = endX - startX;
+        int chunks = Math.max(2, idx2 - idx1);
+        double chunk = strip / chunks;
+
+        // apply new positions to the control points
+        double newPos = startX + chunk;
+        for (int k = idx1; k < idx2; ++k) {
+            SplineSegment adjust = spline.get(k);
+            double width = adjust.boundingBox.width;
+            adjust.boundingBox.x = newPos - width / 2;
+            
+            newPos += chunk;
+        }
     }
 
     private void applyCommentPositions() {

@@ -24,8 +24,10 @@ import org.eclipse.elk.alg.layered.options.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.Spacings;
+import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -39,6 +41,10 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *  incoming and outgoing edges, this processor is required to be executed before the
  *  {@link org.eclipse.elk.alg.layered.intermediate.ReversedEdgeRestorer ReversedEdgeRestorer}.
  * </p>
+ * 
+ * <h3>Splines</h3>
+ * The processor is able to cope with edges that are routed using spline segments. 
+ * North/south ports have not been tested in this scenario, however, and are likely to yield undesired results.  
  * 
  * <dl>
  *  <dt>Precondition:</dt>
@@ -197,6 +203,23 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
         @Override
         public double getHorizontalSpacing(final CNode cNode1, final CNode cNode2) {
             
+            // For splines, some of the required spacing between nodes and vertical segments 
+            // is already included in the vertical segment's hitbox, the rest is added here 
+            if (lGraph.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
+
+                if (cNode1.origin instanceof VerticalSegment && cNode2.origin instanceof LNode
+                         || cNode2.origin instanceof VerticalSegment && cNode1.origin instanceof LNode) {
+                    
+                    // for sloppy splines even less spacing is required
+                    if (lGraph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING)) {
+                        return 0;
+                    } else {
+                        return SplineEdgeRouter.NODE_TO_VERTICAL_SEGMENT_GAP;
+                    }
+                    
+                }
+            }
+            
             // joining north/south segments that belong to the same edge 
             // by setting their spacing to 0
             if (isVerticalSegmentsOfSameEdge(cNode1, cNode2)) {
@@ -233,7 +256,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
         public double getVerticalSpacing(final CNode cNode1, final CNode cNode2) {
 
             // Note that this method is only called when the quadratic constraint calculation is used
-            //  (not if the edge aware scaline procedure is used).
+            //  (not if the edge aware scanline procedure is used).
             
             // joining north/south segments that belong to the same edge 
             // by setting their vertical spacing to 1, 

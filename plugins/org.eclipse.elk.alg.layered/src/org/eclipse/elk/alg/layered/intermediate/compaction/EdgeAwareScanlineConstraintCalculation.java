@@ -57,11 +57,64 @@ public class EdgeAwareScanlineConstraintCalculation extends ScanlineConstraintCa
         case ORTHOGONAL:
             calculateForOrthogonal();
             break;
+        case SPLINES:
+            calculateForSpline();
+            break;
         default:
             throw new UnsupportedConfigurationException();
         }
 
     }
+    
+    // -------------------------------------- SPLINES --------------------------------------
+    
+    private void calculateForSpline() {
+        final List<Runnable> schedule = Lists.newArrayList();
+        
+        /* -------------------- Vertical Segments -------------------- */
+        // Note that some constraints between subsequent vertical segments of the same spline 
+        //  have been precalculated during import 
+        // Apart from that the boxes are not enlarged since this risks to introduce overlaps 
+        
+        sweep(n -> n.origin instanceof VerticalSegment);
+        
+        /* -------------------- Everything -------------------- */
+        
+        // find the minimum spacing
+        double minSpacing = compactor.cGraph.cNodes.stream()
+            .mapToDouble(n -> {
+                // ignore external ports since their spacing is internally set to 0
+                if (n.origin instanceof LNode && ((LNode) n.origin).getType() == NodeType.EXTERNAL_PORT) {
+                    return Double.POSITIVE_INFINITY;
+                }
+                
+                VerticalSegment vs = HorizontalGraphCompactor.getVerticalSegmentOrNull(n);
+                if (vs != null) {
+                    return Math.max(0, verticalEdgeEdgeSpacing / 2 - EPSILON);
+                }
+                LNode lNode = HorizontalGraphCompactor.getLNodeOrNull(n);
+                if (lNode != null) {
+                    double spacing = Spacings.getIndividualOrDefault(lNode, LayeredOptions.SPACING_NODE_NODE);
+                    return Math.max(0, spacing / 2 - EPSILON);
+                }
+                
+                return Double.POSITIVE_INFINITY;
+            }).min().orElseGet(() -> 0.0);
+
+        compactor.cGraph.cNodes.stream()
+            .filter(n -> n.origin instanceof LNode)
+            .forEach(n -> {
+                alterHitbox(n, minSpacing, 1);
+                schedule.add(() -> alterHitbox(n, minSpacing, -1));
+            });
+
+        sweep(n -> true);
+        
+        schedule.forEach(r -> r.run());
+        schedule.clear();
+        
+    }
+    
     // -------------------------------------- ORTHOGONAL --------------------------------------
     private void calculateForOrthogonal() {
         
@@ -87,8 +140,9 @@ public class EdgeAwareScanlineConstraintCalculation extends ScanlineConstraintCa
             .filter(n -> n.origin instanceof LNode)
             .forEach(n -> {
                 LNode lNode = HorizontalGraphCompactor.getLNodeOrNull(n);
-                // TODO problem if edge-node spacing smaller than node-node/2, in which case two 
-                // node can be closer than they actually may ...
+                // One would want to use node-to-node spacing here but there's a problem:
+                // if edge-node spacing is smaller than node-to-node/2, two nodes can be placed closer than they 
+                // actually may by the previous phases ...
                 //double spacing = Spacings.getIndividualOrDefault(lNode, LayeredOptions.SPACING_NODE_NODE);
                 double spacing = Spacings.getIndividualOrDefault(lNode, LayeredOptions.SPACING_EDGE_EDGE);
                 double finalSpacing = Math.max(0, spacing / 2 - EPSILON);

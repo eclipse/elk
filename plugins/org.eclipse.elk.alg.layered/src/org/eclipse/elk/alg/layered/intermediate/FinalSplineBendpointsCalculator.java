@@ -18,8 +18,11 @@ import java.util.stream.StreamSupport;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
+import org.eclipse.elk.alg.layered.options.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.splines.NubSpline;
@@ -51,6 +54,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph> {
 
     private double hEdgeSpacing;
+    private boolean sloppyRoutingRequested;
+    private GraphCompactionStrategy compactionStrategy;
     
     /**
      * {@inheritDoc}
@@ -58,8 +63,9 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
     @Override
     public void process(final LGraph graph, final IElkProgressMonitor progressMonitor) {
 
-        hEdgeSpacing = graph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
-        final boolean sloppyRouting = graph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING);
+        this.hEdgeSpacing = graph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
+        this.sloppyRoutingRequested = graph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING);
+        this.compactionStrategy = graph.getProperty(LayeredOptions.COMPACTION_POST_COMPACTION_STRATEGY);
         
         List<LEdge> startEdges = graph.getLayers().stream()
             .flatMap(l -> l.getNodes().stream())
@@ -75,7 +81,7 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
                 if (segment.isStraight) {
                     calculateNUBSBendPointStraight(segment);
                 } else {
-                    calculateNUBSBendPoints(segment, sloppyRouting);
+                    calculateNUBSBendPoints(segment);
                 }
             }
             e.setProperty(InternalProperties.SPLINE_ROUTE_START, null);
@@ -84,7 +90,7 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
         // ... then convert them to bezier splines
         for (LEdge e : startEdges) {
             List<LEdge> edgeChain = e.getProperty(InternalProperties.SPLINE_EDGE_CHAIN);
-            calculateBezierBendPoints(edgeChain, sloppyRouting);
+            calculateBezierBendPoints(edgeChain);
             // clear property
             e.setProperty(InternalProperties.SPLINE_EDGE_CHAIN, null);
         }
@@ -120,15 +126,12 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
      * 
      * @param segment
      *            The segment, whose edges shall be processed.
-     * @param startXPos
-     *            The start x position of current between layer gap.
-     * @param endXPos
-     *            The end x position of current between layer gap.
      */
-    private void calculateNUBSBendPoints(final SplineSegment segment, final boolean sloppyRouting) {
+    private void calculateNUBSBendPoints(final SplineSegment segment) {
         double startXPos = segment.boundingBox.x;
         double endXPos = segment.boundingBox.x + segment.boundingBox.width;
         
+        boolean sloppyRouting = sloppyRoutingRequested && segmentAllowsSloppyRouting(segment);
         
         // the center position is the same for all edges but depends on sloppiness of the routing
         final double centerXPos = sloppyRouting ? (startXPos + endXPos) / 2
@@ -156,7 +159,6 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
 
             boolean invertedSource = false;
             boolean invertedTarget = false;
-            
 
             // Modify straight CPs to handle the in-layer segments 
             // originating from inverted edges.
@@ -230,10 +232,12 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
      * @param edge The last edge of the chain of edges we want the bezier CPs to be calculated for. 
      * @param succeedingEdge A mapping pointing from an edge to it's successor.
      */
-    private void calculateBezierBendPoints(final List<LEdge> edgeChain, final boolean sloppyRouting) {
+    private void calculateBezierBendPoints(final List<LEdge> edgeChain) {
         if (edgeChain.isEmpty()) {
             return;
         }
+        
+        boolean sloppyRouting = sloppyRoutingRequested;
         
         // in this chain we will put all NURBS control points.
         final KVectorChain allCP = new KVectorChain();
@@ -348,4 +352,40 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
         edge.getBendPoints().addAll(nubSpline.getBezierCP());
     }
     
+    private boolean segmentAllowsSloppyRouting(final SplineSegment segment) {
+        
+        // only check this if one dimensional compaction is applied
+        if (compactionStrategy == GraphCompactionStrategy.NONE) {
+            return true;
+        }
+        
+        double startXPos = segment.boundingBox.x;
+        double endXPos = segment.boundingBox.x + segment.boundingBox.width;
+
+        if (segment.initialSegment) {
+            LNode n = segment.sourceNode;
+            double t = segmentNodeDistanceThreshold(n);
+            double nodeSegmentDistance = startXPos - (n.getPosition().x + n.getSize().x); 
+            if (nodeSegmentDistance > t) {
+                return false;
+            }
+        }
+        if (segment.lastSegment) {
+            LNode n = segment.targetNode;
+            double t = segmentNodeDistanceThreshold(n);
+            double nodeSegmentDistance = n.getPosition().x - endXPos;
+            if (nodeSegmentDistance > t) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+    /**
+     * @return a magically determined threshold value.  
+     */
+    private double segmentNodeDistanceThreshold(final LNode n) {
+        return n.getLayer().getSize().x - n.getSize().x / 2;
+    }
 }

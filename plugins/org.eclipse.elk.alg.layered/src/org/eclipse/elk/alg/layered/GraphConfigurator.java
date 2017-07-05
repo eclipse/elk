@@ -222,7 +222,7 @@ final class GraphConfigurator {
         
         // Additional horizontal compaction depends on orthogonal edge routing
         if (lgraph.getProperty(LayeredOptions.COMPACTION_POST_COMPACTION_STRATEGY) != GraphCompactionStrategy.NONE
-              && lgraph.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+              && lgraph.getProperty(LayeredOptions.EDGE_ROUTING) != EdgeRouting.POLYLINE) {
             configuration.addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
         }
         
