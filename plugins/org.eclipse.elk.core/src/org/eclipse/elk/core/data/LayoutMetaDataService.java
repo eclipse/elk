@@ -156,7 +156,7 @@ public final class LayoutMetaDataService {
      * @param providers
      *            the providers to register.
      */
-    public final void registerLayoutMetaDataProviders(final ILayoutMetaDataProvider... providers) {
+    public void registerLayoutMetaDataProviders(final ILayoutMetaDataProvider... providers) {
         for (ILayoutMetaDataProvider provider : providers) {
             Registry registry = new Registry();
             provider.apply(registry);
@@ -172,7 +172,7 @@ public final class LayoutMetaDataService {
      * @return the corresponding layout algorithm data, or {@code null} if there is no algorithm with the given
      *         identifier
      */
-    public final LayoutAlgorithmData getAlgorithmData(final String id) {
+    public LayoutAlgorithmData getAlgorithmData(final String id) {
         return layoutAlgorithmMap.get(id);
     }
 
@@ -181,7 +181,7 @@ public final class LayoutMetaDataService {
      *
      * @return collection of registered layout algorithms
      */
-    public final Collection<LayoutAlgorithmData> getAlgorithmData() {
+    public Collection<LayoutAlgorithmData> getAlgorithmData() {
         return Collections.unmodifiableCollection(layoutAlgorithmMap.values());
     }
 
@@ -193,7 +193,7 @@ public final class LayoutMetaDataService {
      * @return the first layout algorithm data that has the given suffix, or {@code null} if no algorithm has that
      *         suffix or the suffix is not unique (multiple algorithms have it)
      */
-    public final LayoutAlgorithmData getAlgorithmDataBySuffix(final String suffix) {
+    public LayoutAlgorithmData getAlgorithmDataBySuffix(final String suffix) {
         if (suffix == null || suffix.isEmpty()) {
             return null;
         }
@@ -232,7 +232,7 @@ public final class LayoutMetaDataService {
      * @return the layout algorithm data or {@code null} if neither the requested nor the default layout algorithm
      *         are present.
      */
-    public final LayoutAlgorithmData getAlgorithmDataBySuffixOrDefault(final String algorithmId,
+    public LayoutAlgorithmData getAlgorithmDataBySuffixOrDefault(final String algorithmId,
             final String defaultId) {
 
         // First, look for the requested algorithm
@@ -264,7 +264,7 @@ public final class LayoutMetaDataService {
      *            layout option identifier
      * @return the corresponding layout option data, or {@code null} if there is no option with the given identifier
      */
-    public final LayoutOptionData getOptionData(final String id) {
+    public LayoutOptionData getOptionData(final String id) {
         LayoutOptionData data = layoutOptionMap.get(id);
         return data != null ? data : legacyLayoutOptionMap.get(id);
     }
@@ -274,7 +274,7 @@ public final class LayoutMetaDataService {
      *
      * @return collection of registered layout options
      */
-    public final Collection<LayoutOptionData> getOptionData() {
+    public Collection<LayoutOptionData> getOptionData() {
         return Collections.unmodifiableCollection(layoutOptionMap.values());
     }
 
@@ -287,7 +287,7 @@ public final class LayoutMetaDataService {
      * @return the first layout option data that has the given suffix, or {@code null} if no option has that suffix
      *         or the suffix is not unique (multiple options have it)
      */
-    public final LayoutOptionData getOptionDataBySuffix(final String suffix) {
+    public LayoutOptionData getOptionDataBySuffix(final String suffix) {
         if (suffix == null || suffix.isEmpty()) {
             return null;
         }
@@ -344,7 +344,7 @@ public final class LayoutMetaDataService {
      *            type of layout option target
      * @return list of suitable layout options
      */
-    public final List<LayoutOptionData> getOptionData(final LayoutAlgorithmData algorithmData,
+    public List<LayoutOptionData> getOptionData(final LayoutAlgorithmData algorithmData,
             final LayoutOptionData.Target targetType) {
 
         List<LayoutOptionData> optionDataList = new LinkedList<LayoutOptionData>();
@@ -366,7 +366,7 @@ public final class LayoutMetaDataService {
      * @return layout category data instance with given identifier, or {@code null} if the layout category is not
      *         registered
      */
-    public final LayoutCategoryData getCategoryData(final String id) {
+    public LayoutCategoryData getCategoryData(final String id) {
         return layoutCategoryMap.get(id);
     }
 
@@ -376,7 +376,7 @@ public final class LayoutMetaDataService {
      *
      * @return a list of all layout categories
      */
-    public final Collection<LayoutCategoryData> getCategoryData() {
+    public Collection<LayoutCategoryData> getCategoryData() {
         return Collections.unmodifiableCollection(layoutCategoryMap.values());
     }
 
