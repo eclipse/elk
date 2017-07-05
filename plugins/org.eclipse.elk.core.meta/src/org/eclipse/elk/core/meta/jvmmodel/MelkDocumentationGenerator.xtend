@@ -464,6 +464,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                     res += doc.charAt(i)
                     i++
                 }
+                res = res.substring(0, res.lastIndexOf("!["));
                 var path = ""
                 var int openedParens = 1
                 // count parentheses to determine the closing one
@@ -486,7 +487,8 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                 val newFileName = fileNamePrefix + "_" + path.substring(path.lastIndexOf('/') + 1)
                 projectDocumentationSourceFolder.resolve(path).toString.copyImageToOutputPath(newFileName)
                 // replace the URL with the new path
-//                res += IMAGES_OUTPUT_FOLDER + "/" + newFileName + imgTitle
+                res += "{{< image src=\"" + newFileName + "\" alt=\"Preview Image\" gen=\"1\" >}}\n\n"
+                i++;
             }
         }
         

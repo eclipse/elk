@@ -144,7 +144,7 @@ public abstract class AbstractMetaDataRuntimeModule extends DefaultXbaseRuntimeM
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
-	public Provider<InternalMetaDataLexer> provideInternalMetaDataLexer() {
+	public Provider<? extends InternalMetaDataLexer> provideInternalMetaDataLexer() {
 		return LexerProvider.create(InternalMetaDataLexer.class);
 	}
 	

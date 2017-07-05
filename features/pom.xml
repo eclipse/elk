@@ -19,6 +19,7 @@
     <module>org.eclipse.elk.feature</module>
     <module>org.eclipse.elk.sdk.feature</module>
     <module>org.eclipse.elk.gmf.feature</module>
+    <module>org.eclipse.elk.graph.json.feature</module>
     <module>org.eclipse.elk.graphiti.feature</module>
     <module>org.eclipse.elk.graphviz.feature</module>
     <module>org.eclipse.elk.ui.feature</module>

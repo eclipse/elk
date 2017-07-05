@@ -312,7 +312,7 @@ public final class Rectangle {
         return retVal;
     }
     
-    // GWTExcludeStart
+    // elkjs-exclude-start
     // DecimalFormat not available in gwt
     /** Format for the values shown on toString(). */
     private static final DecimalFormat DEC_FORMAT = new DecimalFormat("#0.0");
@@ -329,5 +329,5 @@ public final class Rectangle {
         + ",bottom= " + DEC_FORMAT.format(bottom) 
         + ",right= " + DEC_FORMAT.format(right) + "]";
     }
-    // GWTExcludeEnd
+    // elkjs-exclude-end
 }

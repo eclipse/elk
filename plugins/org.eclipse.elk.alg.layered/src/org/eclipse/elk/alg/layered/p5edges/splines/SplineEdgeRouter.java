@@ -307,7 +307,8 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
 
                     // Determine where next layer should start based on the maximal vertical span of edges
                     // between the two layers
-                    double layerSpacing = sloppyLayerSpacingFactor * (hEdgeSpacing / hNodeSpacing) * maxVertDiff;
+                    double layerSpacing =
+                            sloppyLayerSpacingFactor * Math.min(1.0, hEdgeSpacing / hNodeSpacing) * maxVertDiff;
 
                     // At least have minimal node spacing if all edges are straight
                     if (layerSpacing < hNodeSpacing && !externalLeftLayer && !externalRightLayer) {

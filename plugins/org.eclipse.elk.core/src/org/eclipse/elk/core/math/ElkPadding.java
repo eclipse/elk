@@ -73,4 +73,14 @@ public class ElkPadding extends Spacing {
     public ElkPadding(final ElkPadding other) {
         super(other.top, other.right, other.bottom, other.left);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    // elkjs-exclude-start
+    @Override
+    // elkjs-exclude-end
+    public ElkPadding clone() {
+        return new ElkPadding(this);
+    }
 }

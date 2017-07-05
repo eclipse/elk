@@ -62,9 +62,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cStatementsStatementParserRuleCall_4_0 = (RuleCall)cStatementsAssignment_4.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  graph:      [ 'strict' ] ('graph' | 'digraph') [ ID ] '{' stmt_list '}'
-		// * / Graph:
+		// */ Graph:
 		//	strict?="strict"? type=GraphType name=DotID?
 		//	"{" statements+=Statement* "}";
 		@Override public ParserRule getRule() { return rule; }
@@ -113,10 +113,10 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSubgraphParserRuleCall_0_4 = (RuleCall)cAlternatives_0.eContents().get(4);
 		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  stmt_list:  [ stmt [ ';' ] [ stmt_list ] ]
 		// *  stmt:       node_stmt | edge_stmt | attr_stmt | ID '=' ID | subgraph
-		// * / Statement:
+		// */ Statement:
 		//	(NodeStatement | EdgeStatement | AttributeStatement | Attribute
 		//	| Subgraph) ";"?;
 		@Override public ParserRule getRule() { return rule; }
@@ -124,7 +124,7 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		//(NodeStatement | EdgeStatement | AttributeStatement | Attribute | Subgraph) ";"?
 		public Group getGroup() { return cGroup; }
 		
-		//(NodeStatement | EdgeStatement | AttributeStatement | Attribute | Subgraph)
+		//NodeStatement | EdgeStatement | AttributeStatement | Attribute | Subgraph
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
 		//NodeStatement
@@ -192,9 +192,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAttributesListAttributeParserRuleCall_1_1_1_1_0 = (RuleCall)cAttributesAssignment_1_1_1_1.eContents().get(0);
 		private final Keyword cRightSquareBracketKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  node_stmt:  node_id [ attr_list ]
-		// * / NodeStatement:
+		// */ NodeStatement:
 		//	node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -247,9 +247,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cPortAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cPortPortParserRuleCall_1_1_0 = (RuleCall)cPortAssignment_1_1.eContents().get(0);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  node_id:    ID [ port ]
-		// * / Node:
+		// */ Node:
 		//	name=DotID (":" port=Port)?;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -292,9 +292,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAttributesListAttributeParserRuleCall_2_1_1_1_0 = (RuleCall)cAttributesAssignment_2_1_1_1.eContents().get(0);
 		private final Keyword cRightSquareBracketKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  edge_stmt:  (node_id | subgraph) edgeRHS [ attr_list ]
-		// * / EdgeStatement:
+		// */ EdgeStatement:
 		//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -354,9 +354,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cTargetnodeAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
 		private final RuleCall cTargetnodeNodeParserRuleCall_1_1_0 = (RuleCall)cTargetnodeAssignment_1_1.eContents().get(0);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  edgeRHS:    edgeop (node_id | subgraph) [ edgeRHS ]
-		// * / EdgeTarget:
+		// */ EdgeTarget:
 		//	operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node);
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -369,7 +369,7 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		//EdgeOperator
 		public RuleCall getOperatorEdgeOperatorEnumRuleCall_0_0() { return cOperatorEdgeOperatorEnumRuleCall_0_0; }
 		
-		//(targetSubgraph=Subgraph | targetnode=Node)
+		//targetSubgraph=Subgraph | targetnode=Node
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 		
 		//targetSubgraph=Subgraph
@@ -399,9 +399,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAttributesListAttributeParserRuleCall_2_1_1_0 = (RuleCall)cAttributesAssignment_2_1_1.eContents().get(0);
 		private final Keyword cRightSquareBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  attr_stmt:  ('graph' | 'node' | 'edge') attr_list
-		// * / AttributeStatement:
+		// */ AttributeStatement:
 		//	type=AttributeType
 		//	"[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
 		@Override public ParserRule getRule() { return rule; }
@@ -455,9 +455,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cStatementsStatementParserRuleCall_3_0 = (RuleCall)cStatementsAssignment_3.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  subgraph:   [ 'subgraph' [ ID ] ] '{' stmt_list '}'
-		// * / Subgraph:
+		// */ Subgraph:
 		//	{Subgraph} ("subgraph" name=ID?)? "{" statements+=Statement* "}";
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -501,11 +501,11 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cValueDotIDParserRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  attr_list:  '[' [ a_list ] ']' [ attr_list ]
 		// *  a_list:     ID [ '=' ID ] [ ',' ] [ a_list ]
-		// * / ListAttribute Attribute:
-		//	name=DotID ("=" value=DotID)?
+		// */ ListAttribute Attribute:
+		//	name=DotID ("=" value=DotID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//name=DotID ("=" value=DotID)?
@@ -539,10 +539,10 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cCompass_ptAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cCompass_ptIDTerminalRuleCall_1_1_0 = (RuleCall)cCompass_ptAssignment_1_1.eContents().get(0);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  port:       ':' ID [ ':' compass_pt ] | ':' compass_pt
 		// *  compass_pt: (n | ne | e | se | s | sw | w | nw | c | _)
-		// * / Port:
+		// */ Port:
 		//	name=DotID (":" compass_pt=ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -575,14 +575,14 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cFLOATTerminalRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cSTRINGTerminalRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		
-		/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// *  An ID is one of the following:
 		// *    - Any string of alphabetic ([a-zA-Z'200-'377]) characters, underscores
 		// *      ('_') or digits ([0-9]), not beginning with a digit;
 		// *    - a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
 		// *    - any double-quoted string ("...") possibly containing escaped quotes ('");
 		// *    - an HTML string (<...>). 
-		// * / DotID:
+		// */ DotID:
 		//	ID | INT | FLOAT | STRING;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -783,9 +783,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getGraphvizModelAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  graph:      [ 'strict' ] ('graph' | 'digraph') [ ID ] '{' stmt_list '}'
-	// * / Graph:
+	// */ Graph:
 	//	strict?="strict"? type=GraphType name=DotID?
 	//	"{" statements+=Statement* "}";
 	public GraphElements getGraphAccess() {
@@ -796,10 +796,10 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getGraphAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  stmt_list:  [ stmt [ ';' ] [ stmt_list ] ]
 	// *  stmt:       node_stmt | edge_stmt | attr_stmt | ID '=' ID | subgraph
-	// * / Statement:
+	// */ Statement:
 	//	(NodeStatement | EdgeStatement | AttributeStatement | Attribute
 	//	| Subgraph) ";"?;
 	public StatementElements getStatementAccess() {
@@ -820,9 +820,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getAttributeAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  node_stmt:  node_id [ attr_list ]
-	// * / NodeStatement:
+	// */ NodeStatement:
 	//	node=Node ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 	public NodeStatementElements getNodeStatementAccess() {
 		return pNodeStatement;
@@ -832,9 +832,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getNodeStatementAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  node_id:    ID [ port ]
-	// * / Node:
+	// */ Node:
 	//	name=DotID (":" port=Port)?;
 	public NodeElements getNodeAccess() {
 		return pNode;
@@ -844,9 +844,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getNodeAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  edge_stmt:  (node_id | subgraph) edgeRHS [ attr_list ]
-	// * / EdgeStatement:
+	// */ EdgeStatement:
 	//	sourceNode=Node edgeTargets+=EdgeTarget+ ("[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]")?;
 	public EdgeStatementElements getEdgeStatementAccess() {
 		return pEdgeStatement;
@@ -856,9 +856,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getEdgeStatementAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  edgeRHS:    edgeop (node_id | subgraph) [ edgeRHS ]
-	// * / EdgeTarget:
+	// */ EdgeTarget:
 	//	operator=EdgeOperator (targetSubgraph=Subgraph | targetnode=Node);
 	public EdgeTargetElements getEdgeTargetAccess() {
 		return pEdgeTarget;
@@ -868,9 +868,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getEdgeTargetAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  attr_stmt:  ('graph' | 'node' | 'edge') attr_list
-	// * / AttributeStatement:
+	// */ AttributeStatement:
 	//	type=AttributeType
 	//	"[" (attributes+=ListAttribute (","? attributes+=ListAttribute)*)? "]";
 	public AttributeStatementElements getAttributeStatementAccess() {
@@ -881,9 +881,9 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getAttributeStatementAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  subgraph:   [ 'subgraph' [ ID ] ] '{' stmt_list '}'
-	// * / Subgraph:
+	// */ Subgraph:
 	//	{Subgraph} ("subgraph" name=ID?)? "{" statements+=Statement* "}";
 	public SubgraphElements getSubgraphAccess() {
 		return pSubgraph;
@@ -893,11 +893,11 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getSubgraphAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  attr_list:  '[' [ a_list ] ']' [ attr_list ]
 	// *  a_list:     ID [ '=' ID ] [ ',' ] [ a_list ]
-	// * / ListAttribute Attribute:
-	//	name=DotID ("=" value=DotID)?
+	// */ ListAttribute Attribute:
+	//	name=DotID ("=" value=DotID)?;
 	public ListAttributeElements getListAttributeAccess() {
 		return pListAttribute;
 	}
@@ -906,10 +906,10 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getListAttributeAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  port:       ':' ID [ ':' compass_pt ] | ':' compass_pt
 	// *  compass_pt: (n | ne | e | se | s | sw | w | nw | c | _)
-	// * / Port:
+	// */ Port:
 	//	name=DotID (":" compass_pt=ID)?;
 	public PortElements getPortAccess() {
 		return pPort;
@@ -919,14 +919,14 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 		return getPortAccess().getRule();
 	}
 	
-	/// *~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	///*~~~~Original definition~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// *  An ID is one of the following:
 	// *    - Any string of alphabetic ([a-zA-Z'200-'377]) characters, underscores
 	// *      ('_') or digits ([0-9]), not beginning with a digit;
 	// *    - a numeral [-]?(.[0-9]+ | [0-9]+(.[0-9]*)? );
 	// *    - any double-quoted string ("...") possibly containing escaped quotes ('");
 	// *    - an HTML string (<...>). 
-	// * / DotID:
+	// */ DotID:
 	//	ID | INT | FLOAT | STRING;
 	public DotIDElements getDotIDAccess() {
 		return pDotID;
@@ -997,7 +997,7 @@ public class GraphvizDotGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal ML_COMMENT:
-	//	'/ *'->'* /';
+	//	'/*'->'*/';
 	public TerminalRule getML_COMMENTRule() {
 		return gaTerminals.getML_COMMENTRule();
 	}

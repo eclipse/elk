@@ -20,6 +20,7 @@
     <!-- Re-enable tests at some point. -->
     <!--<module>../test</module>-->
     <module>org.eclipse.elk.alg.force</module>
+    <module>org.eclipse.elk.alg.radial</module>
     <module>org.eclipse.elk.alg.graphviz.dot</module>
     <module>org.eclipse.elk.alg.graphviz.layouter</module>
     <module>org.eclipse.elk.alg.layered</module>
@@ -33,6 +34,7 @@
     <module>org.eclipse.elk.core.service</module>
     <module>org.eclipse.elk.core.ui</module>
     <module>org.eclipse.elk.graph</module>
+    <module>org.eclipse.elk.graph.json</module>
     <module>org.eclipse.elk.graph.text</module>
     <module>org.eclipse.elk.graph.text.ide</module>
     <module>org.eclipse.elk.graph.text.ui</module>

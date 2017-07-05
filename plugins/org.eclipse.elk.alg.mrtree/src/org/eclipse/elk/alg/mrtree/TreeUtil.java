@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 
 /**
  * Utility class for KLay Tree.
@@ -66,7 +66,7 @@ public final class TreeUtil {
                 Iterable<TNode> nextLevel = new Iterable<TNode>() {
 
                     public Iterator<TNode> iterator() {
-                        return Iterators.emptyIterator();
+                        return Collections.emptyIterator();
                     }
                 };
 
@@ -83,7 +83,7 @@ public final class TreeUtil {
                 Iterable<TNode> nextLevel = new Iterable<TNode>() {
 
                     public Iterator<TNode> iterator() {
-                        return Iterators.emptyIterator();
+                        return Collections.emptyIterator();
                     }
                 };
 
