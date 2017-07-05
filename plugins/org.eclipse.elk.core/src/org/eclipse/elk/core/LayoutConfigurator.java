@@ -53,7 +53,7 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     private final Map<ElkGraphElement, MapPropertyHolder> elementOptionMap = Maps.newHashMap();
     private final Map<Class<? extends ElkGraphElement>, MapPropertyHolder> classOptionMap = Maps.newHashMap();
     private boolean clearLayout = false;
-    private List<IOptionFilter> optionFilters = Lists.newArrayList();
+    private final List<IOptionFilter> optionFilters = Lists.newArrayList();
     
     /**
      * Functional interface that allows to specify whether a certain property should be set for a certain graph element.
@@ -102,7 +102,8 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     }
     
     /**
-     * Returns the filter that has been set via {@link #setFilter(Predicate)}, or {@code null}.
+     * Returns the list of filters that have been added via {@link #addFilter(IOptionFilter)} or have been inherited
+     * from another {@link LayoutConfigurator} via {@link #overrideWith(LayoutConfigurator)}.
      */
     protected List<IOptionFilter> getFilters() {
         return optionFilters;
