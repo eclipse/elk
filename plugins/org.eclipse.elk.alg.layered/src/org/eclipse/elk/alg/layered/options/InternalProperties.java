@@ -22,9 +22,12 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
+import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
+import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
@@ -394,6 +397,18 @@ public final class InternalProperties {
      */
     public static final IProperty<BreakingPointInserter.BPInfo> BREAKING_POINT_INFO =
             new Property<BreakingPointInserter.BPInfo>("breakingPoint.info");
+
+    /**
+     * Collection of all spline routes created by the {@link SplineEdgeRouter}. Set on an {@link LEdge}, to be read by
+     * the {@link FinalSplineBendpointsCalculator}.
+     */
+    public static final IProperty<List<SplineSegment>> SPLINE_ROUTE_START = new Property<>("splines.route.start");
+
+    /**
+     * Collection of all edge chains as computed by the {@link SplineEdgeRouter}. Set on an {@link LEdge}, to be read by
+     * the {@link FinalSplineBendpointsCalculator}.
+     */
+    public static final IProperty<List<LEdge>> SPLINE_EDGE_CHAIN = new Property<>("splines.edgeChain");
 
     /**
      * Hidden default constructor.

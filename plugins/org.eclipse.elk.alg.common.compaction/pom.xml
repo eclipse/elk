@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (c) 2016 Kiel University and others.
+  Copyright (c) 2017 Kiel University and others.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the Eclipse Public License v1.0
   which accompanies this distribution, and is available at
@@ -20,32 +20,18 @@
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
-  <artifactId>org.eclipse.elk.alg.layered</artifactId>
-  <name>ELK Layered Layout Algorithm</name>
+  <artifactId>org.eclipse.elk.alg.common.compaction</artifactId>
+  <name>ELK Compaction Algorithms</name>
   <version>0.3.0-SNAPSHOT</version>
-  <description>Layout algorithm based on the layered approach.</description>
+  <description>Compaction algorithms.</description>
   <packaging>eclipse-plugin</packaging>
   
   <dependencies>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.core</artifactId>
-      <version>[${project.version}]</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.elk</groupId>
-      <artifactId>org.eclipse.elk.alg.common.compaction</artifactId>
-      <version>[${project.version}]</version>
+      <version>0.3.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <!-- Generate code from .melk files. -->
-      <plugin>
-        <groupId>org.eclipse.xtext</groupId>
-        <artifactId>xtext-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>

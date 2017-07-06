@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,10 @@ package org.eclipse.elk.alg.layered.intermediate.compaction;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.compaction.oned.CGroup;
-import org.eclipse.elk.alg.layered.compaction.oned.CNode;
-import org.eclipse.elk.alg.layered.compaction.oned.OneDimensionalCompactor;
-import org.eclipse.elk.alg.layered.compaction.oned.algs.ICompactionAlgorithm;
+import org.eclipse.elk.alg.common.compaction.oned.CGroup;
+import org.eclipse.elk.alg.common.compaction.oned.CNode;
+import org.eclipse.elk.alg.common.compaction.oned.ICompactionAlgorithm;
+import org.eclipse.elk.alg.common.compaction.oned.OneDimensionalCompactor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -31,11 +31,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 /**
  * Compaction strategy for the {@link OneDimensionalCompactor} based on the network simplex
- * algorithm. As a consequence not the width is minimized but the edge length of the unterlying
+ * algorithm. As a consequence not the width is minimized but the edge length of the underlying
  * network simplex graph. We model this graph, such that the edge lengths of the original
  * {@link org.eclipse.elk.alg.layered.graph.LGraph LGraph} are minimized.
  */
@@ -91,24 +90,10 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
         
         // #6 apply positions
         for (CNode cNode : compactor.cGraph.cNodes) {
-            cNode.startPos = nNodes[cNode.cGroup.id].layer + cNode.cGroupOffset.x;
-            cNode.applyPosition();
+            cNode.hitbox.x = nNodes[cNode.cGroup.id].layer + cNode.cGroupOffset.x;
         }  
     }
 
-    /**
-     * @return true if both passed nodes originate from the same (set) of {@link LEdge}. 
-     */
-    private boolean isVerticalSegmentsOfSameEdge(final CNode cNode1, final CNode cNode2) {
-        return cNode1.parentNode != null
-                && cNode2.parentNode != null
-                && (cNode1 instanceof CLEdge && cNode2 instanceof CLEdge)
-                // this might seem quite expensive but in most cases the sets 
-                // contain only one element
-                && !Sets.intersection(((CLEdge) cNode1).originalLEdges,
-                        ((CLEdge) cNode2).originalLEdges).isEmpty();
-    }
-    
     /**
      * Add constraints that guarantee proper spacing and order between all groups.
      */
@@ -143,12 +128,12 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
                 //  it should be ok to fix this here
                 delta = Math.max(0, delta); 
 
-                if (!isVerticalSegmentsOfSameEdge(cNode, incNode)) {
+                if (!HorizontalGraphCompactor.isVerticalSegmentsOfSameEdge(cNode, incNode)) {
                     
                     // it looks nicer if the initial segment is close to the node
                     double weight = SEPARATION_WEIGHT;
-                    if ((cNode instanceof CLEdge && incNode instanceof CLNode)
-                            || (incNode instanceof CLEdge && cNode instanceof CLNode)) {
+                    if ((cNode.origin instanceof VerticalSegment && incNode.origin instanceof LNode)
+                            || (incNode.origin instanceof VerticalSegment && cNode.origin instanceof LNode)) {
                         weight = 2;
                     }
                     // add a single edge, i.e. constraint to the network simplex graph
@@ -167,21 +152,33 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
                     //  edge without violating any other requirements
                     
                     NNode helper = NNode.of().create(networkSimplexGraph);
+                    int offsetDelta = (int) Math.ceil(incNode.cGroupOffset.x - cNode.cGroupOffset.x);
                     
-                    // TODO add an offsetcorrection... just slightly move one of the nodes 
-                    int offsetDelta =
-                            (int) Math.ceil(incNode.cGroupOffset.x - cNode.cGroupOffset.x);
+                    // if ports are involved, move one of them slightly since the computed positions will be integral 
+                    double adjust = offsetDelta - (incNode.cGroupOffset.x - cNode.cGroupOffset.x);
+                    LPort port = HorizontalGraphCompactor.getVerticalSegmentOrNull(cNode).aPort;
+                    CNode alterOffset = cNode;
+                    if (port == null) {
+                        port = HorizontalGraphCompactor.getVerticalSegmentOrNull(incNode).aPort;
+                        adjust = -adjust;
+                        alterOffset = incNode;
+                    }
                     
+                    if (port != null) {
+                        alterOffset.cGroupOffset.x -= adjust;
+                        port.getPosition().x -= adjust;
+                    }
+
                     NEdge.of()
                         .delta(Math.max(0, offsetDelta))
-                        .weight(SEPARATION_WEIGHT) // small weight here, it only preserves separations
+                        .weight(SEPARATION_WEIGHT)
                         .source(helper)
                         .target(nNodes[cNode.cGroup.id])
                         .create();
                     
                     NEdge.of()
                         .delta(Math.max(0, -offsetDelta))
-                        .weight(SEPARATION_WEIGHT) // no weight here, it only preserves separations
+                        .weight(SEPARATION_WEIGHT)
                         .source(helper)
                         .target(nNodes[incNode.cGroup.id])
                         .create();
@@ -205,24 +202,27 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
      */
     private void addEdgeConstraints() {
 
-        // collect the original edgess
+        // collect the original edges
         Map<LNode, CNode> lNodeMap = Maps.newHashMap();
         Multimap<LEdge, CNode> lEdgeMap = HashMultimap.create();
         for (CNode cNode : compactor.cGraph.cNodes) {
-            if (cNode instanceof CLNode) {
-                LNode lNode = ((CLNode) cNode).getlNode();
+            LNode lNode = HorizontalGraphCompactor.getLNodeOrNull(cNode);
+            if (lNode != null) {
                 lNodeMap.put(lNode, cNode);
-            } else if (cNode instanceof CLEdge) {
-                for (LEdge e : ((CLEdge) cNode).originalLEdges) {
-                    lEdgeMap.put(e, cNode);
+            } else {
+                VerticalSegment vs = HorizontalGraphCompactor.getVerticalSegmentOrNull(cNode);
+                if (vs != null) {
+                    for (LEdge e : vs.representedLEdges) {
+                        lEdgeMap.put(e, cNode);
+                    }
                 }
-            }
+            } 
         }
         
         // add network simplex edges
         for (CNode cNode : compactor.cGraph.cNodes) {
-            if (cNode instanceof CLNode) {
-                LNode lNode = ((CLNode) cNode).getlNode();
+            LNode lNode = HorizontalGraphCompactor.getLNodeOrNull(cNode);
+            if (lNode != null) {
                 for (LEdge lEdge : lNode.getOutgoingEdges()) {
                     
                     // ignore self-loops
