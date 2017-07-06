@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.options;
 
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.p1cycles.DepthFirstCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.GreedyCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.InteractiveCycleBreaker;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -23,8 +24,6 @@ import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
  * 
  * @author msp
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, LGraph> {
 
@@ -32,6 +31,10 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
      * Applies a greedy heuristic to minimize the number of reversed edges.
      */
     GREEDY,
+    /**
+     * Applies a depth-first traversal to find and reverse edges to make the graph acyclic.
+     */
+    DEPTH_FIRST,
     /**
      * Reacts on user interaction by respecting initial node positions. The actual positions
      * as given in the input diagram are considered here. This means that if the user moves
@@ -48,6 +51,9 @@ public enum CycleBreakingStrategy implements ILayoutPhaseFactory<LayeredPhases, 
         switch (this) {
         case GREEDY:
             return new GreedyCycleBreaker();
+            
+        case DEPTH_FIRST:
+            return new DepthFirstCycleBreaker();
             
         case INTERACTIVE:
             return new InteractiveCycleBreaker();
