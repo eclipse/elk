@@ -546,13 +546,16 @@ public final class JsonImporter {
             jsonSection.addJsonObj("endPoint", endPoint)
             
             // Bend Points
-            val bendPoints = newJsonArray
-            elkSection.bendPoints.forEach [ pnt |
-                val jsonPnt = newJsonObject
-                jsonPnt.addJsonObj("x", pnt.x)
-                jsonPnt.addJsonObj("y", pnt.y)
-                bendPoints.addJsonArr(jsonPnt)
-            ]
+            if (!elkSection.bendPoints.nullOrEmpty) {
+                val bendPoints = newJsonArray
+                elkSection.bendPoints.forEach [ pnt |
+                    val jsonPnt = newJsonObject
+                    jsonPnt.addJsonObj("x", pnt.x)
+                    jsonPnt.addJsonObj("y", pnt.y)
+                    bendPoints.addJsonArr(jsonPnt)
+                ]
+                jsonSection.addJsonObj("bendPoints", bendPoints)
+            }
             
             // Incoming shape
             if (elkSection.incomingShape !== null) {
