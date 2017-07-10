@@ -170,8 +170,8 @@ public final class MrTree {
 
             System.out.println("KLay MrTree uses the following " + algorithm.size() + " modules:");
             for (int i = 0; i < algorithm.size(); i++) {
-                System.out.println("   Slot " + String.format("%1$02d", i) + ": "
-                        + algorithm.get(i).getClass().getName());
+                String slot = (i < 10 ? "0" : "") + (i++); // SUPPRESS CHECKSTYLE MagicNumber
+                System.out.println("   Slot " + slot + ": " + algorithm.get(i).getClass().getName());
             }
         }
         // invoke each layout processor
