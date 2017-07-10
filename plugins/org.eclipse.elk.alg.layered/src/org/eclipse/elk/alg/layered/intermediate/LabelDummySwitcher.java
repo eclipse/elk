@@ -11,7 +11,10 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -26,9 +29,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.Pair;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 
@@ -79,147 +80,92 @@ import com.google.common.collect.Lists;
  */
 public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     
-    /** Width of all layers. */
-    private double[] layerWidths;
-
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy switching", 1);
-
-        // List of label dummies we encounter
-        List<LNode> labelDummies = Lists.newArrayList();
-        // List of label dummies and long edge dummies that need to be swapped
-        List<Pair<LNode, LNode>> nodesToSwap = Lists.newArrayList();
-
-        // Iterate over the graph and gather all label dummies that need to be swapped
-        List<LNode> leftLongEdgeDummies = Lists.newArrayList();
-        List<LNode> rightLongEdgeDummies = Lists.newArrayList();
-
+        
         CenterEdgeLabelPlacementStrategy strategy =
                 layeredGraph.getProperty(LayeredOptions.EDGE_LABELS_CENTER_LABEL_PLACEMENT_STRATEGY);
-        if (strategy == CenterEdgeLabelPlacementStrategy.WIDEST_LAYER) {
-            // Gather all layer widths and setup layer IDs for array indexing
-            final List<Layer> layers = layeredGraph.getLayers();
-            layerWidths = new double[layers.size()];
-            
-            int layerIndex = 0;
-            for (Layer layer : layers) {
-                layerWidths[layerIndex] = LGraphUtil.findMaxNonDummyNodeWidth(layer, false);
-                layer.id = layerIndex;
-            }
-        }
-
-        for (Layer layer : layeredGraph) {
-            for (LNode node : layer.getNodes()) {
-                if (node.getType() == NodeType.LABEL) {
-                    labelDummies.add(node);
-                    leftLongEdgeDummies.clear();
-                    rightLongEdgeDummies.clear();
-
-                    // Gather long edge dummies left of the label dummy
-                    // TODO: This list is in reversed order, which is decidedly counter-intuitive
-                    LNode source = node;
-                    do {
-                        source = source.getIncomingEdges().iterator().next().getSource().getNode();
-                        if (source.getType() == NodeType.LONG_EDGE) {
-                            leftLongEdgeDummies.add(source);
-                        }
-                    } while (source.getType() == NodeType.LONG_EDGE);
-
-                    // Gather long edge dummies right of the label dummy
-                    LNode target = node;
-                    do {
-                        target = target.getOutgoingEdges().iterator().next().getTarget().getNode();
-                        if (target.getType() == NodeType.LONG_EDGE) {
-                            rightLongEdgeDummies.add(target);
-                        }
-                    } while (target.getType() == NodeType.LONG_EDGE);
-
-                    // Determine the nodes to swap according to the given strategy
-                    switch (strategy) {
-                    case WIDEST_LAYER:
-                        findSwapCandidateForWidestLayer(node, leftLongEdgeDummies, rightLongEdgeDummies, nodesToSwap);
-                        break;
-                    case MEDIAN_LAYER:
-                    default:
-                        findSwapCandidateMedian(
-                                node, Lists.reverse(leftLongEdgeDummies), rightLongEdgeDummies, nodesToSwap);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Execute the swapping and reset long edge source / target information
-        for (Pair<LNode, LNode> swapPair : nodesToSwap) {
-            swapNodes(swapPair.getFirst(), swapPair.getSecond());
-        }
+        
+        // Gather all label dummies in the graph and calculate layer width info, if required
+        List<LNode> labelDummies = gatherLabelDummies(layeredGraph);
+        double[] layerWidths = strategy.usesLabelSizeInformation()
+                ? calculateLayerWidthsAndAssignIDsToLayers(layeredGraph)
+                : null;
+        
         for (LNode labelDummy : labelDummies) {
+            // Gather the long edge dummies to the left and right of the label dummy
+            List<LNode> leftLongEdgeDummies = gatherLeftLongEdgeDummies(labelDummy);
+            List<LNode> rightLongEdgeDummies = gatherRightLongEdgeDummies(labelDummy);
+            
+            // Find the swap candidate, depending on the strategy
+            LNode swapCandidate = null;
+            
+            switch (strategy) {
+            case EDGE_CENTER:
+                // TODO: Implement
+                break;
+            
+            case MEDIAN_LAYER:
+                swapCandidate = findMedianLayerSwapCandidate(
+                        labelDummy, leftLongEdgeDummies, rightLongEdgeDummies);
+                break;
+                
+            case WIDEST_LAYER:
+                swapCandidate = findWidestLayerSwapCandidate(
+                        labelDummy, layerWidths, leftLongEdgeDummies, rightLongEdgeDummies);
+                break;
+            }
+            
+            // If we have a swap candidate, swap the two
+            if (swapCandidate != null) {
+                swapNodes(labelDummy, swapCandidate);
+            }
+            
             updateLongEdgeSourceLabelDummyInfo(labelDummy);
         }
-
-        layerWidths = null;
+        
         monitor.done();
     }
     
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Widest Layer
-
     /**
-     * Find a long edge dummy and add it to the list of nodes to swap to move the given node in the
-     * widest layer the edge crosses.
-     * 
-     * @param node
-     *            the dummy node to move.
-     * @param leftLongEdgeDummies
-     *            long edge dummies to the left.
-     * @param rightLongEdgeDummies
-     *            long edge dummies to the right.
-     * @param nodesToSwap
-     *            list of nodes to swap.
+     * Returns an array containing the width of all layers, indexed by layer ID which is assigned to the layers by this
+     * method as well.
      */
-    private void findSwapCandidateForWidestLayer(final LNode node,
-            final List<LNode> leftLongEdgeDummies, final List<LNode> rightLongEdgeDummies,
-            final List<Pair<LNode, LNode>> nodesToSwap) {
-
-        // Find the widest layer and the corresponding swap candidate
-        double maxWidth = 0.0;
-        LNode swapCandidate = null;
-        for (LNode dummy : Iterables.concat(rightLongEdgeDummies, leftLongEdgeDummies)) {
-            double width = layerWidths[dummy.getLayer().id];
-            if (width > maxWidth) {
-                maxWidth = width;
-                swapCandidate = dummy;
-            }
+    private double[] calculateLayerWidthsAndAssignIDsToLayers(final LGraph layeredGraph) {
+        final List<Layer> layers = layeredGraph.getLayers();
+        double[] layerWidths = new double[layers.size()];
+        
+        int layerIndex = 0;
+        for (Layer layer : layers) {
+            layerWidths[layerIndex] = LGraphUtil.findMaxNonDummyNodeWidth(layer, false);
+            layer.id = layerIndex;
+            layerIndex++;
         }
-
-        if (swapCandidate != null) {
-            nodesToSwap.add(new Pair<LNode, LNode>(node, swapCandidate));
-        }
+        
+        return layerWidths;
     }
-    
-    
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Median Layer
 
     /**
-     * Find a long edge dummy and add it to the list of nodes to swap to move the given node in the
-     * center layer the edge crosses.
+     * Find a long edge dummy to swap the label dummy with. This method bases its decision on which long edge dummy is
+     * in the median layer of the layers the long edge spans.
      * 
-     * @param node
-     *            the dummy node to move.
+     * @param labelDummy
+     *            the label dummy to find a swap candidate for.
      * @param leftLongEdgeDummies
-     *            long edge dummies to the left.
+     *            long edge dummies left of the label dummy.
      * @param rightLongEdgeDummies
-     *            long edge dummies to the right.
-     * @param nodesToSwap
-     *            list of nodes to swap.
+     *            long edge dummies right of the label dummy.
+     * @return long edge dummy to swap the label dummy with or {@code null}.
      */
-    private void findSwapCandidateMedian(final LNode node, final List<LNode> leftLongEdgeDummies,
-            final List<LNode> rightLongEdgeDummies, final List<Pair<LNode, LNode>> nodesToSwap) {
+    private LNode findMedianLayerSwapCandidate(final LNode labelDummy, final List<LNode> leftLongEdgeDummies,
+            final List<LNode> rightLongEdgeDummies) {
 
         int leftDummies = leftLongEdgeDummies.size();
         int rightDummies = rightLongEdgeDummies.size();
@@ -230,22 +176,116 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         
         if (lowerMedian < leftDummies) {
             // The label dummy is not in the desired layer, but one of the left long edge dummies is
-            nodesToSwap.add(new Pair<LNode, LNode>(node, leftLongEdgeDummies.get(lowerMedian)));
+            return leftLongEdgeDummies.get(lowerMedian);
         } else if (lowerMedian > leftDummies) {
             // The label dummy is not in the desired layer, but one of the right long edge dummies is
-            nodesToSwap.add(new Pair<LNode, LNode>(node, rightLongEdgeDummies.get(lowerMedian - leftDummies - 1)));
+            return rightLongEdgeDummies.get(lowerMedian - leftDummies - 1);
+        } else {
+            return null;
         }
     }
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Actual Swapping
+    // Widest Layer
 
     /**
-     * Swaps the two given dummy nodes.
+     * Find a long edge dummy to swap the label dummy with. This method bases its decision on which long edge dummy is
+     * in the widest layer.
      * 
-     * @param dummy1 the first dummy node.
-     * @param dummy2 the second dummy node.
+     * @param labelDummy
+     *            the label dummy to find a swap candidate for.
+     * @param layerWidths
+     *            widths of layers, indexed by layer IDs.
+     * @param leftLongEdgeDummies
+     *            long edge dummies left of the label dummy.
+     * @param rightLongEdgeDummies
+     *            long edge dummies right of the label dummy.
+     * @return long edge dummy to swap the label dummy with or {@code null}.
+     */
+    private LNode findWidestLayerSwapCandidate(final LNode labelDummy, final double[] layerWidths,
+            final List<LNode> leftLongEdgeDummies, final List<LNode> rightLongEdgeDummies) {
+
+        // Find the widest layer among those the long edge dummies are placed in
+        Optional<LNode> widestLayerDummy = Stream.concat(leftLongEdgeDummies.stream(), rightLongEdgeDummies.stream())
+                .max((node1, node2) -> Double.compare(
+                        layerWidths[node1.getLayer().id],
+                        layerWidths[node2.getLayer().id]));
+        
+        if (widestLayerDummy.isPresent()) {
+            // We need to check with the width of the label dummy's current layer as well
+            double labelDummyLayerWidth = layerWidths[labelDummy.getLayer().id];
+            double widestLayerWidth = layerWidths[widestLayerDummy.get().getLayer().id];
+            
+            if (widestLayerWidth > labelDummyLayerWidth) {
+                return widestLayerDummy.get();
+            }
+        }
+        
+        // We don't have a swap candidate
+        return null;
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Dummy Gathering Utilities
+    
+    /**
+     * Returns a list of the graph's label dummies.
+     */
+    private List<LNode> gatherLabelDummies(final LGraph layeredGraph) {
+        // From the graph's nodes, filter out the label dummies and return them in the form of a list
+        return layeredGraph.getLayers().stream()
+                .flatMap((layer) -> layer.getNodes().stream())
+                .filter(node -> node.getType() == NodeType.LABEL)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Gathers the long edge dummies left of the label dummy which are part of its long edge. The order they are
+     * in reflects the order of layers, that is, the label dummy is the successor of the last long edge dummy in
+     * the list.
+     */
+    private List<LNode> gatherLeftLongEdgeDummies(final LNode labelDummy) {
+        List<LNode> leftLongEdgeDummies = Lists.newArrayList();
+        
+        LNode source = labelDummy;
+        do {
+            source = source.getIncomingEdges().iterator().next().getSource().getNode();
+            if (source.getType() == NodeType.LONG_EDGE) {
+                leftLongEdgeDummies.add(source);
+            }
+        } while (source.getType() == NodeType.LONG_EDGE);
+        
+        // The list is currently not in the order we would expect, so return a reversed version
+        return Lists.reverse(leftLongEdgeDummies);
+    }
+    
+    /**
+     * Gathers the long edge dummies right of the label dummy which are part of its long edge. The order they are
+     * in reflects the order of layers, that is, the label dummy is the predecessor of the first long edge dummy in
+     * the list.
+     */
+    private List<LNode> gatherRightLongEdgeDummies(final LNode labelDummy) {
+        List<LNode> rightLongEdgeDummies = Lists.newArrayList();
+        
+        LNode target = labelDummy;
+        do {
+            target = target.getOutgoingEdges().iterator().next().getTarget().getNode();
+            if (target.getType() == NodeType.LONG_EDGE) {
+                rightLongEdgeDummies.add(target);
+            }
+        } while (target.getType() == NodeType.LONG_EDGE);
+        
+        return rightLongEdgeDummies;
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Swapping Utilities
+
+    /**
+     * Swaps the two given dummy nodes. The nodes are assumed to be part of the same long edge.
      */
     private void swapNodes(final LNode dummy1, final LNode dummy2) {
         Layer layer1 = dummy1.getLayer();
@@ -322,4 +362,3 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     }
     
 }
-

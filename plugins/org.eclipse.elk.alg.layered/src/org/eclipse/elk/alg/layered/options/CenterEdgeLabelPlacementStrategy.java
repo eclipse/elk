@@ -19,6 +19,18 @@ public enum CenterEdgeLabelPlacementStrategy {
     /** Consider all layers a labeled edge crosses and place its label dummy in the one at the median spot. */
     MEDIAN_LAYER,
     /** Place a label dummy in the widest of all layers its edge crosses. */
-    WIDEST_LAYER;
+    WIDEST_LAYER,
+    /** Places the label dummy in a layer that we think will be closest to the edge's physical center later. */
+    EDGE_CENTER;
+    
+    
+    /**
+     * Checks whether this strategy is based on information about the width of layers.
+     * 
+     * @return {@code true} iff that is the case.
+     */
+    public boolean usesLabelSizeInformation() {
+        return this == WIDEST_LAYER || this == EDGE_CENTER;
+    }
     
 }
