@@ -18,7 +18,6 @@ import org.eclipse.elk.alg.force.options.ForceMetaDataProvider;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.mrtree.options.MrTreeMetaDataProvider;
-import org.eclipse.elk.alg.radial.RadialMetaDataProvider;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
@@ -49,7 +48,7 @@ public class ElkReflectTest {
                     CoreOptions.class, 
                     LayeredMetaDataProvider.class,
                     ForceMetaDataProvider.class,
-                    RadialMetaDataProvider.class,
+                    org.eclipse.elk.alg.radial.options.RadialMetaDataProvider.class,
                     MrTreeMetaDataProvider.class);
     
     /** Properties used internally somewhere. */

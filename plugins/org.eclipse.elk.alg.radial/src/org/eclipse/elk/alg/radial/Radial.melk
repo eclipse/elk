@@ -18,12 +18,12 @@ import org.eclipse.elk.alg.radial.options.SortingStrategy
 
 bundle {
     label "Radial Layout Algorithm"
-    metadataClass RadialMetaDataProvider
+    metadataClass options.RadialMetaDataProvider
     idPrefix org.eclipse.elk.radial
 }
 
 algorithm radial(RadialLayoutProvider) {
-    label "Radial Layouter"
+    label "ELK Radial"
     metadataClass options.RadialOptions
     description "A radial layout provider which is based on the algorithm of Peter Eades published in \"Drawing free trees.\", published by
                 International Institute for Advanced Study of Social Information Science, Fujitsu Limited in 1991. The radial
