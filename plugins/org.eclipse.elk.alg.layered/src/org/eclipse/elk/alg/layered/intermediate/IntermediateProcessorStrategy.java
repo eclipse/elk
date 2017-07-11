@@ -15,7 +15,7 @@ import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompac
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointProcessor;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointRemover;
-import org.eclipse.elk.alg.layered.intermediate.wrapping.PathLikeGraphWrapper;
+import org.eclipse.elk.alg.layered.intermediate.wrapping.SingleEdgeGraphWrapper;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -108,8 +108,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     TWO_SIDED_GREEDY_SWITCH,
     /** Unhide self loops after phase 3. */
     SPLINE_SELF_LOOP_POSITIONER,
-    /** Wraps path-like graphs such that they better fit a given drawing area. */
-    PATH_LIKE_GRAPH_WRAPPER,
+    /** Wraps graphs such that they better fit a given drawing area, allowing only a single edge per cut. */
+    SINGLE_EDGE_GRAPH_WRAPPER,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
@@ -324,8 +324,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
         case REVERSED_EDGE_RESTORER:
             return new ReversedEdgeRestorer();
 
-        case PATH_LIKE_GRAPH_WRAPPER:
-            return new PathLikeGraphWrapper();
+        case SINGLE_EDGE_GRAPH_WRAPPER:
+            return new SingleEdgeGraphWrapper();
 
         case SELF_LOOP_PROCESSOR:
             return new SelfLoopProcessor();

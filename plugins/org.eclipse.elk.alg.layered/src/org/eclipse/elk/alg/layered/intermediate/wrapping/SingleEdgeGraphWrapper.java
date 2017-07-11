@@ -57,7 +57,7 @@ import com.google.common.collect.Lists;
  *   <dt>Slots:</dt><dd>Before phase 4.</dd>
  * </dl>
  */
-public class PathLikeGraphWrapper implements ILayoutProcessor<LGraph> {
+public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
 
     /**
      * {@inheritDoc}
@@ -98,7 +98,7 @@ public class PathLikeGraphWrapper implements ILayoutProcessor<LGraph> {
         
         // if they are not guaranteed to be valid, make them valid
         if (!icic.guaranteeValid()) {
-            switch (graph.getProperty(LayeredOptions.WRAPPING_PATH_LIKE_VALIDIFY_STRATEGY)) {
+            switch (graph.getProperty(LayeredOptions.WRAPPING_SINGLE_EDGE_VALIDIFY_STRATEGY)) {
                 case LOOK_BACK:
                     cuts = validifyIndexesLookingBack(gs, cuts);
                     break;

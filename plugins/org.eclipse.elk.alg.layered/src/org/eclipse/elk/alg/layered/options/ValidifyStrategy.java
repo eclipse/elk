@@ -14,7 +14,7 @@ import org.eclipse.elk.alg.layered.intermediate.wrapping.ICutIndexCalculator;
 
 /**
  * The cuts calculated by a {@link ICutIndexCalculator} are not necessarily valid (when using
- * {@link WrappingStrategy#PATH_LIKE}). The specified 'validify' takes care of transforming forbidden cuts into valid
+ * {@link WrappingStrategy#SINGLE_EDGE}). The specified 'validify' takes care of transforming forbidden cuts into valid
  * ones.
  */
 public enum ValidifyStrategy {

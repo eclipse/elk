@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kiel University and others.
+ * Copyright (c) 2015, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,13 +71,14 @@ algorithm layered(LayeredLayoutProvider) {
     // wrapping related
     supports wrapping.strategy
     supports wrapping.additionalEdgeSpacing
+    supports wrapping.correctionFactor
     supports wrapping.cutting.strategy
     supports wrapping.cutting.cuts
     supports wrapping.cutting.msd.freedom
-    supports wrapping.pathLike.validify.strategy 
-    supports wrapping.general.improveCuts
-    supports wrapping.general.distancePenalty
-    supports wrapping.general.improveWrappedEdges
+    supports wrapping.singleEdge.validify.strategy 
+    supports wrapping.multiEdge.improveCuts
+    supports wrapping.multiEdge.distancePenalty
+    supports wrapping.multiEdge.improveWrappedEdges
     // flexible nodes during node placement
     supports nodePlacement.networkSimplex.nodeFlexibility
     supports nodePlacement.networkSimplex.nodeFlexibility.^default
@@ -619,7 +620,7 @@ group wrapping {
              split the laid out graph into chunks that are placed side by side. 
              The edges that connect different chunks are 'wrapped' around from the end of 
              one chunk to the start of the other chunk.
-            The points between the chunks are referred to as 'cuts'."
+             The points between the chunks are referred to as 'cuts'."
         targets parents
         default = WrappingStrategy.OFF
     }
@@ -630,6 +631,17 @@ group wrapping {
             "To visually separate edges that are wrapped from regularly routed edges an additional spacing value 
              can be specified in form of this layout option. The spacing is added to the regular edgeNode spacing."
         default = 10
+        targets parents
+    }
+    
+    advanced option correctionFactor: double {
+        label "Correction factor for the wrapping"
+        description 
+            "At times and for certain types of graphs the executed wrapping may produce results that 
+             are consistently biased in the same fashion: either wrapping to often or to rarely. 
+             This factor can be used to correct the bias. Internally, it is simplay multiplied with 
+             the 'aspect ratio' layout option."
+        default = 1.0
         targets parents
     }
 
@@ -666,7 +678,7 @@ group wrapping {
         }
     }
  
-    group pathLike {
+    group singleEdge {
     
         group validify {
             
@@ -677,12 +689,12 @@ group wrapping {
                      The validify strategy makes sure every computed split point is allowed."
                 default = ValidifyStrategy.GREEDY 
                 targets parents
-                requires wrapping.strategy == WrappingStrategy.PATH_LIKE
+                requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
             }
         }
     }
  
-    group general {
+    group multiEdge {
      
         advanced option improveCuts: boolean {
             label "Improve Cuts"
@@ -691,14 +703,14 @@ group wrapping {
                  Thus a compromise between evenly-distributed cuts and the total number of cut edges is sought."
             default = true
             targets parents
-            requires strategy == WrappingStrategy.GENERAL
+            requires strategy == WrappingStrategy.MULTI_EDGE
         }
  
         advanced option distancePenalty: double {
             label "Distance Penalty When Improving Cuts "
             default = 2.0
             targets parents
-            requires strategy == WrappingStrategy.GENERAL
+            requires strategy == WrappingStrategy.MULTI_EDGE
             requires improveCuts == true
         }
      
@@ -709,7 +721,7 @@ group wrapping {
                  one chunk to another may be unnecessarily long. Activating this option tries to shorten such edges."
             default = true
             targets parents 
-            requires strategy == WrappingStrategy.GENERAL
+            requires strategy == WrappingStrategy.MULTI_EDGE
          }
     }
 }
