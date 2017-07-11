@@ -163,11 +163,29 @@ public final class JsonExporter {
 
         // connection points
         val sources = newJsonArray
-        edge.sources.forEach[ s | sources.addJsonArr(nodeIdMap.get(s).toJson) ]
+        edge.sources.forEach[ s | 
+            var source = portIdMap.get(s)
+            if (source === null) {
+                source = nodeIdMap.get(s)
+            }
+            if (source === null) {
+                 formatError("Unknown edge source: " + s)
+            }
+            sources.addJsonArr(source.toJson)
+        ]
         jsonObj.addJsonObj("sources", sources)
         
         val targets = newJsonArray
-        edge.targets.forEach[ t | targets.addJsonArr(nodeIdMap.get(t).toJson) ]
+        edge.targets.forEach[ t | 
+            var target = portIdMap.get(t)
+            if (target === null) {
+                nodeIdMap.get(t)
+            }
+            if (target === null) {
+                formatError("Unknown edge target: " + target)
+            }
+            targets.addJsonArr(target.toJson)
+        ]
         jsonObj.addJsonObj("targets", targets)
 
         // labels
@@ -394,7 +412,7 @@ public final class JsonExporter {
     }
         
     def <T> Iterator<T> emptyIfNull(Iterator<T> iterator) {
-        if (iterator == null) {
+        if (iterator === null) {
             return Collections.emptyIterator
         } else {
             iterator
