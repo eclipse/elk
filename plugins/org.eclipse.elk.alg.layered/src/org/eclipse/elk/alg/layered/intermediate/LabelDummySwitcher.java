@@ -104,8 +104,9 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             LNode swapCandidate = null;
             
             switch (strategy) {
-            case EDGE_CENTER:
-                // TODO: Implement
+            case CENTER_LAYER:
+                swapCandidate = findCenterLayerSwapCandidate(
+                        labelDummy, layerWidths, leftLongEdgeDummies, rightLongEdgeDummies);
                 break;
             
             case MEDIAN_LAYER:
@@ -147,6 +148,79 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         
         return layerWidths;
     }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Center Layer
+
+    /**
+     * Find a long edge dummy to swap the label dummy with. This method bases its decision on which layer it thinks
+     * will be closest to the edge's physical center later.
+     * 
+     * @param labelDummy
+     *            the label dummy to find a swap candidate for.
+     * @param layerWidths
+     *            widths of layers, indexed by layer IDs.
+     * @param leftLongEdgeDummies
+     *            long edge dummies left of the label dummy.
+     * @param rightLongEdgeDummies
+     *            long edge dummies right of the label dummy.
+     * @return long edge dummy to swap the label dummy with or {@code null}.
+     */
+    private LNode findCenterLayerSwapCandidate(final LNode labelDummy, final double[] layerWidths,
+            final List<LNode> leftLongEdgeDummies, final List<LNode> rightLongEdgeDummies) {
+        
+        // Sum up the widths of all the layers this thing spans
+        double[] layerWidthSums = computeLayerWidthSums(labelDummy, layerWidths, leftLongEdgeDummies,
+                rightLongEdgeDummies);
+        
+        // Find the first layer that exceeds half the width
+        double threshold = layerWidthSums[layerWidthSums.length - 1] / 2;
+        
+        for (int i = 0; i < layerWidthSums.length; i++) {
+            if (layerWidthSums[i] >= threshold) {
+                return findIthLongEdgeDummy(i, leftLongEdgeDummies, rightLongEdgeDummies);
+            }
+        }
+        
+        // This should actually not happen
+        assert false;
+        return null;
+    }
+    
+    /**
+     * Computes an array in which entry i refers to the combined width of layers [0, i]. The combined width is
+     * estimated based on the currently estimated layer width and a wild guess as to the layer spacing.
+     */
+    private double[] computeLayerWidthSums(final LNode labelDummy, final double[] layerWidths,
+            final List<LNode> leftLongEdgeDummies, final List<LNode> rightLongEdgeDummies) {
+
+        // The minimum space that we think will be left between 
+        double edgeNodeSpacing = labelDummy.getGraph().getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS) * 2;
+        double nodeNodeSpacing = labelDummy.getGraph().getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
+        double minSpaceBetweenLayers = Math.max(edgeNodeSpacing, nodeNodeSpacing);
+        
+        // The array that will hold the accumulated widths
+        double[] layerWidthSums = new double[leftLongEdgeDummies.size() + rightLongEdgeDummies.size() + 1];
+        
+        double currentWidthSum = -minSpaceBetweenLayers;
+        int currentIndex = 0;
+        
+        for (LNode leftDummy : leftLongEdgeDummies) {
+            currentWidthSum += layerWidths[leftDummy.getLayer().id] + minSpaceBetweenLayers;
+            layerWidthSums[currentIndex++] = currentWidthSum;
+        }
+        
+        currentWidthSum += layerWidths[labelDummy.getLayer().id] + minSpaceBetweenLayers;
+        layerWidthSums[currentIndex++] = currentWidthSum;
+        
+        for (LNode rightDummy : rightLongEdgeDummies) {
+            currentWidthSum += layerWidths[rightDummy.getLayer().id] + minSpaceBetweenLayers;
+            layerWidthSums[currentIndex++] = currentWidthSum;
+        }
+        
+        return layerWidthSums;
+    }
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,22 +241,11 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     private LNode findMedianLayerSwapCandidate(final LNode labelDummy, final List<LNode> leftLongEdgeDummies,
             final List<LNode> rightLongEdgeDummies) {
 
-        int leftDummies = leftLongEdgeDummies.size();
-        int rightDummies = rightLongEdgeDummies.size();
-        
         // Find the median of the layers spanned by the long edge this label dummy is part of
-        int layers = leftDummies + rightDummies + 1;
+        int layers = leftLongEdgeDummies.size() + rightLongEdgeDummies.size() + 1;
         int lowerMedian = (layers - 1) / 2;
         
-        if (lowerMedian < leftDummies) {
-            // The label dummy is not in the desired layer, but one of the left long edge dummies is
-            return leftLongEdgeDummies.get(lowerMedian);
-        } else if (lowerMedian > leftDummies) {
-            // The label dummy is not in the desired layer, but one of the right long edge dummies is
-            return rightLongEdgeDummies.get(lowerMedian - leftDummies - 1);
-        } else {
-            return null;
-        }
+        return findIthLongEdgeDummy(lowerMedian, leftLongEdgeDummies, rightLongEdgeDummies);
     }
     
     
@@ -283,6 +346,27 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Swapping Utilities
+    
+    /**
+     * Returns the i-th long edge dummy from the given lists of long edge dummies to the left and right of a label
+     * dummy. If the i-th long edge dummy is in the left list, the corresponding node is returned. If it is in the
+     * right list, again the corresponding dummy is returned. If this method would return the label dummy itself,
+     * which sits between the two lists, the method instead returns {@code null} to indicate that no swapping is
+     * necessary.
+     */
+    private LNode findIthLongEdgeDummy(final int i, final List<LNode> leftLongEdgeDummies,
+            final List<LNode> rightLongEdgeDummies) {
+
+        if (i < leftLongEdgeDummies.size()) {
+            // The label dummy is not in the desired layer, but one of the left long edge dummies is
+            return leftLongEdgeDummies.get(i);
+        } else if (i > leftLongEdgeDummies.size()) {
+            // The label dummy is not in the desired layer, but one of the right long edge dummies is
+            return rightLongEdgeDummies.get(i - leftLongEdgeDummies.size() - 1);
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Swaps the two given dummy nodes. The nodes are assumed to be part of the same long edge.
