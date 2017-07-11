@@ -69,7 +69,8 @@ public final class Spacings {
         nodeTypeSpacing(NodeType.NORMAL, NodeType.EXTERNAL_PORT,
                 LayeredOptions.SPACING_EDGE_NODE); // TODO
         nodeTypeSpacing(NodeType.NORMAL, NodeType.LABEL,
-                LayeredOptions.SPACING_EDGE_NODE);
+                LayeredOptions.SPACING_NODE_NODE,
+                LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
         nodeTypeSpacing(NodeType.NORMAL, NodeType.BIG_NODE,
                 LayeredOptions.SPACING_NODE_NODE,
                 LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
@@ -83,7 +84,8 @@ public final class Spacings {
         nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.EXTERNAL_PORT, 
                 LayeredOptions.SPACING_EDGE_EDGE); // TODO
         nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.LABEL, 
-                LayeredOptions.SPACING_EDGE_LABEL);
+                LayeredOptions.SPACING_EDGE_NODE,
+                LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
         nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.BIG_NODE, 
                 LayeredOptions.SPACING_EDGE_NODE,
                 LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);  
@@ -108,6 +110,7 @@ public final class Spacings {
         
         // label
         nodeTypeSpacing(NodeType.LABEL,
+                LayeredOptions.SPACING_EDGE_EDGE,
                 LayeredOptions.SPACING_EDGE_EDGE); 
         nodeTypeSpacing(NodeType.LABEL, NodeType.BIG_NODE, 
                 LayeredOptions.SPACING_EDGE_NODE);

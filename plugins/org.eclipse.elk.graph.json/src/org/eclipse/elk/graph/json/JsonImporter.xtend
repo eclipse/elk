@@ -94,7 +94,7 @@ public final class JsonImporter {
     private def transformChildNodes(Object jsonNodeA, ElkNode parent) {
         val jsonNode = jsonNodeA.toJsonObject
         jsonNode.optJSONArray("children") => [ children |
-            if (children != null) {
+            if (children !== null) {
                 for (i : 0 ..< children.sizeJsonArr) {
                     children.optJSONObject(i)?.transformNode(parent)
                 }
@@ -126,7 +126,7 @@ public final class JsonImporter {
         
         // transform edges of the current hierarchy level
         jsonObj.optJSONArray("edges") => [ edges |
-            if (edges != null) {
+            if (edges !== null) {
                 for (i : 0 ..< edges.sizeJsonArr) {
                     val edge = edges.optJSONObject(i)
                     if (edge.hasJsonObj("sources") || edge.hasJsonObj("targets")) {
@@ -140,7 +140,7 @@ public final class JsonImporter {
 
         // transform the edges of all child nodes
         jsonObj.optJSONArray("children") => [ children |
-            if (children != null) {
+            if (children !== null) {
                 for (i : 0 ..< children.sizeJsonArr) {
                     children.optJSONObject(i)?.transformEdges
                 }
@@ -158,10 +158,10 @@ public final class JsonImporter {
         val srcNode = nodeIdMap.get(jsonObj.getJsonObj("source").asId)
         val srcPort = portIdMap.get(jsonObj.getJsonObj("sourcePort")?.asId) // may be null
 
-        if (srcNode == null) {
+        if (srcNode === null) {
             throw formatError("An edge must have a source node (edge id: '" + jsonObj.id +"').") 
         }
-        if (srcPort != null && srcPort.parent != srcNode) {
+        if (srcPort !== null && srcPort.parent != srcNode) {
             throw formatError("The source port of an edge must be a port of the edge's source node (edge id: '" 
                 + jsonObj.idSave + "').")
         }
@@ -172,11 +172,11 @@ public final class JsonImporter {
         val tgtNode = nodeIdMap.get(jsonObj.getJsonObj("target").asId)
         val tgtPort = portIdMap.get(jsonObj.getJsonObj("targetPort")?.asId) // may be null
         
-        if (tgtNode == null) {
+        if (tgtNode === null) {
             throw formatError("An edge must have a target node (edge id: '" + jsonObj.id +"').") 
         }
         
-        if (tgtPort != null && tgtPort.parent != tgtNode) {
+        if (tgtPort !== null && tgtPort.parent != tgtNode) {
             throw formatError("The target port of an edge must be a port of the edge's target node (edge id: '" 
                 + jsonObj.idSave + "').")
         }
@@ -199,7 +199,7 @@ public final class JsonImporter {
         val section = ElkGraphUtil.firstEdgeSection(edge, true, true)
         // src
         jsonObj.optJSONObject("sourcePoint") => [ srcPnt |
-            if (srcPnt != null) {
+            if (srcPnt !== null) {
                 srcPnt.optDouble("x") => [section.startX = it]
                 srcPnt.optDouble("y") => [section.startY = it]
             }
@@ -207,7 +207,7 @@ public final class JsonImporter {
 
         // tgt
         jsonObj.optJSONObject("targetPoint") => [ tgtPnt |
-            if (tgtPnt != null) {
+            if (tgtPnt !== null) {
                 tgtPnt.optDouble("x") => [section.endX = it]
                 tgtPnt.optDouble("y") => [section.endY = it]
             }
@@ -215,7 +215,7 @@ public final class JsonImporter {
 
         // bend points
         jsonObj.optJSONArray("bendPoints") => [ bendPoints |
-            if (bendPoints != null) {
+            if (bendPoints !== null) {
                 for (i : 0 ..< bendPoints.sizeJsonArr) {
                     bendPoints.optJSONObject(i) => [ bendPoint |
                         ElkGraphUtil.createBendPoint(section, bendPoint.optDouble("x"), bendPoint.optDouble("y"));
@@ -234,10 +234,10 @@ public final class JsonImporter {
 
         // sources
         jsonObj.optJSONArray("sources") => [ sources |
-            if (sources != null) {
+            if (sources !== null) {
                 for (i : 0 ..< sources.sizeJsonArr) {
                     val sourceElement = shapeById(sources.getJsonArr(i).asId);
-                    if (sourceElement != null) {
+                    if (sourceElement !== null) {
                         edge.sources += sourceElement;
                     }
                 }
@@ -246,10 +246,10 @@ public final class JsonImporter {
 
         // targets
         jsonObj.optJSONArray("targets") => [ targets |
-            if (targets != null) {
+            if (targets !== null) {
                 for (i : 0 ..< targets.sizeJsonArr) {
                     val targetElement = shapeById(targets.getJsonArr(i).asId);
-                    if (targetElement != null) {
+                    if (targetElement !== null) {
                         edge.targets += targetElement;
                     }
                 }
@@ -277,7 +277,7 @@ public final class JsonImporter {
         val Multimap<ElkEdgeSection, Object> outgoingSectionIdentifiers = HashMultimap.create();
         
         jsonObj.optJSONArray("sections") => [ sections |
-            if (sections != null) {
+            if (sections !== null) {
                 for (i : 0 ..< sections.sizeJsonArr) {
                     sections.optJSONObject(i) => [ jsonSection |
                         val elkSection = ElkGraphUtil.createEdgeSection(edge).register(jsonSection)
@@ -287,20 +287,20 @@ public final class JsonImporter {
                         
                         // Incoming and Outgoing shapes
                         jsonSection.optString("incomingShape") => [ jsonShapeId |
-                            if (jsonShapeId != null) {
+                            if (jsonShapeId !== null) {
                                 elkSection.incomingShape = shapeById(jsonShapeId);
                             }
                         ]
                         
                         jsonSection.optString("outgoingShape") => [ jsonShapeId |
-                            if (jsonShapeId != null) {
+                            if (jsonShapeId !== null) {
                                 elkSection.outgoingShape = shapeById(jsonShapeId);
                             }
                         ]
                         
                         // References to incoming and outgoing sections
                         jsonSection.optJSONArray("incomingSections") => [ jsonSectionIds |
-                            if (jsonSectionIds != null) {
+                            if (jsonSectionIds !== null) {
                                 for (j : 0 ..< jsonSectionIds.sizeJsonArr) {
                                     incomingSectionIdentifiers.put(elkSection, jsonSectionIds.getJsonArr(j).asId)
                                 }
@@ -308,7 +308,7 @@ public final class JsonImporter {
                         ]
                         
                         jsonSection.optJSONArray("outgoingSections") => [ jsonSectionIds |
-                            if (jsonSectionIds != null) {
+                            if (jsonSectionIds !== null) {
                                 for (j : 0 ..< jsonSectionIds.sizeJsonArr) {
                                     outgoingSectionIdentifiers.put(elkSection, jsonSectionIds.getJsonArr(j).asId)
                                 }
@@ -323,7 +323,7 @@ public final class JsonImporter {
         for (section : incomingSectionIdentifiers.keySet) {
             for (id : incomingSectionIdentifiers.get(section)) {
                 val referencedSection = edgeSectionIdMap.get(id);
-                if (referencedSection != null) {
+                if (referencedSection !== null) {
                     section.incomingSections += referencedSection;
                 } else {
                     throw formatError("Referenced edge section does not exist: " + id 
@@ -335,7 +335,7 @@ public final class JsonImporter {
         for (section : outgoingSectionIdentifiers.keySet) {
             for (id : outgoingSectionIdentifiers.get(section)) {
                 val referencedSection = edgeSectionIdMap.get(id);
-                if (referencedSection != null) {
+                if (referencedSection !== null) {
                     section.outgoingSections += referencedSection;
                 } else {
                     throw formatError("Referenced edge section does not exist: " + id 
@@ -349,7 +349,7 @@ public final class JsonImporter {
         // respectively
         if (edge.isConnected && !edge.isHyperedge && edge.sections.size == 1) {
             val section = edge.sections.get(0);
-            if (section.incomingShape == null && section.outgoingShape == null) {
+            if (section.incomingShape === null && section.outgoingShape === null) {
                 section.incomingShape = edge.sources.get(0);
                 section.outgoingShape = edge.targets.get(0);
             }
@@ -359,7 +359,7 @@ public final class JsonImporter {
     private def fillEdgeSectionCoordinates(Object jsonObjA, ElkEdgeSection section) {
         val jsonObj = jsonObjA.toJsonObject
         jsonObj.optJSONObject("startPoint") => [ startPoint |
-            if (startPoint != null) {
+            if (startPoint !== null) {
                 startPoint.optDouble("x") => [section.startX = it]
                 startPoint.optDouble("y") => [section.startY = it]
             } else {
@@ -368,7 +368,7 @@ public final class JsonImporter {
         ]
         
         jsonObj.optJSONObject("endPoint") => [ endPoint |
-            if (endPoint != null) {
+            if (endPoint !== null) {
                 endPoint.optDouble("x") => [section.endX = it]
                 endPoint.optDouble("y") => [section.endY = it]
             } else {
@@ -377,7 +377,7 @@ public final class JsonImporter {
         ]
         
         jsonObj.optJSONArray("bendPoints") => [ bendPoints |
-            if (bendPoints != null) {
+            if (bendPoints !== null) {
                 for (i : 0 ..< bendPoints.sizeJsonArr) {
                     bendPoints.optJSONObject(i) => [ bendPoint |
                         ElkGraphUtil.createBendPoint(section, bendPoint.optDouble("x"), bendPoint.optDouble("y"));
@@ -399,9 +399,9 @@ public final class JsonImporter {
        
     private def setOption(EMapPropertyHolder e, String id, String value) {
         val optionData = LayoutMetaDataService.instance.getOptionDataBySuffix(id)
-        if (optionData != null) {
+        if (optionData !== null) {
             val parsed = optionData.parseValue(value)
-            if (parsed != null) {
+            if (parsed !== null) {
                 e.setProperty(optionData, parsed)
             }
         }
@@ -410,10 +410,10 @@ public final class JsonImporter {
     private def transformLabels(Object jsonObjA, ElkGraphElement element) {
         val jsonObj = jsonObjA.toJsonObject
         jsonObj.optJSONArray("labels") => [ labels |
-            if (labels != null) {
+            if (labels !== null) {
                 for (i : 0 ..< labels.sizeJsonArr) {
                     val jsonLabel = labels.optJSONObject(i)
-                    if (jsonLabel != null) {
+                    if (jsonLabel !== null) {
                         val label = ElkGraphUtil.createLabel(jsonLabel.optString("text"), element)
                         labelJsonMap.put(label, jsonLabel) 
                         if (jsonLabel.hasJsonObj("id")) {
@@ -436,7 +436,7 @@ public final class JsonImporter {
     private def transformPorts(Object jsonObjA, ElkNode parent) {
         val jsonObj = jsonObjA.toJsonObject
         jsonObj.optJSONArray("ports") => [ ports |
-            if (ports != null) {
+            if (ports !== null) {
                 for (i : 0 ..< ports.sizeJsonArr) {
                     ports.optJSONObject(i)?.transformPort(parent)
                 }
@@ -464,7 +464,7 @@ public final class JsonImporter {
     }
     
     private def double doubleValueValid(Double d) {
-        if (d == null || d.infinite || d.naN) {
+        if (d === null || d.infinite || d.naN) {
             return 0.0
         } else {
             return d.doubleValue
@@ -475,9 +475,9 @@ public final class JsonImporter {
         val node = nodeIdMap.get(id)
         val port = portIdMap.get(id)
         
-        if (node != null) {
+        if (node !== null) {
             return node
-        } else if (port != null) {
+        } else if (port !== null) {
             return port
         } else {
             throw formatError("Referenced shape does not exist: " + id)
@@ -546,21 +546,24 @@ public final class JsonImporter {
             jsonSection.addJsonObj("endPoint", endPoint)
             
             // Bend Points
-            val bendPoints = newJsonArray
-            elkSection.bendPoints.forEach [ pnt |
-                val jsonPnt = newJsonObject
-                jsonPnt.addJsonObj("x", pnt.x)
-                jsonPnt.addJsonObj("y", pnt.y)
-                bendPoints.addJsonArr(jsonPnt)
-            ]
+            if (!elkSection.bendPoints.nullOrEmpty) {
+                val bendPoints = newJsonArray
+                elkSection.bendPoints.forEach [ pnt |
+                    val jsonPnt = newJsonObject
+                    jsonPnt.addJsonObj("x", pnt.x)
+                    jsonPnt.addJsonObj("y", pnt.y)
+                    bendPoints.addJsonArr(jsonPnt)
+                ]
+                jsonSection.addJsonObj("bendPoints", bendPoints)
+            }
             
             // Incoming shape
-            if (elkSection.incomingShape != null) {
+            if (elkSection.incomingShape !== null) {
                 jsonSection.addJsonObj("incomingShape", idByElement(elkSection.incomingShape))
             }
             
             // Outgoing shape
-            if (elkSection.outgoingShape != null) {
+            if (elkSection.outgoingShape !== null) {
                 jsonSection.addJsonObj("outgoingShape", idByElement(elkSection.outgoingShape))
             }
             

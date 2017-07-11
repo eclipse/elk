@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,11 @@ package org.eclipse.elk.alg.layered.networksimplex;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 /**
@@ -174,17 +177,156 @@ public final class NNode {
     }
     
     /**
-     * Extending {@link ArrayList} to expose the {@code modCount} field. The field allows to check
-     * if the instance of the array list changed.
+     * Delegates all its calls to an internal {@link ArrayList} An easy implementation would just expose the
+     * {@link java.util.AbstractList AbstractList}'s {@code modCount} field. However this is not compatible with GWT
+     * since GWT's list implementations do not increment the 'modCount' variable.
      * 
      * @param <E>
      *            type of the elements in this collection.
      */
-    private static class ChangeAwareArrayList<E> extends ArrayList<E> {
-        private static final long serialVersionUID = 7137934731310022891L;
+    private static class ChangeAwareArrayList<E> implements List<E> {
 
+        private final ArrayList<E> list = Lists.newArrayList(); 
+        private int modCount;
+        
+        // CHECKSTYLEOFF Parameters
         private int getModCnt() {
             return modCount;
         }
+
+        @Override
+        public int size() {
+            return list.size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return list.isEmpty();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return list.contains(o);
+        }
+
+        @Override
+        public Iterator<E> iterator() {
+            return Iterators.unmodifiableIterator(list.iterator());
+        }
+
+        @Override
+        public Object[] toArray() {
+            return list.toArray();
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+            return list.toArray(a);
+        }
+
+        @Override
+        public boolean add(E e) {
+            modCount++;
+            return list.add(e);
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            modCount++;
+            return list.remove(o);
+        }
+
+        @Override
+        public boolean containsAll(Collection<?> c) {
+            return list.containsAll(c);
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends E> c) {
+            modCount++;
+            return list.addAll(c);
+        }
+
+        @Override
+        public boolean addAll(int index, Collection<? extends E> c) {
+            modCount++;
+            return list.addAll(index, c);
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            boolean changed = list.removeAll(c);
+            if (changed) {
+                modCount++;
+            }
+            return changed;
+        }
+
+        @Override
+        public boolean retainAll(Collection<?> c) {
+            boolean changed = list.retainAll(c);
+            if (changed) {
+                modCount++;
+            }
+            return changed;
+        }
+
+        @Override
+        public void clear() {
+            modCount++;
+            list.clear();
+        }
+
+        @Override
+        public E get(int index) {
+            return list.get(index);
+        }
+
+        @Override
+        public E set(int index, E element) {
+            modCount++;
+            return list.set(index, element);
+        }
+
+        @Override
+        public void add(int index, E element) {
+            modCount++;
+            list.add(index, element);
+        }
+
+        @Override
+        public E remove(int index) {
+            modCount++;
+            return list.remove(index);
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            return list.indexOf(o);
+        }
+
+        @Override
+        public int lastIndexOf(Object o) {
+            return list.lastIndexOf(o);
+        }
+
+        @Override
+        public ListIterator<E> listIterator() {
+            // if implemented, must guarantee not to alter the list or to increment modCount
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ListIterator<E> listIterator(int index) {
+            // if implemented, must guarantee not to alter the list or to increment modCount
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List<E> subList(int fromIndex, int toIndex) {
+            return list.subList(fromIndex, toIndex);
+        }
+        // CHECKSTYLEON Parameters
     }
+    
 }

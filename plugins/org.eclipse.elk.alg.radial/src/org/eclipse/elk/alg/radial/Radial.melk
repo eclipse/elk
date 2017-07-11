@@ -1,0 +1,100 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Kiel University - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.alg.radial
+
+import org.eclipse.elk.alg.radial.RadialLayoutProvider
+import org.eclipse.elk.alg.radial.options.AnnulusWedgeCriteria
+import org.eclipse.elk.alg.radial.options.CompactionStrategy
+import org.eclipse.elk.alg.radial.options.RadialTranslationStrategy
+import org.eclipse.elk.alg.radial.options.SortingStrategy
+
+bundle {
+    label "Radial Layout Algorithm"
+    metadataClass options.RadialMetaDataProvider
+    idPrefix org.eclipse.elk.radial
+}
+
+algorithm radial(RadialLayoutProvider) {
+    label "ELK Radial"
+    metadataClass options.RadialOptions
+    description "A radial layout provider which is based on the algorithm of Peter Eades published in \"Drawing free trees.\", published by
+                International Institute for Advanced Study of Social Information Science, Fujitsu Limited in 1991. The radial
+                layouter takes a tree and places the nodes in radial order around the root. The nodes of the same tree level are placed
+                on the same radius."
+    preview images/Radial.png
+    documentation "@radial.md"
+    supports radius
+    supports orderId
+    supports compactor
+    supports sorter
+    supports compactionStepSize
+    supports wedgeCriteria
+    supports optimizationCriteria
+    supports org.eclipse.elk.spacing.nodeNode
+    supports org.eclipse.elk.position
+}
+
+/////////////////////////////////Options///////////////////////////////
+
+option orderId: int {
+    label "Order ID "
+    description "The id can be used to define an order for nodes of one radius. This can be used to sort them in the layer accordingly."
+    default = 0
+    targets nodes
+}
+
+option radius: double {
+    label "Radius"
+    description "The radius option can be used to set the initial radius for the radial layouter."
+    default = 0.0
+    targets parents
+}  
+
+//Compaction
+option compactor: CompactionStrategy {
+    label "Compaction"
+    description "With the compacter option it can be determined how compaction on the graph is done. 
+It can be chosen between none, the radial compaction or the compaction of wedges separately."
+    targets parents
+    default = CompactionStrategy.NONE
+} 
+
+option compactionStepSize: int {
+    label "Compaction Step Size"
+    description "Determine the size of steps with which the compaction is done. 
+                Step size 1 correlates to a compaction of 1 pixel per Iteration."
+    lowerBound = 0
+    default = 1
+    targets parents
+    requires compactor
+}
+
+option sorter: SortingStrategy {
+    label "Sorter"
+    description "Sort the nodes per radius according to the sorting algorithm. The strategies are none, by the given order id, or sorting them by polar coordinates."
+    targets parents
+    default = SortingStrategy.NONE
+}
+
+option wedgeCriteria: AnnulusWedgeCriteria {
+    label "Annulus Wedge Criteria"
+    description "Determine how the wedge for the node placement is calculated. 
+It can be chosen between wedge determination by the number of leaves or by the maximum sum of diagonals."
+    targets parents
+    default = AnnulusWedgeCriteria.NODE_SIZE
+}
+
+option optimizationCriteria: RadialTranslationStrategy {
+    label "Translation Optimization"
+    description "Find the optimal translation of the nodes of the first radii according to this criteria. For example edge crossings can be minimized."
+    default = RadialTranslationStrategy.NONE
+    targets parents
+}

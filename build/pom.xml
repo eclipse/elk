@@ -15,8 +15,8 @@
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
     <targetJdk>1.8</targetJdk>
-    <tycho-version>0.26.0</tycho-version>
-    <xtext-version>2.10.0</xtext-version>
+    <tycho-version>1.0.0</tycho-version>
+    <xtext-version>2.12.0</xtext-version>
     <elk-version>0.3.0</elk-version>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
@@ -96,6 +96,38 @@
             <version>2.10.4</version>
             <configuration>
               <failOnError>false</failOnError>
+              <tags>
+                <tag>
+                  <name>model</name>
+                  <placement>a</placement>
+                  <head>Model</head>
+                </tag>
+                <tag>
+                  <name>generated</name>
+                  <placement>a</placement>
+                  <head>Generated</head>
+                </tag>
+                <tag>
+                  <name>ordered</name>
+                  <placement>a</placement>
+                  <head>Ordered</head>
+                </tag>
+                <tag>
+                  <name>kieler.design</name>
+                  <placement>t</placement>
+                  <head>Design Review:</head>
+                </tag>
+                <tag>
+                  <name>kieler.rating</name>
+                  <placement>t</placement>
+                  <head>Code Review:</head>
+                </tag>
+                <tag>
+                  <name>implSpec</name>
+                  <placement>a</placement>
+                  <head>Implementation Specification</head>
+                </tag>
+              </tags>
             </configuration>
             <executions>
               <execution>
@@ -240,12 +272,12 @@
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.graph</artifactId>
-              <version>${elk-version}-SNAPSHOT</version>
+              <version>[${elk-version}-SNAPSHOT]</version>
             </dependency>
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.core.meta</artifactId>
-              <version>${elk-version}-SNAPSHOT</version>
+              <version>[${elk-version}-SNAPSHOT]</version>
             </dependency>
           </dependencies>
         </plugin>

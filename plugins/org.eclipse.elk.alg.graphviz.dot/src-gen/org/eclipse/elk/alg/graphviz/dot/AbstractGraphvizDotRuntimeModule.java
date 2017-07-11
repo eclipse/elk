@@ -101,7 +101,7 @@ public abstract class AbstractGraphvizDotRuntimeModule extends DefaultRuntimeMod
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
-	public Provider<InternalGraphvizDotLexer> provideInternalGraphvizDotLexer() {
+	public Provider<? extends InternalGraphvizDotLexer> provideInternalGraphvizDotLexer() {
 		return LexerProvider.create(InternalGraphvizDotLexer.class);
 	}
 	

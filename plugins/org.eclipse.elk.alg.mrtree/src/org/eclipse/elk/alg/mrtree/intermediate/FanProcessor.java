@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.intermediate;
 
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -154,10 +153,11 @@ public class FanProcessor implements ILayoutProcessor<TGraph> {
      * @return a string representation
      */
     public static String formatRight(final int value, final int len) {
-        Formatter formatter = new Formatter();
-        String result = formatter.format("%1$" + len + "d", value).toString();
-        formatter.close();
-        return result;
+        String s = value + "";
+        while (s.length() < len) {
+            s = "0" + s;
+        }
+        return s;
     }
     
 }

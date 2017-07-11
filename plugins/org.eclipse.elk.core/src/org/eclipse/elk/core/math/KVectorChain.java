@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.elk.core.util.IDataObject;
-import org.eclipse.elk.graph.ElkBendPoint;
-import org.eclipse.elk.graph.ElkEdgeSection;
 
 /**
  * A chain of vectors. Can be used to describe polylines or similar constructs.

@@ -5,7 +5,7 @@ Bundle-Vendor: Eclipse Modeling Project
 Bundle-Version: 0.3.0.qualifier
 Bundle-SymbolicName: org.eclipse.elk.graph.json;singleton:=true
 Require-Bundle: com.google.guava;bundle-version="15.0.0",
- com.google.gson;bundle-version="2.2.4",
+ com.google.gson;bundle-version="2.2.4";visibility:=reexport,
  org.eclipse.elk.graph,
  org.eclipse.elk.core,
  org.eclipse.xtext.xbase.lib,

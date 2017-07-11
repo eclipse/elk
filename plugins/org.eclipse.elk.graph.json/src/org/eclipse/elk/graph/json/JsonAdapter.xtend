@@ -18,6 +18,10 @@ import com.google.gson.JsonPrimitive
 /**
  * The library dependent part of the {@link JsonImporter} 
  * using Google's gson library.
+ * 
+ * <b>IMPORTANT</b>
+ * Whenever methods are added or removed from this class, 
+ * elkjs's corresponding JsonAdapter must be update accordingly!
  */
 public final class JsonAdapter {
 

@@ -24,7 +24,7 @@ import com.google.common.collect.Iterables;
 
 /**
  * This class is representing a rectangle and provides some comfort methods to work with the
- * rectangle. Special about this implementation is that there is no width and height is stored. This
+ * rectangle. Special about this implementation is that there is no width and height stored. This
  * improves the performance of unions and accesses to the right/top side.
  * 
  * @author tit
@@ -312,7 +312,7 @@ public final class Rectangle {
         return retVal;
     }
     
-    // GWTExcludeStart
+    // elkjs-exclude-start
     // DecimalFormat not available in gwt
     /** Format for the values shown on toString(). */
     private static final DecimalFormat DEC_FORMAT = new DecimalFormat("#0.0");
@@ -329,5 +329,5 @@ public final class Rectangle {
         + ",bottom= " + DEC_FORMAT.format(bottom) 
         + ",right= " + DEC_FORMAT.format(right) + "]";
     }
-    // GWTExcludeEnd
+    // elkjs-exclude-end
 }

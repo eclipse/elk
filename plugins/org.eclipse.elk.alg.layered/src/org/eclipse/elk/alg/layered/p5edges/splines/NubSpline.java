@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
  * @author tit
  * 
  */
- class NubSpline {
+public class NubSpline {
     /** Default dimension of the spline. */
     protected static final int DIM = 3;
     /** Doubles with a difference less than this value will be assumed to be equal. */
@@ -1118,21 +1118,19 @@ import com.google.common.collect.Lists;
         }
 
         /**
-         * Returns the polar-coordinate.
-         * 
-         * @return The polar-coordinate. May be modified.
+         * Sets the polar-coordinate.
          */
         public void setPolarCoordinate(final List<Double> polarCoordinate) {
             this.polarCoordinate = polarCoordinate;
         }
 
-        // GWTExcludeStart
+        // elkjs-exclude-start
         /**
          * {@inheritDoc}
          */
         public String toString() {
             return polarCoordinate + " " + SplinesMath.convertKVectorToString(cp);
         }
-        // GWTExcludeEnd
+        // elkjs-exclude-end
     }
 }

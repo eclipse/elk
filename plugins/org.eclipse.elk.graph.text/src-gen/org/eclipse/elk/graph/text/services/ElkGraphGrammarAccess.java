@@ -53,7 +53,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//RootNode ElkNode:
 		//	{ElkNode} ('graph' identifier=ID)?
 		//	ShapeLayout?
-		//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
+		//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{ElkNode} ('graph' identifier=ID)? ShapeLayout? properties+=Property* (labels+=ElkLabel | ports+=ElkPort |
@@ -371,7 +371,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//'['
 		public Keyword getLeftSquareBracketKeyword_1() { return cLeftSquareBracketKeyword_1; }
 		
-		//(('position' ':' x=Number ',' y=Number)? & ('size' ':' width=Number ',' height=Number)?)
+		//('position' ':' x=Number ',' y=Number)? & ('size' ':' width=Number ',' height=Number)?
 		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
 		
 		//('position' ':' x=Number ',' y=Number)?
@@ -459,7 +459,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cLabelsElkLabelParserRuleCall_7_3_0 = (RuleCall)cLabelsAssignment_7_3.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_7_4 = (Keyword)cGroup_7.eContents().get(4);
 		
-		/// * SuppressWarnings[BidirectionalReference] * / ElkEdge:
+		///* SuppressWarnings[BidirectionalReference] */ ElkEdge:
 		//	'edge' (identifier=ID ':')?
 		//	sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
 		//	targets+=[ElkConnectableShape|QualifiedId] (',' targets+=[ElkConnectableShape|QualifiedId])* ('{'
@@ -589,7 +589,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//'['
 		public Keyword getLeftSquareBracketKeyword_1() { return cLeftSquareBracketKeyword_1; }
 		
-		//(sections+=ElkSingleEdgeSection | sections+=ElkEdgeSection+)
+		//sections+=ElkSingleEdgeSection | sections+=ElkEdgeSection+
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 		
 		//sections+=ElkSingleEdgeSection
@@ -658,7 +658,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 		//	& ('start' ':' startX=Number ',' startY=Number)?
 		//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
-		//	properties+=Property*)
+		//	properties+=Property*);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{ElkEdgeSection} ((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
@@ -670,15 +670,15 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//{ElkEdgeSection}
 		public Action getElkEdgeSectionAction_0() { return cElkEdgeSectionAction_0; }
 		
-		//((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
-		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
-		//properties+=Property*)
-		public Group getGroup_1() { return cGroup_1; }
-		
 		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)?)
+		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		//properties+=Property*
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
+		//endX=Number ',' endY=Number)?
 		public UnorderedGroup getUnorderedGroup_1_0() { return cUnorderedGroup_1_0; }
 		
 		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
@@ -858,7 +858,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cPropertiesPropertyParserRuleCall_4_2_0 = (RuleCall)cPropertiesAssignment_4_2.eContents().get(0);
 		private final Keyword cRightSquareBracketKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
-		/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
+		///* SuppressWarnings[BidirectionalReference] */ ElkEdgeSection:
 		//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
 		//	((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 		//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
@@ -916,15 +916,15 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//'['
 		public Keyword getLeftSquareBracketKeyword_3() { return cLeftSquareBracketKeyword_3; }
 		
-		//((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
-		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
-		//properties+=Property*)
-		public Group getGroup_4() { return cGroup_4; }
-		
 		//(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
 		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
-		//endX=Number ',' endY=Number)?)
+		//endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+		//properties+=Property*
+		public Group getGroup_4() { return cGroup_4; }
+		
+		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])? & ('outgoing' ':'
+		//outgoingShape=[ElkConnectableShape|QualifiedId])? & ('start' ':' startX=Number ',' startY=Number)? & ('end' ':'
+		//endX=Number ',' endY=Number)?
 		public UnorderedGroup getUnorderedGroup_4_0() { return cUnorderedGroup_4_0; }
 		
 		//('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
@@ -1112,7 +1112,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cFLOATTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		//Number ecore::EDouble:
-		//	SIGNED_INT | FLOAT
+		//	SIGNED_INT | FLOAT;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//SIGNED_INT | FLOAT
@@ -1142,7 +1142,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cNullKeyword_2_4 = (Keyword)cAlternatives_2.eContents().get(4);
 		
 		//Property ElkPropertyToValueMapEntry:
-		//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
+		//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null');
 		@Override public ParserRule getRule() { return rule; }
 		
 		//key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
@@ -1157,7 +1157,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		//':'
 		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
 		
-		//(value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
+		//value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null'
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 		
 		//value=StringValue
@@ -1196,7 +1196,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cIDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
 		
 		//PropertyKey IProperty hidden():
-		//	ID ('.' ID)*
+		//	ID ('.' ID)*;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//ID ('.' ID)*
@@ -1219,7 +1219,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSTRINGTerminalRuleCall = (RuleCall)rule.eContents().get(1);
 		
 		//StringValue ecore::EJavaObject:
-		//	STRING
+		//	STRING;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//STRING
@@ -1230,7 +1230,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQualifiedIdParserRuleCall = (RuleCall)rule.eContents().get(1);
 		
 		//QualifiedIdValue ecore::EJavaObject:
-		//	QualifiedId
+		//	QualifiedId;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//QualifiedId
@@ -1243,7 +1243,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cFLOATTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		//NumberValue ecore::EJavaObject:
-		//	SIGNED_INT | FLOAT
+		//	SIGNED_INT | FLOAT;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//SIGNED_INT | FLOAT
@@ -1262,7 +1262,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cFalseKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		
 		//BooleanValue ecore::EJavaObject:
-		//	'true' | 'false'
+		//	'true' | 'false';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//'true' | 'false'
@@ -1358,7 +1358,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	//RootNode ElkNode:
 	//	{ElkNode} ('graph' identifier=ID)?
 	//	ShapeLayout?
-	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
+	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*;
 	public RootNodeElements getRootNodeAccess() {
 		return pRootNode;
 	}
@@ -1419,7 +1419,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		return getShapeLayoutAccess().getRule();
 	}
 	
-	/// * SuppressWarnings[BidirectionalReference] * / ElkEdge:
+	///* SuppressWarnings[BidirectionalReference] */ ElkEdge:
 	//	'edge' (identifier=ID ':')?
 	//	sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
 	//	targets+=[ElkConnectableShape|QualifiedId] (',' targets+=[ElkConnectableShape|QualifiedId])* ('{'
@@ -1450,7 +1450,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('start' ':' startX=Number ',' startY=Number)?
 	//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
-	//	properties+=Property*)
+	//	properties+=Property*);
 	public ElkSingleEdgeSectionElements getElkSingleEdgeSectionAccess() {
 		return pElkSingleEdgeSection;
 	}
@@ -1459,7 +1459,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 		return getElkSingleEdgeSectionAccess().getRule();
 	}
 	
-	/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
+	///* SuppressWarnings[BidirectionalReference] */ ElkEdgeSection:
 	//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
 	//	((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
@@ -1495,7 +1495,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Number ecore::EDouble:
-	//	SIGNED_INT | FLOAT
+	//	SIGNED_INT | FLOAT;
 	public NumberElements getNumberAccess() {
 		return pNumber;
 	}
@@ -1505,7 +1505,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Property ElkPropertyToValueMapEntry:
-	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
+	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null');
 	public PropertyElements getPropertyAccess() {
 		return pProperty;
 	}
@@ -1515,7 +1515,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//PropertyKey IProperty hidden():
-	//	ID ('.' ID)*
+	//	ID ('.' ID)*;
 	public PropertyKeyElements getPropertyKeyAccess() {
 		return pPropertyKey;
 	}
@@ -1525,7 +1525,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//StringValue ecore::EJavaObject:
-	//	STRING
+	//	STRING;
 	public StringValueElements getStringValueAccess() {
 		return pStringValue;
 	}
@@ -1535,7 +1535,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//QualifiedIdValue ecore::EJavaObject:
-	//	QualifiedId
+	//	QualifiedId;
 	public QualifiedIdValueElements getQualifiedIdValueAccess() {
 		return pQualifiedIdValue;
 	}
@@ -1545,7 +1545,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//NumberValue ecore::EJavaObject:
-	//	SIGNED_INT | FLOAT
+	//	SIGNED_INT | FLOAT;
 	public NumberValueElements getNumberValueAccess() {
 		return pNumberValue;
 	}
@@ -1555,7 +1555,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//BooleanValue ecore::EJavaObject:
-	//	'true' | 'false'
+	//	'true' | 'false';
 	public BooleanValueElements getBooleanValueAccess() {
 		return pBooleanValue;
 	}
@@ -1596,7 +1596,7 @@ public class ElkGraphGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal ML_COMMENT:
-	//	'/ *'->'* /';
+	//	'/*'->'*/';
 	public TerminalRule getML_COMMENTRule() {
 		return gaTerminals.getML_COMMENTRule();
 	}

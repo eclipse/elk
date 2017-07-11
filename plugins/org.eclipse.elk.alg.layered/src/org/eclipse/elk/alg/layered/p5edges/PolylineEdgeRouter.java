@@ -193,7 +193,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
         
         final double nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
         final double edgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
-        final float edgeSpaceFac = Math.min(1f, (float) (edgeSpacing / nodeSpacing)); 
+        final double edgeSpaceFac = Math.min(1.0, edgeSpacing / nodeSpacing); 
         
         double xpos = 0.0;
         double layerSpacing = 0.0;

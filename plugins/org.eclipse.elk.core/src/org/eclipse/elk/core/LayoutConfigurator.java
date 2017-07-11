@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Kiel University and others.
+ * Copyright (c) 2015, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,21 +10,24 @@
  *******************************************************************************/
 package org.eclipse.elk.core;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.core.util.IGraphElementVisitor;
-import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.ElkShape;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.elk.graph.properties.Property;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -50,7 +53,24 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     private final Map<ElkGraphElement, MapPropertyHolder> elementOptionMap = Maps.newHashMap();
     private final Map<Class<? extends ElkGraphElement>, MapPropertyHolder> classOptionMap = Maps.newHashMap();
     private boolean clearLayout = false;
-    private Predicate<Pair<ElkGraphElement, IProperty<?>>> optionFilter;
+    private final List<IOptionFilter> optionFilters = Lists.newArrayList();
+    
+    /**
+     * Functional interface that allows to specify whether a certain property should be set for a certain graph element.
+     */
+    @FunctionalInterface
+    public interface IOptionFilter {
+        /**
+         * @return {@code true} if and only if the passed graph element may be configured with the passed property.
+         */
+        boolean accept(ElkGraphElement e, IProperty<?> p);
+    }
+    
+    /**
+     * Generic filter that prevents the {@link LayoutConfigurator} from overwriting layout options that are 
+     * already set for a graph element.
+     */
+    public static final IOptionFilter NO_OVERWRITE = (e, p) -> !e.hasProperty(p);
     
     /**
      * Whether to clear the layout of each graph element before the new configuration is applied.
@@ -71,21 +91,22 @@ public class LayoutConfigurator implements IGraphElementVisitor {
     }
     
     /**
-     * Set a filter that is queried for each combination of graph elements and options. An option
+     * Adds a filter that is queried for each combination of graph elements and options. An option
      * value is applied only if the filter matches. If no filter is set, all values are applied.
      * 
      * @return {@code this}
      */
-    public LayoutConfigurator setFilter(final Predicate<Pair<ElkGraphElement, IProperty<?>>> filter) {
-        this.optionFilter = filter;
+    public LayoutConfigurator addFilter(final IOptionFilter filter) {
+        this.optionFilters.add(filter);
         return this;
     }
     
     /**
-     * Returns the filter that has been set via {@link #setFilter(Predicate)}, or {@code null}.
+     * Returns the list of filters that have been added via {@link #addFilter(IOptionFilter)} or have been inherited
+     * from another {@link LayoutConfigurator} via {@link #overrideWith(LayoutConfigurator)}.
      */
-    protected Predicate<Pair<ElkGraphElement, IProperty<?>>> getFilter() {
-        return optionFilter;
+    protected List<IOptionFilter> getFilters() {
+        return optionFilters;
     }
     
     /**
@@ -140,19 +161,23 @@ public class LayoutConfigurator implements IGraphElementVisitor {
         if (clearLayout) {
             element.getProperties().clear();
         }
-        applyProperties(element, findClassOptions(element));
-        applyProperties(element, getProperties(element));
+        MapPropertyHolder combined = findClassOptions(element);
+        // implicitly overwrite options specified for a class with options specified for the specific element
+        combined.copyProperties(getProperties(element));
+        applyProperties(element, combined);
     }
     
     /**
      * Apply all properties held in {@code properties} to {@code element}.
      */
     @SuppressWarnings("unchecked")
-    protected void applyProperties(final ElkGraphElement element, IPropertyHolder properties) {
+    protected void applyProperties(final ElkGraphElement element, final IPropertyHolder properties) {
         if (properties != null) {
-            if (optionFilter != null) {
+            if (!optionFilters.isEmpty()) {
                 for (Map.Entry<IProperty<?>, Object> entry : properties.getAllProperties().entrySet()) {
-                    if (optionFilter.apply(Pair.of(element, entry.getKey()))) {
+                    boolean accept = optionFilters.stream()
+                            .allMatch(filter -> filter.accept(element, entry.getKey()));
+                    if (accept) {
                         element.setProperty((IProperty<Object>) entry.getKey(), entry.getValue());
                     }
                 }
@@ -171,42 +196,50 @@ public class LayoutConfigurator implements IGraphElementVisitor {
      * @return the most specific {@link MapPropertyHolder} fitting the passed {@code element}'s type.
      */
     private MapPropertyHolder findClassOptions(final ElkGraphElement element) {
-        MapPropertyHolder needle = null;
-
-        // most general
-        needle = getPropertyHolderOrDefault(element, ElkGraphElement.class, needle);
+        MapPropertyHolder combined = new MapPropertyHolder();
         
-        needle = getPropertyHolderOrDefault(element, ElkLabel.class, needle);
+        // order is important as it reflects inheritance 
         
-        // labeled elements
-        needle = getPropertyHolderOrDefault(element, ElkGraphElement.class, needle);
-
-        // most specific
-        needle = getPropertyHolderOrDefault(element, ElkNode.class, needle);
-        needle = getPropertyHolderOrDefault(element, ElkPort.class, needle);
-        needle = getPropertyHolderOrDefault(element, ElkEdge.class, needle);
-        
-        return needle;
-    }
-    
-    /**
-     * Checks if the {@link #classOptionMap} contains an entry for the passed {@code clazz} 
-     * and returns it. If not, it returns the {@code old} value.
-     */
-    private MapPropertyHolder getPropertyHolderOrDefault(final ElkGraphElement element, final Class<?> clazz,
-            final MapPropertyHolder old) {
-        
-        if (clazz.isAssignableFrom(element.getClass())) {
-            MapPropertyHolder holder = classOptionMap.get(clazz);
-            if (holder != null) {
-                return holder;
-            }
+        if (element instanceof ElkGraphElement) {
+            combined.copyProperties(classOptionMap.get(ElkGraphElement.class));
         }
-        return old;
+        
+        if (element instanceof ElkShape) {
+            combined.copyProperties(classOptionMap.get(ElkShape.class));
+        }
+        
+        if (element instanceof ElkLabel) {
+            combined.copyProperties(classOptionMap.get(ElkLabel.class));
+            // cannot be anything of the following, we can return
+            return combined;
+        }
+        
+        if (element instanceof ElkConnectableShape) {
+            combined.copyProperties(classOptionMap.get(ElkConnectableShape.class));
+        }
+        
+        if (element instanceof ElkNode) {
+            combined.copyProperties(classOptionMap.get(ElkNode.class));
+            // cannot be anything of the following, we can return
+            return combined;
+        }
+        
+        if (element instanceof ElkPort) {
+            combined.copyProperties(classOptionMap.get(ElkPort.class));
+            // cannot be anything of the following, we can return
+            return combined;
+        }
+        
+        if (element instanceof ElkEdge) {
+            combined.copyProperties(classOptionMap.get(ElkEdge.class));
+        }
+        
+        return combined;
     }
     
     /**
-     * Copy all options from the given configurator to this one, possibly overriding the own options.
+     * Copy all options from the given configurator to this one, possibly overriding the own options. The
+     * {@link IOptionFilter}s of this configurator are cleared and filled with the filters of {@code other}.
      * 
      * @return {@code this}
      */
@@ -228,7 +261,8 @@ public class LayoutConfigurator implements IGraphElementVisitor {
             thisHolder.copyProperties(entry.getValue());
         }
         this.clearLayout = other.clearLayout;
-        this.optionFilter = other.optionFilter;
+        this.optionFilters.clear();
+        this.optionFilters.addAll(other.optionFilters);
         return this;
     }
 

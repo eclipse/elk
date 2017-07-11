@@ -296,20 +296,9 @@ public abstract class Spacing implements IDataObject, Cloneable {
         this.bottom += other.bottom;
         return this;
     }
-    
-    // GWTExcludeStart
-    // Object.clone() is not available in GWT
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Spacing clone() {
-        try {
-            return (Spacing) super.clone();
-        } catch (CloneNotSupportedException exception) {
-            throw new AssertionError();
-        }
-    }
-    // GWTExcludeEnd
 
+    /**
+     * Return a new instance of the concrete class. 
+     */
+    public abstract Spacing clone();
 }

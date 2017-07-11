@@ -133,7 +133,7 @@ public abstract class AbstractElkGraphRuntimeModule extends DefaultRuntimeModule
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2
-	public Provider<InternalElkGraphLexer> provideInternalElkGraphLexer() {
+	public Provider<? extends InternalElkGraphLexer> provideInternalElkGraphLexer() {
 		return LexerProvider.create(InternalElkGraphLexer.class);
 	}
 	

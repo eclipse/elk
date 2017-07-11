@@ -73,4 +73,15 @@ public class ElkMargin extends Spacing {
     public ElkMargin(final ElkMargin other) {
         super(other.top, other.right, other.bottom, other.left);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    // elkjs-exclude-start
+    @Override
+    // elkjs-exclude-end
+    public ElkMargin clone() {
+        return new ElkMargin(this);
+    }
+    
 }

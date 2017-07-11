@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.properties;
 
-import java.lang.reflect.Method;
+import org.eclipse.elk.graph.util.ElkReflect;
 
 /**
  * Definition of a property that can be set on an {@link IPropertyHolder}. A property is described
@@ -126,26 +126,27 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
      * 
      * @return the default value.
      */
+    @SuppressWarnings("unchecked")
     public T getDefault() {
-        // Clone the default value if it's a Cloneable. We need to use reflection for this to work
+        // Clone the default value if it's a Cloneable. One would have to use reflection for this to work
         // properly (classes implementing Cloneable are not required to make their clone() method
         // public, so we need to check if they have such a method and invoke it via reflection, which
         // results in ugly and unchecked type casting)
+        // HOWEVER, since GWT doesn't support reflection, a helper class is used that is able to clone 
+        // those objects that are viable as property values 
         if (defaultValue instanceof Cloneable) {
-            try {
-                Method cloneMethod = defaultValue.getClass().getMethod("clone");
-                @SuppressWarnings("unchecked")
-                T clonedDefaultValue = (T) cloneMethod.invoke(defaultValue);
-                return clonedDefaultValue;
-            } catch (Exception e) {
-                // Give up cloning and return the default instance
-                return defaultValue;
+            Object clone = ElkReflect.clone(defaultValue);
+            if (clone == null) {
+                throw new IllegalStateException(
+                        "Couldn't clone property '" + id + "'. " + "Make sure it's type is registered with the "
+                                + ElkReflect.class.getSimpleName() + " utility class.");
             }
+            return (T) clone;
         } else {
             return defaultValue;
         }
     }
-
+    
     /**
      * {@inheritDoc}
      */
