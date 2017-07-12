@@ -261,11 +261,11 @@ final class GraphConfigurator {
 
         // Wrapping of graphs
         switch (lgraph.getProperty(LayeredOptions.WRAPPING_STRATEGY)) {
-        case PATH_LIKE:
+        case SINGLE_EDGE:
             configuration.addBefore(LayeredPhases.P4_NODE_PLACEMENT,
-                    IntermediateProcessorStrategy.PATH_LIKE_GRAPH_WRAPPER);
+                    IntermediateProcessorStrategy.SINGLE_EDGE_GRAPH_WRAPPER);
             break;
-        case GENERAL:
+        case MULTI_EDGE:
             configuration
                     .addBefore(LayeredPhases.P3_NODE_ORDERING,
                             IntermediateProcessorStrategy.BREAKING_POINT_INSERTER)

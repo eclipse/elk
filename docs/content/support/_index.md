@@ -14,9 +14,9 @@ There are lots of ways to get support. The following is a list you should probab
 The Documentation section has lots of information which may already provide answers to your problems.
 
 
-## Forum
+## Forum and Chat
 
-We have [a forum](http://eclipse.org/forums/eclipse.elk) available for you to ask questions.
+We have [a forum](http://eclipse.org/forums/eclipse.elk) available for you to ask questions, as well as [a Gitter chat](https://gitter.im/eclipse/elk).
 
 
 ## Reporting Bugs

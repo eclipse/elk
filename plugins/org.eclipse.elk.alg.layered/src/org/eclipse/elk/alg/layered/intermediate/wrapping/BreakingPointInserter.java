@@ -89,7 +89,7 @@ public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
         List<Integer> cuts = icic.getCutIndexes(graph, gs);
 
         // #2 improve cuts 
-        if (graph.getProperty(LayeredOptions.WRAPPING_GENERAL_IMPROVE_CUTS)) {
+        if (graph.getProperty(LayeredOptions.WRAPPING_MULTI_EDGE_IMPROVE_CUTS)) {
             cuts = improveCuts(graph, cuts);
         }
         
@@ -304,7 +304,7 @@ public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
      * @return
      */
     private double computeScore(final LGraph graph, final int index, final int spans, final int dist) {
-        double distancePenalty = graph.getProperty(LayeredOptions.WRAPPING_GENERAL_DISTANCE_PENALTY);
+        double distancePenalty = graph.getProperty(LayeredOptions.WRAPPING_MULTI_EDGE_DISTANCE_PENALTY);
         return spans + Math.pow(dist, distancePenalty);
     }
     

@@ -70,7 +70,7 @@ public class BreakingPointProcessor implements ILayoutProcessor<LGraph> {
         performWrapping(graph);
         
         // #2 if desired, improve edge lengths
-        if (graph.getProperty(LayeredOptions.WRAPPING_GENERAL_IMPROVE_WRAPPED_EDGES)) {
+        if (graph.getProperty(LayeredOptions.WRAPPING_MULTI_EDGE_IMPROVE_WRAPPED_EDGES)) {
             
             // assign indexes to nodes, s.t. the node's index
             // equals the nodes position within its layer

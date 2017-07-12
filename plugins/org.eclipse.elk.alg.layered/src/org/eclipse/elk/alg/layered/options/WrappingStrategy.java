@@ -19,14 +19,14 @@ public enum WrappingStrategy {
     /** Off. */
     OFF,
     /**
-     * Path-like graphs are easy. The allow to forbid certain indexes, and to have a single edge wrapping backwards at
-     * each wrapping point.
+     * At each cut point, only a single edge may wrap backwards. Consequently it is only possible 
+     * to cut between pairs of layers that are connected (and spanned) by a single edge. 
      */
-    PATH_LIKE,
+    SINGLE_EDGE,
     /**
-     * For general graphs it is allowed that multiple edges wrap backwards at a wrapping point. An additional 
-     * objective is thus to keep the number of edges wrapping backwards small.
+     * It is allowed that multiple edges wrap backwards at a cut point. An additional objective is thus to keep the
+     * number of edges wrapping backwards small.
      */
-    GENERAL,
+    MULTI_EDGE,
     
 }

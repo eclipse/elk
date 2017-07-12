@@ -473,15 +473,14 @@ public final class JsonImporter {
     
     private def shapeById(Object id) {
         val node = nodeIdMap.get(id)
-        val port = portIdMap.get(id)
-        
         if (node !== null) {
             return node
-        } else if (port !== null) {
+        } 
+        val port = portIdMap.get(id)
+        if (port !== null) {
             return port
-        } else {
-            throw formatError("Referenced shape does not exist: " + id)
         }
+        throw formatError("Referenced shape does not exist: " + id)
     }
 
     /* ---------------------------------------------------------------------------

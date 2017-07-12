@@ -58,10 +58,12 @@ public class GraphStats {
         //  (ELK internally always assumes left to right, however the
         //  aspect ratio is not adjusted during graph import)
         final Direction dir = graph.getProperty(LayeredOptions.DIRECTION);
+        final double aspectRatio = graph.getProperty(LayeredOptions.ASPECT_RATIO);
+        final double correction = graph.getProperty(LayeredOptions.WRAPPING_CORRECTION_FACTOR);
         if (dir == Direction.LEFT || dir == Direction.RIGHT || dir == Direction.UNDEFINED) {
-            this.dar = graph.getProperty(LayeredOptions.ASPECT_RATIO).doubleValue();
+            this.dar = aspectRatio * correction;
         } else {
-            this.dar = 1 / graph.getProperty(LayeredOptions.ASPECT_RATIO);
+            this.dar = 1 / (aspectRatio * correction);
         }
         
         this.spacing = graph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
