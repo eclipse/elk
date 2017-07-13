@@ -25,6 +25,7 @@ import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.ElkShape
+import org.eclipse.elk.core.options.CoreOptions
 
 /**
  * Exporter from elk graph to json.
@@ -200,6 +201,19 @@ public final class JsonExporter {
             val sections = newJsonArray
             jsonObj.addJsonObj("sections", sections)
             edge.sections.forEach[ it.transformSection(sections) ]
+        }
+
+        // transfer junction points, if existent
+        val jps = edge.getProperty(CoreOptions.JUNCTION_POINTS)
+        if (!omitLayout && !jps.nullOrEmpty) {
+            val jsonJPs = newJsonArray
+            jps.forEach[ jp |
+                val jsonPnt = newJsonObject
+                jsonPnt.addJsonObj("x", jp.x)
+                jsonPnt.addJsonObj("y", jp.y)
+                jsonJPs.addJsonArr(jsonPnt)
+            ]
+            jsonObj.addJsonObj("junctionPoints", jsonJPs)
         }
 
         // properties        

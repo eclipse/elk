@@ -587,6 +587,19 @@ public final class JsonImporter {
         ]
         
         jsonObj.addJsonObj("sections", sections)
+        
+        // transfer junction points, if existent
+        val jps = edge.getProperty(CoreOptions.JUNCTION_POINTS)
+        if (!jps.nullOrEmpty) {
+            val jsonJPs = newJsonArray
+            jps.forEach[ jp |
+                val jsonPnt = newJsonObject
+                jsonPnt.addJsonObj("x", jp.x)
+                jsonPnt.addJsonObj("y", jp.y)
+                jsonJPs.addJsonArr(jsonPnt)
+            ]
+            jsonObj.addJsonObj("junctionPoints", jsonJPs)
+        }
     }
     
     private def dispatch transferLayoutInt(ElkLabel label) {
