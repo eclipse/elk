@@ -57,8 +57,7 @@ public final class LabelDummyInserter implements ILayoutProcessor<LGraph> {
     /** Predicate that checks for center labels. */
     private static final Predicate<LLabel> CENTER_LABEL = new Predicate<LLabel>() {
         public boolean apply(final LLabel label) {
-            return label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT)
-                    == EdgeLabelPlacement.CENTER;
+            return label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.CENTER;
         }
     };
     
@@ -68,83 +67,53 @@ public final class LabelDummyInserter implements ILayoutProcessor<LGraph> {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy insertions", 1);
         
+        // We cannot add the nodes to the graph while we're iterating over it, so remember the dummy nodes we create
         List<LNode> newDummyNodes = Lists.newArrayList();
         
-        double labelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_LABEL);
+        double edgeLabelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_LABEL);
+        double labelLabelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_LABEL_LABEL);
         Direction layoutDirection = layeredGraph.getProperty(LayeredOptions.DIRECTION);
 
         for (LNode node : layeredGraph.getLayerlessNodes()) {
-            for (LPort port : node.getPorts()) {
-                for (LEdge edge : port.getOutgoingEdges()) {
-                    // Ignore self-loops for the moment (see KIPRA-1073)
-                    if (edge.getSource().getNode() != edge.getTarget().getNode()
-                            && Iterables.any(edge.getLabels(), CENTER_LABEL)) {
+            for (LEdge edge : node.getOutgoingEdges()) {
+                if (edgeNeedsToBeProcessed(edge)) {
+                    double thickness = retrieveThickness(edge);
                     
-                        // Remember the list of edge labels represented by the dummy node
-                        List<LLabel> representedLabels = Lists.newArrayListWithCapacity(
-                                edge.getLabels().size());
+                    // Create dummy node and remember represented labels (to be filled below)
+                    List<LLabel> representedLabels = Lists.newArrayListWithCapacity(edge.getLabels().size());
+                    LNode dummyNode = createLabelDummy(layeredGraph, edge, thickness, representedLabels);
+                    newDummyNodes.add(dummyNode);
+                    
+                    // Determine the size of the dummy node and move labels over to it
+                    KVector dummySize = dummyNode.getSize();
+                    
+                    ListIterator<LLabel> iterator = edge.getLabels().listIterator();
+                    while (iterator.hasNext()) {
+                        LLabel label = iterator.next();
                         
-                        // Create dummy node
-                        LNode dummyNode = new LNode(layeredGraph);
-                        dummyNode.setType(NodeType.LABEL);
-                        
-                        dummyNode.setProperty(InternalProperties.ORIGIN, edge);
-                        dummyNode.setProperty(InternalProperties.REPRESENTED_LABELS, representedLabels);
-                        dummyNode.setProperty(LayeredOptions.PORT_CONSTRAINTS,
-                                PortConstraints.FIXED_POS);
-                        dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, edge.getSource());
-                        dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, edge.getTarget());
-                        
-                        newDummyNodes.add(dummyNode);
-                        
-                        // Actually split the edge
-                        LongEdgeSplitter.splitEdge(edge, dummyNode);
-                        
-                        // Set thickness of the edge and place ports at its center
-                        double thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
-                        if (thickness < 0) {
-                            thickness = 0;
-                            edge.setProperty(LayeredOptions.EDGE_THICKNESS, thickness);
-                        }
-                        double portPos = Math.floor(thickness / 2);
-
-                        // Apply port positions
-                        for (LPort dummyPort : dummyNode.getPorts()) {
-                            dummyPort.getPosition().y = portPos;
-                        }
-                        
-                        // Determine the size of the dummy node and move labels over to it
-                        KVector dummySize = dummyNode.getSize();
-                        
-                        ListIterator<LLabel> iterator = edge.getLabels().listIterator();
-                        while (iterator.hasNext()) {
-                            LLabel label = iterator.next();
-                            
-                            if (label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT)
-                                    == EdgeLabelPlacement.CENTER) {
-                                
-                                // The way we stack labels depends on the layout direction
-                                if (layoutDirection.isVertical()) {
-                                    dummySize.x += label.getSize().x + labelSpacing;
-                                    dummySize.y = Math.max(dummySize.y, label.getSize().y);
-                                } else {
-                                    dummySize.x = Math.max(dummySize.x, label.getSize().x);
-                                    dummySize.y += label.getSize().y + labelSpacing;
-                                }
-                                
-                                // Move the label over to the dummy node's REPRESENTED_LABELS property
-                                representedLabels.add(label);
-                                iterator.remove();
+                        if (label.getProperty(LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.CENTER) {
+                            // The way we stack labels depends on the layout direction
+                            if (layoutDirection.isVertical()) {
+                                dummySize.x += label.getSize().x + labelLabelSpacing;
+                                dummySize.y = Math.max(dummySize.y, label.getSize().y);
+                            } else {
+                                dummySize.x = Math.max(dummySize.x, label.getSize().x);
+                                dummySize.y += label.getSize().y + labelLabelSpacing;
                             }
+                            
+                            // Move the label over to the dummy node's REPRESENTED_LABELS property
+                            representedLabels.add(label);
+                            iterator.remove();
                         }
-                        
-                        // Determine the final dummy node size
-                        if (layoutDirection.isVertical()) {
-                            dummySize.x -= labelSpacing;
-                            dummySize.y += labelSpacing + thickness;
-                        } else {
-                            dummySize.y += labelSpacing + thickness;
-                        }
+                    }
+                    
+                    // The dummy node now contains a superfluous label-label spacing and does not include the
+                    // edge-label spacing yet
+                    if (layoutDirection.isVertical()) {
+                        dummySize.x -= labelLabelSpacing;
+                        dummySize.y += edgeLabelSpacing + thickness;
+                    } else {
+                        dummySize.y += edgeLabelSpacing - labelLabelSpacing + thickness;
                     }
                 }
             }
@@ -154,6 +123,66 @@ public final class LabelDummyInserter implements ILayoutProcessor<LGraph> {
         layeredGraph.getLayerlessNodes().addAll(newDummyNodes);
         
         monitor.done();
+    }
+    
+    /**
+     * Checks whether the given edge needs to be processed. That's the case if the edge is not a self-loop
+     * and if it has center edge labels in the first place.
+     */
+    private boolean edgeNeedsToBeProcessed(final LEdge edge) {
+        return edge.getSource().getNode() != edge.getTarget().getNode()
+                && Iterables.any(edge.getLabels(), CENTER_LABEL);
+    }
+    
+    /**
+     * Retrieves the given edge's thickness. If this is a negative value, zero is returned and set on the edge.
+     */
+    private double retrieveThickness(final LEdge edge) {
+        double thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
+        if (thickness < 0) {
+            thickness = 0;
+            edge.setProperty(LayeredOptions.EDGE_THICKNESS, thickness);
+        }
+        
+        return thickness;
+    }
+
+    /**
+     * Creates a label dummy for the given edge.
+     * 
+     * @param layeredGraph
+     *            graph the dummy will later be placed in.
+     * @param edge
+     *            the edge the label dummy is created for.
+     * @param thickness
+     *            the edge's thickness.
+     * @param representedLabels
+     *            currently empty list of labels represented by the new label dummy. This is set on the edge as a
+     *            property and will later be filled with the represented labels by the calling method.
+     */
+    private LNode createLabelDummy(final LGraph layeredGraph, final LEdge edge, final double thickness,
+            final List<LLabel> representedLabels) {
+        
+        LNode dummyNode = new LNode(layeredGraph);
+        dummyNode.setType(NodeType.LABEL);
+        
+        dummyNode.setProperty(InternalProperties.ORIGIN, edge);
+        dummyNode.setProperty(InternalProperties.REPRESENTED_LABELS, representedLabels);
+        dummyNode.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, edge.getSource());
+        dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, edge.getTarget());
+        
+        
+        // Actually split the edge
+        LongEdgeSplitter.splitEdge(edge, dummyNode);
+        
+        // Place ports at the edge's center
+        double portPos = Math.floor(thickness / 2);
+        for (LPort dummyPort : dummyNode.getPorts()) {
+            dummyPort.getPosition().y = portPos;
+        }
+        
+        return dummyNode;
     }
 
 }
