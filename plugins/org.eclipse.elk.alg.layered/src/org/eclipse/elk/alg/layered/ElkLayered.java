@@ -478,11 +478,9 @@ public final class ElkLayered {
             // before each slot execution
 
             System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
-            int i = 0;
+            int slot = 0;
             for (ILayoutProcessor<LGraph> processor : algorithm) {
-                String slot = (i < 10 ? "0" : "") + (i++);
-                System.out.println("   Slot " + slot + ": "
-                        + processor.getClass().getName());
+                System.out.printf("   Slot %02d: %s%n", slot++, processor.getClass().getName());
             }
 
             // Invoke each layout processor
