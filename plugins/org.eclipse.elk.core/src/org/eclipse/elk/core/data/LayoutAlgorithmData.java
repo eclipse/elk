@@ -167,6 +167,13 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     }
     
     /**
+     * @return the supportedFeatures
+     */
+    public Set<GraphFeature> getSupportedFeatures() {
+        return supportedFeatures;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public String getId() {
