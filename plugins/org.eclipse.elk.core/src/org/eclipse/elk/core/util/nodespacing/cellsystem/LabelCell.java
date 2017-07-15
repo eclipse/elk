@@ -24,15 +24,24 @@ import com.google.common.collect.Lists;
 
 /**
  * A cell which manages the size and placement of labels. It inserts a customizable gap between each of the labels and
- * calculates its minimum size to be the area required to place all of its labels. The horizontal and vertical
- * alignment control what happens if the cell's actual size is larger than required by its labels. Call
+ * calculates its minimum size to be the area required to place all of its labels. The horizontal and vertical alignment
+ * control what happens if the cell's actual size is larger than required by its labels. Call
  * {@link #applyLabelLayout()} to cause the cell to go ahead and assign positions to all of its labels.
+ * 
+ * <p>
+ * The cell can operate in horizontal and vertical layout mode (with horizontal being the default). Horizontal layout
+ * mode is used for horizontal layout directions and assumes that labels are horizontal lines of text that need to be
+ * stacked atop one another. Vertical layout mode assumes that labels are vertical columns of text that need to be
+ * stacked next to each other. If in doubt, use horizontal layout mode.
+ * </p>
  */
 public class LabelCell extends Cell {
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Properties
 
+    /** Whether we operate in horizontal or vertical layout mode. */
+    private final boolean horizontalLayoutMode;
     /** Horizontal alignment of labels. */
     private HorizontalLabelAlignment horizontalAlignment = HorizontalLabelAlignment.CENTER;
     /** Vertical alignment of labels. */
@@ -56,7 +65,22 @@ public class LabelCell extends Cell {
      */
     public LabelCell(final double gap) {
         this.gap = gap;
+        this.horizontalLayoutMode = true;
     }
+    
+    /**
+     * Constructs a new instance with the given properties.
+     * 
+     * @param gap
+     *            gap between labels.
+     * @param horizontalLayoutMode
+     *            whether the cell should operate in horizontal or vertical layout mode.
+     */
+    public LabelCell(final double gap, final boolean horizontalLayoutMode) {
+        this.gap = gap;
+        this.horizontalLayoutMode = horizontalLayoutMode;
+    }
+    
     
     /**
      * Constructs a new instance with the given properties.
@@ -68,6 +92,7 @@ public class LabelCell extends Cell {
      */
     public LabelCell(final double gap, final NodeLabelLocation nodeLabelLocation) {
         this.gap = gap;
+        this.horizontalLayoutMode = true;
         this.horizontalAlignment = nodeLabelLocation.getHorizontalAlignment();
         this.verticalAlignment = nodeLabelLocation.getVerticalAlignment();
     }
@@ -153,14 +178,25 @@ public class LabelCell extends Cell {
     public void addLabel(final LabelAdapter<?> label) {
         labels.add(label);
         
-        // Update our minimum size
+        // Update our minimum size (how this works depends on the layout mode)
         KVector labelSize = label.getSize();
-        minimumContentAreaSize.x = Math.max(minimumContentAreaSize.x, labelSize.x);
-        minimumContentAreaSize.y += labelSize.y;
         
-        // If this is not our first label, insert a gap
-        if (labels.size() > 1) {
-            minimumContentAreaSize.y += gap;
+        if (horizontalLayoutMode) {
+            minimumContentAreaSize.x = Math.max(minimumContentAreaSize.x, labelSize.x);
+            minimumContentAreaSize.y += labelSize.y;
+            
+            // If this is not our first label, insert a gap
+            if (labels.size() > 1) {
+                minimumContentAreaSize.y += gap;
+            }
+        } else {
+            minimumContentAreaSize.x += labelSize.x;
+            minimumContentAreaSize.y = Math.max(minimumContentAreaSize.y, labelSize.y);
+            
+            // If this is not our first label, insert a gap
+            if (labels.size() > 1) {
+                minimumContentAreaSize.x += gap;
+            }
         }
     }
     
@@ -181,6 +217,18 @@ public class LabelCell extends Cell {
      * Actually applies coordinates to the labels based on this cell's content area rectangle.
      */
     public void applyLabelLayout() {
+        // Delegate to the methods specialized for our two layout modes
+        if (horizontalLayoutMode) {
+            applyHorizontalModeLabelLayout();
+        } else {
+            applyVerticalModeLabelLayout();
+        }
+    }
+
+    /**
+     * Implementation of {@link #applyLabelLayout()} for horizontal layout mode.
+     */
+    private void applyHorizontalModeLabelLayout() {
         ElkRectangle cellRect = getCellRectangle();
         ElkPadding cellPadding = getPadding();
         
@@ -214,6 +262,51 @@ public class LabelCell extends Cell {
                 
             case RIGHT:
                 labelPos.x = cellRect.x + cellRect.width - cellPadding.right - labelSize.x;
+                break;
+            }
+            
+            // Apply position
+            label.setPosition(labelPos);
+        }
+    }
+
+    /**
+     * Implementation of {@link #applyLabelLayout()} for vertical layout mode.
+     */
+    private void applyVerticalModeLabelLayout() {
+        ElkRectangle cellRect = getCellRectangle();
+        ElkPadding cellPadding = getPadding();
+        
+        // Calculate our starting y coordinate
+        double xPos = cellRect.x;
+        
+        if (horizontalAlignment == HorizontalLabelAlignment.CENTER) {
+            xPos += (cellRect.width - minimumContentAreaSize.x) / 2;
+        } else if (horizontalAlignment == HorizontalLabelAlignment.RIGHT) {
+            xPos += cellRect.width - minimumContentAreaSize.x;
+        }
+        
+        // Place them labels, I say!
+        for (LabelAdapter<?> label : labels) {
+            KVector labelSize = label.getSize();
+            KVector labelPos = new KVector();
+            
+            // X coordinate
+            labelPos.x = xPos;
+            xPos += labelSize.x + gap;
+            
+            // Y coordinate
+            switch (verticalAlignment) {
+            case TOP:
+                labelPos.y = cellRect.y + cellPadding.top;
+                break;
+                
+            case CENTER:
+                labelPos.y = cellRect.y + cellPadding.top + (cellRect.height - labelSize.y) / 2;
+                break;
+                
+            case BOTTOM:
+                labelPos.y = cellRect.y + cellRect.height - cellPadding.bottom - labelSize.y;
                 break;
             }
             
