@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,8 +43,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link LabelDummySwitcher}</dd>
  * </dl>
- * 
- * @author cds
  */
 public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> {
 

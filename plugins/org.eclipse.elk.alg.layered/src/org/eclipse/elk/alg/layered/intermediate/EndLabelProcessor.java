@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Kiel University and others.
+ * Copyright (c) 2012, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,9 +49,6 @@ import com.google.common.collect.Maps;
  *                                   <dd>{@link LabelDummyRemover}</dd>
  *                                   <dd>{@link ReverseEdgeRestorer}</dd>
  * </dl>
- * 
- * @author jjc
- * @kieler.rating proposed yellow cds
  */
 public final class EndLabelProcessor implements ILayoutProcessor<LGraph> {
 

@@ -47,9 +47,6 @@ import org.eclipse.elk.core.util.nodespacing.LabelSide;
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
  * </dl>
- *
- * @author jjc
- * @kieler.rating yellow proposed cds
  */
 public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
 
