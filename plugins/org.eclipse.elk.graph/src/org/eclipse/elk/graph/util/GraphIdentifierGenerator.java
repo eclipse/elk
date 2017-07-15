@@ -22,6 +22,7 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 
@@ -33,6 +34,7 @@ import com.google.common.collect.Sets;
 public final class GraphIdentifierGenerator {
     
     private ElkNode graph;
+    private boolean validate = false;
     private boolean generate = false;
     private boolean unique = false;
     
@@ -41,11 +43,20 @@ public final class GraphIdentifierGenerator {
      * @return a new {@link GraphIdentifierGenerator} instance that can be configured and finally executed. 
      * 
      * @see #assertExists()
+     * @see #assertValid()
      * @see #assertUnique()
      * @see #execute()
      */
     public static GraphIdentifierGenerator forGraph(final ElkNode graph) {
         return new GraphIdentifierGenerator(graph);
+    }
+    
+    /**
+     * Ensures that existing identifiers are valid instances of identifiers as defined by the ELKT format.
+     */
+    public GraphIdentifierGenerator assertValid() {
+        validate = true;
+        return this;
     }
     
     /**
@@ -68,9 +79,14 @@ public final class GraphIdentifierGenerator {
      * Execute this generator. 
      */
     public void execute() {
+        if (validate) {
+            validateIdentifiers(graph);
+        }
+        
         if (generate) {
             generateIdentifiers(graph);
         }
+        
         if (unique) {
             assertAllIdsUnique(graph);
         }
@@ -121,6 +137,107 @@ public final class GraphIdentifierGenerator {
             }
         }
     }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Identifier Validation
+    
+    /**
+     * Ensures valid identifiers in the object tree rooted at the given element.
+     */
+    private void validateIdentifiers(final EObject element) {
+        new ElkGraphSwitch<Object>() {
+            
+            @Override
+            public Object caseElkNode(final ElkNode node) {
+                validateIdentifier(node);
+                
+                node.getLabels().stream().forEach(l -> generateIdentifiers(l));
+                node.getPorts().stream().forEach(p -> generateIdentifiers(p));
+                node.getContainedEdges().stream().forEach(e -> generateIdentifiers(e));
+                node.getChildren().stream().forEach(c -> generateIdentifiers(c));
+                return null;
+            }
+            
+            @Override
+            public Object caseElkPort(final ElkPort port) {
+                validateIdentifier(port);
+                
+                port.getLabels().stream().forEach(l -> generateIdentifiers(l));
+                return null;
+            }
+            
+            @Override
+            public Object caseElkLabel(final ElkLabel label) {
+                validateIdentifier(label);
+                
+                label.getLabels().stream().forEach(l -> generateIdentifiers(l));
+                return null;
+            }
+            
+            @Override
+            public Object caseElkEdge(final ElkEdge edge) {
+                validateIdentifier(edge);
+                
+                edge.getLabels().stream().forEach(l -> generateIdentifiers(l));
+                edge.getSections().stream().forEach(s -> generateIdentifiers(s));
+                return null;
+            }
+            
+            @Override
+            public Object caseElkEdgeSection(final ElkEdgeSection section) {
+                validateIdentifier(section);
+                return null;
+            }
+            
+        }.doSwitch(element);
+    }
+    
+    private void validateIdentifier(final ElkGraphElement element) {
+        String validIdentifier = validateIdentifier(element.getIdentifier());
+        if (validIdentifier != null) {
+            element.setIdentifier(validIdentifier);
+        }
+    }
+    
+    private void validateIdentifier(final ElkEdgeSection section) {
+        String validIdentifier = validateIdentifier(section.getIdentifier());
+        if (validIdentifier != null) {
+            section.setIdentifier(validIdentifier);
+        }
+    }
+    
+    /**
+     * Returns a validated version of the given identifier or {@code null} if the identifier was already valid (or
+     * empty or {@code null} itself).
+     */
+    private String validateIdentifier(final String identifier) {
+        if (Strings.isNullOrEmpty(identifier)) {
+            return null;
+        }
+        
+        boolean valid = true;
+        char[] chars = identifier.toCharArray();
+        
+        for (int i = 0; i < chars.length; i++) {
+            // Rule to validate: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            if (!(chars[i] >= 'A' && chars[i] <= 'Z')
+                    && !(chars[i] >= 'a' && chars[i] <= 'z')
+                    && !(chars[i] == '_')
+                    && !(i > 0 && chars[i] >= '0' && chars[i] <= '9')) {
+                
+                // We have an invalid character, replace with _
+                chars[i] = '_';
+                valid = false;
+            }
+        }
+        
+        return valid ? null : new String(chars);
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Identifier Generation
    
     /**
      * Recursively generates identifiers for the given element and its child elements.
@@ -214,6 +331,10 @@ public final class GraphIdentifierGenerator {
         
         return identifier;
     }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Uniqueness
     
     private GraphIdentifierGenerator assertAllIdsUnique(final EObject element) {
         Set<String> knownIds = Sets.newHashSet();
