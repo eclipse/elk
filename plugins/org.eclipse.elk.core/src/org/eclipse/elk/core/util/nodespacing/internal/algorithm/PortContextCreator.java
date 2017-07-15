@@ -13,9 +13,9 @@ package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
 
 /**
  * Creates port context objects and assigns volatile IDs to all ports. Also, unless port labels are fixed, the labels

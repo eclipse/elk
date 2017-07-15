@@ -13,6 +13,9 @@ package org.eclipse.elk.core.util.nodespacing;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.Cell;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.GridContainerCell;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.CellSystemConfigurator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.HorizontalPortPlacementSizeCalculator;
@@ -25,9 +28,6 @@ import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortContextCreat
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortLabelPlacementCalculator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortPlacementCalculator;
 import org.eclipse.elk.core.util.nodespacing.internal.algorithm.VerticalPortPlacementSizeCalculator;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.Cell;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.GridContainerCell;
 
 /**
  * Knows how to calculate the size of a node and how to place its ports. Takes all

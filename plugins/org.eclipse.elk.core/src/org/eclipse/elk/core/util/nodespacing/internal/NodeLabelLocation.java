@@ -16,7 +16,9 @@ import java.util.Set;
 
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.HorizontalLabelAlignment;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.VerticalLabelAlignment;
 
 import com.google.common.collect.Lists;
 

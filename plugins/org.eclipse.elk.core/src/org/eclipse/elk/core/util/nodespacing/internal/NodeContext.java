@@ -26,12 +26,12 @@ import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.IndividualSpacings;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.GridContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.StripContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.StripContainerCell.Strip;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.ContainerArea;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.GridContainerCell;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.StripContainerCell;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.StripContainerCell.Strip;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;

@@ -8,18 +8,18 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal;
+package org.eclipse.elk.core.util.nodespacing.cellsystem;
 
 /**
- * Horizontal alignment of labels.
+ * Vertical alignment of labels.
  */
-public enum HorizontalLabelAlignment {
+public enum VerticalLabelAlignment {
     
-    /** Labels are left-aligned. */
-    LEFT,
+    /** Labels are top-aligned. */
+    TOP,
     /** Labels are centered. */
     CENTER,
-    /** Labels are right-aligned. */
-    RIGHT;
+    /** Labels are bottom-aligned. */
+    BOTTOM;
     
 }

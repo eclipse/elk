@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.cellsystem;
+package org.eclipse.elk.core.util.nodespacing.cellsystem;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,9 +18,7 @@ import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
-import org.eclipse.elk.core.util.nodespacing.internal.HorizontalLabelAlignment;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
-import org.eclipse.elk.core.util.nodespacing.internal.VerticalLabelAlignment;
 
 import com.google.common.collect.Lists;
 
@@ -86,11 +84,12 @@ public class LabelCell extends Cell {
     }
 
     /**
-     * Sets the horizontal alignment of labels.
+     * Sets the horizontal alignment of labels. Can be chained with further method calls.
      */
-    public void setHorizontalAlignment(final HorizontalLabelAlignment horizontalAlignment) {
-        Objects.requireNonNull(horizontalAlignment, "Horizontal alignment cannot be null");
-        this.horizontalAlignment = horizontalAlignment;
+    public LabelCell setHorizontalAlignment(final HorizontalLabelAlignment newHorizontalAlignment) {
+        Objects.requireNonNull(newHorizontalAlignment, "Horizontal alignment cannot be null");
+        this.horizontalAlignment = newHorizontalAlignment;
+        return this;
     }
 
     /**
@@ -101,11 +100,12 @@ public class LabelCell extends Cell {
     }
 
     /**
-     * Sets the vertical alignment of labels.
+     * Sets the vertical alignment of labels. Can be chained with further method calls.
      */
-    public void setVerticalAlignment(final VerticalLabelAlignment verticalAlignment) {
-        Objects.requireNonNull(verticalAlignment, "Vertical alignment cannot be null");
-        this.verticalAlignment = verticalAlignment;
+    public LabelCell setVerticalAlignment(final VerticalLabelAlignment newVerticalAlignment) {
+        Objects.requireNonNull(newVerticalAlignment, "Vertical alignment cannot be null");
+        this.verticalAlignment = newVerticalAlignment;
+        return this;
     }
 
     /**
