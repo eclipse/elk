@@ -75,6 +75,17 @@ public final class LGraphAdapters {
         return new LGraphAdapter(graph, transparentNorthSouthEdges);
      }
     
+    /**
+     * Adapts the given {@link LLabel}.
+     * 
+     * @param label
+     *            the label to wrap an adapter around.
+     * @return an {@link LLabelAdapter} for the passed label.
+     */
+    public static LLabelAdapter adapt(final LLabel label) {
+        return new LLabelAdapter(label);
+    }
+    
     
     /**
      * Basic base class for adapters that adapt {@link LGraphElement}s.
