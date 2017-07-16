@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
 import org.eclipse.elk.alg.layered.graph.LLabel;
+import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -48,6 +49,7 @@ import com.google.common.collect.Ordering;
  *   <dt>Postcondition:</dt>
  *     <dd>each node with end labels has its {@link InternalProperties#END_LABELS} property set accordingly</dd>
  *     <dd>label cells are large enough to hold their labels and are positioned correctly relative to their node</dd>
+ *     <dd>node margins include space required to place edge end labels.</dd>
  *   <dt>Slots:</dt>
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
@@ -108,7 +110,14 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
                 .filter(cell -> cell != null)
                 .collect(Collectors.toList());
         node.setProperty(InternalProperties.END_LABELS, portLabelCellList);
+        
+        // Update the node's margins
+        updateNodeMargins(node, portLabelCellList);
     }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Label Gathering
 
     /**
      * Returns a label cell that contains all end labels to be placed at the given port. If there are no such lables,
@@ -156,6 +165,10 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
         
         return labelCell;
     }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Label Placement
 
     /**
      * Places the edge end labels that are to be placed near the given port.
@@ -166,6 +179,9 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
         labelCellRect.height = labelCell.getMinimumHeight();
         labelCellRect.width = labelCell.getMinimumWidth();
         
+        // Some necessary position information
+        KVector nodeSize = port.getNode().getSize();
+        LMargin nodeMargin = port.getNode().getMargin();
         KVector portPos = port.getPosition();
         KVector portAnchor = KVector.sum(portPos, port.getAnchor());
         
@@ -173,8 +189,7 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
         switch (port.getSide()) {
         case NORTH:
             labelCell.setVerticalAlignment(VerticalLabelAlignment.BOTTOM);
-            labelCellRect.y = portPos.y
-                    - port.getMargin().top
+            labelCellRect.y = -nodeMargin.top
                     - edgeLabelSpacing
                     - labelCellRect.height;
             
@@ -194,9 +209,8 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
             
         case EAST:
             labelCell.setHorizontalAlignment(HorizontalLabelAlignment.LEFT);
-            labelCellRect.x = portPos.x
-                    + port.getSize().x
-                    + port.getMargin().right
+            labelCellRect.x = nodeSize.x
+                    + nodeMargin.right
                     + edgeLabelSpacing;
             
             if (getLabelSide(labelCell) == LabelSide.ABOVE) {
@@ -215,9 +229,8 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
             
         case SOUTH:
             labelCell.setVerticalAlignment(VerticalLabelAlignment.TOP);
-            labelCellRect.y = portPos.y
-                    + port.getSize().y
-                    + port.getMargin().bottom
+            labelCellRect.y = nodeSize.y
+                    + nodeMargin.bottom
                     + edgeLabelSpacing;
             
             if (getLabelSide(labelCell) == LabelSide.ABOVE) {
@@ -236,8 +249,7 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
             
         case WEST:
             labelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
-            labelCellRect.x = portPos.x
-                    - port.getMargin().left
+            labelCellRect.x = -nodeMargin.left
                     - edgeLabelSpacing
                     - labelCellRect.width;
             
@@ -255,6 +267,36 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
             }
             break;
         }
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Node Margins
+    
+    /**
+     * Updates the node's margins to account for its end labels.
+     */
+    private void updateNodeMargins(final LNode node, final List<LabelCell> labelCells) {
+        LMargin nodeMargin = node.getMargin();
+        KVector nodeSize = node.getSize();
+        
+        // Calculate the rectangle that describes the node's current margin
+        ElkRectangle nodeMarginRectangle = new ElkRectangle(
+                -nodeMargin.left,
+                -nodeMargin.top,
+                nodeMargin.left + nodeSize.x + nodeMargin.right,
+                nodeMargin.top + nodeSize.y + nodeMargin.bottom);
+        
+        // Union the rectangle with each rectangle that describes a label cell
+        for (LabelCell labelCell : labelCells) {
+            nodeMarginRectangle.union(labelCell.getCellRectangle());
+        }
+        
+        // Reapply the new rectangle to the margin
+        nodeMargin.left = -nodeMarginRectangle.x;
+        nodeMargin.top = -nodeMarginRectangle.y;
+        nodeMargin.right = nodeMarginRectangle.width - nodeMargin.left - nodeSize.x;
+        nodeMargin.bottom = nodeMarginRectangle.height - nodeMargin.top - nodeSize.y;
     }
     
     
