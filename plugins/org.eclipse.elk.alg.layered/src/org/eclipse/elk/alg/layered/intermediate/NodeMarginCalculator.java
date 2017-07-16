@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,20 +33,15 @@ import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
  *   <dt>Precondition:</dt>
  *     <dd>A layered graph.</dd>
  *     <dd>Ports have fixed port positions.</dd>
- *     <dd>Labels have fixed positions.</dd>
+ *     <dd>Node and port labels have fixed positions.</dd>
  *   <dt>Postcondition:</dt>
  *     <dd>The node margins are properly set to form a bounding box around the node and its ports and
- *         labels.</dd>
+ *         labels. End labels of edges are not included in the margins.</dd>
  *   <dt>Slots:</dt>
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link LabelAndNodeSizeProcessor}</dd>
  * </dl>
- *
- * @see LabelAndNodeSizeProcessor
- * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by cds
  */
 public final class NodeMarginCalculator implements ILayoutProcessor<LGraph> {
 
@@ -56,19 +51,19 @@ public final class NodeMarginCalculator implements ILayoutProcessor<LGraph> {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Node margin calculation", 1);
         
-        // calculate the margins using ELK's utility methods
-        // Use transparentNorthSouthEdges. This ensures that end labels of edges connected to north/south
-        // ports are considered during margin calculation.
-        // Setting this to false would consider end labels in the margin calculation of the corresponding
-        // dummy node instead of the originally connected port.
-        NodeDimensionCalculation.calculateNodeMargins(LGraphAdapters.adapt(layeredGraph, true));
+        // Calculate the margins using ELK's utility methods. What is not included in the margins yet are is space
+        // required for self loops and comment boxes. We will deal with all of those later.
+        NodeDimensionCalculation.getNodeMarginCalculator(LGraphAdapters.adapt(layeredGraph, false))
+                .excludeEdgeHeadTailLabels()
+                .process();
 
         // Iterate through the layers to additionally handle comments
-        double spacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
+        double nodeNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
+        
         for (Layer layer : layeredGraph) {
             // Iterate through the layer's nodes
             for (LNode node : layer) {
-                processComments(node, spacing);
+                processComments(node, nodeNodeSpacing);
                 processSelfLoops(node);                
             }
         }

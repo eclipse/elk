@@ -34,6 +34,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -120,14 +121,18 @@ public final class InternalProperties {
     /**
      * Edge labels represented by an edge label dummy node.
      */
-    public static final IProperty<List<LLabel>> REPRESENTED_LABELS =
-            new Property<List<LLabel>>("representedLabels");
+    public static final IProperty<List<LLabel>> REPRESENTED_LABELS = new Property<>("representedLabels");
+    
+    /**
+     * If any edge incident to a node has end labels, those are stored in one label cell per port by the end label
+     * processors.
+     */
+    public static final IProperty<List<LabelCell>> END_LABELS = new Property<>("endLabels");
 
     /**
      * The side (of an edge) a label is placed on.
      */
-    public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
-            "labelSide", LabelSide.UNKNOWN);
+    public static final IProperty<LabelSide> LABEL_SIDE = new Property<>("labelSide", LabelSide.UNKNOWN);
 
     /**
      * Flag for reversed edges.
