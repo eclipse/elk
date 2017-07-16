@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.math;
 
@@ -15,8 +12,6 @@ import java.util.Objects;
 /**
  * Class resembles basic functionality of {@link java.awt.geom.Rectangle2D}. This way it is possible
  * to avoid awt dependencies in ELK Layered's code.
- * 
- * @author msp
  */
 public class ElkRectangle {
 
@@ -155,6 +150,17 @@ public class ElkRectangle {
             y2 = t;
         }
         setRect(x1, y1, x2 - x1, y2 - y1);
+    }
+    
+    /**
+     * Moves the rectangle by the given offset.
+     * 
+     * @param offset
+     *            the offset to move the rectangle by.
+     */
+    public void move(final KVector offset) {
+        x += offset.x;
+        y += offset.y;
     }
     
     /**
