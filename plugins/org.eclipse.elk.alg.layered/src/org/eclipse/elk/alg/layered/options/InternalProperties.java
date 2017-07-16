@@ -133,6 +133,11 @@ public final class InternalProperties {
      * The side (of an edge) a label is placed on.
      */
     public static final IProperty<LabelSide> LABEL_SIDE = new Property<>("labelSide", LabelSide.UNKNOWN);
+    
+    /**
+     * The maximum thickness of any edge connected to a port.
+     */
+    public static final IProperty<Double> MAX_EDGE_THICKNESS = new Property<>("maxEdgeThickness", 0.0);
 
     /**
      * Flag for reversed edges.

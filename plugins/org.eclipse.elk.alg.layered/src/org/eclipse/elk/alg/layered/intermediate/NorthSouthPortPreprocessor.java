@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
@@ -100,7 +97,7 @@ import com.google.common.collect.Lists;
  * <h3>Self-Loops</h3>
  * 
  * <p>
- * Self-loops are a special case that is handled party by this processor. For this to work, the
+ * Self-loops are a special case that is handled partly by this processor. For this to work, the
  * {@link SelfLoopProcessor} must have been executed prior to this processor's execution. Then, this
  * processor correctly processes all kinds of self-loops involving northern or southern ports as
  * follows: (due to the {@link SelfLoopProcessor}, only the cases detailled below must be handled)
@@ -117,23 +114,21 @@ import com.google.common.collect.Lists;
  * </ul>
  * 
  * <dl>
- * <dt>Precondition:</dt>
- * <dd>a layered graph; nodes have fixed port sides.</dd>
- * <dt>Postcondition:</dt>
- * <dd>dummy nodes have been inserted for edges connected to ports on north and south sides, with
- * layout groups and node successor constraints set.</dd>
- * <dt>Slots:</dt>
- * <dd>Before phase 3.</dd>
- * <dt>Same-slot dependencies:</dt>
- * <dd>{@link PortListSorter}, {@link SelfLoopProcessor}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph; nodes have fixed port sides.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>dummy nodes have been inserted for edges connected to ports on north and south sides, with
+ *         layout groups and node successor constraints set.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link PortListSorter}</dd>
+ *     <dd>{@link SelfLoopProcessor}</dd>
  * </dl>
  * 
  * @see NorthSouthPortPostprocessor
  * @see PortListSorter
  * @see SelfLoopProcessor
- * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph> {
 

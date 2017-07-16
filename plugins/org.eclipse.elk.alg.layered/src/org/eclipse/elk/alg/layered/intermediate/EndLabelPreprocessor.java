@@ -10,7 +10,6 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -95,7 +94,8 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
             LPort port = node.getPorts().get(portIndex);
             port.id = portIndex;
             
-            portLabelCells[portIndex] = gatherLabels(port, labelLabelSpacing, verticalLayout);
+            portLabelCells[portIndex] = createConfiguredLabelCell(
+                    gatherLabels(port), labelLabelSpacing, verticalLayout);
         }
         
         // Iterate over the created label cells and place them properly
@@ -109,48 +109,20 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
         List<LabelCell> portLabelCellList = Arrays.stream(portLabelCells)
                 .filter(cell -> cell != null)
                 .collect(Collectors.toList());
-        node.setProperty(InternalProperties.END_LABELS, portLabelCellList);
-        
-        // Update the node's margins
-        updateNodeMargins(node, portLabelCellList);
-    }
-    
-    
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Label Gathering
-
-    /**
-     * Returns a label cell that contains all end labels to be placed at the given port. If there are no such lables,
-     * {@code null} is magically returned.
-     */
-    private LabelCell gatherLabels(final LPort port, final double labelLabelSpacing, final boolean verticalLayout) {
-        List<LLabel> labels = Lists.newArrayList();
-        
-        for (LEdge incidentEdge : port.getConnectedEdges()) {
-            if (incidentEdge.getSource() == port) {
-                // It's an outgoing edge; all tail labels belong to this port
-                incidentEdge.getLabels().stream()
-                        .filter(label -> label.getProperty(
-                                LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.TAIL)
-                        .forEach(label -> labels.add(label));
-            } else {
-                // It's an incoming edge; all head labels belong to this port
-                incidentEdge.getLabels().stream()
-                        .filter(label -> label.getProperty(
-                                LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD)
-                        .forEach(label -> labels.add(label));
-            }
+        if (!portLabelCellList.isEmpty()) {
+            node.setProperty(InternalProperties.END_LABELS, portLabelCellList);
+            
+            // Update the node's margins
+            updateNodeMargins(node, portLabelCellList);
         }
-        
-        return createConfiguredLabelCell(port, labels, labelLabelSpacing, verticalLayout);
     }
     
     /**
      * Creates label cell for the given port with the given labels, if any. If there are no labels, this method returns
      * {@code null}. The label cell will still have to have its alignment set up.
      */
-    private LabelCell createConfiguredLabelCell(final LPort port, final List<LLabel> labels,
-            final double labelLabelSpacing, final boolean verticalLayout) {
+    private LabelCell createConfiguredLabelCell(final List<LLabel> labels, final double labelLabelSpacing,
+            final boolean verticalLayout) {
         
         if (labels.isEmpty()) {
             return null;
@@ -164,6 +136,71 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
         }
         
         return labelCell;
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Label Gathering
+
+    /**
+     * Returns a list that contains all end labels to be placed at the given port. If there are no such labels, the
+     * list will be empty. This method also takes care of north / south ports whose original edges have been rerouted
+     * to a north / south port dummy. The maximum thickness of any edge connected to the port is saved
+     * {@link InternalProperties#MAX_EDGE_THICKNESS as a property}.
+     */
+    private List<LLabel> gatherLabels(final LPort port) {
+        List<LLabel> labels = Lists.newArrayList();
+        
+        // Gather labels of the port itself
+        double maxEdgeThickness = gatherLabels(port, labels);
+        
+        // If it has a dummy associated with it, we need to go through the dummy's ports and process those that were
+        // created for the current port (see the NorthSouthPortPreprocessor)
+        LNode dummyNode = port.getProperty(InternalProperties.PORT_DUMMY);
+        if (dummyNode != null) {
+            for (LPort dummyPort : dummyNode.getPorts()) {
+                if (dummyPort.getProperty(InternalProperties.ORIGIN) == port) {
+                    maxEdgeThickness = Math.max(
+                            maxEdgeThickness,
+                            gatherLabels(dummyPort, labels));
+                }
+            }
+        }
+        
+        // Only save the maximum edge thickness if we'll be interested in it later
+        if (!labels.isEmpty()) {
+            port.setProperty(InternalProperties.MAX_EDGE_THICKNESS, maxEdgeThickness);
+        }
+        
+        return labels;
+    }
+    
+    /**
+     * Puts all relevant end labels of edges connected to the given port into the given list. Returns the maximum edge
+     * thickness of any incident edge.
+     */
+    private double gatherLabels(final LPort port, final List<LLabel> targetList) {
+        double maxEdgeThickness = 0;
+        
+        for (LEdge incidentEdge : port.getConnectedEdges()) {
+            maxEdgeThickness = Math.max(maxEdgeThickness, incidentEdge.getProperty(LayeredOptions.EDGE_THICKNESS));
+            
+            if (incidentEdge.getSource() == port) {
+                // It's an outgoing edge; all tail labels belong to this port
+                incidentEdge.getLabels().stream()
+                        .filter(label -> label.getProperty(
+                                LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.TAIL)
+                        .forEach(label -> targetList.add(label));
+            } else {
+                // It's an incoming edge; all head labels belong to this port
+                incidentEdge.getLabels().stream()
+                        .filter(label -> label.getProperty(
+                                LayeredOptions.EDGE_LABELS_PLACEMENT) == EdgeLabelPlacement.HEAD)
+                        .forEach(label -> targetList.add(label));
+            }
+        }
+        
+        return maxEdgeThickness;
     }
     
     
@@ -318,10 +355,11 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
      * Returns the maximum thickness of all edges incident to the port.
      */
     private double maxEdgeThickness(final LPort port) {
-        return StreamSupport.stream(port.getConnectedEdges().spliterator(), false)
-                .mapToDouble(edge -> edge.getProperty(LayeredOptions.EDGE_THICKNESS))
-                .max()
-                .getAsDouble();
+//        return StreamSupport.stream(port.getConnectedEdges().spliterator(), false)
+//                .mapToDouble(edge -> edge.getProperty(LayeredOptions.EDGE_THICKNESS))
+//                .max()
+//                .getAsDouble();
+        return port.getProperty(InternalProperties.MAX_EDGE_THICKNESS);
     }
 
 }
