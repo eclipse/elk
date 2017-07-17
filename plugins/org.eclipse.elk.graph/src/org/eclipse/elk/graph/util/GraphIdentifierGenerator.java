@@ -152,10 +152,10 @@ public final class GraphIdentifierGenerator {
             public Object caseElkNode(final ElkNode node) {
                 validateIdentifier(node);
                 
-                node.getLabels().stream().forEach(l -> generateIdentifiers(l));
-                node.getPorts().stream().forEach(p -> generateIdentifiers(p));
-                node.getContainedEdges().stream().forEach(e -> generateIdentifiers(e));
-                node.getChildren().stream().forEach(c -> generateIdentifiers(c));
+                node.getLabels().stream().forEach(l -> validateIdentifier(l));
+                node.getPorts().stream().forEach(p -> validateIdentifier(p));
+                node.getContainedEdges().stream().forEach(e -> validateIdentifier(e));
+                node.getChildren().stream().forEach(c -> validateIdentifier(c));
                 return null;
             }
             
@@ -163,7 +163,7 @@ public final class GraphIdentifierGenerator {
             public Object caseElkPort(final ElkPort port) {
                 validateIdentifier(port);
                 
-                port.getLabels().stream().forEach(l -> generateIdentifiers(l));
+                port.getLabels().stream().forEach(l -> validateIdentifier(l));
                 return null;
             }
             
@@ -171,7 +171,7 @@ public final class GraphIdentifierGenerator {
             public Object caseElkLabel(final ElkLabel label) {
                 validateIdentifier(label);
                 
-                label.getLabels().stream().forEach(l -> generateIdentifiers(l));
+                label.getLabels().stream().forEach(l -> validateIdentifier(l));
                 return null;
             }
             
@@ -179,8 +179,8 @@ public final class GraphIdentifierGenerator {
             public Object caseElkEdge(final ElkEdge edge) {
                 validateIdentifier(edge);
                 
-                edge.getLabels().stream().forEach(l -> generateIdentifiers(l));
-                edge.getSections().stream().forEach(s -> generateIdentifiers(s));
+                edge.getLabels().stream().forEach(l -> validateIdentifier(l));
+                edge.getSections().stream().forEach(s -> validateIdentifier(s));
                 return null;
             }
             
