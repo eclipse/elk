@@ -146,48 +146,48 @@ public final class GraphIdentifierGenerator {
      * Ensures valid identifiers in the object tree rooted at the given element.
      */
     private void validateIdentifiers(final EObject element) {
-        new ElkGraphSwitch<Object>() {
+        new ElkGraphSwitch<Boolean>() {
             
             @Override
-            public Object caseElkNode(final ElkNode node) {
+            public Boolean caseElkNode(final ElkNode node) {
                 validateIdentifier(node);
                 
-                node.getLabels().stream().forEach(l -> validateIdentifier(l));
-                node.getPorts().stream().forEach(p -> validateIdentifier(p));
-                node.getContainedEdges().stream().forEach(e -> validateIdentifier(e));
-                node.getChildren().stream().forEach(c -> validateIdentifier(c));
-                return null;
+                node.getLabels().stream().forEach(l -> validateIdentifiers(l));
+                node.getPorts().stream().forEach(p -> validateIdentifiers(p));
+                node.getContainedEdges().stream().forEach(e -> validateIdentifiers(e));
+                node.getChildren().stream().forEach(c -> validateIdentifiers(c));
+                return true;
             }
             
             @Override
-            public Object caseElkPort(final ElkPort port) {
+            public Boolean caseElkPort(final ElkPort port) {
                 validateIdentifier(port);
                 
-                port.getLabels().stream().forEach(l -> validateIdentifier(l));
-                return null;
+                port.getLabels().stream().forEach(l -> validateIdentifiers(l));
+                return true;
             }
             
             @Override
-            public Object caseElkLabel(final ElkLabel label) {
+            public Boolean caseElkLabel(final ElkLabel label) {
                 validateIdentifier(label);
                 
-                label.getLabels().stream().forEach(l -> validateIdentifier(l));
-                return null;
+                label.getLabels().stream().forEach(l -> validateIdentifiers(l));
+                return true;
             }
             
             @Override
-            public Object caseElkEdge(final ElkEdge edge) {
+            public Boolean caseElkEdge(final ElkEdge edge) {
                 validateIdentifier(edge);
                 
-                edge.getLabels().stream().forEach(l -> validateIdentifier(l));
-                edge.getSections().stream().forEach(s -> validateIdentifier(s));
-                return null;
+                edge.getLabels().stream().forEach(l -> validateIdentifiers(l));
+                edge.getSections().stream().forEach(s -> validateIdentifiers(s));
+                return true;
             }
             
             @Override
-            public Object caseElkEdgeSection(final ElkEdgeSection section) {
+            public Boolean caseElkEdgeSection(final ElkEdgeSection section) {
                 validateIdentifier(section);
-                return null;
+                return true;
             }
             
         }.doSwitch(element);
@@ -245,10 +245,10 @@ public final class GraphIdentifierGenerator {
      * @param element the element to generate an identifier for.
      */
     private GraphIdentifierGenerator generateIdentifiers(final EObject element) {
-        new ElkGraphSwitch<Object>() {
+        new ElkGraphSwitch<Boolean>() {
             
             @Override
-            public Object caseElkNode(final ElkNode node) {
+            public Boolean caseElkNode(final ElkNode node) {
                 if (node.getParent() == null) {
                     if (node.getIdentifier() == null || node.getIdentifier().trim().isEmpty()) {
                         node.setIdentifier("G1");
@@ -261,38 +261,38 @@ public final class GraphIdentifierGenerator {
                 node.getPorts().stream().forEach(p -> generateIdentifiers(p));
                 node.getContainedEdges().stream().forEach(e -> generateIdentifiers(e));
                 node.getChildren().stream().forEach(c -> generateIdentifiers(c));
-                return null;
+                return true;
             }
             
             @Override
-            public Object caseElkPort(final ElkPort port) {
+            public Boolean caseElkPort(final ElkPort port) {
                 setIdentifierIfMissing(port, ElementType.PORT);
                 
                 port.getLabels().stream().forEach(l -> generateIdentifiers(l));
-                return null;
+                return true;
             }
             
             @Override
-            public Object caseElkLabel(final ElkLabel label) {
+            public Boolean caseElkLabel(final ElkLabel label) {
                 setIdentifierIfMissing(label, ElementType.LABEL);
                 
                 label.getLabels().stream().forEach(l -> generateIdentifiers(l));
-                return null;
+                return true;
             }
             
             @Override
-            public Object caseElkEdge(final ElkEdge edge) {
+            public Boolean caseElkEdge(final ElkEdge edge) {
                 setIdentifierIfMissing(edge, ElementType.EDGE);
                 
                 edge.getLabels().stream().forEach(l -> generateIdentifiers(l));
                 edge.getSections().stream().forEach(s -> generateIdentifiers(s));
-                return null;
+                return true;
             }
             
             @Override
-            public Object caseElkEdgeSection(final ElkEdgeSection section) {
+            public Boolean caseElkEdgeSection(final ElkEdgeSection section) {
                 setIdentifierIfMissing(section);
-                return null;
+                return true;
             }
             
         }.doSwitch(element);
