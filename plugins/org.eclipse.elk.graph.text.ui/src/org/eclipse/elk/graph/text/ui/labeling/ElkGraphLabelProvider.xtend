@@ -29,7 +29,7 @@ class ElkGraphLabelProvider extends DefaultEObjectLabelProvider {
     }
 
     def image(ElkNode node) {
-        if (node.parent == null) {
+        if (!node.eIsProxy && node.parent === null) {
             'elkgraph.gif'
         } else {
             'elknode.gif'
