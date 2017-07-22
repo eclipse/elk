@@ -125,7 +125,7 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
     private LabelCell createConfiguredLabelCell(final List<LLabel> labels, final double labelLabelSpacing,
             final boolean verticalLayout) {
         
-        if (labels.isEmpty()) {
+        if (labels == null || labels.isEmpty()) {
             return null;
         }
         
@@ -147,14 +147,21 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Label Gathering
+    
+    /** Special value to indicate that there are no edges incident to a port. */
+    private static final double NO_INCIDENT_EDGE_THICKNESS = -1;
 
     /**
      * Returns a list that contains all end labels to be placed at the given port. If there are no such labels, the
-     * list will be empty. This method also takes care of north / south ports whose original edges have been rerouted
-     * to a north / south port dummy. The maximum thickness of any edge connected to the port is saved
-     * {@link InternalProperties#MAX_EDGE_THICKNESS as a property}.
+     * list will be empty. If there are not even any edges connected to the port, the return value will be {@code null}.
+     * 
+     *  <p>his method also takes care of north / south ports whose original edges have been rerouted to a north / south
+     *  port dummy. The maximum thickness of any edge connected to the port is saved
+     *  {@link InternalProperties#MAX_EDGE_THICKNESS as a property} if it has labels.</p>
+     * 
+     * <p>This method is also used by {@link LabelSideSelector}.</p>
      */
-    private List<LLabel> gatherLabels(final LPort port) {
+    static List<LLabel> gatherLabels(final LPort port) {
         List<LLabel> labels = Lists.newArrayList();
         
         // Gather labels of the port itself
@@ -178,15 +185,15 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
             port.setProperty(InternalProperties.MAX_EDGE_THICKNESS, maxEdgeThickness);
         }
         
-        return labels;
+        return maxEdgeThickness != NO_INCIDENT_EDGE_THICKNESS ? labels : null;
     }
     
     /**
      * Puts all relevant end labels of edges connected to the given port into the given list. Returns the maximum edge
-     * thickness of any incident edge.
+     * thickness of any incident edge or {@link #NO_INCIDENT_EDGE_THICKNESS} if there is no incident edge.
      */
-    private double gatherLabels(final LPort port, final List<LLabel> targetList) {
-        double maxEdgeThickness = 0;
+    private static double gatherLabels(final LPort port, final List<LLabel> targetList) {
+        double maxEdgeThickness = -1;
         
         for (LEdge incidentEdge : port.getConnectedEdges()) {
             maxEdgeThickness = Math.max(maxEdgeThickness, incidentEdge.getProperty(LayeredOptions.EDGE_THICKNESS));
