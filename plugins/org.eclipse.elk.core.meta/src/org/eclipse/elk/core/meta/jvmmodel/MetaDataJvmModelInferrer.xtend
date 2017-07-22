@@ -126,7 +126,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         
         // Infer code for the declared layout algorithms
         for (algorithm : bundle.members.filter(MdAlgorithm)) {
-            inferAlgorithm(algorithm, acceptor, isPreIndexingPhase)
+            inferAlgorithm(model, algorithm, acceptor, isPreIndexingPhase)
         }
     }
     
@@ -274,6 +274,8 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     /**
      * Generates code for the given algorithm's metadata provider class.
      * 
+     * @param model
+     *            the model the algorithm was declared in. Used for the file header.
      * @param algorithm
      *            the algorithm to create one or more {@link JvmDeclaredType declared types} from.
      * @param acceptor
@@ -288,7 +290,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
      *            rely on linking using the index if isPreIndexingPhase is
      *            <code>true</code>.
      */
-    private def void inferAlgorithm(MdAlgorithm algorithm, IJvmDeclaredTypeAcceptor acceptor,
+    private def void inferAlgorithm(MdModel model, MdAlgorithm algorithm, IJvmDeclaredTypeAcceptor acceptor,
         boolean isPreIndexingPhase) {
             
         // If the algorithm doesn't have a name yet, don't bother
@@ -301,7 +303,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         acceptor.accept(algorithm.toClass(algorithm.qualifiedTargetClass)) [
             // Implement the ILayoutMetaDataProvider interface and... BE DOCUMENTED!
             superTypes += typeRef("org.eclipse.elk.core.data.ILayoutMetaDataProvider")
-            fileHeader = algorithm.bundle.documentation
+            fileHeader = model.documentation
             documentation = algorithm.documentation
             
             // 1. Public constants for supported layout options

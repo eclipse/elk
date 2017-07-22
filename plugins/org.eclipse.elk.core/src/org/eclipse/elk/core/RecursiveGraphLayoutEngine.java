@@ -134,9 +134,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     final boolean stopHierarchy = knode.getProperty(CoreOptions.HIERARCHY_HANDLING)
                             == HierarchyHandling.SEPARATE_CHILDREN;
 
-                    if (stopHierarchy || !getAlgorithm(knode).equals(algorithmData)) {
-                        // Hierarchical layout is stopped by explicitly disabling or switching
-                        // algorithm. Separate recursive call is used for child nodes
+                    // Hierarchical layout is stopped by explicitly disabling or switching the algorithm. 
+                    // In that case, a separate recursive call is used for child nodes
+                    if (stopHierarchy 
+                          || (knode.hasProperty(CoreOptions.ALGORITHM) 
+                                  && !getAlgorithm(knode).equals(algorithmData))) {
                         List<ElkEdge> childLayoutSelfLoops = layoutRecursively(knode, progressMonitor);
                         childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                         // Explicitly disable hierarchical layout for the child node. Simplifies the
