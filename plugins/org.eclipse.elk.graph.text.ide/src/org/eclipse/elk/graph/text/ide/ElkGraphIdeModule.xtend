@@ -7,9 +7,16 @@
  *******************************************************************************/
 package org.eclipse.elk.graph.text.ide
 
+import org.eclipse.elk.graph.text.ide.contentassist.ElkGraphProposalProvider
+import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
 
 /**
  * Use this class to register ide components.
  */
 class ElkGraphIdeModule extends AbstractElkGraphIdeModule {
+    
+    def Class<? extends IdeContentProposalProvider> bindIdeContentProposalProvider() {
+        ElkGraphProposalProvider
+    }
+    
 }

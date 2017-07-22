@@ -8,8 +8,10 @@
 package org.eclipse.elk.graph.text
 
 import org.eclipse.elk.graph.text.conversion.ElkGraphValueConverterService
+import org.eclipse.elk.graph.text.naming.ElkGraphQualifiedNameConverter
 import org.eclipse.elk.graph.text.naming.ElkGraphQualifiedNameProvider
 import org.eclipse.elk.graph.text.serializer.ElkGraphTransientValueService
+import org.eclipse.xtext.naming.IQualifiedNameConverter
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService
 
 /**
@@ -23,6 +25,10 @@ class ElkGraphRuntimeModule extends AbstractElkGraphRuntimeModule {
     
     override bindIQualifiedNameProvider() {
         ElkGraphQualifiedNameProvider
+    }
+    
+    def Class<? extends IQualifiedNameConverter> bindIQualifiedNameConverter() {
+        ElkGraphQualifiedNameConverter
     }
     
     def Class<? extends ITransientValueService> bindITransientValueService2() {

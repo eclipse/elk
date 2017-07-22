@@ -8,29 +8,21 @@
 package org.eclipse.elk.graph.text.conversion
 
 import com.google.inject.Inject
-import com.google.inject.Provider
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.core.util.internal.LayoutOptionProxy
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
 import org.eclipse.elk.graph.properties.IProperty
-import org.eclipse.elk.graph.text.services.ElkGraphGrammarAccess
+import org.eclipse.elk.graph.text.naming.ElkGraphQualifiedNameConverter
 import org.eclipse.xtext.conversion.ValueConverterException
 import org.eclipse.xtext.conversion.impl.AbstractValueConverter
-import org.eclipse.xtext.conversion.impl.IDValueConverter
+import org.eclipse.xtext.naming.QualifiedName
 import org.eclipse.xtext.nodemodel.INode
 import org.eclipse.xtext.util.Strings
 
 class PropertyValueValueConverter extends AbstractValueConverter<Object> {
     
-    IDValueConverter idValueConverter
-    
-    @Inject
-    def void initialize(Provider<IDValueConverter> idValueConverterProvider, ElkGraphGrammarAccess grammarAccess) {
-        this.idValueConverter = idValueConverterProvider.get => [
-            rule = grammarAccess.IDRule
-        ]
-    }
+    @Inject ElkGraphQualifiedNameConverter qualifiedNameConverter
     
     override toString(Object value) throws ValueConverterException {
         if (value instanceof Double && Math.floor(value as Double) == value as Double)
@@ -43,7 +35,8 @@ class PropertyValueValueConverter extends AbstractValueConverter<Object> {
     
     private def quoteIfNecessary(String s) {
         try {
-            return Strings.split(s, '.').map[idValueConverter.toString(it)].join('.')
+            val qname = QualifiedName.create(Strings.split(s, ElkGraphQualifiedNameConverter.DELIMITER))
+            return qualifiedNameConverter.toString(qname)
         } catch (ValueConverterException e) {
             return '"' + s + '"'
         }
@@ -66,8 +59,10 @@ class PropertyValueValueConverter extends AbstractValueConverter<Object> {
     private def unquoteIfNecessary(String s) {
         if (s.length >= 2 && s.startsWith('"') && s.endsWith('"'))
             return s.substring(1, s.length - 1)
-        else if (s.length >= 1 && (Character.isJavaIdentifierStart(s.charAt(0)) || s.startsWith('^')))
-            return Strings.split(s, '.').map[idValueConverter.toValue(it, null)].join('.')
+        else if (s.length >= 1 && (Character.isJavaIdentifierStart(s.charAt(0)) || s.startsWith('^'))) {
+            val qname = qualifiedNameConverter.toQualifiedName(s)
+            return qname.toString(ElkGraphQualifiedNameConverter.DELIMITER)
+        }
         else
             return s
     }

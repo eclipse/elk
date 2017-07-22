@@ -5,10 +5,15 @@ Bundle-Vendor: Eclipse Modeling Project
 Bundle-Version: 0.3.0.qualifier
 Bundle-SymbolicName: org.eclipse.elk.graph.text.ide; singleton:=true
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.elk.graph.text,
- org.eclipse.xtext.ide;bundle-version="2.12.0",
- org.eclipse.xtext.xbase.ide
+Require-Bundle: org.eclipse.xtext.ide;bundle-version="2.12.0",
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.xtend.lib,
+ org.eclipse.elk.graph,
+ org.eclipse.elk.core,
+ org.eclipse.elk.graph.text
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.elk.graph.text.ide.contentassist.antlr.internal,
- org.eclipse.elk.graph.text.ide.contentassist.antlr
+Export-Package: org.eclipse.elk.graph.text.ide,
+ org.eclipse.elk.graph.text.ide.contentassist,
+ org.eclipse.elk.graph.text.ide.contentassist.antlr,
+ org.eclipse.elk.graph.text.ide.contentassist.antlr.internal
 

@@ -27,4 +27,4 @@ Export-Package: org.eclipse.elk.graph.text.ui,
  org.eclipse.elk.graph.text.ui.labeling,
  org.eclipse.elk.graph.text.ui.outline,
  org.eclipse.elk.graph.text.ui.quickfix
-Bundle-Activator: org.eclipse.elk.graph.text.ui.internal.TextActivator
+Bundle-Activator: org.eclipse.elk.graph.text.ui.ElkGraphTextUiActivator
