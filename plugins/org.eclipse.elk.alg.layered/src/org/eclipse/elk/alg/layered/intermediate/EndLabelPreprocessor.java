@@ -8,6 +8,7 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,10 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
+import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover;
+import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover.OverlapRemovalDirection;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
 import org.eclipse.elk.core.util.nodespacing.cellsystem.HorizontalLabelAlignment;
 import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
@@ -98,12 +102,8 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
                     gatherLabels(port), labelLabelSpacing, verticalLayout);
         }
         
-        // Iterate over the created label cells and place them properly
-        for (LPort port : node.getPorts()) {
-            if (portLabelCells[port.id] != null) {
-                placeLabels(port, portLabelCells[port.id], edgeLabelSpacing);
-            }
-        }
+        // Actually go off and place them labels!
+        placeLabels(node, portLabelCells, labelLabelSpacing, edgeLabelSpacing, verticalLayout);
         
         // Turn the array into a list and save that in the node
         List<LabelCell> portLabelCellList = Arrays.stream(portLabelCells)
@@ -119,7 +119,8 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
     
     /**
      * Creates label cell for the given port with the given labels, if any. If there are no labels, this method returns
-     * {@code null}. The label cell will still have to have its alignment set up.
+     * {@code null}. The label cell will still have to have its alignment set up, but its size is already set to the
+     * size required to place its labels.
      */
     private LabelCell createConfiguredLabelCell(final List<LLabel> labels, final double labelLabelSpacing,
             final boolean verticalLayout) {
@@ -134,6 +135,11 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
         for (LLabel label : labels) {
             labelCell.addLabel(LGraphAdapters.adapt(label));
         }
+        
+        // Setup the label cell's size
+        ElkRectangle labelCellRect = labelCell.getCellRectangle();
+        labelCellRect.height = labelCell.getMinimumHeight();
+        labelCellRect.width = labelCell.getMinimumWidth();
         
         return labelCell;
     }
@@ -206,17 +212,39 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Label Placement
+    
+    /**
+     * Places end labels of all of the node's ports.
+     */
+    private void placeLabels(final LNode node, final LabelCell[] portLabelCells, final double labelLabelSpacing,
+            final double edgeLabelSpacing, final boolean verticalLayout) {
+        
+        // First, place them as we usually would. This step can result in overlaps for northern / southern labels
+        // (for horizontal layout directions) or for eastern / western labels (for vertical layout directions).
+        EnumSet<PortSide> portSidesWithLabels = EnumSet.noneOf(PortSide.class);
+        for (LPort port : node.getPorts()) {
+            if (portLabelCells[port.id] != null) {
+                placeLabels(port, portLabelCells[port.id], edgeLabelSpacing);
+                portSidesWithLabels.add(port.getSide());
+            }
+        }
+        
+        // If there are ports on the problematic sides, go ahead and remove overlaps between them
+        if (verticalLayout) {
+            removeLabelOverlaps(node, portLabelCells, PortSide.EAST, 2 * labelLabelSpacing, edgeLabelSpacing);
+            removeLabelOverlaps(node, portLabelCells, PortSide.WEST, 2 * labelLabelSpacing, edgeLabelSpacing);
+        } else {
+            removeLabelOverlaps(node, portLabelCells, PortSide.NORTH, 2 * labelLabelSpacing, edgeLabelSpacing);
+            removeLabelOverlaps(node, portLabelCells, PortSide.SOUTH, 2 * labelLabelSpacing, edgeLabelSpacing);
+        }
+    }
 
     /**
      * Places the edge end labels that are to be placed near the given port.
      */
     private void placeLabels(final LPort port, final LabelCell labelCell, final double edgeLabelSpacing) {
-        // Setup the cell's cell rectangle
-        ElkRectangle labelCellRect = labelCell.getCellRectangle();
-        labelCellRect.height = labelCell.getMinimumHeight();
-        labelCellRect.width = labelCell.getMinimumWidth();
-        
         // Some necessary position information
+        ElkRectangle labelCellRect = labelCell.getCellRectangle();
         KVector nodeSize = port.getNode().getSize();
         LMargin nodeMargin = port.getNode().getMargin();
         KVector portPos = port.getPosition();
@@ -305,6 +333,58 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
             break;
         }
     }
+
+    /**
+     * Calls the rectangle overlap removal code to remove overlaps between end labels of edges connected to ports on
+     * the given sides.
+     */
+    private void removeLabelOverlaps(final LNode node, final LabelCell[] portLabelCells, final PortSide portSide,
+            final double labelLabelSpacing, final double edgeLabelSpacing) {
+        
+        RectangleStripOverlapRemover overlapRemover = RectangleStripOverlapRemover
+                .createForDirection(portSideToOverlapRemovalDirection(portSide))
+                .withGap(labelLabelSpacing)
+                .withStartCoordinate(calculateOverlapStartCoordinate(node, portSide, edgeLabelSpacing));
+        
+        // Gather the rectangles
+        for (LPort port : node.getPorts(portSide)) {
+            if (portLabelCells[port.id] != null) {
+                ElkRectangle labelCellRect = portLabelCells[port.id].getCellRectangle();
+                assert labelCellRect.height > 0 && labelCellRect.width > 0;
+                
+                overlapRemover.addRectangle(labelCellRect);
+            }
+        }
+        
+        // Remove overlaps. Since we have stuffed the original label cell rectangles into this thing, we won't evern
+        // have to apply or post-process anything. The marvels of modern technology.
+        overlapRemover.removeOverlaps();
+    }
+    
+    /**
+     * Calculates the start coordinate to use for overlap removal on the given port side.
+     */
+    private double calculateOverlapStartCoordinate(final LNode node, final PortSide portSide,
+            final double edgeLabelSpacing) {
+        
+        KVector nodeSize = node.getSize();
+        LMargin nodeMargin = node.getMargin();
+        
+        switch (portSide) {
+        case NORTH:
+            return -nodeMargin.top - edgeLabelSpacing;
+        case SOUTH:
+            return nodeSize.y + nodeMargin.bottom + edgeLabelSpacing;
+        case EAST:
+            return nodeSize.x + nodeMargin.right + edgeLabelSpacing;
+        case WEST:
+            return -nodeMargin.left - edgeLabelSpacing;
+        default:
+            // Should never happen
+            assert false;
+            return 0;
+        }
+    }
     
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -355,11 +435,27 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
      * Returns the maximum thickness of all edges incident to the port.
      */
     private double maxEdgeThickness(final LPort port) {
-//        return StreamSupport.stream(port.getConnectedEdges().spliterator(), false)
-//                .mapToDouble(edge -> edge.getProperty(LayeredOptions.EDGE_THICKNESS))
-//                .max()
-//                .getAsDouble();
         return port.getProperty(InternalProperties.MAX_EDGE_THICKNESS);
+    }
+    
+    /**
+     * Returns the overlap removal direction appropriate for the given port side.
+     */
+    private OverlapRemovalDirection portSideToOverlapRemovalDirection(final PortSide portSide) {
+        switch (portSide) {
+        case NORTH:
+            return OverlapRemovalDirection.UP;
+        case SOUTH:
+            return OverlapRemovalDirection.DOWN;
+        case EAST:
+            return OverlapRemovalDirection.RIGHT;
+        case WEST:
+            return OverlapRemovalDirection.LEFT;
+        default:
+            // Shouldn't happen
+            assert false;
+            return null;
+        }
     }
 
 }
