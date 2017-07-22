@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2015 Kiel University and others.
+ * Copyright (c) 2012, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * <p>
- * This intermediate processor is used to select the side of port and edge labels. It is chosen
- * between the sides {@code UP} and {@code DOWN} based on different strategies selected by a layout
- * option.
- * </p>
+ * <p>Decides for each edge label whether to place it above or below its respective edge. How the decision is made
+ * depends on the active edge label side selection strategy.</p>
  * 
  * <dl>
  *   <dt>Precondition:</dt>
@@ -59,12 +56,10 @@ import com.google.common.collect.Maps;
  *     <dd>{@link SubgraphOrderingProcessor}</dd>
  * </dl>
  * 
- * @author jjc
- * @kieler.design proposed by cds
- * @kieler.rating proposed yellow by cds
+ * @see EdgeLabelSideSelection
  */
 public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
-
+    
     private static final LabelSide DEFAULT_LABEL_SIDE = LabelSide.BELOW;
 
     /**
@@ -79,16 +74,16 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         
         switch (mode) {
         case ALWAYS_UP:
-            alwaysUp(nodes);
+            sameSide(nodes, LabelSide.ABOVE);
             break;
         case ALWAYS_DOWN:
-            alwaysDown(nodes);
+            sameSide(nodes, LabelSide.BELOW);
             break;
         case DIRECTION_UP:
-            directionUp(nodes);
+            basedOnDirection(nodes, LabelSide.ABOVE);
             break;
         case DIRECTION_DOWN:
-            directionDown(nodes);
+            basedOnDirection(nodes, LabelSide.BELOW);
             break;
         case SMART:
             smart(nodes);
@@ -129,79 +124,44 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
     
     
     ////////////////////////////////////////////////////////////////////////////////////////
-    // Placement Strategies
-
+    // Simple Placement Strategies
+    
     /**
-     * Places all labels above their respective edge.
-     * 
-     * @param nodes all nodes of the graph
+     * Configures all labels to be placed on the given side.
      */
-    private void alwaysUp(final Iterable<LNode> nodes) {
+    private void sameSide(final Iterable<LNode> nodes, final LabelSide labelSide) {
         for (LNode node : nodes) {
             if (node.getType() == NodeType.LABEL) {
-                node.setProperty(InternalProperties.LABEL_SIDE, LabelSide.ABOVE);
+                node.setProperty(InternalProperties.LABEL_SIDE, labelSide);
             }
             
             for (LEdge edge : node.getOutgoingEdges()) {
-                applyLabelSide(edge, LabelSide.ABOVE);
+                applyLabelSide(edge, labelSide);
             }
         }
     }
-
+    
     /**
-     * Places all labels below their respective edge.
-     * 
-     * @param nodes all nodes of the graph
+     * Configures all labels to be placed according to their edge's direction. If their edge points right, the labels
+     * will be placed on the side passed to this method. Otherwise, they will be placed on the opposite side.
      */
-    private void alwaysDown(final Iterable<LNode> nodes) {
+    private void basedOnDirection(final Iterable<LNode> nodes, final LabelSide sideForRightwardEdges) {
         for (LNode node : nodes) {
             if (node.getType() == NodeType.LABEL) {
-                node.setProperty(InternalProperties.LABEL_SIDE, LabelSide.BELOW);
-            }
-            
-            for (LEdge edge : node.getOutgoingEdges()) {
-                applyLabelSide(edge, LabelSide.BELOW);
-            }
-        }
-    }
-
-    /**
-     * Places all labels above their respective edge if it points right, and below if it points left.
-     * 
-     * @param nodes all nodes of the graph
-     */
-    private void directionUp(final Iterable<LNode> nodes) {
-        for (LNode node : nodes) {
-            if (node.getType() == NodeType.LABEL) {
-                LabelSide side = doesEdgePointRight(node) ? LabelSide.ABOVE : LabelSide.BELOW;
+                LabelSide side = doesEdgePointRight(node) ? sideForRightwardEdges : sideForRightwardEdges.opposite();
                 node.setProperty(InternalProperties.LABEL_SIDE, side);
             }
             
             for (LEdge edge : node.getOutgoingEdges()) {
-                LabelSide side = doesEdgePointRight(edge) ? LabelSide.ABOVE : LabelSide.BELOW;
+                LabelSide side = doesEdgePointRight(edge) ? sideForRightwardEdges : sideForRightwardEdges.opposite();
                 applyLabelSide(edge, side);
             }
         }
     }
-
-    /**
-     * Places all labels below their respective edge if it points right, and above if it points left.
-     * 
-     * @param nodes all nodes of the graph
-     */
-    private void directionDown(final Iterable<LNode> nodes) {
-        for (LNode node : nodes) {
-            if (node.getType() == NodeType.LABEL) {
-                LabelSide side = doesEdgePointRight(node) ? LabelSide.BELOW : LabelSide.ABOVE;
-                node.setProperty(InternalProperties.LABEL_SIDE, side);
-            }
-            
-            for (LEdge edge : node.getOutgoingEdges()) {
-                LabelSide side = doesEdgePointRight(edge) ? LabelSide.BELOW : LabelSide.ABOVE;
-                applyLabelSide(edge, side);
-            }
-        }
-    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Smart Placement Strategy
 
     /**
      * Chooses label sides depending on certain patterns.

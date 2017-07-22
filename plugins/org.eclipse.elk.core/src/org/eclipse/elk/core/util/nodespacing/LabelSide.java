@@ -15,8 +15,6 @@ import org.eclipse.elk.graph.properties.Property;
 
 /**
  * Enumeration for the definition of a side of the edge to place the (edge) label to.
- * 
- * @author jjc
  */
 public enum LabelSide {
     /** The label's placement side hasn't been decided yet. */
@@ -33,4 +31,19 @@ public enum LabelSide {
      */
     public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
             "org.eclipse.elk.labelSide", LabelSide.UNKNOWN);
+    
+    
+    /**
+     * Returns the side opposite to the one this method is called on. {@link #UNKNOWN} is mapped to itself.
+     */
+    public LabelSide opposite() {
+        switch (this) {
+        case ABOVE:
+            return BELOW;
+        case BELOW:
+            return ABOVE;
+        default:
+            return UNKNOWN;
+        }
+    }
 }
