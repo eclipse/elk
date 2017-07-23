@@ -23,7 +23,6 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection;
-import org.eclipse.elk.alg.layered.options.InLayerConstraint;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -121,7 +120,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
                     LabelSide side = doesEdgePointRight(node)
                             ? sideForRightwardEdges
                             : sideForRightwardEdges.opposite();
-                    node.setProperty(InternalProperties.LABEL_SIDE, side);
+                    applyLabelSide(node, side);
                 }
                 
                 for (LEdge edge : node.getOutgoingEdges()) {
@@ -146,8 +145,8 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         Deque<LNode> dummyNodeQueue = new ArrayDeque<>();
         
         for (Layer layer : graph) {
-            // The first call to any method 
-            InLayerConstraint inLayerPosition = InLayerConstraint.TOP;
+            // The first call to any method
+            boolean topGroup = true;
             int labelDummiesInQueue = 0;
             
             for (LNode node : layer) {
@@ -162,44 +161,42 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
                 case NORMAL:
                     smartForRegularNode(node, defaultSide);
                     
-                    // Reset things
-                    inLayerPosition = InLayerConstraint.NONE;
-                    labelDummiesInQueue = 0;
-                    
                     // Intended fall-through to handle the most recent dummy node run, if any
                     
                 default:
                     // Empty dummy node queue
                     if (!dummyNodeQueue.isEmpty()) {
                         smartForConsecutiveDummyNodeRun(
-                                dummyNodeQueue, labelDummiesInQueue, inLayerPosition, defaultSide);
-                        
-                        // Reset things
-                        inLayerPosition = InLayerConstraint.NONE;
-                        labelDummiesInQueue = 0;
+                                dummyNodeQueue, labelDummiesInQueue, topGroup, false, defaultSide);
                     }
+                    
+                    // Reset things
+                    topGroup = false;
+                    labelDummiesInQueue = 0;
                 }
             }
             
             // Do stuff with the nodes in the queue
             if (!dummyNodeQueue.isEmpty()) {
                 smartForConsecutiveDummyNodeRun(
-                        dummyNodeQueue, labelDummiesInQueue, InLayerConstraint.BOTTOM, defaultSide);
+                        dummyNodeQueue, labelDummiesInQueue, topGroup, true, defaultSide);
             }
         }
     }
     
     /**
      * Assigns label sides to all label dummies in the given queue and empties the queue afterwards. The queue is
-     * expected to not be empty.
+     * expected to not be empty. We also want to know whether this group consists of the topmost or of the bottommost
+     * nodes in their layer (both can be true simultaneously). Decisions will be made, and they might depend on these
+     * information.
      */
     private void smartForConsecutiveDummyNodeRun(final Deque<LNode> dummyNodes, final int labelDummyCount,
-            final InLayerConstraint inLayerPosition, final LabelSide defaultSide) {
+            final boolean topGroup, final boolean bottomGroup, final LabelSide defaultSide) {
         
         assert !dummyNodes.isEmpty();
         
         // We will work our way through a number of different cases to optimize stuff
-        if (inLayerPosition == InLayerConstraint.TOP
+        if (topGroup
                 && labelDummyCount == 1
                 && dummyNodes.peek().getType() == NodeType.LABEL) {
             
@@ -207,7 +204,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
             // dummy is at the top of the run; select the ABOVE side to ensure that its edge doesn't get too long
             applyLabelSide(dummyNodes.peek(), LabelSide.ABOVE);
             
-        } else if (inLayerPosition == InLayerConstraint.BOTTOM
+        } else if (bottomGroup
                 && labelDummyCount == 1
                 && dummyNodes.peekLast().getType() == NodeType.LABEL) {
             
