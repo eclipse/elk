@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Queue;
 
@@ -22,6 +23,7 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection;
+import org.eclipse.elk.alg.layered.options.InLayerConstraint;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -135,37 +137,54 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
     
     ////////////////////////////////////////////////////////////////////////////////////////
     // Smart Placement Strategy
-
+    
     /**
      * Chooses label sides depending on certain patterns. If in doubt, uses the given default side.
      */
     private void smart(final LGraph graph, final LabelSide defaultSide) {
         // We will collect consecutive runs of certain dummy nodes while we iterate through layers
-        Queue<LNode> dummyNodeQueue = new ArrayDeque<>();
+        Deque<LNode> dummyNodeQueue = new ArrayDeque<>();
         
         for (Layer layer : graph) {
+            // The first call to any method 
+            InLayerConstraint inLayerPosition = InLayerConstraint.TOP;
+            int labelDummiesInQueue = 0;
+            
             for (LNode node : layer) {
                 switch (node.getType()) {
-                case LONG_EDGE:
                 case LABEL:
+                    labelDummiesInQueue++;
+                    // Intended fall-through to add the label dummy to the queue
+                case LONG_EDGE:
                     dummyNodeQueue.add(node);
                     break;
                     
                 case NORMAL:
                     smartForRegularNode(node, defaultSide);
-                    // Intended fall-through to handling the most recent dummy node run, if any
+                    
+                    // Reset things
+                    inLayerPosition = InLayerConstraint.NONE;
+                    labelDummiesInQueue = 0;
+                    
+                    // Intended fall-through to handle the most recent dummy node run, if any
                     
                 default:
                     // Empty dummy node queue
                     if (!dummyNodeQueue.isEmpty()) {
-                        smartForConsecutiveDummyNodeRun(dummyNodeQueue, defaultSide);
+                        smartForConsecutiveDummyNodeRun(
+                                dummyNodeQueue, labelDummiesInQueue, inLayerPosition, defaultSide);
+                        
+                        // Reset things
+                        inLayerPosition = InLayerConstraint.NONE;
+                        labelDummiesInQueue = 0;
                     }
                 }
             }
             
             // Do stuff with the nodes in the queue
             if (!dummyNodeQueue.isEmpty()) {
-                smartForConsecutiveDummyNodeRun(dummyNodeQueue, defaultSide);
+                smartForConsecutiveDummyNodeRun(
+                        dummyNodeQueue, labelDummiesInQueue, InLayerConstraint.BOTTOM, defaultSide);
             }
         }
     }
@@ -174,21 +193,43 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
      * Assigns label sides to all label dummies in the given queue and empties the queue afterwards. The queue is
      * expected to not be empty.
      */
-    private void smartForConsecutiveDummyNodeRun(final Queue<LNode> dummyNodes, final LabelSide defaultSide) {
+    private void smartForConsecutiveDummyNodeRun(final Deque<LNode> dummyNodes, final int labelDummyCount,
+            final InLayerConstraint inLayerPosition, final LabelSide defaultSide) {
+        
         assert !dummyNodes.isEmpty();
         
-        if (dummyNodes.size() == 2) {
-            // Unambiguous placement
+        // We will work our way through a number of different cases to optimize stuff
+        if (inLayerPosition == InLayerConstraint.TOP
+                && labelDummyCount == 1
+                && dummyNodes.peek().getType() == NodeType.LABEL) {
+            
+            // The current run of dummy nodes is at the top of the layer, has only a single label dummy, and that label
+            // dummy is at the top of the run; select the ABOVE side to ensure that its edge doesn't get too long
+            applyLabelSide(dummyNodes.peek(), LabelSide.ABOVE);
+            
+        } else if (inLayerPosition == InLayerConstraint.BOTTOM
+                && labelDummyCount == 1
+                && dummyNodes.peekLast().getType() == NodeType.LABEL) {
+            
+            // Symmetric to the previous case, only at the bottom of the layer
+            applyLabelSide(dummyNodes.peekLast(), LabelSide.BELOW);
+            
+        } else if (dummyNodes.size() == 2) {
+            // There's only a run of two edges, so place the label of the first above its edge, and the label of the
+            // second below its edge
             applyLabelSide(dummyNodes.poll(), LabelSide.ABOVE);
             applyLabelSide(dummyNodes.poll(), LabelSide.BELOW);
+            
         } else {
-            // Same placement for everyone
+            // None of the special case, so same placement for everyone in a noble attempt to avoid ambiguity
             for (LNode dummyNode : dummyNodes) {
                 applyLabelSide(dummyNode, defaultSide);
             }
             
-            dummyNodes.clear();
         }
+        
+        // Ensure the list is cleared
+        dummyNodes.clear();
     }
     
     /**
