@@ -115,6 +115,16 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 swapCandidate = findWidestLayerSwapCandidate(
                         labelDummy, layerWidths, leftLongEdgeDummies, rightLongEdgeDummies);
                 break;
+            
+            case HEAD_LAYER:
+                swapCandidate = findEndLayerSwapCandidate(
+                        labelDummy, true, leftLongEdgeDummies, rightLongEdgeDummies);
+                break;
+                
+            case TAIL_LAYER:
+                swapCandidate = findEndLayerSwapCandidate(
+                        labelDummy, false, leftLongEdgeDummies, rightLongEdgeDummies);
+                break;
             }
             
             // If we have a swap candidate, swap the two
@@ -284,6 +294,62 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         
         // We don't have a swap candidate
         return null;
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // End Layer
+
+    /**
+     * Find a long edge dummy to swap the label dummy with. This method simply returns the dummy node closest to the
+     * original edge's head or tail. It does take into account whether the edge is reversed or not.
+     * 
+     * @param labelDummy
+     *            the label dummy to find a swap candidate for.
+     * @param headLayer
+     *            {@code true} if the dummy node closest to the edge's head should be returned, {@code false} if the
+     *            dummy node closes to the edge's tail should be returned.
+     * @param leftLongEdgeDummies
+     *            long edge dummies left of the label dummy.
+     * @param rightLongEdgeDummies
+     *            long edge dummies right of the label dummy.
+     * @return long edge dummy to swap the label dummy with or {@code null}.
+     */
+    private LNode findEndLayerSwapCandidate(final LNode labelDummy, final boolean headLayer,
+            final List<LNode> leftLongEdgeDummies, final List<LNode> rightLongEdgeDummies) {
+        
+        boolean reversed = isPartOfReversedEdge(labelDummy);
+        
+        if ((headLayer && !reversed) || (!headLayer && reversed)) {
+            // If we already are in the head layer, don't bother
+            if (rightLongEdgeDummies.isEmpty()) {
+                return null;
+            } else {
+                return rightLongEdgeDummies.get(rightLongEdgeDummies.size() - 1);
+            }
+        } else {
+            // If we already are in the tail layer, don't bother
+            if (leftLongEdgeDummies.isEmpty()) {
+                return null;
+            } else {
+                return leftLongEdgeDummies.get(0);
+            }
+        }
+    }
+    
+    /**
+     * Checks if the given label dummy node is part of a reversed edge.
+     */
+    private boolean isPartOfReversedEdge(final LNode labelDummy) {
+        assert labelDummy.getType() == NodeType.LABEL;
+        assert labelDummy.getIncomingEdges().iterator().hasNext();
+        assert labelDummy.getOutgoingEdges().iterator().hasNext();
+        
+        // Find incoming and outgoing edge
+        LEdge incoming = labelDummy.getIncomingEdges().iterator().next();
+        LEdge outgoing = labelDummy.getOutgoingEdges().iterator().next();
+        
+        return incoming.getProperty(InternalProperties.REVERSED) || outgoing.getProperty(InternalProperties.REVERSED);
     }
     
     

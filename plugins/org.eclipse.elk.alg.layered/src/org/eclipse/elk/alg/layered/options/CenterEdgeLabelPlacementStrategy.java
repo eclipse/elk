@@ -16,12 +16,22 @@ package org.eclipse.elk.alg.layered.options;
  */
 public enum CenterEdgeLabelPlacementStrategy {
     
-    /** Consider all layers a labeled edge crosses and place its label dummy in the one at the median spot. */
+    /** Consider all layers a labeled edge crosses and place its labels in the one at the median spot. */
     MEDIAN_LAYER,
-    /** Place a label dummy in the widest of all layers its edge crosses. */
+    /** Place labels in the widest of all layers its edge crosses. */
     WIDEST_LAYER,
-    /** Places the label dummy in a layer that we think will be closest to the edge's physical center later. */
-    CENTER_LAYER;
+    /** Places labels in a layer that we think will be closest to the edge's physical center later. */
+    CENTER_LAYER,
+    /**
+     * Places labels in the layer closest to the edge's tail. This is similar to simply defining tail labels, but is a
+     * bit more space-efficient.
+     */
+    TAIL_LAYER,
+    /**
+     * Places labels in the layer closest to the edge's head. This is similar to simply defining tail labels, but is a
+     * bit more space-efficient.
+     */
+    HEAD_LAYER;
     
     
     /**
