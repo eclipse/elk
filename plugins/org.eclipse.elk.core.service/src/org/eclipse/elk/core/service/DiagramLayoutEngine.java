@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.service;
 
@@ -70,10 +67,6 @@ import com.google.inject.Singleton;
  * <p>Subclasses of this class can be bound in an {@link ILayoutSetup} injector for customization.
  * Note that this class is marked as {@link Singleton}, which means that exactly one instance is
  * created for each injector, i.e. for each registered {@link ILayoutSetup}.</p>
- * 
- * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2012-07-05 review KI-18 by cmot, sgu
  */
 @Singleton
 public class DiagramLayoutEngine {
@@ -393,7 +386,10 @@ public class DiagramLayoutEngine {
                         stopEarlierOperations(target, getTimestamp());
                     }
                     
-                    monitor.done();
+                    // Be sure that the monitor is closed
+                    if (monitor.isRunning()) {
+                        monitor.done();
+                    }
                 } else {
                     status = new Status(Status.WARNING, ElkServicePlugin.PLUGIN_ID,
                             "Unable to build the layout graph from the given selection.");
