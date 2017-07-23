@@ -76,8 +76,11 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         case DIRECTION_DOWN:
             basedOnDirection(layeredGraph, LabelSide.BELOW);
             break;
-        case SMART:
-            smart(layeredGraph);
+        case SMART_UP:
+            smart(layeredGraph, LabelSide.ABOVE);
+            break;
+        case SMART_DOWN:
+            smart(layeredGraph, LabelSide.BELOW);
             break;
         }
 
@@ -134,9 +137,9 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
     // Smart Placement Strategy
 
     /**
-     * Chooses label sides depending on certain patterns.
+     * Chooses label sides depending on certain patterns. If in doubt, uses the given default side.
      */
-    private void smart(final LGraph graph) {
+    private void smart(final LGraph graph, final LabelSide defaultSide) {
         // We will collect consecutive runs of certain dummy nodes while we iterate through layers
         Queue<LNode> dummyNodeQueue = new ArrayDeque<>();
         
@@ -149,32 +152,29 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
                     break;
                     
                 case NORMAL:
-                    smartForRegularNode(node);
+                    smartForRegularNode(node, defaultSide);
                     // Intended fall-through to handling the most recent dummy node run, if any
                     
                 default:
                     // Empty dummy node queue
                     if (!dummyNodeQueue.isEmpty()) {
-                        smartForConsecutiveDummyNodeRun(dummyNodeQueue);
+                        smartForConsecutiveDummyNodeRun(dummyNodeQueue, defaultSide);
                     }
                 }
             }
             
             // Do stuff with the nodes in the queue
             if (!dummyNodeQueue.isEmpty()) {
-                smartForConsecutiveDummyNodeRun(dummyNodeQueue);
+                smartForConsecutiveDummyNodeRun(dummyNodeQueue, defaultSide);
             }
         }
     }
-    
-    /** The default side that we will apply when we have no idea what we're doing. */
-    private static final LabelSide DEFAULT_LABEL_SIDE = LabelSide.BELOW;
     
     /**
      * Assigns label sides to all label dummies in the given queue and empties the queue afterwards. The queue is
      * expected to not be empty.
      */
-    private void smartForConsecutiveDummyNodeRun(final Queue<LNode> dummyNodes) {
+    private void smartForConsecutiveDummyNodeRun(final Queue<LNode> dummyNodes, final LabelSide defaultSide) {
         assert !dummyNodes.isEmpty();
         
         if (dummyNodes.size() == 2) {
@@ -184,7 +184,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         } else {
             // Same placement for everyone
             for (LNode dummyNode : dummyNodes) {
-                applyLabelSide(dummyNode, DEFAULT_LABEL_SIDE);
+                applyLabelSide(dummyNode, defaultSide);
             }
             
             dummyNodes.clear();
@@ -195,7 +195,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
      * Assigns label sides to all end labels incident to this node. The assigned label sides depend on how many ports
      * there are on any given side.
      */
-    private void smartForRegularNode(final LNode node) {
+    private void smartForRegularNode(final LNode node, final LabelSide defaultSide) {
         // Iterate over the node's list of ports on each side. Remember the ones that have edges connected to them
         // and make the label side decision based on how many such ports there are
         Queue<List<LLabel>> endLabelQueue = new ArrayDeque<>(node.getPorts().size());
@@ -205,7 +205,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         for (LPort port : node.getPorts()) {
             if (port.getSide() != currentPortSide) {
                 if (!endLabelQueue.isEmpty()) {
-                    smartForRegularNodePortEndLabels(endLabelQueue, currentPortSide);
+                    smartForRegularNodePortEndLabels(endLabelQueue, currentPortSide, defaultSide);
                 }
                 
                 endLabelQueue.clear();
@@ -221,14 +221,16 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
 
         // Clear remaining ports
         if (!endLabelQueue.isEmpty()) {
-            smartForRegularNodePortEndLabels(endLabelQueue, currentPortSide);
+            smartForRegularNodePortEndLabels(endLabelQueue, currentPortSide, defaultSide);
         }
     }
     
     /**
      * Handle the end labels currently in the queue (which may get modified in the process).
      */
-    private void smartForRegularNodePortEndLabels(final Queue<List<LLabel>> endLabelQueue, final PortSide portSide) {
+    private void smartForRegularNodePortEndLabels(final Queue<List<LLabel>> endLabelQueue, final PortSide portSide,
+            final LabelSide defaultSide) {
+        
         assert !endLabelQueue.isEmpty();
         assert portSide != null;
         
@@ -243,7 +245,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
             }
         } else {
             for (List<LLabel> labelList : endLabelQueue) {
-                applyLabelSide(labelList, DEFAULT_LABEL_SIDE);
+                applyLabelSide(labelList, defaultSide);
             }
         }
     }

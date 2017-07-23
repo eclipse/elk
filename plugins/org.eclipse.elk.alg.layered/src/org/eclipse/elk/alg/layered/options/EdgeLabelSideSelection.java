@@ -25,12 +25,14 @@ public enum EdgeLabelSideSelection {
     DIRECTION_UP,
     /** Labels are always placed below their edge if the edge points leftwards, or above if it doesn't. */
     DIRECTION_DOWN,
-    /** Determine the side automatically. */
-    SMART;
+    /** Determine the side automatically, default to UP if in doubt. */
+    SMART_UP,
+    /** Determine the side automatically, default to DOWN if in doubt. */
+    SMART_DOWN;
     
     /**
      * Transposes this label side selection strategy and returns the result. Downward selections are turned upwards
-     * while upward selections are turned downwards. The smart selection stays smart.
+     * while upward selections are turned downwards.
      *
      * @return the transformed edge label side selection.
      */
@@ -44,8 +46,13 @@ public enum EdgeLabelSideSelection {
             return DIRECTION_DOWN;
         case DIRECTION_DOWN:
             return DIRECTION_UP;
+        case SMART_UP:
+            return SMART_DOWN;
+        case SMART_DOWN:
+            return SMART_UP;
         default:
-            return SMART;
+            assert false;
+            return null;
         }
     }
 
