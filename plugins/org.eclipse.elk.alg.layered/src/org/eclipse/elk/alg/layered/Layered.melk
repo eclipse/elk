@@ -733,7 +733,7 @@ group edgeLabels {
     option sideSelection: EdgeLabelSideSelection {
         label "Edge Label Side Selection"
         description "Method to decide on edge label sides."
-        default = EdgeLabelSideSelection.ALWAYS_DOWN
+        default = EdgeLabelSideSelection.SMART_DOWN
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.edgeLabelSideSelection
     }
