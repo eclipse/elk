@@ -240,35 +240,26 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
             final LabelSide defaultSide) {
         
         // We keep track of runs of consecutive label dummy nodes that connect the same two nodes
-        List<LNode> labelDummyRun = Lists.newArrayListWithCapacity(labelDummyCount);
+        List<LNode> labelDummyRun = Lists.newArrayListWithCapacity(dummyNodes.size());
         LNode prevLongEdgeSource = null;
         LNode prevLongEdgeTarget = null;
         
         for (LNode currentDummy : dummyNodes) {
-            // What we do depends on what kind of dummy node we have here
-            if (currentDummy.getType() == NodeType.LABEL) {
-                // Check if we are continuing a previous run
-                LNode currLongEdgeSource = getLongEdgeEndNode(currentDummy, true);
-                LNode currLongEdgeTarget = getLongEdgeEndNode(currentDummy, false);
-                
-                if ((prevLongEdgeSource != null && prevLongEdgeSource != currLongEdgeSource)
-                        || (prevLongEdgeTarget != null && prevLongEdgeTarget != currLongEdgeTarget)) {
-                    
-                    // We do not continue the previous run since the current label dummy does not connect the same
-                    // nodes as the previous one; apply sides
-                    applyLabelSidesToLabelDummyRun(labelDummyRun, defaultSide);                    
-                }
-                
-                labelDummyRun.add(currentDummy);
-                prevLongEdgeSource = currLongEdgeSource;
-                prevLongEdgeTarget = currLongEdgeTarget;
-            } else {
-                // We're breaking the current run because the current node is not a label dummy
+            assert currentDummy.getType() == NodeType.LABEL || currentDummy.getType() == NodeType.LONG_EDGE;
+            
+            // Check if we are continuing a previous run
+            LNode currLongEdgeSource = getLongEdgeEndNode(currentDummy, true);
+            LNode currLongEdgeTarget = getLongEdgeEndNode(currentDummy, false);
+            
+            if (prevLongEdgeSource != currLongEdgeSource || prevLongEdgeTarget != currLongEdgeTarget) {
+                // We're starting a new run
                 applyLabelSidesToLabelDummyRun(labelDummyRun, defaultSide);
                 
-                prevLongEdgeSource = null;
-                prevLongEdgeTarget = null;
+                prevLongEdgeSource = currLongEdgeSource;
+                prevLongEdgeTarget = currLongEdgeTarget;
             }
+            
+            labelDummyRun.add(currentDummy);
         }
         
         // Assign label sides to whatever dummy nodes are left
