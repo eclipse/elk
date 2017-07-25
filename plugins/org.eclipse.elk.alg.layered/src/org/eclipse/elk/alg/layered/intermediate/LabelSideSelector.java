@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Queue;
@@ -29,6 +30,8 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.LabelSide;
+
+import com.google.common.collect.Lists;
 
 /**
  * <p>Decides for each edge label whether to place it above or below its respective edge. How the decision is made
@@ -218,17 +221,93 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
             applyLabelSide(dummyNodes.poll(), LabelSide.BELOW);
             
         } else {
-            // None of the special case, so same placement for everyone in a noble attempt to avoid ambiguity
-            for (LNode dummyNode : dummyNodes) {
-                applyLabelSide(dummyNode, defaultSide);
-            }
-            
+            // Not one of the special cases above. Iterate over the dummy nodes and assign the default label side,
+            // except if we find two consecutive label dummies that connect the same nodes (tight loops that can
+            // happen in control flow diagrams)
+            applyForDummyNodeRunWithSimpleLoops(dummyNodes, labelDummyCount, defaultSide);
         }
         
         // Ensure the list is cleared
         dummyNodes.clear();
     }
     
+    /**
+     * Takes a collection of dummy nodes that contains a given number of label dummy nodes and applies label sides to
+     * label dummy nodes in the collection. Usually, that will be the default side. If, however, we find exactly two
+     * consecutive label dummies that connect the same regular nodes, that's going to be a special case.
+     */
+    private void applyForDummyNodeRunWithSimpleLoops(final Collection<LNode> dummyNodes, final int labelDummyCount,
+            final LabelSide defaultSide) {
+        
+        // We keep track of runs of consecutive label dummy nodes that connect the same two nodes
+        List<LNode> labelDummyRun = Lists.newArrayListWithCapacity(labelDummyCount);
+        LNode prevLongEdgeSource = null;
+        LNode prevLongEdgeTarget = null;
+        
+        for (LNode currentDummy : dummyNodes) {
+            // What we do depends on what kind of dummy node we have here
+            if (currentDummy.getType() == NodeType.LABEL) {
+                // Check if we are continuing a previous run
+                LNode currLongEdgeSource = getLongEdgeEndNode(currentDummy, true);
+                LNode currLongEdgeTarget = getLongEdgeEndNode(currentDummy, false);
+                
+                if ((prevLongEdgeSource != null && prevLongEdgeSource != currLongEdgeSource)
+                        || (prevLongEdgeTarget != null && prevLongEdgeTarget != currLongEdgeTarget)) {
+                    
+                    // We do not continue the previous run since the current label dummy does not connect the same
+                    // nodes as the previous one; apply sides
+                    applyLabelSidesToLabelDummyRun(labelDummyRun, defaultSide);                    
+                }
+                
+                labelDummyRun.add(currentDummy);
+                prevLongEdgeSource = currLongEdgeSource;
+                prevLongEdgeTarget = currLongEdgeTarget;
+            } else {
+                // We're breaking the current run because the current node is not a label dummy
+                applyLabelSidesToLabelDummyRun(labelDummyRun, defaultSide);
+                
+                prevLongEdgeSource = null;
+                prevLongEdgeTarget = null;
+            }
+        }
+        
+        // Assign label sides to whatever dummy nodes are left
+        applyLabelSidesToLabelDummyRun(labelDummyRun, defaultSide);
+    }
+    
+    /**
+     * Returns either the long edge source or target node of the given label dummy. May be, but shouldn't be
+     * {@code null}.
+     */
+    private LNode getLongEdgeEndNode(final LNode labelDummy, final boolean source) {
+        LPort endPort = labelDummy.getProperty(source
+                ? InternalProperties.LONG_EDGE_SOURCE
+                : InternalProperties.LONG_EDGE_TARGET);
+        
+        return endPort == null
+                ? null
+                : endPort.getNode();
+    }
+    
+    /**
+     * Applies label sides to the given list of consecutive dummy nodes and empties that list afterwards.
+     */
+    private void applyLabelSidesToLabelDummyRun(final List<LNode> labelDummyRun, final LabelSide defaultSide) {
+        if (!labelDummyRun.isEmpty()) {
+            // If the list contains exactly two label dummies, we place labels differently
+            if (labelDummyRun.size() == 2) {
+                applyLabelSide(labelDummyRun.get(0), LabelSide.ABOVE);
+                applyLabelSide(labelDummyRun.get(1), LabelSide.BELOW);
+            } else {
+                for (LNode dummyNode : labelDummyRun) {
+                    applyLabelSide(dummyNode, defaultSide);
+                }
+            }
+            
+            labelDummyRun.clear();
+        }
+    }
+
     /**
      * Assigns label sides to all end labels incident to this node. The assigned label sides depend on how many ports
      * there are on any given side.
