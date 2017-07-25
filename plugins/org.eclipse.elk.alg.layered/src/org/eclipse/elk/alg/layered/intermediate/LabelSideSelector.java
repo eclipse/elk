@@ -198,8 +198,9 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         
         assert !dummyNodes.isEmpty();
         
-        // We will work our way through a number of different cases to optimize stuff
+        // We distinguish a number of special cases whose rules seem rather complicated. 
         if (topGroup
+                && (!bottomGroup || dummyNodes.size() > 1)
                 && labelDummyCount == 1
                 && dummyNodes.peek().getType() == NodeType.LABEL) {
             
@@ -208,6 +209,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
             applyLabelSide(dummyNodes.peek(), LabelSide.ABOVE);
             
         } else if (bottomGroup
+                && (!topGroup || dummyNodes.size() > 1)
                 && labelDummyCount == 1
                 && dummyNodes.peekLast().getType() == NodeType.LABEL) {
             
