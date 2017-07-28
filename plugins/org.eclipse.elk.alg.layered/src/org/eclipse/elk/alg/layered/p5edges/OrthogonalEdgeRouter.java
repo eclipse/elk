@@ -92,6 +92,9 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
      *     
      *   - For edge labels:
      *     - LABEL_SIDE_SELECTOR
+     *     
+     *   - For end edge labels:
+     *     - END_LABEL_PREPROCESSOR
      * 
      * Before phase 5:
      * 
@@ -106,7 +109,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
      *     - LABEL_DUMMY_REMOVER
      *     
      *   - For end edge labels:
-     *     - END_LABEL_PROCESSOR
+     *     - END_LABEL_POSTPROCESSOR
      */
     
     /** additional processor dependencies for graphs with hyperedges. */
@@ -157,7 +160,8 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, L
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> END_EDGE_LABEL_PROCESSING_ADDITIONS =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
-            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_PROCESSOR);
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.END_LABEL_PREPROCESSOR)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_POSTPROCESSOR);
     
     /**
      * {@inheritDoc}

@@ -124,6 +124,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     SPLINE_SELF_LOOP_ROUTER,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
+    /** Place end labels of edges and extend node margins accordingly. */
+    END_LABEL_PREPROCESSOR,
     /** Adjusts the width of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
 
@@ -160,8 +162,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     FINAL_SPLINE_BENDPOINTS_CALCULATOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
-    /** Place end labels on edges. */
-    END_LABEL_PROCESSOR,
+    /** Assign correct coordinates to end labels. */
+    END_LABEL_POSTPROCESSOR,
     /** In hierarchical graphs, maps a child graph to its parent node. */
     HIERARCHICAL_NODE_RESIZER,
     /** Mirrors the graph to perform a right-to-left drawing. */
@@ -201,7 +203,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
         case BREAKING_POINT_REMOVER:
             return new BreakingPointRemover();
             
-
         case COMMENT_POSTPROCESSOR:
             return new CommentPostprocessor();
 
@@ -214,9 +215,12 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
             return new EdgeAndLayerConstraintEdgeReverser();
-
-        case END_LABEL_PROCESSOR:
-            return new EndLabelProcessor();
+            
+        case END_LABEL_POSTPROCESSOR:
+            return new EndLabelPostprocessor();
+            
+        case END_LABEL_PREPROCESSOR:
+            return new EndLabelPreprocessor();
             
         case FINAL_SPLINE_BENDPOINTS_CALCULATOR:
             return new FinalSplineBendpointsCalculator();

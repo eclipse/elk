@@ -47,9 +47,6 @@ import org.eclipse.elk.core.util.nodespacing.LabelSide;
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link HierarchicalPortOrthogonalEdgeRouter}</dd>
  * </dl>
- *
- * @author jjc
- * @kieler.rating yellow proposed cds
  */
 public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
 
@@ -59,12 +56,12 @@ public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy removal", 1);
         
-        double labelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_LABEL);
+        double edgeLabelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_LABEL);
+        double labelLabelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_LABEL_LABEL);
         Direction layoutDirection = layeredGraph.getProperty(LayeredOptions.DIRECTION);
         
         for (Layer layer : layeredGraph.getLayers()) {
-            // An iterator is necessary for traversing nodes, since
-            // dummy nodes might be removed
+            // An iterator is necessary for traversing nodes, since dummy nodes might be removed
             ListIterator<LNode> nodeIterator = layer.getNodes().listIterator();
             
             while (nodeIterator.hasNext()) {
@@ -74,30 +71,36 @@ public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
                     // First, place labels on position of dummy node 
                     LEdge originEdge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
                     double thickness = originEdge.getProperty(LayeredOptions.EDGE_THICKNESS).doubleValue();
+                    boolean labelsBelowEdge = node.getProperty(InternalProperties.LABEL_SIDE) == LabelSide.BELOW;
                     
                     KVector currLabelPos = new KVector(node.getPosition());
                     
                     // If the labels are to be placed below their edge, we need to move the first label's
                     // position down a bit to respect the label spacing
-                    if (node.getProperty(InternalProperties.LABEL_SIDE) == LabelSide.BELOW) {
-                        currLabelPos.y += thickness + labelSpacing;
+                    if (labelsBelowEdge) {
+                        currLabelPos.y += thickness + edgeLabelSpacing;
                     }
                     
                     // Calculate the space available for the placement of labels
                     KVector labelSpace = new KVector(
                             node.getSize().x,
-                            node.getSize().y - thickness - labelSpacing);
+                            node.getSize().y - thickness - edgeLabelSpacing);
                     
                     // Place labels
-                    List<LLabel> representedLabels =
-                            node.getProperty(InternalProperties.REPRESENTED_LABELS);
+                    List<LLabel> representedLabels = node.getProperty(InternalProperties.REPRESENTED_LABELS);
                     
                     if (layoutDirection.isVertical()) {
-                        placeLabelsForVerticalLayout(representedLabels, currLabelPos, labelSpacing,
+                        placeLabelsForVerticalLayout(
+                                representedLabels,
+                                currLabelPos,
+                                labelLabelSpacing,
                                 labelSpace,
-                                node.getProperty(InternalProperties.LABEL_SIDE) != LabelSide.ABOVE);
+                                labelsBelowEdge);
                     } else {
-                        placeLabelsForHorizontalLayout(representedLabels, currLabelPos, labelSpacing,
+                        placeLabelsForHorizontalLayout(
+                                representedLabels,
+                                currLabelPos,
+                                labelLabelSpacing,
                                 labelSpace);
                     }
                     

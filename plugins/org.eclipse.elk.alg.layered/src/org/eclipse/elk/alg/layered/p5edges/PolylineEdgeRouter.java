@@ -92,6 +92,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
      * Before phase 4:
      *   - For center edge labels:
      *     - LABEL_SIDE_SELECTOR
+     *     
+     *   - For end edge labels:
+     *     - END_LABEL_PREPROCESSOR
      * 
      * Before phase 5:
      *   - None.
@@ -104,7 +107,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
      *     - LABEL_DUMMY_REMOVER
      *     
      *   - For end edge labels:
-     *     - END_LABEL_PROCESSOR
+     *     - END_LABEL_POSTPROCESSOR
      */
     
     /** additional processor dependencies for graphs with possible inverted ports. */
@@ -130,7 +133,8 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> END_EDGE_LABEL_PROCESSING_ADDITIONS =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
-            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_PROCESSOR);
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.END_LABEL_PREPROCESSOR)
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_POSTPROCESSOR);
     
     
     /**

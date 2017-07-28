@@ -16,10 +16,10 @@ import org.eclipse.elk.alg.layered.LayeredLayoutProvider
 import org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.Direction
-import org.eclipse.elk.core.options.EdgeLabelPlacementStrategy
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.alg.layered.options.CenterEdgeLabelPlacementStrategy
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -122,7 +122,6 @@ algorithm layered(LayeredLayoutProvider) {
 	supports interactiveReferencePoint
 	supports org.eclipse.elk.alg.layered.nodePlacement.strategy
 	supports org.eclipse.elk.alg.layered.nodePlacement.bk.fixedAlignment
-	supports edgeLabelSideSelection
 	supports feedbackEdges
 	supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
 	supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
@@ -151,7 +150,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.position
     supports northOrSouthPort
     supports org.eclipse.elk.alg.layered.layering.nodePromotion.maxIterations
-    supports edgeCenterLabelPlacementStrategy
+    supports edgeLabels.sideSelection
+	supports edgeLabels.centerLabelPlacementStrategy
     supports org.eclipse.elk.margins
     supports edgeRouting.sloppySplineRouting
     supports edgeRouting.sloppySplineLayerSpacing
@@ -727,6 +727,27 @@ group wrapping {
 }
 
 /* ------------------------
+ *    edgeLabels
+ * ------------------------*/
+group edgeLabels {
+    option sideSelection: EdgeLabelSideSelection {
+        label "Edge Label Side Selection"
+        description "Method to decide on edge label sides."
+        default = EdgeLabelSideSelection.SMART_DOWN
+        targets parents
+        legacyIds de.cau.cs.kieler.klay.layered.edgeLabelSideSelection
+    }
+    
+    advanced option centerLabelPlacementStrategy: CenterEdgeLabelPlacementStrategy {
+        label "Edge Center Label Placement Strategy"
+        description "Determines in which layer center labels of long edges should be placed."
+        default = CenterEdgeLabelPlacementStrategy.MEDIAN_LAYER
+        targets parents
+        legacyIds de.cau.cs.kieler.edgeLabelPlacementStrategy
+    }
+}
+
+/* ------------------------
  *    miscellaneous
  * ------------------------*/
 advanced option contentAlignment: EnumSet<ContentAlignment> {
@@ -735,23 +756,6 @@ advanced option contentAlignment: EnumSet<ContentAlignment> {
 	default = EnumSet.noneOf(ContentAlignment)
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
-}
-
-advanced option edgeCenterLabelPlacementStrategy: EdgeLabelPlacementStrategy {
-	label "Edge Label Placement Strategy"
-	description "Determines in which layer center labels of long edges should be placed."
-	default = EdgeLabelPlacementStrategy.CENTER
-	targets parents
-	legacyIds de.cau.cs.kieler.edgeLabelPlacementStrategy
-}
-
-option edgeLabelSideSelection: EdgeLabelSideSelection {
-	label "Edge Label Side Selection"
-	description "Method to decide on edge label sides."
-	default = EdgeLabelSideSelection.ALWAYS_DOWN
-	targets parents
-	legacyIds de.cau.cs.kieler.klay.layered.edgeLabelSideSelection
-	requires org.eclipse.elk.edgeRouting == EdgeRouting.ORTHOGONAL
 }
 
 advanced option feedbackEdges: boolean {

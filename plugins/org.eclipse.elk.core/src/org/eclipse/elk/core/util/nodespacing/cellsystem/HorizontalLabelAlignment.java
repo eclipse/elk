@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal;
+package org.eclipse.elk.core.util.nodespacing.cellsystem;
 
 /**
  * Horizontal alignment of labels.

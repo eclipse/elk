@@ -1,0 +1,79 @@
+/*******************************************************************************
+ * Copyright (c) 2012, 2017 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eclipse.elk.alg.layered.intermediate;
+
+import java.util.List;
+
+import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.math.ElkRectangle;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
+
+/**
+ * <p>After the {@link EndLabelPreprocessor} has done all the major work for us, each node may have a list of label
+ * cells full of edge end labels associated with it, along with proper label cell coordinates. The problem is that
+ * when the preprocessor was run, the final coordinates of all the nodes (and with that, the final coordinates of all
+ * the edges) were not known yet. Now they are, so the label cell coordinates can be offset accordingly and label
+ * coordinates can be applied.</p>
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph</dd>
+ *     <dd>end labels of all edges are contained in label cells associated with nodes</dd>
+ *     <dd>label cells have correct sizes and settings and are placed relative to their node's upper left corner</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>end labels have proper coordinates assigned to them</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>none</dd>
+ * </dl>
+ */
+public final class EndLabelPostprocessor implements ILayoutProcessor<LGraph> {
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
+        monitor.begin("End label post-processing", 1);
+        
+        // We iterate over each node's label cells and offset and place them
+        layeredGraph.getLayers().stream()
+                .flatMap(layer -> layer.getNodes().stream())
+                .filter(node -> node.getType() == NodeType.NORMAL && node.hasProperty(InternalProperties.END_LABELS))
+                .forEach(node -> processNode(node));
+        
+        monitor.done();
+    }
+    
+    private void processNode(final LNode node) {
+        assert node.hasProperty(InternalProperties.END_LABELS);
+        
+        // The node should have a non-empty list of label cells, or something went TERRIBLY WRONG!!!
+        List<LabelCell> endLabelCells = node.getProperty(InternalProperties.END_LABELS);
+        assert !endLabelCells.isEmpty();
+        
+        KVector nodePos = node.getPosition();
+        
+        for (LabelCell labelCell : endLabelCells) {
+            ElkRectangle labelCellRect = labelCell.getCellRectangle();
+            labelCellRect.move(nodePos);
+            
+            labelCell.applyLabelLayout();
+        }
+        
+        // Remove label cells
+        node.setProperty(InternalProperties.END_LABELS, null);
+    }
+
+}

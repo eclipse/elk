@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Kiel University and others.
+ * Copyright (c) 2009, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,7 @@
 package org.eclipse.elk.core.options;
 
 /**
- * Definition of placement positions for edge labels. To be accessed using
- * {@link CoreOptions#EDGE_LABEL_PLACEMENT}.
- * 
- * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
- * @author msp
+ * Definition of placement positions for edge labels. To be accessed using {@link CoreOptions#EDGE_LABEL_PLACEMENT}.
  */
 public enum EdgeLabelPlacement {
 
@@ -28,5 +23,15 @@ public enum EdgeLabelPlacement {
     HEAD,
     /** label is at the tail (source) of the edge. */
     TAIL;
+    
+    
+    /**
+     * Checks whether this edge label placement is one of the two end label placements.
+     * 
+     * @return {@code true} iff this is {@link #HEAD} or {@link #TAIL}.
+     */
+    public boolean isEndLabelPlacement() {
+        return this == HEAD || this == TAIL;
+    }
     
 }

@@ -285,7 +285,7 @@ group spacing {
 	    description
 	       "The minimal distance to be preserved between a label and the edge it is associated with.
             Note that the placement of a label is influenced by the 'edgelabels.placement' option."
-        default = 5
+        default = 2
         lowerBound = 0.0
         targets parents
 	}

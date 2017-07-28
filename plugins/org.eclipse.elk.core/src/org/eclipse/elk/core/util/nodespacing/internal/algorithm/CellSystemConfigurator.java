@@ -14,10 +14,10 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
 
 /**
  * Configures constraints of the cell system such that the various cells contribute properly to the node size

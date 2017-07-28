@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.cellsystem;
+package org.eclipse.elk.core.util.nodespacing.cellsystem;
 
 /**
  * Enumeration of three container areas that can be used by containers that use three areas.

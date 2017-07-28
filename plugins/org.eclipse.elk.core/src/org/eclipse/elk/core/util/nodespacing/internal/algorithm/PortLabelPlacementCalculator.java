@@ -19,12 +19,12 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
-import org.eclipse.elk.core.util.nodespacing.internal.HorizontalLabelAlignment;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.HorizontalLabelAlignment;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
+import org.eclipse.elk.core.util.nodespacing.cellsystem.VerticalLabelAlignment;
 import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
-import org.eclipse.elk.core.util.nodespacing.internal.VerticalLabelAlignment;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.cellsystem.LabelCell;
 import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover;
 import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover.OverlapRemovalDirection;
 

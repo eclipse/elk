@@ -703,9 +703,9 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
      * @param graph the complete graph
      */
     private void transposeEdgeLabelPlacement(final LGraph graph) {
-        EdgeLabelSideSelection oldSide = graph.getProperty(LayeredOptions.EDGE_LABEL_SIDE_SELECTION);
+        EdgeLabelSideSelection oldSide = graph.getProperty(LayeredOptions.EDGE_LABELS_SIDE_SELECTION);
         if (oldSide != null) {
-            graph.setProperty(LayeredOptions.EDGE_LABEL_SIDE_SELECTION, oldSide.transpose());
+            graph.setProperty(LayeredOptions.EDGE_LABELS_SIDE_SELECTION, oldSide.transpose());
         }
 
     }

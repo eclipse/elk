@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
@@ -32,18 +29,20 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * edges properly.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; nodes are placed; edges are routed; port positions
- *     are fixed.</dd>
- *   <dt>Postcondition:</dt><dd>north south port dummy nodes are removed, their edges
- *     properly reconnected and routed.</dd>
- *   <dt>Slots:</dt><dd>After phase 5.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph</dd>
+ *     <dd>nodes are placed</dd>
+ *     <dd>edges are routed</dd>
+ *     <dd>port positions are fixed</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>north south port dummy nodes are removed, their edges properly reconnected and routed.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>None.</dd>
  * </dl>
  * 
  * @see NorthSouthPortPreprocessor
- * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGraph> {
 
@@ -85,8 +84,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGrap
                     // Check if all ports were created for the same origin port
                     boolean sameOriginPort;
                     if (node.getPorts().size() >= 2) {
-                        // Iterate over the dummy's ports to find out whether the origin is always the
-                        // same
+                        // Iterate over the dummy's ports to find out whether the origin is always the same
                         sameOriginPort = true;
                         
                         Iterator<LPort> portIterator = node.getPorts().iterator();
