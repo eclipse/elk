@@ -371,17 +371,28 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
     private void applyLabelSide(final LNode labelDummy, final LabelSide side) {
         // This method only does things to label dummy nodes
         if (labelDummy.getType() == NodeType.LABEL) {
-            labelDummy.setProperty(InternalProperties.LABEL_SIDE, side);
+            LabelSide effectiveSide = areLabelsPlacedInline(labelDummy)
+                    ? LabelSide.INLINE
+                    : side;
+
+            labelDummy.setProperty(InternalProperties.LABEL_SIDE, effectiveSide);
             
-            // If the label is not above the edge, the ports need to be moved
-            if (side == LabelSide.ABOVE) {
+            // If the label is not below the edge, the ports need to be moved
+            if (effectiveSide != LabelSide.BELOW) {
                 LEdge originEdge = (LEdge) labelDummy.getProperty(InternalProperties.ORIGIN);
                 double thickness = originEdge.getProperty(LayeredOptions.EDGE_THICKNESS);
-                double portPos = labelDummy.getSize().y - Math.ceil(thickness / 2);
+                
+                // The new port position depends on the new placement
+                double portPos = 0;
+                if (effectiveSide == LabelSide.ABOVE) {
+                    portPos = labelDummy.getSize().y - Math.ceil(thickness / 2);
+                } else if (effectiveSide == LabelSide.INLINE) {
+                    portPos = (labelDummy.getSize().y - Math.ceil(thickness)) / 2;
+                }
+                
                 for (LPort port : labelDummy.getPorts()) {
                     port.getPosition().y = portPos;
                 }
-                
             }
         }
     }
@@ -402,6 +413,16 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         for (LLabel label : labels) {
             label.setProperty(InternalProperties.LABEL_SIDE, side);
         }
+    }
+    
+    /**
+     * Checks if the labels represented by the given label dummy are to be placed inline.
+     */
+    private boolean areLabelsPlacedInline(final LNode labelDummy) {
+        assert labelDummy.getType() == NodeType.LABEL;
+        
+        return labelDummy.getProperty(InternalProperties.REPRESENTED_LABELS).stream()
+                .allMatch(label -> label.getProperty(LayeredOptions.EDGE_LABELS_INLINE));
     }
     
     /**

@@ -563,13 +563,22 @@ programmatic option commentBox: boolean {
 
 // --- EDGE LABELS
 group edgeLabels {
-	
-	programmatic option placement: EdgeLabelPlacement {
+	option placement: EdgeLabelPlacement {
 		label "Edge Label Placement"
 		description "Gives a hint on where to put edge labels."
 		default = EdgeLabelPlacement.UNDEFINED
 		targets labels
 		legacyIds de.cau.cs.kieler.edgeLabelPlacement
+	}
+	
+	option inline: boolean {
+	    label "Inline Edge Labels"
+	    description
+	        "If true, an edge label is placed directly on its edge. May only apply to center edge labels.
+            This kind of label placement is only advisable if the label's rendering is such that it is not
+            crossed by its edge and thus stays legible."
+        default = false
+        targets labels
 	}
 }
 

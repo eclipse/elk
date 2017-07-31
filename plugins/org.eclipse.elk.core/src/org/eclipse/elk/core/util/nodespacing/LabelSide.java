@@ -22,7 +22,9 @@ public enum LabelSide {
     /** The label is placed above the edge. */
     ABOVE,
     /** The label is placed below the edge. */
-    BELOW;
+    BELOW,
+    /** The label is placed directly on top of the edge. */
+    INLINE;
     
 
     /**
@@ -42,6 +44,8 @@ public enum LabelSide {
             return BELOW;
         case BELOW:
             return ABOVE;
+        case INLINE:
+            return INLINE;
         default:
             return UNKNOWN;
         }

@@ -138,6 +138,7 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.junctionPoints
 	supports org.eclipse.elk.edge.thickness
 	supports org.eclipse.elk.edgeLabels.placement
+	supports org.eclipse.elk.edgeLabels.inline
     supports org.eclipse.elk.alg.layered.crossingMinimization.hierarchicalSweepiness
     supports org.eclipse.elk.port.index
     supports org.eclipse.elk.commentBox
