@@ -534,11 +534,17 @@ public final class JsonImporter {
         // what we need to transfer are the edge sections
         val sections = newJsonArray
         edge.sections.forEach [ elkSection, i |
-            val jsonSection = newJsonObject
-            sections.addJsonArr(jsonSection)
             
-            // Id, just enumerate the sections per edge
-            jsonSection.addJsonObj("id", edgeId + "_s" + i)
+            // check if there's a corresponding json section
+            var maybeSection = edgeSectionJsonMap.get(elkSection)
+            if (maybeSection === null) {
+                // otherwise create a new one
+                maybeSection = newJsonObject 
+                // Id, just enumerate the sections per edge
+                maybeSection.toJsonObject.addJsonObj("id", edgeId + "_s" + i)
+            }
+            val jsonSection = maybeSection.toJsonObject
+            sections.addJsonArr(jsonSection)
             
             // Start Point
             val startPoint = newJsonObject

@@ -4,16 +4,19 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.graph.json.test
 
+import com.google.gson.JsonParser
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine
+import org.eclipse.elk.core.util.BasicProgressMonitor
+import org.eclipse.elk.core.util.Maybe
 import org.eclipse.elk.graph.json.ElkGraphJson
+import org.eclipse.elk.graph.json.JsonImporter
 import org.junit.Test
 
 import static org.junit.Assert.*
+import com.google.gson.Gson
 
 /**
  */
@@ -68,5 +71,49 @@ class SectionsTest {
         
         assertTrue(s44.incomingSections.size === 1)
         assertTrue(s44.incomingSections.head === s1)
+    }
+    
+    @Test
+    def void preserveSectionIdsTest() {
+        val graph = '''
+        {
+          id: "root",
+          properties: { 
+            'elk.algorithm': 'random'
+          },
+          children: [
+            { id: "n1", width: 10, height: 10 },
+            { id: "n2", width: 10, height: 10 }
+          ],
+          edges: [{
+            id: "e1", sources: [ "n1" ], targets: [ "n2" ],
+            sections: [{
+              id: "xyz",
+              startPoint: { x: 0, y: 0 },
+              bendPoints: [{ x: 20, y: 0 }],
+              endPoint: { x: 50, y: 0 }
+            }]
+          }]
+        }'''
+        
+        
+        // string -> json
+        val parser = new JsonParser
+        val json = parser.parse(graph).asJsonObject
+        
+        // json -> elk
+        val importer = new Maybe<JsonImporter>()
+        val root = ElkGraphJson.forGraph(json).rememberImporter(importer).toElk
+        val edge = root.containedEdges.head
+        val es1 = edge.sections.findFirst[ identifier == "xyz" ]
+        assertNotNull(es1)
+
+        // layout
+        new RecursiveGraphLayoutEngine().layout(root, new BasicProgressMonitor)
+        
+        importer.get.transferLayout(root)
+        
+        val s = new Gson().toJson(json)
+        assertTrue(s.contains('''"id":"xyz"'''))
     }
 }
