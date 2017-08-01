@@ -389,12 +389,20 @@ public final class JsonImporter {
 
     private def transformProperties(Object jsonObjA, EMapPropertyHolder layoutData) {
         val jsonObj = jsonObjA.toJsonObject
-        jsonObj.optJSONObject("properties") => [ props |
-            props?.keysJsonObj?.forEach[ k |
-                val value = props.getJsonObj(k)?.stringVal
+        
+        var layoutOptions = jsonObj.optJSONObject("layoutOptions")
+        if (layoutOptions === null) {
+            // legacy support
+            layoutOptions = jsonObj.optJSONObject("properties")
+        }
+        
+        if (layoutOptions !== null) {
+            val opts = layoutOptions
+            opts?.keysJsonObj?.forEach[ k |
+                val value = opts.getJsonObj(k)?.stringVal
                 layoutData.setOption(k, value)
             ]
-        ]
+        }
     }
        
     private def setOption(EMapPropertyHolder e, String id, String value) {

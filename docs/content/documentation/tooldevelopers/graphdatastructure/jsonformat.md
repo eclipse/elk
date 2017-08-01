@@ -16,21 +16,21 @@ fields are marked with an _asterisk_.
 
 ## Nodes, Ports, Labels, Edges, and Edge Sections
 
-All elements, except labels, must have an `id` that uniquely identifies them.
+All elements, except labels, must have an _id_ that uniquely identifies them.
 Labels are usually not referred to from other parts of the graph,
 which is why the id is optional.
 The id can be a string or an integer.
-All elements furthermore can have properties.
-Properties are basically a list of key-value pairs that are usually used to
+All elements furthermore can have [_layout options_]({{< relref "reference/options.md" >}}).
+Layout options are basically a list of key-value pairs that are used to
 assign layout option values to the element.
+
 
 ```json
 {
   id*: "ID",
-  properties: { ..object with key value pairs.. }
+  layoutOptions: { ..object with key value pairs.. }
 }
 ```
-
 
 ## Nodes, Ports, and Labels
 
@@ -59,7 +59,7 @@ Finally, a node can contain edges. These edges do not necessarily connect to the
 usually connect its children. The edge coordinates will be interpreted relative to the upper
 left corner of the node which contains it.
 
-```javascript
+```json
 {
   ports: [ ..array of port objects.. ],
   children: [ ..array of child node objects.. ],
@@ -84,7 +84,6 @@ Therefore you should specify a reasonable width and height.
   text: "A magnificent text"
 }
 ```
-
 
 ## Edges
 
@@ -151,12 +150,50 @@ Incoming and outgoing shapes are then filled in automatically by the importer.
 }
 ```
 
+## Junction Points
+
+_Junction points_ are the split and merge points of hyperedges. 
+Layout algorithms supporting hyperedges may compute these points 
+such that a rendering framework can use them to position visual cues, 
+for instance, small circles. 
+In case an algorithm computes junction points, 
+an edge's representation might look like the following after layout.
+
+```json
+{
+  id: 'edge0',
+  junctionPoints: [ ..array of {x, y} pairs.. ]
+}
+```
+
+
+# Small Example
+```json
+{
+  id: "root",
+  properties: { 'elk.direction': 'RIGHT' },
+  children: [
+    { id: "n1", width: 10, height: 10 },
+    { id: "n2", width: 10, height: 10 }
+  ],
+  edges: [{
+    id: "e1", sources: [ "n1" ], targets: [ "n2" ]
+  }]
+}
+```
+
 
 # API
 
+{{% note title="Info" mode="info" %}}
+The following explanations 
+concern only the Java API,
+not elk.js.
+{{% /note %}}
 
 Importing and exporting can be done using the `ElkGraphJson` utility class.
 It provides a set of methods that are outlined next.
+
 
 ## JSON to ELK Graph
 

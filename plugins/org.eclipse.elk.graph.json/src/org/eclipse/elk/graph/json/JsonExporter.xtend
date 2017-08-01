@@ -296,7 +296,7 @@ public final class JsonExporter {
         
         val jsonProps = newJsonObject
         val parent = parentA.toJsonObject
-        parent.addJsonObj("properties", jsonProps)
+        parent.addJsonObj("layoutOptions", jsonProps)
         holder.properties.entrySet.forEach [ p |
             var key = if (shortLayoutOptionKeys) p.key.id.shortOptionKey else p.key.id
             jsonProps.addProperty(key, p.value.toString)
