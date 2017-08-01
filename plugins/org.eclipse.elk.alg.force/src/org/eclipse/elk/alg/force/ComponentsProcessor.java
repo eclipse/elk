@@ -172,10 +172,11 @@ public final class ComponentsProcessor {
                     maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
             for (FNode node : graph.getNodes()) {
                 priority += node.getProperty(ForceOptions.PRIORITY);
-                minx = Math.min(minx, node.getPosition().x);
-                miny = Math.min(miny, node.getPosition().y);
-                maxx = Math.max(maxx, node.getPosition().x + node.getSize().x);
-                maxy = Math.max(maxy, node.getPosition().y + node.getSize().y);
+                // careful: the (x,y) of an FNode refers to its center
+                minx = Math.min(minx, node.getPosition().x - node.getSize().x / 2);
+                miny = Math.min(miny, node.getPosition().y - node.getSize().y / 2);
+                maxx = Math.max(maxx, node.getPosition().x + node.getSize().x / 2);
+                maxy = Math.max(maxy, node.getPosition().y + node.getSize().y / 2);
             }
             graph.setProperty(ForceOptions.PRIORITY, priority);
             graph.setProperty(InternalProperties.BB_UPLEFT, new KVector(minx, miny));
