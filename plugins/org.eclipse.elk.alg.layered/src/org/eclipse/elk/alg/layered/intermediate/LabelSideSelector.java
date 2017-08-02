@@ -387,6 +387,8 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
                 if (effectiveSide == LabelSide.ABOVE) {
                     portPos = labelDummy.getSize().y - Math.ceil(thickness / 2);
                 } else if (effectiveSide == LabelSide.INLINE) {
+                    // The label dummy has a superfluous label-edge spacing
+                    labelDummy.getSize().y -= labelDummy.getGraph().getProperty(LayeredOptions.SPACING_EDGE_LABEL);
                     portPos = (labelDummy.getSize().y - Math.ceil(thickness)) / 2;
                 }
                 
