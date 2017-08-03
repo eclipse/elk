@@ -42,6 +42,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link InLayerConstraintProcessor}</dd>
+ *     <dd>{@link LabelDummySwitcher}</dd>
  * </dl>
  *
  * @author cds

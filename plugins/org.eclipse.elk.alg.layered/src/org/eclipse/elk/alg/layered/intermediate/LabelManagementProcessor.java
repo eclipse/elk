@@ -39,7 +39,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Postcondition:</dt>
  *     <dd>Possible lable text modifications.</dd>
  *   <dt>Slots:</dt>
- *     <dd>Before phase 3.</dd>
+ *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link LabelDummySwitcher}</dd>
  * </dl>

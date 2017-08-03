@@ -29,6 +29,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.nodespacing.NodeLabelAndSizeCalculator;
 
 import com.google.common.collect.Lists;
 
@@ -68,9 +69,11 @@ import com.google.common.collect.Lists;
  *         same is true for the {@link InternalProperties#LONG_EDGE_SOURCE} property of long edge dummies
  *         succeeding center edge label dummies.
  *   <dt>Slots:</dt>
- *     <dd>Before phase 3.</dd>
+ *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>{@link LongEdgeSplitter}</dd>
+ *     <dd>{@link NodeLabelAndSizeCalculator}</dd>
+ *     <dd>{@link NodeMarginCalculator}</dd>
+ *     <dd>{@link EndLabelPreprocessor}</dd>
  * </dl>
  * 
  * @see CenterEdgeLabelPlacementStrategy
@@ -435,10 +438,18 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
      * Swaps the two given dummy nodes. The nodes are assumed to be part of the same long edge.
      */
     private void swapNodes(final LNode dummy1, final LNode dummy2) {
+        // Find the layers and the positions inside the layers of the dummy nodes. We need the positions later since
+        // we run after crossing minimization and have to keep the order of nodes the same. An alternative for this
+        // method would be not to change the layers and connections of the two nodes but to switch all of their
+        // properties instead, but we reckon that might be more work
         Layer layer1 = dummy1.getLayer();
         Layer layer2 = dummy2.getLayer();
         
-        // Detect incoming and outgoing ports of the nodes
+        int dummy1LayerPosition = layer1.getNodes().indexOf(dummy1);
+        int dummy2LayerPosition = layer2.getNodes().indexOf(dummy2);
+        
+        // Detect incoming and outgoing ports of the nodes (this of course assumes that there's just one of each kind,
+        // which should be true for long edge and label dummy nodes)
         LPort inputPort1 = dummy1.getPorts(PortType.INPUT).iterator().next();
         LPort outputPort1 = dummy1.getPorts(PortType.OUTPUT).iterator().next();
         LPort inputPort2 = dummy2.getPorts(PortType.INPUT).iterator().next();
@@ -450,8 +461,8 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         LEdge[] incomingEdges2 = inputPort2.getIncomingEdges().toArray(new LEdge[1]);
         LEdge[] outgoingEdges2 = outputPort2.getOutgoingEdges().toArray(new LEdge[1]);
 
-        // Set values of first node to values from second node
-        dummy1.setLayer(layer2);
+        // Put first dummy into second dummy's layer and reroute second dummy's edges to first dummy
+        dummy1.setLayer(dummy2LayerPosition, layer2);
         for (LEdge edge : incomingEdges2) {
             edge.setTarget(inputPort1);
         }
@@ -459,8 +470,8 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             edge.setSource(outputPort1);
         }
 
-        // Set values of first node to values from second node
-        dummy2.setLayer(layer1);
+        // Put second dummy into first dummy's layer and reroute first dummy's edges to second dummy
+        dummy2.setLayer(dummy1LayerPosition, layer1);
         for (LEdge edge : incomingEdges1) {
             edge.setTarget(inputPort2);
         }

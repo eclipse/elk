@@ -125,7 +125,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
             .addBefore(LayeredPhases.P2_LAYERING, IntermediateProcessorStrategy.LABEL_DUMMY_INSERTER)
-            .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER)
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_DUMMY_SWITCHER)
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
             .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.LABEL_DUMMY_REMOVER);
     

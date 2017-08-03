@@ -57,7 +57,7 @@ import com.google.common.collect.Ordering;
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link LabelAndNodeSizeProcessor}</dd>
- *     <dd>{@link EndLabelPreprocessor}</dd>
+ *     <dd>{@link NodeMarginCalculator}</dd>
  *     <dd>{@link LabelSideSelector}</dd>
  * </dl>
  * 

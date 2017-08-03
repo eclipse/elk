@@ -86,10 +86,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     LONG_EDGE_SPLITTER,
     /** Makes sure nodes have at least fixed port sides. */
     PORT_SIDE_PROCESSOR,
-    /** Tries to switch the label dummy nodes which the middle most dummy node of a long edge. */
-    LABEL_DUMMY_SWITCHER,
-    /** Tries to shorten labels where necessary. */
-    LABEL_MANAGEMENT_PROCESSOR,
     /** Takes a layered graph and inserts dummy nodes for edges connected to inverted ports. */
     INVERTED_PORT_PROCESSOR,
     /** Takes care of self loops. */
@@ -112,10 +108,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     SINGLE_EDGE_GRAPH_WRAPPER,
     /** Makes sure that in-layer constraints are handled. */
     IN_LAYER_CONSTRAINT_PROCESSOR,
-    /** Merges long edge dummy nodes belonging to the same hyperedge. */
-    HYPEREDGE_DUMMY_MERGER,
-    /** Decides, on which side of an edge the edge labels should be placed. */
-    LABEL_SIDE_SELECTOR,
     /** Alternative big nodes handling, splitting nodes _after_ crossing minimization. */
     BIG_NODES_SPLITTER,
     /** Sets the positions of ports and labels, and sets the node sizes. */
@@ -124,8 +116,16 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     SPLINE_SELF_LOOP_ROUTER,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
+    /** Decides, on which side of an edge the edge labels should be placed. */
+    LABEL_SIDE_SELECTOR,
     /** Place end labels of edges and extend node margins accordingly. */
     END_LABEL_PREPROCESSOR,
+    /** Tries to switch the label dummy nodes which the middle most dummy node of a long edge. */
+    LABEL_DUMMY_SWITCHER,
+    /** Tries to shorten labels where necessary. */
+    LABEL_MANAGEMENT_PROCESSOR,
+    /** Merges long edge dummy nodes belonging to the same hyperedge. */
+    HYPEREDGE_DUMMY_MERGER,
     /** Adjusts the width of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_DUMMY_SIZE_PROCESSOR,
 
