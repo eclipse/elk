@@ -101,9 +101,9 @@ to a source port and target port.
   sourcePort: port identifier,
   target*: node identifier,
   targetPort: port identifier,
-  sourcePoint: {x,y},
-  targetPoint: {x,y},
-  bendPoints: [ .. {x,y} pairs .. ]
+  sourcePoint: {x, y},
+  targetPoint: {x, y},
+  bendPoints: [ .. {x, y} pairs .. ]
 }
 ```
 
@@ -161,7 +161,7 @@ an edge's representation might look like the following after layout.
 
 ```json
 {
-  id: 'edge0',
+  id: "edge0",
   junctionPoints: [ ..array of {x, y} pairs.. ]
 }
 ```
@@ -171,7 +171,7 @@ an edge's representation might look like the following after layout.
 ```json
 {
   id: "root",
-  properties: { 'elk.direction': 'RIGHT' },
+  properties: { "elk.direction": "RIGHT" },
   children: [
     { id: "n1", width: 10, height: 10 },
     { id: "n2", width: 10, height: 10 }
@@ -183,17 +183,10 @@ an edge's representation might look like the following after layout.
 ```
 
 
-# API
-
-{{% note title="Info" mode="info" %}}
-The following explanations 
-concern only the Java API,
-not elk.js.
-{{% /note %}}
+# Java API
 
 Importing and exporting can be done using the `ElkGraphJson` utility class.
 It provides a set of methods that are outlined next.
-
 
 ## JSON to ELK Graph
 
