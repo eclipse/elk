@@ -19,6 +19,7 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
+import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
 import org.eclipse.elk.core.util.nodespacing.cellsystem.HorizontalLabelAlignment;
 import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
@@ -336,8 +337,9 @@ public final class PortLabelPlacementCalculator {
         Collection<PortContext> portContexts = nodeContext.portContexts.get(portSide);
         
         // If there are only two ports on a side, we place the first port's label on its other side to make it
-        // especially clear which port it belongs to
-        boolean portWithSpecialNeeds = portContexts.size() == 2;
+        // especially clear which port it belongs to. The same applies if the user requested space-efficient mode
+        boolean portWithSpecialNeeds = portContexts.size() == 2
+                || portContexts.size() > 2 && nodeContext.sizeOptions.contains(SizeOptions.SPACE_EFFICIENT_PORT_LABELS);
         
         for (PortContext portContext : portContexts) {
             // If the port doesn't have labels, skip
@@ -423,12 +425,16 @@ public final class PortLabelPlacementCalculator {
     private static void constrainedOutsidePortLabelPlacement(final NodeContext nodeContext, final PortSide portSide) {
         Collection<PortContext> portContexts = nodeContext.portContexts.get(portSide);
     
-        // If there are only two ports on this port side, or if it's neither the northern nor the southern side, simply
-        // revert to simple port label placement
-        if (portContexts.size() == 2 || portSide == PortSide.EAST || portSide == PortSide.WEST) {
+        // If there are at most two ports on this port side, or if it's neither the northern nor the southern side,
+        // simply revert to simple port label placement
+        if (portContexts.size() <= 2 || portSide == PortSide.EAST || portSide == PortSide.WEST) {
             simpleOutsidePortLabelPlacement(nodeContext, portSide);
             return;
         }
+        
+        // If space-efficient port labels are active, the leftmost / topmost port's label must be placed to its left /
+        // above it
+        boolean portWithSpecialNeeds = nodeContext.sizeOptions.contains(SizeOptions.SPACE_EFFICIENT_PORT_LABELS);
         
         // Prepare things
         OverlapRemovalDirection overlapRemovalDirection = portSide == PortSide.NORTH
@@ -461,7 +467,12 @@ public final class PortLabelPlacementCalculator {
             // Setup the label cell's cell rectangle
             portLabelCellRect.width = portLabelCell.getMinimumWidth();
             portLabelCellRect.height = portLabelCell.getMinimumHeight();
-            portLabelCellRect.x = portPosition.x + portSize.x + nodeContext.portLabelSpacing;
+            if (portWithSpecialNeeds) {
+                portLabelCellRect.x = portPosition.x - portLabelCell.getMinimumWidth() - nodeContext.portLabelSpacing;
+                portWithSpecialNeeds = false;
+            } else {
+                portLabelCellRect.x = portPosition.x + portSize.x + nodeContext.portLabelSpacing;
+            }
             
             portLabelCell.setVerticalAlignment(verticalLabelAlignment);
             portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);

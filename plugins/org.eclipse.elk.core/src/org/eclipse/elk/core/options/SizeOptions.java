@@ -68,6 +68,15 @@ public enum SizeOptions {
     UNIFORM_PORT_SPACING,
     
     /**
+     * Unless there are exactly two ports at a given port side, outside port labels are usually all placed to the same
+     * side of their port. For example, if there are three northern ports, all of their labels will be placed to the
+     * right of their ports. If this option is active, the leftmost label will be placed to the left of its port while
+     * the others stay on the right side (and similar for the other port sides). This allows the node to be smaller
+     * because the node size doesn't have to accommodate as many port labels, but it breaks symmetry.
+     */
+    SPACE_EFFICIENT_PORT_LABELS,
+    
+    /**
      * If this option is set, the node sizing and label placement code will not make an attempt to achieve a symmetrical
      * layout. With this option inactive, for example, the space reserved for left inside port labels will be the same
      * as for right inside port labels, which would not be the case otherwise. Deactivating this option will also ensure
