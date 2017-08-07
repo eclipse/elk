@@ -690,12 +690,24 @@ group port {
 // --- PORT LABELS
 group portLabels {
 	
-	programmatic option placement: PortLabelPlacement {
+	option placement: PortLabelPlacement {
 		label "Port Label Placement"
 		description "Decides on a placement method for port labels."
 		default = PortLabelPlacement.OUTSIDE
 		targets nodes
 		legacyIds de.cau.cs.kieler.portLabelPlacement
+	}
+	
+	option nextToPortIfPossible: boolean {
+	    label "Port Labels Next to Port"
+	    description
+	       "Usually, inside port labels of hierarchical nodes are placed not next to their port,
+           but with an offset to avoid edge-label crossings. The offset is not necessary if the
+           port has no connections that would cross the label, but is usually applied anyway to
+           keep things uniform. Setting this option to true places labels next to their ports if
+           they won't be crossed by edges."
+       default = false
+       targets nodes
 	}
 }
 

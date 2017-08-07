@@ -71,11 +71,12 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
         // which is the reason why we haven't handed them to the label and node size processing code
         if (layeredGraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(GraphProperties.EXTERNAL_PORTS)) {
             PortLabelPlacement portLabelPlacement = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT);
+            boolean placeNextToPort = layeredGraph.getProperty(LayeredOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE);
             
             for (Layer layer : layeredGraph.getLayers()) {
                 layer.getNodes().stream()
                         .filter(node -> node.getType() == NodeType.EXTERNAL_PORT)
-                        .forEach(dummy -> placeExternalPortDummyLabels(dummy, portLabelPlacement));
+                        .forEach(dummy -> placeExternalPortDummyLabels(dummy, portLabelPlacement, placeNextToPort));
             }
         }
         
@@ -86,7 +87,9 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
      * Places the labels of the given external port dummy such that it results in correct node margins later on that
      * will reserve enough space for the labels to be placed once label and node placement is called on the graph.
      */
-    private void placeExternalPortDummyLabels(final LNode dummy, final PortLabelPlacement graphPortLabelPlacement) {
+    private void placeExternalPortDummyLabels(final LNode dummy, final PortLabelPlacement graphPortLabelPlacement,
+            final boolean placeNextToPortIfPossible) {
+        
         double labelPortSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT);
         double labelLabelSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_LABEL);
         
@@ -104,31 +107,34 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
         // Determine the position of the box
         // TODO We could handle FIXED here as well
         if (graphPortLabelPlacement == PortLabelPlacement.INSIDE) {
-            // TODO We could also handle the case where an external port does not have any connections
             // (port label placement has to support this case first, though)
             switch (dummy.getProperty(InternalProperties.EXT_PORT_SIDE)) {
             case NORTH:
-//                portLabelBox.x = (dummySize.x - portLabelBox.width) / 2 - dummyPortPos.x;
-                portLabelBox.x = dummySize.x + labelPortSpacing - dummyPortPos.x;
+                portLabelBox.x = (dummySize.x - portLabelBox.width) / 2 - dummyPortPos.x;
                 portLabelBox.y = labelPortSpacing;
                 break;
                 
             case SOUTH:
-//                portLabelBox.x = (dummySize.x - portLabelBox.width) / 2 - dummyPortPos.x;
-                portLabelBox.x = dummySize.x + labelPortSpacing - dummyPortPos.x;
+                portLabelBox.x = (dummySize.x - portLabelBox.width) / 2 - dummyPortPos.x;
                 portLabelBox.y = -labelPortSpacing - portLabelBox.height;
                 break;
                 
             case EAST:
+                if (labelNextToPort(dummyPort, placeNextToPortIfPossible)) {
+                    portLabelBox.y = (dummySize.y - portLabelBox.height) / 2 - dummyPortPos.y;
+                } else {
+                    portLabelBox.y = dummySize.y + labelPortSpacing - dummyPortPos.y;
+                }
                 portLabelBox.x = -labelPortSpacing - portLabelBox.width;
-//                portLabelBox.y = (dummySize.y - portLabelBox.height) / 2 - dummyPortPos.y;
-                portLabelBox.y = dummySize.y + labelPortSpacing - dummyPortPos.y;
                 break;
                 
             case WEST:
+                if (labelNextToPort(dummyPort, placeNextToPortIfPossible)) {
+                    portLabelBox.y = (dummySize.y - portLabelBox.height) / 2 - dummyPortPos.y;
+                } else {
+                    portLabelBox.y = dummySize.y + labelPortSpacing - dummyPortPos.y;
+                }
                 portLabelBox.x = labelPortSpacing;
-//                portLabelBox.y = (dummySize.y - portLabelBox.height) / 2 - dummyPortPos.y;
-                portLabelBox.y = dummySize.y + labelPortSpacing - dummyPortPos.y;
                 break;
             }
         } else if (graphPortLabelPlacement == PortLabelPlacement.OUTSIDE) {
@@ -156,7 +162,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
             currentY += label.getSize().y + labelLabelSpacing;
         }
     }
-    
+
     /**
      * Returns the amount of space required to place the labels later, or {@code null} if there are no labels.
      */
@@ -177,6 +183,17 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
             
             return result;
         }
+    }
+    
+    /**
+     * Checks whether the labels of the given port should be placed next to the port or below it. The former is the
+     * case if the user requested port labels to be placed next to the port, if possible, and if the port has no
+     * connections.
+     */
+    private boolean labelNextToPort(final LPort dummyPort, final boolean placeNextToPortIfPossible) {
+        return placeNextToPortIfPossible
+                && dummyPort.getIncomingEdges().isEmpty()
+                && dummyPort.getOutgoingEdges().isEmpty();
     }
     
 }

@@ -97,10 +97,6 @@ public final class PortLabelPlacementCalculator {
         // For northern and southern port labels, we need to set the inside port label cell's client height later
         double insideNorthOrSouthPortLabelAreaHeight = 0;
         
-        // If the node is a compound node, we make an effort to place port labels such that edges won't cross them
-        boolean compoundNodeMode = nodeContext.node.isCompoundNode()
-                || nodeContext.node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE);
-        
         // Some spacings we may need later
         double labelBorderOffset = portLabelBorderOffsetForPortSide(nodeContext, portSide);
         double portLabelSpacing = nodeContext.portLabelSpacing;
@@ -124,7 +120,8 @@ public final class PortLabelPlacementCalculator {
             portLabelCellRect.width = portLabelCell.getMinimumWidth();
             portLabelCellRect.height = portLabelCell.getMinimumHeight();
             
-            // Calculate the position of the port's label cell
+            // Calculate the position of the port's label cell. If the node is a compound node, we make an effort to
+            // place port labels such that edges won't cross them
             switch (portSide) {
             case NORTH:
                 portLabelCellRect.x = (portSize.x - portLabelCellRect.width) / 2;
@@ -142,7 +139,7 @@ public final class PortLabelPlacementCalculator {
                 
             case EAST:
                 portLabelCellRect.x = -portBorderOffset - labelBorderOffset - portLabelCellRect.width;
-                portLabelCellRect.y = compoundNodeMode
+                portLabelCellRect.y = NodeLabelAndSizeUtilities.effectiveCompoundNodeMode(portContext)
                         ? portSize.y + portLabelSpacing
                         : (portSize.y - portLabelCellRect.height) / 2;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.RIGHT);
@@ -151,7 +148,7 @@ public final class PortLabelPlacementCalculator {
                 
             case WEST:
                 portLabelCellRect.x = portSize.x + portBorderOffset + labelBorderOffset;
-                portLabelCellRect.y = compoundNodeMode
+                portLabelCellRect.y = NodeLabelAndSizeUtilities.effectiveCompoundNodeMode(portContext)
                         ? portSize.y + portLabelSpacing
                         : (portSize.y - portLabelCellRect.height) / 2;
                 portLabelCell.setHorizontalAlignment(HorizontalLabelAlignment.LEFT);

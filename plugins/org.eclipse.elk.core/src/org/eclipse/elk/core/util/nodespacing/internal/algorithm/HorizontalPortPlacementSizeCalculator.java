@@ -235,7 +235,8 @@ public final class HorizontalPortPlacementSizeCalculator {
         cell.getPadding().left = nodeContext.surroundingPortMargins.left;
         cell.getPadding().right = nodeContext.surroundingPortMargins.right;
         
-        // A few convenience variables
+        // A few convenience variables (note that there is no notion of compound node mode here because in the free
+        // case, we assume that every port will end up on either the western or the eastern side)
         boolean includePortLabels = nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS);
         boolean twoPorts = nodeContext.portContexts.get(portSide).size() == 2;
         boolean portLabelsOutside = nodeContext.portLabelsPlacement == PortLabelPlacement.OUTSIDE;

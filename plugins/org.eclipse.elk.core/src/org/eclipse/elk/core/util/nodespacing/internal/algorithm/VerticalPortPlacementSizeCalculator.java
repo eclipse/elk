@@ -112,7 +112,6 @@ public final class VerticalPortPlacementSizeCalculator {
 
         boolean includePortLabels = nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS);
         boolean portLabelsInside = nodeContext.portLabelsPlacement == PortLabelPlacement.INSIDE;
-        boolean compoundNodeMode = nodeContext.node.isCompoundNode();
         double minHeight = 0;
         
         // Go over all pairs of consecutive ports
@@ -130,7 +129,7 @@ public final class VerticalPortPlacementSizeCalculator {
             
             // If port labels are to be respected, we need to calculate the port's margins to do so
             if (includePortLabels) {
-                setVerticalPortMargins(nodeContext, portSide, portLabelsInside && !compoundNodeMode, 0);
+                setVerticalPortMargins(nodeContext, portSide, 0, portLabelsInside);
             }
             
             if (previousPortContext == null) {
@@ -211,7 +210,6 @@ public final class VerticalPortPlacementSizeCalculator {
         boolean includePortLabels = nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS);
         boolean twoPorts = nodeContext.portContexts.get(portSide).size() == 2;
         boolean portLabelsOutside = nodeContext.portLabelsPlacement == PortLabelPlacement.OUTSIDE;
-        boolean compoundNodeMode = nodeContext.node.isCompoundNode();
         boolean uniformPortSpacing = nodeContext.sizeOptions.contains(SizeOptions.UNIFORM_PORT_SPACING);
         double height = 0.0;
         
@@ -229,7 +227,7 @@ public final class VerticalPortPlacementSizeCalculator {
                 
                 // If there is a maximum label width, setup the port margins accordingly
                 if (maxLabelHeight > 0) {
-                    setVerticalPortMargins(nodeContext, portSide, false, maxLabelHeight);
+                    setVerticalPortMargins(nodeContext, portSide, maxLabelHeight, false);
                 }
                 
                 // Sum up the height of all ports including their margins, except for the last part (its label is not
@@ -238,7 +236,7 @@ public final class VerticalPortPlacementSizeCalculator {
                 
             } else {
                 // Setup the port margins to include port labels
-                setVerticalPortMargins(nodeContext, portSide, false, 0);
+                setVerticalPortMargins(nodeContext, portSide, 0, false);
                 
                 // Sum up the space required
                 height = portHeightPlusPortPortSpacing(nodeContext, portSide, true, false);
@@ -249,17 +247,17 @@ public final class VerticalPortPlacementSizeCalculator {
             if (uniformPortSpacing) {
                 // We need to find the highest port-label combination and use that as the size of all ports
                 int ports = nodeContext.portContexts.get(portSide).size();
-                double maxPortAndLabelHeight = maximumPortAndLabelHeight(nodeContext, portSide, compoundNodeMode);
+                double maxPortAndLabelHeight = maximumPortAndLabelHeight(nodeContext, portSide);
                 height = maxPortAndLabelHeight * ports + nodeContext.portPortSpacing * (ports - 1);
                 
                 // If there is a maximum port and label height, setup the port margins accordingly
                 if (maxPortAndLabelHeight > 0) {
-                    setVerticalPortMargins(nodeContext, portSide, !compoundNodeMode, maxPortAndLabelHeight);
+                    setVerticalPortMargins(nodeContext, portSide, maxPortAndLabelHeight, true);
                 }
                 
             } else {
                 // Setup the port margins to include port labels
-                setVerticalPortMargins(nodeContext, portSide, !compoundNodeMode, 0);
+                setVerticalPortMargins(nodeContext, portSide, 0, true);
                 
                 // Sum up the space required
                 height = portHeightPlusPortPortSpacing(nodeContext, portSide, true, true);
@@ -292,15 +290,13 @@ public final class VerticalPortPlacementSizeCalculator {
      * assumed to later be placed below the port. If it is off, labels are assumed to later be placed next to their
      * port.
      */
-    private static double maximumPortAndLabelHeight(final NodeContext nodeContext, final PortSide portSide,
-            final boolean compoundNodeMode) {
-        
+    private static double maximumPortAndLabelHeight(final NodeContext nodeContext, final PortSide portSide) {
         double maxResult = 0.0;
         
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
             double labelHeight = portContext.portLabelCell.getMinimumHeight();
             
-            if (compoundNodeMode) {
+            if (NodeLabelAndSizeUtilities.effectiveCompoundNodeMode(portContext)) {
                 maxResult = Math.max(maxResult, labelHeight);
                 maxResult = Math.max(maxResult, portContext.port.getSize().y);
             } else {
@@ -347,7 +343,7 @@ public final class VerticalPortPlacementSizeCalculator {
      * not the height of the port's labels is used, but the uniform height.
      */
     private static void setVerticalPortMargins(final NodeContext nodeContext, final PortSide portSide,
-            final boolean centered, final double uniformLabelHeight) {
+            final double uniformLabelHeight, final boolean insidePortLabels) {
         
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
             double labelHeight = 0;
@@ -358,15 +354,19 @@ public final class VerticalPortPlacementSizeCalculator {
             }
             
             if (labelHeight > 0) {
-                if (centered) {
+                if (insidePortLabels && NodeLabelAndSizeUtilities.effectiveCompoundNodeMode(portContext)) {
+                    // The port is to be treated as a port with inside connections, so reserve space for its label
+                    // below the port
+                    portContext.portMargin.bottom = nodeContext.portLabelSpacing + labelHeight;
+                    
+                } else {
+                    // The label is placed next to the port (usual case)
                     double portHeight = portContext.port.getSize().y;
                     if (labelHeight > portHeight) {
                         double overhang = (labelHeight - portHeight) / 2;
                         portContext.portMargin.top = overhang;
                         portContext.portMargin.bottom = overhang;
                     }
-                } else {
-                    portContext.portMargin.bottom = nodeContext.portLabelSpacing + labelHeight;
                 }
             }
         }

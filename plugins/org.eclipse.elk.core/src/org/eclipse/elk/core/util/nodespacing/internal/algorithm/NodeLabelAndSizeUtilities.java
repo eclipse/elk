@@ -119,6 +119,26 @@ public final class NodeLabelAndSizeUtilities {
         nodeContext.node.setPadding(nodePadding);
     }
     
+    /**
+     * Checks whether compound node mode should be active for the given part. Depending on the configuration, the user
+     * may want us to only offset port labels if their port actually has a connection to the inside. That's basically
+     * what this method is all about.
+     */
+    public static boolean effectiveCompoundNodeMode(final PortContext portContext) {
+        if (!portContext.parentNodeContext.treatAsCompoundNode) {
+            // Compound node mode was already off, so spare us the hassle
+            return false;
+            
+        } else if (portContext.parentNodeContext.node.getProperty(CoreOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE)) {
+            // Compound node more is active _and_ the presence of connections to the inside actually makes a difference
+            return portContext.port.hasCompoundConnections();
+            
+        } else {
+            // Compound node mode is active, but we treat all ports as if they had connections to the inside
+            return true;
+        }
+    }
+    
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Minimum Size Things

@@ -102,6 +102,7 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.direction = Direction.UNDEFINED
 	supports org.eclipse.elk.nodeLabels.placement
 	supports org.eclipse.elk.portLabels.placement
+    supports org.eclipse.elk.portLabels.nextToPortIfPossible
 	supports org.eclipse.elk.portAlignment.basic = PortAlignment.JUSTIFIED
 	supports org.eclipse.elk.portAlignment.north
 	supports org.eclipse.elk.portAlignment.south

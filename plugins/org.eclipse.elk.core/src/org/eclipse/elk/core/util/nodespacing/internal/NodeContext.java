@@ -51,6 +51,8 @@ public final class NodeContext {
     
     /** The node we calculate stuff for. */
     public final NodeAdapter<?> node;
+    /** Whether this node has stuff inside it or not. */
+    public final boolean treatAsCompoundNode;
     /** The node's size constraints. */
     public final Set<SizeConstraint> sizeConstraints;
     /** The node's size options. */
@@ -118,6 +120,9 @@ public final class NodeContext {
      */
     public NodeContext(final GraphAdapter<?> parentGraph, final NodeAdapter<?> node) {
         this.node = node;
+        
+        // Compound node
+        treatAsCompoundNode = node.isCompoundNode() || node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE);
         
         // Core size settings
         sizeConstraints = node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS);
