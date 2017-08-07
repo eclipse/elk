@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.layered.graph;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -72,8 +73,31 @@ public final class LGraphAdapters {
      * @return an {@link LGraphAdapter} for the passed graph.
      */
     public static LGraphAdapter adapt(final LGraph graph, final boolean transparentNorthSouthEdges) {
-        return new LGraphAdapter(graph, transparentNorthSouthEdges);
+        return new LGraphAdapter(graph, transparentNorthSouthEdges, n -> true);
      }
+    
+    /**
+     * Adapts the given {@link LGraph}. Transparently provides access to edges connected to
+     * north/south port dummies and allows to filter out nodes that client code shouldn't see.
+     *
+     * @param graph
+     *            the graph that should be wrapped in an adapter.
+     * @param transparentNorthSouthEdges
+     *            {@code true} if edges connected to north south port dummies should appear to be
+     *            directly connected to their original north/south ports. This effectively makes the
+     *            north/south port dummies "transparent" in the sense that edges connected to them
+     *            appear to be connected to the original connection points.
+     * @param nodeFilter
+     *            predicate that returns {@code true} for a node that should be visible in the adapted
+     *            graph and {@code false} for one that should not. Usual application is to hide
+     *            certain kinds of dummy nodes.
+     * @return an {@link LGraphAdapter} for the passed graph.
+     */
+    public static LGraphAdapter adapt(final LGraph graph, final boolean transparentNorthSouthEdges,
+            final Predicate<LNode> nodeFilter) {
+        
+        return new LGraphAdapter(graph, transparentNorthSouthEdges, nodeFilter);
+    }
     
     /**
      * Adapts the given {@link LLabel}.
@@ -175,7 +199,7 @@ public final class LGraphAdapters {
     public static final class LGraphAdapter implements GraphAdapter<LGraph> {
         // CHECKSTYLEOFF VisibilityModifier
         /** The wrapped element. */
-        protected LGraph element;
+        protected final LGraph element;
         // CHECKSTYLEON VisibilityModifier
         /** List of cached node adapters. */
         private List<NodeAdapter<?>> nodeAdapters = null;
@@ -183,7 +207,9 @@ public final class LGraphAdapters {
          * Whether to simulate that edges are directly connected to north south ports instead of to
          * north/south port dummies.
          */
-        private boolean transparentNorthSouthEdges;
+        private final boolean transparentNorthSouthEdges;
+        /** Predicate that decides which of our children we make visible to clients. */
+        private final Predicate<LNode> nodeFilter;
 
         /**
          * Creates a new adapter for the given graph.
@@ -194,9 +220,12 @@ public final class LGraphAdapters {
          *            whether to simulate that edges are directly connected to north south ports 
          *            instead of to north/south port dummies.
          */
-        private LGraphAdapter(final LGraph element, final boolean transparentNorthSouthEdges) {
+        private LGraphAdapter(final LGraph element, final boolean transparentNorthSouthEdges,
+                final Predicate<LNode> nodeFilter) {
+            
             this.element = element;
             this.transparentNorthSouthEdges = transparentNorthSouthEdges;
+            this.nodeFilter = nodeFilter;
         }
         
         /**
@@ -252,7 +281,9 @@ public final class LGraphAdapters {
                 // to anyone using these adapters
                 for (Layer l : element.getLayers()) {
                     for (LNode n : l.getNodes()) {
-                        nodeAdapters.add(new LNodeAdapter(this, n, transparentNorthSouthEdges));
+                        if (nodeFilter.test(n)) {
+                            nodeAdapters.add(new LNodeAdapter(this, n, transparentNorthSouthEdges));
+                        }
                     }
                 }
             }

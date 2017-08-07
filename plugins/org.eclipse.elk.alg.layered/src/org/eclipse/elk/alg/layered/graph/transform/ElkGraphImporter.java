@@ -477,7 +477,7 @@ class ElkGraphImporter {
      */
     private void transformExternalPort(final ElkNode elkgraph, final LGraph lgraph, final ElkPort elkport) {
         // We need some information about the port
-        KVector kportPosition = new KVector(
+        KVector elkportPosition = new KVector(
                 elkport.getX() + elkport.getWidth() / 2.0,
                 elkport.getY() + elkport.getHeight() / 2.0);
         int netFlow = calculateNetFlow(elkport);
@@ -507,7 +507,7 @@ class ElkGraphImporter {
         KVector graphSize = new KVector(elkgraph.getWidth(), elkgraph.getHeight());
         LNode dummy = LGraphUtil.createExternalPortDummy(
                 elkport, portConstraints, portSide, netFlow, graphSize,
-                kportPosition, new KVector(elkport.getWidth(), elkport.getHeight()),
+                elkportPosition, new KVector(elkport.getWidth(), elkport.getHeight()),
                 layoutDirection, lgraph);
         dummy.setProperty(InternalProperties.ORIGIN, elkport);
         
@@ -546,6 +546,13 @@ class ElkGraphImporter {
                 }
             }
         }
+        
+        // Remember the relevant spacings that will apply to the labels here. It's not the spacings in the graph, but
+        // in the parent
+        dummy.setProperty(LayeredOptions.SPACING_LABEL_PORT,
+                elkgraph.getParent().getProperty(LayeredOptions.SPACING_LABEL_PORT));
+        dummy.setProperty(LayeredOptions.SPACING_LABEL_LABEL,
+                elkgraph.getParent().getProperty(LayeredOptions.SPACING_LABEL_LABEL));
         
         // Put the external port dummy into our graph and associate it with the original KPort
         lgraph.getLayerlessNodes().add(dummy);
