@@ -98,7 +98,8 @@ public final class PortLabelPlacementCalculator {
         double insideNorthOrSouthPortLabelAreaHeight = 0;
         
         // If the node is a compound node, we make an effort to place port labels such that edges won't cross them
-        boolean compoundNodeMode = nodeContext.node.isCompoundNode();
+        boolean compoundNodeMode = nodeContext.node.isCompoundNode()
+                || nodeContext.node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE);
         
         // Some spacings we may need later
         double labelBorderOffset = portLabelBorderOffsetForPortSide(nodeContext, portSide);
