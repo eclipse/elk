@@ -358,7 +358,7 @@ public final class ElkGraphAdapters {
          * {@inheritDoc}
          */
         public boolean isCompoundNode() {
-            return !element.getChildren().isEmpty();
+            return !element.getChildren().isEmpty() || element.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE);
         }
     }
 
@@ -466,6 +466,12 @@ public final class ElkGraphAdapters {
             for (ElkEdge edge : element.getOutgoingEdges()) {
                 for (ElkConnectableShape target : edge.getTargets()) {
                     if (ElkGraphUtil.isDescendant(ElkGraphUtil.connectableShapeToNode(target), node)) {
+                        return true;
+                        
+                    } else if (ElkGraphUtil.connectableShapeToNode(target) == node
+                            && edge.getProperty(CoreOptions.INSIDE_SELF_LOOPS_YO)) {
+                        
+                        // Inside self loops are treated as compound connections, too
                         return true;
                     }
                 }

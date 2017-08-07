@@ -172,7 +172,8 @@ public interface GraphAdapters {
         /**
          * Whether the node an is a compound node or not, i.e if it has child nodes. This might
          * influence certain layout decisions, such as where to place inside port labels so that
-         * they don't overlap edges.
+         * they don't overlap edges. A node that has inside self-loops activated is treated as a
+         * compound node.
          * 
          * @return {@code true} if it is a compound node.
          */
@@ -253,8 +254,8 @@ public interface GraphAdapters {
          * Checks if the port has any incident edges the come from or go to descendants of its node. If
          * the node is not a compound node, the result is always {@code false}.
          * 
-         * @return {@code true} if the port has any connections to descendants of its node, {@code false}
-         *         otherwise.
+         * @return {@code true} if the port has any connections to descendants of its node or any incident edges
+         *         that are inside self loops, {@code false} otherwise.
          */
         boolean hasCompoundConnections();
     }

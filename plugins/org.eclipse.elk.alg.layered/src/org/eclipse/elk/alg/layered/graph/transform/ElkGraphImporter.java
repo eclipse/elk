@@ -642,7 +642,7 @@ class ElkGraphImporter {
         nodeAndPortMap.put(elknode, lnode);
         
         // check if the node is a compound node in the original graph
-        if (!elknode.getChildren().isEmpty()) {
+        if (!elknode.getChildren().isEmpty() || elknode.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE)) {
             lnode.setProperty(InternalProperties.COMPOUND_NODE, true);
         }
 
@@ -749,8 +749,16 @@ class ElkGraphImporter {
                 .anyMatch(sourceNode -> ElkGraphUtil.isDescendant(sourceNode, elkport.getParent()));
         }
         
+        // if there are still no connections to descendants, there might yet be inside self loops involved
+        if (!connectionsToDescendants) {
+            // check if the original port has any incoming connections from descendants of its node
+            connectionsToDescendants = elkport.getOutgoingEdges().stream()
+                    // All targets of each edge
+                   .anyMatch(edge -> edge.isSelfloop() && edge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO));
+        }
+        
         // if we have found connections to / from descendants, mark the port accordingly
-        lport.setProperty(InternalProperties.INSIDE_CONNECTIONS, true);
+        lport.setProperty(InternalProperties.INSIDE_CONNECTIONS, connectionsToDescendants);
 
         // initialize the port's side, offset, and anchor point
         LGraphUtil.initializePort(lport, portConstraints, layoutDirection,
