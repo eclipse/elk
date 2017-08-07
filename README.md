@@ -32,7 +32,7 @@ The repository's structure is pretty straightforward. We only have a few folders
 * `setups`:
   Contains our Oomph setup files.
 * `tests`:
-  Contains unit tests.
+  Contains unit tests. Note that we have [a whole repository](https://github.com/eclipse/elk-models/) dedicated to test models.
 
 
 ## Building ELK
