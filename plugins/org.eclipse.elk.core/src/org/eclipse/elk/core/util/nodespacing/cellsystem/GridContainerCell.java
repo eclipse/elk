@@ -149,8 +149,12 @@ public class GridContainerCell extends ContainerCell {
         double width = 0;
         
         // If only our center cell contributes to our minimum width, shortcut!
-        if (onlyCenterCellContributesToMinimumSize && centerCellMinimumSize != null) {
-            width = centerCellMinimumSize.x;
+        if (onlyCenterCellContributesToMinimumSize) {
+            if (centerCellMinimumSize != null) {
+                width = centerCellMinimumSize.x;
+            } else if (cells[1][1] != null) {
+                width = cells[1][1].getMinimumWidth();
+            }
         } else {
             // Minimum widths of the different columns
             double[] colWidths = minColumnWidths(true);
@@ -184,8 +188,12 @@ public class GridContainerCell extends ContainerCell {
         double height = 0;
         
         // If only our center cell contributes to our minimum width, shortcut!
-        if (onlyCenterCellContributesToMinimumSize && centerCellMinimumSize != null) {
-            height = centerCellMinimumSize.y;
+        if (onlyCenterCellContributesToMinimumSize) {
+            if (centerCellMinimumSize != null) {
+                height = centerCellMinimumSize.y;
+            } else if (cells[1][1] != null) {
+                height = cells[1][1].getMinimumHeight();
+            }
         } else {
             // Minimum height of the different rows
             double[] rowHeights = minRowHeights(true);
