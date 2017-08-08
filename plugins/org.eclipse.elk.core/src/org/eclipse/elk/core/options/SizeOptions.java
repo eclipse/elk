@@ -77,6 +77,13 @@ public enum SizeOptions {
     SPACE_EFFICIENT_PORT_LABELS,
     
     /**
+     * By default, inside node labels will be laid out in three rows of three cells, with no relation between the
+     * width of cells in different rows. If this option is enabled, the cells will be treated as cells of a table,
+     * with equal columns across all rows. This usually results in larger nodes.
+     */
+    FORCE_TABULAR_NODE_LABELS,
+    
+    /**
      * If this option is set, the node sizing and label placement code will not make an attempt to achieve a symmetrical
      * layout. With this option inactive, for example, the space reserved for left inside port labels will be the same
      * as for right inside port labels, which would not be the case otherwise. Deactivating this option will also ensure

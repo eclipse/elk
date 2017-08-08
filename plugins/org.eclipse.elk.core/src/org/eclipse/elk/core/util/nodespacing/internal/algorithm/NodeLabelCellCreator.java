@@ -90,9 +90,12 @@ public final class NodeLabelCellCreator {
      */
     private static void createNodeLabelCellContainers(final NodeContext nodeContext, final boolean onlyInside) {
         boolean symmetry = !nodeContext.sizeOptions.contains(SizeOptions.ASYMMETRICAL);
+        boolean tabularNodeLabels = nodeContext.sizeOptions.contains(SizeOptions.FORCE_TABULAR_NODE_LABELS);
         
         // Inside container
-        nodeContext.insideNodeLabelContainer = new GridContainerCell(symmetry, nodeContext.labelCellSpacing);
+        nodeContext.insideNodeLabelContainer = new GridContainerCell(
+                tabularNodeLabels, symmetry, nodeContext.labelCellSpacing);
+        
         if (nodeContext.nodeLabelsPadding != null) {
             nodeContext.insideNodeLabelContainer.getPadding().copy(nodeContext.nodeLabelsPadding);
         }
