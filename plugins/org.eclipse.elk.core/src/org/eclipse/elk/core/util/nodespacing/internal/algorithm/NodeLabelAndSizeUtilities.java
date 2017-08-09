@@ -117,6 +117,14 @@ public final class NodeLabelAndSizeUtilities {
         
         nodeContext.node.setPadding(nodePadding);
     }
+
+    /**
+     * Applies the calculated node size to the node and the calculated port positions to the ports.
+     */
+    public static void applyStuff(final NodeContext nodeContext) {
+        nodeContext.applyNodeSize();
+        nodeContext.portContexts.values().stream().forEach(pc -> pc.applyPortPosition());
+    }
     
     /**
      * Checks whether compound node mode should be active for the given part. Depending on the configuration, the user

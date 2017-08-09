@@ -145,12 +145,15 @@ class ElkGraphImporter {
         GraphAdapter<?> graphAdapter = ElkGraphAdapters.adapt(elkgraph.getParent());
         NodeAdapter<?> nodeAdapter = ElkGraphAdapters.adaptSingleNode(elkgraph);
         
-        KVector minSize = NodeLabelAndSizeCalculator.process(graphAdapter, nodeAdapter, false);
+        KVector minSize = NodeLabelAndSizeCalculator.process(graphAdapter, nodeAdapter, false, true);
         
         // Apply the minimum size a sa property and make sure the minimum size is respected by ELK Layered by making
         // sure the necessary size constraint exists
-        lgraph.setProperty(LayeredOptions.NODE_SIZE_MINIMUM, minSize);
         sizeConstraints.add(SizeConstraint.MINIMUM_SIZE);
+        
+        KVector configuredMinSize = lgraph.getProperty(LayeredOptions.NODE_SIZE_MINIMUM);
+        configuredMinSize.x = Math.max(minSize.x, configuredMinSize.x);
+        configuredMinSize.y = Math.max(minSize.y, configuredMinSize.y);
     }
 
     /**

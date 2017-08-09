@@ -56,7 +56,7 @@ public final class NodeLabelAndSizeCalculator {
      */
     public static void process(final GraphAdapter<?> graph) {
         // Process all of the graph's direct children
-        graph.getNodes().forEach(node -> process(graph, node, true));
+        graph.getNodes().forEach(node -> process(graph, node, true, false));
     }
     
     /**
@@ -71,9 +71,15 @@ public final class NodeLabelAndSizeCalculator {
      * @param applyStuff
      *            {@code true} if the node should actually be resized and have its ports and labels positioned,
      *            {@code false} if we should only return the size that would be applied.
+     * @param ignoreInsidePortLabels
+     *            if {@code true}, we don't place port labels that should be placed inside. This is usually used in
+     *            conjunction with {@code applyStuff} by layout algorithms that want to get a lower bound on a
+     *            hierarchical node's size, but that handle inside port labels themselves.
      * @return the node's size that was or would be applied.
      */
-    public static KVector process(final GraphAdapter<?> graph, final NodeAdapter<?> node, final boolean applyStuff) {
+    public static KVector process(final GraphAdapter<?> graph, final NodeAdapter<?> node, final boolean applyStuff,
+            final boolean ignoreInsidePortLabels) {
+        
         // Note that, upon Miro's request, each phase of the algorithm was given a code name in the first version of
         // this code. We happily carry on fulfilling this request in this, the second version.
 
@@ -85,7 +91,7 @@ public final class NodeLabelAndSizeCalculator {
          * contexts will also create label cells for each port that has labels.
          */
         NodeContext nodeContext = new NodeContext(graph, node);
-        PortContextCreator.createPortContexts(nodeContext);
+        PortContextCreator.createPortContexts(nodeContext, ignoreInsidePortLabels);
         
         
         /* PHASE 1: WONDEROUS WATERFOWL
@@ -183,9 +189,7 @@ public final class NodeLabelAndSizeCalculator {
          */
         LabelPlacer.placeLabels(nodeContext);
         NodeLabelAndSizeUtilities.setNodePadding(nodeContext);
-        
-        nodeContext.applyNodeSize();
-        nodeContext.portContexts.values().stream().forEach(pc -> pc.applyPortPosition());
+        NodeLabelAndSizeUtilities.applyStuff(nodeContext);
         
         // Return the size
         return nodeContext.nodeSize;
