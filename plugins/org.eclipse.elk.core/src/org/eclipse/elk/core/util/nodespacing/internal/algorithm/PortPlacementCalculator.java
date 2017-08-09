@@ -81,14 +81,9 @@ public final class PortPlacementCalculator {
      */
     private static void placeHorizontalFixedPosPorts(final NodeContext nodeContext, final PortSide portSide) {
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
-            PortAdapter<?> port = portContext.port;
-            KVector portPosition = port.getPosition();
-            
             // The port's x coordinate is already fixed anyway, so simply adjust its y coordinate according to its
             // offset, if any
-            portPosition.y = calculateHorizontalPortYCoordinate(port);
-            
-            portContext.port.setPosition(portPosition);
+            portContext.portPosition.y = calculateHorizontalPortYCoordinate(portContext);
         }
     }
 
@@ -96,17 +91,12 @@ public final class PortPlacementCalculator {
      * Places ports on the northern and southern side for the {@link PortConstraints#FIXED_RATIO} case.
      */
     private static void placeHorizontalFixedRatioPorts(final NodeContext nodeContext, final PortSide portSide) {
-        final double nodeWidth = nodeContext.node.getSize().x;
+        final double nodeWidth = nodeContext.nodeSize.x;
         
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
-            PortAdapter<?> port = portContext.port;
-            KVector portPosition = new KVector();
-            
             // The x coordinate is a function of the node's width and the port's position ratio
-            portPosition.x = nodeWidth * port.getProperty(PORT_RATIO_OR_POSITION);
-            portPosition.y = calculateHorizontalPortYCoordinate(port);
-            
-            portContext.port.setPosition(portPosition);
+            portContext.portPosition.x = nodeWidth * portContext.port.getProperty(PORT_RATIO_OR_POSITION);
+            portContext.portPosition.y = calculateHorizontalPortYCoordinate(portContext);
         }
     }
 
@@ -174,17 +164,12 @@ public final class PortPlacementCalculator {
         
         // Iterate over all ports and place them
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
-            PortAdapter<?> port = portContext.port;
-            KVector portPosition = new KVector();
-            
-            portPosition.x = currentXPos + portContext.portMargin.left;
-            portPosition.y = calculateHorizontalPortYCoordinate(port);
-            
-            portContext.port.setPosition(portPosition);
+            portContext.portPosition.x = currentXPos + portContext.portMargin.left;
+            portContext.portPosition.y = calculateHorizontalPortYCoordinate(portContext);
             
             // Update the x coordinate for the next port
             currentXPos += portContext.portMargin.left
-                    + port.getSize().x
+                    + portContext.port.getSize().x
                     + portContext.portMargin.right
                     + spaceBetweenPorts;
         }
@@ -193,7 +178,9 @@ public final class PortPlacementCalculator {
     /**
      * Returns the y coordinate for the given port.
      */
-    private static double calculateHorizontalPortYCoordinate(final PortAdapter<?> port) {
+    private static double calculateHorizontalPortYCoordinate(final PortContext portContext) {
+        PortAdapter<?> port = portContext.port;
+        
         // The y coordinate is set according to the port's offset, if any
         if (port.hasProperty(CoreOptions.PORT_BORDER_OFFSET)) {
             return port.getSide() == PortSide.NORTH
@@ -237,17 +224,12 @@ public final class PortPlacementCalculator {
      * Places ports on the eastern and western side for the {@link PortConstraints#FIXED_POS} case.
      */
     private static void placeVerticalFixedPosPorts(final NodeContext nodeContext, final PortSide portSide) {
-        double nodeWidth = nodeContext.node.getSize().x;
+        double nodeWidth = nodeContext.nodeSize.x;
         
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
-            PortAdapter<?> port = portContext.port;
-            KVector portPosition = port.getPosition();
-            
             // The port's y coordinate is already fixed anyway, so simply adjust its x coordinate according to its
             // offset, if any
-            portPosition.x = calculateVerticalPortXCoordinate(port, nodeWidth);
-            
-            portContext.port.setPosition(portPosition);
+            portContext.portPosition.x = calculateVerticalPortXCoordinate(portContext, nodeWidth);
         }
     }
 
@@ -255,17 +237,12 @@ public final class PortPlacementCalculator {
      * Places ports on the eastern and western side for the {@link PortConstraints#FIXED_RATIO} case.
      */
     private static void placeVerticalFixedRatioPorts(final NodeContext nodeContext, final PortSide portSide) {
-        final KVector nodeSize = nodeContext.node.getSize();
+        final KVector nodeSize = nodeContext.nodeSize;
         
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
-            PortAdapter<?> port = portContext.port;
-            KVector portPosition = new KVector();
-            
             // The y coordinate is a function of the node's width and the port's position ratio
-            portPosition.x = calculateVerticalPortXCoordinate(port, nodeSize.x);
-            portPosition.y = nodeSize.y * port.getProperty(PORT_RATIO_OR_POSITION);
-            
-            portContext.port.setPosition(portPosition);
+            portContext.portPosition.x = calculateVerticalPortXCoordinate(portContext, nodeSize.x);
+            portContext.portPosition.y = nodeSize.y * portContext.port.getProperty(PORT_RATIO_OR_POSITION);
         }
     }
 
@@ -291,7 +268,7 @@ public final class PortPlacementCalculator {
         double calculatedPortPlacementHeight = insidePortLabelCell.getMinimumContentAreaSize().y;
         double currentYPos = insidePortLabelCellRectangle.y + insidePortLabelCellPadding.top;
         double spaceBetweenPorts = nodeContext.portPortSpacing;
-        double nodeWidth = nodeContext.node.getSize().x;
+        double nodeWidth = nodeContext.nodeSize.x;
         
         // If we only have a single port and justified alignment, change the alignment to CENTER
         if (nodeContext.portContexts.get(portSide).size() == 1) {
@@ -334,17 +311,12 @@ public final class PortPlacementCalculator {
         
         // Iterate over all ports and place them
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
-            PortAdapter<?> port = portContext.port;
-            KVector portPosition = new KVector();
-            
-            portPosition.x = calculateVerticalPortXCoordinate(port, nodeWidth);
-            portPosition.y = currentYPos + portContext.portMargin.top;
-            
-            portContext.port.setPosition(portPosition);
+            portContext.portPosition.x = calculateVerticalPortXCoordinate(portContext, nodeWidth);
+            portContext.portPosition.y = currentYPos + portContext.portMargin.top;
             
             // Update the y coordinate for the next port
             currentYPos += portContext.portMargin.top
-                    + port.getSize().y
+                    + portContext.port.getSize().y
                     + portContext.portMargin.bottom
                     + spaceBetweenPorts;
         }
@@ -353,7 +325,8 @@ public final class PortPlacementCalculator {
     /**
      * Returns the x coordinate for the given port.
      */
-    private static double calculateVerticalPortXCoordinate(final PortAdapter<?> port, final double nodeWidth) {
+    private static double calculateVerticalPortXCoordinate(final PortContext portContext, final double nodeWidth) {
+        PortAdapter<?> port = portContext.port;
         // The x coordinate is set according to the port's offset, if any
         if (port.hasProperty(CoreOptions.PORT_BORDER_OFFSET)) {
             return port.getSide() == PortSide.WEST

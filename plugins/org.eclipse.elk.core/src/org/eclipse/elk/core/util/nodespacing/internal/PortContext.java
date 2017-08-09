@@ -11,12 +11,14 @@
 package org.eclipse.elk.core.util.nodespacing.internal;
 
 import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
 import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
 
 /**
  * Data holder class to be passed around to avoid having too much state in the size calculation classes. Port contexts
- * are part of {@link NodeContext node contexts}.
+ * are part of {@link NodeContext node contexts}. The position of a port calculated as part of the algorithm should 
+ * first be stored in {@link #portPosition} and only be applied at the end of the algorithm, if required.
  */
 public final class PortContext {
     
@@ -30,6 +32,8 @@ public final class PortContext {
     public final NodeContext parentNodeContext;
     /** The port we calculate stuff for. */
     public final PortAdapter<?> port;
+    /** The port's position, to be modified by the algorithm and possibly applied later. */
+    public final KVector portPosition;
 
 
     /////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +60,18 @@ public final class PortContext {
     public PortContext(final NodeContext parentNodeContext, final PortAdapter<?> port) {
         this.parentNodeContext = parentNodeContext;
         this.port = port;
+        this.portPosition = new KVector(port.getPosition());
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // Application
+    
+    /**
+     * Applies the port position stored in this context to the actual port.
+     */
+    public void applyPortPosition() {
+        port.setPosition(portPosition);
     }
     
     

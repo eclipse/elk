@@ -39,7 +39,7 @@ public final class NodeSizeCalculator {
      * tells it to compute a horizontal layout.
      */
     public static void setNodeWidth(final NodeContext nodeContext) {
-        KVector nodeSize = nodeContext.node.getSize();
+        KVector nodeSize = nodeContext.nodeSize;
         double width;
         
         if (nodeContext.sizeConstraints.isEmpty()) {
@@ -66,7 +66,6 @@ public final class NodeSizeCalculator {
         
         // Set the node's width
         nodeSize.x = width;
-        nodeContext.node.setSize(nodeSize);
         
         // Set the cell system's width and tell it to compute horizontal coordinates and widths
         ElkRectangle nodeCellRectangle = nodeContext.nodeContainer.getCellRectangle();
@@ -85,7 +84,7 @@ public final class NodeSizeCalculator {
      * and tells it to compute a horizontal layout.
      */
     public static void setNodeHeight(final NodeContext nodeContext) {
-        KVector nodeSize = nodeContext.node.getSize();
+        KVector nodeSize = nodeContext.nodeSize;
         double height;
         
         if (nodeContext.sizeConstraints.isEmpty()) {
@@ -124,7 +123,6 @@ public final class NodeSizeCalculator {
         
         // Set the node's height
         nodeSize.y = height;
-        nodeContext.node.setSize(nodeSize);
         
         // Set the cell system's height and tell it to compute vertical coordinates and heights
         ElkRectangle nodeCellRectangle = nodeContext.nodeContainer.getCellRectangle();

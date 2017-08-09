@@ -83,7 +83,7 @@ public final class HorizontalPortPlacementSizeCalculator {
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
             rightmostPortBorder = Math.max(
                     rightmostPortBorder,
-                    portContext.port.getPosition().x + portContext.port.getSize().x);
+                    portContext.portPosition.x + portContext.port.getSize().x);
         }
         
         // Set the cell size and remove left padding since the cell size itself already includes all the space we need

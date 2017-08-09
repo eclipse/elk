@@ -88,12 +88,11 @@ public final class NodeLabelAndSizeUtilities {
      * them along the node's southern border.
      */
     public static void offsetSouthernPortsByNodeSize(final NodeContext nodeContext) {
-        double nodeHeight = nodeContext.node.getSize().y;
+        double nodeHeight = nodeContext.nodeSize.y;
         
         for (PortContext portContext : nodeContext.portContexts.get(PortSide.SOUTH)) {
-            KVector portPosition = portContext.port.getPosition();
+            KVector portPosition = portContext.portPosition;
             portPosition.y += nodeHeight;
-            portContext.port.setPosition(portPosition);
         }
     }
     

@@ -65,7 +65,7 @@ public final class LabelPlacer {
     private static void placeHorizontalOuterNodeLabelContainer(final NodeContext nodeContext,
             final boolean outerNodeLabelsOverhang, final PortSide portSide) {
         
-        KVector nodeSize = nodeContext.node.getSize();
+        KVector nodeSize = nodeContext.nodeSize;
         StripContainerCell nodeLabelContainer = nodeContext.outsideNodeLabelContainers.get(portSide);
         ElkRectangle nodeLabelContainerRect = nodeLabelContainer.getCellRectangle();
         
@@ -107,7 +107,7 @@ public final class LabelPlacer {
     private static void placeVerticalOuterNodeLabelContainer(final NodeContext nodeContext,
             final boolean outerNodeLabelsOverhang, final PortSide portSide) {
         
-        KVector nodeSize = nodeContext.node.getSize();
+        KVector nodeSize = nodeContext.nodeSize;
         StripContainerCell nodeLabelContainer = nodeContext.outsideNodeLabelContainers.get(portSide);
         ElkRectangle nodeLabelContainerRect = nodeLabelContainer.getCellRectangle();
         

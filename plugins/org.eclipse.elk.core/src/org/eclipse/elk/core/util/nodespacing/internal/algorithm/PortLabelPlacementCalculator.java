@@ -251,7 +251,7 @@ public final class PortLabelPlacementCalculator {
             }
             
             KVector portSize = portContext.port.getSize();
-            KVector portPosition = portContext.port.getPosition();
+            KVector portPosition = portContext.portPosition;
             LabelCell portLabelCell = portContext.portLabelCell;
             ElkRectangle portLabelCellRect = portLabelCell.getCellRectangle();
             
@@ -270,8 +270,8 @@ public final class PortLabelPlacementCalculator {
             
             // Update start coordinate
             startCoordinate = portSide == PortSide.NORTH
-                    ? Math.max(startCoordinate, portContext.port.getPosition().y + portContext.port.getSize().y)
-                    : Math.min(startCoordinate, portContext.port.getPosition().y);
+                    ? Math.max(startCoordinate, portPosition.y + portContext.port.getSize().y)
+                    : Math.min(startCoordinate, portPosition.y);
         }
         
         // The start coordinate needs to be offset by the port-label space
@@ -294,12 +294,11 @@ public final class PortLabelPlacementCalculator {
                 continue;
             }
             
-            KVector portPosition = portContext.port.getPosition();
             ElkRectangle portLabelCellRect = portContext.portLabelCell.getCellRectangle();
             
             // Setup the label cell's cell rectangle
-            portLabelCellRect.x -= portPosition.x;
-            portLabelCellRect.y -= portPosition.y;
+            portLabelCellRect.x -= portContext.portPosition.x;
+            portLabelCellRect.y -= portContext.portPosition.y;
         }
     }
     
@@ -460,7 +459,7 @@ public final class PortLabelPlacementCalculator {
             }
             
             KVector portSize = portContext.port.getSize();
-            KVector portPosition = portContext.port.getPosition();
+            KVector portPosition = portContext.portPosition;
             LabelCell portLabelCell = portContext.portLabelCell;
             ElkRectangle portLabelCellRect = portLabelCell.getCellRectangle();
             
@@ -482,8 +481,8 @@ public final class PortLabelPlacementCalculator {
             
             // Update start coordinate
             startCoordinate = portSide == PortSide.NORTH
-                    ? Math.min(startCoordinate, portContext.port.getPosition().y)
-                    : Math.max(startCoordinate, portContext.port.getPosition().y + portContext.port.getSize().y);
+                    ? Math.min(startCoordinate, portPosition.y)
+                    : Math.max(startCoordinate, portPosition.y + portContext.port.getSize().y);
         }
         
         // The start coordinate needs to be offset by the port-label space
@@ -502,12 +501,11 @@ public final class PortLabelPlacementCalculator {
                 continue;
             }
             
-            KVector portPosition = portContext.port.getPosition();
             ElkRectangle portLabelCellRect = portContext.portLabelCell.getCellRectangle();
             
             // Setup the label cell's cell rectangle
-            portLabelCellRect.x -= portPosition.x;
-            portLabelCellRect.y -= portPosition.y;
+            portLabelCellRect.x -= portContext.portPosition.x;
+            portLabelCellRect.y -= portContext.portPosition.y;
         }
     }
     

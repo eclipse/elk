@@ -41,8 +41,11 @@ import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
+import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
@@ -92,6 +95,11 @@ class ElkGraphImporter {
             }
         }
         
+        // Calculate the graph's minimum size (which requires that external ports have defined port sides, which
+        // the call to transformExternalPort(...) above ensures)
+        calculateMinimumGraphSize(elkgraph, topLevelGraph);
+        
+        // Remember things
         if (topLevelGraph.getProperty(LayeredOptions.PARTITIONING_ACTIVATE)) {
             graphProperties.add(GraphProperties.PARTITIONS);
         }
@@ -104,6 +112,45 @@ class ElkGraphImporter {
         }
         
         return topLevelGraph;
+    }
+    
+    /**
+     * Asks the label and node size thing to calculate the minimum size necessary for the graph to be large enough for
+     * its ports and stuff (if it's not the top level graph).
+     * 
+     * @param elkgraph
+     *            the original ELK graph.
+     * @param lgraph
+     *            the imported LGraph. Its properties may be updated over the course of this method.
+     */
+    private void calculateMinimumGraphSize(final ElkNode elkgraph, final LGraph lgraph) {
+        // If the graph is on the top level, don't bother
+        if (elkgraph.getParent() == null) {
+            return;
+        }
+        
+        // If the graph has no size constraints, don't bother either
+        EnumSet<SizeConstraint> sizeConstraints = lgraph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS);
+        if (sizeConstraints.isEmpty()) {
+            return;
+        }
+        
+        // Ensure that the port constraints are not UNDEFINED
+        if (elkgraph.getProperty(LayeredOptions.PORT_CONSTRAINTS) == PortConstraints.UNDEFINED) {
+            elkgraph.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+        }
+        
+        // Size constraints are not empty, so calculate the size the node and label placement code thing would like to
+        // give the graph
+        GraphAdapter<?> graphAdapter = ElkGraphAdapters.adapt(elkgraph.getParent());
+        NodeAdapter<?> nodeAdapter = ElkGraphAdapters.adaptSingleNode(elkgraph);
+        
+        KVector minSize = NodeLabelAndSizeCalculator.process(graphAdapter, nodeAdapter, false);
+        
+        // Apply the minimum size a sa property and make sure the minimum size is respected by ELK Layered by making
+        // sure the necessary size constraint exists
+        lgraph.setProperty(LayeredOptions.NODE_SIZE_MINIMUM, minSize);
+        sizeConstraints.add(SizeConstraint.MINIMUM_SIZE);
     }
 
     /**

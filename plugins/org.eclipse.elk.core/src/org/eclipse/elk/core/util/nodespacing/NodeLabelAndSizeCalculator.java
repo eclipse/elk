@@ -11,6 +11,7 @@
 package org.eclipse.elk.core.util.nodespacing;
 
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.nodespacing.cellsystem.Cell;
@@ -55,7 +56,7 @@ public final class NodeLabelAndSizeCalculator {
      */
     public static void process(final GraphAdapter<?> graph) {
         // Process all of the graph's direct children
-        graph.getNodes().forEach(node -> process(graph, node));
+        graph.getNodes().forEach(node -> process(graph, node, true));
     }
     
     /**
@@ -67,8 +68,12 @@ public final class NodeLabelAndSizeCalculator {
      *            the node's parent graph.
      * @param node
      *            the node to process.
+     * @param applyStuff
+     *            {@code true} if the node should actually be resized and have its ports and labels positioned,
+     *            {@code false} if we should only return the size that would be applied.
+     * @return the node's size that was or would be applied.
      */
-    public static void process(final GraphAdapter<?> graph, final NodeAdapter<?> node) {
+    public static KVector process(final GraphAdapter<?> graph, final NodeAdapter<?> node, final boolean applyStuff) {
         // Note that, upon Miro's request, each phase of the algorithm was given a code name in the first version of
         // this code. We happily carry on fulfilling this request in this, the second version.
 
@@ -151,9 +156,17 @@ public final class NodeLabelAndSizeCalculator {
          * since we now know the node's height, we can finally correct the southern port positions. Before we can do
          * all that, however, we might need to update the height and padding of the eastern and western inside port
          * label cells to be sure that free ports are positioned properly.
+         * 
+         * Note that if we are to not apply stuff, we're done once we know the node's height. Which is why we stop at
+         * that point.
          */
         CellSystemConfigurator.updateVerticalInsidePortLabelCellPadding(nodeContext);
         NodeSizeCalculator.setNodeHeight(nodeContext);
+        
+        if (!applyStuff) {
+            return nodeContext.nodeSize;
+        }
+        
         NodeLabelAndSizeUtilities.offsetSouthernPortsByNodeSize(nodeContext);
         
         PortPlacementCalculator.placeVerticalPorts(nodeContext);
@@ -161,14 +174,21 @@ public final class NodeLabelAndSizeCalculator {
         
         
         /* PHASE 7: THANKSGIVING
-         *          Place Labels
+         *          Place Labels and Apply Stuff
          * 
          * Since we now have the node's final size, we can now calculate the positions of the containers for outer node
          * labels and place all inner and outer node labels. Also, the port label cells have positions assigned to them
-         * and can be told to apply positions to their labels.
+         * and can be told to apply positions to their labels. Finally, we can apply the node's size and all of the
+         * port positions we have calculated.
          */
         LabelPlacer.placeLabels(nodeContext);
         NodeLabelAndSizeUtilities.setNodePadding(nodeContext);
+        
+        nodeContext.applyNodeSize();
+        nodeContext.portContexts.values().stream().forEach(pc -> pc.applyPortPosition());
+        
+        // Return the size
+        return nodeContext.nodeSize;
     }
     
     /**

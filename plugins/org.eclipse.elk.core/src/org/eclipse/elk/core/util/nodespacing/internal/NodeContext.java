@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortAlignment;
@@ -39,7 +40,9 @@ import com.google.common.collect.TreeMultimap;
 
 /**
  * Data holder class to be passed around to avoid having too much state in the size calculation classes. Some of the
- * most relevant settings are copied into variables for convenience.
+ * most relevant settings are copied into variables for convenience. The node's size is stored in a separate variable
+ * in this context, to be used by the algorithm. Once the algorithm has finished it can apply the calculated size to
+ * the node by calling {@link #applyNodeSize()}.
  */
 public final class NodeContext {
    
@@ -51,6 +54,8 @@ public final class NodeContext {
     
     /** The node we calculate stuff for. */
     public final NodeAdapter<?> node;
+    /** The node's size. This will be used during the algorithm, to be applied (or not) once it is finished. */
+    public final KVector nodeSize;
     /** Whether this node has stuff inside it or not. */
     public final boolean treatAsCompoundNode;
     /** The node's size constraints. */
@@ -120,6 +125,7 @@ public final class NodeContext {
      */
     public NodeContext(final GraphAdapter<?> parentGraph, final NodeAdapter<?> node) {
         this.node = node;
+        this.nodeSize = new KVector(node.getSize());
         
         // Compound node
         treatAsCompoundNode = node.isCompoundNode() || node.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE);
@@ -148,6 +154,17 @@ public final class NodeContext {
         
         nodeContainerMiddleRow = new StripContainerCell(Strip.HORIZONTAL, symmetry, 0);
         nodeContainer.setCell(ContainerArea.CENTER, nodeContainerMiddleRow);
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////
+    // Application
+    
+    /**
+     * Applies the node size stored in this context to the actual node.
+     */
+    public void applyNodeSize() {
+        node.setSize(nodeSize);
     }
     
     

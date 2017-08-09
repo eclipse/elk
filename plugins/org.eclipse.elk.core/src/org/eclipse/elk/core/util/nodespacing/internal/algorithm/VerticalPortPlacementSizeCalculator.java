@@ -81,7 +81,7 @@ public final class VerticalPortPlacementSizeCalculator {
         for (PortContext portContext : nodeContext.portContexts.get(portSide)) {
             bottommostPortBorder = Math.max(
                     bottommostPortBorder,
-                    portContext.port.getPosition().y + portContext.port.getSize().y);
+                    portContext.portPosition.y + portContext.port.getSize().y);
         }
         
         // Set the cell size and remove top padding since the cell size itself already includes all the space we need
