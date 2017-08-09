@@ -238,14 +238,15 @@ public final class JsonExporter {
         jsonObj.addJsonObj("endPoint", endPoint)
         
         // Bend Points
-        if (!section.bendPoints.nullOrEmpty) {
-        val bendPoints = newJsonArray
-            section.bendPoints.forEach [ pnt |
-                val jsonPnt = newJsonObject
-                jsonPnt.addProperty("x", pnt.x)
-                jsonPnt.addProperty("y", pnt.y)
-                bendPoints.addJsonArr(jsonPnt)
-            ]
+        if (!omitLayout && !section.bendPoints.nullOrEmpty) {
+            val bendPoints = newJsonArray
+                section.bendPoints.forEach [ pnt |
+                    val jsonPnt = newJsonObject
+                    jsonPnt.addProperty("x", pnt.x)
+                    jsonPnt.addProperty("y", pnt.y)
+                    bendPoints.addJsonArr(jsonPnt)
+                ]
+            jsonObj.addJsonObj("bendPoints", bendPoints)
         }
         
         // Incoming shape
