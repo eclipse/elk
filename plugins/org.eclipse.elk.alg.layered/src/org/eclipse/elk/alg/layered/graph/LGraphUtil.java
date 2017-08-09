@@ -837,31 +837,52 @@ public final class LGraphUtil {
             assert false : finalExternalPortSide;
         }
         
-        // From FIXED_ORDER onwards, we need to save the port position or ratio
         if (portConstraints.isOrderFixed()) {
-            double positionOrRatio = 0;
+            // The order of ports is fixed in some way, so what we will have to do is to remember information about it
+            double informationAboutIt = 0;
             
-            switch (finalExternalPortSide) {
-            case WEST:
-            case EAST:
-                positionOrRatio = portPosition.y;
-                if (portConstraints.isRatioFixed()) {
-                    positionOrRatio /= portNodeSize.y;
+            // If only the order is fixed _and_ the port has an explicit index set on it, remember that
+            if (portConstraints == PortConstraints.FIXED_ORDER
+                    && propertyHolder.hasProperty(LayeredOptions.PORT_INDEX)) {
+                
+                // We will have to be careful: on the SOUTH and WEST sides, the index is in reverse to what we would
+                // later expect in the code, so we'll use the index * -1 there
+                switch (finalExternalPortSide) {
+                case NORTH:
+                case EAST:
+                    informationAboutIt = propertyHolder.getProperty(LayeredOptions.PORT_INDEX);
+                    break;
+                    
+                case SOUTH:
+                case WEST:
+                    informationAboutIt = -1 * propertyHolder.getProperty(LayeredOptions.PORT_INDEX);
+                    break;
                 }
                 
-                break;
-                
-            case NORTH:
-            case SOUTH:
-                positionOrRatio = portPosition.x;
-                if (portConstraints.isRatioFixed()) {
-                    positionOrRatio /= portNodeSize.x;
+            } else {
+                // Otherwise, we will just go with the position itself
+                switch (finalExternalPortSide) {
+                case WEST:
+                case EAST:
+                    informationAboutIt = portPosition.y;
+                    if (portConstraints.isRatioFixed()) {
+                        informationAboutIt /= portNodeSize.y;
+                    }
+                    
+                    break;
+                    
+                case NORTH:
+                case SOUTH:
+                    informationAboutIt = portPosition.x;
+                    if (portConstraints.isRatioFixed()) {
+                        informationAboutIt /= portNodeSize.x;
+                    }
+                    
+                    break;
                 }
-                
-                break;
             }
             
-            dummy.setProperty(InternalProperties.PORT_RATIO_OR_POSITION, positionOrRatio);
+            dummy.setProperty(InternalProperties.PORT_RATIO_OR_POSITION, informationAboutIt);
         }
         
         // Set the port side of the dummy
