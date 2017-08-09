@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
 
+import java.util.EnumSet;
+
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
@@ -126,26 +128,6 @@ public final class NodeLabelAndSizeUtilities {
         nodeContext.portContexts.values().stream().forEach(pc -> pc.applyPortPosition());
     }
     
-    /**
-     * Checks whether compound node mode should be active for the given part. Depending on the configuration, the user
-     * may want us to only offset port labels if their port actually has a connection to the inside. That's basically
-     * what this method is all about.
-     */
-    public static boolean effectiveCompoundNodeMode(final PortContext portContext) {
-        if (!portContext.parentNodeContext.treatAsCompoundNode) {
-            // Compound node mode was already off, so spare us the hassle
-            return false;
-            
-        } else if (portContext.parentNodeContext.node.getProperty(CoreOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE)) {
-            // Compound node more is active _and_ the presence of connections to the inside actually makes a difference
-            return portContext.port.hasCompoundConnections();
-            
-        } else {
-            // Compound node mode is active, but we treat all ports as if they had connections to the inside
-            return true;
-        }
-    }
-    
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Minimum Size Things
@@ -199,6 +181,43 @@ public final class NodeLabelAndSizeUtilities {
         }
         
         return minSize;
+    }
+    
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utilities
+    
+    /** Size constraints that only contain port labels should not cause a node to resize. */
+    private static final EnumSet<SizeConstraint> EFFECTIVELY_FIXED_SIZE_CONSTRAINTS =
+            EnumSet.of(SizeConstraint.PORT_LABELS);
+    
+    /**
+     * Checks if the size constraints, even if not empty, should cause the node not to be resized. This is the case if
+     * the constraints are either empty or contain only {@link SizeConstraint#PORT_LABELS}.
+     */
+    public static boolean areSizeConstraintsFixed(final NodeContext nodeContext) {
+        return nodeContext.sizeConstraints.isEmpty()
+                || (nodeContext.sizeConstraints.equals(EFFECTIVELY_FIXED_SIZE_CONSTRAINTS));
+    }
+    
+    /**
+     * Checks whether compound node mode should be active for the given part. Depending on the configuration, the user
+     * may want us to only offset port labels if their port actually has a connection to the inside. That's basically
+     * what this method is all about.
+     */
+    public static boolean effectiveCompoundNodeMode(final PortContext portContext) {
+        if (!portContext.parentNodeContext.treatAsCompoundNode) {
+            // Compound node mode was already off, so spare us the hassle
+            return false;
+            
+        } else if (portContext.parentNodeContext.node.getProperty(CoreOptions.PORT_LABELS_NEXT_TO_PORT_IF_POSSIBLE)) {
+            // Compound node more is active _and_ the presence of connections to the inside actually makes a difference
+            return portContext.port.hasCompoundConnections();
+            
+        } else {
+            // Compound node mode is active, but we treat all ports as if they had connections to the inside
+            return true;
+        }
     }
     
 }

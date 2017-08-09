@@ -42,7 +42,7 @@ public final class NodeSizeCalculator {
         KVector nodeSize = nodeContext.nodeSize;
         double width;
         
-        if (nodeContext.sizeConstraints.isEmpty()) {
+        if (NodeLabelAndSizeUtilities.areSizeConstraintsFixed(nodeContext)) {
             // Simply use the node's current width
             width = nodeSize.x;
         } else {
@@ -87,7 +87,7 @@ public final class NodeSizeCalculator {
         KVector nodeSize = nodeContext.nodeSize;
         double height;
         
-        if (nodeContext.sizeConstraints.isEmpty()) {
+        if (NodeLabelAndSizeUtilities.areSizeConstraintsFixed(nodeContext)) {
             // Simply use the node's current height
             height = nodeSize.y;
         } else {

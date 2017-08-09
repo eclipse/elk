@@ -65,18 +65,19 @@ public final class CellSystemConfigurator {
             // The main row needs to contribute height for the east and west port label cells to be able to contribute
             // their height
             nodeContext.nodeContainerMiddleRow.setContributesToMinimumHeight(freePortPlacement);
-        }
-        
-        if (nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS)) {
-            // The port label cells contribute the space they need for inside port label placement
-            nodeContext.insidePortLabelCells.get(PortSide.NORTH).setContributesToMinimumHeight(true);
-            nodeContext.insidePortLabelCells.get(PortSide.SOUTH).setContributesToMinimumHeight(true);
-            nodeContext.insidePortLabelCells.get(PortSide.EAST).setContributesToMinimumWidth(true);
-            nodeContext.insidePortLabelCells.get(PortSide.WEST).setContributesToMinimumWidth(true);
             
-            // The main row needs to contribute Width for the east and west port label cells to be able to contribute
-            // their width
-            nodeContext.nodeContainerMiddleRow.setContributesToMinimumWidth(true);
+            // Port labels only contribute their size if ports are accounted for as well
+            if (nodeContext.sizeConstraints.contains(SizeConstraint.PORT_LABELS)) {
+                // The port label cells contribute the space they need for inside port label placement
+                nodeContext.insidePortLabelCells.get(PortSide.NORTH).setContributesToMinimumHeight(true);
+                nodeContext.insidePortLabelCells.get(PortSide.SOUTH).setContributesToMinimumHeight(true);
+                nodeContext.insidePortLabelCells.get(PortSide.EAST).setContributesToMinimumWidth(true);
+                nodeContext.insidePortLabelCells.get(PortSide.WEST).setContributesToMinimumWidth(true);
+                
+                // The main row needs to contribute Width for the east and west port label cells to be able to
+                // contribute their width
+                nodeContext.nodeContainerMiddleRow.setContributesToMinimumWidth(true);
+            }
         }
         
         if (nodeContext.sizeConstraints.contains(SizeConstraint.NODE_LABELS)) {

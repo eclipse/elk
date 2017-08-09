@@ -339,11 +339,12 @@ class ElkGraphLayoutTransferrer {
     private void applyParentNodeLayout(final LGraph lgraph) {
         ElkNode elknode = (ElkNode) lgraph.getProperty(InternalProperties.ORIGIN);
         
-        KVector actualGraphSize = lgraph.getActualSize();
-        elknode.setProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
+        boolean sizeConstraintsIncludedPortLabels =
+                elknode.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS).contains(SizeConstraint.PORT_LABELS);
 
         if (lgraph.getProperty(InternalProperties.PARENT_LNODE) == null) {
             Set<GraphProperties> graphProps = lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES);
+            KVector actualGraphSize = lgraph.getActualSize();
             
             if (graphProps.contains(GraphProperties.EXTERNAL_PORTS)) {
                 // Ports have positions assigned, the graph's size is final
@@ -363,6 +364,15 @@ class ElkGraphLayoutTransferrer {
                         true,
                         true);
             }
+        }
+        
+        // Set the size constraints. Thing is, if we always set the size constraints to fixed, we might remove a
+        // PORT_LABELS constraints that was formerly present. This in turn will cause ports to be placed without
+        // consideration for their labels.
+        if (sizeConstraintsIncludedPortLabels) {
+            elknode.setProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.PORT_LABELS));
+        } else {
+            elknode.setProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.fixed());
         }
     }
     
