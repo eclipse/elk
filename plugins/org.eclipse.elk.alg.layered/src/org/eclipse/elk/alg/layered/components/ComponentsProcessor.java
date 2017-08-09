@@ -118,6 +118,12 @@ public final class ComponentsProcessor {
                     newGraph.setProperty(InternalProperties.EXT_PORT_CONNECTIONS,
                             componentData.getSecond());
                     newGraph.getPadding().copy(graph.getPadding());
+                    
+                    // If a minimum size was set on the original graph, setting it on the seperated graphs as well
+                    // might enlarge them although their combined area might not actually have fallen below the minimum
+                    // size; thus, remove the minimum size
+                    newGraph.setProperty(LayeredOptions.NODE_SIZE_MINIMUM, null);
+                    
                     for (LNode n : componentData.getFirst()) {
                         newGraph.getLayerlessNodes().add(n);
                         n.setGraph(newGraph);
