@@ -60,8 +60,7 @@ public final class LGraphAdapters {
     }
     
     /**
-     * Adapts the given {@link LGraph}. Transparently provides access to edges connected to
-     * north/south port dummies.
+     * Adapts the given {@link LGraph}. Transparently provides access to edges connected to north/south port dummies.
      *
      * @param graph
      *            the graph that should be wrapped in an adapter.
@@ -97,6 +96,22 @@ public final class LGraphAdapters {
             final Predicate<LNode> nodeFilter) {
         
         return new LGraphAdapter(graph, transparentNorthSouthEdges, nodeFilter);
+    }
+    
+    /**
+     * Adapts the given single node. Transparently provides access to edges connected to north/south port dummies.
+     *
+     * @param node
+     *            the node that should be wrapped in an adapter.
+     * @param transparentNorthSouthEdges
+     *            {@code true} if edges connected to north south port dummies should appear to be
+     *            directly connected to their original north/south ports. This effectively makes the
+     *            north/south port dummies "transparent" in the sense that edges connected to them
+     *            appear to be connected to the original connection points.
+     * @return an {@link LNodeAdapter} for the passed node.
+     */
+    public static LNodeAdapter adapt(final LNode node, final boolean transparentNorthSouthEdges) {
+        return new LNodeAdapter(null, node, transparentNorthSouthEdges);
     }
     
     /**

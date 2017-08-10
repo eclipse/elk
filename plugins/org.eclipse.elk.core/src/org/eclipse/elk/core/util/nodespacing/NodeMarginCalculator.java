@@ -118,6 +118,15 @@ public final class NodeMarginCalculator  {
             processNode(node, spacing);
         }
     }
+    
+    /**
+     * Calculates and assigns margins to the given node. The node is expected to be part of the graph the calculator
+     * was created for.
+     */
+    public void processNode(final NodeAdapter<?> node) {
+        double spacing = adapter.getProperty(CoreOptions.SPACING_LABEL_NODE);
+        processNode(node, spacing);
+    }
 
     /**
      * Calculates the margin of the given node.

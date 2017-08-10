@@ -17,6 +17,8 @@ import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
+import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
@@ -30,8 +32,11 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -159,7 +164,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         // Restore the original external port dummies
         for (LNode dummy : layeredGraph.getProperty(InternalProperties.EXT_PORT_REPLACED_DUMMIES)) {
-            restoreDummy(dummy);
+            restoreDummy(dummy, layeredGraph);
             restoredDummies.add(dummy);
         }
         
@@ -194,10 +199,8 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
     
     /**
      * Restores the given dummy.
-     * 
-     * @param dummy the dummy node to restore.
      */
-    private void restoreDummy(final LNode dummy) {
+    private void restoreDummy(final LNode dummy, final LGraph graph) {
         // Depending on the hierarchical port's side, we set the port side of the dummy's ports
         // to be able to route properly (northern dummies must have a southern port)
         PortSide portSide = dummy.getProperty(InternalProperties.EXT_PORT_SIDE);
@@ -207,6 +210,37 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             dummyPort.setSide(PortSide.SOUTH);
         } else if (portSide == PortSide.SOUTH) {
             dummyPort.setSide(PortSide.NORTH);
+        }
+        
+        // Since the dummy node was hidden from the algorithm, its port labels are not placed properly and its margins
+        // are not set acoordingly. That needs to be fixed (if port labels are to be taken into consideration)
+        if (graph.getProperty(LayeredOptions.NODE_SIZE_CONSTRAINTS).contains(SizeConstraint.PORT_LABELS)) {
+            // The ElkGraphImporter has set the relevant spacings on the dummy node
+            double portLabelSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_PORT);
+            double labelLabelSpacing = dummy.getProperty(LayeredOptions.SPACING_LABEL_LABEL);
+            
+            PortLabelPlacement portLabelPlacement = graph.getProperty(LayeredOptions.PORT_LABELS_PLACEMENT);
+            if (portLabelPlacement == PortLabelPlacement.INSIDE) {
+                double currentY = portLabelSpacing;
+                double xCenterRelativeToPort = dummy.getSize().x / 2 - dummyPort.getPosition().x;
+                
+                for (LLabel label : dummyPort.getLabels()) {
+                    label.getPosition().y = currentY;
+                    label.getPosition().x = xCenterRelativeToPort - label.getSize().x / 2;
+                    
+                    currentY += label.getSize().y + labelLabelSpacing;
+                }
+                
+            } else if (portLabelPlacement == PortLabelPlacement.OUTSIDE) {
+                // Port labels have a vertical size of 0, but we need to set their x coordinate
+                for (LLabel label : dummyPort.getLabels()) {
+                    label.getPosition().x = portLabelSpacing + dummy.getSize().x - dummyPort.getPosition().x;
+                }
+            }
+            
+            // Calculate margins
+            NodeDimensionCalculation.getNodeMarginCalculator(LGraphAdapters.adapt(graph, false))
+                .processNode(LGraphAdapters.adapt(dummy, false));
         }
     }
     
