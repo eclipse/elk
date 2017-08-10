@@ -239,7 +239,14 @@ public final class InternalProperties {
      */
     public static final IProperty<KVector> EXT_PORT_SIZE = new Property<KVector>(
             "externalPortSize", new KVector());
-
+    
+    /**
+     * External port dummies that represent northern or southern external ports are replaced by new
+     * dummy nodes during layout. The original ones are kept in this property set on the graph.
+     */
+    public static final IProperty<List<LNode>> EXT_PORT_REPLACED_DUMMIES = new Property<>(
+            "externalPortReplacedDummies");
+    
     /**
      * External port dummies that represent northern or southern external ports are replaced by new
      * dummy nodes during layout. In these cases, this property is set to the original dummy node.

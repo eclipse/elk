@@ -16,7 +16,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -34,7 +33,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Processes constraints imposed on hierarchical node dummies.
@@ -181,8 +179,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
             }
             
             if (lastHierarchicalDummy != null) {
-                lastHierarchicalDummy.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS)
-                        .add(node);
+                lastHierarchicalDummy.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(node);
             }
             
             lastHierarchicalDummy = node;
@@ -216,10 +213,8 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
         // again.
         // We keep enough space to hold layerCount + 2 instances of each data structure because we
         // might have to add a new first and last layer, even though that shouldn't normally happen
-        List<Map<Object, LNode>> extPortToDummyNodeMap =
-                Lists.newArrayListWithExpectedSize(layerCount + 2);
-        List<List<LNode>> newDummyNodes =
-                Lists.newArrayListWithExpectedSize(layerCount + 2);
+        List<Map<Object, LNode>> extPortToDummyNodeMap = Lists.newArrayListWithExpectedSize(layerCount + 2);
+        List<List<LNode>> newDummyNodes = Lists.newArrayListWithExpectedSize(layerCount + 2);
         
         // Add maps and lists for a new first layer that might have to be created as well as for the
         // current first layer. A map for the next layer is added on each iteration of the for loop
@@ -228,9 +223,8 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
         newDummyNodes.add(new ArrayList<LNode>());
         newDummyNodes.add(new ArrayList<LNode>());
         
-        // We remember each original external port dummy we encounter (they must be removed from
-        // the layers later)
-        Set<LNode> originalExternalPortDummies = Sets.newHashSet();
+        // We remember each original external port dummy we encounter (they must be removed from the layers later)
+        List<LNode> originalExternalPortDummies = Lists.newArrayList();
         
         // Iterate through each layer
         for (int currLayerIdx = 0; currLayerIdx < layerCount; currLayerIdx++) {
@@ -248,15 +242,20 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
             // Iterate through the layer's nodes, looking for normal nodes connected to
             // northern / southern hierarchical port dummies
             for (LNode currentNode : currentLayer) {
+                if (isNorthernOrSouthernDummy(currentNode)) {
+                    // It's a northern or southern external port dummy. Schedule for removal and move on to next node
+                    originalExternalPortDummies.add(currentNode);
+                    continue;
+                }
+                
                 // Iterate over the node's incoming edges
                 for (LEdge edge : currentNode.getIncomingEdges()) {
                     LNode sourceNode = edge.getSource().getNode();
                     
                     // Check if it's a northern / southern dummy node
-                    if (!isNorthernSouthernDummy(sourceNode)) {
+                    if (!isNorthernOrSouthernDummy(sourceNode)) {
                         continue;
                     }
-                    originalExternalPortDummies.add(sourceNode);
                     
                     // See if a dummy has already been created for the previous layer
                     LNode prevLayerDummy = prevExtPortToDummyNodesMap.get(
@@ -279,10 +278,9 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
                     LNode targetNode = edge.getTarget().getNode();
                     
                     // Check if it's a northern / southern dummy node
-                    if (!isNorthernSouthernDummy(targetNode)) {
+                    if (!isNorthernOrSouthernDummy(targetNode)) {
                         continue;
                     }
-                    originalExternalPortDummies.add(targetNode);
                     
                     // See if a dummy has already been created for the next layer
                     LNode nextLayerDummy = nextExtPortToDummyNodesMap.get(
@@ -334,6 +332,9 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
             // Remove the original dummy; new dummy nodes have already been created for it
             originalDummy.setLayer(null);
         }
+        
+        // Remember the original external port dummies in the graph
+        layeredGraph.setProperty(InternalProperties.EXT_PORT_REPLACED_DUMMIES, originalExternalPortDummies);
     }
     
     /**
@@ -343,7 +344,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      * @return {@code true} if the node represents a northern or southern external port,
      *         {@code false} otherwise.
      */
-    private boolean isNorthernSouthernDummy(final LNode node) {
+    private boolean isNorthernOrSouthernDummy(final LNode node) {
         NodeType nodeType = node.getType();
         
         if (nodeType == NodeType.EXTERNAL_PORT) {

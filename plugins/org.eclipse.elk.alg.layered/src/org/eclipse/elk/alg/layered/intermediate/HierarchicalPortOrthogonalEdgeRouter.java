@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPadding;
@@ -55,14 +56,19 @@ import com.google.common.collect.Sets;
  * </ol>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>A layered graph, with edge routing finished for edges not incident
- *     to external ports; long edge dummies are not yet joined.</dd>
- *   <dt>Postcondition:</dt><dd>All external port dummy nodes left map onto an actual external port;
- *     the coordinates of external port dummy nodes specify the coordinates of their respective
- *     external port; all external port dummy nodes have a size of (0, 0); edges connected to
- *     external ports have their bend points set.</dd>
- *   <dt>Slots:</dt><dd>After phase 5.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>A layered graph</dd>
+ *     <dd>with edge routing finished for edges not incident to external ports</dd>
+ *     <dd>long edge dummies are not yet joined.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>All external port dummy nodes left map onto an actual external port</dd>
+ *     <dd>the coordinates of external port dummy nodes specify the coordinates of their respective external port</dd>
+ *     <dd>all external port dummy nodes have a size of (0, 0)</dd>
+ *     <dd>edges connected to external ports have their bend points set.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>None.</dd>
  * </dl>
  * 
  * @see HierarchicalPortConstraintProcessor
@@ -93,7 +99,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
          * Restore any north / south port dummies removed by the HierarchicalPortConstraintProcessor
          * and connect them to the dummies created in their stead.
          */
-        Set<LNode> northSouthDummies = restoreNorthSouthDummies(layeredGraph);
+        List<LNode> northSouthDummies = restoreNorthSouthDummies(layeredGraph);
         
         /* Step 2
          * Calculate coordinates for the north / south port dummies. Coordinates for the
@@ -144,12 +150,20 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      * @param layeredGraph the layered graph.
      * @return the list of restored external port dummies.
      */
-    private Set<LNode> restoreNorthSouthDummies(final LGraph layeredGraph) {
-        Set<LNode> restoredDummies = Sets.newLinkedHashSet();
-        Layer lastLayer = null;
+    private List<LNode> restoreNorthSouthDummies(final LGraph layeredGraph) {
+        List<LNode> restoredDummies = Lists.newArrayList();
         
-        // Iterate through all nodes, looking for hierarchical port dummies that replace
-        // another hierarchical port dummy
+        if (!layeredGraph.hasProperty(InternalProperties.EXT_PORT_REPLACED_DUMMIES)) {
+            return restoredDummies;
+        }
+        
+        // Restore the original external port dummies
+        for (LNode dummy : layeredGraph.getProperty(InternalProperties.EXT_PORT_REPLACED_DUMMIES)) {
+            restoreDummy(dummy);
+            restoredDummies.add(dummy);
+        }
+        
+        // Looking for hierarchical port dummies that replaced the restored hierarchical port dummy
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 if (node.getType() != NodeType.EXTERNAL_PORT) {
@@ -158,54 +172,41 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                     continue;
                 }
                 
-                LNode replacedDummy =
-                        (LNode) node.getProperty(InternalProperties.EXT_PORT_REPLACED_DUMMY);
+                LNode replacedDummy = (LNode) node.getProperty(InternalProperties.EXT_PORT_REPLACED_DUMMY);
                 if (replacedDummy != null) {
                     assert replacedDummy.getType() == NodeType.EXTERNAL_PORT;
                     
                     // Restore the origin and connect the node to it
-                    restoreDummy(replacedDummy, restoredDummies);
                     connectNodeToDummy(layeredGraph, node, replacedDummy);
                 }
             }
-            
-            lastLayer = layer;
         }
         
         // Assign the restored dummies to the graph's last layer (this has nothing to do anymore
         // with where they'll be placed; we just need some layer to assign them to, and we simply
         // choose the last one)
         for (LNode dummy : restoredDummies) {
-            dummy.setLayer(lastLayer);
+            dummy.setLayer(layeredGraph.getLayers().get(layeredGraph.getLayers().size() - 1));
         }
         
         return restoredDummies;
     }
     
     /**
-     * Restores the given dummy, if it's not already restored. If the dummy has already been
-     * restored, it will be contained in the given set. If not, it is restored by setting its
-     * port's side and putting it in the set.
+     * Restores the given dummy.
      * 
      * @param dummy the dummy node to restore.
-     * @param restoredDummies set of dummy nodes already restored.
      */
-    private void restoreDummy(final LNode dummy, final Set<LNode> restoredDummies) {
-        if (restoredDummies.contains(dummy)) {
-            return;
-        } else {
-            // Depending on the hierarchical port's side, we set the port side of the dummy's ports
-            // to be able to route properly (northern dummies must have a southern port)
-            PortSide portSide = dummy.getProperty(InternalProperties.EXT_PORT_SIDE);
-            LPort dummyPort = dummy.getPorts().get(0);
-            
-            if (portSide == PortSide.NORTH) {
-                dummyPort.setSide(PortSide.SOUTH);
-            } else if (portSide == PortSide.SOUTH) {
-                dummyPort.setSide(PortSide.NORTH);
-            }
-            
-            restoredDummies.add(dummy);
+    private void restoreDummy(final LNode dummy) {
+        // Depending on the hierarchical port's side, we set the port side of the dummy's ports
+        // to be able to route properly (northern dummies must have a southern port)
+        PortSide portSide = dummy.getProperty(InternalProperties.EXT_PORT_SIDE);
+        LPort dummyPort = dummy.getPorts().get(0);
+        
+        if (portSide == PortSide.NORTH) {
+            dummyPort.setSide(PortSide.SOUTH);
+        } else if (portSide == PortSide.SOUTH) {
+            dummyPort.setSide(PortSide.NORTH);
         }
     }
     
@@ -240,11 +241,9 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      * Set coordinates for northern and southern external port dummy nodes.
      * 
      * @param layeredGraph the layered graph.
-     * @param northSouthDummies set of dummy nodes whose position to set.
+     * @param northSouthDummies dummy nodes whose position to set.
      */
-    private void setNorthSouthDummyCoordinates(final LGraph layeredGraph,
-            final Set<LNode> northSouthDummies) {
-        
+    private void setNorthSouthDummyCoordinates(final LGraph layeredGraph, final List<LNode> northSouthDummies) {
         PortConstraints constraints = layeredGraph.getProperty(LayeredOptions.PORT_CONSTRAINTS);
         KVector graphSize = layeredGraph.getSize();
         LPadding graphPadding = layeredGraph.getPadding();
@@ -325,18 +324,23 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         // First, get the dummy's port (it has only one)
         LPort dummyInPort = dummy.getPorts().get(0);
         
-        // Now, iterate over all connected ports, adding their horizontal position
-        double posSum = 0.0;
-        
-        for (LPort connectedPort : dummyInPort.getConnectedPorts()) {
-            posSum += connectedPort.getNode().getPosition().x + connectedPort.getPosition().x
-                    + connectedPort.getAnchor().x;
+        // It might be that the node is not actually connected to anything. In that case, we assign a default position
+        if (dummyInPort.getDegree() == 0) {
+            dummy.getPosition().x = 0;
+        } else {
+            // Now, iterate over all connected ports, adding their horizontal position
+            double posSum = 0.0;
+            
+            for (LPort connectedPort : dummyInPort.getConnectedPorts()) {
+                posSum += connectedPort.getNode().getPosition().x + connectedPort.getPosition().x
+                        + connectedPort.getAnchor().x;
+            }
+            
+            // Assign the dummy's x coordinate
+            KVector anchor = dummy.getProperty(LayeredOptions.PORT_ANCHOR);
+            double offset = anchor == null ? 0 : anchor.x;
+            dummy.getPosition().x = posSum / dummyInPort.getDegree() - offset;
         }
-        
-        // Assign the dummy's x coordinate
-        KVector anchor = dummy.getProperty(LayeredOptions.PORT_ANCHOR);
-        double offset = anchor == null ? 0 : anchor.x;
-        dummy.getPosition().x = posSum / dummyInPort.getDegree() - offset;
     }
     
     /**
@@ -424,22 +428,34 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      * @param graph the layered graph.
      */
     private void assignAscendingCoordinates(final LNode[] dummies, final LGraph graph) {
-        // Find the edge distance
-        float edgeSpacing = graph.getProperty(LayeredOptions.SPACING_EDGE_EDGE).floatValue();
+        // Find the port-port spacing
+        double spacing = graph.getProperty(LayeredOptions.SPACING_PORT_PORT);
         
         // Now, iterate over the array, remembering the last assigned position. If we find a
         // position that is less than or equal to the last position, assign a new position of
         // "lastPosition + edgeSpacing"
-        double lastCoordinate = dummies[0].getPosition().x + dummies[0].getSize().x;
+        double nextValidCoordinate = dummies[0].getPosition().x
+                + dummies[0].getSize().x
+                + dummies[0].getMargin().right
+                + spacing;
+        
         for (int index = 1; index < dummies.length; index++) {
             KVector currentPosition = dummies[index].getPosition();
             KVector currentSize = dummies[index].getSize();
+            LMargin currentMargin = dummies[index].getMargin();
             
-            if (currentPosition.x <= lastCoordinate + edgeSpacing) {
-                currentPosition.x = lastCoordinate + edgeSpacing;
+            // Ensure spacings are adhered to
+            double delta = currentPosition.x - currentMargin.left - nextValidCoordinate;
+            if (delta < 0) {
+                currentPosition.x -= delta;
             }
             
-            lastCoordinate = currentPosition.x + currentSize.x;
+            // Ensure the graph is large enough for this node
+            KVector graphSize = graph.getSize();
+            graphSize.x = Math.max(graphSize.x, currentPosition.x + currentSize.x);
+            
+            // Compute next valid coordinate
+            nextValidCoordinate = currentPosition.x + currentSize.x + currentMargin.right + spacing;
         }
     }
     
@@ -551,7 +567,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                     continue;
                 }
                 
-                if (node.getProperty(InternalProperties.EXT_PORT_REPLACED_DUMMY) == null) {
+                if (!node.hasProperty(InternalProperties.EXT_PORT_REPLACED_DUMMY)) {
                     // We're only looking for temporary north / south dummies
                     continue;
                 }
