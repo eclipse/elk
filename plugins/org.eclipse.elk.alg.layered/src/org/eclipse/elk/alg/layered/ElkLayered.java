@@ -400,8 +400,7 @@ public final class ElkLayered {
             //  to differentiate between 'it's ok' and 'it's not'.
             // throw new IllegalArgumentException(
             // "Given processor not part of the remaining algorithm.");
-            System.err
-                    .println("Given processor " + phase + " not part of the remaining algorithm.");
+            System.err.println("Given processor " + phase + " not part of the remaining algorithm.");
         }
 
         // perform the layout up to and including that phase
@@ -477,10 +476,12 @@ public final class ElkLayered {
             // Print the algorithm configuration and output the whole graph to a file
             // before each slot execution
 
-            System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
+            System.out.println("ELK Layered uses the following " + algorithm.size() + " modules:");
             int slot = 0;
             for (ILayoutProcessor<LGraph> processor : algorithm) {
-                System.out.printf("   Slot %02d: %s%n", slot++, processor.getClass().getName());
+                // SUPPRESS CHECKSTYLE NEXT MagicNumber
+                String gwtDoesntSupportPrintf = (slot < 10 ? "0" : "") + (slot++);
+                System.out.println("   Slot " + gwtDoesntSupportPrintf + ": " + processor.getClass().getName());
             }
 
             // Invoke each layout processor
