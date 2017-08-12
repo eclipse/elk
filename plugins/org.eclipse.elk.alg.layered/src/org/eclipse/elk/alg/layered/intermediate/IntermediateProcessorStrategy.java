@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Kiel University and others.
+ * Copyright (c) 2010, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,11 +24,6 @@ import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 /**
  * Definition of available intermediate layout processors for the layered layouter. This enumeration also serves as a
  * factory for intermediate layout processors.
- *
- * @author cds
- * @author ima
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGraph> {
 
@@ -96,6 +91,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     NORTH_SOUTH_PORT_PREPROCESSOR,
 
     // Before Phase 4
+    
     /** Performs 'wrapping' of the graph, potentially executing improvement heuristics. */
     BREAKING_POINT_PROCESSOR,
     /** Hierarchical one-sided greedy switch crossing reduction. */
@@ -131,10 +127,10 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
     // Before Phase 5
 
+    /** Calculate the size of layers and the graph's height and offset. */
+    LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR,
     /** Fix coordinates of hierarchical port dummy nodes. */
     HIERARCHICAL_PORT_POSITION_PROCESSOR,
-    /** Calculate the size of layers. */
-    LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR,
     /** Merges dummy nodes originating from big nodes. */
     BIG_NODES_POSTPROCESSOR,
 

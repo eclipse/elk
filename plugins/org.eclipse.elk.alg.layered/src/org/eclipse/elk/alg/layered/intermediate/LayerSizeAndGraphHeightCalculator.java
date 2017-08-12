@@ -34,13 +34,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Slots:</dt>
  *     <dd>Before phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>{@link HierarchicalPortDummySizeProcessor}</dd>
- *     <dd>{@link HierarchicalPortPositionProcessor}</dd>
+ *     <dd>None.</dd>
  * </dl>
- * 
- * @author cds
- * @kieler.design proposed by cds
- * @kieler.rating proposed yellow by cds
  */
 public final class LayerSizeAndGraphHeightCalculator implements ILayoutProcessor<LGraph> {
 

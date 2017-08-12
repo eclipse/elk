@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,30 +24,38 @@ import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * Sets the y coordinate of external node dummies representing eastern or western
- * hierarchical ports. Note that due to additional space required to route edges connected
- * to northern external ports, the y coordinate set here may become invalid and may need
- * to be fixed later. That fixing is part of what {@link HierarchicalPortOrthogonalEdgeRouter}
+ * Sets the y coordinate of external node dummies representing eastern or western hierarchical ports. Note that due to
+ * additional space required to route edges connected to northern external ports, the y coordinate set here may become
+ * invalid and may need to be fixed later. That fixing is part of what {@link HierarchicalPortOrthogonalEdgeRouter}
  * does.
  * 
  * <p>This processor is only necessary for node placers that do not respect the
- * {@link org.eclipse.elk.alg.layered.options.InternalProperties#PORT_RATIO_OR_POSITION}
- * property themselves.</p>
+ * {@link InternalProperties#PORT_RATIO_OR_POSITION} property themselves.</p>
+ * 
+ * <p>Note that this code involves a few subtleties with the graph's offset. The vertical offset is calculated by the
+ * {@link LayerSizeAndGraphHeightCalculator}, which is executed before this processor has fixed the positions of the
+ * external port dummies of eastern and western ports. However, those dummies were most likely not placed at a smaller
+ * y coordinate than other nodes. This processor either moves dummies downwards, which has no influence on the graph's
+ * offset, or upwards. If this had an influence on the offset, external ports could not be placed outside their border,
+ * which is a perfectly valid configuration. We thus do not touch the offset again after moving the dummies around.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>A layered graph with finished node placement.</dd>
- *   <dt>Postcondition:</dt><dd>External node dummies representing western or eastern ports
- *     have a correct y coordinate.</dd>
- *   <dt>Slots:</dt><dd>Before phase 5.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>None.</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>A layered graph with finished node placement.</dd>
+ *     <dd>The graph's vertical coordinate offset is correct.</dd>
+ *     <dd>External port dummies of eastern and western ports appear in their layer's node list in the order they
+ *         will later appear on their node side in.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>External node dummies representing western or eastern ports have a correct y coordinate.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link LayerSizeAndGraphHeightCalculator}</dd>
  * </dl>
  * 
  * @see HierarchicalPortConstraintProcessor
  * @see HierarchicalPortDummySizeProcessor
  * @see HierarchicalPortOrthogonalEdgeRouter
- * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class HierarchicalPortPositionProcessor implements ILayoutProcessor<LGraph> {
     
