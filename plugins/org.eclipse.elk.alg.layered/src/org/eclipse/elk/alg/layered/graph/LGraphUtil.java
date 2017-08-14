@@ -850,12 +850,12 @@ public final class LGraphUtil {
                 switch (finalExternalPortSide) {
                 case NORTH:
                 case EAST:
-                    informationAboutIt = propertyHolder.getProperty(LayeredOptions.PORT_INDEX);
+                    informationAboutIt = propertyHolder.getProperty(LayeredOptions.PORT_INDEX).doubleValue();
                     break;
                     
                 case SOUTH:
                 case WEST:
-                    informationAboutIt = -1 * propertyHolder.getProperty(LayeredOptions.PORT_INDEX);
+                    informationAboutIt = -1 * propertyHolder.getProperty(LayeredOptions.PORT_INDEX).doubleValue();
                     break;
                 }
                 
