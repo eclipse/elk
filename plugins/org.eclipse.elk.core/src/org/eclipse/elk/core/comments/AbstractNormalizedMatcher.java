@@ -1,31 +1,31 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
-import org.eclipse.elk.graph.ElkGraphElement;
-import org.eclipse.elk.graph.ElkNode;
+import java.util.Objects;
 
 /**
- * Provides a basic and configurable implementation of a normalized matcher. Clients have to
- * implement {@link #raw(ElkNode, ElkGraphElement)}, the rest is done by this implementation. The actual
- * normalization is controlled through {@link NormalizationFunction}.
+ * Provides a basic and configurable implementation of a normalized matcher. Clients have to implement
+ * {@link #raw(Object, Object)}, the rest is done by this implementation. The actual normalization is controlled
+ * through {@link NormalizationFunction}.
  * 
  * <p>
- * The way normalization is performed can be controlled through a bunch of configuration methods
- * that are protected to be accessed by subclasses only. Subclasses will probably want to offer
- * specialized configuration methods that call the configuration methods in this class as
- * appropriate, but may also increase the visibility of the provided methods.
+ * The way normalization is performed can be controlled through a bunch of configuration methods that are protected to
+ * be accessed by subclasses only. Subclasses will probably want to offer specialized configuration methods that call
+ * the configuration methods in this class as appropriate, but may also increase the visibility of the provided methods.
  * </p>
+ * 
+ * @param <C>
+ *            type of comments.
+ * @param <T>
+ *            type of attachment targets.
  */
-public abstract class AbstractNormalizedMatcher implements IMatcher {
+public abstract class AbstractNormalizedMatcher<C, T> implements IMatcher<C, T> {
     
     /**
      * Enumeration of available normalization functions.
@@ -49,9 +49,9 @@ public abstract class AbstractNormalizedMatcher implements IMatcher {
     // Configuration
     
     /**
-     * Sets the raw values at which the normalized value will become 0 and 1. There is no
-     * restriction on which of the two is the larger value. If the two are equal, the normalized value
-     * will be 1 if the raw value matches the two, and 0 otherwise.
+     * Sets the raw values at which the normalized value will become 0 and 1. There is no restriction on which of the
+     * two is the larger value. If the two are equal, the normalized value will be 1 if the raw value matches the two,
+     * and 0 otherwise.
      * 
      * @param worstRawVal
      *            the raw value at which the normalized value will become 0.
@@ -59,7 +59,7 @@ public abstract class AbstractNormalizedMatcher implements IMatcher {
      *            the raw value at which the normalized value will become 1.
      * @return this object for method chaining.
      */
-    protected AbstractNormalizedMatcher withBounds(final double worstRawVal, final double bestRawVal) {
+    protected AbstractNormalizedMatcher<C, T> withBounds(final double worstRawVal, final double bestRawVal) {
         this.worstRawValue = worstRawVal;
         this.bestRawValue = bestRawVal;
         
@@ -74,15 +74,10 @@ public abstract class AbstractNormalizedMatcher implements IMatcher {
      * @return this object for method chaining.
      * @throws IllegalArgumentException if the normalization function is {@code null}.
      */
-    protected AbstractNormalizedMatcher withNormalizationFunction(
-            final NormalizationFunction function) {
-        
-        if (function == null) {
-            throw new IllegalArgumentException("Normalization function cannot be null.");
-        }
+    protected AbstractNormalizedMatcher<C, T> withNormalizationFunction(final NormalizationFunction function) {
+        Objects.requireNonNull(function, "Normalization function cannot be null.");
         
         this.normalizationFunction = function;
-        
         return this;
     }
     
@@ -110,13 +105,10 @@ public abstract class AbstractNormalizedMatcher implements IMatcher {
 
     
     /////////////////////////////////////////////////////////////////////////////////////////////
-    // IHeuristic Implementation
+    // IMatcher
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public double normalized(final ElkNode comment, final ElkGraphElement element) {
+    public double normalized(final C comment, final T element) {
         double rawValue = raw(comment, element);
         
         switch (normalizationFunction) {
@@ -164,8 +156,8 @@ public abstract class AbstractNormalizedMatcher implements IMatcher {
     }
     
     /**
-     * Normalizes the given raw value by mapping everything up to the worst possible value to 1, and
-     * everything beyond the worst value to 0.
+     * Normalizes the given raw value by mapping everything up to the worst possible value to 1, and everything beyond
+     * the worst value to 0.
      * 
      * @param raw
      *            the raw value.

@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
@@ -14,68 +11,68 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.Map;
 
-import org.eclipse.elk.graph.ElkNode;
-
 import com.google.common.collect.Maps;
 
 /**
- * Knows how to retrieve the position and size of graph elements. The straightforward thing would be
- * to just take the bounds as defined in the shape layout, which a default bounds provider actually
- * does. However, comment attachment may need to use original bounds as preserved in an original
- * model as opposed to the KGraph version, which may have different sizes and positions.
+ * Knows how to retrieve the position and size of comments and attachment targets.
  * 
  * <p>
- * Note that if an implementation holds state, all resources should be released once
- * {@link #cleanup()} is called.
+ * Note that if an implementation holds state, all resources should be released once {@link #cleanup()} is called.
  * </p>
  * 
  * <p>
- * If clients implementing this interface don't need any preprocessing or cleanup, this interface
- * can be used as a functional interface.
+ * Bounds providers can be turned into caching bounds providers by calling {@link #cached()} on a bounds provider.
+ * Cached bounds providers only calculate the bounds of nodes the first time, and use cached bounds afterwards. Use
+ * cached bounds providers as proxies for computationally expensive bounds providers. It is usually a good idea to use
+ * a single cached bounds provider for the whole comment attachment system.
  * </p>
  * 
- * <p>
- * Bounds providers can be turned into caching bounds providers by calling {@link #cached()} on a
- * bounds provider. Cached bounds providers only calculate the bounds of nodes the first time, and
- * use cached bounds afterwards. Use cached bounds providers as proxies for computationally
- * expensive bounds providers.
- * </p>
- * 
+ * @param <C>
+ *            type of comments.
+ * @param <T>
+ *            type of attachment targets.
  * @see ElkGraphBoundsProvider
  */
-@FunctionalInterface
-public interface IBoundsProvider {
-    
+public interface IBoundsProvider<C, T> {
+
     /**
-     * Returns the position and size to be used for the given node during comment attachment.
+     * Returns the position and size to be used for the given attachment target during comment attachment.
      * 
-     * @param node
-     *            the node whose bounds to retrieve.
-     * @return the node's bounds, or {@code null} if the provider was unable to retrieve the bounds.
+     * @param comment
+     *            the comment whose bounds to retrieve.
+     * @return the comment's bounds, or {@code null} if the provider was unable to retrieve them.
      */
-    Rectangle2D.Double boundsFor(ElkNode node);
+    Rectangle2D.Double boundsForComment(C comment);
     
     /**
-     * Does any preprocessing necessary. This method is called before the first invocation of
-     * {@link #boundsFor(ElkNode)} for a given graph.
+     * Returns the position and size to be used for the given attachment target during comment attachment.
+     * 
+     * @param target
+     *            the target whose bounds to retrieve.
+     * @return the target's bounds, or {@code null} if the provider was unable to retrieve them.
+     */
+    Rectangle2D.Double boundsForTarget(T target);
+    
+    /**
+     * Does any preprocessing necessary. This method is called before the first invocation of the bounds methods for a
+     * given data set.
      * 
      * @implSpec
      * The default implementation does nothing.
      * 
-     * @param graph
-     *            the graph.
+     * @param dataProvider
+     *            the data set provider.
      * @param includeHierarchy
-     *            if {@code true}, the preprocessing is done not only on the current hierarchy
-     *            level, but also on all sub levels. Implementations may choose to behave
-     *            differently depending on this value.
+     *            if {@code true}, the preprocessing is done not only on the current hierarchy level, but also on all
+     *            sub levels. Implementations may choose to behave differently depending on this value.
      */
-    default void preprocess(ElkNode graph, boolean includeHierarchy) {
+    default void preprocess(IDataProvider<C, T> dataProvider, boolean includeHierarchy) {
     }
     
     /**
-     * Does any cleaning necessary to get the implementation ready for the next comment attachment
-     * run. This method is called after the last invocation of {@link #boundsFor(ElkNode)} for a given
-     * graph.
+     * Does any cleaning necessary to get the implementation ready for the next comment attachment run. This method is
+     * called when no more invocations of {@link #boundsForComment(Object)} and {@link #boundsForTarget(Object)} will
+     * follow for a given data set.
      * 
      * @implSpec The default implementation does nothing.
      */
@@ -87,34 +84,50 @@ public interface IBoundsProvider {
      * 
      * @return a caching bounds provider around this bounds provider.
      */
-    default IBoundsProvider cached() {
-        return new IBoundsProvider() {
-            
-            /** Cache for bounds. */
-            private final Map<ElkNode, Rectangle2D.Double> boundsCache = Maps.newHashMap();
+    default IBoundsProvider<C, T> cached() {
+        return new IBoundsProvider<C, T>() {
+
+            /** Cache for comment bounds. */
+            private final Map<C, Rectangle2D.Double> commentBoundsCache = Maps.newHashMap();
+            /** Cache for target bounds. */
+            private final Map<T, Rectangle2D.Double> targetBoundsCache = Maps.newHashMap();
             
             @Override
-            public Double boundsFor(final ElkNode node) {
-                // The cache may actually map a node to null if the bounds provider was unable to
-                // retrieve bounds for the node
-                if (boundsCache.containsKey(node)) {
-                    return boundsCache.get(node);
+            public Double boundsForComment(final C comment) {
+                // The cache may actually map a comment to null if the bounds provider was unable to
+                // retrieve bounds for the comment
+                if (commentBoundsCache.containsKey(comment)) {
+                    return commentBoundsCache.get(comment);
                 } else {
-                    Rectangle2D.Double bounds = IBoundsProvider.this.boundsFor(node);
-                    boundsCache.put(node, bounds);
+                    Rectangle2D.Double bounds = IBoundsProvider.this.boundsForComment(comment);
+                    commentBoundsCache.put(comment, bounds);
                     return bounds;
                 }
             }
             
             @Override
-            public void preprocess(final ElkNode graph, final boolean includeHierarchy) {
+            public Double boundsForTarget(final T target) {
+                // The cache may actually map a target to null if the bounds provider was unable to
+                // retrieve bounds for the target
+                if (targetBoundsCache.containsKey(target)) {
+                    return targetBoundsCache.get(target);
+                } else {
+                    Rectangle2D.Double bounds = IBoundsProvider.this.boundsForTarget(target);
+                    targetBoundsCache.put(target, bounds);
+                    return bounds;
+                }
+            }
+            
+            @Override
+            public void preprocess(final IDataProvider<C, T> dataProvider, final boolean includeHierarchy) {
                 // Forward to wrapped provider
-                IBoundsProvider.this.preprocess(graph, includeHierarchy);
+                IBoundsProvider.this.preprocess(dataProvider, includeHierarchy);
             }
 
             @Override
             public void cleanup() {
-                boundsCache.clear();
+                commentBoundsCache.clear();
+                targetBoundsCache.clear();
                 
                 // Forward to wrapped provider
                 IBoundsProvider.this.cleanup();

@@ -1,33 +1,32 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
-import org.eclipse.elk.graph.ElkGraphElement;
-
 /**
- * Selects the attachment target with the best aggregated heuristic result. The attachment heuristic
- * results are first aggregated using a configurable aggregation function. Then, the attachment
- * target with the highest result is selected, provided that it is at least as high as or higher
- * than a configurable lower bound. The class provides a number of pre-defined aggregation functions.
+ * Selects the attachment target with the best aggregated heuristic result. The matcher results are first aggregated
+ * using a configurable aggregation function. Then, the attachment target with the highest result is selected, provided
+ * that it is at least as high as or higher than a configurable lower bound. The class provides a number of pre-defined
+ * aggregation functions.
+ * 
+ * @param <T>
+ *            type of attachment targets.
  */
-public final class AggregatedHeuristicsDecider implements IDecider {
+public final class AggregatedMatchDecider<T> implements IDecider<T> {
     
     /** Aggregator used to aggregate heuristics results. */
-    private ToDoubleFunction<Collection<Double>> aggregator = AggregatedHeuristicsDecider::max;
+    private ToDoubleFunction<Collection<Double>> aggregator = AggregatedMatchDecider::max;
     /** The minimum aggregate result for a comment to be attached to anything. */
     private double lowerBoundary = 0.0;
     /** Whether an attachment is accepted if the aggregate value is exactly the lower boundary. */
@@ -45,28 +44,23 @@ public final class AggregatedHeuristicsDecider implements IDecider {
      * </p>
      * 
      * @param f
-     *            the aggregator to use. There are no constraints on the values it produces, except
-     *            that they must not be negative.
+     *            the aggregator to use. There are no constraints on the values it produces, except that they must not
+     *            be negative.
      * @return this object for method chaining.
      * @throws IllegalArgumentException
      *             if the function is {@code null}.
      */
-    public AggregatedHeuristicsDecider withAggregator(
-            final ToDoubleFunction<Collection<Double>> f) {
-        
-        if (f == null) {
-            throw new IllegalArgumentException("Aggregator cannot be null.");
-        }
+    public AggregatedMatchDecider<T> withAggregator(final ToDoubleFunction<Collection<Double>> f) {
+        Objects.requireNonNull(f, "Aggregator cannot be null.");
         
         aggregator = f;
-        
         return this;
     }
     
     /**
-     * Configures the attachment decider to impose the given lower boundary on attachability
-     * decisions. This means that if the attachment target with the highest aggregated result
-     * doesn't score at least as high as the lower boundary, it is not returned.
+     * Configures the attachment decider to impose the given lower boundary on attachability decisions. This means that
+     * if the attachment target with the highest aggregated result doesn't score at least as high as the lower boundary,
+     * it is not returned.
      * 
      * <p>
      * If this method is not called, all attachment targets will be considered eligible.
@@ -78,7 +72,7 @@ public final class AggregatedHeuristicsDecider implements IDecider {
      * @throws IllegalArgumentException
      *             if the lower boundary is {@code < 0}.
      */
-    public AggregatedHeuristicsDecider withLowerAttachmentBoundary(final double lower) {
+    public AggregatedMatchDecider<T> withLowerAttachmentBoundary(final double lower) {
         if (lower < 0) {
             throw new IllegalArgumentException("Lower boundary must be >= 0.");
         }
@@ -89,21 +83,20 @@ public final class AggregatedHeuristicsDecider implements IDecider {
     }
     
     /**
-     * Configures the attachment decider to allow attachments already if the highest aggregated result
-     * is exactly the lower boundary.
+     * Configures whether the attachment decider allows attachments already if the highest aggregated result is exactly
+     * the lower boundary.
      * 
      * <p>
-     * If this method is not called, the decider requires the highest aggregated result to be strictly
-     * greater than the lower boundary.
+     * If this method is not called, the decider requires the highest aggregated result to be strictly greater than the
+     * lower boundary.
      * </p>
      * 
      * @param include
-     *            the lower boundary, {@code >= 0}.
+     *            {@code true} if the lower boundary should be included.
      * @return this object for method chaining.
      */
-    public AggregatedHeuristicsDecider withLowerBoundaryIncluded(final boolean include) {
+    public AggregatedMatchDecider<T> withLowerBoundaryIncluded(final boolean include) {
         includeLowerBoundary = include;
-        
         return this;
     }
     
@@ -111,19 +104,12 @@ public final class AggregatedHeuristicsDecider implements IDecider {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // IAttachmentDecider
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ElkGraphElement makeAttachmentDecision(
-            final Map<ElkGraphElement, Map<Class<? extends IMatcher>, Double>> normalizedHeuristics) {
-        
+    public T makeAttachmentDecision(final Map<T, Map<Class<? extends IMatcher<?, T>>, Double>> normalizedHeuristics) {
         double max = Double.NEGATIVE_INFINITY;
-        ElkGraphElement maxElement = null;
+        T maxTarget = null;
         
-        for (Map.Entry<ElkGraphElement, Map<Class<? extends IMatcher>, Double>> entry
-                : normalizedHeuristics.entrySet()) {
-            
+        for (Map.Entry<T, Map<Class<? extends IMatcher<?, T>>, Double>> entry : normalizedHeuristics.entrySet()) {
             double aggregate = aggregator.applyAsDouble(entry.getValue().values());
             if (aggregate < 0) {
                 throw new IllegalStateException("The aggregator provided a value < 0.");
@@ -131,14 +117,14 @@ public final class AggregatedHeuristicsDecider implements IDecider {
             
             if (aggregate > max) {
                 max = aggregate;
-                maxElement = entry.getKey();
+                maxTarget = entry.getKey();
             }
         }
         
         if (includeLowerBoundary) {
-            return max >= lowerBoundary ? maxElement : null;
+            return max >= lowerBoundary ? maxTarget : null;
         } else {
-            return max > lowerBoundary ? maxElement : null;
+            return max > lowerBoundary ? maxTarget : null;
         }
     }
     

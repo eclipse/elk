@@ -1,24 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.base.Strings;
@@ -26,18 +23,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * A binary matcher that checks if node names are referenced in comment texts. This can either be the
- * case or not, hence the term <em>binary heuristic</em>. Indeed, the matcherwill always output
- * either 0 or 1. It will only output 1 if a node's name appears in a comment's text, and if no other
- * node's name appears in it. The following configuration methods have to be called before using this
- * heuristic:
+ * A binary matcher that checks if target names are referenced in comment texts. This can either be the case or not,
+ * hence the term <em>binary heuristic</em>. Indeed, the matcher will always output either 0 or 1. It will only output 1
+ * if a target's name appears in a comment's text, and if no other target's name appears in it. The following
+ * configuration methods have to be called before using this heuristic:
  * <ul>
  *   <li>{@link #withCommentTextProvider(Function)}</li>
  *   <li>{@link #withTargetNameProvider(Function)}</li>
  * </ul>
  * <p>
- * The heuristic can optionally be configured to only consider matches to be matches if the distance
- * between a comment and a matching node does not exceed a configurable threshold.
+ * The heuristic can optionally be configured to only consider matches to be matches if the distance between a comment
+ * and a matching target does not exceed a configurable threshold. In that case, the
+ * {@link #withBoundsProvider(IBoundsProvider)} method has to be called as well.
  * </p>
  * 
  * <p>
@@ -47,33 +44,36 @@ import com.google.common.collect.Maps;
  * 
  * <h3>Strict Mode</h3>
  * <p>
- * In strict mode, node names have to appear exactly as they are in the text of a comment, as a
- * separate word.
+ * In strict mode, target names have to appear exactly as they are in the text of a comment, as a separate word.
  * </p>
  * 
  * 
  * <h3>Fuzzy Mode</h3>
  * <p>
- * In fuzzy mode, the matcher allows the comment text more freedom in mentioning node names. Apart
- * from ignoring case, as in strict mode, we here also allow arbitrary whitespace (including newlines)
- * between two parts of the name. A part is divided from another part either through spaces or through
- * camel case.
+ * In fuzzy mode, the matcher allows the comment text more freedom in mentioning target names. Apart from ignoring case,
+ * as in strict mode, we here also allow arbitrary whitespace (including newlines) between two parts of the name. A part
+ * is divided from another part either through spaces or through camel case.
  * </p>
+ * 
+ * @param <C>
+ *            type of comments.
+ * @param <T>
+ *            type of attachment targets.
  */
-public class NodeReferenceMatcher implements IMatcher {
+public class NodeReferenceMatcher<C, T> implements IMatcher<C, T> {
     
     /** Function used to retrieve a comment's text. */
-    private Function<ElkNode, String> commentTextFunction = null;
-    /** Function used to retrieve a node's name. */
-    private Function<ElkNode, String> nodeNameFunction = null;
+    private Function<C, String> commentTextFunction = null;
+    /** Function used to retrieve a target's name. */
+    private Function<T, String> targetNameFunction = null;
     /** The bounds provider to use. */
-    private IBoundsProvider boundsProvider = new ElkGraphBoundsProvider();
+    private IBoundsProvider<C, T> boundsProvider = null;
     /** The maixmum distance attached comments may be away from each other. */
     private double maxDistance = -1;
-    /** Whether to use fuzzy mode when looking for occurrences of a node's name in a comment's text. */
+    /** Whether to use fuzzy mode when looking for occurrences of a target's name in a comment's text. */
     private boolean fuzzy = false;
-    /** The comment-node attachments we've found during preprocessing. */
-    private Map<ElkNode, ElkNode> foundAttachments = Maps.newHashMap();
+    /** The comment-target attachments we've found during preprocessing. */
+    private Map<C, T> foundAttachments = Maps.newHashMap();
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,13 +90,10 @@ public class NodeReferenceMatcher implements IMatcher {
      *            the function to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceMatcher withCommentTextProvider(final Function<ElkNode, String> f) {
-        if (f == null) {
-            throw new IllegalArgumentException("Comment text function cannot be null.");
-        }
+    public NodeReferenceMatcher<C, T> withCommentTextProvider(final Function<C, String> f) {
+        Objects.requireNonNull(f, "Comment text function cannot be null.");
         
         commentTextFunction = f;
-        
         return this;
     }
     
@@ -111,19 +108,16 @@ public class NodeReferenceMatcher implements IMatcher {
      *            the function to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceMatcher withTargetNameProvider(final Function<ElkNode, String> f) {
-        if (f == null) {
-            throw new IllegalArgumentException("Node name function cannot be null.");
-        }
+    public NodeReferenceMatcher<C, T> withTargetNameProvider(final Function<T, String> f) {
+        Objects.requireNonNull(f, "Node name function cannot be null.");
         
-        nodeNameFunction = f;
-        
+        targetNameFunction = f;
         return this;
     }
     
     /**
-     * Configures the matcher to be fuzzy when looking for occurrences of node names in a
-     * comment's text. If fuzzy mode is off, only exact occurrences will be found.
+     * Configures the matcher to be fuzzy when looking for occurrences of target names in a comment's text. If fuzzy
+     * mode is off, only exact occurrences will be found.
      * 
      * <p>
      * If this method is not called, the heuristic will default to strict mode.
@@ -131,14 +125,14 @@ public class NodeReferenceMatcher implements IMatcher {
      * 
      * @return this object for method chaining.
      */
-    public NodeReferenceMatcher withFuzzyMatching() {
+    public NodeReferenceMatcher<C, T> withFuzzyMatching() {
         fuzzy = true;
         return this;
     }
     
     /**
-     * Configures the matcher to use the given maximum attachment distance. A comment is only attached
-     * to a referenced target if the distance between the two doesn't exceed this distance.
+     * Configures the matcher to use the given maximum attachment distance. A comment is only attached to a referenced
+     * target if the distance between the two doesn't exceed this distance.
      * 
      * <p>
      * If this method is not called, the matcher does not impose a distance restriction.
@@ -148,27 +142,25 @@ public class NodeReferenceMatcher implements IMatcher {
      *            the maximum possible distance. Negative values disable the distance restriction.
      * @return this object for method chaining.
      */
-    public NodeReferenceMatcher withMaximumAttachmentDistance(final double distance) {
+    public NodeReferenceMatcher<C, T> withMaximumAttachmentDistance(final double distance) {
         this.maxDistance = distance;
         return this;
     }
     
     /**
-     * Configures the matcher to use the given bounds provider to determine the bounds of
-     * comments.
+     * Configures the matcher to use the given bounds provider to determine the bounds of comments and targets.
      * 
      * <p>
-     * If this method is not called, the {@link ElkGraphBoundsProvider} is used by default.
+     * If this method is not called, but a maximum attachment distance is configured, the filter will throw an
+     * exception during preprocessing.
      * </p>
      * 
      * @param provider
      *            the bounds provider to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceMatcher withBoundsProvider(final IBoundsProvider provider) {
-        if (provider == null) {
-            throw new IllegalArgumentException("Bounds provider must not be null.");
-        }
+    public NodeReferenceMatcher<C, T> withBoundsProvider(final IBoundsProvider<C, T> provider) {
+        Objects.requireNonNull(provider, "Bounds provider must not be null.");
         
         this.boundsProvider = provider;
         return this;
@@ -185,75 +177,70 @@ public class NodeReferenceMatcher implements IMatcher {
             throw new IllegalStateException("A comment text function is required.");
         }
         
-        if (nodeNameFunction == null) {
+        if (targetNameFunction == null) {
             throw new IllegalStateException("A node name function is required.");
+        }
+        
+        if (maxDistance >= 0 && boundsProvider == null) {
+            throw new IllegalStateException(
+                    "A bounds provider must be installed if a maximum attachment distance is set.");
         }
     }
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
-    // IHeuristic
+    // IMatcher
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void preprocess(final ElkNode graph, final boolean includeHierarchy) {
+    public void preprocess(final IDataProvider<C, T> dataProvider, final boolean includeHierarchy) {
         checkConfiguration();
         
-        // Build up maps of comment texts and node names
-        List<Pair<ElkNode, String>> commentTexts = Lists.newArrayList();
-        List<Pair<ElkNode, String>> nodeNames = Lists.newArrayList();
+        // Build up maps of comment texts
+        List<Pair<C, String>> commentTexts = Lists.newArrayList();
         
-        for (ElkNode node : graph.getChildren()) {
-            if (CommentAttacher.isComment(node)) {
-                String commentText = commentTextFunction.apply(node);
-                
-                if (!Strings.isNullOrEmpty(commentText)) {
-                    commentTexts.add(Pair.of(node, commentText));
-                }
-            } else {
-                String nodeName = nodeNameFunction.apply(node);
-                
-                if (!Strings.isNullOrEmpty(nodeName)) {
-                    nodeNames.add(Pair.of(node, nodeName));
-                }
-                
-                if (includeHierarchy && !node.getChildren().isEmpty()) {
-                    preprocess(node, true);
-                }
+        for (C comment : dataProvider.provideComments()) {
+            String commentText = commentTextFunction.apply(comment);
+            
+            if (!Strings.isNullOrEmpty(commentText)) {
+                commentTexts.add(Pair.of(comment, commentText));
+            }
+        }
+
+        // Build up maps of target names
+        List<Pair<T, String>> targetNames = Lists.newArrayList();
+        for (T target : dataProvider.provideTargets()) {
+            String targetName = targetNameFunction.apply(target);
+            
+            if (!Strings.isNullOrEmpty(targetName)) {
+                targetNames.add(Pair.of(target, targetName));
             }
         }
         
         // Go find matches!
-        goFindMatches(commentTexts, nodeNames);
+        goFindMatches(commentTexts, targetNames);
         
-        commentTexts = null;
+        // Recurse into sub levels
+        if (includeHierarchy) {
+            for (IDataProvider<C, T> subProvider : dataProvider.provideSubHierarchies()) {
+                preprocess(subProvider, true);
+            }
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void cleanup() {
         foundAttachments.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public double raw(final ElkNode comment, final ElkGraphElement element) {
-        // Simply lookup the comment-node pair in our map
-        return foundAttachments.get(comment) == element ? 1 : 0;
+    public double raw(final C comment, final T target) {
+        // Simply lookup the comment-target pair in our map
+        return foundAttachments.get(comment) == target ? 1 : 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public double normalized(final ElkNode comment, final ElkGraphElement element) {
-        return raw(comment, element);
+    public double normalized(final C comment, final T target) {
+        return raw(comment, target);
     }
     
     
@@ -261,66 +248,60 @@ public class NodeReferenceMatcher implements IMatcher {
     // Matching
     
     /**
-     * Runs off and finds matches between comments and attachment targets. Depending on whether fuzzy
-     * mode is on or off, this method uses different kinds of regular expressions to find target names in
-     * comments. A target and a comment match if the target's name is contained in the comment's text,
-     * and if no other target is mentioned in the comment's text.
+     * Runs off and finds matches between comments and attachment targets. Depending on whether fuzzy mode is on or off,
+     * this method uses different kinds of regular expressions to find target names in comments. A target and a comment
+     * match if the target's name is contained in the comment's text, and if no other target is mentioned in the
+     * comment's text.
      * 
      * <p>
      * Matches are recorded in {@link #foundAttachments}.
      * </p>
      * 
      * @param commentTexts
-     *            list of pairs of comments and their text. The text is expected to not be
-     *            {@code null}.
+     *            list of pairs of comments and their text. The text is expected to not be {@code null}.
      * @param targetNames
-     *            list of pairs of targets and their names. The name is expected to not be
-     *            {@code null}.
+     *            list of pairs of targets and their names. The name is expected to not be {@code null}.
      */
-    private void goFindMatches(final List<Pair<ElkNode, String>> commentTexts,
-            final List<Pair<ElkNode, String>> targetNames) {
-        
-        // Produce regular expression patterns for all node names
-        List<Pair<ElkNode, Pattern>> nodeRegexps = Lists.newArrayListWithCapacity(targetNames.size());
-        for (Pair<ElkNode, String> nodeNamePair : targetNames) {
+    private void goFindMatches(final List<Pair<C, String>> commentTexts, final List<Pair<T, String>> targetNames) {
+        // Produce regular expression patterns for all target names
+        List<Pair<T, Pattern>> targetRegexps = Lists.newArrayListWithCapacity(targetNames.size());
+        for (Pair<T, String> targetNamePair : targetNames) {
             Pattern regexp = fuzzy
-                    ? fuzzyRegexpFor(nodeNamePair.getSecond())
-                    : strictRegexpFor(nodeNamePair.getSecond());
-            nodeRegexps.add(Pair.of(nodeNamePair.getFirst(), regexp));
+                    ? fuzzyRegexpFor(targetNamePair.getSecond())
+                    : strictRegexpFor(targetNamePair.getSecond());
+            targetRegexps.add(Pair.of(targetNamePair.getFirst(), regexp));
         }
         
-        // Check each pair of comment and node
-        for (Pair<ElkNode, String> commentTextPair : commentTexts) {
-            ElkNode foundNode = null;
+        // Check each pair of comment and target
+        for (Pair<C, String> commentTextPair : commentTexts) {
+            T foundTarget = null;
             
-            for (Pair<ElkNode, Pattern> nodeRegexpPair : nodeRegexps) {
-                Matcher matcher = nodeRegexpPair.getSecond().matcher(commentTextPair.getSecond());
+            for (Pair<T, Pattern> targetRegexpPair : targetRegexps) {
+                Matcher matcher = targetRegexpPair.getSecond().matcher(commentTextPair.getSecond());
                 
                 if (matcher.find()) {
-                    // We only want to establish associations if a node is the only one mentioned in a
-                    // comment
-                    if (foundNode == null) {
-                        foundNode = nodeRegexpPair.getFirst();
+                    // We only want to establish associations if a target is the only one mentioned in a comment
+                    if (foundTarget == null) {
+                        foundTarget = targetRegexpPair.getFirst();
                     } else {
-                        foundNode = null;
+                        foundTarget = null;
                         break;
                     }
                 }
             }
             
             // Record the match, if any and if the maximum attachment distance allows
-            if (foundNode != null) {
+            if (foundTarget != null) {
                 if (maxDistance < 0) {
                     // There is no distance restriction
-                    foundAttachments.put(commentTextPair.getFirst(), foundNode);
+                    foundAttachments.put(commentTextPair.getFirst(), foundTarget);
                 } else {
-                    // Calculate the distance between the node and the comment
-                    Rectangle2D.Double commentBounds = boundsProvider.boundsFor(
-                            commentTextPair.getFirst());
-                    Rectangle2D.Double nodeBounds = boundsProvider.boundsFor(foundNode);
+                    // Calculate the distance between the target and the comment
+                    Rectangle2D.Double commentBounds = boundsProvider.boundsForComment(commentTextPair.getFirst());
+                    Rectangle2D.Double nodeBounds = boundsProvider.boundsForTarget(foundTarget);
                     
                     if (DistanceMatcher.distance(commentBounds, nodeBounds) <= maxDistance) {
-                        foundAttachments.put(commentTextPair.getFirst(), foundNode);
+                        foundAttachments.put(commentTextPair.getFirst(), foundTarget);
                     }
                 }
             }
@@ -328,16 +309,16 @@ public class NodeReferenceMatcher implements IMatcher {
     }
     
     /**
-     * Produces a fuzzy regular expression pattern for the given target name. The pattern matches the
-     * following appearances of the target name:
+     * Produces a fuzzy regular expression pattern for the given target name. The pattern matches the following
+     * appearances of the target name:
      * <ul>
      *   <li>
-     *     a space character in the target name can be represented by one or more whitespace and line
-     *     break characters in the comment text.
+     *     a space character in the target name can be represented by one or more whitespace and line break characters
+     *     in the comment text.
      *   </li>
      *   <li>
-     *     if the target name is camelCased, each upper-case character preceded by a lower-case character
-     *     can be prefixed by one or more whitespace and line break characters in the comment text.
+     *     if the target name is camelCased, each upper-case character preceded by a lower-case character can be
+     *     prefixed by one or more whitespace and line break characters in the comment text.
      *   </li>
      * </ul>
      * 
@@ -346,17 +327,16 @@ public class NodeReferenceMatcher implements IMatcher {
      * @return regular expression pattern for fuzzy containation.
      */
     private static Pattern fuzzyRegexpFor(final String targetName) {
-        String trimmedNodeName = targetName.trim();
+        String trimmedTargetName = targetName.trim();
         StringBuffer regexp = new StringBuffer(targetName.length() * 2);
         StringBuffer currentSegment = new StringBuffer(targetName.length());
         
-        for (int i = 0; i < trimmedNodeName.length(); i++) {
-            char currC = trimmedNodeName.charAt(i);
+        for (int i = 0; i < trimmedTargetName.length(); i++) {
+            char currC = trimmedTargetName.charAt(i);
             
             if (Character.isUpperCase(currC)) {
-                // If the previous character was lower-case, end the current segment and insert
-                // whitespace placeholders
-                if (i > 0 && Character.isLowerCase(trimmedNodeName.charAt(i - 1))) {
+                // If the previous character was lower-case, end the current segment and insert whitespace placeholders
+                if (i > 0 && Character.isLowerCase(trimmedTargetName.charAt(i - 1))) {
                     regexp.append(Pattern.quote(currentSegment.toString()));
                     currentSegment = new StringBuffer(targetName.length());
                     
@@ -365,9 +345,9 @@ public class NodeReferenceMatcher implements IMatcher {
                 
                 currentSegment.append(currC);
             } else if (Character.isWhitespace(currC)) {
-                // The first of a series of whitespace characters must be replaced by whitespace
-                // placeholders in the regular expression, and the current segment ends
-                if (i > 0 && !Character.isWhitespace(trimmedNodeName.charAt(i - 1))) {
+                // The first of a series of whitespace characters must be replaced by whitespace placeholders in the
+                // regular expression, and the current segment ends
+                if (i > 0 && !Character.isWhitespace(trimmedTargetName.charAt(i - 1))) {
                     regexp.append(Pattern.quote(currentSegment.toString()));
                     currentSegment = new StringBuffer(targetName.length());
                     
@@ -386,8 +366,8 @@ public class NodeReferenceMatcher implements IMatcher {
     }
     
     /**
-     * Produces a strict regular expression pattern for the given target name. The pattern matches the
-     * target name if it's not part of a longer word.
+     * Produces a strict regular expression pattern for the given target name. The pattern matches the target name if
+     * it's not part of a longer word.
      * 
      * @param targetName
      *            the target name.
@@ -402,13 +382,13 @@ public class NodeReferenceMatcher implements IMatcher {
     // Accessors
     
     /**
-     * Returns a map that maps comments to targets they were attached to by this heuristic. The returned
-     * map is meaningful only if it is called between calls to {@link #preprocess(ElkNode, boolean)} and
-     * {@link #cleanup()}. Comments that are not attached to anything don't appear in the map.
+     * Returns a map that maps comments to targets they were attached to by this heuristic. The returned map is
+     * meaningful only if it is called between calls to {@link #preprocess(ElkNode, boolean)} and {@link #cleanup()}.
+     * Comments that are not attached to anything don't appear in the map.
      * 
      * @return mapping of comments to targets.
      */
-    public Map<ElkNode, ElkNode> getAttachments() {
+    public Map<C, T> getAttachments() {
         return foundAttachments;
     }
 

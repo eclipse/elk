@@ -1,47 +1,45 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
 import java.awt.geom.Rectangle2D;
-
-import org.eclipse.elk.graph.ElkGraphElement;
-import org.eclipse.elk.graph.ElkNode;
+import java.util.Objects;
 
 /**
- * A matcher based on the alignment between comments and attachment targets. A comment can be
- * left/right- or top/bottom-aligned to a node. The alignment is computed as the smallest
- * offset between any perfect alignment. It usually makes sense to combine this heuristic
- * with some sort of distance-based cutoff. Use the methods named {@code withXXX} to configure
- * the heuristic.
+ * A matcher based on the alignment between comments and attachment targets. A comment can be left/right- or
+ * top/bottom-aligned to a target. The alignment is computed as the smallest offset between any perfect alignment. It
+ * usually makes sense to combine this heuristic with some sort of distance-based cutoff. Use the methods named
+ * {@code withXXX} to configure the heuristic.
  * 
+ * @param <C>
+ *            type of comments.
+ * @param <T>
+ *            type of attachment targets.
  * @see IBoundsProvider
  */
-public final class AlignmentMatcher extends AbstractNormalizedMatcher {
+public final class AlignmentMatcher<C, T> extends AbstractNormalizedMatcher<C, T> {
     
     /** The bounds provider to use. */
-    private IBoundsProvider boundsProvider = new ElkGraphBoundsProvider();
+    private IBoundsProvider<C, T> boundsProvider = null;
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
     
     /**
-     * Configures the matcher to consider the given offset as the offset at which a comment is not
-     * considered to be attached to a node anymore.
+     * Configures the matcher to consider the given offset as the offset at which a comment is not considered to be
+     * attached to a target anymore.
      * 
      * @param offset
      *            the maximum possible offset.
      * @return this object for method chaining.
      */
-    public AlignmentMatcher withMaximumAlignmentOffset(final double offset) {
+    public AlignmentMatcher<C, T> withMaximumAlignmentOffset(final double offset) {
         if (offset <= 0) {
             throw new IllegalArgumentException("Maximum alignment offset must be > 0.");
         }
@@ -54,53 +52,59 @@ public final class AlignmentMatcher extends AbstractNormalizedMatcher {
      * Configures the matcher to use the given bounds provider to determine the bounds of comments.
      * 
      * <p>
-     * If this method is not called, the {@link ElkGraphBoundsProvider} is used by default.
+     * If this method is not called, the matcher will throw an exception during preprocessing.
      * </p>
      * 
      * @param provider
      *            the bounds provider to use.
      * @return this object for method chaining.
      */
-    public AlignmentMatcher withBoundsProvider(final IBoundsProvider provider) {
-        if (provider == null) {
-            throw new IllegalArgumentException("Bounds provider must not be null.");
-        }
+    public AlignmentMatcher<C, T> withBoundsProvider(final IBoundsProvider<C, T> provider) {
+        Objects.requireNonNull(provider, "Bounds provider must not be null.");
         
         this.boundsProvider = provider;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public AlignmentMatcher withNormalizationFunction(
-            final NormalizationFunction normalizationFunction) {
-        
+    public AlignmentMatcher<C, T> withNormalizationFunction(final NormalizationFunction normalizationFunction) {
         super.withNormalizationFunction(normalizationFunction);
         return this;
     }
     
+    /**
+     * Checks whether the current configuration is valid.
+     * 
+     * @throws IllegalStateException
+     *             if the configuration is invalid.
+     */
+    private void checkConfiguration() {
+        if (boundsProvider == null) {
+            throw new IllegalStateException("A bounds provider is required.");
+        }
+    }
+    
     
     /////////////////////////////////////////////////////////////////////////////////////////////
-    // AbstractNormalizedHeuristic
+    // IMatcher
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public double raw(final ElkNode comment, final ElkGraphElement element) {
-        if (element instanceof ElkNode) {
-            ElkNode node = (ElkNode) element;
-            
-            Rectangle2D.Double commentBounds = boundsProvider.boundsFor(comment);
-            Rectangle2D.Double nodeBounds = boundsProvider.boundsFor(node);
-            
-            double alignment = alignment(commentBounds, nodeBounds);
-            return alignment == -1 ? getWorstRawValue() : alignment;
-        } else {
-            return getWorstRawValue();
-        }
+    public void preprocess(final IDataProvider<C, T> dataProvider, final boolean includeHierarchy) {
+        super.preprocess(dataProvider, includeHierarchy);
+        checkConfiguration();
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // AbstractNormalizedMatcher
+
+    @Override
+    public double raw(final C comment, final T target) {
+        Rectangle2D.Double commentBounds = boundsProvider.boundsForComment(comment);
+        Rectangle2D.Double nodeBounds = boundsProvider.boundsForTarget(target);
+        
+        double alignment = alignment(commentBounds, nodeBounds);
+        return alignment == -1 ? getWorstRawValue() : alignment;
     }
     
     
@@ -118,10 +122,9 @@ public final class AlignmentMatcher extends AbstractNormalizedMatcher {
     private static final int BOTTOM_RIGHT = Rectangle2D.OUT_BOTTOM | Rectangle2D.OUT_RIGHT;
     
     /**
-     * Compute the alignment offset between the two shapes defined by the given bounds. Shapes can
-     * be left/right- or top/bottom-aligned. The alignment is computed as the smallest offset
-     * between any perfect alignment. If the two shapes are cater-cornered, they are not considered
-     * to be aligned.
+     * Compute the alignment offset between the two shapes defined by the given bounds. Shapes can be left/right- or
+     * top/bottom-aligned. The alignment is computed as the smallest offset between any perfect alignment. If the two
+     * shapes are cater-cornered, they are not considered to be aligned.
      *
      * @param bounds1
      *            the first shape.

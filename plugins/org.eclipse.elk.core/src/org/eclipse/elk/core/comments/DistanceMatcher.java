@@ -1,30 +1,29 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2017 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.comments;
 
 import java.awt.geom.Rectangle2D;
-
-import org.eclipse.elk.graph.ElkGraphElement;
-import org.eclipse.elk.graph.ElkNode;
+import java.util.Objects;
 
 /**
- * A matcher based on the distance between comments and attachment targets. Use the methods named
- * {@code withXXX} to configure the matcher.
+ * A matcher based on the distance between comments and attachment targets. Use the methods named {@code withXXX} to
+ * configure the matcher.
  * 
+ * @param <C>
+ *            type of comments.
+ * @param <T>
+ *            type of attachment targets.
  * @see IBoundsProvider
  */
-public final class DistanceMatcher extends AbstractNormalizedMatcher {
+public final class DistanceMatcher<C, T> extends AbstractNormalizedMatcher<C, T> {
     
     /** The bounds provider to use. */
-    private IBoundsProvider boundsProvider = new ElkGraphBoundsProvider();
+    private IBoundsProvider<C, T> boundsProvider = null;
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +36,7 @@ public final class DistanceMatcher extends AbstractNormalizedMatcher {
      *            the maximum possible distance.
      * @return this object for method chaining.
      */
-    public DistanceMatcher withMaximumAttachmentDistance(final double distance) {
+    public DistanceMatcher<C, T> withMaximumAttachmentDistance(final double distance) {
         if (distance < 0) {
             throw new IllegalArgumentException("Maximum attachment distance must be >= 0.");
         }
@@ -47,57 +46,62 @@ public final class DistanceMatcher extends AbstractNormalizedMatcher {
     }
     
     /**
-     * Configures the matcher to use the given bounds provider to determine the bounds of
-     * comments.
+     * Configures the matcher to use the given bounds provider to determine the bounds of comments and targets.
      * 
      * <p>
-     * If this method is not called, the {@link ElkGraphBoundsProvider} is used by default.
+     * If this method is not called, the matcher will throw an exception during preprocessing.
      * </p>
      * 
      * @param provider
      *            the bounds provider to use.
      * @return this object for method chaining.
      */
-    public DistanceMatcher withBoundsProvider(final IBoundsProvider provider) {
-        if (provider == null) {
-            throw new IllegalArgumentException("Bounds provider must not be null.");
-        }
+    public DistanceMatcher<C, T> withBoundsProvider(final IBoundsProvider<C, T> provider) {
+        Objects.requireNonNull(provider, "Bounds provider must not be null.");
         
         this.boundsProvider = provider;
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public DistanceMatcher withNormalizationFunction(
-            final NormalizationFunction normalizationFunction) {
-        
+    public DistanceMatcher<C, T> withNormalizationFunction(final NormalizationFunction normalizationFunction) {
         super.withNormalizationFunction(normalizationFunction);
         return this;
     }
     
+    /**
+     * Checks whether the current configuration is valid.
+     * 
+     * @throws IllegalStateException
+     *             if the configuration is invalid.
+     */
+    private void checkConfiguration() {
+        if (boundsProvider == null) {
+            throw new IllegalStateException("A bounds provider is required.");
+        }
+    }
+    
     
     /////////////////////////////////////////////////////////////////////////////////////////////
-    // AbstractNormalizedHeuristic
+    // IMatcher
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public double raw(final ElkNode comment, final ElkGraphElement element) {
-        if (element instanceof ElkNode) {
-            ElkNode node = (ElkNode) element;
-            
-            Rectangle2D.Double commentBounds = boundsProvider.boundsFor(comment);
-            Rectangle2D.Double nodeBounds = boundsProvider.boundsFor(node);
-            
-            double distance = distance(commentBounds, nodeBounds);
-            return distance == -1 ? getWorstRawValue() : distance;
-        } else {
-            return getWorstRawValue();
-        }
+    public void preprocess(final IDataProvider<C, T> dataProvider, final boolean includeHierarchy) {
+        super.preprocess(dataProvider, includeHierarchy);
+        checkConfiguration();
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // AbstractNormalizedMatcher
+
+    @Override
+    public double raw(final C comment, final T target) {
+        Rectangle2D.Double commentBounds = boundsProvider.boundsForComment(comment);
+        Rectangle2D.Double nodeBounds = boundsProvider.boundsForTarget(target);
+        
+        double distance = distance(commentBounds, nodeBounds);
+        return distance == -1 ? getWorstRawValue() : distance;
     }
     
     
@@ -115,15 +119,14 @@ public final class DistanceMatcher extends AbstractNormalizedMatcher {
     private static final int BOTTOM_RIGHT = Rectangle2D.OUT_BOTTOM | Rectangle2D.OUT_RIGHT;
     
     /**
-     * Compute the squared distance between the two shapes defined by the given bounds. If the two
-     * shapes intersect, a distance of zero is returned.
+     * Compute the squared distance between the two shapes defined by the given bounds. If the two shapes intersect, a
+     * distance of zero is returned.
      *
      * @param bounds1
      *            the first shape.
      * @param bounds2
      *            the second shape.
-     * @return the squared distance between the two shapes, or {@code -1} if the distance could not
-     *         be determined.
+     * @return the squared distance between the two shapes, or {@code -1} if the distance could not be determined.
      */
     public static double distance(final Rectangle2D.Double bounds1, final Rectangle2D.Double bounds2) {
         // Check if the bounds intersect
@@ -229,9 +232,7 @@ public final class DistanceMatcher extends AbstractNormalizedMatcher {
      *            y coordinate of the second point.
      * @return the distance between the two points.
      */
-    private static double distance(
-            final double x1, final double y1, final double x2, final double y2) {
-        
+    private static double distance(final double x1, final double y1, final double x2, final double y2) {
         double deltaX = x2 - x1;
         double deltaY = y2 - y1;
         
