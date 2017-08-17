@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
  * Determines if a comment is eligible for attachment based on its size. Use the methods named
  * {@code withXXX} to configure the filter.
  */
-public class TextPrefixFilter implements IEligibilityFilter {
+public class TextPrefixFilter implements IFilter {
     
     /** Function that provides the text for comments. */
     private Function<ElkNode, String> commentTextProvider = null;

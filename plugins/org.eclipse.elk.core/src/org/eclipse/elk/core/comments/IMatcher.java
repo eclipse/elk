@@ -14,20 +14,20 @@ import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * An attachment heuristic that indicates how closely a comment is related to another graph element.
- * Attachment heuristics provide a raw heuristic result and a normalized result. The latter is
- * constrained to be in {@code [0, 1]} (including the boundaries), while the former is
- * unconstrained, but may choose to follow the same constraints.
+ * A matcher determines how likely it is that a comment is related to an attachment target.
+ * Matchers provide a raw heuristic result and a normalized result. The latter is constrained
+ * to be in {@code [0, 1]} (including the boundaries), while the former is unconstrained, but
+ * may choose to follow the same constraints.
  * 
  * <p>
  * Note that if an implementation holds state, all resources should be released once
  * {@link #cleanup()} is called.
  * </p>
  */
-public interface IHeuristic {
+public interface IMatcher {
     
     /**
-     * Computes the raw heuristic value for the given comment and the given graph element. The
+     * Computes the raw heuristic value for the given comment and the given attachment target. The
      * heuristic value is expressed as an arbitrary number.
      * 
      * <p>

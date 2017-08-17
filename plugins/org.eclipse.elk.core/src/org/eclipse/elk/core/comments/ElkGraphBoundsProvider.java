@@ -16,9 +16,9 @@ import java.awt.geom.Rectangle2D.Double;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * An {@link IBoundsProvider} that simply returns the bounds defined in the node's shape layout.
+ * An {@link IBoundsProvider} that simply returns the bounds defined in an ELK node.
  */
-public class ShapeLayoutBoundsProvider implements IBoundsProvider {
+public class ElkGraphBoundsProvider implements IBoundsProvider {
 
     /**
      * {@inheritDoc}

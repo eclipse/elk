@@ -13,9 +13,9 @@ package org.eclipse.elk.core.comments;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Determines if a given comment is eligible for attachment to a graph element. There are types of
- * comments that can very well stand on their own, without any need for attachment. An eligibility
- * filter identifies such comments.
+ * Determines if a given comment is eligible for attachment to an attachment target. There are types of
+ * comments that can very well stand on their own, without any need for attachment. A filter identifies
+ * such comments.
  * 
  * <p>
  * Note that if an implementation holds state, all resources should be released once
@@ -28,10 +28,10 @@ import org.eclipse.elk.graph.ElkNode;
  * </p>
  */
 @FunctionalInterface
-public interface IEligibilityFilter {
+public interface IFilter {
     
     /**
-     * Checks if the given comment can be attached to a graph element.
+     * Checks if the given comment can be attached to an attachment target.
      * 
      * @param comment
      *            the comment.

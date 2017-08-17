@@ -16,28 +16,28 @@ import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * A heuristic based on the distance between nodes. Use the methods named {@code withXXX} to
- * configure the heuristic.
+ * A matcher based on the distance between comments and attachment targets. Use the methods named
+ * {@code withXXX} to configure the matcher.
  * 
  * @see IBoundsProvider
  */
-public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
+public final class DistanceMatcher extends AbstractNormalizedMatcher {
     
     /** The bounds provider to use. */
-    private IBoundsProvider boundsProvider = new ShapeLayoutBoundsProvider();
+    private IBoundsProvider boundsProvider = new ElkGraphBoundsProvider();
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
     
     /**
-     * Configures the heuristic to consider comments up to the given distance to be attachable.
+     * Configures the matcher to consider comments up to the given distance to be attachable.
      * 
      * @param distance
      *            the maximum possible distance.
      * @return this object for method chaining.
      */
-    public DistanceHeuristic withMaximumAttachmentDistance(final double distance) {
+    public DistanceMatcher withMaximumAttachmentDistance(final double distance) {
         if (distance < 0) {
             throw new IllegalArgumentException("Maximum attachment distance must be >= 0.");
         }
@@ -47,18 +47,18 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
     }
     
     /**
-     * Configures the heuristic to use the given bounds provider to determine the bounds of
+     * Configures the matcher to use the given bounds provider to determine the bounds of
      * comments.
      * 
      * <p>
-     * If this method is not called, the {@link ShapeLayoutBoundsProvider} is used by default.
+     * If this method is not called, the {@link ElkGraphBoundsProvider} is used by default.
      * </p>
      * 
      * @param provider
      *            the bounds provider to use.
      * @return this object for method chaining.
      */
-    public DistanceHeuristic withBoundsProvider(final IBoundsProvider provider) {
+    public DistanceMatcher withBoundsProvider(final IBoundsProvider provider) {
         if (provider == null) {
             throw new IllegalArgumentException("Bounds provider must not be null.");
         }
@@ -71,7 +71,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
      * {@inheritDoc}
      */
     @Override
-    public DistanceHeuristic withNormalizationFunction(
+    public DistanceMatcher withNormalizationFunction(
             final NormalizationFunction normalizationFunction) {
         
         super.withNormalizationFunction(normalizationFunction);

@@ -26,14 +26,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * A binary heuristic that checks if node names are referenced in comment texts. This can either be the
- * case or not, hence the term <em>binary heuristic</em>. Indeed, the heuristic will always output
+ * A binary matcher that checks if node names are referenced in comment texts. This can either be the
+ * case or not, hence the term <em>binary heuristic</em>. Indeed, the matcherwill always output
  * either 0 or 1. It will only output 1 if a node's name appears in a comment's text, and if no other
  * node's name appears in it. The following configuration methods have to be called before using this
  * heuristic:
  * <ul>
  *   <li>{@link #withCommentTextProvider(Function)}</li>
- *   <li>{@link #withNodeNameProvider(Function)}</li>
+ *   <li>{@link #withTargetNameProvider(Function)}</li>
  * </ul>
  * <p>
  * The heuristic can optionally be configured to only consider matches to be matches if the distance
@@ -41,7 +41,7 @@ import com.google.common.collect.Maps;
  * </p>
  * 
  * <p>
- * The heuristic can operate in two modes: a strict and a fuzzy mode.
+ * The matcher can operate in two modes: a strict and a fuzzy mode.
  * </p>
  * 
  * 
@@ -54,20 +54,20 @@ import com.google.common.collect.Maps;
  * 
  * <h3>Fuzzy Mode</h3>
  * <p>
- * In fuzzy mode, the heuristic allows the comment text more freedom in mentioning node names. Apart
+ * In fuzzy mode, the matcher allows the comment text more freedom in mentioning node names. Apart
  * from ignoring case, as in strict mode, we here also allow arbitrary whitespace (including newlines)
  * between two parts of the name. A part is divided from another part either through spaces or through
  * camel case.
  * </p>
  */
-public class NodeReferenceHeuristic implements IHeuristic {
+public class NodeReferenceMatcher implements IMatcher {
     
     /** Function used to retrieve a comment's text. */
     private Function<ElkNode, String> commentTextFunction = null;
     /** Function used to retrieve a node's name. */
     private Function<ElkNode, String> nodeNameFunction = null;
     /** The bounds provider to use. */
-    private IBoundsProvider boundsProvider = new ShapeLayoutBoundsProvider();
+    private IBoundsProvider boundsProvider = new ElkGraphBoundsProvider();
     /** The maixmum distance attached comments may be away from each other. */
     private double maxDistance = -1;
     /** Whether to use fuzzy mode when looking for occurrences of a node's name in a comment's text. */
@@ -80,17 +80,17 @@ public class NodeReferenceHeuristic implements IHeuristic {
     // Configuration
     
     /**
-     * Configures the heuristic to use the given function to obtain the text for a comment.
+     * Configures the matcher to use the given function to obtain the text for a comment.
      * 
      * <p>
-     * If this method is not called, the heuristic will throw an exception during preprocessing.
+     * If this method is not called, the matcher will throw an exception during preprocessing.
      * </p>
      * 
      * @param f
      *            the function to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withCommentTextProvider(final Function<ElkNode, String> f) {
+    public NodeReferenceMatcher withCommentTextProvider(final Function<ElkNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Comment text function cannot be null.");
         }
@@ -101,17 +101,17 @@ public class NodeReferenceHeuristic implements IHeuristic {
     }
     
     /**
-     * Configures the heuristic to use the given function to obtain the name of a node.
+     * Configures the matcher to use the given function to obtain the name of an attachment target.
      * 
      * <p>
-     * If this method is not called, the heuristic will throw an exception during preprocessing.
+     * If this method is not called, the matcher will throw an exception during preprocessing.
      * </p>
      * 
      * @param f
      *            the function to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withNodeNameProvider(final Function<ElkNode, String> f) {
+    public NodeReferenceMatcher withTargetNameProvider(final Function<ElkNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Node name function cannot be null.");
         }
@@ -122,7 +122,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
     }
     
     /**
-     * Configures the heuristic to be fuzzy when looking for occurrences of node names in a
+     * Configures the matcher to be fuzzy when looking for occurrences of node names in a
      * comment's text. If fuzzy mode is off, only exact occurrences will be found.
      * 
      * <p>
@@ -131,41 +131,41 @@ public class NodeReferenceHeuristic implements IHeuristic {
      * 
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withFuzzyMatching() {
+    public NodeReferenceMatcher withFuzzyMatching() {
         fuzzy = true;
         return this;
     }
     
     /**
-     * Configures the heuristic to use the given maximum attachment distance. A comment is only attached
-     * to a referenced node if the distance between the two doesn't exceed this distance.
+     * Configures the matcher to use the given maximum attachment distance. A comment is only attached
+     * to a referenced target if the distance between the two doesn't exceed this distance.
      * 
      * <p>
-     * If this method is not called, the heuristic does not impose a distance restriction.
+     * If this method is not called, the matcher does not impose a distance restriction.
      * </p>
      * 
      * @param distance
      *            the maximum possible distance. Negative values disable the distance restriction.
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withMaximumAttachmentDistance(final double distance) {
+    public NodeReferenceMatcher withMaximumAttachmentDistance(final double distance) {
         this.maxDistance = distance;
         return this;
     }
     
     /**
-     * Configures the heuristic to use the given bounds provider to determine the bounds of
+     * Configures the matcher to use the given bounds provider to determine the bounds of
      * comments.
      * 
      * <p>
-     * If this method is not called, the {@link ShapeLayoutBoundsProvider} is used by default.
+     * If this method is not called, the {@link ElkGraphBoundsProvider} is used by default.
      * </p>
      * 
      * @param provider
      *            the bounds provider to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withBoundsProvider(final IBoundsProvider provider) {
+    public NodeReferenceMatcher withBoundsProvider(final IBoundsProvider provider) {
         if (provider == null) {
             throw new IllegalArgumentException("Bounds provider must not be null.");
         }
@@ -261,10 +261,10 @@ public class NodeReferenceHeuristic implements IHeuristic {
     // Matching
     
     /**
-     * Runs off and finds matches between comments and nodes. Depending on whether fuzzy mode is on
-     * or off, this method uses different kinds of regular expressions to find node names in
-     * comments. A node and a comment match if the node's text is contained in the comment's text,
-     * and if no other node is mentioned in the comment's text.
+     * Runs off and finds matches between comments and attachment targets. Depending on whether fuzzy
+     * mode is on or off, this method uses different kinds of regular expressions to find target names in
+     * comments. A target and a comment match if the target's name is contained in the comment's text,
+     * and if no other target is mentioned in the comment's text.
      * 
      * <p>
      * Matches are recorded in {@link #foundAttachments}.
@@ -273,16 +273,16 @@ public class NodeReferenceHeuristic implements IHeuristic {
      * @param commentTexts
      *            list of pairs of comments and their text. The text is expected to not be
      *            {@code null}.
-     * @param nodeNames
-     *            list of pairs of nodes and their names. The name is expected to not be
+     * @param targetNames
+     *            list of pairs of targets and their names. The name is expected to not be
      *            {@code null}.
      */
     private void goFindMatches(final List<Pair<ElkNode, String>> commentTexts,
-            final List<Pair<ElkNode, String>> nodeNames) {
+            final List<Pair<ElkNode, String>> targetNames) {
         
         // Produce regular expression patterns for all node names
-        List<Pair<ElkNode, Pattern>> nodeRegexps = Lists.newArrayListWithCapacity(nodeNames.size());
-        for (Pair<ElkNode, String> nodeNamePair : nodeNames) {
+        List<Pair<ElkNode, Pattern>> nodeRegexps = Lists.newArrayListWithCapacity(targetNames.size());
+        for (Pair<ElkNode, String> nodeNamePair : targetNames) {
             Pattern regexp = fuzzy
                     ? fuzzyRegexpFor(nodeNamePair.getSecond())
                     : strictRegexpFor(nodeNamePair.getSecond());
@@ -319,7 +319,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
                             commentTextPair.getFirst());
                     Rectangle2D.Double nodeBounds = boundsProvider.boundsFor(foundNode);
                     
-                    if (DistanceHeuristic.distance(commentBounds, nodeBounds) <= maxDistance) {
+                    if (DistanceMatcher.distance(commentBounds, nodeBounds) <= maxDistance) {
                         foundAttachments.put(commentTextPair.getFirst(), foundNode);
                     }
                 }
@@ -328,27 +328,27 @@ public class NodeReferenceHeuristic implements IHeuristic {
     }
     
     /**
-     * Produces a fuzzy regular expression pattern for the given node name. The pattern matches the
-     * following appearances of the node name:
+     * Produces a fuzzy regular expression pattern for the given target name. The pattern matches the
+     * following appearances of the target name:
      * <ul>
      *   <li>
-     *     a space character in the node name can be represented by one or more whitespace and line
+     *     a space character in the target name can be represented by one or more whitespace and line
      *     break characters in the comment text.
      *   </li>
      *   <li>
-     *     if the node name is camelCased, each upper-case character preceded by a lower-case character
+     *     if the target name is camelCased, each upper-case character preceded by a lower-case character
      *     can be prefixed by one or more whitespace and line break characters in the comment text.
      *   </li>
      * </ul>
      * 
-     * @param nodeName
-     *            the node name.
+     * @param targetName
+     *            the target name.
      * @return regular expression pattern for fuzzy containation.
      */
-    private static Pattern fuzzyRegexpFor(final String nodeName) {
-        String trimmedNodeName = nodeName.trim();
-        StringBuffer regexp = new StringBuffer(nodeName.length() * 2);
-        StringBuffer currentSegment = new StringBuffer(nodeName.length());
+    private static Pattern fuzzyRegexpFor(final String targetName) {
+        String trimmedNodeName = targetName.trim();
+        StringBuffer regexp = new StringBuffer(targetName.length() * 2);
+        StringBuffer currentSegment = new StringBuffer(targetName.length());
         
         for (int i = 0; i < trimmedNodeName.length(); i++) {
             char currC = trimmedNodeName.charAt(i);
@@ -358,7 +358,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
                 // whitespace placeholders
                 if (i > 0 && Character.isLowerCase(trimmedNodeName.charAt(i - 1))) {
                     regexp.append(Pattern.quote(currentSegment.toString()));
-                    currentSegment = new StringBuffer(nodeName.length());
+                    currentSegment = new StringBuffer(targetName.length());
                     
                     regexp.append("[\\h\\v]*");
                 }
@@ -369,7 +369,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
                 // placeholders in the regular expression, and the current segment ends
                 if (i > 0 && !Character.isWhitespace(trimmedNodeName.charAt(i - 1))) {
                     regexp.append(Pattern.quote(currentSegment.toString()));
-                    currentSegment = new StringBuffer(nodeName.length());
+                    currentSegment = new StringBuffer(targetName.length());
                     
                     regexp.append("[\\h\\v]*");
                 }
@@ -386,15 +386,15 @@ public class NodeReferenceHeuristic implements IHeuristic {
     }
     
     /**
-     * Produces a strict regular expression pattern for the given node name. The pattern matches the
-     * node name if it's not part of a longer word.
+     * Produces a strict regular expression pattern for the given target name. The pattern matches the
+     * target name if it's not part of a longer word.
      * 
-     * @param nodeName
-     *            the node name.
+     * @param targetName
+     *            the target name.
      * @return regular expression pattern for strict containation.
      */
-    private static Pattern strictRegexpFor(final String nodeName) {
-        return Pattern.compile("\\b" + Pattern.quote(nodeName) + "\\b", Pattern.DOTALL);
+    private static Pattern strictRegexpFor(final String targetName) {
+        return Pattern.compile("\\b" + Pattern.quote(targetName) + "\\b", Pattern.DOTALL);
     }
     
     
@@ -402,11 +402,11 @@ public class NodeReferenceHeuristic implements IHeuristic {
     // Accessors
     
     /**
-     * Returns a map that maps comments to nodes they were attached to by this heuristic. The returned
+     * Returns a map that maps comments to targets they were attached to by this heuristic. The returned
      * map is meaningful only if it is called between calls to {@link #preprocess(ElkNode, boolean)} and
      * {@link #cleanup()}. Comments that are not attached to anything don't appear in the map.
      * 
-     * @return mapping of comments to nodes.
+     * @return mapping of comments to targets.
      */
     public Map<ElkNode, ElkNode> getAttachments() {
         return foundAttachments;

@@ -17,7 +17,7 @@ import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Returns all graph elements that are possible attachment targets for a given comment. Most clients
- * will want to use the {@link SiblingAttachmentTargetProvider}. However, simply returning all
+ * will want to use the {@link SiblingTargetProvider}. However, simply returning all
  * siblings may not be good enough in terms of performance. Other, optimized strategies can thus be
  * plugged in at will.
  * 
@@ -31,10 +31,10 @@ import org.eclipse.elk.graph.ElkNode;
  * can be used as a functional interface.
  * </p>
  * 
- * @see SiblingAttachmentTargetProvider
+ * @see SiblingTargetProvider
  */
 @FunctionalInterface
-public interface IAttachmentTargetProvider {
+public interface ITargetProvider {
     
     /**
      * Returns all attachment targets for the given comment. This may include other comments.

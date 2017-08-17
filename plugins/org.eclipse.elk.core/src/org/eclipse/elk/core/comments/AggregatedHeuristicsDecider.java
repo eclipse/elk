@@ -22,14 +22,12 @@ import org.eclipse.elk.graph.ElkGraphElement;
  * Selects the attachment target with the best aggregated heuristic result. The attachment heuristic
  * results are first aggregated using a configurable aggregation function. Then, the attachment
  * target with the highest result is selected, provided that it is at least as high as or higher
- * than a configurable lower bound. The class provides a number of pre-defined aggregation
- * functions.
+ * than a configurable lower bound. The class provides a number of pre-defined aggregation functions.
  */
-public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentDecider {
+public final class AggregatedHeuristicsDecider implements IDecider {
     
     /** Aggregator used to aggregate heuristics results. */
-    private ToDoubleFunction<Collection<Double>> aggregator =
-            AggregatedHeuristicsAttachmentDecider::max;
+    private ToDoubleFunction<Collection<Double>> aggregator = AggregatedHeuristicsDecider::max;
     /** The minimum aggregate result for a comment to be attached to anything. */
     private double lowerBoundary = 0.0;
     /** Whether an attachment is accepted if the aggregate value is exactly the lower boundary. */
@@ -53,7 +51,7 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
      * @throws IllegalArgumentException
      *             if the function is {@code null}.
      */
-    public AggregatedHeuristicsAttachmentDecider withAggregator(
+    public AggregatedHeuristicsDecider withAggregator(
             final ToDoubleFunction<Collection<Double>> f) {
         
         if (f == null) {
@@ -80,7 +78,7 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
      * @throws IllegalArgumentException
      *             if the lower boundary is {@code < 0}.
      */
-    public AggregatedHeuristicsAttachmentDecider withLowerAttachmentBoundary(final double lower) {
+    public AggregatedHeuristicsDecider withLowerAttachmentBoundary(final double lower) {
         if (lower < 0) {
             throw new IllegalArgumentException("Lower boundary must be >= 0.");
         }
@@ -103,7 +101,7 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
      *            the lower boundary, {@code >= 0}.
      * @return this object for method chaining.
      */
-    public AggregatedHeuristicsAttachmentDecider withLowerBoundaryIncluded(final boolean include) {
+    public AggregatedHeuristicsDecider withLowerBoundaryIncluded(final boolean include) {
         includeLowerBoundary = include;
         
         return this;
@@ -118,12 +116,12 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
      */
     @Override
     public ElkGraphElement makeAttachmentDecision(
-            final Map<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics) {
+            final Map<ElkGraphElement, Map<Class<? extends IMatcher>, Double>> normalizedHeuristics) {
         
         double max = Double.NEGATIVE_INFINITY;
         ElkGraphElement maxElement = null;
         
-        for (Map.Entry<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> entry
+        for (Map.Entry<ElkGraphElement, Map<Class<? extends IMatcher>, Double>> entry
                 : normalizedHeuristics.entrySet()) {
             
             double aggregate = aggregator.applyAsDouble(entry.getValue().values());

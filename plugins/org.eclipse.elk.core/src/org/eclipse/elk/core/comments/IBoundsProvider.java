@@ -41,7 +41,7 @@ import com.google.common.collect.Maps;
  * expensive bounds providers.
  * </p>
  * 
- * @see ShapeLayoutBoundsProvider
+ * @see ElkGraphBoundsProvider
  */
 @FunctionalInterface
 public interface IBoundsProvider {

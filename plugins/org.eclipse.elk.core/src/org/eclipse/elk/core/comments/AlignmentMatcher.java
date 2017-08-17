@@ -16,31 +16,32 @@ import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * A heuristic based on the alignment between comments and nodes. A comment can be left/right- or
- * top/bottom-aligned to a node. The alignment is computed as the smallest offset between any
- * perfect alignment. It usually makes sense to combine this heuristic with some sort of
- * distance-based cutoff. Use the methods named {@code withXXX} to configure the heuristic.
+ * A matcher based on the alignment between comments and attachment targets. A comment can be
+ * left/right- or top/bottom-aligned to a node. The alignment is computed as the smallest
+ * offset between any perfect alignment. It usually makes sense to combine this heuristic
+ * with some sort of distance-based cutoff. Use the methods named {@code withXXX} to configure
+ * the heuristic.
  * 
  * @see IBoundsProvider
  */
-public final class AlignmentHeuristic extends AbstractNormalizedHeuristic {
+public final class AlignmentMatcher extends AbstractNormalizedMatcher {
     
     /** The bounds provider to use. */
-    private IBoundsProvider boundsProvider = new ShapeLayoutBoundsProvider();
+    private IBoundsProvider boundsProvider = new ElkGraphBoundsProvider();
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Configuration
     
     /**
-     * Configures the heuristic to consider the given offset as the offset at which a comment is not
+     * Configures the matcher to consider the given offset as the offset at which a comment is not
      * considered to be attached to a node anymore.
      * 
      * @param offset
      *            the maximum possible offset.
      * @return this object for method chaining.
      */
-    public AlignmentHeuristic withMaximumAlignmentOffset(final double offset) {
+    public AlignmentMatcher withMaximumAlignmentOffset(final double offset) {
         if (offset <= 0) {
             throw new IllegalArgumentException("Maximum alignment offset must be > 0.");
         }
@@ -50,18 +51,17 @@ public final class AlignmentHeuristic extends AbstractNormalizedHeuristic {
     }
     
     /**
-     * Configures the heuristic to use the given bounds provider to determine the bounds of
-     * comments.
+     * Configures the matcher to use the given bounds provider to determine the bounds of comments.
      * 
      * <p>
-     * If this method is not called, the {@link ShapeLayoutBoundsProvider} is used by default.
+     * If this method is not called, the {@link ElkGraphBoundsProvider} is used by default.
      * </p>
      * 
      * @param provider
      *            the bounds provider to use.
      * @return this object for method chaining.
      */
-    public AlignmentHeuristic withBoundsProvider(final IBoundsProvider provider) {
+    public AlignmentMatcher withBoundsProvider(final IBoundsProvider provider) {
         if (provider == null) {
             throw new IllegalArgumentException("Bounds provider must not be null.");
         }
@@ -74,7 +74,7 @@ public final class AlignmentHeuristic extends AbstractNormalizedHeuristic {
      * {@inheritDoc}
      */
     @Override
-    public AlignmentHeuristic withNormalizationFunction(
+    public AlignmentMatcher withNormalizationFunction(
             final NormalizationFunction normalizationFunction) {
         
         super.withNormalizationFunction(normalizationFunction);

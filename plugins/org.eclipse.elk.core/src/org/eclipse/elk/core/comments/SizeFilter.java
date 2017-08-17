@@ -18,10 +18,10 @@ import org.eclipse.elk.graph.ElkNode;
  * Determines if a comment is eligible for attachment based on its size. Use the methods named
  * {@code withXXX} to configure the filter.
  */
-public class SizeEligibilityFilter implements IEligibilityFilter {
+public class SizeFilter implements IFilter {
     
     /** The bounds provider to use. */
-    private IBoundsProvider boundsProvider = new ShapeLayoutBoundsProvider();
+    private IBoundsProvider boundsProvider = new ElkGraphBoundsProvider();
     /** The maximum area for a comment to still be eligible. */
     private double maxArea = -1;
     
@@ -40,7 +40,7 @@ public class SizeEligibilityFilter implements IEligibilityFilter {
      *            the maximum possible area.
      * @return this object for method chaining.
      */
-    public SizeEligibilityFilter withMaximumArea(final double area) {
+    public SizeFilter withMaximumArea(final double area) {
         if (area < 0) {
             throw new IllegalArgumentException("Maximum area must be >= 0.");
         }
@@ -55,14 +55,14 @@ public class SizeEligibilityFilter implements IEligibilityFilter {
      * comments.
      * 
      * <p>
-     * If this method is not called, the {@link ShapeLayoutBoundsProvider} is used by default.
+     * If this method is not called, the {@link ElkGraphBoundsProvider} is used by default.
      * </p>
      * 
      * @param provider
      *            the bounds provider to use.
      * @return this object for method chaining.
      */
-    public SizeEligibilityFilter withBoundsProvider(final IBoundsProvider provider) {
+    public SizeFilter withBoundsProvider(final IBoundsProvider provider) {
         if (provider == null) {
             throw new IllegalArgumentException("Bounds provider must not be null.");
         }

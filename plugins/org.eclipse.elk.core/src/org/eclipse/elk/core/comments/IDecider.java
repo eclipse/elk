@@ -17,10 +17,10 @@ import org.eclipse.elk.graph.ElkGraphElement;
 /**
  * An attachment decider has the final say on which graph element to attach a comment to, if any. The
  * decision is based on the normalized heuristic values produced by the heuristics for each possible
- * graph element the comment can be attached to.
+ * attachment target.
  */
 @FunctionalInterface
-public interface IAttachmentDecider {
+public interface IDecider {
     
     /**
      * Decides which graph element to attach a comment to, if any.
@@ -32,6 +32,6 @@ public interface IAttachmentDecider {
      *         unattached.
      */
     ElkGraphElement makeAttachmentDecision(
-            Map<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics);
+            Map<ElkGraphElement, Map<Class<? extends IMatcher>, Double>> normalizedHeuristics);
     
 }

@@ -23,7 +23,7 @@ import org.eclipse.elk.graph.ElkNode;
  * targets. The provider can be configured to only return non-comment siblings (the default) or also
  * include comments.
  */
-public class SiblingAttachmentTargetProvider implements IAttachmentTargetProvider {
+public class SiblingTargetProvider implements ITargetProvider {
     
     /** Whether to return siblings that are comments themselves as well. */
     private boolean includeComments = false;
@@ -38,7 +38,7 @@ public class SiblingAttachmentTargetProvider implements IAttachmentTargetProvide
      * 
      * @return this attachment target provider (for configuration method chaining).
      */
-    public SiblingAttachmentTargetProvider includeComments() {
+    public SiblingTargetProvider includeComments() {
         includeComments = true;
         return this;
     }

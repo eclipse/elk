@@ -52,27 +52,27 @@ import com.google.common.collect.Maps;
  *     knows how to provide these information for comments and nodes.
  *   </li>
  *   <li>
- *     {@link IAttachmentTargetProvider}<br/>
+ *     {@link ITargetProvider}<br/>
  *     By default, all non-comment siblings of a comment are considered as possible attachment targets.
  *     However, implementations of this interface can be used to limit the considered attachment targets
  *     to a smaller number to achieve speedups or things. Clients usually won't need to provide a
  *     custom implementation.
  *   </li>
  *   <li>
- *     {@link IEligibilityFilter}<br/>
+ *     {@link IFilter}<br/>
  *     Some comments clearly refer to a diagram as a whole. Eligibility filters filter these out to
  *     keep them from being attached to anything. Examples are comments that identify the authors of
  *     a diagram.
  *   </li>
  *   <li>
- *     {@link IHeuristic}<br/>
+ *     {@link IMatcher}<br/>
  *     Heuristics provide a heuristic assessment as to whether a given comment-node pair is likely to
  *     be attached or not. Heuristics can be based on a lot of different metrics, but have to provide
  *     a way of normalizing their results to {@code [0, 1]}. Attachment decisions are based on the
  *     values computed by heuristics.
  *   </li>
  *   <li>
- *     {@link IAttachmentDecider}<br/>
+ *     {@link IDecider}<br/>
  *     Attachment deciders have the final say on which attachment target a comment will be attached to.
  *   </li>
  * </ul>
@@ -90,11 +90,11 @@ import com.google.common.collect.Maps;
  *     Even if no heuristics are configured, explicit attachments may be of interest.
  *   </li>
  *   <li>
- *     {@link #addEligibilityFilter(IEligibilityFilter)}<br/>
+ *     {@link #addEligibilityFilter(IFilter)}<br/>
  *     Filtering out standalone comments will probably be of interest.
  *   </li>
  *   <li>
- *     {@link #addHeuristic(IHeuristic)}<br/>
+ *     {@link #addHeuristic(IMatcher)}<br/>
  *     Heuristics are the backbone of the comment attachment framework. Unless you only want to add
  *     explicit attachments, you will want to add heuristics to base attachment decisions on.
  *   </li>
@@ -109,15 +109,15 @@ public final class CommentAttacher {
     /** Retrieves graph elements explicitly attached to a comment by the user. */
     private IExplicitAttachmentProvider explicitAttachmentProvider = (a) -> null;
     /** The bounds provider to be used. */
-    private IBoundsProvider boundsProvider = new ShapeLayoutBoundsProvider();
+    private IBoundsProvider boundsProvider = new ElkGraphBoundsProvider();
     /** The attachment target provider. */
-    private IAttachmentTargetProvider targetProvider = new SiblingAttachmentTargetProvider();
-    /** List of eligibility filters. */
-    private List<IEligibilityFilter> eligibilityFilters = Lists.newArrayList();
-    /** List of attachment heuristics. */
-    private List<IHeuristic> heuristics = Lists.newArrayList();
+    private ITargetProvider targetProvider = new SiblingTargetProvider();
+    /** List of filters. */
+    private List<IFilter> filters = Lists.newArrayList();
+    /** List of matchers. */
+    private List<IMatcher> matchers = Lists.newArrayList();
     /** The attachment decider. */
-    private IAttachmentDecider attachmentDecider = new AggregatedHeuristicsAttachmentDecider();
+    private IDecider decider = new AggregatedHeuristicsDecider();
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ public final class CommentAttacher {
     }
     
     /**
-     * Configures comment attachment to keep using heuristics to attach comments even if explicit
+     * Configures comment attachment to keep using matchers to attach comments even if explicit
      * attachments are found.
      * 
      * <p>
@@ -181,7 +181,7 @@ public final class CommentAttacher {
      * for more information on bounds providers.
      * 
      * <p>
-     * If this method is not called, the {@link ShapeLayoutBoundsProvider} is used by default.
+     * If this method is not called, the {@link ElkGraphBoundsProvider} is used by default.
      * </p>
      * 
      * @param provider
@@ -201,11 +201,11 @@ public final class CommentAttacher {
     }
     
     /**
-     * Configures comment attachment to use the given attachment target provider. See the class
-     * documentation for more information on attachment target providers.
+     * Configures comment attachment to use the given target provider. See the class documentation
+     * for more information on target providers.
      * 
      * <p>
-     * If this method is not called, the {@link SiblingAttachmentTargetProvider} is used by default,
+     * If this method is not called, the {@link SiblingTargetProvider} is used by default,
      * configured such that other comments are not considered valid attachment targets.
      * </p>
      * 
@@ -215,9 +215,9 @@ public final class CommentAttacher {
      * @throws IllegalArgumentException
      *             if {@code provider == null}.
      */
-    public CommentAttacher withAttachmentTargetProvider(final IAttachmentTargetProvider provider) {
+    public CommentAttacher withTargetProvider(final ITargetProvider provider) {
         if (provider == null) {
-            throw new IllegalArgumentException("The attachment target provider must not be null.");
+            throw new IllegalArgumentException("The target provider must not be null.");
         } else {
             targetProvider = provider;
         }
@@ -226,73 +226,73 @@ public final class CommentAttacher {
     }
     
     /**
-     * Adds the given eligibility filter to the list of eligiblity filters to be used. See the class
-     * documentation for more information on eligibility filters.
+     * Adds the given filter to the list of filters to be used. See the class documentation for more
+     * information on filters.
      * 
      * <p>
      * If this method is not called, all comments are considered eligible for attachment.
      * </p>
      * 
      * @param filter
-     *            the non-{@code null} eligibility filter.
+     *            the non-{@code null} filter.
      * @return this comment attacher for method chaining.
      * @throws IllegalArgumentException
      *             if {@code filter == null}.
      */
-    public CommentAttacher addEligibilityFilter(final IEligibilityFilter filter) {
+    public CommentAttacher addEligibilityFilter(final IFilter filter) {
         if (filter == null) {
-            throw new IllegalArgumentException("The eligibility filter must not be null.");
+            throw new IllegalArgumentException("The filter must not be null.");
         } else {
-            eligibilityFilters.add(filter);
+            filters.add(filter);
         }
         
         return this;
     }
     
     /**
-     * Adds the given attachment heuristic to the list of heuristics to be used. See the class
-     * documentation for more information on eligibility filters.
+     * Adds the given matcher to the list of matchers to be used. See the class documentation for more
+     * information on matchers.
      * 
      * <p>
      * If this method is not called, no comment will be heuristically attached to anything.
      * </p>
      * 
-     * @param heuristic
-     *            the non-{@code null} attachment heuristic.
+     * @param matcher
+     *            the non-{@code null} matcher.
      * @return this comment attacher for method chaining.
      * @throws IllegalArgumentException
      *             if {@code heuristic == null}.
      */
-    public CommentAttacher addHeuristic(final IHeuristic heuristic) {
-        if (heuristic == null) {
-            throw new IllegalArgumentException("The attachment heuristic must not be null.");
+    public CommentAttacher addMatcher(final IMatcher matcher) {
+        if (matcher == null) {
+            throw new IllegalArgumentException("The matcher must not be null.");
         } else {
-            heuristics.add(heuristic);
+            matchers.add(matcher);
         }
         
         return this;
     }
     
     /**
-     * Configures comment attachment to use the given attachment decider. See the class
-     * documentation for more information on attachment deciders.
+     * Configures comment attachment to use the given decider. See the class documentation for more
+     * information on deciders.
      * 
      * <p>
      * If this method is not called, no comments are ever heuristically attached to anything. This is
      * probably not what you want.
      * </p>
      * 
-     * @param decider
-     *            the non-{@code null} attachment decider.
+     * @param attachmentDecider
+     *            the non-{@code null} decider.
      * @return this comment attacher for method chaining.
      * @throws IllegalArgumentException
      *             if {@code decider == null}.
      */
-    public CommentAttacher withAttachmentDecider(final IAttachmentDecider decider) {
-        if (decider == null) {
+    public CommentAttacher withAttachmentDecider(final IDecider attachmentDecider) {
+        if (attachmentDecider == null) {
             throw new IllegalArgumentException("The attachment target provider must not be null.");
         } else {
-            attachmentDecider = decider;
+            this.decider = attachmentDecider;
         }
         
         return this;
@@ -373,8 +373,8 @@ public final class CommentAttacher {
         explicitAttachmentProvider.preprocess(graph, includeHierarchy);
         boundsProvider.preprocess(graph, includeHierarchy);
         targetProvider.preprocess(graph, includeHierarchy);
-        eligibilityFilters.stream().forEach((f) -> f.preprocess(graph, includeHierarchy));
-        heuristics.stream().forEach((h) -> h.preprocess(graph, includeHierarchy));
+        filters.stream().forEach((f) -> f.preprocess(graph, includeHierarchy));
+        matchers.stream().forEach((h) -> h.preprocess(graph, includeHierarchy));
     }
 
     /**
@@ -385,7 +385,7 @@ public final class CommentAttacher {
      * @return {@code true} if the comment may be attached to things.
      */
     private boolean isEligibleForHeuristicAttachment(final ElkNode comment) {
-        return eligibilityFilters.stream().allMatch((f) -> f.eligibleForAttachment(comment));
+        return filters.stream().allMatch((f) -> f.eligibleForAttachment(comment));
     }
     
     /**
@@ -399,7 +399,7 @@ public final class CommentAttacher {
      */
     private ElkGraphElement findHeuristicAttachment(final ElkNode comment) {
         // If there are no heuristics, return nothing...
-        if (heuristics.isEmpty()) {
+        if (matchers.isEmpty()) {
             return null;
         }
         
@@ -411,20 +411,20 @@ public final class CommentAttacher {
         
         // Collect the heuristic results in this map, indexed by attachment target, then indexed by
         // the heuristic
-        Map<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> results = Maps.newHashMap();
+        Map<ElkGraphElement, Map<Class<? extends IMatcher>, Double>> results = Maps.newHashMap();
         
         for (ElkGraphElement candidate : candidates) {
-            Map<Class<? extends IHeuristic>, Double> candidateResults = Maps.newHashMap();
+            Map<Class<? extends IMatcher>, Double> candidateResults = Maps.newHashMap();
             results.put(candidate, candidateResults);
             
             // Run the normalized heuristics and collect their results in an array
-            for (IHeuristic heuristic : heuristics) {
+            for (IMatcher heuristic : matchers) {
                 candidateResults.put(heuristic.getClass(), heuristic.normalized(comment, candidate));
             }
         }
         
         // Decide which attachment target to attach the comment to
-        return attachmentDecider.makeAttachmentDecision(results);
+        return decider.makeAttachmentDecision(results);
     }
     
     /**
@@ -499,8 +499,8 @@ public final class CommentAttacher {
         explicitAttachmentProvider.cleanup();
         boundsProvider.cleanup();
         targetProvider.cleanup();
-        eligibilityFilters.stream().forEach((f) -> f.cleanup());
-        heuristics.stream().forEach((h) -> h.cleanup());
+        filters.stream().forEach((f) -> f.cleanup());
+        matchers.stream().forEach((h) -> h.cleanup());
     }
     
     

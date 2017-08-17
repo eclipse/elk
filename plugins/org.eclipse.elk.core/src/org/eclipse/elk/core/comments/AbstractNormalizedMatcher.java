@@ -14,7 +14,7 @@ import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Provides a basic and configurable implementation of a normalized heuristic. Clients have to
+ * Provides a basic and configurable implementation of a normalized matcher. Clients have to
  * implement {@link #raw(ElkNode, ElkGraphElement)}, the rest is done by this implementation. The actual
  * normalization is controlled through {@link NormalizationFunction}.
  * 
@@ -25,20 +25,16 @@ import org.eclipse.elk.graph.ElkNode;
  * appropriate, but may also increase the visibility of the provided methods.
  * </p>
  */
-public abstract class AbstractNormalizedHeuristic implements IHeuristic {
+public abstract class AbstractNormalizedMatcher implements IMatcher {
     
     /**
      * Enumeration of available normalization functions.
-     * 
-     * @author cds
      */
     public enum NormalizationFunction {
-        
         /** Interpolates linearly between the worst and best value. */
         LINEAR,
         /** Normalizes everything up to the worst value to 1, everything beyond to 0. */
         BINARY;
-        
     }
     
     /** The raw value that marks the point at which the normalized heuristic will become 0. */
@@ -63,7 +59,7 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
      *            the raw value at which the normalized value will become 1.
      * @return this object for method chaining.
      */
-    protected AbstractNormalizedHeuristic withBounds(final double worstRawVal, final double bestRawVal) {
+    protected AbstractNormalizedMatcher withBounds(final double worstRawVal, final double bestRawVal) {
         this.worstRawValue = worstRawVal;
         this.bestRawValue = bestRawVal;
         
@@ -78,7 +74,7 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
      * @return this object for method chaining.
      * @throws IllegalArgumentException if the normalization function is {@code null}.
      */
-    protected AbstractNormalizedHeuristic withNormalizationFunction(
+    protected AbstractNormalizedMatcher withNormalizationFunction(
             final NormalizationFunction function) {
         
         if (function == null) {
