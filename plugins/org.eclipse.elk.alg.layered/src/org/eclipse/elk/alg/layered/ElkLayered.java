@@ -28,7 +28,9 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.ContentAlignment;
+import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
+import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -186,10 +188,10 @@ public final class ElkLayered {
     }
 
     /**
-     * Processors can be marked as operating on the full hierarchy using
-     * {@link ILayoutProcessor#operatesOnFullHierarchy()}.
+     * Processors can be marked as operating on the full hierarchy by using the {@link IHierarchyAwareLayoutProcessor}
+     * interface.
      *
-     * All graphs are collected using a breadth first search and this list is reversed, so that for each graph, all
+     * All graphs are collected using a breadth-first search and this list is reversed, so that for each graph, all
      * following graphs are on the same hierarchy level or higher, i.e. closer to the parent graph. Each graph then has
      * a unique configuration of ELK Layered, which is comprised of a sequence of processors. The processors can vary
      * depending on the characteristics of each graph. The list of graphs and their algorithms is then traversed. If a
@@ -202,6 +204,11 @@ public final class ElkLayered {
         // Perform a reversed breadth first search: The graphs in the lowest hierarchy come first.
         Collection<LGraph> graphs = collectAllGraphsBottomUp(lgraph);
 
+        // We have to make sure that hierarchical processors don't break the control flow 
+        //  of the following layout execution (see e.g. #228). To be precise, if the root node of 
+        //  the hierarchical graph doesn't include a hierarchical processor, nor may any of the children.
+        reviewAndCorrectHierarchicalProcessors(lgraph, graphs);
+        
         // Get list of processors for each graph, since they can be different.
         // Iterators are used, so that processing of a graph can be paused and continued easily.
         int work = 0;
@@ -214,7 +221,7 @@ public final class ElkLayered {
             graphsAndAlgorithms.add(Pair.of(g, algorithm));
         }
 
-        monitor.begin("Recursive Hierarchical layout", work);
+        monitor.begin("Recursive hierarchical layout", work);
 
         // When the root graph has finished layout, the layout is complete.
         Iterator<ILayoutProcessor<LGraph>> rootProcessors = getProcessorsForRootGraph(graphsAndAlgorithms);
@@ -270,6 +277,38 @@ public final class ElkLayered {
             }
         }
         return collectedGraphs;
+    }
+    
+    /**
+     * It is not permitted that any of the child-graphs specifies a hierarchical 
+     * layout processor ({@link IHierarchyAwareLayoutProcessor}) that is not specified by the root node.
+     * 
+     * It depends on the concrete processor how this is fixed.   
+     * 
+     * @param root the root graph
+     * @param graphs all graphs of the handled hierarchy
+     */
+    private void reviewAndCorrectHierarchicalProcessors(final LGraph root, final Collection<LGraph> graphs) {
+        
+        // Crossing minimization
+        //  overwrite invalid child configuration (only layer sweep is hierarchical)
+        CrossingMinimizationStrategy parentCms = root.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY);
+        if (parentCms != CrossingMinimizationStrategy.LAYER_SWEEP) {
+            graphs.forEach(child -> {
+                CrossingMinimizationStrategy childCms = 
+                        child.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY);
+                if (childCms == CrossingMinimizationStrategy.LAYER_SWEEP) {
+                    child.setProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY, parentCms);
+                }
+            });
+        }
+        
+        // Greedy switch
+        //  simply turn it off for children
+        if (!GraphConfigurator.activateGreedySwitchFor(root)) {
+            graphs.forEach(
+                    g -> g.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF));
+        }
     }
 
     private Iterator<ILayoutProcessor<LGraph>> getProcessorsForRootGraph(

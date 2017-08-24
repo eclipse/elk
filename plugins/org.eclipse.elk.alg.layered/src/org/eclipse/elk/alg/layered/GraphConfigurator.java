@@ -253,22 +253,11 @@ final class GraphConfigurator {
                     IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
         }
 
-        // Configure greedy switch, activate it if the following holds true
-        //  a) no interactive crossing minimization is performed
-        //  b) the greedy switch type is set to something different than OFF
-        //  c) the activationThreshold is larger than or equal to the graph's number of nodes (or '0')
-        GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
-        boolean interactiveCrossMin =
-                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE) 
-                || lgraph.getProperty(
-                        LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) == CrossingMinimizationStrategy.INTERACTIVE;
-        int activationThreshold =
-                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_ACTIVATION_THRESHOLD);
-        int graphSize = lgraph.getLayerlessNodes().size();
-        if (!interactiveCrossMin && greedySwitchType != GreedySwitchType.OFF 
-                && (activationThreshold == 0 || activationThreshold > graphSize)) {
-            IntermediateProcessorStrategy internalGreedyType = 
-                    greedySwitchType == GreedySwitchType.ONE_SIDED
+        // Configure greedy switch
+        if (activateGreedySwitchFor(lgraph)) {
+            GreedySwitchType greedySwitchType =
+                    lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
+            IntermediateProcessorStrategy internalGreedyType = (greedySwitchType == GreedySwitchType.ONE_SIDED)
                         ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
                         : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
             configuration.addBefore(LayeredPhases.P4_NODE_PLACEMENT, internalGreedyType);
@@ -293,4 +282,27 @@ final class GraphConfigurator {
         return configuration;
     }
     
+    /**
+     * Greedy switch may be activated if the following holds.
+     * <ol>
+     *  <li>no interactive crossing minimization is performed</li>
+     *  <li>the greedy switch type is set to something different than OFF</li>
+     *  <li>the activationThreshold is larger than or equal to the graph's number of nodes (or '0')</li>
+     * </ol>
+     * @return {@code true} if above condition holds, {@code false} otherwise.
+     */
+    public static boolean activateGreedySwitchFor(final LGraph lgraph) {
+        GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
+        boolean interactiveCrossMin =
+                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE) 
+                || lgraph.getProperty(
+                        LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) == CrossingMinimizationStrategy.INTERACTIVE;
+        int activationThreshold =
+                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_ACTIVATION_THRESHOLD);
+        int graphSize = lgraph.getLayerlessNodes().size();
+        
+        return !interactiveCrossMin 
+                && greedySwitchType != GreedySwitchType.OFF 
+                && (activationThreshold == 0 || activationThreshold > graphSize);
+    }
 }
