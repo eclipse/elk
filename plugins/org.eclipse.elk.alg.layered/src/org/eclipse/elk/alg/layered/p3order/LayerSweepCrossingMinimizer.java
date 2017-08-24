@@ -447,8 +447,7 @@ public class LayerSweepCrossingMinimizer
                     .addBefore(LayeredPhases.P4_NODE_PLACEMENT,
                             IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
                     .after(LayeredPhases.P5_EDGE_ROUTING)
-                        .add(IntermediateProcessorStrategy.LONG_EDGE_JOINER)
-                        .add(IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER);
+                        .add(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
     
     /**
      * TODO Java 8 api not supported yet and Guava's Void is much much uglier.

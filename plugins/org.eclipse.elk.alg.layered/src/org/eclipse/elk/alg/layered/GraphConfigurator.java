@@ -30,6 +30,7 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.HierarchyHandling;
 
 /**
  * The configurator configures a graph in preparation for layout. This includes making sure that a
@@ -59,6 +60,11 @@ final class GraphConfigurator {
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> LABEL_MANAGEMENT_ADDITIONS =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_MANAGEMENT_PROCESSOR);
+    
+    /** intermediate processors for hierarchical layout, i.e. {@link HierarchyHandling#INCLUDE_CHILDREN}. */
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HIERARCHICAL_ADDITIONS = 
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER);
 
     
     ////////////////////////////////////////////////////////////////////////////////
@@ -164,6 +170,15 @@ final class GraphConfigurator {
         // Basic configuration
         LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
                 LayoutProcessorConfiguration.createFrom(BASELINE_PROCESSING_CONFIGURATION);
+        
+        // Hierarchical layout. 
+        //  Note that the recursive graph layout engine made sure that at this point
+        //  'INCLUDE_CHILDREN' has been propagated to all parent nodes with 'INHERIT'.
+        //  Thus, every lgraph of the hierarchical lgraph structure is configured with the following additions. 
+        HierarchyHandling hierarchyHandling = lgraph.getProperty(LayeredOptions.HIERARCHY_HANDLING);
+        if (hierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN) {
+            configuration.addAll(HIERARCHICAL_ADDITIONS);
+        }
 
         // Port side processor, put to first slot only if requested and routing is orthogonal
         if (lgraph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
