@@ -675,6 +675,28 @@ public final class ElkGraphUtil {
         }
         return connectableShapeToPort(simpleEdge.getTargets().get(0));
     }
+    
+    /**
+     * Finds the non-label element that the given label labels. Since labels can be nested, we traverse up the
+     * containment hierarchy until we find a non-label element.
+     * 
+     * @param label
+     *            the label whose labeled element to find.
+     * @return first non-label ancestor or {@code null} if there is none.
+     */
+    public static ElkGraphElement elementLabeledBy(final ElkLabel label) {
+        EObject element = label.getParent();
+        while (element instanceof ElkLabel) {
+            element = element.eContainer();
+        }
+        
+        // Ensure that the element we've found is actually an ElkGraphElement
+        return element instanceof ElkGraphElement
+                ? (ElkGraphElement) element
+                : null;
+    }
+    
+    
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Iteration
@@ -733,6 +755,7 @@ public final class ElkGraphUtil {
     }
 
 
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Property values
 
@@ -789,6 +812,7 @@ public final class ElkGraphUtil {
         return false;
     }
 
+    
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Privates
