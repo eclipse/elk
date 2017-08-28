@@ -58,7 +58,9 @@ final class GraphConfigurator {
     /** intermediate processors for label management. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> LABEL_MANAGEMENT_ADDITIONS =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_MANAGEMENT_PROCESSOR);
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.CENTER_LABEL_MANAGEMENT_PROCESSOR)
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT,
+                       IntermediateProcessorStrategy.END_NODE_PORT_LABEL_MANAGEMENT_PROCESSOR);
 
     
     ////////////////////////////////////////////////////////////////////////////////

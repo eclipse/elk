@@ -106,20 +106,22 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     IN_LAYER_CONSTRAINT_PROCESSOR,
     /** Alternative big nodes handling, splitting nodes _after_ crossing minimization. */
     BIG_NODES_SPLITTER,
+    /** Manages edge end labels, node labels, and port labels. */
+    END_NODE_PORT_LABEL_MANAGEMENT_PROCESSOR,
     /** Sets the positions of ports and labels, and sets the node sizes. */
     LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the self loops with relative position to the parent node.*/
     SPLINE_SELF_LOOP_ROUTER,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
-    /** Decides, on which side of an edge the edge labels should be placed. */
-    LABEL_SIDE_SELECTOR,
     /** Place end labels of edges and extend node margins accordingly. */
     END_LABEL_PREPROCESSOR,
     /** Tries to switch the label dummy nodes which the middle most dummy node of a long edge. */
     LABEL_DUMMY_SWITCHER,
-    /** Tries to shorten labels where necessary. */
-    LABEL_MANAGEMENT_PROCESSOR,
+    /** Tries to shorten edge center labels where necessary. */
+    CENTER_LABEL_MANAGEMENT_PROCESSOR,
+    /** Decides, on which side of an edge the edge labels should be placed. */
+    LABEL_SIDE_SELECTOR,
     /** Merges long edge dummy nodes belonging to the same hyperedge. */
     HYPEREDGE_DUMMY_MERGER,
     /** Adjusts the width of hierarchical port dummy nodes. */
@@ -199,6 +201,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
         case BREAKING_POINT_REMOVER:
             return new BreakingPointRemover();
             
+        case CENTER_LABEL_MANAGEMENT_PROCESSOR:
+            return new LabelManagementProcessor(true);
+            
         case COMMENT_POSTPROCESSOR:
             return new CommentPostprocessor();
 
@@ -217,6 +222,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
             
         case END_LABEL_PREPROCESSOR:
             return new EndLabelPreprocessor();
+        
+        case END_NODE_PORT_LABEL_MANAGEMENT_PROCESSOR:
+            return new LabelManagementProcessor(false);
             
         case FINAL_SPLINE_BENDPOINTS_CALCULATOR:
             return new FinalSplineBendpointsCalculator();
@@ -271,9 +279,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case LABEL_DUMMY_SWITCHER:
             return new LabelDummySwitcher();
-            
-        case LABEL_MANAGEMENT_PROCESSOR:
-            return new LabelManagementProcessor();
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
