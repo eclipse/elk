@@ -9,6 +9,7 @@ package org.eclipse.elk.graph.text.ui.contentassist
 
 import com.google.inject.Inject
 import com.google.inject.Provider
+import java.util.ArrayList
 import org.eclipse.elk.core.data.LayoutAlgorithmData
 import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.graph.text.services.ElkGraphGrammarAccess
@@ -20,39 +21,47 @@ import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.ide.editor.contentassist.ContentAssistContext.Builder
 import org.eclipse.xtext.ide.editor.contentassist.ContentAssistEntry
-import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalAcceptor
+import org.eclipse.xtext.ide.editor.contentassist.IIdeContentProposalAcceptor
 import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
+import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.ui.IImageHelper
 import org.eclipse.xtext.ui.editor.contentassist.AbstractContentProposalProvider
+import org.eclipse.xtext.ui.editor.contentassist.AbstractContentProposalProvider.NullSafeCompletionProposalAcceptor
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 import org.eclipse.xtext.util.TextRegion
-import org.eclipse.xtext.resource.IEObjectDescription
 
 /**
  * Proposal provider that delegates to the generic IDE implementation.
  */
 class ElkGraphProposalProvider extends AbstractContentProposalProvider {
+    
+    static val MAX_ENTRIES = 1000
 
     @Inject IdeContentProposalProvider ideProvider
     
     @Inject Provider<Builder> builderProvider
-    
-    @Inject Provider<IdeContentProposalAcceptor> acceptorProvider
     
     @Inject ElkGraphGrammarAccess grammar
     
     @Inject IImageHelper imageHelper
 
     override createProposals(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        val ideAcceptor = acceptorProvider.get
+        val entries = new ArrayList<Pair<ContentAssistEntry, Integer>>
+        val ideAcceptor = new IIdeContentProposalAcceptor {
+            override accept(ContentAssistEntry entry, int priority) {
+                entries += entry -> priority
+            }
+            override canAcceptMoreProposals() {
+                entries.size < MAX_ENTRIES
+            }
+        }
         ideProvider.createProposals(#[context.getIdeContext], ideAcceptor)
         val uiAcceptor = new NullSafeCompletionProposalAcceptor(acceptor)
 
-        val entries = ideAcceptor.entries
-        entries.forEach [ entry, index |
-            val priority = entries.size - index
-            val proposal = createCompletionProposal(entry.proposal, entry.displayString, entry.image, priority, entry.prefix, context)
+        entries.forEach [ p, index |
+            val entry = p.key
+            val proposal = doCreateProposal(entry.proposal, entry.displayString, entry.image, p.value, context)
             uiAcceptor.accept(proposal)
         ]
     }

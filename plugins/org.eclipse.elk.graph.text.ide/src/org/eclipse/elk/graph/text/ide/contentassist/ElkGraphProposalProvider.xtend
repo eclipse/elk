@@ -125,15 +125,14 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
             LayoutOptionData.Target targetType, ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         val metaDataService = LayoutMetaDataService.instance
         val filteredOptions = metaDataService.optionData.filter[ o |
-            targetType === null || o.targets.contains(targetType)
-        ].filter[ o |
-            algorithmData === null || algorithmData.knowsOption(o) || CoreOptions.ALGORITHM == o
-        ].filter[ o |
-            element === null || !element.properties.map.containsKey(o)
+            (targetType === null || o.targets.contains(targetType))
+            && (algorithmData === null || algorithmData.knowsOption(o) || CoreOptions.ALGORITHM == o)
+            && (element === null || !element.properties.map.containsKey(o))
         ]
         for (option : filteredOptions) {
+            val matchesName = !context.prefix.empty && option.name.toLowerCase.contains(context.prefix.toLowerCase)
             val idSplit = Strings.split(option.id, '.')
-            val prefixSplit = Strings.split(context.prefix, '.')
+            val prefixSplit = if (!matchesName) Strings.split(context.prefix, '.')
             var foundMatch = false
             var i = idSplit.size - 1
             if (i >= 1 && option.group == idSplit.get(i - 1)) {
@@ -141,14 +140,18 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
             }
             while (i >= 0 && !foundMatch) {
                 val suffix = idSplit.drop(i)
-                if (metaDataService.getOptionDataBySuffix(suffix.join('.')) !== null && suffix.startsWith(prefixSplit))
+                if (metaDataService.getOptionDataBySuffix(suffix.join('.')) !== null
+                        && (matchesName || suffix.startsWith(prefixSplit)))
                     foundMatch = true
                 else
                     i--
             }
             if (foundMatch) {
                 val suffix = idSplit.drop(i)
-                val entry = proposalCreator.createProposal(suffix.convert, context, ContentAssistEntry.KIND_PROPERTY) [
+                val entry = new ContentAssistEntry => [
+                    proposal = suffix.convert
+                    prefix = context.prefix
+                    kind = ContentAssistEntry.KIND_PROPERTY
                     label = suffix.join('.')
                     description = getDescription(option)
                     documentation = option.description
@@ -232,20 +235,25 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     protected def proposeAlgorithms(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         val metaDataService = LayoutMetaDataService.instance
         for (algorithm : metaDataService.algorithmData) {
+            val matchesName = !context.prefix.empty && algorithm.name.toLowerCase.contains(context.prefix.toLowerCase)
             val idSplit = Strings.split(algorithm.id, '.')
-            val prefixSplit = Strings.split(context.prefix, '.')
+            val prefixSplit = if (!matchesName) Strings.split(context.prefix, '.')
             var foundMatch = false
             var i = idSplit.size - 1
             while (i >= 0 && !foundMatch) {
                 val suffix = idSplit.drop(i)
-                if (metaDataService.getAlgorithmDataBySuffix(suffix.join('.')) !== null && suffix.startsWith(prefixSplit))
+                if (metaDataService.getAlgorithmDataBySuffix(suffix.join('.')) !== null
+                        && (matchesName || suffix.startsWith(prefixSplit)))
                     foundMatch = true
                 else
                     i--
             }
             if (foundMatch) {
                 val suffix = idSplit.drop(i)
-                val entry = proposalCreator.createProposal(suffix.convert, context, ContentAssistEntry.KIND_VALUE) [
+                val entry = new ContentAssistEntry => [
+                    proposal = suffix.convert
+                    prefix = context.prefix
+                    kind = ContentAssistEntry.KIND_VALUE
                     label = suffix.join('.')
                     description = getDescription(algorithm)
                     documentation = algorithm.description

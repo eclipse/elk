@@ -57,7 +57,7 @@ class PropertyValueValueConverter extends AbstractValueConverter<Object> {
     }
     
     private def unquoteIfNecessary(String s) {
-        if (s.length >= 2 && s.startsWith('"') && s.endsWith('"'))
+        if (s.length >= 2 && (s.startsWith('"') && s.endsWith('"') || s.startsWith("'") && s.endsWith("'")))
             return s.substring(1, s.length - 1)
         else if (s.length >= 1 && (Character.isJavaIdentifierStart(s.charAt(0)) || s.startsWith('^'))) {
             val qname = qualifiedNameConverter.toQualifiedName(s)
