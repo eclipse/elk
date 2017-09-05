@@ -1,0 +1,97 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eclipse.elk.core.util;
+
+import java.util.Objects;
+
+/**
+ * Data structure for storing three (different) values.
+ *
+ * @param <F>
+ *            type of first value
+ * @param <S>
+ *            type of second value
+ * @param <T>
+ *            type of third value
+ */
+public class Triple<F, S, T> {
+    private F first;
+    private S second;
+    private T third;
+
+    /**
+     * Creates a Triple with initial values. These are read-only afterwards.
+     * 
+     * @param f
+     *            First value
+     * @param s
+     *            Second value
+     * @param t
+     *            Third value
+     */
+    public Triple(final F f, final S s, final T t) {
+        first = f;
+        second = s;
+        third = t;
+    }
+
+    /**
+     * Gets the first value.
+     * 
+     * @return The first value
+     */
+    public F getFirst() {
+        return first;
+    }
+
+    /**
+     * Gets the second value.
+     * 
+     * @return The second value
+     */
+    public S getSecond() {
+        return second;
+    }
+
+    /**
+     * Gets the third value.
+     * 
+     * @return The third value
+     */
+    public T getThird() {
+        return third;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(first, second, third);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        return Objects.equals(first, ((Triple<?, ?, ?>) obj).getFirst())
+                && Objects.equals(second, ((Triple<?, ?, ?>) obj).getSecond())
+                && Objects.equals(third, ((Triple<?, ?, ?>) obj).getThird());
+    }
+    
+    @Override
+    public String toString() {
+        return "(" + first + ", " + second + ", " + third + ")";
+    }
+
+}
