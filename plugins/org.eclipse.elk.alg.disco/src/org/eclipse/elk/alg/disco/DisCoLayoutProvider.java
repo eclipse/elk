@@ -1,0 +1,71 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eclipse.elk.alg.disco;
+
+import org.eclipse.elk.alg.disco.graph.DCGraph;
+import org.eclipse.elk.alg.disco.options.DisCoMetaDataProvider;
+import org.eclipse.elk.alg.disco.options.DisCoOptions;
+import org.eclipse.elk.alg.disco.transform.ElkGraphTransformer;
+import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.ElkNode;
+
+/**
+ * Layout provider for the layout algorithms for positioning disconnected components relative to each other.
+ */
+public class DisCoLayoutProvider extends AbstractLayoutProvider {
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Variables
+
+    /** simplified version of the input graph consisting of polygons approximating the original graph's shape. */
+    private DCGraph result;
+
+    /** minimum spacing between each component. */
+    private double componentSpacing;
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Layout
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.elk.core.IGraphLayoutEngine#layout(org.eclipse.elk.graph.KNode,
+     * org.eclipse.elk.core.util.IElkProgressMonitor)
+     */
+    @Override
+    public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+
+        componentSpacing = layoutGraph.getProperty(DisCoOptions.SPACING_COMPONENT_COMPONENT);
+
+        // 1.) Transform given KGraph into DCGraph
+        ElkGraphTransformer transformer = new ElkGraphTransformer(componentSpacing);
+        result = transformer.importGraph(layoutGraph);
+
+        // 2.) Choose strategy and compact the DCGraph (only polyomino compaction at the moment)
+        switch (layoutGraph.getProperty(DisCoMetaDataProvider.COMPONENT_COMPACTION_STRATEGY)) {
+
+        // The implementation based on Freivalds et al. (2002), uses lower resolution polyominoes of the DCGraph's
+        // components
+        case POLYOMINO:
+            new DisCoPolyominoCompactor().compact(result);
+            // Only for debugging purposes, see org.eclipse.elk.alg.disco.debug.views.DisCoGraphRenderer
+            layoutGraph.setProperty(DisCoOptions.DEBUG_DISCO_POLYS, result.getProperty(DisCoOptions.DEBUG_DISCO_POLYS));
+            break;
+        default:
+            System.out.println("DisCo: no compaction strategy used for connected components.");
+        }
+
+        // 3.) Apply new layout to input graph
+        transformer.applyLayout();
+
+        // Only for debugging purposes, see org.eclipse.elk.alg.disco.debug.views.DisCoGraphRenderer
+        layoutGraph.setProperty(DisCoOptions.DEBUG_DISCO_GRAPH, result);
+    }
+
+}

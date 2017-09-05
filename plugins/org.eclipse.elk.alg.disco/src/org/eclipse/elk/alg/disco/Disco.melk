@@ -1,0 +1,58 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+package org.eclipse.elk.alg.disco
+
+import org.eclipse.elk.alg.disco.DisCoLayoutProvider
+
+bundle {
+    label "DisCo Layout Algorithm for Connected Components"
+    metadataClass options.DisCoMetaDataProvider
+    idPrefix org.eclipse.elk.disco
+}
+ 
+algorithm compactor(DisCoLayoutProvider) {
+    label "DisCo Layouter for Connected Components"
+    metadataClass options.DisCoOptions
+    supports org.eclipse.elk.spacing.componentComponent
+    supports org.eclipse.elk.edge.thickness
+    supports org.eclipse.elk.aspectRatio
+    supports org.eclipse.elk.padding
+    supports componentCompaction.strategy
+    supports org.eclipse.elk.alg.common.compaction.polyomino.lowLevelSort
+    supports org.eclipse.elk.alg.common.compaction.polyomino.highLevelSort
+    supports org.eclipse.elk.alg.common.compaction.polyomino.costfunction
+    supports org.eclipse.elk.alg.common.compaction.polyomino.fill
+    supports debug.discoGraph
+    supports debug.discoPolys
+}
+
+group componentCompaction {
+    option strategy : CompactionStrategy {
+        label "Compaction Strategy for Connected Components"
+        description 
+            "Strategy for packing different connected components in order to save space 
+             and enhance readability of a graph."
+        default = CompactionStrategy.POLYOMINO
+        targets parents
+    }  
+}
+
+group debug {
+    programmatic option discoGraph: Object {
+        label "DCGraph"
+        description "Access to the DCGraph is intended for the debug view,"
+        targets parents
+    }
+    
+    programmatic option discoPolys: Object {
+        label "List of Polyominoes"
+        description "Access to the polyominoes is intended for the debug view,"
+        targets parents
+    }
+}
+
