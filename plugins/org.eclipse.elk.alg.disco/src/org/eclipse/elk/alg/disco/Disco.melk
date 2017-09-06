@@ -10,23 +10,25 @@ package org.eclipse.elk.alg.disco
 import org.eclipse.elk.alg.disco.DisCoLayoutProvider
 
 bundle {
-    label "DisCo Layout Algorithm for Connected Components"
     metadataClass options.DisCoMetaDataProvider
     idPrefix org.eclipse.elk.disco
 }
  
-algorithm compactor(DisCoLayoutProvider) {
-    label "DisCo Layouter for Connected Components"
+algorithm disco(DisCoLayoutProvider) {
+    label "ELK DisCo"
+    description 
+        "Layouter for arranging unconnected subgraphs. The subgraphs themselves are not laid out."
     metadataClass options.DisCoOptions
+    preview images/disco_layout.png
     supports org.eclipse.elk.spacing.componentComponent
     supports org.eclipse.elk.edge.thickness
     supports org.eclipse.elk.aspectRatio
     supports org.eclipse.elk.padding
-    supports componentCompaction.strategy
     supports org.eclipse.elk.alg.common.compaction.polyomino.lowLevelSort
     supports org.eclipse.elk.alg.common.compaction.polyomino.highLevelSort
     supports org.eclipse.elk.alg.common.compaction.polyomino.costfunction
     supports org.eclipse.elk.alg.common.compaction.polyomino.fill
+    supports componentCompaction.strategy
     supports debug.discoGraph
     supports debug.discoPolys
 }

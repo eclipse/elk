@@ -1,0 +1,35 @@
+algorithm: elk.stress
+stress.desiredEdgeLength: 40
+
+node n1
+node n2
+node n3
+node n4
+node n5
+node n6
+node n7
+node n8
+node n9
+node n10
+node n11
+node n12
+node n13
+
+// c1
+edge n1 -> n2
+edge n1 -> n3
+edge n2 -> n3
+
+// c2 
+edge n4 -> n5
+edge n5 -> n6
+edge n6 -> n7
+edge n7 -> n4
+
+// c3 
+edge n8 -> n9
+edge n9 -> n11
+edge n10 -> n12
+edge n8 -> n13
+edge n12 -> n9
+edge n11 -> n10
