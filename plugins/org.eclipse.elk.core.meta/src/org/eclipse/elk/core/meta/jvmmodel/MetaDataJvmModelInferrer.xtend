@@ -425,6 +425,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             new «algorithm.toFactoryClass»(),
             «algorithm.category?.qualifiedName.toCodeString»,
             «algorithm.bundle?.label.toCodeString»,
+            «algorithm.model?.definingBundleId?.toCodeString»,
             «algorithm.previewImage.toCodeString»,
             «IF algorithm.supportedFeatures.empty»
                 null
@@ -563,6 +564,22 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         return parent as MdBundle
     }
     
+    private def MdModel getModel(MdBundleMember member) {
+        var parent = member.eContainer
+        while (!(parent instanceof MdModel)) {
+            parent = parent.eContainer
+        }
+        return parent as MdModel
+    }
+    
+    private def String getDefiningBundleId(MdModel model) {
+        val uri = model.eResource.URI
+        val srcIndex = uri.segments.indexOf('src')
+        if (srcIndex >= 1) {
+            return uri.segments.get(srcIndex - 1)
+        }
+        return null
+    }
     
     ////////////////////////////////////////////////////////////////////////////
     // Constant Names
