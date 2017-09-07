@@ -41,16 +41,23 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import com.google.common.base.Strings;
 
 /**
  * A dialog to browse and select layout algorithms or layout types.
@@ -159,13 +166,13 @@ public class AlgorithmSelectionDialog extends Dialog {
         descriptionLabel.setText(description);
         Image image = imageCache.get(layoutData);
         if (image == null && layoutData instanceof LayoutAlgorithmData) {
-            String path = ((LayoutAlgorithmData) layoutData).getPreviewImagePath();
-            int lastDotIndex = layoutData.getId().lastIndexOf('.');
-            if (path != null && lastDotIndex > 0) {
-                String bundleId = layoutData.getId().substring(0, lastDotIndex);
+            LayoutAlgorithmData algorithmData = (LayoutAlgorithmData) layoutData;
+            String path = algorithmData.getPreviewImagePath();
+            String bundleId = algorithmData.getDefiningBundleId();
+            if (!Strings.isNullOrEmpty(path) && !Strings.isNullOrEmpty(bundleId)) {
                 ImageDescriptor imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(bundleId, path);
                 if (imageDescriptor != null) {
-                    image = imageDescriptor.createImage(false);
+                    image = createAndScaleImage(imageDescriptor);
                     if (image != null) {
                         imageCache.put(layoutData, image);
                     }
@@ -180,6 +187,61 @@ public class AlgorithmSelectionDialog extends Dialog {
         if (okButton != null) {
             okButton.setEnabled(layoutData instanceof LayoutAlgorithmData);
         }
+    }
+    
+    private static final RGB PREVIEW_IMG_FRAME_COLOR = new RGB(180, 180, 180);
+    
+    /**
+     * Create an image from the image descriptor. Scale it such that it properly fits the dialog and 
+     * use a {@link GC} for this; because we like anti aliasing.
+     */
+    private Image createAndScaleImage(final ImageDescriptor imageDescriptor) {
+        // initially create an image
+        Image image = imageDescriptor.createImage(false);
+        if (image == null) {
+            return null;
+        }
+        
+        // scale it reasonably, and shiny
+        double scale = 1;
+        Rectangle bounds = image.getBounds();
+        if (bounds.width > DESCRIPTION_WIDTH || bounds.height > IMAGE_MAX_HEIGHT) {
+            double widthScale = Math.min(1.0, IMAGE_MAX_HEIGHT / (double) bounds.height);
+            double heightScale = Math.min(1.0, DESCRIPTION_WIDTH / (double) bounds.width);
+            scale = Math.min(widthScale, heightScale);
+        }
+        int newWidth = (int) (scale * bounds.width);
+        int newHeight = (int) (scale * bounds.height);
+        int imgXPadding = (DESCRIPTION_WIDTH - newWidth) / 2;
+        
+        Image scaled = new Image(Display.getDefault(), DESCRIPTION_WIDTH, newHeight);
+        GC gc = new GC(scaled);
+        gc.setAntialias(SWT.ON);
+        gc.setInterpolation(SWT.HIGH);
+        gc.drawImage(image, 
+                0, 0, bounds.width, bounds.height, 
+                imgXPadding, 1, DESCRIPTION_WIDTH - 2 * imgXPadding, newHeight - 2);
+
+        // draw a border
+        Color frameColor = new Color(Display.getCurrent(), PREVIEW_IMG_FRAME_COLOR);
+        gc.setForeground(frameColor);
+        gc.setAntialias(SWT.OFF);
+        for (int x : new int[] {0, DESCRIPTION_WIDTH - 1}) {
+            for (int y = 0; y < newHeight; ++y) {
+                gc.drawPoint(x, y);
+            }
+        }
+        for (int y : new int[] {0, newHeight - 1}) {
+            for (int x = 0; x < DESCRIPTION_WIDTH; ++x) {
+                gc.drawPoint(x, y);
+            }
+        }
+        
+        // clean up our mess
+        gc.dispose();
+        image.dispose();
+
+        return scaled;
     }
     
     /**
@@ -339,6 +401,8 @@ public class AlgorithmSelectionDialog extends Dialog {
     private static final int DESCRIPTION_WIDTH = 300;
     /** vertical spacing in the description area. */
     private static final int DESCR_SPACING = 12;
+    /** maximum height of preview images .*/
+    private static final int IMAGE_MAX_HEIGHT = 200;
     
     /**
      * Create the dialog area that displays the description of a layout algorithm.
@@ -364,7 +428,7 @@ public class AlgorithmSelectionDialog extends Dialog {
         
         // create label for the preview image
         imageLabel = new Label(composite, SWT.NONE);
-        GridData imageLayoutData = new GridData(SWT.FILL, SWT.BOTTOM, true, false);
+        GridData imageLayoutData = new GridData(SWT.CENTER, SWT.BOTTOM, true, false);
         imageLabel.setLayoutData(imageLayoutData);
         
         GridLayout compositeLayout = new GridLayout();
