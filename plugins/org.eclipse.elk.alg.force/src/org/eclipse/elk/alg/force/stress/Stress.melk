@@ -31,7 +31,7 @@ algorithm stress(StressLayoutProvider) {
         The method allows to specify individual edge lengths."
     metadataClass options.StressOptions
     category org.eclipse.elk.force
-    
+    preview images/stress_layout.png
     supports org.eclipse.elk.interactive
     supports fixed
     supports dimension

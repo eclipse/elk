@@ -33,7 +33,7 @@ algorithm mrtree(TreeLayoutProvider) {
     metadataClass options.MrTreeOptions
     category org.eclipse.elk.tree
     features disconnected
-    preview images/tree.png
+    preview images/mrtree_layout.png
     supports org.eclipse.elk.padding = new ElkPadding(20)
     supports org.eclipse.elk.spacing.nodeNode = 20
     supports org.eclipse.elk.aspectRatio = 1.6f

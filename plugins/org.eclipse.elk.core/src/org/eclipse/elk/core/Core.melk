@@ -86,6 +86,11 @@ category planar {
         theoretically interesting, but not practically usable."
 }
 
+category radial {
+    label "Radial"
+    description 
+        "Radial layout algorithms usually position the nodes of the graph on concentric circles."
+}
 
 //------- UTILITY ALGORITHMS
 
@@ -141,7 +146,7 @@ algorithm random(RandomLayoutProvider) {
 		"Distributes the nodes randomly on the plane, leading to very obfuscating layouts. Can be
 		useful to demonstrate the power of \"real\" layout algorithms."
     metadataClass core.options.RandomLayouterOptions 
-	preview images/random.png
+	preview images/random_layout.png
 	supports padding = new ElkPadding(15)
 	supports spacing.nodeNode = 15
 	supports randomSeed = 0

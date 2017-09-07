@@ -21,12 +21,6 @@ bundle {
     idPrefix org.eclipse.elk.radial
 }
 
-category radial {
-    label "Radial"
-    description 
-        "Radial layout algorithms usually position the nodes of the graph on concentric circles."
-}
-
 algorithm radial(RadialLayoutProvider) {
     label "ELK Radial"
     metadataClass options.RadialOptions
@@ -35,9 +29,9 @@ algorithm radial(RadialLayoutProvider) {
          published by International Institute for Advanced Study of Social Information Science, Fujitsu Limited in 1991. 
          The radial layouter takes a tree and places the nodes in radial order around the root. The nodes of the same 
          tree level are placed on the same radius."
-    preview images/Radial.png
+    preview images/radial_layout.png
     documentation "@radial.md"
-    category radial
+    category org.eclipse.elk.radial
     supports org.eclipse.elk.position
     supports org.eclipse.elk.spacing.nodeNode
     supports compactionStepSize
