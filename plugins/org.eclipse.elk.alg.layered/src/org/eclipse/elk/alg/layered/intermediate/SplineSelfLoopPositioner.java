@@ -1104,8 +1104,8 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor<LGraph> 
              * @return The least crowded corner loopSide or {@code null}.
              */
             private LoopSide getLeastCrowdedCorner() {
-                double minHeight = Double.MAX_VALUE;
-                double minWidth = Double.MAX_VALUE;
+                double minHeight = Double.POSITIVE_INFINITY;
+                double minWidth = Double.POSITIVE_INFINITY;
                 LoopSide minSide = null;
 
                 for (final Entry<LoopSide, SizeOfSide> entry : sizeMap.entrySet()) {
@@ -1139,8 +1139,8 @@ public final class SplineSelfLoopPositioner implements ILayoutProcessor<LGraph> 
              * @return The least crowded horizontal across loopSide or {@code null}.
              */
             private LoopSide getLeastCrowdedHorizontalCrossing() {
-                double minHeight = Double.MAX_VALUE;
-                double minWidth = Double.MAX_VALUE;
+                double minHeight = Double.POSITIVE_INFINITY;
+                double minWidth = Double.POSITIVE_INFINITY;
                 LoopSide minSide = null;
 
                 for (final Entry<LoopSide, SizeOfSide> entry : sizeMap.entrySet()) {

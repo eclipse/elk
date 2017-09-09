@@ -46,8 +46,8 @@ public final class LayerSizeAndGraphHeightCalculator implements ILayoutProcessor
         monitor.begin("Layer size calculation", 1);
         
         // Remember the lowest and the highest y coordinates
-        double minY = Double.MAX_VALUE;
-        double maxY = Double.MIN_VALUE;
+        double minY = Double.POSITIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
 
         for (Layer layer : layeredGraph) {
             // Retrieve and reset layer size (just to be sure...)

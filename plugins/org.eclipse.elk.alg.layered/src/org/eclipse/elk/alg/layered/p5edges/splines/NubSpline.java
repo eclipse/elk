@@ -571,7 +571,7 @@ public class NubSpline {
             final NubSpline nubSpline, final double accuracy, final int maxRecursion) {
         
         final NubSpline firstDerive = generateDerivedNUBS(nubSpline);
-        double currentAccuracy = Double.MAX_VALUE;
+        double currentAccuracy = Double.POSITIVE_INFINITY;
         KVector currentVector = null;
         int loopCount = 0;
         double knot = 0.0;
@@ -598,7 +598,7 @@ public class NubSpline {
             final NubSpline nubSpline, final double accuracy, final int maxRecursion) {
         
         final NubSpline firstDerive = generateInvertedNUBS(generateDerivedNUBS(nubSpline));
-        double currentAccuracy = Double.MAX_VALUE;
+        double currentAccuracy = Double.POSITIVE_INFINITY;
         KVector currentVector = null;
         int loopCount = 0;
         double knot = 0.0;
@@ -625,7 +625,7 @@ public class NubSpline {
             final NubSpline nubSpline, final double accuracy, final int maxRecursion) {
         
         final NubSpline firstDerive = generateDerivedNUBS(nubSpline);
-        double currentAccuracy = Double.MAX_VALUE;
+        double currentAccuracy = Double.POSITIVE_INFINITY;
         KVector currentVector = null;
         int loopCount = 0;
         double knot = 0.0;
@@ -651,7 +651,7 @@ public class NubSpline {
             final NubSpline nubSpline, final double accuracy, final int maxRecursion) {
         
         final NubSpline firstDerive = generateInvertedNUBS(generateDerivedNUBS(nubSpline));
-        double currentAccuracy = Double.MAX_VALUE;
+        double currentAccuracy = Double.POSITIVE_INFINITY;
         KVector currentVector = null;
         int loopCount = 0;
         double knot = 0.0;
