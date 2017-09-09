@@ -42,7 +42,7 @@ algorithm layered(LayeredLayoutProvider) {
 	metadataClass options.LayeredOptions
 	category org.eclipse.elk.layered
 	features self_loops, inside_self_loops, multi_edges, edge_labels, ports, compound, clusters
-	preview images/layered.png
+	preview images/layered_layout.png
 	// general spacings
 	supports org.eclipse.elk.spacing.componentComponent
 	supports org.eclipse.elk.spacing.edgeEdge

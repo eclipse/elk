@@ -50,9 +50,9 @@ import com.google.common.collect.Lists;
  *   <dt>Slots:</dt>
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>{@link HyperedgeDummyMerger}</dd>
  *     <dd>{@link InLayerConstraintProcessor}</dd>
- *     <dd>{@link SubgraphOrderingProcessor}</dd>
+ *     <dd>{@link LabelManagementProcessor}</dd>
+ *     <dd>{@link LabelDummySwitcher}</dd>
  * </dl>
  * 
  * @see EdgeLabelSideSelection

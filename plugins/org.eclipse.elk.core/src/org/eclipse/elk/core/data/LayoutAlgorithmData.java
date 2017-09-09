@@ -40,7 +40,9 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     /** layout category identifier. */
     private final String category;
     /** name of the bundle of which this algorithm is part of. */
-    private final String bundle;
+    private final String melkBundleName;
+    /** id of the (eclipse) bundle in which the melk file resides. */
+    private final String definingBundleId;
     /** detail description. */
     private final String description;
     /** a path to a preview image for displaying in user interfaces. */
@@ -55,14 +57,16 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
      * Create a layout algorithm data entry.
      */
     public LayoutAlgorithmData(final String aid, final String aname, final String adescription,
-            final IFactory<AbstractLayoutProvider> providerFactory, final String acategory, final String abundle,
+            final IFactory<AbstractLayoutProvider> providerFactory, final String acategory, 
+            final String abundle, final String aBundleId,
             final String aimagePath, final Set<GraphFeature> asupportedFeatures) {
         this.id = aid;
         this.name = aname;
         this.description = adescription;
         this.providerPool = new InstancePool<AbstractLayoutProvider>(providerFactory);
         this.category = acategory;
-        this.bundle = abundle;
+        this.melkBundleName = abundle;
+        this.definingBundleId = aBundleId;
         this.imagePath = aimagePath;
         if (asupportedFeatures == null) {
             this.supportedFeatures = EnumSet.noneOf(GraphFeature.class);
@@ -221,9 +225,16 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
      * @return the bundle name
      */
     public String getBundleName() {
-        return bundle;
+        return melkBundleName;
     }
 
+    /**
+     * @return the id of the (eclipse) bundle in which the melk file resides
+     */
+    public String getDefiningBundleId() {
+        return definingBundleId;
+    }
+    
     /**
      * Returns the preview image path.
      * 

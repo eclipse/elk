@@ -59,13 +59,14 @@ final class GraphConfigurator {
     /** intermediate processors for label management. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> LABEL_MANAGEMENT_ADDITIONS =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_MANAGEMENT_PROCESSOR);
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.CENTER_LABEL_MANAGEMENT_PROCESSOR)
+            .addBefore(LayeredPhases.P4_NODE_PLACEMENT,
+                       IntermediateProcessorStrategy.END_NODE_PORT_LABEL_MANAGEMENT_PROCESSOR);
     
     /** intermediate processors for hierarchical layout, i.e. {@link HierarchyHandling#INCLUDE_CHILDREN}. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HIERARCHICAL_ADDITIONS = 
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
             .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER);
-
     
     ////////////////////////////////////////////////////////////////////////////////
     // Processor Caching

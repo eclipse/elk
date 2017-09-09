@@ -34,7 +34,7 @@ algorithm dot(GraphvizLayoutProvider#DOT) {
 	metadataClass layouter.DotOptions
 	category org.eclipse.elk.layered
 	features self_loops, multi_edges, edge_labels, compound, clusters
-	preview  images/dot.png
+	preview images/dot_layout.png
 	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.direction = Direction.DOWN
 	supports org.eclipse.elk.spacing.nodeNode = 20
@@ -44,11 +44,11 @@ algorithm dot(GraphvizLayoutProvider#DOT) {
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.SPLINES
 	supports org.eclipse.elk.debugMode
 	supports org.eclipse.elk.hierarchyHandling
-	   documentation 
-	       "If activated, the whole hierarchical graph is passed to dot as a whole.
-            Note however that dot performs a 'compound' layout where it somewhat flattens 
-            the hierarchy and performs a layout on the flattened graph. 
-            As a consequence, padding information of hierarchical child nodes is discarded."
+	documentation 
+        "If activated, the whole hierarchical graph is passed to dot as a whole.
+         Note however that dot performs a 'compound' layout where it somewhat flattens 
+         the hierarchy and performs a layout on the flattened graph. 
+         As a consequence, padding information of hierarchical child nodes is discarded."
 	supports iterationsFactor = 1
 	supports concentrate
 	supports labelDistance
@@ -67,7 +67,7 @@ algorithm neato(GraphvizLayoutProvider#NEATO) {
     metadataClass layouter.NeatoOptions
 	category org.eclipse.elk.force
 	features self_loops, multi_edges, edge_labels
-	preview  images/neato.png
+	preview  images/neato_layout.png
 	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.spacing.nodeNode = 40
 	supports org.eclipse.elk.spacing.edgeLabel
@@ -92,12 +92,12 @@ algorithm fdp(GraphvizLayoutProvider#FDP) {
 	label "FDP"
 	description
 		"Spring model layouts similar to those of Neato, but does this by reducing forces rather
-		than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a
-		multigrid solver that handles larger graphs and clustered undirected graphs."
+		 than working with energy. Fdp implements the Fruchterman-Reingold heuristic including a
+		 multigrid solver that handles larger graphs and clustered undirected graphs."
     metadataClass layouter.FdpOptions
 	category org.eclipse.elk.force
 	features self_loops, multi_edges, edge_labels, clusters
-	preview  images/fdp.png
+	preview  images/fdp_layout.png
 	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.spacing.nodeNode = 40
 	supports org.eclipse.elk.spacing.edgeLabel
@@ -119,12 +119,12 @@ algorithm twopi(GraphvizLayoutProvider#TWOPI) {
 	label "Twopi"
 	description
 		"Radial layouts, after Wills '97. The nodes are placed on concentric circles depending on
-		their distance from a given root node. The algorithm is designed to handle not only small
-		graphs, but also very large ones."
+		 their distance from a given root node. The algorithm is designed to handle not only small
+		 graphs, but also very large ones."
     metadataClass layouter.TwopiOptions
-	category org.eclipse.elk.tree
+	category org.eclipse.elk.radial
 	features self_loops, multi_edges, edge_labels
-	preview  images/twopi.png
+	preview  images/twopi_layout.png
 	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.spacing.nodeNode = 60
 	supports org.eclipse.elk.spacing.edgeLabel
@@ -149,7 +149,7 @@ algorithm circo(GraphvizLayoutProvider#CIRCO) {
     metadataClass layouter.CircoOptions
 	category org.eclipse.elk.circle
 	features self_loops, multi_edges, edge_labels
-	preview  images/circo.png
+	preview  images/circo_layout.png
 	supports org.eclipse.elk.padding = new ElkPadding(10)
 	supports org.eclipse.elk.spacing.nodeNode = 40
 	supports org.eclipse.elk.spacing.edgeLabel

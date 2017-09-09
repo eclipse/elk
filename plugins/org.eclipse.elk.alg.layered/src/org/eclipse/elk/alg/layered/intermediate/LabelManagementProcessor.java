@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
@@ -30,30 +31,50 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * Invokes a potentially registered label manager on center edge label dummy nodes.
+ * Invokes a potentially registered label manager on labels. This processor has two modes of operation. The first mode
+ * seeks out node labels, port labels, and edge labels. This mode is used for the first label management run before
+ * computing node sizes. The second mode manages center edge labels, which requires node sizes to be fixed.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>The graph is layered.</dd>
  *     <dd>Label dummy nodes are placed in their final layers.</dd>
  *   <dt>Postcondition:</dt>
- *     <dd>Possible lable text modifications.</dd>
+ *     <dd>Possible label text modifications.</dd>
  *   <dt>Slots:</dt>
  *     <dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt>
+ *   <dt>Same-slot dependencies for mode 1:</dt>
+ *     <dd>None.</dd>
+ *   <dt>Same-slot dependencies for mode 2:</dt>
  *     <dd>{@link LabelDummySwitcher}</dd>
  * </dl>
  */
 public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> {
 
-    /** Minimum width for shortened edge labels. */
-    private static final double MIN_WIDTH_EDGE_LABELS = 60;
     /** Minimum width for shortened port labels. */
     private static final double MIN_WIDTH_PORT_LABELS = 20;
-
+    /** Minimum width for shortened node labels. */
+    private static final double MIN_WIDTH_NODE_LABELS = 40;
+    /** Minimum width for shortened edge labels. */
+    private static final double MIN_WIDTH_EDGE_LABELS = 60;
+    
+    /** Whether we should only manage edge center labels. */
+    private boolean centerLabels;
+    
+    
     /**
-     * {@inheritDoc}
+     * Creates a new instance.
+     * 
+     * @param centerLabels
+     *            {@code true} if the new instance should operate only on edge center labels, {@code false} if it should
+     *            operate on everything except edge center labels.
      */
+    public LabelManagementProcessor(final boolean centerLabels) {
+        this.centerLabels = centerLabels;
+    }
+
+    
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label management", 1);
 
@@ -63,87 +84,107 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
         if (labelManager != null) {
             double edgeLabelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_LABEL).doubleValue();
             double labelLabelSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_LABEL_LABEL).doubleValue();
-
-            // Iterate over all layers and call our nifty code
-            for (Layer layer : layeredGraph) {
-                manageLabels(layer, labelManager, edgeLabelSpacing, labelLabelSpacing);
+            
+            if (centerLabels) {
+                manageCenterLabels(layeredGraph, labelManager, edgeLabelSpacing, labelLabelSpacing);
+            } else {
+                manageNonCenterLabels(layeredGraph, labelManager, labelLabelSpacing);
             }
         }
 
         monitor.done();
     }
-
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Everything Except Center Edge Labels
+    
     /**
-     * Iterates over the nodes labels and invokes the label manager on label dummy nodes. The target width for labels is
-     * the width of the widest non-dummy node.
-     * 
-     * @param layer
-     *            the layer whose labels to manage.
-     * @param labelManager
-     *            the label manager to be used.
-     * @param edgeLabelSpacing
-     *            spacing between labels and edges.
-     * @param labelLabelSpacing
-     *            spacing between labels.
+     * Calls label management on all labels that are not edge center labels.
      */
-    private void manageLabels(final Layer layer, final ILabelManager labelManager,
-            final double edgeLabelSpacing, final double labelLabelSpacing) {
+    private void manageNonCenterLabels(final LGraph lGraph, final ILabelManager labelManager,
+            final double labelLabelSpacing) {
 
-        assert labelManager != null : "labelManager is null";
-
-        boolean verticalLayout = layer.getGraph().getProperty(LayeredOptions.DIRECTION).isVertical();
-        double maxWidth = Math.max(MIN_WIDTH_EDGE_LABELS, LGraphUtil.findMaxNonDummyNodeWidth(layer, false));
-
-        // Apply the maximum width to all label dummy nodes
-        for (LNode layerNode : layer) {
-            switch (layerNode.getType()) {
-            case NORMAL:
-                // Handle ports
-                List<LPort> ports = layerNode.getPorts();
-                for (LPort port : ports) {
-                    doManageLabels(labelManager, port.getLabels(), MIN_WIDTH_PORT_LABELS, 0, verticalLayout);
-                }
-
-                // Self-loop splines
-                final List<ConnectedSelfLoopComponent> components =
-                        layerNode.getProperty(InternalProperties.SPLINE_SELFLOOP_COMPONENTS);
-                
-                for (ConnectedSelfLoopComponent component : components) {
-                    Set<LEdge> edges = component.getEdges();
-                    for (LEdge edge : edges) {
-                        doManageLabels(labelManager, edge.getLabels(), maxWidth, edgeLabelSpacing, verticalLayout);
+        boolean verticalLayout = lGraph.getProperty(LayeredOptions.DIRECTION).isVertical();
+        
+        // Iterate over the layers
+        for (Layer layer : lGraph) {
+            // Apply label management to node and port labels
+            for (LNode node : layer) {
+                if (node.getType() == NodeType.NORMAL) {
+                    // Handle node labels
+                    doManageLabels(labelManager, node.getLabels(), MIN_WIDTH_NODE_LABELS,
+                            labelLabelSpacing, verticalLayout);
+                    
+                    // Handle ports
+                    List<LPort> ports = node.getPorts();
+                    for (LPort port : ports) {
+                        doManageLabels(labelManager, port.getLabels(), MIN_WIDTH_PORT_LABELS,
+                                labelLabelSpacing, verticalLayout);
+                    }
+                    
+                    // Self-loop splines
+                    final List<ConnectedSelfLoopComponent> components =
+                            node.getProperty(InternalProperties.SPLINE_SELFLOOP_COMPONENTS);
+                    
+                    for (ConnectedSelfLoopComponent component : components) {
+                        Set<LEdge> edges = component.getEdges();
+                        for (LEdge edge : edges) {
+                            doManageLabels(labelManager, edge.getLabels(), MIN_WIDTH_EDGE_LABELS,
+                                    labelLabelSpacing, verticalLayout);
+                        }
                     }
                 }
                 
-                break;
-
-            case LABEL:
-                LEdge edge = layerNode.getConnectedEdges().iterator().next();
-                double edgeThickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS).doubleValue();
-
-                // The list of labels should never be empty (otherwise the label dummy wouldn't have been created in
-                // the first place)
-                Iterable<LLabel> labels = layerNode.getProperty(InternalProperties.REPRESENTED_LABELS);
-                KVector spaceRequiredForLabels = doManageLabels(
-                        labelManager, labels, maxWidth, labelLabelSpacing, verticalLayout);
-                
-                // Apply the space required for labels to the dummy node (we don't bother with the ports here since
-                // they will be meddled with later by the LabelSideSelector anyway)
-                layerNode.getSize().x = spaceRequiredForLabels.x;
-                layerNode.getSize().y = spaceRequiredForLabels.y + edgeThickness + edgeLabelSpacing;
-                
-                break;
-
-            }
-            
-            // Edges can have edge and tail labels that need to be managed as well (note that at this
-            // point, only head and tail labels remain)
-            for (LEdge edge : layerNode.getOutgoingEdges()) {
-                doManageLabels(labelManager, edge.getLabels(), MIN_WIDTH_EDGE_LABELS, 0, verticalLayout);
+                // Edges can have edge and tail labels that need to be managed as well (note that at this
+                // point, only head and tail labels remain)
+                for (LEdge edge : node.getOutgoingEdges()) {
+                    doManageLabels(labelManager, edge.getLabels(), MIN_WIDTH_EDGE_LABELS, 0, verticalLayout);
+                }
             }
         }
-        
     }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Center Edge Labels
+    
+    /**
+     * Calls label management on all edge center labels.
+     */
+    private void manageCenterLabels(final LGraph lGraph, final ILabelManager labelManager,
+            final double edgeLabelSpacing, final double labelLabelSpacing) {
+
+        boolean verticalLayout = lGraph.getProperty(LayeredOptions.DIRECTION).isVertical();
+        
+        // Iterate over the layers and find label dummy nodes
+        for (Layer layer : lGraph) {
+            // The maximum width is used as the target width for center edge labels
+            double maxWidth = Math.max(MIN_WIDTH_EDGE_LABELS, LGraphUtil.findMaxNonDummyNodeWidth(layer, false));
+            
+            for (LNode node : layer) {
+                if (node.getType() == NodeType.LABEL) {
+                    LEdge edge = node.getConnectedEdges().iterator().next();
+                    double edgeThickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS).doubleValue();
+    
+                    // The list of labels should never be empty (otherwise the label dummy wouldn't have been created
+                    // in the first place)
+                    Iterable<LLabel> labels = node.getProperty(InternalProperties.REPRESENTED_LABELS);
+                    KVector spaceRequiredForLabels = doManageLabels(
+                            labelManager, labels, maxWidth, labelLabelSpacing, verticalLayout);
+                    
+                    // Apply the space required for labels to the dummy node (we don't bother with the ports here since
+                    // they will be meddled with later by the LabelSideSelector anyway)
+                    node.getSize().x = spaceRequiredForLabels.x;
+                    node.getSize().y = spaceRequiredForLabels.y + edgeThickness + edgeLabelSpacing;
+                }
+            }
+        }
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Actual Label Management
 
     /**
      * Manage all the labels according to the labelManager and change the labels size.

@@ -32,7 +32,7 @@ algorithm force(ForceLayoutProvider) {
     metadataClass options.ForceOptions
     category org.eclipse.elk.force
     features multi_edges, edge_labels
-    preview images/force.png
+    preview images/force_layout.png
     supports org.eclipse.elk.priority = 1
     supports org.eclipse.elk.spacing.nodeNode = 80
     supports org.eclipse.elk.spacing.edgeLabel = 5
