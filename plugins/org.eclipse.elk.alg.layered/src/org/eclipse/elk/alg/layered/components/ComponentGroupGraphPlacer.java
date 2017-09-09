@@ -131,6 +131,8 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
                 h.getOffset().reset().add(compactor.getOffset());
             }
 
+            // set the new (compacted) graph size
+            target.getSize().reset().add(compactor.getGraphSize());
         }
 
         // finally move the components to the combined graph
