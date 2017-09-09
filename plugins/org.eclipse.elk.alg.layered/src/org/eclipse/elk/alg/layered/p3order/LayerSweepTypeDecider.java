@@ -129,7 +129,7 @@ public class LayerSweepTypeDecider implements IInitializable {
         }
 
         double allPaths = pathsToRandom + pathsToHierarchical;
-        double normalized = allPaths == 0 ? Double.MAX_VALUE : (pathsToRandom - pathsToHierarchical) / allPaths;
+        double normalized = allPaths == 0 ? Double.POSITIVE_INFINITY : (pathsToRandom - pathsToHierarchical) / allPaths;
         return normalized >= boundary;
     }
 

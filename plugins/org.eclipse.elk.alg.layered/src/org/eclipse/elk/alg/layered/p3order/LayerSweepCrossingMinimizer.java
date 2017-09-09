@@ -96,7 +96,8 @@ public class LayerSweepCrossingMinimizer
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Minimize Crossings " + crossMinType, 1);
 
-        if (layeredGraph.getLayers().isEmpty()) {
+        // short-circuit cases in which no crossings can be minimized
+        if (layeredGraph.getLayers().isEmpty() || layeredGraph.getLayers().size() == 1) {
             progressMonitor.done();
             return;
         }
@@ -126,6 +127,9 @@ public class LayerSweepCrossingMinimizer
     private void minimizeCrossings(final List<GraphInfoHolder> graphsToSweepOn,
             final Consumer<GraphInfoHolder> minimizingMethod) {
         for (GraphInfoHolder gData : graphsToSweepOn) {
+            if (gData.childGraphs().isEmpty()) {
+                continue; 
+            }
             minimizingMethod.accept(gData);
             if (gData.hasParent()) {
                 setPortOrderOnParentGraph(gData);
@@ -404,7 +408,10 @@ public class LayerSweepCrossingMinimizer
 
     private void transferNodeAndPortOrdersToGraph() {
         for (GraphInfoHolder gD : graphInfoHolders) {
-            gD.getBestSweep().transferNodeAndPortOrdersToGraph(gD.lGraph());
+            SweepCopy bestSweep = gD.getBestSweep();
+            if (bestSweep != null) {
+                bestSweep.transferNodeAndPortOrdersToGraph(gD.lGraph());
+            }
         }
     }
 
