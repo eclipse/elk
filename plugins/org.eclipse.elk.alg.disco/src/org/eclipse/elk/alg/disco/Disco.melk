@@ -17,7 +17,7 @@ bundle {
 algorithm disco(DisCoLayoutProvider) {
     label "ELK DisCo"
     description 
-        "Layouter for arranging unconnected subgraphs. The subgraphs themselves are not laid out."
+        "Layouter for arranging unconnected subgraphs. The subgraphs themselves are, by default, not laid out."
     metadataClass options.DisCoOptions
     preview images/disco_layout.png
     supports org.eclipse.elk.spacing.componentComponent
@@ -29,20 +29,32 @@ algorithm disco(DisCoLayoutProvider) {
     supports org.eclipse.elk.alg.common.compaction.polyomino.costfunction
     supports org.eclipse.elk.alg.common.compaction.polyomino.fill
     supports componentCompaction.strategy
+    supports componentCompaction.componentLayoutAlgorithm
     supports debug.discoGraph
     supports debug.discoPolys
 }
 
 group componentCompaction {
     option strategy : CompactionStrategy {
-        label "Compaction Strategy for Connected Components"
+        label "Connected Components Compaction Strategy"
         description 
             "Strategy for packing different connected components in order to save space 
              and enhance readability of a graph."
         default = CompactionStrategy.POLYOMINO
         targets parents
+    }
+    
+    option componentLayoutAlgorithm: String {
+        label "Connected Components Layout Algorithm"
+        description
+            "A layout algorithm that is to be applied to each connected component 
+             before the components themselves are compacted. If unspecified, 
+             the positions of the components' nodes are not altered. "
+        targets parents
     }  
 }
+
+
 
 group debug {
     programmatic option discoGraph: Object {

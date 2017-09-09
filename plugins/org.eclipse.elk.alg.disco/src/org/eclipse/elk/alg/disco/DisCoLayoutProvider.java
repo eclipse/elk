@@ -12,6 +12,8 @@ import org.eclipse.elk.alg.disco.options.DisCoMetaDataProvider;
 import org.eclipse.elk.alg.disco.options.DisCoOptions;
 import org.eclipse.elk.alg.disco.transform.ElkGraphTransformer;
 import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -34,15 +36,24 @@ public class DisCoLayoutProvider extends AbstractLayoutProvider {
 
     /*
      * (non-Javadoc)
-     * 
-     * @see org.eclipse.elk.core.IGraphLayoutEngine#layout(org.eclipse.elk.graph.KNode,
-     * org.eclipse.elk.core.util.IElkProgressMonitor)
      */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+        progressMonitor.begin("Connected Components Compaction", 1);
 
         componentSpacing = layoutGraph.getProperty(DisCoOptions.SPACING_COMPONENT_COMPONENT);
 
+        // If desired, apply a layout algorithm to the connected components themselves
+        if (layoutGraph.hasProperty(DisCoOptions.COMPONENT_COMPACTION_COMPONENT_LAYOUT_ALGORITHM)) {
+            String requestedAlgorithm =
+                    layoutGraph.getProperty(DisCoOptions.COMPONENT_COMPACTION_COMPONENT_LAYOUT_ALGORITHM);
+            LayoutAlgorithmData lad = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffix(requestedAlgorithm);
+            if (lad != null) {
+                AbstractLayoutProvider layoutProvider = lad.getInstancePool().fetch();
+                layoutProvider.layout(layoutGraph, progressMonitor.subTask(1));
+            }
+        }
+        
         // 1.) Transform given KGraph into DCGraph
         ElkGraphTransformer transformer = new ElkGraphTransformer(componentSpacing);
         result = transformer.importGraph(layoutGraph);
@@ -66,6 +77,8 @@ public class DisCoLayoutProvider extends AbstractLayoutProvider {
 
         // Only for debugging purposes, see org.eclipse.elk.alg.disco.debug.views.DisCoGraphRenderer
         layoutGraph.setProperty(DisCoOptions.DEBUG_DISCO_GRAPH, result);
+        
+        progressMonitor.done();
     }
 
 }

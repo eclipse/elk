@@ -220,7 +220,7 @@ public class AlgorithmSelectionDialog extends Dialog {
         gc.setInterpolation(SWT.HIGH);
         gc.drawImage(image, 
                 0, 0, bounds.width, bounds.height, 
-                imgXPadding, 1, DESCRIPTION_WIDTH - 2 * imgXPadding, newHeight - 2);
+                imgXPadding, 0, DESCRIPTION_WIDTH - 2 * imgXPadding, newHeight - 1);
 
         // draw a border
         Color frameColor = new Color(Display.getCurrent(), PREVIEW_IMG_FRAME_COLOR);

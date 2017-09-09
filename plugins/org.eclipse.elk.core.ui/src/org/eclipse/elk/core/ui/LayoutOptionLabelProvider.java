@@ -16,6 +16,7 @@ import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.ui.views.LayoutPropertyDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -84,7 +85,8 @@ public class LayoutOptionLabelProvider extends LabelProvider {
     public String getText(final Object element) {
         switch (optionData.getType()) {
         case STRING:
-            if (CoreOptions.ALGORITHM.equals(optionData)) {
+            if (CoreOptions.ALGORITHM.equals(optionData) 
+                    || optionData.getId().equals(LayoutPropertyDescriptor.DISCO_LAYOUT_ALG_ID)) {
                 LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
                 LayoutAlgorithmData algorithmData = layoutDataService.getAlgorithmData((String) element);
                 if (algorithmData != null) {

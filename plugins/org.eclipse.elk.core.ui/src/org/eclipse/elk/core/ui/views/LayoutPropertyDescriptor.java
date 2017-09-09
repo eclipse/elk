@@ -54,6 +54,10 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
     /** the label provider for this property descriptor. */
     private LayoutOptionLabelProvider labelProvider;
     
+    /** There's another option that allows to select a layout algorithm other than {@link CoreOptions#ALGORITHM}. 
+     *  To avoid a dependency to that plugin, the option is hard-coded here. */
+    public static final String DISCO_LAYOUT_ALG_ID =
+            "org.eclipse.elk.disco.componentCompaction.componentLayoutAlgorithm";
     /**
      * Creates a layout property descriptor based on a specific layout option.
      * 
@@ -83,7 +87,9 @@ public class LayoutPropertyDescriptor implements IPropertyDescriptor {
         switch (optionData.getType()) {
         case STRING:
             if (CoreOptions.ALGORITHM.equals(optionData)) {
-                return new AlgorithmCellEditor(parent);
+                return new AlgorithmCellEditor(parent, CoreOptions.ALGORITHM.getId());
+            } else if (optionData.getId().equals(DISCO_LAYOUT_ALG_ID)) {
+                return new AlgorithmCellEditor(parent, DISCO_LAYOUT_ALG_ID);
             } else {
                 return new TextCellEditor(parent);
             }
