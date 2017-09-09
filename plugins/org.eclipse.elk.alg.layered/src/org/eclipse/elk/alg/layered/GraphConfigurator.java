@@ -30,6 +30,7 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.HierarchyHandling;
 
 /**
  * The configurator configures a graph in preparation for layout. This includes making sure that a
@@ -61,7 +62,11 @@ final class GraphConfigurator {
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.CENTER_LABEL_MANAGEMENT_PROCESSOR)
             .addBefore(LayeredPhases.P4_NODE_PLACEMENT,
                        IntermediateProcessorStrategy.END_NODE_PORT_LABEL_MANAGEMENT_PROCESSOR);
-
+    
+    /** intermediate processors for hierarchical layout, i.e. {@link HierarchyHandling#INCLUDE_CHILDREN}. */
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> HIERARCHICAL_ADDITIONS = 
+        LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+            .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.HIERARCHICAL_NODE_RESIZER);
     
     ////////////////////////////////////////////////////////////////////////////////
     // Processor Caching
@@ -166,6 +171,15 @@ final class GraphConfigurator {
         // Basic configuration
         LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
                 LayoutProcessorConfiguration.createFrom(BASELINE_PROCESSING_CONFIGURATION);
+        
+        // Hierarchical layout. 
+        //  Note that the recursive graph layout engine made sure that at this point
+        //  'INCLUDE_CHILDREN' has been propagated to all parent nodes with 'INHERIT'.
+        //  Thus, every lgraph of the hierarchical lgraph structure is configured with the following additions. 
+        HierarchyHandling hierarchyHandling = lgraph.getProperty(LayeredOptions.HIERARCHY_HANDLING);
+        if (hierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN) {
+            configuration.addAll(HIERARCHICAL_ADDITIONS);
+        }
 
         // Port side processor, put to first slot only if requested and routing is orthogonal
         if (lgraph.getProperty(LayeredOptions.FEEDBACK_EDGES)) {
@@ -240,22 +254,11 @@ final class GraphConfigurator {
                     IntermediateProcessorStrategy.SEMI_INTERACTIVE_CROSSMIN_PROCESSOR);
         }
 
-        // Configure greedy switch, activate it if the following holds true
-        //  a) no interactive crossing minimization is performed
-        //  b) the greedy switch type is set to something different than OFF
-        //  c) the activationThreshold is larger than or equal to the graph's number of nodes (or '0')
-        GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
-        boolean interactiveCrossMin =
-                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE) 
-                || lgraph.getProperty(
-                        LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) == CrossingMinimizationStrategy.INTERACTIVE;
-        int activationThreshold =
-                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_ACTIVATION_THRESHOLD);
-        int graphSize = lgraph.getLayerlessNodes().size();
-        if (!interactiveCrossMin && greedySwitchType != GreedySwitchType.OFF 
-                && (activationThreshold == 0 || activationThreshold > graphSize)) {
-            IntermediateProcessorStrategy internalGreedyType = 
-                    greedySwitchType == GreedySwitchType.ONE_SIDED
+        // Configure greedy switch
+        if (activateGreedySwitchFor(lgraph)) {
+            GreedySwitchType greedySwitchType =
+                    lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
+            IntermediateProcessorStrategy internalGreedyType = (greedySwitchType == GreedySwitchType.ONE_SIDED)
                         ? IntermediateProcessorStrategy.ONE_SIDED_GREEDY_SWITCH
                         : IntermediateProcessorStrategy.TWO_SIDED_GREEDY_SWITCH;
             configuration.addBefore(LayeredPhases.P4_NODE_PLACEMENT, internalGreedyType);
@@ -280,4 +283,27 @@ final class GraphConfigurator {
         return configuration;
     }
     
+    /**
+     * Greedy switch may be activated if the following holds.
+     * <ol>
+     *  <li>no interactive crossing minimization is performed</li>
+     *  <li>the greedy switch type is set to something different than OFF</li>
+     *  <li>the activationThreshold is larger than or equal to the graph's number of nodes (or '0')</li>
+     * </ol>
+     * @return {@code true} if above condition holds, {@code false} otherwise.
+     */
+    public static boolean activateGreedySwitchFor(final LGraph lgraph) {
+        GreedySwitchType greedySwitchType = lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE);
+        boolean interactiveCrossMin =
+                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE) 
+                || lgraph.getProperty(
+                        LayeredOptions.CROSSING_MINIMIZATION_STRATEGY) == CrossingMinimizationStrategy.INTERACTIVE;
+        int activationThreshold =
+                lgraph.getProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_ACTIVATION_THRESHOLD);
+        int graphSize = lgraph.getLayerlessNodes().size();
+        
+        return !interactiveCrossMin 
+                && greedySwitchType != GreedySwitchType.OFF 
+                && (activationThreshold == 0 || activationThreshold > graphSize);
+    }
 }
