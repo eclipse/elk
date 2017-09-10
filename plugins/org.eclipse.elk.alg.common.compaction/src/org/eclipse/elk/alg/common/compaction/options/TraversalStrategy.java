@@ -10,7 +10,7 @@ package org.eclipse.elk.alg.common.compaction.options;
 /**
  * Possible traversal orders (with an implicit cost function) for placing polyominoes on an infinite square planar grid.
  */
-public enum CostStrategy {
+public enum TraversalStrategy {
     // TODO finalize choices and comment on each one
     SPIRAL,
     LINE_BY_LINE,

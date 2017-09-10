@@ -13,6 +13,6 @@ package org.eclipse.elk.alg.common.compaction.options;
  * </p>
  */
 public enum HighLevelSortingCriterion {
-NUM_OF_EXTERNAL_SIDES_THAN_NUM_OF_EXTENSIONS_LAST,
-CORNER_CASES_THAN_SINGLE_SIDE_LAST
+    NUM_OF_EXTERNAL_SIDES_THAN_NUM_OF_EXTENSIONS_LAST,
+    CORNER_CASES_THAN_SINGLE_SIDE_LAST
 }

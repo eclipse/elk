@@ -84,7 +84,7 @@ public class PolyominoCompactor {
         // 2. Initialize cost function. Implemented as a BiFunction for future interchangeability with different
         // metrics.
         BiFunction<Pair<Integer, Integer>, Polyomino, Pair<Integer, Integer>> successorBasedOnCost;
-        switch (polyHolder.getProperty(PolyominoOptions.POLYOMINO_COSTFUNCTION)) {
+        switch (polyHolder.getProperty(PolyominoOptions.POLYOMINO_TRAVERSAL_STRATEGY)) {
         case SPIRAL:
             successorBasedOnCost = new SuccessorMaxNormWindingInMathPosSense();
             break;

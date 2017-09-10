@@ -7,6 +7,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.common.compaction
 
+import org.eclipse.elk.alg.common.compaction.options.TraversalStrategy
+
 bundle {
     label "Options for Polyomino Compaction"
     metadataClass options.PolyominoOptions
@@ -15,16 +17,16 @@ bundle {
  
 group polyomino {
     
-    option costfunction: CostStrategy {
-        label "Cost Function for Enumerating Candidate Positions for Polyominoes"
+    option traversalStrategy: TraversalStrategy {
+        label "Polyomino Traversal Strategy"
         description 
-            "Strategy for trying different candidate positions for polyominoes based on minimizing a cost function."
-        default = CostStrategy.QUADRANTS_LINE_BY_LINE
+            "Traversal strategy for trying different candidate positions for polyominoes."
+        default = TraversalStrategy.QUADRANTS_LINE_BY_LINE
         targets parents
     }
     
     option lowLevelSort: LowLevelSortingCriterion {
-        label "Secondary Sorting Criterion for Sorting Polyominoes"
+        label "Polyomino Secondary Sorting Criterion"
         description 
             "Possible secondary sorting criteria for the processing order of polyominoes. 
              They are used when polyominoes are equal according to the primary 
@@ -34,14 +36,14 @@ group polyomino {
     }
     
      option highLevelSort: HighLevelSortingCriterion {
-        label "Primary Sorting Criterion for Sorting Polyominoes"
+        label "Polyomino Primary Sorting Criterion"
         description "Possible primary sorting criteria for the processing order of polyominoes."
         default = HighLevelSortingCriterion.NUM_OF_EXTERNAL_SIDES_THAN_NUM_OF_EXTENSIONS_LAST
         targets parents
     }
     
     option fill: boolean {
-        label "Fill Polyominoes to Prevent Small Ones From Being Placed within Big Polyominoes."
+        label "Fill Polyominoes"
         description 
             "Use the Profile Fill algorithm to fill polyominoes to prevent small polyominoes
              from being placed inside of big polyominoes with large holes. Might increase packing area."

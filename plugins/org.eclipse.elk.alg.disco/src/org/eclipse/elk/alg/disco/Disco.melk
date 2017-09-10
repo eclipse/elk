@@ -26,7 +26,7 @@ algorithm disco(DisCoLayoutProvider) {
     supports org.eclipse.elk.padding
     supports org.eclipse.elk.alg.common.compaction.polyomino.lowLevelSort
     supports org.eclipse.elk.alg.common.compaction.polyomino.highLevelSort
-    supports org.eclipse.elk.alg.common.compaction.polyomino.costfunction
+    supports org.eclipse.elk.alg.common.compaction.polyomino.traversalStrategy
     supports org.eclipse.elk.alg.common.compaction.polyomino.fill
     supports componentCompaction.strategy
     supports componentCompaction.componentLayoutAlgorithm
@@ -53,8 +53,6 @@ group componentCompaction {
         targets parents
     }  
 }
-
-
 
 group debug {
     programmatic option discoGraph: Object {
