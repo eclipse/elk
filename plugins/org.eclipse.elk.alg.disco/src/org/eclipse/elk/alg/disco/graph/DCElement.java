@@ -7,20 +7,17 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.disco.graph;
 
-import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.elk.alg.disco.ICompactor;
 import org.eclipse.elk.alg.disco.transform.IGraphTransformer;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 import com.google.common.collect.Lists;
-import com.google.common.primitives.Doubles;
 
 /**
  * Represents an element of a {@link DCGraph}. Expresses common graph features like nodes, edges, labels, ... simply as
@@ -35,7 +32,9 @@ public class DCElement extends MapPropertyHolder {
     // Variables
 
     /** Path representing this elements shape based on the positions of polygon vertices . */
-    private Path2D.Double shape = new Path2D.Double();
+    private final KVectorChain shape;
+    /** The bounding box of the {@link #shape}. */
+    private final ElkRectangle bounds;
     /** The {@link DCComponent} this element belongs to. */
     private DCComponent cp;
     /** Maintained for drawing purposes in the DisCoGraphRenderer of the DisCoDebugView. */
@@ -55,15 +54,19 @@ public class DCElement extends MapPropertyHolder {
      * @param polyPath
      *            Ordered list of points expressing the vertices of a Polygon
      */
-    public DCElement(final List<Point2D.Double> polyPath) {
-        Point2D.Double start = polyPath.get(0);
-        shape.moveTo(start.x, start.y);
-
-        for (int i = 1; i < polyPath.size(); i++) {
-            Point2D.Double vertice = polyPath.get(i);
-            shape.lineTo(vertice.x, vertice.y);
+    public DCElement(final KVectorChain polyPath) {
+        this.shape = polyPath;
+        double minX = Double.POSITIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double maxX = Double.NEGATIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
+        for (KVector v : polyPath) {
+            minX = Math.min(minX, v.x);
+            minY = Math.min(minY, v.y);
+            maxX = Math.max(maxX, v.x);
+            maxY = Math.max(maxY, v.y);
         }
-        shape.closePath();
+        bounds = new ElkRectangle(minX, minY, maxX - minX, maxY - minY);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -93,21 +96,16 @@ public class DCElement extends MapPropertyHolder {
             return coords;
         }
 
-        final int six = 6;
-        ArrayList<Double> coordList = Lists.newArrayList();
-        PathIterator iter = shape.getPathIterator(null);
-        double[] returned = new double[six];
-        while (!iter.isDone()) {
-            for (int i = 0; i < six; i++) {
-                returned[i] = Double.NaN;
-            }
-            iter.currentSegment(returned);
-            for (int j = 0; j < six && !Double.isNaN(returned[j]); j++) {
-                coordList.add(returned[j]);
-            }
-            iter.next();
+        coords = new double[shape.size() * 2];
+        Iterator<KVector> it = shape.iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            KVector c = it.next();
+            coords[i] = c.x;
+            coords[i + 1] = c.y;
+            i += 2;
         }
-        coords = Doubles.toArray(coordList);
+
         return coords;
     }
 
@@ -135,8 +133,8 @@ public class DCElement extends MapPropertyHolder {
      * 
      * @return The bounding rectangle of this element
      */
-    public Rectangle2D getBounds() {
-        return shape.getBounds2D();
+    public ElkRectangle getBounds() {
+        return bounds;
     }
 
     /**
@@ -172,8 +170,8 @@ public class DCElement extends MapPropertyHolder {
     }
 
     /**
-     * Tests whether this {@link DCElement} intersects with a rectangular area given by the four paramaters of this
-     * method.
+     * Tests whether this {@link DCElement} intersects with, or fully contains, 
+     * a rectangular area given by the four parameters.
      * 
      * @param x
      *            X-coordinate of the upper left corner of the rectangle
@@ -188,6 +186,7 @@ public class DCElement extends MapPropertyHolder {
     boolean intersects(final double x, final double y, final double width, final double height) {
         // The implementations of the following Path2D methods enable false positives and negatives in edge cases as a
         // sacrifice for better performance.
-        return shape.intersects(x, y, width, height) || shape.contains(x, y, width, height);
+        //return shape.intersects(x, y, width, height) || shape.contains(x, y, width, height);
+        return false;
     }
 }

@@ -7,8 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.disco.graph;
 
-import java.awt.geom.Rectangle2D;
-
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 
 /**
@@ -41,8 +40,8 @@ public class DCExtension {
         this.direction = direction;
         this.width = width;
 
-        Rectangle2D bounds = parent.getBounds();
-        setOffset(new KVector(-bounds.getX(), -bounds.getY()));
+        ElkRectangle bounds = parent.getBounds();
+        setOffset(new KVector(-bounds.x, -bounds.y));
         getOffset().add(middlePos);
         // adjust position so that the Vector describes the left bound of the extension when viewed clock wise;
         double halfWidth = width / 2;

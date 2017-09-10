@@ -26,6 +26,7 @@ import org.eclipse.elk.alg.disco.graph.DCGraph;
 import org.eclipse.elk.alg.disco.options.DisCoOptions;
 import org.eclipse.elk.alg.disco.structures.DCPolyomino;
 import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -396,7 +397,9 @@ public class DisCoGraphRenderer {
 
                 }
 
-                Rectangle2D elementBounding = el.getBounds();
+                ElkRectangle bounds = el.getBounds();
+                Rectangle2D.Double elementBounding = new Rectangle2D.Double(bounds.x, bounds.y, bounds.width,
+                        bounds.height);
                 double offsetX = elementBounding.getX() + el.getOffset().x;
                 double offsetY = elementBounding.getY() + el.getOffset().y;
                 elementBounding = new Rectangle2D.Double(offsetX, offsetY, elementBounding.getWidth(),

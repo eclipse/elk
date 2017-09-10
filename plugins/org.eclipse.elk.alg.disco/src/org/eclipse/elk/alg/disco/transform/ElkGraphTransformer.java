@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.disco.transform;
 
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -288,17 +287,13 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
             throw new IllegalArgumentException("Method only works for ElkNode-, ElkLabel and ElkPort-objects.");
         }
 
-        List<Point2D.Double> coords;
-        // KShapeLayout elementLayout = element.getData(KShapeLayout.class);
-
         double halfComponentSpacing = componentSpacing / 2;
         double x0 = element.getX() + offsetX - halfComponentSpacing;
         double y0 = element.getY() + offsetY - halfComponentSpacing;
         double x1 = x0 + element.getWidth() + componentSpacing;
         double y1 = y0 + element.getHeight() + componentSpacing;
 
-        coords = Lists.newArrayList();
-
+        KVectorChain coords = new KVectorChain();
         coords.add(newPoint(x0, y0));
         coords.add(newPoint(x0, y1));
         coords.add(newPoint(x1, y1));
@@ -331,7 +326,7 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
         List<KVector> points = ElkUtil.createVectorChain(edgeSection);
 
         double thickness = edge.getProperty(DisCoOptions.EDGE_THICKNESS);
-        List<Point2D.Double> contour = getContour(points, thickness + componentSpacing);
+        KVectorChain contour = getContour(points, thickness + componentSpacing);
 
         DCElement shape = new DCElement(contour);
         shape.copyProperties(edge);
@@ -394,7 +389,7 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
             List<KVector> fixedEdgePoints = Lists.newArrayList();
             fixedEdgePoints.addAll(points.subList(1, points.size()));
 
-            List<Point2D.Double> contour = getContour(fixedEdgePoints, thickness + componentSpacing);
+            KVectorChain contour = getContour(fixedEdgePoints, thickness + componentSpacing);
 
             shape = new DCElement(contour);
             shape.copyProperties(edge);
@@ -530,9 +525,9 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
      *            Desired thickness of the edge
      * @return List of vertices of the edge as a polygon considering the given thickness
      */
-    private List<Point2D.Double> getContour(final List<KVector> edgePoints, final double thickness) {
-        List<Point2D.Double> ccwPoints = Lists.newArrayList();
-        List<Point2D.Double> cwPoints = Lists.newArrayList();
+    private KVectorChain getContour(final List<KVector> edgePoints, final double thickness) {
+        List<KVector> ccwPoints = Lists.newArrayList();
+        List<KVector> cwPoints = Lists.newArrayList();
         double radius = thickness / 2;
 
         int numberOfPoints = edgePoints.size();
@@ -541,7 +536,7 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
         KVector predecessor;
         KVector current = edgePoints.get(0);
         KVector successor = edgePoints.get(1);
-        List<Point2D.Double> orthPoints = getOrthogonalPoints(current.x, current.y, successor.x, successor.y, radius);
+        List<KVector> orthPoints = getOrthogonalPoints(current.x, current.y, successor.x, successor.y, radius);
         ccwPoints.add(orthPoints.get(0));
         cwPoints.add(orthPoints.get(1));
 
@@ -565,13 +560,13 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
         cwPoints.add(orthPoints.get(0));
 
         // Compute the intersections of the line segments of the orthogonal points
-        List<Point2D.Double> ccwMerged = Lists.newArrayList();
-        List<Point2D.Double> cwMerged = Lists.newArrayList();
+        KVectorChain ccwMerged = new KVectorChain();
+        List<KVector> cwMerged = Lists.newArrayList();
 
         ccwMerged.add(ccwPoints.get(0));
         for (int i = 1; i < ccwPoints.size() - 2; i += 2) {
-            Point2D.Double currentPoint = ccwPoints.get(i);
-            Point2D.Double intersectionPoint =
+            KVector currentPoint = ccwPoints.get(i);
+            KVector intersectionPoint =
                     computeIntersection(ccwPoints.get(i - 1), currentPoint, ccwPoints.get(i + 1), ccwPoints.get(i + 2));
 
             // Keep currentPoint if lines are coincident (or parallel).
@@ -585,8 +580,8 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
 
         cwMerged.add(cwPoints.get(0));
         for (int i = 1; i < cwPoints.size() - 2; i += 2) {
-            Point2D.Double currentPoint = cwPoints.get(i);
-            Point2D.Double intersectionPoint =
+            KVector currentPoint = cwPoints.get(i);
+            KVector intersectionPoint =
                     computeIntersection(cwPoints.get(i - 1), currentPoint, cwPoints.get(i + 1), cwPoints.get(i + 2));
 
             // Keep currentPoint if lines are coincident (or parallel).
@@ -622,7 +617,7 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
      *            Distance of the generated point from the current point
      * @return Generated points as a list
      */
-    private List<Point2D.Double> getOrthogonalPoints(final double curX, final double curY, final double nxtX,
+    private List<KVector> getOrthogonalPoints(final double curX, final double curY, final double nxtX,
             final double nxtY, final double radius) {
         double difX = nxtX - curX;
         double difY = nxtY - curY;
@@ -640,8 +635,8 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
     }
 
     // might result in +inf or -inf
-    private Point2D.Double computeIntersection(final Point2D.Double p1, final Point2D.Double p2,
-            final Point2D.Double p3, final Point2D.Double p4) {
+    private KVector computeIntersection(final KVector p1, final KVector p2,
+            final KVector p3, final KVector p4) {
         double x1 = p1.x;
         double y1 = p1.y;
         double x2 = p2.x;
@@ -662,7 +657,7 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
     }
 
     /**
-     * Creates a new instance of {@link Path2D.Double}.
+     * Creates a new instance of {@link KVector}.
      * 
      * @param x
      *            X-coordinate
@@ -670,8 +665,8 @@ public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
      *            Y-coordinate
      * @return Freshly instantiated point
      */
-    private Point2D.Double newPoint(final double x, final double y) {
-        return new Point2D.Double(x, y);
+    private KVector newPoint(final double x, final double y) {
+        return new KVector(x, y);
     }
 
     /**

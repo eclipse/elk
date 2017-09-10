@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.disco.structures;
 
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import org.eclipse.elk.alg.common.compaction.polyomino.structures.Direction;
@@ -16,6 +15,7 @@ import org.eclipse.elk.alg.disco.graph.DCComponent;
 import org.eclipse.elk.alg.disco.graph.DCDirection;
 import org.eclipse.elk.alg.disco.graph.DCElement;
 import org.eclipse.elk.alg.disco.graph.DCExtension;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 
 /**
@@ -207,10 +207,10 @@ public class DCPolyomino extends Polyomino {
         double baseX = compCorner.x - polyoOffset.x;
         double baseY = compCorner.y - polyoOffset.y;
 
-        Rectangle2D elemPos = elem.getBounds();
+        ElkRectangle elemPos = elem.getBounds();
 
-        baseX = elemPos.getX() - baseX;
-        baseY = elemPos.getY() - baseY;
+        baseX = elemPos.x - baseX;
+        baseY = elemPos.y - baseY;
 
         for (DCExtension extension : extensions) {
             KVector pos = extension.getOffset();

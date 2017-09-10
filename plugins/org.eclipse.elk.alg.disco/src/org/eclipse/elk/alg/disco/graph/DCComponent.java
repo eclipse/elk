@@ -7,11 +7,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.disco.graph;
 
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.elk.alg.disco.ICompactor;
+import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.Sets;
@@ -169,26 +169,24 @@ public class DCComponent {
         double maxY = Double.NEGATIVE_INFINITY;
 
         for (DCElement elem : shapes) {
-            Rectangle2D elemBounds = elem.getBounds();
-            double elemX = elemBounds.getX();
-            double elemY = elemBounds.getY();
+            ElkRectangle elemBounds = elem.getBounds();
 
-            minX = Math.min(minX, elemX);
-            maxX = Math.max(maxX, elemX + elemBounds.getWidth());
-            minY = Math.min(minY, elemY);
-            maxY = Math.max(maxY, elemY + elemBounds.getHeight());
+            minX = Math.min(minX, elemBounds.x);
+            maxX = Math.max(maxX, elemBounds.x + elemBounds.width);
+            minY = Math.min(minY, elemBounds.y);
+            maxY = Math.max(maxY, elemBounds.y + elemBounds.height);
 
             for (DCExtension ext : elem.getExtensions()) {
                 DCDirection dir = ext.getDirection();
                 double minPos, maxPos;
 
                 if (dir.isHorizontal()) {
-                    minPos = elemY + ext.getOffset().y;
+                    minPos = elemBounds.y + ext.getOffset().y;
                     maxPos = minPos + ext.getWidth();
                     minY = Math.min(minY, minPos);
                     maxY = Math.max(maxY, maxPos);
                 } else {
-                    minPos = elemX + ext.getOffset().x;
+                    minPos = elemBounds.x + ext.getOffset().x;
                     maxPos = minPos + ext.getWidth();
                     minX = Math.min(minX, minPos);
                     maxX = Math.max(maxX, maxPos);
