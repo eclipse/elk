@@ -34,7 +34,7 @@ import static extension org.eclipse.elk.graph.text.ElkGraphTextUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
 
 /**
- * Custom validation rules for the ElkGraph language. 
+ * Custom validation rules for the ElkGraph language.
  */
 class ElkGraphValidator extends AbstractElkGraphValidator {
     
