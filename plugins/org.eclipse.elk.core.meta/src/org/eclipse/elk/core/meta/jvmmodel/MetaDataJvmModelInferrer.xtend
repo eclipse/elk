@@ -211,32 +211,37 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     
     private def StringConcatenationClient registerLayoutOptions(MdBundle bundle) '''
         «FOR option : bundle.members.getAllOptionDefinitions»
-            registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
-                «option.qualifiedName.toCodeString»,
-                «option.groups.map[name].join('.').toCodeString»,
-                «(option.label ?: option.name).shrinkWhiteSpace.toCodeString»,
-                «option.description.shrinkWhiteSpace.toCodeString»,
-                «IF option.defaultValue === null»null,«ELSE»«option.defaultConstantName»,«ENDIF»
-                «IF option.lowerBound === null»null,«ELSE»«option.lowerBoundConstantName»,«ENDIF»
-                «IF option.upperBound === null»null,«ELSE»«option.upperBoundConstantName»,«ENDIF»
-                org.eclipse.elk.core.data.LayoutOptionData.Type.«option.optionType»,
-                «option.optionTypeClass».class,
-                «IF option.targets.empty»
-                    null,
-                «ELSE»
-                    «EnumSet».of(«FOR t : option.targets SEPARATOR ', '»org.eclipse.elk.core.data.LayoutOptionData.Target.«t.toString.toUpperCase»«ENDFOR»),
+            registry.register(new «LayoutOptionData».Builder()
+                .id(«option.qualifiedName.toCodeString»)
+                .group(«option.groups.map[name].join('.').toCodeString»)
+                .name(«(option.label ?: option.name).shrinkWhiteSpace.toCodeString»)
+                .description(«option.description.shrinkWhiteSpace.toCodeString»)
+                «IF option.defaultValue !== null»
+                    .defaultValue(«option.defaultConstantName»)
+                «ENDIF»
+                «IF option.lowerBound !== null»
+                    .lowerBound(«option.lowerBoundConstantName»)
+                «ENDIF»
+                «IF option.upperBound !== null»
+                    .upperBound(«option.upperBoundConstantName»)
+                «ENDIF»
+                .type(«LayoutOptionData».Type.«option.optionType»)
+                .optionClass(«option.optionTypeClass».class)
+                «IF !option.targets.empty»
+                    .targets(«EnumSet».of(«FOR t : option.targets SEPARATOR ', '»«LayoutOptionData».Target.«t.toString.toUpperCase»«ENDFOR»))
                 «ENDIF»
                 «IF option.programmatic || option.output || option.global»
-                    org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
+                    .visibility(«LayoutOptionData».Visibility.HIDDEN)
                 «ELSEIF option.advanced»
-                    org.eclipse.elk.core.data.LayoutOptionData.Visibility.ADVANCED
+                    .visibility(«LayoutOptionData».Visibility.ADVANCED)
                 «ELSE»
-                    org.eclipse.elk.core.data.LayoutOptionData.Visibility.VISIBLE
+                    .visibility(«LayoutOptionData».Visibility.VISIBLE)
                 «ENDIF»
                 «IF !option.legacyIds.empty»
-                    «option.legacyIds.map[', "' + it + '"'].join»
+                    .legacyIds(«option.legacyIds.map['"' + it + '"'].join(', ')»)
                 «ENDIF»
-            ));
+                .create()
+            );
             «FOR dependency : option.dependencies»
                 registry.addDependency(
                     «option.qualifiedName.toCodeString»,
@@ -251,15 +256,24 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
         «ENDFOR»
     '''
     
+    private def LayoutOptionData() {
+        typeRef('org.eclipse.elk.core.data.LayoutOptionData')
+    }
+    
     private def StringConcatenationClient registerLayoutCategories(MdBundle bundle) '''
         «FOR category : bundle.members.filter(MdCategory)»
-            registry.register(new org.eclipse.elk.core.data.LayoutCategoryData(
-                «category.qualifiedName.toCodeString»,
-                «(category.label ?: category.name).shrinkWhiteSpace.toCodeString»,
-                «category.description.shrinkWhiteSpace.toCodeString»
-            ));
+            registry.register(new «LayoutCategoryData».Builder()
+                .id(«category.qualifiedName.toCodeString»)
+                .name(«(category.label ?: category.name).shrinkWhiteSpace.toCodeString»)
+                .description(«category.description.shrinkWhiteSpace.toCodeString»)
+                .create()
+            );
         «ENDFOR»
     '''
+    
+    private def LayoutCategoryData() {
+        typeRef('org.eclipse.elk.core.data.LayoutCategoryData')
+    }
     
     private def StringConcatenationClient registerLayoutAlgorithms(MdBundle bundle) '''
         «FOR MdAlgorithm algorithm : bundle.members.filter(MdAlgorithm)»
@@ -418,21 +432,28 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     // Registration Code
     
     private def StringConcatenationClient registerLayoutAlgorithm(MdAlgorithm algorithm) '''
-        registry.register(new org.eclipse.elk.core.data.LayoutAlgorithmData(
-            «algorithm.qualifiedName.toCodeString»,
-            «(algorithm.label ?: algorithm.name).shrinkWhiteSpace.toCodeString»,
-            «algorithm.description.shrinkWhiteSpace.toCodeString»,
-            new «algorithm.toFactoryClass»(),
-            «algorithm.category?.qualifiedName.toCodeString»,
-            «algorithm.bundle?.label.toCodeString»,
-            «algorithm.model?.definingBundleId?.toCodeString»,
-            «algorithm.previewImage.toCodeString»,
-            «IF algorithm.supportedFeatures.empty»
-                null
-            «ELSE»
-                «EnumSet».of(«FOR f : algorithm.supportedFeatures SEPARATOR ', '»org.eclipse.elk.graph.properties.GraphFeature.«f.toString.toUpperCase»«ENDFOR»)
+        registry.register(new «LayoutAlgorithmData».Builder()
+            .id(«algorithm.qualifiedName.toCodeString»)
+            .name(«(algorithm.label ?: algorithm.name).shrinkWhiteSpace.toCodeString»)
+            .description(«algorithm.description.shrinkWhiteSpace.toCodeString»)
+            .providerFactory(new «algorithm.toFactoryClass»())
+            «IF algorithm.category !== null»
+                .category(«algorithm.category.qualifiedName.toCodeString»)
             «ENDIF»
-        ));
+            «IF algorithm.bundle !== null»
+                .melkBundleName(«algorithm.bundle.label.toCodeString»)
+            «ENDIF»
+            «IF algorithm.model?.definingBundleId !== null»
+                .definingBundleId(«algorithm.model.definingBundleId.toCodeString»)
+            «ENDIF»
+            «IF algorithm.previewImage !== null»
+                .imagePath(«algorithm.previewImage.toCodeString»)
+            «ENDIF»
+            «IF !algorithm.supportedFeatures.empty»
+                .supportedFeatures(«EnumSet».of(«FOR f : algorithm.supportedFeatures SEPARATOR ', '»«typeRef('org.eclipse.elk.graph.properties.GraphFeature')».«f.toString.toUpperCase»«ENDFOR»))
+            «ENDIF»
+            .create()
+        );
         «FOR support : algorithm.supportedOptions»
             registry.addOptionSupport(
                 «algorithm.qualifiedName.toCodeString»,
@@ -445,6 +466,10 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
             );
         «ENDFOR»
     '''
+    
+    private def LayoutAlgorithmData() {
+        typeRef('org.eclipse.elk.core.data.LayoutAlgorithmData')
+    }
     
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -509,18 +534,18 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     }
     
     private def boolean hasSupertype(JvmDeclaredType type, Class<?> superType) {
-        if (type.superTypes.findFirst[ t | t.qualifiedName == superType.canonicalName] != null) {
+        if (type.superTypes.findFirst[ t | t.qualifiedName == superType.canonicalName] !== null) {
             return true;
         } else {
             return type.superTypes
                         .map[rt | rt.type]
                         .filter(JvmDeclaredType)
-                        .findFirst[t | t.hasSupertype(superType) ] != null
+                        .findFirst[t | t.hasSupertype(superType) ] !== null
         }
     }    
     
     private def JvmTypeReference getOptionTypeClass(MdOption property) {
-        if (property.type != null) {
+        if (property.type !== null) {
             // There are a few cases we need to catch
             if (property.type.type instanceof JvmPrimitiveType) {
                 val primitiveType = property.type.type as JvmPrimitiveType;

@@ -491,7 +491,7 @@ public final class LayoutMetaDataService {
         private LayoutCategoryData retrieveBackupCategory() {
             LayoutCategoryData otherCategory = layoutCategoryMap.get("");
             if (otherCategory == null) {
-                otherCategory = new LayoutCategoryData("", "Other", null);
+                otherCategory = new LayoutCategoryData.Builder().id("").name("Other").create();
                 layoutCategoryMap.put("", otherCategory);
             }
 
