@@ -40,8 +40,8 @@ import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.util.Strings
 
+import static extension org.eclipse.elk.graph.text.ElkGraphTextUtil.*
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import static extension org.eclipse.xtext.EcoreUtil2.*
 
 /**
  * Special content assist proposals for the ELK Graph language.
@@ -110,17 +110,6 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
             ElkLabel: {
                 proposeProperties(model, model.algorithm, LayoutOptionData.Target.LABELS, context, acceptor)
             }
-        }
-    }
-    
-    private def getAlgorithm(ElkGraphElement element) {
-        var node = element.getContainerOfType(ElkNode)
-        if (node !== null) {
-            if ((element instanceof ElkLabel || element instanceof ElkPort) && node.parent !== null)
-                node = node.parent
-            val algorithmId = node.getProperty(CoreOptions.ALGORITHM)
-            if (!algorithmId.nullOrEmpty)
-                return LayoutMetaDataService.instance.getAlgorithmDataBySuffix(algorithmId)
         }
     }
     

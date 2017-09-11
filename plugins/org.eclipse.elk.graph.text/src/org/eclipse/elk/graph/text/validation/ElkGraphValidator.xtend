@@ -30,6 +30,7 @@ import org.eclipse.xtext.validation.Check
 
 import static org.eclipse.elk.graph.ElkGraphPackage.Literals.*
 
+import static extension org.eclipse.elk.graph.text.ElkGraphTextUtil.*
 import static extension org.eclipse.xtext.EcoreUtil2.*
 
 /**
@@ -119,23 +120,20 @@ class ElkGraphValidator extends AbstractElkGraphValidator {
     
     private def void checkAlgorithmSupport(LayoutOptionData option, ElkGraphElement element) {
         if (option != CoreOptions.ALGORITHM) {
-            val algorithm = element.algorithm
-            if (algorithm !== null) {
-                if (!algorithm.knowsOption(option))
+            var algorithm = element.algorithm
+            if (algorithm !== null && !algorithm.knowsOption(option)) {
+                // Maybe the option is handled by one of the parent nodes
+                var foundMatch = false
+                var parent = element.getContainerOfType(ElkNode)
+                while (parent !== null && !foundMatch) {
+                    algorithm = parent.algorithm
+                    foundMatch = algorithm !== null && algorithm.knowsOption(option)
+                    parent = parent.parent
+                }
+                if (!foundMatch)
                     warning("The algorithm '" + algorithm.id + "' does not support the option '" + option.id + "'.",
                         ELK_PROPERTY_TO_VALUE_MAP_ENTRY__KEY)
             }
-        }
-    }
-    
-    private def getAlgorithm(ElkGraphElement element) {
-        var node = element.getContainerOfType(ElkNode)
-        if (node !== null) {
-            if ((element instanceof ElkLabel || element instanceof ElkPort) && node.parent !== null)
-                node = node.parent
-            val algorithmId = node.getProperty(CoreOptions.ALGORITHM)
-            if (!algorithmId.nullOrEmpty)
-                return LayoutMetaDataService.instance.getAlgorithmDataBySuffix(algorithmId)
         }
     }
 	
