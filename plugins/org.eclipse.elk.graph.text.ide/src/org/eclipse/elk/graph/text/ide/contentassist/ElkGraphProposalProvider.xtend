@@ -35,6 +35,7 @@ import org.eclipse.xtext.conversion.impl.IDValueConverter
 import org.eclipse.xtext.ide.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ide.editor.contentassist.ContentAssistEntry
 import org.eclipse.xtext.ide.editor.contentassist.IIdeContentProposalAcceptor
+import org.eclipse.xtext.ide.editor.contentassist.IProposalConflictHelper
 import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.util.Strings
@@ -52,6 +53,8 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     ElkGraphGrammarAccess grammar
     
     IDValueConverter idValueConverter
+    
+    @Inject IProposalConflictHelper conflictHelper
     
     @Inject
     def void initialize(Provider<IDValueConverter> idValueConverterProvider, ElkGraphGrammarAccess grammarAccess) {
@@ -123,6 +126,10 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     
     protected def proposeProperties(ElkGraphElement element, LayoutAlgorithmData algorithmData,
             LayoutOptionData.Target targetType, ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
+        if (conflictHelper.existsConflict('a', context)) {
+            // Early-exit in case any property id would conflict with the previous token
+            return
+        }
         val metaDataService = LayoutMetaDataService.instance
         val filteredOptions = metaDataService.optionData.filter[ o |
             (targetType === null || o.targets.contains(targetType))
@@ -233,6 +240,10 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
     }
     
     protected def proposeAlgorithms(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
+        if (conflictHelper.existsConflict('a', context)) {
+            // Early-exit in case any algorithm id would conflict with the previous token
+            return
+        }
         val metaDataService = LayoutMetaDataService.instance
         for (algorithm : metaDataService.algorithmData) {
             val matchesName = !context.prefix.empty && algorithm.name.toLowerCase.contains(context.prefix.toLowerCase)
