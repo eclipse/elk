@@ -200,7 +200,7 @@ group layering {
         label "Layer Constraint"
         description "Determines a constraint on the placement of the node regarding the layering."
         default = LayerConstraint.NONE
-        targets parents
+        targets nodes
         legacyIds de.cau.cs.kieler.klay.layered.layerConstraint
     }
 
