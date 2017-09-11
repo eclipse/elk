@@ -13,6 +13,7 @@ import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.core.util.internal.LayoutOptionProxy
 import org.eclipse.elk.graph.impl.ElkPropertyToValueMapEntryImpl
 import org.eclipse.elk.graph.properties.IProperty
+import org.eclipse.elk.graph.properties.IPropertyValueProxy
 import org.eclipse.elk.graph.text.naming.ElkGraphQualifiedNameConverter
 import org.eclipse.xtext.conversion.ValueConverterException
 import org.eclipse.xtext.conversion.impl.AbstractValueConverter
@@ -25,12 +26,26 @@ class PropertyValueValueConverter extends AbstractValueConverter<Object> {
     @Inject ElkGraphQualifiedNameConverter qualifiedNameConverter
     
     override toString(Object value) throws ValueConverterException {
-        if (value instanceof Double && Math.floor(value as Double) == value as Double)
-            return Integer.toString((value as Double).intValue)
-        else if (value instanceof Boolean || value instanceof Number || value instanceof Enum<?>)
-            return value.toString
-        else
-            return String.valueOf(value).quoteIfNecessary
+        // Here we assume that the toString() implementation of the proxy yields a meaningful value
+        val v = if (value instanceof IPropertyValueProxy) value.toString else value
+
+        if (v === null)
+            return 'null'
+        else if (v instanceof Double && Math.floor(v as Double) == v as Double)
+            return Integer.toString((v as Double).intValue)
+        else if (v instanceof Boolean || v instanceof Number || v instanceof Enum<?>)
+            return v.toString
+        else if (v instanceof String) {
+            if (v == 'true' || v == 'false' || v == 'null')
+                return v
+            try {
+                Double.parseDouble(v)
+                return v
+            } catch (NumberFormatException e) {
+                return v.quoteIfNecessary
+            }
+        } else
+            return v.toString.quoteIfNecessary
     }
     
     private def quoteIfNecessary(String s) {
@@ -43,7 +58,7 @@ class PropertyValueValueConverter extends AbstractValueConverter<Object> {
     }
     
     override toValue(String string, INode node) throws ValueConverterException {
-        if (!string.nullOrEmpty) {
+        if (!string.nullOrEmpty && string != 'null') {
             val unquotedString = string.unquoteIfNecessary
             val semanticElem = node?.semanticElement
             if (semanticElem instanceof ElkPropertyToValueMapEntryImpl) {
@@ -62,8 +77,7 @@ class PropertyValueValueConverter extends AbstractValueConverter<Object> {
         else if (s.length >= 1 && (Character.isJavaIdentifierStart(s.charAt(0)) || s.startsWith('^'))) {
             val qname = qualifiedNameConverter.toQualifiedName(s)
             return qname.toString(ElkGraphQualifiedNameConverter.DELIMITER)
-        }
-        else
+        } else
             return s
     }
     
