@@ -58,6 +58,10 @@ public final class NetworkSimplex  {
     /** Empirically determined threshold when removing subtrees pays off. */
     private static final int REMOVE_SUBTREES_THRESH = 40;
     
+    /** Small value smaller than zero. Used to check whether cut values are small than zero and to deal with 
+     *  imprecision of double computations. */
+    private static final double FUZZY_ST_ZERO = -1e-10;
+    
     /** Use {@link #forGraph(NGraph)}. */
     private NetworkSimplex() {
     }
@@ -716,7 +720,7 @@ public final class NetworkSimplex  {
      */
     private NEdge leaveEdge() {
         for (NEdge edge : treeEdges) {
-            if (edge.treeEdge && cutvalue[edge.internalId] < 0) {
+            if (edge.treeEdge && cutvalue[edge.internalId] < FUZZY_ST_ZERO) {
                 return edge;
             }
         }
