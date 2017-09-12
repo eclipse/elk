@@ -15,6 +15,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.elk.alg.layered.IHierarchyAwareLayoutProcessor;
 import org.eclipse.elk.alg.layered.LayeredPhases;
@@ -127,12 +128,11 @@ public class LayerSweepCrossingMinimizer
     private void minimizeCrossings(final List<GraphInfoHolder> graphsToSweepOn,
             final Consumer<GraphInfoHolder> minimizingMethod) {
         for (GraphInfoHolder gData : graphsToSweepOn) {
-            if (gData.childGraphs().isEmpty()) {
-                continue; 
-            }
-            minimizingMethod.accept(gData);
-            if (gData.hasParent()) {
-                setPortOrderOnParentGraph(gData);
+            if (gData.currentNodeOrder().length > 0) {
+                minimizingMethod.accept(gData);
+                if (gData.hasParent()) {
+                    setPortOrderOnParentGraph(gData);
+                }
             }
         }
     }
@@ -456,12 +456,4 @@ public class LayerSweepCrossingMinimizer
                     .after(LayeredPhases.P5_EDGE_ROUTING)
                         .add(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
     
-    /**
-     * TODO Java 8 api not supported yet and Guava's Void is much much uglier.
-     * 
-     * @param <T>
-     */
-    private interface Consumer<T> {
-        void accept(T input);
-    }
 }
