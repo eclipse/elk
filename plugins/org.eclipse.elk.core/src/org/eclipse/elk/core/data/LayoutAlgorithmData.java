@@ -56,22 +56,19 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     /**
      * Create a layout algorithm data entry.
      */
-    public LayoutAlgorithmData(final String aid, final String aname, final String adescription,
-            final IFactory<AbstractLayoutProvider> providerFactory, final String acategory, 
-            final String abundle, final String aBundleId,
-            final String aimagePath, final Set<GraphFeature> asupportedFeatures) {
-        this.id = aid;
-        this.name = aname;
-        this.description = adescription;
-        this.providerPool = new InstancePool<AbstractLayoutProvider>(providerFactory);
-        this.category = acategory;
-        this.melkBundleName = abundle;
-        this.definingBundleId = aBundleId;
-        this.imagePath = aimagePath;
-        if (asupportedFeatures == null) {
+    private LayoutAlgorithmData(final Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.description = builder.description;
+        this.providerPool = new InstancePool<AbstractLayoutProvider>(builder.providerFactory);
+        this.category = builder.category;
+        this.melkBundleName = builder.melkBundleName;
+        this.definingBundleId = builder.definingBundleId;
+        this.imagePath = builder.imagePath;
+        if (builder.supportedFeatures == null) {
             this.supportedFeatures = EnumSet.noneOf(GraphFeature.class);
         } else {
-            this.supportedFeatures = asupportedFeatures;
+            this.supportedFeatures = builder.supportedFeatures;
         }
     }
     
@@ -171,7 +168,7 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     }
     
     /**
-     * @return the supportedFeatures
+     * @return the set of supported features
      */
     public Set<GraphFeature> getSupportedFeatures() {
         return supportedFeatures;
@@ -242,6 +239,102 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
      */
     public String getPreviewImagePath() {
         return imagePath;
+    }
+    
+    /**
+     * Builder for {@link LayoutAlgorithmData} instances.
+     */
+    public static class Builder {
+
+        private String id;
+        private String name;
+        private IFactory<AbstractLayoutProvider> providerFactory;
+        private String category;
+        private String melkBundleName;
+        private String definingBundleId;
+        private String description;
+        private String imagePath;
+        private Set<GraphFeature> supportedFeatures;
+        
+        /**
+         * Create an instance with the configured values.
+         */
+        public LayoutAlgorithmData create() {
+            return new LayoutAlgorithmData(this);
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getId() id}.
+         */
+        public Builder id(final String aid) {
+            this.id = aid;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getName() name}.
+         */
+        public Builder name(final String aname) {
+            this.name = aname;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getInstancePool() providerFactory}.
+         */
+        public Builder providerFactory(final IFactory<AbstractLayoutProvider> aproviderFactory) {
+            this.providerFactory = aproviderFactory;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getCategoryId() category}.
+         */
+        public Builder category(final String acategory) {
+            this.category = acategory;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getBundleName() melkBundleName}.
+         */
+        public Builder melkBundleName(final String amelkBundleName) {
+            this.melkBundleName = amelkBundleName;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getDefiningBundleId() definingBundleId}.
+         */
+        public Builder definingBundleId(final String adefiningBundleId) {
+            this.definingBundleId = adefiningBundleId;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getDescription() description}.
+         */
+        public Builder description(final String adescription) {
+            this.description = adescription;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getPreviewImagePath() imagePath}.
+         */
+        public Builder imagePath(final String aimagePath) {
+            this.imagePath = aimagePath;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getSupportedFeatures() supportedFeatures}.
+         */
+        public Builder supportedFeatures(final Set<GraphFeature> asupportedFeatures) {
+            this.supportedFeatures = asupportedFeatures;
+            return this;
+        }
+        
     }
 
 }

@@ -37,10 +37,10 @@ public final class LayoutCategoryData implements ILayoutMetaData {
     /**
      * Create a layout category data entry.
      */
-    public LayoutCategoryData(final String aid, final String aname, final String adescription) {
-        this.id = aid;
-        this.name = aname;
-        this.description = adescription;
+    private LayoutCategoryData(final Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.description = builder.description;
     }
     
     /**
@@ -102,6 +102,48 @@ public final class LayoutCategoryData implements ILayoutMetaData {
      */
     public String getDescription() {
         return description;
+    }
+    
+    /**
+     * Builder for {@link LayoutCategoryData} instances.
+     */
+    public static class Builder {
+        
+        private String id;
+        private String name;
+        private String description;
+        
+        /**
+         * Create an instance with the configured values.
+         */
+        public LayoutCategoryData create() {
+            return new LayoutCategoryData(this);
+        }
+        
+        /**
+         * Configure the {@link LayoutCategoryData#getId() id}.
+         */
+        public Builder id(final String aid) {
+            this.id = aid;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutCategoryData#getName() name}.
+         */
+        public Builder name(final String aname) {
+            this.name = aname;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutCategoryData#getDescription() description}.
+         */
+        public Builder description(final String adescription) {
+            this.description = adescription;
+            return this;
+        }
+        
     }
     
 }

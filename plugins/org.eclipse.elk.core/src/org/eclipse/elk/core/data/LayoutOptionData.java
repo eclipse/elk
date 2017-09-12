@@ -105,40 +105,26 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
     /** the upper bound for option values. */
     private Object upperBound;
     
-    
     /**
      * Create a layout option data entry.
      */
-    // SUPPRESS CHECKSTYLE NEXT ParameterNumber
-    public LayoutOptionData(final String aid, 
-            final String agroup,
-            final String aname, 
-            final String adescription, 
-            final Object adefaultValue,
-            final Object alowerBound,
-            final Object anupperBound,
-            final Type atype,
-            final Class<?> atypeClass, 
-            final Set<Target> atargets, 
-            final Visibility avisibility, 
-            final String... alegacyIds) {
-        this.id = aid;
-        this.group = agroup;
-        this.name = aname;
-        this.description = adescription;
-        this.defaultValue = adefaultValue;
-        this.lowerBound = alowerBound;
-        this.upperBound = anupperBound;
-        this.type = atype;
-        this.clazz = atypeClass;
-        if (atargets == null) {
+    private LayoutOptionData(final Builder builder) {
+        this.id = builder.id;
+        this.group = builder.group;
+        this.name = builder.name;
+        this.description = builder.description;
+        this.defaultValue = builder.defaultValue;
+        this.lowerBound = builder.lowerBound;
+        this.upperBound = builder.upperBound;
+        this.type = builder.type;
+        this.clazz = builder.clazz;
+        if (builder.targets == null) {
             this.targets = EnumSet.noneOf(Target.class);
         } else {
-            this.targets = atargets;
+            this.targets = builder.targets;
         }
-        this.visibility = avisibility;
-        this.legacyIds = alegacyIds;
-        
+        this.visibility = builder.visibility;
+        this.legacyIds = builder.legacyIds;
     }
     
     /**
@@ -623,6 +609,129 @@ public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object
      */
     public String[] getLegacyIds() {
         return legacyIds;
+    }
+    
+    /**
+     * Builder for {@link LayoutOptionData} instances.
+     */
+    public static class Builder {
+        
+        private String id;
+        private String group;
+        private String[] legacyIds;
+        private Object defaultValue;
+        private Class<?> clazz;
+        private Type type;
+        private String name;
+        private String description;
+        private Set<Target> targets;
+        private Visibility visibility;
+        private Object lowerBound;
+        private Object upperBound;
+        
+        /**
+         * Create an instance with the configured values.
+         */
+        public LayoutOptionData create() {
+            return new LayoutOptionData(this);
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getId() id}.
+         */
+        public Builder id(final String aid) {
+            this.id = aid;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getGroup() group}.
+         */
+        public Builder group(final String agroup) {
+            this.group = agroup;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getLegacyIds() legacyIds}.
+         */
+        public Builder legacyIds(final String... alegacyIds) {
+            this.legacyIds = alegacyIds;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getDefault() defaultValue}.
+         */
+        public Builder defaultValue(final Object adefaultValue) {
+            this.defaultValue = adefaultValue;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getOptionClass() optionClass}.
+         */
+        public Builder optionClass(final Class<?> aclazz) {
+            this.clazz = aclazz;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getType() type}.
+         */
+        public Builder type(final Type atype) {
+            this.type = atype;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getName() name}.
+         */
+        public Builder name(final String aname) {
+            this.name = aname;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getDescription() description}.
+         */
+        public Builder description(final String adescription) {
+            this.description = adescription;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getTargets() targets}.
+         */
+        public Builder targets(final Set<Target> atargets) {
+            this.targets = atargets;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getVisibility() visibility}.
+         */
+        public Builder visibility(final Visibility avisibility) {
+            this.visibility = avisibility;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getLowerBound() lowerBound}.
+         */
+        public Builder lowerBound(final Object alowerBound) {
+            this.lowerBound = alowerBound;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutOptionData#getUpperBound() upperBound}.
+         */
+        public Builder upperBound(final Object aupperBound) {
+            this.upperBound = aupperBound;
+            return this;
+        }
+        
     }
     
 }
