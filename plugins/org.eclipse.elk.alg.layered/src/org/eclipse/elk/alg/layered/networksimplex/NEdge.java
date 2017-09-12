@@ -16,9 +16,11 @@ package org.eclipse.elk.alg.layered.networksimplex;
  */
 public class NEdge {
 
-    // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
-    /** An id, internally used for indexing. */
+    // SUPPRESS CHECKSTYLE NEXT 22 VisibilityModifier
+    /** A public id, unused internally, use it for whatever you want. */
     public int id;
+    /** Internally set and used id to index arrays. */
+    protected int internalId;
     /** An object from which this edge is derived. */
     public Object origin;
     /** The source node of this edge. */

@@ -218,11 +218,9 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
         final Map<LNode, NNode> nodeMap = Maps.newHashMap();
         
         // transform nodes
-        int counter = 0;
         NGraph graph = new NGraph();
         for (LNode lNode : theNodes) {
             NNode nNode = NNode.of()
-                               .id(counter++)
                                .origin(lNode)
                                .create(graph);
             nodeMap.put(lNode, nNode);

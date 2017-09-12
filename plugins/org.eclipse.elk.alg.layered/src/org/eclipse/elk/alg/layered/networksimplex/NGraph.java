@@ -85,14 +85,14 @@ public class NGraph {
 
         int id = 0;
         for (NNode n : nodes) {
-            n.id = id++;
+            n.internalId = id++;
         }
         
         // initialize the number of incident edges for each node
         int[] incident = new int[nodes.size()];
         int[] layer = new int[nodes.size()];
         for (NNode node : nodes) {
-            incident[node.id] += node.getIncomingEdges().size();
+            incident[node.internalId] += node.getIncomingEdges().size();
         }
 
         LinkedList<NNode> roots = Lists.newLinkedList();
@@ -109,9 +109,9 @@ public class NGraph {
             
             for (NEdge edge : node.getOutgoingEdges()) {
                 NNode target = edge.getTarget();
-                layer[target.id] = Math.max(layer[target.id], layer[node.id] + 1);
-                incident[target.id]--;
-                if (incident[target.id] == 0) {
+                layer[target.internalId] = Math.max(layer[target.internalId], layer[node.internalId] + 1);
+                incident[target.internalId]--;
+                if (incident[target.internalId] == 0) {
                     roots.add(target);
                 }
             }
@@ -120,7 +120,7 @@ public class NGraph {
         // check for backward edges
         for (NNode node : nodes) {
             for (NEdge edge : node.getOutgoingEdges()) {
-                if (layer[edge.target.id] <= layer[edge.source.id]) {
+                if (layer[edge.target.internalId] <= layer[edge.source.internalId]) {
                     return false;
                 }
             }

@@ -207,7 +207,7 @@ public final class NetworkSimplex  {
         int index = 0;
         List<NEdge> theEdges = Lists.newArrayList();
         for (NNode node : graph.nodes) {
-            node.id = index++;
+            node.internalId = index++;
             // add node to sinks, resp. sources
             if (node.getIncomingEdges().size() == 0) {
                 sources.add(node);
@@ -217,7 +217,7 @@ public final class NetworkSimplex  {
         // re-index edges
         int counter = 0;
         for (NEdge edge : theEdges) {
-            edge.id = counter++;
+            edge.internalId = counter++;
             edge.treeEdge = false;
         }
         // initialize edge attributes
@@ -445,7 +445,7 @@ public final class NetworkSimplex  {
         // initialize the number of incident edges for each node
         int[] incident = new int[graph.nodes.size()];
         for (NNode node : graph.nodes) {
-            incident[node.id] += node.getIncomingEdges().size();
+            incident[node.internalId] += node.getIncomingEdges().size();
         }
 
         LinkedList<NNode> roots = Lists.newLinkedList(initialRootNodes);
@@ -455,8 +455,8 @@ public final class NetworkSimplex  {
             for (NEdge edge : node.getOutgoingEdges()) {
                 NNode target = edge.getTarget();
                 target.layer = Math.max(target.layer, node.layer + edge.delta);
-                incident[target.id]--;
-                if (incident[target.id] == 0) {
+                incident[target.internalId]--;
+                if (incident[target.internalId] == 0) {
                     roots.add(target);
                 }
             }
@@ -512,8 +512,8 @@ public final class NetworkSimplex  {
         node.treeNode = true;
         NNode opposite = null;
         for (NEdge edge : node.getConnectedEdges()) {
-            if (!edgeVisited[edge.id]) {
-                edgeVisited[edge.id] = true;
+            if (!edgeVisited[edge.internalId]) {
+                edgeVisited[edge.internalId] = true;
                 opposite = edge.getOther(node);
                 if (edge.treeEdge) {
                     // edge is a tree edge already: follow this path
@@ -576,14 +576,14 @@ public final class NetworkSimplex  {
     private int postorderTraversal(final NNode node) {
         int lowest = Integer.MAX_VALUE;
         for (NEdge edge : node.getConnectedEdges()) {
-            if (edge.treeEdge && !edgeVisited[edge.id]) {
-                edgeVisited[edge.id] = true;
+            if (edge.treeEdge && !edgeVisited[edge.internalId]) {
+                edgeVisited[edge.internalId] = true;
                 lowest = Math.min(lowest, postorderTraversal(edge.getOther(node)));
             }
         }
-        poID[node.id] = postOrder;
-        lowestPoID[node.id] = Math.min(lowest, postOrder++);
-        return lowestPoID[node.id];
+        poID[node.internalId] = postOrder;
+        lowestPoID[node.internalId] = Math.min(lowest, postOrder++);
+        return lowestPoID[node.internalId];
     }
 
     /**
@@ -606,16 +606,18 @@ public final class NetworkSimplex  {
         NNode source = edge.getSource();
         NNode target = edge.getTarget();
 
-        if (lowestPoID[source.id] <= poID[node.id] && poID[node.id] <= poID[source.id]
-                && lowestPoID[target.id] <= poID[node.id] && poID[node.id] <= poID[target.id]) {
+        if (lowestPoID[source.internalId] <= poID[node.internalId] 
+                && poID[node.internalId] <= poID[source.internalId]
+                && lowestPoID[target.internalId] <= poID[node.internalId] 
+                && poID[node.internalId] <= poID[target.internalId]) {
             // node is in a descending path in the DFS-Tree
-            if (poID[source.id] < poID[target.id]) {
+            if (poID[source.internalId] < poID[target.internalId]) {
                 // root is in the head component
                 return false;
             }
             return true;
         }
-        if (poID[source.id] < poID[target.id]) {
+        if (poID[source.internalId] < poID[target.internalId]) {
             // root is in the head component
             return true;
         }
@@ -657,7 +659,7 @@ public final class NetworkSimplex  {
             while (node.unknownCutvalues.size() == 1) {
                 // one tree edge with undetermined cut value is incident
                 toDetermine = node.unknownCutvalues.iterator().next();
-                cutvalue[toDetermine.id] = toDetermine.weight;
+                cutvalue[toDetermine.internalId] = toDetermine.weight;
                 source = toDetermine.getSource();
                 target = toDetermine.getTarget();
                 for (NEdge edge : node.getConnectedEdges()) {
@@ -667,23 +669,23 @@ public final class NetworkSimplex  {
                             if (source.equals(edge.getSource())
                                     || target.equals(edge.getTarget())) {
                                 // edge has not the same direction as toDetermine
-                                cutvalue[toDetermine.id] -= cutvalue[edge.id] - edge.weight;
+                                cutvalue[toDetermine.internalId] -= cutvalue[edge.internalId] - edge.weight;
                             } else {
-                                cutvalue[toDetermine.id] += cutvalue[edge.id] - edge.weight;
+                                cutvalue[toDetermine.internalId] += cutvalue[edge.internalId] - edge.weight;
                             }
                         } else {
                             // edge is non-tree edge
                             if (node.equals(source)) {
                                 if (edge.getSource().equals(node)) {
-                                    cutvalue[toDetermine.id] += edge.weight;
+                                    cutvalue[toDetermine.internalId] += edge.weight;
                                 } else {
-                                    cutvalue[toDetermine.id] -= edge.weight;
+                                    cutvalue[toDetermine.internalId] -= edge.weight;
                                 }
                             } else {
                                 if (edge.getSource().equals(node)) {
-                                    cutvalue[toDetermine.id] -= edge.weight;
+                                    cutvalue[toDetermine.internalId] -= edge.weight;
                                 } else {
-                                    cutvalue[toDetermine.id] += edge.weight;
+                                    cutvalue[toDetermine.internalId] += edge.weight;
                                 }
                             }
                         }
@@ -714,7 +716,7 @@ public final class NetworkSimplex  {
      */
     private NEdge leaveEdge() {
         for (NEdge edge : treeEdges) {
-            if (edge.treeEdge && cutvalue[edge.id] < 0) {
+            if (edge.treeEdge && cutvalue[edge.internalId] < 0) {
                 return edge;
             }
         }
