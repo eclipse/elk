@@ -241,6 +241,11 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
             pm.done();
         }
         
+        // make sure the ngraph is connected. Cases where this doesn't have to be the case include
+        //  hierarchical nodes with unconnected ports that are (in the case of hierarchical layout) 
+        //  converted into unconnected dummy nodes
+        nGraph.makeConnected();
+        
         // --------------------------------
         // #2 execute the network simplex
         // --------------------------------

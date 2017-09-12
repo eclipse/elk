@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.networksimplex;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,11 +74,71 @@ public class NGraph {
             e.printStackTrace();
         }
     }
-
+    
+    /**
+     * Checks if this {@link NGraph} is connected. If not, it identifies one representative per connected component
+     * and connects each of them to a new artificial root node. 
+     */
+    public final NNode makeConnected() {
+        int id = 0;
+        for (NNode n : nodes) {
+            n.internalId = id++;
+        }
+        List<NNode> ccRep = findConCompRepresentatives();
+        NNode root = null;
+        if (ccRep.size() > 1) {
+            root = createArtificialRootAndConnect(ccRep);
+        }
+        return root;
+    }
+    
+    /**
+     * Creates and returns a new {@link NNode} and connects the passed {@code nodesToConnect}
+     * to the new node with zero-weight, zero-delta edges.
+     */
+    private NNode createArtificialRootAndConnect(final List<NNode> nodesToConnect) {
+        NNode root = NNode.of().create(this);
+        for (NNode src : nodesToConnect) {
+            NEdge.of()
+               .delta(0)
+               .weight(0)
+               .source(root)
+               .target(src)
+               .create();
+        }
+        return root;
+    }
+    
+    /**
+     * Identifies and returns one representative {@link NNode} per connected component. 
+     */
+    private List<NNode> findConCompRepresentatives() {
+        List<NNode> ccRep = Lists.newArrayList();
+        boolean[] mark = new boolean[nodes.size()];
+        Arrays.fill(mark, false);
+        for (NNode node : nodes) {
+            if (!mark[node.internalId]) {
+                ccRep.add(node);
+                dfs(node, mark);
+            }
+        }
+        return ccRep;
+    }
+    
+    private void dfs(final NNode node, final boolean[] mark) {
+        if (mark[node.internalId]) {
+            return;
+        }
+        mark[node.internalId] = true;
+        for (NEdge edge : node.getConnectedEdges()) {
+            NNode other = edge.getOther(node);
+            dfs(other, mark);
+        }
+    }
+    
+    
     /**
      * Creates a topological ordering and checks for back edges.
-     * 
-     * Note that this method writes to the {@link NNode#id} field.
      * 
      * @return true if the graph is acyclic, false if it is cyclic.
      */
