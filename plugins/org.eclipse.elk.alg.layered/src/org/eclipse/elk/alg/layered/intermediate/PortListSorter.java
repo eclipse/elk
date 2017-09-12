@@ -108,21 +108,22 @@ public final class PortListSorter implements ILayoutProcessor<LGraph> {
         }
 
     }
-
+    
+    /** The default comparator used to sort a node's port list. */
+    public static final PortComparator DEFAULT_SORT_COMPARATOR = new PortComparator();
 
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Port order processing", 1);
-        PortComparator portComparator = new PortComparator();
 
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 if (node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
                     // We need to sort the port list accordingly
-                    Collections.sort(node.getPorts(), portComparator);
+                    Collections.sort(node.getPorts(), DEFAULT_SORT_COMPARATOR);
                     node.cachePortSides();
                 }
             }

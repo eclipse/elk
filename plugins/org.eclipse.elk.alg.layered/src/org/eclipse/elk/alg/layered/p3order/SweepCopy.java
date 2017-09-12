@@ -12,17 +12,21 @@ package org.eclipse.elk.alg.layered.p3order;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.intermediate.PortListSorter;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Stores node and port order for a sweep.
@@ -86,7 +90,8 @@ class SweepCopy {
         // the side a corresponding dummy node is placed on in order to reduce the number of crossings
         // as a consequence the configured port side may not be valid anymore and has to be corrected
         List<LNode> northSouthPortDummies = Lists.newArrayList();
-
+        Set<LNode> updatePortOrder = Sets.newHashSet();
+        
         // iterate the layers
         List<Layer> layers = lGraph.getLayers();
         for (int i = 0; i < layers.size(); i++) {
@@ -109,35 +114,48 @@ class SweepCopy {
             }
             
             // assert that the port side is set properly
-            for (LNode node : northSouthPortDummies) {
-                assertCorrectPortSides(node);
-                // the order of the ports may have changed, update the port index cache
-                node.cachePortSides();
+            for (LNode dummy : northSouthPortDummies) {
+                LNode origin = assertCorrectPortSides(dummy);
+                updatePortOrder.add(origin);
+                updatePortOrder.add(dummy);
             }
+        }
+
+        // since the side of certain ports may have changed at this point, 
+        // the list of ports must be re-sorted (see PortListSorter) 
+        // and the port list views must be re-cached.
+        for (LNode node : updatePortOrder) {
+            Collections.sort(node.getPorts(), PortListSorter.DEFAULT_SORT_COMPARATOR);
+            node.cachePortSides();
         }
     }
 
-    private void assertCorrectPortSides(final LNode node) {
-        assert node.getType() == NodeType.NORTH_SOUTH_PORT;
+    /**
+     * Corrects the {@link PortSide} of dummy's origin.  
+     * @return The {@link LNode} ('origin') whose port {@code dummy} represents. 
+     */
+    private LNode assertCorrectPortSides(final LNode dummy) {
+        assert dummy.getType() == NodeType.NORTH_SOUTH_PORT;
 
-        LNode origin = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+        LNode origin = dummy.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
 
         // a north south port dummy has exactly one port
-        List<LPort> dummyPorts = node.getPorts();
+        List<LPort> dummyPorts = dummy.getPorts();
         LPort dummyPort = dummyPorts.get(0);
 
         // find the corresponding port on the regular node
         for (LPort port : origin.getPorts()) {
             if (port.equals(dummyPort.getProperty(InternalProperties.ORIGIN))) {
                 // switch the port's side if necessary
-                if ((port.getSide() == PortSide.NORTH) && (node.id > origin.id)) {
+                if ((port.getSide() == PortSide.NORTH) && (dummy.id > origin.id)) {
                     port.setSide(PortSide.SOUTH);
-                } else if ((port.getSide() == PortSide.SOUTH) && (origin.id > node.id)) {
+                } else if ((port.getSide() == PortSide.SOUTH) && (origin.id > dummy.id)) {
                     port.setSide(PortSide.NORTH);
                 }
                 break;
             }
         }
+        return origin;
     }
     
 }
