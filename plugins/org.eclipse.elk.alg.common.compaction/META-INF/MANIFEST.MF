@@ -6,8 +6,13 @@ Bundle-Version: 0.3.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava;bundle-version="15.0.0",
- org.eclipse.elk.core
+ org.eclipse.elk.core,
+ org.eclipse.elk.graph
 Export-Package: org.eclipse.elk.alg.common.compaction,
  org.eclipse.elk.alg.common.compaction.oned,
+ org.eclipse.elk.alg.common.compaction.options,
+ org.eclipse.elk.alg.common.compaction.polyomino,
+ org.eclipse.elk.alg.common.compaction.polyomino.structures,
+ org.eclipse.elk.alg.common.compaction.polyomino.util,
  org.eclipse.elk.alg.common.compaction.recthull
 
