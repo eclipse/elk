@@ -744,7 +744,7 @@ group edgeLabels {
         label "Edge Center Label Placement Strategy"
         description "Determines in which layer center labels of long edges should be placed."
         default = CenterEdgeLabelPlacementStrategy.MEDIAN_LAYER
-        targets parents
+        targets parents, labels
         legacyIds de.cau.cs.kieler.edgeLabelPlacementStrategy
     }
 }

@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
+import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -28,6 +29,7 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.nodespacing.NodeLabelAndSizeCalculator;
 
@@ -96,6 +98,12 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 : null;
         
         for (LNode labelDummy : labelDummies) {
+            // Check if the label dummy overrides the layer selection strategy
+            CenterEdgeLabelPlacementStrategy actualStrategy = getPlacementStrategyOverride(labelDummy);
+            if (actualStrategy == null) {
+                actualStrategy = strategy;
+            }
+            
             // Gather the long edge dummies to the left and right of the label dummy
             List<LNode> leftLongEdgeDummies = gatherLeftLongEdgeDummies(labelDummy);
             List<LNode> rightLongEdgeDummies = gatherRightLongEdgeDummies(labelDummy);
@@ -103,7 +111,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             // Find the swap candidate, depending on the strategy
             LNode swapCandidate = null;
             
-            switch (strategy) {
+            switch (actualStrategy) {
             case CENTER_LAYER:
                 swapCandidate = findCenterLayerSwapCandidate(
                         labelDummy, layerWidths, leftLongEdgeDummies, rightLongEdgeDummies);
@@ -120,11 +128,13 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 break;
             
             case HEAD_LAYER:
+                setEndLayerNodeAlignment(labelDummy, actualStrategy);
                 swapCandidate = findEndLayerSwapCandidate(
                         labelDummy, true, leftLongEdgeDummies, rightLongEdgeDummies);
                 break;
                 
             case TAIL_LAYER:
+                setEndLayerNodeAlignment(labelDummy, actualStrategy);
                 swapCandidate = findEndLayerSwapCandidate(
                         labelDummy, false, leftLongEdgeDummies, rightLongEdgeDummies);
                 break;
@@ -140,7 +150,23 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         
         monitor.done();
     }
-    
+
+    /**
+     * Returns the first label placement strategy we can find among the represented labels, or {@code null} if we can't
+     * find any.
+     */
+    private CenterEdgeLabelPlacementStrategy getPlacementStrategyOverride(final LNode labelDummy) {
+        for (LLabel label : labelDummy.getProperty(InternalProperties.REPRESENTED_LABELS)) {
+            // Take the first override we can find
+            if (label.hasProperty(LayeredOptions.EDGE_LABELS_CENTER_LABEL_PLACEMENT_STRATEGY)) {
+                return label.getProperty(LayeredOptions.EDGE_LABELS_CENTER_LABEL_PLACEMENT_STRATEGY);
+            }
+        }
+        
+        // We didn't find an override
+        return null;
+    }
+
     /**
      * Returns an array containing the width of all layers, indexed by layer ID which is assigned to the layers by this
      * method as well.
@@ -337,6 +363,26 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             } else {
                 return leftLongEdgeDummies.get(0);
             }
+        }
+    }
+    
+    /**
+     * Sets the alignment property for the given label dummy which is being placed according to the given layer
+     * selection strategy. The strategy is assumed to be one of the end strategies.
+     */
+    private void setEndLayerNodeAlignment(final LNode labelDummy,
+            final CenterEdgeLabelPlacementStrategy actualStrategy) {
+        
+        assert actualStrategy == CenterEdgeLabelPlacementStrategy.HEAD_LAYER
+                || actualStrategy == CenterEdgeLabelPlacementStrategy.TAIL_LAYER;
+        
+        boolean isHeadLabel = actualStrategy == CenterEdgeLabelPlacementStrategy.HEAD_LAYER;
+        boolean isPartOfReversedEdge = isPartOfReversedEdge(labelDummy);
+        
+        if ((isHeadLabel && !isPartOfReversedEdge) || (!isHeadLabel && isPartOfReversedEdge)) {
+            labelDummy.setProperty(LayeredOptions.ALIGNMENT, Alignment.RIGHT);
+        } else {
+            labelDummy.setProperty(LayeredOptions.ALIGNMENT, Alignment.LEFT);
         }
     }
     
