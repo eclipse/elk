@@ -22,7 +22,7 @@
   <version>0.3.0-SNAPSHOT</version>
   <description>Compaction algorithms for disconnected graphs.</description>
   <packaging>eclipse-plugin</packaging>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
@@ -40,5 +40,15 @@
       <version>0.3.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Generate code from .melk files. -->
+      <plugin>
+        <groupId>org.eclipse.xtext</groupId>
+        <artifactId>xtext-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
