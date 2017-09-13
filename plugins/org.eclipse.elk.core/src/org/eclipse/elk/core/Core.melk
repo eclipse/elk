@@ -424,7 +424,7 @@ group portAlignment {
 	option basic: PortAlignment {
 		label "Port Alignment"
 		description "Defines the default port distribution for a node. May be overridden for each side individually."
-		default = PortAlignment.CENTER
+		default = PortAlignment.JUSTIFIED
 		targets nodes
 		legacyIds de.cau.cs.kieler.portAlignment
 	}
