@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.core.math;
 
+import java.util.Iterator;
 import java.util.ListIterator;
+
+import com.google.common.math.DoubleMath;
 
 /**
  * Mathematics utility class for the Eclipse Layout Kernel.
@@ -891,4 +894,178 @@ public final class ElkMath {
         return 0;
     }
 
+    /**
+     * Checks whether any of the four borders of {@code rect} intersects with any of the straight line segments of the
+     * closed {@code path = p_1,...,p_n}. Also checks the closing segment {@code (p_n, p_1)}. If the path contains less
+     * than two points, {@code false} is returned. If {@code rect} fully contains the shape, no intersection is assumed.
+     * 
+     * @param rect
+     * @param path
+     *            a {@link KVectorChain} describing a closed path of straight line segments.
+     * @return {@code true} if {@code rect} intersects {@code path}, {@code false} otherwise.
+     */
+    public static boolean intersects(final ElkRectangle rect, final KVectorChain path) {
+        if (path.size() < 2) {
+            return false;
+        }
+
+        final Iterator<KVector> pathIt = path.iterator();
+        KVector first = pathIt.next();
+        KVector p1 = first;
+        // check every segment
+        while (pathIt.hasNext()) {
+            KVector p2 = pathIt.next();
+            if (intersects(rect, p1, p2)) {
+                return true;
+            }
+            p1 = p2;
+        }
+        // check the closing segment
+        if (intersects(rect, p1, first)) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    /**
+     * Checks whether the straight line {@code l} defined by {@code (p1, p2)} intersects with at least one of the four
+     * segments defining the passed rectangle. If {@code l} is fully contained within {@code rect}'s bounding box, no
+     * intersection assumed. If the line is parallel to, and lies on, one of the four borders, no intersection is
+     * assumed.
+     * 
+     * @param rect
+     * @param p1
+     *            start point of a line
+     * @param p2
+     *            end point of a line
+     * @return {@code true} if {@code (p1, p2)} intersects with {@code rect}, {@code false} otherwise.
+     */
+    public static boolean intersects(final ElkRectangle rect, final KVector p1, final KVector p2) {
+        // simple cases first: fully contained
+        if (contains(rect, p1, p2)) {
+            return false;
+        }
+        // leaves the cases
+        //  - where one point is inside and the other outside (don't use contains here, as point on border is 'outside')
+        //  - where both points are outside
+        // for that, check if (p1, p2) intersects with one of rect's borders
+        return intersects(rect.getTopLeft(), rect.getTopRight(), p1, p2) 
+            || intersects(rect.getTopRight(), rect.getBottomRight(), p1, p2)
+            || intersects(rect.getBottomRight(), rect.getBottomLeft(), p1, p2)
+            || intersects(rect.getBottomLeft(), rect.getTopLeft(), p1, p2);
+    }
+
+    /**
+     * Double computations are potentially imprecise, we need a robust way of checking if a value is zero in
+     * {@link #intersects(KVector, KVector, KVector, KVector)}, which is done using an epsilon comparison.
+     */
+    private static final double DOUBLE_EQ_EPSILON = 0.00001d;
+    
+    /**
+     * Detects intersection of the two passed lines {@code (l11, l12)} and {@code (l21, l22)}.
+     * 
+     * <p>
+     * Implementation based on https://stackoverflow.com/questions/4977491/determining-if-two-line-segments-intersect.
+     * See also https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Mathematics.
+     * </p>
+     * 
+     * @param l11
+     *            start point of first line
+     * @param l12
+     *            end point of first line
+     * @param l21
+     *            start point of second line
+     * @param l22
+     *            end point of second line
+     * @return {@code true} if the two lines intersect, {@code false} otherwise. In particular, of the start or and
+     *         point of one of the lines only "touches" the other line, no intersection is assumed.
+     */
+    public static boolean intersects(final KVector l11, final KVector l12, final KVector l21, final KVector l22) {
+        KVector u0 = l11;
+        KVector v0 = l12.clone().sub(l11);
+        KVector u1 = l21;
+        KVector v1 = l22.clone().sub(l21);
+        double x00 = u0.x, y00 = u0.y;
+        double x10 = u1.x, y10 = u1.y;
+        double x01 = v0.x, y01 = v0.y;
+        double x11 = v1.x, y11 = v1.y;
+        
+        double d = x11 * y01 - x01 * y11;
+        if (DoubleMath.fuzzyEquals(0, d, DOUBLE_EQ_EPSILON)) {
+            return false;
+        }
+        double s = (1 / d) * ((x00 - x10) * y01 - (y00 - y10) * x01);
+        double t = (1 / d) * -(-(x00 - x10) * y11 + (y00 - y10) * x11);
+        // System.out.println("d: " + d + ", s: " + s + ", t: " + t);
+        
+        // use < instead of <= to not recognize "touching" as intersection
+        return 0 < s && s < 1
+            && 0 < t && t < 1;
+    }
+    
+    /**
+     * Checks whether every straight line segment of the path {@code p_1,...,p_n} 
+     * is fully contained within {@code rect}. Also checks the closing segment {@code (p_n, p_1)}.
+     * If the path contains less than two points, {@code false} is returned.
+     * 
+     * @param rect
+     * @param path a {@link KVectorChain} describing a closed path of straight line segments. 
+     * @return {@code true} if {@code rect} fully contains {@code path}, {@code false} otherwise.
+     */
+    public static boolean contains(final ElkRectangle rect, final KVectorChain path) {
+        if (path.size() < 2) {
+            return false;
+        }
+        
+        final Iterator<KVector> pathIt = path.iterator();
+        KVector first = pathIt.next();
+        KVector p1 = first; 
+        // check every segment
+        while (pathIt.hasNext()) {
+            KVector p2 = pathIt.next();
+            if (!contains(rect, p1, p2)) {
+                return false;
+            }
+            p1 = p2;
+        }
+        // check the closing segment
+        if (!contains(rect, p1, first)) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Check whether {@code rect} fully contains the straight line {@code l} defined by {@code (p1, p2)}. That is, 
+     * it is checked if both {@code p1} and {@code p2} lie within the bounding box of {@code rect}. If one of the 
+     * two points lies on the border of {@code rect}, the line is considered to be <em>not</em> contained. 
+     * 
+     * @param rect
+     * @param p1 start point of a line 
+     * @param p2 end point of a line
+     * @return {@code true} if {@code rect} fully contains {@code (p1, p2)}, {@code false} otherwise.
+     */
+    public static boolean contains(final ElkRectangle rect, final KVector p1, final KVector p2) {
+        return contains(rect, p1) && contains(rect, p2);        
+    }
+   
+    /**
+     * Check whether {@code rect} contains the point {@code p}. That is, it is checked if {@code p} lies within the
+     * bounding box of {@code rect}. If the point lies on the border of {@code rect}, the line is considered to be
+     * <em>not</em> contained.
+     * 
+     * @param rect
+     * @param p
+     * @return {@code true} if {@code rect} contains {@code p1}, {@code false} otherwise.
+     */
+    public static boolean contains(final ElkRectangle rect, final KVector p) {
+        double minX = rect.x;
+        double maxX = rect.x + rect.width;
+        double minY = rect.y;
+        double maxY = rect.y + rect.height;
+        
+        return (p.x > minX && p.x < maxX) && (p.y > minY && p.y < maxY);     
+    }
 }
