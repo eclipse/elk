@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.elk.alg.disco.ICompactor;
 import org.eclipse.elk.alg.disco.transform.IGraphTransformer;
+import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -173,20 +174,10 @@ public class DCElement extends MapPropertyHolder {
      * Tests whether this {@link DCElement} intersects with, or fully contains, 
      * a rectangular area given by the four parameters.
      * 
-     * @param x
-     *            X-coordinate of the upper left corner of the rectangle
-     * @param y
-     *            Y-coordinate of the upper left corner of the rectangle
-     * @param width
-     *            Width of the rectangle
-     * @param height
-     *            Height of the rectangle
+     * @param rect
      * @return true: rectangle intersects with this {@link DCElement}; false: otherwise.
      */
-    boolean intersects(final double x, final double y, final double width, final double height) {
-        // The implementations of the following Path2D methods enable false positives and negatives in edge cases as a
-        // sacrifice for better performance.
-        //return shape.intersects(x, y, width, height) || shape.contains(x, y, width, height);
-        return false;
+    boolean intersects(final ElkRectangle rect) {
+        return ElkMath.intersects(rect, shape) || ElkMath.contains(rect, shape); 
     }
 }

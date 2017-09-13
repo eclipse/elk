@@ -183,7 +183,7 @@ public class DCPolyomino extends Polyomino {
         for (int y = 0; y < pHeight; y++) {
             curX = baseX;
             for (int x = 0; x < pWidth; x++) {
-                if (representee.intersects(curX, curY, cellSizeX, cellSizeY)) {
+                if (representee.intersects(new ElkRectangle(curX, curY, cellSizeX, cellSizeY))) {
                     setBlocked(x, y);
                 }
                 curX += cellSizeX;

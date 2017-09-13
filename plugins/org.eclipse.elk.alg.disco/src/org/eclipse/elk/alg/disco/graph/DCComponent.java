@@ -108,19 +108,12 @@ public class DCComponent {
      * Tests whether this {@link DCComponent} intersects with a rectangular area given by the four parameters of this
      * method.
      * 
-     * @param x
-     *            X-coordinate of the upper left corner of the rectangle
-     * @param y
-     *            Y-coordinate of the upper left corner of the rectangle
-     * @param width
-     *            Width of the rectangle
-     * @param height
-     *            Height of the rectangle
+     * @param rect
      * @return true: rectangle intersects with this {@link DCComponent}; false: otherwise.
      */
-    public boolean intersects(final double x, final double y, final double width, final double height) {
+    public boolean intersects(final ElkRectangle rect) {
         for (DCElement elem : shapes) {
-            if (elem.intersects(x, y, width, height)) {
+            if (elem.intersects(rect)) {
                 return true;
             }
         }
