@@ -16,12 +16,13 @@ Require-Bundle: org.eclipse.elk.core,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.elk.graph.text,
  org.eclipse.elk.graph.text.conversion,
+ org.eclipse.elk.graph.text.formatting2,
+ org.eclipse.elk.graph.text.linking,
  org.eclipse.elk.graph.text.naming,
  org.eclipse.elk.graph.text.parser.antlr,
  org.eclipse.elk.graph.text.parser.antlr.internal,
  org.eclipse.elk.graph.text.scoping,
  org.eclipse.elk.graph.text.serializer,
  org.eclipse.elk.graph.text.services,
- org.eclipse.elk.graph.text.validation,
- org.eclipse.elk.graph.text.formatting2
+ org.eclipse.elk.graph.text.validation
 Import-Package: org.apache.log4j

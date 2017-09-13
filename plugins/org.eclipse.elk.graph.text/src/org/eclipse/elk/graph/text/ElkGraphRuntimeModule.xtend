@@ -8,12 +8,10 @@
 package org.eclipse.elk.graph.text
 
 import org.eclipse.elk.graph.text.conversion.ElkGraphValueConverterService
+import org.eclipse.elk.graph.text.linking.ElkGraphLinker
 import org.eclipse.elk.graph.text.naming.ElkGraphQualifiedNameConverter
 import org.eclipse.elk.graph.text.naming.ElkGraphQualifiedNameProvider
 import org.eclipse.elk.graph.text.serializer.ElkGraphTransientValueService
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EReference
-import org.eclipse.xtext.linking.impl.Linker
 import org.eclipse.xtext.naming.IQualifiedNameConverter
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService
 
@@ -39,15 +37,7 @@ class ElkGraphRuntimeModule extends AbstractElkGraphRuntimeModule {
     }
     
     override bindILinker() {
-        MyLinker
-    }
-    
-    static class MyLinker extends Linker {
-        override protected clearReference(EObject obj, EReference ref) {
-            // fix for #170, where otherwise eOpposites aren't loaded properly in elkt files
-            if (ref.EOpposite === null)
-                super.clearReference(obj, ref)
-        }
+        ElkGraphLinker
     }
     
 }
