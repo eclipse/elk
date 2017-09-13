@@ -158,7 +158,7 @@ public final class CellSystemConfigurator {
         double topPadding = Math.max(0, eastCell.getPadding().top - topBorderOffset);
         topPadding = Math.max(topPadding, westCell.getPadding().top - topBorderOffset);
         double bottomPadding = Math.max(0, eastCell.getPadding().bottom - bottomBorderOffset);
-        bottomPadding = Math.max(0, westCell.getPadding().bottom - bottomBorderOffset);
+        bottomPadding = Math.max(bottomPadding, westCell.getPadding().bottom - bottomBorderOffset);
 
         // Update paddings
         eastCell.getPadding().top = topPadding;
