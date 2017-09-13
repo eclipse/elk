@@ -30,6 +30,8 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
  * property does not, it doesn't make sense to serialize it since we won't be able to deserialize them again
  * anyway. This implementation causes such property values to not be serialized.</p>
  * 
+ * <p>Instances of this class default to UTF-8 encoding.</p>
+ * 
  * 
  * <h3>Deserialization</h3>
  * 
@@ -59,6 +61,9 @@ public class ElkGraphResource extends XMIResourceImpl {
      */
     public ElkGraphResource(URI uri) {
         super(uri);
+        
+        // Default to utf-8 encoding (#163)
+        setEncoding("utf-8");
     }
     
     
