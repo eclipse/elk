@@ -20,6 +20,8 @@
     <!-- Re-enable tests at some point. -->
     <!--<module>../test</module>-->
     <module>org.eclipse.elk.alg.common.compaction</module>
+    <module>org.eclipse.elk.alg.disco</module>
+    <module>org.eclipse.elk.alg.disco.debug</module>
     <module>org.eclipse.elk.alg.force</module>
     <module>org.eclipse.elk.alg.radial</module>
     <module>org.eclipse.elk.alg.graphviz.dot</module>
