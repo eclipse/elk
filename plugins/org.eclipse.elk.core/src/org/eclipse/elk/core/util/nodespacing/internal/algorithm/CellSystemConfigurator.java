@@ -154,9 +154,11 @@ public final class CellSystemConfigurator {
         AtomicCell eastCell = nodeContext.insidePortLabelCells.get(PortSide.EAST);
         AtomicCell westCell = nodeContext.insidePortLabelCells.get(PortSide.WEST);
         
-        // Calculate how much top padding we actually
+        // Calculate how much top padding we actually need
         double topPadding = Math.max(0, eastCell.getPadding().top - topBorderOffset);
+        topPadding = Math.max(topPadding, westCell.getPadding().top - topBorderOffset);
         double bottomPadding = Math.max(0, eastCell.getPadding().bottom - bottomBorderOffset);
+        bottomPadding = Math.max(0, westCell.getPadding().bottom - bottomBorderOffset);
 
         // Update paddings
         eastCell.getPadding().top = topPadding;
