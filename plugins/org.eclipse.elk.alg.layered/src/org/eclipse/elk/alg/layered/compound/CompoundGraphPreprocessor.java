@@ -841,13 +841,15 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
             // we need to check if a dummy node has already been created for the port
             dummyNode = dummyNodeMap.get(outsidePort);
             if (dummyNode == null) {
+                // Ticket #160 explains why we need to pass on a position here. While that works fine to determine port
+                // orders, the exact port positions might yet need to be adjusted for some inside paddings
                 dummyNode = LGraphUtil.createExternalPortDummy(
                         outsidePort,
                         parentNode.getProperty(LayeredOptions.PORT_CONSTRAINTS),
                         portSide,
                         portType == PortType.INPUT ? -1 : 1,
                         null,
-                        null,
+                        outsidePort.getPosition(),
                         outsidePort.getSize(),
                         layoutDirection,
                         graph
@@ -856,8 +858,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                 dummyNodeMap.put(outsidePort, dummyNode);
             }
         } else {
-            // we create a new dummy node in any case, and since there is no port yet we have to
-            // create one as well
+            // We create a new dummy node in any case, and since there is no port yet we have to create one as well. We
+            // do need to pass a position vector to keep an NPE from being thrown (#160), but it is questionable
+            // whether this part of the code should actually be used with anything other than fixed port constraints.
             double thickness = edge.getProperty(LayeredOptions.EDGE_THICKNESS);
             dummyNode = LGraphUtil.createExternalPortDummy(
                     createExternalPortProperties(graph),
@@ -865,7 +868,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
                     portSide,
                     portType == PortType.INPUT ? -1 : 1,
                     null,
-                    null,
+                    new KVector(),
                     new KVector(thickness, thickness),
                     layoutDirection,
                     graph
