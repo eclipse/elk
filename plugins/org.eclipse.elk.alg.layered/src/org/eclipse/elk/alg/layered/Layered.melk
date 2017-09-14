@@ -103,7 +103,7 @@ algorithm layered(LayeredLayoutProvider) {
 	supports org.eclipse.elk.nodeLabels.placement
 	supports org.eclipse.elk.portLabels.placement
     supports org.eclipse.elk.portLabels.nextToPortIfPossible
-	supports org.eclipse.elk.portAlignment.basic = PortAlignment.JUSTIFIED
+	supports org.eclipse.elk.portAlignment.^default = PortAlignment.JUSTIFIED
 	supports org.eclipse.elk.portAlignment.north
 	supports org.eclipse.elk.portAlignment.south
 	supports org.eclipse.elk.portAlignment.west
@@ -159,7 +159,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports edgeRouting.sloppySplineLayerSpacing
     supports layering.coffmanGraham.layerBound
     supports nodePlacement.favorStraightEdges
-    supports org.eclipse.elk.spacing.portSurrounding
+    supports org.eclipse.elk.spacing.portsSurrounding
 }
 
 

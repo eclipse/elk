@@ -363,7 +363,7 @@ group spacing {
 	    targets nodes, edges, ports, labels
 	} 
 	
-	advanced option portSurrounding: ElkMargin {
+	advanced option portsSurrounding: ElkMargin {
 		label "Additional Port Space"
 		description
 			"Additional space around the sets of ports on each node side. For each side of a node,
@@ -421,7 +421,7 @@ group nodeLabels {
 // --- PORT ALIGNMENT
 group portAlignment {
 	
-	option basic: PortAlignment {
+	option ^default: PortAlignment {
 		label "Port Alignment"
 		description "Defines the default port distribution for a node. May be overridden for each side individually."
 		default = PortAlignment.JUSTIFIED

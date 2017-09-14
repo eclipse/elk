@@ -509,7 +509,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
         }
          
         final double portSpacing = Spacings.getIndividualOrDefault(corners.origin, LayeredOptions.SPACING_PORT_PORT);
-        ElkMargin portSurrounding = corners.origin.getProperty(LayeredOptions.SPACING_PORT_SURROUNDING);
+        ElkMargin portSurrounding = corners.origin.getProperty(LayeredOptions.SPACING_PORTS_SURROUNDING);
         if (portSurrounding == null) {
             // No additional port spacing set, so we set it to port spacing.
             portSurrounding = new ElkMargin(portSpacing, portSpacing, portSpacing, portSpacing);
@@ -916,7 +916,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
         if (!nf.isFlexibleSizeWhereSpacePermits()) {
             // we are not allowed to increase the node's size
             double portSpacing = Spacings.getIndividualOrDefault(lNode, LayeredOptions.SPACING_PORT_PORT);
-            ElkMargin additionalPortSpacing = lNode.getProperty(LayeredOptions.SPACING_PORT_SURROUNDING);
+            ElkMargin additionalPortSpacing = lNode.getProperty(LayeredOptions.SPACING_PORTS_SURROUNDING);
             if (additionalPortSpacing == null) {
                 additionalPortSpacing = new ElkMargin(portSpacing, portSpacing, portSpacing, portSpacing);
             }

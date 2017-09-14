@@ -144,7 +144,7 @@ public final class NodeContext {
         portPortSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_PORT_PORT);
         portLabelSpacing = IndividualSpacings.getIndividualOrInherited(node, CoreOptions.SPACING_LABEL_PORT);
         surroundingPortMargins = IndividualSpacings.getIndividualOrInherited(
-                node, CoreOptions.SPACING_PORT_SURROUNDING);
+                node, CoreOptions.SPACING_PORTS_SURROUNDING);
         
         labelCellSpacing = 2 * labelLabelSpacing;
         
@@ -209,7 +209,7 @@ public final class NodeContext {
         
         // Fall back to basic port alignment if we haven't found a more specific one yet
         if (alignment == null) {
-            alignment = node.getProperty(CoreOptions.PORT_ALIGNMENT_BASIC);
+            alignment = node.getProperty(CoreOptions.PORT_ALIGNMENT_DEFAULT);
         }
         
         return alignment;
