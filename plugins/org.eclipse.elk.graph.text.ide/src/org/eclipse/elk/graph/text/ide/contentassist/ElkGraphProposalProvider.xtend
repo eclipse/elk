@@ -158,12 +158,16 @@ class ElkGraphProposalProvider extends IdeContentProposalProvider {
         }
     }
     
+    /** There's another option that allows to select a layout algorithm other than {@link CoreOptions#ALGORITHM}. 
+     *  To avoid a dependency to that plugin, the option is hard-coded here. */
+    public static val DISCO_LAYOUT_ALG_ID = "org.eclipse.elk.disco.componentCompaction.componentLayoutAlgorithm";
+    
     protected def void completePropertyValue(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
         val model = context.currentModel
         if (model instanceof ElkPropertyToValueMapEntryImpl) {
             val property = model.key
             if (property instanceof LayoutOptionData) {
-                if (CoreOptions.ALGORITHM == property)
+                if (CoreOptions.ALGORITHM == property || property.id == DISCO_LAYOUT_ALG_ID)
                     proposeAlgorithms(context, acceptor)
                 else 
                     typeAwarePropertyValueProposal(property, context, acceptor)
