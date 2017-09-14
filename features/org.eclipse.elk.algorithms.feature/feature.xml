@@ -15,8 +15,7 @@
 
    <description url="http://www.eclipse.org/elk">
       The Eclipse Layout Kernel provides automatic layout to diagram
-editors and viewers. This feature adds basic support for using
-automatic layout in Graphiti-based editors.
+editors and viewers. This feature adds automatic layout algorithms.
    </description>
 
    <copyright>
@@ -45,13 +44,6 @@ http://www.eclipse.org/legal/epl-v10.html.
 
    <plugin
          id="org.eclipse.elk.alg.disco"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.elk.alg.disco.debug"
          download-size="0"
          install-size="0"
          version="0.0.0"

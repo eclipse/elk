@@ -46,6 +46,13 @@ http://www.eclipse.org/legal/epl-v10.html.
    </requires>
 
    <plugin
+         id="org.eclipse.elk.alg.disco.debug"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.elk.core.meta"
          download-size="0"
          install-size="0"
