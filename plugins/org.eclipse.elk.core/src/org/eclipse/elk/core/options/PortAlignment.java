@@ -17,10 +17,10 @@ package org.eclipse.elk.core.options;
  */
 public enum PortAlignment {
 
-    /** The alignment is not set. */
-    UNDEFINED,
-
-    /** Ports are evenly distributed. */
+    /** Ports are evenly distributed, with the same amount of space between and around them. */
+    DISTRIBUTED,
+    
+    /** Ports are justified and use up all the space except for the surrounding ports spacing. */
     JUSTIFIED,
 
     /** Ports are placed at the most top respectively left position with minimal spacing. */

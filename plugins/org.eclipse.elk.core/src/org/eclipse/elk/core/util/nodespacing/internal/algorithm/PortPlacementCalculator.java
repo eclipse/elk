@@ -123,19 +123,37 @@ public final class PortPlacementCalculator {
         double currentXPos = insidePortLabelCellRectangle.x + insidePortLabelCellPadding.left;
         double spaceBetweenPorts = nodeContext.portPortSpacing;
         
-        // If we only have a single port and justified alignment, change the alignment to CENTER
+        // If the port alignment is distributed or justified, but there's only a single port, we change the alignment
+        // to center to keep things from looking stupid
         if (nodeContext.portContexts.get(portSide).size() == 1) {
+            calculatedPortPlacementWidth = modifiedPortPlacementSize(
+                    nodeContext, portAlignment, calculatedPortPlacementWidth);
             portAlignment = PortAlignment.CENTER;
         }
         
-        // If there is not enough space to place the ports, we may have to adjust the port spacing to ensure we stay
-        // inside the boundaries
         if (availableSpace < calculatedPortPlacementWidth
                 && !nodeContext.sizeOptions.contains(SizeOptions.PORTS_OVERHANG)) {
-            
-            spaceBetweenPorts += (availableSpace - calculatedPortPlacementWidth)
-                    / (nodeContext.portContexts.get(portSide).size() - 1);
+
+            // There is not enough space available for the ports, but they are not allowed to overhang either. Reduce
+            // the space between them to cram them into the available space.
+            if (portAlignment == PortAlignment.DISTRIBUTED) {
+                spaceBetweenPorts += (availableSpace - calculatedPortPlacementWidth)
+                        / (nodeContext.portContexts.get(portSide).size() + 1);
+                currentXPos += spaceBetweenPorts;
+                
+            } else {
+                spaceBetweenPorts += (availableSpace - calculatedPortPlacementWidth)
+                        / (nodeContext.portContexts.get(portSide).size() - 1);
+            }
         } else {
+            // We are allowed to overhang. Yay. However, if we use distributed or justified alignment, this is another
+            // case where we should fall back to centered alignment
+            if (availableSpace < calculatedPortPlacementWidth) {
+                calculatedPortPlacementWidth = modifiedPortPlacementSize(
+                        nodeContext, portAlignment, calculatedPortPlacementWidth);
+                portAlignment = PortAlignment.CENTER;
+            }
+            
             // Calculate where we need to start placing ports (note that the node size required by the port placement
             // includes left and right surrounding port margins, which changes the formulas a bit from what you'd
             // otherwise expect)
@@ -151,11 +169,20 @@ public final class PortPlacementCalculator {
             case END:
                 currentXPos += availableSpace - calculatedPortPlacementWidth;
                 break;
+            
+            case DISTRIBUTED:
+                // In this case, if there is not enough space available to place the ports, we are allowed to overhang.
+                // We thus need to ensure that we're only ever increasing the port spacing here
+                double additionalSpaceBetweenPorts = (availableSpace - calculatedPortPlacementWidth)
+                        / (nodeContext.portContexts.get(portSide).size() + 1);
+                spaceBetweenPorts += Math.max(0, additionalSpaceBetweenPorts);
+                currentXPos += spaceBetweenPorts;
+                break;
                 
             case JUSTIFIED:
                 // In this case, if there is not enough space available to place the ports, we are allowed to overhang.
                 // We thus need to ensure that we're only ever increasing the port spacing here
-                double additionalSpaceBetweenPorts = (availableSpace - calculatedPortPlacementWidth)
+                additionalSpaceBetweenPorts = (availableSpace - calculatedPortPlacementWidth)
                         / (nodeContext.portContexts.get(portSide).size() - 1);
                 spaceBetweenPorts += Math.max(0, additionalSpaceBetweenPorts);
                 break;
@@ -270,19 +297,37 @@ public final class PortPlacementCalculator {
         double spaceBetweenPorts = nodeContext.portPortSpacing;
         double nodeWidth = nodeContext.nodeSize.x;
         
-        // If we only have a single port and justified alignment, change the alignment to CENTER
+        // If the port alignment is distributed or justified, but there's only a single port, we change the alignment
+        // to center to keep things from looking stupid
         if (nodeContext.portContexts.get(portSide).size() == 1) {
+            calculatedPortPlacementHeight = modifiedPortPlacementSize(
+                    nodeContext, portAlignment, calculatedPortPlacementHeight);
             portAlignment = PortAlignment.CENTER;
         }
         
-        // If there is not enough space to place the ports, we may have to adjust the port spacing to ensure we stay
-        // inside the boundaries
         if (availableSpace < calculatedPortPlacementHeight
                 && !nodeContext.sizeOptions.contains(SizeOptions.PORTS_OVERHANG)) {
-            
-            spaceBetweenPorts += (availableSpace - calculatedPortPlacementHeight)
-                    / (nodeContext.portContexts.get(portSide).size() - 1);
+
+            // There is not enough space available for the ports, but they are not allowed to overhang either. Reduce
+            // the space between them to cram them into the available space.
+            if (portAlignment == PortAlignment.DISTRIBUTED) {
+                spaceBetweenPorts += (availableSpace - calculatedPortPlacementHeight)
+                        / (nodeContext.portContexts.get(portSide).size() + 1);
+                currentYPos += spaceBetweenPorts;
+                
+            } else {
+                spaceBetweenPorts += (availableSpace - calculatedPortPlacementHeight)
+                        / (nodeContext.portContexts.get(portSide).size() - 1);
+            }
         } else {
+            // We are allowed to overhang. Yay. However, if we use distributed or justified alignment, this is another
+            // case where we should fall back to centered alignment
+            if (availableSpace < calculatedPortPlacementHeight) {
+                calculatedPortPlacementHeight = modifiedPortPlacementSize(
+                        nodeContext, portAlignment, calculatedPortPlacementHeight);
+                portAlignment = PortAlignment.CENTER;
+            }
+            
             // Calculate where we need to start placing ports (note that the node size required by the port placement
             // includes left and right surrounding port margins, which changes the formulas a bit from what you'd
             // otherwise expect)
@@ -299,10 +344,19 @@ public final class PortPlacementCalculator {
                 currentYPos += availableSpace - calculatedPortPlacementHeight;
                 break;
                 
-            case JUSTIFIED:
+            case DISTRIBUTED:
                 // In this case, if there is not enough space available to place the ports, we are allowed to overhang.
                 // We thus need to ensure that we're only ever increasing the port spacing here
                 double additionalSpaceBetweenPorts = (availableSpace - calculatedPortPlacementHeight)
+                        / (nodeContext.portContexts.get(portSide).size() + 1);
+                spaceBetweenPorts += Math.max(0, additionalSpaceBetweenPorts);
+                currentYPos += spaceBetweenPorts;
+                break;
+                
+            case JUSTIFIED:
+                // In this case, if there is not enough space available to place the ports, we are allowed to overhang.
+                // We thus need to ensure that we're only ever increasing the port spacing here
+                additionalSpaceBetweenPorts = (availableSpace - calculatedPortPlacementHeight)
                         / (nodeContext.portContexts.get(portSide).size() - 1);
                 spaceBetweenPorts += Math.max(0, additionalSpaceBetweenPorts);
                 break;
@@ -336,6 +390,25 @@ public final class PortPlacementCalculator {
             return port.getSide() == PortSide.WEST
                     ? -port.getSize().x
                     : nodeWidth;
+        }
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utilities
+    
+    /**
+     * If we switch from distributed or justified alignment back to centered alignment, this may require us to modify
+     * the required port placement size calculated in a previous phase. This is the case if the old alignment was
+     * distributed, in which case the placement size includes two port-port spacings we don't need anymore.
+     */
+    private static double modifiedPortPlacementSize(final NodeContext nodeContext,
+            final PortAlignment oldPortAlignment, final double currentPortPlacementSize) {
+        
+        if (oldPortAlignment == PortAlignment.DISTRIBUTED) {
+            return currentPortPlacementSize - 2 * nodeContext.portPortSpacing;
+        } else {
+            return currentPortPlacementSize;
         }
     }
 

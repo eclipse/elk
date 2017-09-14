@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.PrimitiveIterator;
 
+import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -275,6 +276,11 @@ public final class VerticalPortPlacementSizeCalculator {
         } else {
             // I don't think this case should ever be reachable.
             assert false;
+        }
+
+        // For distributed port alignment, we need to surround the ports by a port-port spacing on each side
+        if (nodeContext.getPortAlignment(portSide) == PortAlignment.DISTRIBUTED) {
+            height += 2 * nodeContext.portPortSpacing;
         }
         
         // Set the cell size 

@@ -370,7 +370,7 @@ group spacing {
 			this option can reserve additional space before and after the ports on each side. For
 			example, a top spacing of 20 makes sure that the first port on the western and eastern
 			side is 20 units away from the northern border."
-		default = new ElkMargin(10)
+		default = new ElkMargin(0)
 		targets parents
 	}
 }
@@ -424,7 +424,7 @@ group portAlignment {
 	option ^default: PortAlignment {
 		label "Port Alignment"
 		description "Defines the default port distribution for a node. May be overridden for each side individually."
-		default = PortAlignment.JUSTIFIED
+		default = PortAlignment.DISTRIBUTED
 		targets nodes
 		legacyIds de.cau.cs.kieler.portAlignment
 	}
@@ -433,7 +433,6 @@ group portAlignment {
 		label "Port Alignment (North)"
 		description
 			"Defines how ports on the northern side are placed, overriding the node's general port alignment."
-		default = PortAlignment.UNDEFINED
 		targets nodes
 		legacyIds de.cau.cs.kieler.portAlignment.north
 	}
@@ -442,7 +441,6 @@ group portAlignment {
 		label "Port Alignment (South)"
 		description
 			"Defines how ports on the southern side are placed, overriding the node's general port alignment."
-		default = PortAlignment.UNDEFINED
 		targets nodes
 		legacyIds de.cau.cs.kieler.portAlignment.south
 	}
@@ -451,7 +449,6 @@ group portAlignment {
 		label "Port Alignment (West)"
 		description
 			"Defines how ports on the western side are placed, overriding the node's general port alignment."
-		default = PortAlignment.UNDEFINED
 		targets nodes
 		legacyIds de.cau.cs.kieler.portAlignment.west
 	}
@@ -460,7 +457,6 @@ group portAlignment {
 		label "Port Alignment (East)"
 		description
 			"Defines how ports on the eastern side are placed, overriding the node's general port alignment."
-		default = PortAlignment.UNDEFINED
 		targets nodes
 		legacyIds de.cau.cs.kieler.portAlignment.east
 	}
