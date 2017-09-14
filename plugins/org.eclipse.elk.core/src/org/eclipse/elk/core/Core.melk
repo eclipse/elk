@@ -371,7 +371,7 @@ group spacing {
 			example, a top spacing of 20 makes sure that the first port on the western and eastern
 			side is 20 units away from the northern border."
 		default = new ElkMargin(10)
-		targets nodes
+		targets parents
 	}
 }
 
