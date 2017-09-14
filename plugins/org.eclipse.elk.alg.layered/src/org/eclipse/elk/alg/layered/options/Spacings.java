@@ -235,20 +235,32 @@ public final class Spacings {
         return graph.getProperty(layoutOption);
     }
 
-    public static double getIndividualOrDefault(final LNode node, final IProperty<Double> layoutOption) {
-        Double spacing = null;
+    /**
+     * Returns the value of the given property as it applies to the given node. First checks whether an individual
+     * override is set on the node that has the given property configured. If so, the configured value is returned.
+     * Otherwise, the node's parent node, if any, is queried.
+     * 
+     * @param node
+     *            the node whose property value to return.
+     * @param property
+     *            the property.
+     * @return the individual override for the property or the default value inherited by the parent node.
+     */
+    public static <T> T getIndividualOrDefault(final LNode node, final IProperty<T> property) {
+        T result = null;
         // check for individual value
         if (node.hasProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
-            IPropertyHolder is1 = node.getProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE);
-            if (is1.hasProperty(layoutOption)) {
-                spacing = is1.getProperty(layoutOption);
+            IPropertyHolder individualSpacings = node.getProperty(LayeredOptions.SPACING_INDIVIDUAL_OVERRIDE);
+            if (individualSpacings.hasProperty(property)) {
+                result = individualSpacings.getProperty(property);
             }
         }
         // use the common value
-        if (spacing == null) {
-            spacing = node.getGraph().getProperty(layoutOption);
+        if (result == null) {
+            result = node.getGraph().getProperty(property);
         }
-        return spacing;
+        
+        return result;
     }
 
     /**

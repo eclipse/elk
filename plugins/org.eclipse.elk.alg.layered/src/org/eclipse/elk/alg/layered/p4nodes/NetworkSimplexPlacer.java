@@ -20,6 +20,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
@@ -509,10 +510,11 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
         }
          
         final double portSpacing = Spacings.getIndividualOrDefault(corners.origin, LayeredOptions.SPACING_PORT_PORT);
-        ElkMargin portSurrounding = corners.origin.getProperty(LayeredOptions.SPACING_PORTS_SURROUNDING);
+        ElkMargin portSurrounding =
+                Spacings.getIndividualOrDefault(corners.origin, LayeredOptions.SPACING_PORTS_SURROUNDING);
         if (portSurrounding == null) {
-            // No additional port spacing set, so we set it to port spacing.
-            portSurrounding = new ElkMargin(portSpacing, portSpacing, portSpacing, portSpacing);
+            // No additional port spacing set
+            portSurrounding = new ElkMargin();
         }
         
         NNode lastNNode = corners.head;
@@ -553,7 +555,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
         // and connect to the bottom border 
         NEdge.of()
             .weight(0)
-            .delta((int) Math.ceil(portSurrounding.bottom))
+            .delta((int) Math.ceil(portSurrounding.bottom + lastPort.getSize().y))
             .source(lastNNode)
             .target(corners.tail)
             .create();
@@ -1081,15 +1083,19 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
     private void postProcessTwoPaths() {
         Queue<Path> q = Lists.newLinkedList();
         q.addAll(twoPaths);
-        Set<Path> known = Sets.newHashSet();
         
+        Stack<Path> s = new Stack<>();
         while (!q.isEmpty()) {
             Path path = q.poll();
-            boolean tryAgain = improveTwoPath(path);
-            if (tryAgain && !known.contains(path)) {
-                q.add(path);
+            boolean tryAgain = improveTwoPath(path, true);
+            if (tryAgain) {
+                s.add(path);
             }
-            known.add(path);
+        }
+        
+        while (!s.isEmpty()) {
+            Path path = s.pop();
+            improveTwoPath(path, false);
         }
     }
     
@@ -1105,7 +1111,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
      * @return {@code true} if nothing was changed and the path should be checked again later. 
      *         {@code false} if no further processing is required.
      */
-    private boolean improveTwoPath(final Path path) {
+    private boolean improveTwoPath(final Path path, final boolean probe) {
      
         EdgeRep leftEdge = edgeReps[path.get(0).id];
         EdgeRep rightEdge = edgeReps[path.get(1).id];
@@ -1148,7 +1154,7 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
         }
         
         // same space on both sides, check again later 
-        if (DoubleMath.fuzzyEquals(aboveDist, belowDist, EPSILON)) {
+        if (probe && DoubleMath.fuzzyEquals(aboveDist, belowDist, EPSILON)) {
             return true; 
         }
         
@@ -1183,27 +1189,19 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
                 leftEdge.left.target.layer + leftEdge.right.delta > rightEdge.right.target.layer + rightEdge.left.delta;
 
         int move = 0;
-        if (caseD) {
-            int min = Math.min(a, d);
-            if (belowDist - min > 0) {
-                move = min;
-            }
-        } else if (caseC) {
-            int max = Math.max(b, c); // note that both values are negative
-            if (aboveDist + max > 0) {
-                move = max;
-            }
-        } else if (caseA) {
-            if (aboveDist + c > 0) {
-                move = c;
-            } else if (belowDist - a > 0) {
-                move = a;
-            }
-        } else if (caseB) {
-            if (aboveDist + b > 0) {
-                move = b;
-            } else if (belowDist - d > 0) {
-                move = d;
+        if (!caseD && !caseC) {
+            if (caseA) {
+                if (aboveDist + c > 0) {
+                    move = c;
+                } else if (belowDist - a > 0) {
+                    move = a;
+                }
+            } else if (caseB) {
+                if (aboveDist + b > 0) {
+                    move = b;
+                } else if (belowDist - d > 0) {
+                    move = d;
+                }
             }
         }
 
