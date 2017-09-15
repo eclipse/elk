@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Layout Meta Data Language
 Bundle-Vendor: Eclipse Modeling Project
-Bundle-Version: 0.3.0
+Bundle-Version: 0.3.0.qualifier
 Bundle-SymbolicName: org.eclipse.elk.core.meta; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;bundle-version="2.9.0",

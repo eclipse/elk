@@ -12,7 +12,7 @@
 <feature
       id="org.eclipse.elk.graphiti.feature"
       label="Eclipse Layout Kernel (Incubation) - Graphiti Support"
-      version="0.3.0"
+      version="0.3.0.qualifier"
       provider-name="Eclipse Layout Kernel"
       plugin="org.eclipse.elk.core">
 
@@ -45,7 +45,7 @@ http://www.eclipse.org/legal/epl-v10.html.
       <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="com.google.guava" version="15.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.elk.feature" version="0.3.0"/>
+      <import feature="org.eclipse.elk.feature" version="0.3.0.qualifier"/>
    </requires>
 
    <plugin
