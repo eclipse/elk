@@ -9,7 +9,7 @@
 <feature
       id="org.eclipse.elk.sdk.feature"
       label="Eclipse Layout Kernel (Incubation) - SDK"
-      version="0.3.0.qualifier"
+      version="0.3.0"
       provider-name="Eclipse Layout Kernel"
       plugin="org.eclipse.elk.core">
 
@@ -38,11 +38,11 @@ http://www.eclipse.org/legal/epl-v10.html.
       <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
       <import plugin="org.apache.log4j"/>
       <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.elk.feature" version="0.0.0.qualifier"/>
-      <import feature="org.eclipse.elk.feature.source" version="0.0.0.qualifier"/>
-      <import feature="org.eclipse.elk.algorithms.feature" version="0.0.0.qualifier"/>
-      <import feature="org.eclipse.elk.algorithms.feature.source" version="0.0.0.qualifier"/>
-      <import feature="org.eclipse.elk.sdk.feature.source" version="0.0.0.qualifier"/>
+      <import feature="org.eclipse.elk.feature" version="0.0.0"/>
+      <import feature="org.eclipse.elk.feature.source" version="0.0.0"/>
+      <import feature="org.eclipse.elk.algorithms.feature" version="0.0.0"/>
+      <import feature="org.eclipse.elk.algorithms.feature.source" version="0.0.0"/>
+      <import feature="org.eclipse.elk.sdk.feature.source" version="0.0.0"/>
    </requires>
 
    <plugin
