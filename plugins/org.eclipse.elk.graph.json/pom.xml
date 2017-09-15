@@ -15,17 +15,17 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <version>0.4.0-SNAPSHOT</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
-    
+
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.graph.json</artifactId>
   <name>ELK Graph JSON</name>
   <description>JSON Format of the ELK Graph</description>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.4.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -53,7 +53,7 @@
 	  <version>${xtext-version}</version>
 	</dependency>
   </dependencies>
-  
+
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  
+
   <modelVersion>4.0.0</modelVersion>
   <artifactId>parent</artifactId>
   <groupId>org.eclipse.elk</groupId>
   <name>Eclipse Layout Kernel</name>
   <url>https://www.eclipse.org/elk/</url>
-  <version>0.3.0-SNAPSHOT</version>
+  <version>0.4.0-SNAPSHOT</version>
   <description>An infrastructure for automatic graph layout and implementations of different layout algorithms.</description>
   <packaging>pom</packaging>
 
@@ -72,7 +72,7 @@
         <downloadUrl>${elkMeta.repositoryUrl}</downloadUrl>
       </distributionManagement>
     </profile>
-    
+
     <!-- The Maven publishing configuration. -->
     <profile>
       <id>maven-publish</id>
@@ -188,7 +188,7 @@
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
   <build>
     <plugins>
-    
+
       <!-- We need tycho to build eclipse plugins -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
@@ -243,7 +243,7 @@
 
     <pluginManagement>
       <plugins>
-        
+
         <!--  Compile MELK files to options classes -->
         <plugin>
           <groupId>org.eclipse.xtext</groupId>
@@ -363,16 +363,16 @@
       <url>${elkMeta.repositoryUrl}</url>
     </pluginRepository>
   </pluginRepositories>
-  
-  
+
+
   <!-- Information about where the ELK code lives. -->
   <scm>
     <connection>scm:git:git://github.com/eclipse/elk.git</connection>
     <developerConnection>scm:git:ssh://git@github.com:eclipse/elk.git</developerConnection>
     <url>https://github.com/eclipse/elk</url>
   </scm>
-  
-  
+
+
   <!-- The license ELK is available as. -->
   <licenses>
     <license>
@@ -380,8 +380,8 @@
       <url>http://www.eclipse.org/legal/epl-v10.html</url>
     </license>
   </licenses>
-  
-  
+
+
   <!-- Our developers. -->
   <developers>
     <developer>
@@ -394,7 +394,7 @@
         <role>project lead</role>
       </roles>
     </developer>
-    
+
     <developer>
       <id>ulf.rueegg</id>
       <name>Ulf Rüegg</name>
@@ -402,7 +402,7 @@
       <organization>Kiel University</organization>
       <organizationUrl>https://www.rtsys.informatik.uni-kiel.de/</organizationUrl>
     </developer>
-    
+
     <developer>
       <id>miro.spoenemann</id>
       <name>Miro Spönemann</name>
@@ -411,5 +411,5 @@
       <organizationUrl>http://typefox.io</organizationUrl>
     </developer>
   </developers>
-  
+
 </project>

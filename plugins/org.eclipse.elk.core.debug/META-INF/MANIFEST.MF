@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Debugging Utilities
 Bundle-SymbolicName: org.eclipse.elk.core.debug;singleton:=true
-Bundle-Version: 0.3.0.qualifier
+Bundle-Version: 0.4.0.qualifier
 Bundle-Activator: org.eclipse.elk.core.debug.ElkDebugPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
