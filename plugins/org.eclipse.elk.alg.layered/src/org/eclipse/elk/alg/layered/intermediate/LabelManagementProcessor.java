@@ -40,7 +40,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *     <dd>The graph is layered.</dd>
  *     <dd>Label dummy nodes are placed in their final layers.</dd>
  *   <dt>Postcondition:</dt>
- *     <dd>Possible label text modifications.</dd>
+ *     <dd>Possible label text modifications to end labels, port labels, and node labels.</dd>
  *   <dt>Slots:</dt>
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies for mode 1:</dt>
@@ -134,9 +134,22 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
                                     labelLabelSpacing, verticalLayout);
                         }
                     }
+                    
+                    // Handle attached comments
+                    if (node.hasProperty(InternalProperties.TOP_COMMENTS)) {
+                        doManageAttachedCommentLabels(
+                                labelManager, node.getProperty(InternalProperties.TOP_COMMENTS),
+                                MIN_WIDTH_NODE_LABELS, verticalLayout);
+                    }
+
+                    if (node.hasProperty(InternalProperties.BOTTOM_COMMENTS)) {
+                        doManageAttachedCommentLabels(
+                                labelManager, node.getProperty(InternalProperties.BOTTOM_COMMENTS),
+                                MIN_WIDTH_NODE_LABELS, verticalLayout);
+                    }
                 }
                 
-                // Edges can have edge and tail labels that need to be managed as well (note that at this
+                // Edges can have edge Unand tail labels that need to be managed as well (note that at this
                 // point, only head and tail labels remain)
                 for (LEdge edge : node.getOutgoingEdges()) {
                     doManageLabels(labelManager, edge.getLabels(), MIN_WIDTH_EDGE_LABELS, 0, verticalLayout);
@@ -145,7 +158,23 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
         }
     }
     
-    
+    /**
+     * Manages labels of comments attached to a node and thus currently not part of the graph structure.
+     */
+    private void doManageAttachedCommentLabels(final ILabelManager labelManager, final List<LNode> commentNodes,
+            final double minWidthNodeLabels, final boolean verticalLayout) {
+        
+        for (LNode commentNode : commentNodes) {
+            // We only do stuff if the node actually does have labels
+            if (commentNode.getLabels().isEmpty()) {
+                continue;
+            }
+            
+            doManageLabels(labelManager, commentNode.getLabels(), minWidthNodeLabels, 0, verticalLayout);
+        }
+    }
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Center Edge Labels
     
