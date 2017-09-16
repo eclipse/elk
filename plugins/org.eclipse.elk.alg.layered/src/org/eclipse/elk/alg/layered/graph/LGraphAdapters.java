@@ -72,7 +72,7 @@ public final class LGraphAdapters {
      * @return an {@link LGraphAdapter} for the passed graph.
      */
     public static LGraphAdapter adapt(final LGraph graph, final boolean transparentNorthSouthEdges) {
-        return new LGraphAdapter(graph, transparentNorthSouthEdges, n -> true);
+        return new LGraphAdapter(graph, transparentNorthSouthEdges, false, n -> true);
      }
     
     /**
@@ -86,6 +86,9 @@ public final class LGraphAdapters {
      *            directly connected to their original north/south ports. This effectively makes the
      *            north/south port dummies "transparent" in the sense that edges connected to them
      *            appear to be connected to the original connection points.
+     * @param transparentCommentNodes
+     *            {@code true} if attached comment nodes temporarily removed from the graph should
+     *            be included in the adapted graph as if they were included.
      * @param nodeFilter
      *            predicate that returns {@code true} for a node that should be visible in the adapted
      *            graph and {@code false} for one that should not. Usual application is to hide
@@ -93,9 +96,9 @@ public final class LGraphAdapters {
      * @return an {@link LGraphAdapter} for the passed graph.
      */
     public static LGraphAdapter adapt(final LGraph graph, final boolean transparentNorthSouthEdges,
-            final Predicate<LNode> nodeFilter) {
+            final boolean transparentCommentNodes, final Predicate<LNode> nodeFilter) {
         
-        return new LGraphAdapter(graph, transparentNorthSouthEdges, nodeFilter);
+        return new LGraphAdapter(graph, transparentNorthSouthEdges, transparentCommentNodes, nodeFilter);
     }
     
     /**
@@ -223,6 +226,10 @@ public final class LGraphAdapters {
          * north/south port dummies.
          */
         private final boolean transparentNorthSouthEdges;
+        /**
+         * Whether to include attached comment nodes currently not part of the graph.
+         */
+        private final boolean transparentCommentNodes;
         /** Predicate that decides which of our children we make visible to clients. */
         private final Predicate<LNode> nodeFilter;
 
@@ -236,10 +243,11 @@ public final class LGraphAdapters {
          *            instead of to north/south port dummies.
          */
         private LGraphAdapter(final LGraph element, final boolean transparentNorthSouthEdges,
-                final Predicate<LNode> nodeFilter) {
+                final boolean transparentCommentNodes, final Predicate<LNode> nodeFilter) {
             
             this.element = element;
             this.transparentNorthSouthEdges = transparentNorthSouthEdges;
+            this.transparentCommentNodes = transparentCommentNodes;
             this.nodeFilter = nodeFilter;
         }
         
@@ -298,6 +306,20 @@ public final class LGraphAdapters {
                     for (LNode n : l.getNodes()) {
                         if (nodeFilter.test(n)) {
                             nodeAdapters.add(new LNodeAdapter(this, n, transparentNorthSouthEdges));
+                            
+                            if (transparentCommentNodes) {
+                                if (n.hasProperty(InternalProperties.TOP_COMMENTS)) {
+                                    for (LNode comment : n.getProperty(InternalProperties.TOP_COMMENTS)) {
+                                        nodeAdapters.add(new LNodeAdapter(this, comment, false));
+                                    }
+                                }
+                                
+                                if (n.hasProperty(InternalProperties.BOTTOM_COMMENTS)) {
+                                    for (LNode comment : n.getProperty(InternalProperties.BOTTOM_COMMENTS)) {
+                                        nodeAdapters.add(new LNodeAdapter(this, comment, false));
+                                    }
+                                }
+                            }
                         }
                     }
                 }

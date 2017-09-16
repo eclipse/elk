@@ -185,6 +185,7 @@ class ElkGraphLayoutTransferrer {
         for (LLabel llabel : lnode.getLabels()) {
             if (nodeHasLabelPlacement || !llabel.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT).isEmpty()) {
                 ElkLabel elklabel = (ElkLabel) llabel.getProperty(InternalProperties.ORIGIN);
+                elklabel.setDimensions(llabel.getSize().x, llabel.getSize().y);
                 elklabel.setLocation(llabel.getPosition().x, llabel.getPosition().y);
             }
         }
