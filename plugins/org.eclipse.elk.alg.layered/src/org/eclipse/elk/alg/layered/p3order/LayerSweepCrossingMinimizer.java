@@ -29,6 +29,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p3order.counting.CrossMinUtil;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -98,7 +99,15 @@ public class LayerSweepCrossingMinimizer
         progressMonitor.begin("Minimize Crossings " + crossMinType, 1);
 
         // short-circuit cases in which no crossings can be minimized
-        if (layeredGraph.getLayers().isEmpty() || layeredGraph.getLayers().size() == 1) {
+        //  note that in-layer edges may be subject to crossing minimization if |layers| = 1  
+        //  and that hierarchical crossing minimization may dive into a graph with a single node
+        final boolean emptyGraph = layeredGraph.getLayers().isEmpty();
+        final boolean singleNode = layeredGraph.getLayers().size() == 1 
+                && layeredGraph.getLayers().get(0).getNodes().size() == 1;
+        final boolean hierarchicalLayout =
+                layeredGraph.getProperty(LayeredOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN;
+
+        if (emptyGraph || (singleNode && !hierarchicalLayout)) { 
             progressMonitor.done();
             return;
         }
