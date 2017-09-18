@@ -139,7 +139,7 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
             LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
                 .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.LABEL_SIDE_SELECTOR)
                 .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.END_LABEL_PREPROCESSOR)
-                .addBefore(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_POSTPROCESSOR);
+                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_POSTPROCESSOR);
     
     /**
      * {@inheritDoc}
