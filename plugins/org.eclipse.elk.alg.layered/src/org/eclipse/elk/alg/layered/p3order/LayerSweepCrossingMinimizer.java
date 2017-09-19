@@ -99,9 +99,11 @@ public class LayerSweepCrossingMinimizer
         progressMonitor.begin("Minimize Crossings " + crossMinType, 1);
 
         // short-circuit cases in which no crossings can be minimized
-        //  note that hierarchical crossing minimization may dive into a graph with a single node
+        //  note that in-layer edges may be subject to crossing minimization if |layers| = 1  
+        //  and that hierarchical crossing minimization may dive into a graph with a single node
         final boolean emptyGraph = layeredGraph.getLayers().isEmpty();
-        final boolean singleNode = layeredGraph.getLayers().size() == 1;
+        final boolean singleNode = layeredGraph.getLayers().size() == 1 
+                && layeredGraph.getLayers().get(0).getNodes().size() == 1;
         final boolean hierarchicalLayout =
                 layeredGraph.getProperty(LayeredOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN;
 
