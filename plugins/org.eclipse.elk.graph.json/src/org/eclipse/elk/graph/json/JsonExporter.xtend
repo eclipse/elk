@@ -180,7 +180,7 @@ public final class JsonExporter {
         edge.targets.forEach[ t | 
             var target = portIdMap.get(t)
             if (target === null) {
-                nodeIdMap.get(t)
+                target = nodeIdMap.get(t)
             }
             if (target === null) {
                 formatError("Unknown edge target: " + target)
