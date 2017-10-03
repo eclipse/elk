@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
@@ -27,6 +30,8 @@ import org.eclipse.elk.core.options.EdgeRouting;
  */
 public final class EdgeRouterFactory implements ILayoutPhaseFactory<LayeredPhases, LGraph> {
     
+    /** the cache prevents us from always instantiating new factories. */
+    private static Map<EdgeRouting, EdgeRouterFactory> factoryCache = new EnumMap<>(EdgeRouting.class);
     /** the edge routing this factory uses to decide which implementation to return. */
     private EdgeRouting edgeRoutingStrategy;
     
@@ -39,9 +44,12 @@ public final class EdgeRouterFactory implements ILayoutPhaseFactory<LayeredPhase
      * @return the edge router factory.
      */
     public static EdgeRouterFactory factoryFor(final EdgeRouting edgeRoutingStrategy) {
-        EdgeRouterFactory factory = new EdgeRouterFactory();
-        factory.edgeRoutingStrategy = edgeRoutingStrategy;
-        return factory;
+        if (!factoryCache.containsKey(edgeRoutingStrategy)) {
+            EdgeRouterFactory factory = new EdgeRouterFactory();
+            factory.edgeRoutingStrategy = edgeRoutingStrategy;
+            factoryCache.put(edgeRoutingStrategy, factory);
+        }
+        return factoryCache.get(edgeRoutingStrategy);
     }
     
     /**
