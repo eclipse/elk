@@ -70,9 +70,6 @@ public abstract class Spacing implements IDataObject, Cloneable {
      *            the spacing from the right.
      */
     public void set(final double newTop, final double newRight, final double newBottom, final double newLeft) {
-        if (newTop < 0 || newRight < 0 || newBottom < 0 || newLeft < 0) {
-            throw new IllegalArgumentException("Negative padding value not allowed");
-        }
         this.top = newTop;
         this.right = newRight;
         this.bottom = newBottom;
