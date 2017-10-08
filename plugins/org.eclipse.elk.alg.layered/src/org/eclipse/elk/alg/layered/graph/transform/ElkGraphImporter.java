@@ -925,7 +925,7 @@ class ElkGraphImporter {
             PortType portType = PortType.OUTPUT;
             KVector sourcePoint = null;
             
-            if (sourceLNode.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
+            if (edgeSection != null && sourceLNode.getProperty(LayeredOptions.PORT_CONSTRAINTS).isSideFixed()) {
                 sourcePoint = new KVector(edgeSection.getStartX(), edgeSection.getStartY());
                 
                 // The coordinates need to be relative to us
