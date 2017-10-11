@@ -45,7 +45,7 @@ labels.
   y: ...,
   width: ...,
   height: ...,
-  labels: [ ..array of label objects.. ],
+  labels: [ ..array of label objects.. ]
 }
 ```
 
@@ -89,7 +89,8 @@ Therefore you should specify a reasonable width and height.
 
 There are two types of edges: primitive edges and extended edges.
 Primitive edges are solely supported for legacy models to work.
-Exported graphs will always be made up of extended edges
+Exported graphs will always be made up of extended edges. Both kind 
+of edges support labels.
 
 ### Primitive Edges
 
@@ -103,7 +104,8 @@ to a source port and target port.
   targetPort: port identifier,
   sourcePoint: {x, y},
   targetPoint: {x, y},
-  bendPoints: [ .. {x, y} pairs .. ]
+  bendPoints: [ .. {x, y} pairs .. ],
+  labels: [ ..array of label objects.. ]
 }
 ```
 
@@ -118,9 +120,10 @@ that define said layout. A simple edge with one source and one target only needs
 
 ```json
 {
- sources*: [ ..array of node and / or port identifiers.. ],
- targets*: [ ..array of node and / or port identifiers.. ],
- sections: [ ..array of edge sections.. ]
+  sources*: [ ..array of node and / or port identifiers.. ],
+  targets*: [ ..array of node and / or port identifiers.. ],
+  sections: [ ..array of edge sections.. ],
+  labels: [ ..array of label objects.. ]
 }
 ```
 
@@ -140,13 +143,13 @@ Incoming and outgoing shapes are then filled in automatically by the importer.
 
 ```json
 {
- startPoint*: {x, y},
- endPoint*: {x, y},
- bendPoints: [ ..array of {x, y} pairs.. ],
- incomingShape: node and / or port identifier,
- outgoingShape: node and / or port identifier,
- incomingSections: [ ..array of edge section identifiers.. ],
- outgoingSections: [ ..array of edge section identifiers.. ]
+  startPoint*: {x, y},
+  endPoint*: {x, y},
+  bendPoints: [ ..array of {x, y} pairs.. ],
+  incomingShape: node and / or port identifier,
+  outgoingShape: node and / or port identifier,
+  incomingSections: [ ..array of edge section identifiers.. ],
+  outgoingSections: [ ..array of edge section identifiers.. ]
 }
 ```
 
