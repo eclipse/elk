@@ -30,6 +30,11 @@ public enum SizeOptions {
     DEFAULT_MINIMUM_SIZE,
     
     /**
+     * If this option is set, a node is not made smaller than it currently is.
+     */
+    ENLARGE_ONLY,
+    
+    /**
      * If this option is set and paddings are computed by the algorithm, the minimum size plus the
      * computed padding are a lower bound on the node size. If this option is not set, the minimum size
      * will be applied to the node's whole size regardless of any computed padding. Note that,
