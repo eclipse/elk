@@ -635,6 +635,102 @@
       </targlet>
     </setupTask>
   </stream>
+  <stream name="releases/0.3.0"
+      label="Release 0.3.0">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="eclipse.target.platform"
+        defaultValue="Neon"
+        storageURI="scope://Workspace"
+        label="Target Platform">
+      <description>Choose the compatibility level of the target platform</description>
+    </setupTask>
+    <setupTask
+        xsi:type="jdt:JRETask"
+        version="JavaSE-1.8"
+        location="${jre.location-1.8}">
+      <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.p2:P2Task">
+      <requirement
+          name="org.eclipse.elk.sdk.feature.feature.group"/>
+      <repository
+          url="http://download.eclipse.org/elk/updates/releases/0.3.0/"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup.targlets:TargletTask">
+      <targlet
+          name="${scope.project.label}"
+          activeRepositoryList="${eclipse.target.platform}">
+        <annotation
+            source="http:/www.eclipse.org/oomph/targlets/TargetDefinitionGenerator_DISABLED">
+          <detail
+              key="location">
+            <value>${git.clone.location}/build/org.eclipse.elk.targetplatform/org.eclipse.elk.targetplatform.target</value>
+          </detail>
+          <detail
+              key="preferredRepositories">
+            <value>http://download.eclipse.org/eclipse/updates/</value>
+          </detail>
+          <detail
+              key="includeAllPlatforms">
+            <value>false</value>
+          </detail>
+          <detail
+              key="includeSource">
+            <value>false</value>
+          </detail>
+        </annotation>
+        <requirement
+            name="org.eclipse.sdk.feature.group"/>
+        <requirement
+            name="com.google.guava"
+            versionRange="15.0.0"/>
+        <requirement
+            name="com.google.gson"
+            versionRange="2.2.4"/>
+        <requirement
+            name="com.google.inject"/>
+        <requirement
+            name="org.eclipse.emf.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.xtext.sdk.feature.group"
+            versionRange="[2.12.0,2.13.0)"/>
+        <requirement
+            name="de.itemis.xtext.antlr.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.gmf.sdk.feature.group"/>
+        <requirement
+            name="org.eclipse.graphiti.sdk.feature.feature.group"/>
+        <sourceLocator
+            rootFolder="${git.clone.location}"
+            locateNestedProjects="true"/>
+        <repositoryList
+            name="Mars">
+          <repository
+              url="http://download.eclipse.org/releases/mars"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
+          <repository
+              url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="Neon">
+          <repository
+              url="http://download.eclipse.org/releases/neon"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
+          <repository
+              url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
+        </repositoryList>
+      </targlet>
+    </setupTask>
+  </stream>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
       href="index:/org.eclipse.setup#//@projectCatalogs[name='com.github']"/>
