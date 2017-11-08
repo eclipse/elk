@@ -196,33 +196,40 @@ public final class JsonImporter {
 
     private def transformPrimitiveEdgeLayout(Object jsonObjA, ElkEdge edge) {
         val jsonObj = jsonObjA.toJsonObject
-        val section = ElkGraphUtil.firstEdgeSection(edge, true, true)
-        // src
-        jsonObj.optJSONObject("sourcePoint") => [ srcPnt |
-            if (srcPnt !== null) {
-                srcPnt.optDouble("x") => [section.startX = it]
-                srcPnt.optDouble("y") => [section.startY = it]
-            }
-        ]
+        
+        // if there's any edge route information available, turn it into an ElkSection
+        if (jsonObj.hasJsonObj("sourcePoint") 
+            || jsonObj.hasJsonObj("targetPoint") 
+            || jsonObj.hasJsonObj("bendPoints")) { 
 
-        // tgt
-        jsonObj.optJSONObject("targetPoint") => [ tgtPnt |
-            if (tgtPnt !== null) {
-                tgtPnt.optDouble("x") => [section.endX = it]
-                tgtPnt.optDouble("y") => [section.endY = it]
-            }
-        ]
-
-        // bend points
-        jsonObj.optJSONArray("bendPoints") => [ bendPoints |
-            if (bendPoints !== null) {
-                for (i : 0 ..< bendPoints.sizeJsonArr) {
-                    bendPoints.optJSONObject(i) => [ bendPoint |
-                        ElkGraphUtil.createBendPoint(section, bendPoint.optDouble("x"), bendPoint.optDouble("y"));
-                    ]
+            val section = ElkGraphUtil.createEdgeSection(edge)
+            // src
+            jsonObj.optJSONObject("sourcePoint") => [ srcPnt |
+                if (srcPnt !== null) {
+                    srcPnt.optDouble("x") => [section.startX = it]
+                    srcPnt.optDouble("y") => [section.startY = it]
                 }
-            }
-        ]
+            ]
+    
+            // tgt
+            jsonObj.optJSONObject("targetPoint") => [ tgtPnt |
+                if (tgtPnt !== null) {
+                    tgtPnt.optDouble("x") => [section.endX = it]
+                    tgtPnt.optDouble("y") => [section.endY = it]
+                }
+            ]
+    
+            // bend points
+            jsonObj.optJSONArray("bendPoints") => [ bendPoints |
+                if (bendPoints !== null) {
+                    for (i : 0 ..< bendPoints.sizeJsonArr) {
+                        bendPoints.optJSONObject(i) => [ bendPoint |
+                            ElkGraphUtil.createBendPoint(section, bendPoint.optDouble("x"), bendPoint.optDouble("y"));
+                        ]
+                    }
+                }
+            ]
+        }
     }
     
 
@@ -532,79 +539,80 @@ public final class JsonImporter {
         val edgeId = jsonObj.id
                 
         // what we need to transfer are the edge sections
-        val sections = newJsonArray
-        edge.sections.forEach [ elkSection, i |
-            
-            // check if there's a corresponding json section
-            var maybeSection = edgeSectionJsonMap.get(elkSection)
-            if (maybeSection === null) {
-                // otherwise create a new one
-                maybeSection = newJsonObject 
-                // Id, just enumerate the sections per edge
-                maybeSection.toJsonObject.addJsonObj("id", edgeId + "_s" + i)
-            }
-            val jsonSection = maybeSection.toJsonObject
-            sections.addJsonArr(jsonSection)
-            
-            // Start Point
-            val startPoint = newJsonObject
-            startPoint.addJsonObj("x", elkSection.startX)
-            startPoint.addJsonObj("y", elkSection.startY)
-            jsonSection.addJsonObj("startPoint", startPoint)
-            
-            // End Point
-            val endPoint = newJsonObject
-            endPoint.addJsonObj("x", elkSection.endX)
-            endPoint.addJsonObj("y", elkSection.endY)
-            jsonSection.addJsonObj("endPoint", endPoint)
-            
-            // Bend Points
-            if (!elkSection.bendPoints.nullOrEmpty) {
-                val bendPoints = newJsonArray
-                elkSection.bendPoints.forEach [ pnt |
-                    val jsonPnt = newJsonObject
-                    jsonPnt.addJsonObj("x", pnt.x)
-                    jsonPnt.addJsonObj("y", pnt.y)
-                    bendPoints.addJsonArr(jsonPnt)
-                ]
-                jsonSection.addJsonObj("bendPoints", bendPoints)
-            }
-            
-            // Incoming shape
-            if (elkSection.incomingShape !== null) {
-                jsonSection.addJsonObj("incomingShape", idByElement(elkSection.incomingShape))
-            }
-            
-            // Outgoing shape
-            if (elkSection.outgoingShape !== null) {
-                jsonSection.addJsonObj("outgoingShape", idByElement(elkSection.outgoingShape))
-            }
-            
-            // Incoming sections
-            if (!elkSection.incomingSections.empty) {
-                val incomingSections = newJsonArray
-                elkSection.incomingSections.forEach [ sec |
-                    incomingSections.addJsonArr(idByElement(sec))
-                ]
-                jsonSection.addJsonObj("incomingSections", incomingSections)
-            }
-            
-            // Outgoing sections
-            if (!elkSection.outgoingSections.empty) {
-                val outgoingSections = newJsonArray
-                elkSection.outgoingSections.forEach [ sec |
-                    outgoingSections.addJsonArr(idByElement(sec))
-                ]
-                jsonSection.addJsonObj("outgoingSections", outgoingSections)
-            }
-            
-        ]
-        
-        jsonObj.addJsonObj("sections", sections)
+        if (!edge.sections.nullOrEmpty) {
+            val sections = newJsonArray
+            edge.sections.forEach [ elkSection, i |
+                
+                // check if there's a corresponding json section
+                var maybeSection = edgeSectionJsonMap.get(elkSection)
+                if (maybeSection === null) {
+                    // otherwise create a new one
+                    maybeSection = newJsonObject 
+                    // Id, just enumerate the sections per edge
+                    maybeSection.toJsonObject.addJsonObj("id", edgeId + "_s" + i)
+                }
+                val jsonSection = maybeSection.toJsonObject
+                sections.addJsonArr(jsonSection)
+                
+                // Start Point
+                val startPoint = newJsonObject
+                startPoint.addJsonObj("x", elkSection.startX)
+                startPoint.addJsonObj("y", elkSection.startY)
+                jsonSection.addJsonObj("startPoint", startPoint)
+                
+                // End Point
+                val endPoint = newJsonObject
+                endPoint.addJsonObj("x", elkSection.endX)
+                endPoint.addJsonObj("y", elkSection.endY)
+                jsonSection.addJsonObj("endPoint", endPoint)
+                
+                // Bend Points
+                if (!elkSection.bendPoints.nullOrEmpty) {
+                    val bendPoints = newJsonArray
+                    elkSection.bendPoints.forEach [ pnt |
+                        val jsonPnt = newJsonObject
+                        jsonPnt.addJsonObj("x", pnt.x)
+                        jsonPnt.addJsonObj("y", pnt.y)
+                        bendPoints.addJsonArr(jsonPnt)
+                    ]
+                    jsonSection.addJsonObj("bendPoints", bendPoints)
+                }
+                
+                // Incoming shape
+                if (elkSection.incomingShape !== null) {
+                    jsonSection.addJsonObj("incomingShape", idByElement(elkSection.incomingShape))
+                }
+                
+                // Outgoing shape
+                if (elkSection.outgoingShape !== null) {
+                    jsonSection.addJsonObj("outgoingShape", idByElement(elkSection.outgoingShape))
+                }
+                
+                // Incoming sections
+                if (!elkSection.incomingSections.empty) {
+                    val incomingSections = newJsonArray
+                    elkSection.incomingSections.forEach [ sec |
+                        incomingSections.addJsonArr(idByElement(sec))
+                    ]
+                    jsonSection.addJsonObj("incomingSections", incomingSections)
+                }
+                
+                // Outgoing sections
+                if (!elkSection.outgoingSections.empty) {
+                    val outgoingSections = newJsonArray
+                    elkSection.outgoingSections.forEach [ sec |
+                        outgoingSections.addJsonArr(idByElement(sec))
+                    ]
+                    jsonSection.addJsonObj("outgoingSections", outgoingSections)
+                }
+                
+            ]
+            jsonObj.addJsonObj("sections", sections)
+        }
         
         // transfer junction points, if existent
-        val jps = edge.getProperty(CoreOptions.JUNCTION_POINTS)
-        if (!jps.nullOrEmpty) {
+        if (edge.hasProperty(CoreOptions.JUNCTION_POINTS)) {
+            val jps = edge.getProperty(CoreOptions.JUNCTION_POINTS)
             val jsonJPs = newJsonArray
             jps.forEach[ jp |
                 val jsonPnt = newJsonObject

@@ -116,4 +116,57 @@ class SectionsTest {
         val s = new Gson().toJson(json)
         assertTrue(s.contains('''"id":"xyz"'''))
     }
+    
+    @Test
+    def void doNotAddEmptySectionsArrayExtendedEdge() {
+        val graph = '''
+        {
+          id: "root",
+          children: [
+            { id: "n1", width: 10, height: 10 },
+            { id: "n2", width: 10, height: 10 }
+          ],
+          edges: [{ id: "e1", sources: [ "n1" ], targets: [ "n2" ] }]
+        }'''
+        
+        val s = graph.toJsonGraphAndBackToString
+        
+        assertTrue(!s.contains('''"sections"'''))
+    }
+    
+    @Test
+    def void doNotAddEmptySectionsArrayPrimitiveEdge() {
+        val graph = '''
+        {
+          id: "root",
+          children: [
+            { id: "n1", width: 10, height: 10 },
+            { id: "n2", width: 10, height: 10 }
+          ],
+          edges: [{ id: "e1", source: "n1", target: "n2" }]
+        }'''
+        
+        val s = graph.toJsonGraphAndBackToString
+        
+        assertTrue(!s.contains('''"sections"'''))
+    }
+    
+    /**
+     * Convert the string to an ElkNode, call JsonImporter#transferLayout 
+     * and turn the ElkNode into a json string again. 
+     */
+    private def toJsonGraphAndBackToString(String graph) {
+        // string -> json
+        val parser = new JsonParser
+        val json = parser.parse(graph).asJsonObject
+        // json -> elk
+        val importer = new Maybe<JsonImporter>()
+        val root = ElkGraphJson.forGraph(json).rememberImporter(importer).toElk
+        // transfer
+        importer.get.transferLayout(root)
+        // to string
+        val s = new Gson().toJson(json)
+        return s
+    }
+    
 }
