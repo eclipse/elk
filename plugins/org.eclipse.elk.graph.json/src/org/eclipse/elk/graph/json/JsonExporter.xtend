@@ -26,6 +26,8 @@ import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.ElkShape
 import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.graph.properties.IProperty
+import java.util.Random
 
 /**
  * Exporter from elk graph to json.
@@ -54,14 +56,17 @@ public final class JsonExporter {
     private var omitZeroDim = true
     private var omitLayout = false
     private var shortLayoutOptionKeys = true
+    private var omitUnknownLayoutOptions = true
     
     new () { }
 
-    public def setOptions(boolean omitZeroPos, boolean omitZeroDim, boolean omitLayout, boolean shortLayoutOptionKeys) {
-        this.omitZeroPos = omitZeroPos;
-        this.omitZeroDim = omitZeroDim;
-        this.omitLayout = omitLayout;
-        this.shortLayoutOptionKeys = shortLayoutOptionKeys;
+    public def setOptions(boolean omitZeroPos, boolean omitZeroDim, boolean omitLayout, 
+        boolean shortLayoutOptionKeys, boolean omitUnknownLayoutOptions) {
+        this.omitZeroPos = omitZeroPos
+        this.omitZeroDim = omitZeroDim
+        this.omitLayout = omitLayout
+        this.shortLayoutOptionKeys = shortLayoutOptionKeys
+        this.omitUnknownLayoutOptions = omitUnknownLayoutOptions
     }
 
     public def export(ElkNode root) {
@@ -299,8 +304,10 @@ public final class JsonExporter {
         val parent = parentA.toJsonObject
         parent.addJsonObj("layoutOptions", jsonProps)
         holder.properties.entrySet.forEach [ p |
-            var key = if (shortLayoutOptionKeys) p.key.id.shortOptionKey else p.key.id
-            jsonProps.addProperty(key, p.value.toString)
+            if (!omitUnknownLayoutOptions || p.key.isKnown) {
+                var key = if (shortLayoutOptionKeys) p.key.id.shortOptionKey else p.key.id
+                jsonProps.addProperty(key, p.value.toString)                
+            }
         ]
     }
 
@@ -333,13 +340,14 @@ public final class JsonExporter {
      */
     private def createAndRegister(ElkNode node) {
         val obj = newJsonObject
-        var id = node.identifier ?: ("n" + nodeIdCounter)
-        while (nodeIdMap.inverse.containsKey(id)) {
-            id += "_"
+        var id = node.identifier 
+        if (id === null) {
+            id = "n" + nodeIdCounter
+            nodeIdCounter = nodeIdCounter + 1              
         }
+        id = id.assertUnique(nodeIdMap.inverse)
+        
         obj.addProperty("id", id)
-        nodeIdCounter = nodeIdCounter + 1
-
         nodeIdMap.put(node, id)
         nodeJsonMap.put(node, obj)
 
@@ -348,13 +356,14 @@ public final class JsonExporter {
 
     private def createAndRegister(ElkPort port) {
         val obj = newJsonObject
-        var id = port.identifier ?: ("p" + portIdCounter)
-        while (portIdMap.inverse.containsKey(id)) {
-            id += "_"
+        var id = port.identifier 
+        if (id === null) {
+            id = "p" + portIdCounter
+            portIdCounter = portIdCounter + 1    
         }
-        obj.addProperty("id", id)
-        portIdCounter = portIdCounter + 1
+        id = id.assertUnique(portIdMap.inverse)
 
+        obj.addProperty("id", id)
         portIdMap.put(port, id)
         portJsonMap.put(port, obj)
 
@@ -363,13 +372,14 @@ public final class JsonExporter {
 
     private def createAndRegister(ElkEdge edge) {
         val obj = newJsonObject
-        var id = edge.identifier ?: ("e" + edgeIdCounter)
-        while (edgeIdMap.inverse.containsKey(id)) {
-            id += "_"
+        var id = edge.identifier
+        if (id === null) {
+            id = "e" + edgeIdCounter
+            edgeIdCounter = edgeIdCounter + 1
         }
-        obj.addProperty("id", id)
-        edgeIdCounter = edgeIdCounter + 1
+        id = id.assertUnique(edgeIdMap.inverse)
 
+        obj.addProperty("id", id)
         edgeIdMap.put(edge, id)
         edgeJsonMap.put(edge, obj)
 
@@ -378,13 +388,14 @@ public final class JsonExporter {
 
     private def createAndRegister(ElkEdgeSection section) {
         val obj = newJsonObject
-        var id = section.identifier ?: ("s" + edgeSectionIdCounter)
-        while (edgeSectionIdMap.inverse.containsKey(id)) {
-            id += "_"
+        var id = section.identifier
+        if (id === null) {
+            id = "s" + edgeSectionIdCounter
+            edgeSectionIdCounter = edgeSectionIdCounter + 1
         }
-        obj.addProperty("id", id)
-        edgeSectionIdCounter = edgeIdCounter + 1
+        id = id.assertUnique(edgeSectionIdMap.inverse)
 
+        obj.addProperty("id", id)
         edgeSectionIdMap.put(section, id)
         edgeSectionJsonMap.put(section, obj)
 
@@ -404,7 +415,11 @@ public final class JsonExporter {
     }
     
     private def getShortOptionKey(String fullId) {
-        val option = LayoutMetaDataService.instance.getOptionData(fullId)
+        val option = LayoutMetaDataService.instance.getOptionDataBySuffix(fullId)
+        if (option === null) {
+            // if the option is unknown, return the full id
+            return fullId
+        }
         val idSplit = Splitter.on('.').split(option.id)
         var foundMatch = false
         var i = idSplit.size - 1
@@ -433,4 +448,29 @@ public final class JsonExporter {
             iterator
         }
     } 
+    
+    private def isKnown(IProperty<?> property) {
+        return LayoutMetaDataService.instance.getOptionDataBySuffix(property.id) !== null
+    }
+    
+    private val RANDOM = new Random()
+    private def String sixDigitRandomNumber() {
+        return RANDOM.nextInt(1000000) + ""
+    }
+    
+    private def String padZeroes(String s, int length) {
+        var tmp = s
+        while (tmp.length < length) {
+            tmp = "0" + tmp
+        }
+        return tmp
+    }
+    
+    private def String assertUnique(String id, Map<String, ?> map) {
+        var tmp = id
+        while (map.containsKey(tmp)) {
+            tmp = id + "_g" + sixDigitRandomNumber().padZeroes(6)
+        }
+        return tmp
+    }
 }

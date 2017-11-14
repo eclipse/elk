@@ -130,6 +130,7 @@ public final class ElkGraphJson {
         private boolean omitZeroDimension = true;
         private boolean omitLayoutInformation = false;
         private boolean shortLayoutOptionKeys = true;
+        private boolean omitUnknownLayoutOptions = true;
 
         /**
          * Pretty print the resulting json string, e.g. by inserting line breaks.
@@ -172,6 +173,14 @@ public final class ElkGraphJson {
         }
 
         /**
+         * Omit any unknown layout options.
+         */
+        public ExportBuilder omitUnknownLayoutOptions(final boolean omitUnknownOptions) {
+            this.omitUnknownLayoutOptions = omitUnknownOptions;
+            return this;
+        }
+        
+        /**
          * Perform the export using the specified configuration.
          * 
          * @return the json string representation of the graph.
@@ -179,7 +188,8 @@ public final class ElkGraphJson {
         public String toJson() {
             // export the graph
             JsonExporter exporter = new JsonExporter();
-            exporter.setOptions(omitZeroPosition, omitZeroDimension, omitLayoutInformation, shortLayoutOptionKeys);
+            exporter.setOptions(omitZeroPosition, omitZeroDimension, omitLayoutInformation,
+                    shortLayoutOptionKeys, omitUnknownLayoutOptions);
             JsonObject jsonGraph = exporter.export(graph);
 
             // configure the gson builder
