@@ -25,8 +25,8 @@ import org.eclipse.xtext.ide.editor.contentassist.IIdeContentProposalAcceptor
 import org.eclipse.xtext.ide.editor.contentassist.IdeContentProposalProvider
 import org.eclipse.xtext.resource.IEObjectDescription
 import org.eclipse.xtext.ui.IImageHelper
-import org.eclipse.xtext.ui.editor.contentassist.AbstractContentProposalProvider
 import org.eclipse.xtext.ui.editor.contentassist.AbstractContentProposalProvider.NullSafeCompletionProposalAcceptor
+import org.eclipse.xtext.ui.editor.contentassist.AbstractJavaBasedContentProposalProvider
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
 import org.eclipse.xtext.util.TextRegion
@@ -34,7 +34,7 @@ import org.eclipse.xtext.util.TextRegion
 /**
  * Proposal provider that delegates to the generic IDE implementation.
  */
-class ElkGraphProposalProvider extends AbstractContentProposalProvider {
+class ElkGraphProposalProvider extends AbstractJavaBasedContentProposalProvider {
     
     static val MAX_ENTRIES = 1000
 
