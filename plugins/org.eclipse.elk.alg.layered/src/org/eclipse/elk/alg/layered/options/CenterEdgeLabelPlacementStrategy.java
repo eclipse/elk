@@ -22,6 +22,8 @@ public enum CenterEdgeLabelPlacementStrategy {
     WIDEST_LAYER,
     /** Places labels in a layer that we think will be closest to the edge's physical center later. */
     CENTER_LAYER,
+    /** Places labels in layers that will likely result in the most compact diagram. */
+    SPACE_EFFICIENT_LAYER,
     /**
      * Places labels in the layer closest to the edge's tail. This is similar to simply defining tail labels, but is a
      * bit more space-efficient.

@@ -193,7 +193,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         
         // Check if the strategy has a special processing method
         if (labelDummyInfos.get(0).placementStrategy == CenterEdgeLabelPlacementStrategy.SPACE_EFFICIENT_LAYER) {
-            // TODO Call proper method
+            computeSpaceEfficientAssignment(labelDummyInfos);
             
         } else {
             // Execute the strategy for each label dummy
@@ -225,6 +225,28 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 updateLongEdgeSourceLabelDummyInfo(labelDummyInfo);
             }
         }
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Widest Layer
+
+    /**
+     * Find a layer to place the label dummy into. This method bases its decision on which long edge dummy is in the
+     * widest layer.
+     */
+    private int findWidestLayerTargetId(final LabelDummyInfo labelDummyInfo) {
+        // Find the widest layer among those the long edge dummies are placed in
+        int widestLayerIndex = labelDummyInfo.leftmostLayerId;
+        
+        for (int index = widestLayerIndex + 1; index <= labelDummyInfo.rightmostLayerId; index++) {
+            if (layerWidths[index] > layerWidths[widestLayerIndex]) {
+                widestLayerIndex = index;
+            }
+        }
+        
+        // Return the dummy node in the widest layer
+        return widestLayerIndex;
     }
     
     
@@ -304,28 +326,6 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Widest Layer
-
-    /**
-     * Find a layer to place the label dummy into. This method bases its decision on which long edge dummy is in the
-     * widest layer.
-     */
-    private int findWidestLayerTargetId(final LabelDummyInfo labelDummyInfo) {
-        // Find the widest layer among those the long edge dummies are placed in
-        int widestLayerIndex = labelDummyInfo.leftmostLayerId;
-        
-        for (int index = widestLayerIndex + 1; index <= labelDummyInfo.rightmostLayerId; index++) {
-            if (layerWidths[index] > layerWidths[widestLayerIndex]) {
-                widestLayerIndex = index;
-            }
-        }
-        
-        // Return the dummy node in the widest layer
-        return widestLayerIndex;
-    }
-    
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // End Layer
 
     /**
@@ -377,6 +377,139 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         LEdge outgoing = labelDummyInfo.labelDummy.getOutgoingEdges().iterator().next();
         
         return incoming.getProperty(InternalProperties.REVERSED) || outgoing.getProperty(InternalProperties.REVERSED);
+    }
+
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Space Efficient
+    
+    /* The space-efficient assignment strategy is a heuristic. We first perform all trivial assignments: labels
+     * that only have one valid layer available to them, or that can be assigned to a layer larger than he label.
+     * We are then left with labels that are too big for their layers. We define a layer's potential width to be
+     * the maximum of its current width and the width of all unassigned labels that can be assigned to the layer.
+     * We iterate over our labels from biggest to smallest and assign each to the layer with the largest potential
+     * width.
+     */
+    
+    /**
+     * Runs a heuristic that tries to compute the least wide label dummy to layer assignment.
+     */
+    private void computeSpaceEfficientAssignment(final List<LabelDummyInfo> labelDummyInfos) {
+        // We start by assigning all label dummies that only have a single layer to choose from and removing them
+        // from our list
+        List<LabelDummyInfo> nonTrivialLabels = performTrivialAssignments(labelDummyInfos);
+        if (nonTrivialLabels.isEmpty()) {
+            return;
+        }
+        
+        // The remaining labels are not as easy to assign. Sort descendingly by size.
+        nonTrivialLabels.sort(
+                (info1, info2) -> Double.compare(info2.labelDummy.getSize().x, info1.labelDummy.getSize().x));
+        
+        int labelCount = nonTrivialLabels.size();
+        for (int labelIndex = 0; labelIndex < labelCount; labelIndex++) {
+            assignLayer(labelDummyInfos.get(labelIndex), findPotentiallyWidestLayer(labelDummyInfos, labelIndex));
+        }
+    }
+
+    /**
+     * Assigns all layers that either only have a single layer to be assigned to or that can be assigned to a layer
+     * without increasing that layer's width. Returns the remaining labels in a list.
+     */
+    private List<LabelDummyInfo> performTrivialAssignments(final List<LabelDummyInfo> labelDummyInfos) {
+        List<LabelDummyInfo> remainingLabels = new ArrayList<>(labelDummyInfos.size());
+        
+        for (LabelDummyInfo labelDummyInfo : labelDummyInfos) {
+            if (labelDummyInfo.leftmostLayerId == labelDummyInfo.rightmostLayerId) {
+                // Assign to only available layer and remove from list
+                assignLayer(labelDummyInfo, labelDummyInfo.leftmostLayerId);
+                
+            } else if (!assignToWiderLayer(labelDummyInfo)) {
+                // Ending up here means that we didn't find a layer wide enough for the node
+                remainingLabels.add(labelDummyInfo);
+            }
+        }
+        
+        return remainingLabels;
+    }
+    
+    /**
+     * Assigns the given label dummy to the first layer wide enough to house it. If there is no such layer, the label
+     * remains unassigned.
+     * 
+     * @return {@code true} if we succeeded in assigning the label to a layer.
+     */
+    private boolean assignToWiderLayer(final LabelDummyInfo labelDummyInfo) {
+        // Check if the label dummy can be assigned a layer that already is at least as wide as the dummy
+        double dummyWidth = labelDummyInfo.labelDummy.getSize().x;
+        List<Layer> validLayers = labelDummyInfo.labelDummy.getGraph().getLayers().subList(
+                labelDummyInfo.leftmostLayerId,
+                labelDummyInfo.rightmostLayerId + 1);
+        
+        for (Layer layer : validLayers) {
+            if (layer.getSize().x >= dummyWidth) {
+                assignLayer(labelDummyInfo, layer.id);
+                return true;
+            }
+        }
+        
+        // Ending up here means that we didn't find a layer wide enough for our label
+        return false;
+    }
+    
+    /**
+     * Returns the index of the layer with the largest potential width.
+     * 
+     * @param labelDummyInfos
+     *            label dummy infos, sorted descendingly by label width.
+     * @param labelIndex
+     *            index of the label dummy info for which we're currently looking for a layer. All labels with smaller
+     *            index have already been assigned to layers.
+     * @return index of the layer with the maximum potential width.
+     */
+    private int findPotentiallyWidestLayer(final List<LabelDummyInfo> labelDummyInfos, final int labelIndex) {
+        assert labelIndex >= 0 && labelIndex < labelDummyInfos.size();
+        
+        int labelCount = labelDummyInfos.size();
+        LabelDummyInfo labelDummyInfo = labelDummyInfos.get(labelIndex);
+        double labelDummyWidth = labelDummyInfo.labelDummy.getSize().x;
+        
+        // Iterate over the label's valid layers
+        int widestLayerIndex = labelDummyInfo.leftmostLayerId;
+        double widestLayerWidth = 0;
+        
+        for (int layer = labelDummyInfo.leftmostLayerId; layer <= labelDummyInfo.rightmostLayerId; layer++) {
+            // If the layer is already at least as large as the current label, simply return that layer
+            if (labelDummyWidth <= layerWidths[layer]) {
+                return layer;
+            }
+            
+            // The initial potential width is less wide than the label (otherwise we would have already returned)
+            double potentialWidth = layerWidths[layer];
+            
+            // Find the largest unassigned label that is part of this layer
+            LabelDummyInfo largestUnassignedLabel = null;
+            for (int label = labelIndex + 1; label < labelCount; label++) {
+                // Check if the label can be placed in the current layer
+                LabelDummyInfo currLabelInfo = labelDummyInfos.get(label);
+                if (currLabelInfo.leftmostLayerId <= layer && currLabelInfo.rightmostLayerId >= layer) {
+                    largestUnassignedLabel = currLabelInfo;
+                }
+            }
+            
+            // Update layer's potential size
+            if (largestUnassignedLabel != null) {
+                potentialWidth = Math.max(potentialWidth, largestUnassignedLabel.labelDummy.getSize().x);
+            }
+            
+            // Update widest layer (if there are multiple widest layers, we use the leftmost one)
+            if (potentialWidth > widestLayerWidth) {
+                widestLayerIndex = layer;
+                widestLayerWidth = potentialWidth;
+            }
+        }
+        
+        return widestLayerIndex;
     }
     
     
