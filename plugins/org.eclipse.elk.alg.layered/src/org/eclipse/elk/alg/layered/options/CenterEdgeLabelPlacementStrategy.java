@@ -24,6 +24,8 @@ public enum CenterEdgeLabelPlacementStrategy {
     CENTER_LAYER,
     /** Places labels in layers that will likely result in the most compact diagram. */
     SPACE_EFFICIENT_LAYER,
+    /** Computes a globally optimal layer assignment. */
+    SPACE_OPTIMAL_LAYER,
     /**
      * Places labels in the layer closest to the edge's tail. This is similar to simply defining tail labels, but is a
      * bit more space-efficient.
