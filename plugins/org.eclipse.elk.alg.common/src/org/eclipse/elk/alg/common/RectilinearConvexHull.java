@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.elk.alg.common.Point.Quadrant;
 import org.eclipse.elk.alg.common.compaction.Scanline;
 import org.eclipse.elk.alg.common.compaction.Scanline.EventHandler;
 import org.eclipse.elk.core.math.ElkRectangle;

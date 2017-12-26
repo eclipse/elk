@@ -34,7 +34,7 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
-      <artifactId>org.eclipse.elk.alg.common.compaction</artifactId>
+      <artifactId>org.eclipse.elk.alg.common</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
