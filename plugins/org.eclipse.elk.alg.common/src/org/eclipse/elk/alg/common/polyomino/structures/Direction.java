@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.polyomino.structures;
+package org.eclipse.elk.alg.common.polyomino.structures;
 
 /**
  * Represents the four cardinal directions.

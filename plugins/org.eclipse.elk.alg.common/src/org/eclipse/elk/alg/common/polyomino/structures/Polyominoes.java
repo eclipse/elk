@@ -5,11 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.polyomino.structures;
+package org.eclipse.elk.alg.common.polyomino.structures;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.common.compaction.polyomino.ProfileFill;
+import org.eclipse.elk.alg.common.polyomino.ProfileFill;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 import com.google.common.collect.Lists;

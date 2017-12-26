@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.polyomino;
+package org.eclipse.elk.alg.common.polyomino;
 
 import java.util.Comparator;
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.common.compaction.options.PolyominoOptions;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Direction;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.PlanarGrid;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Polyomino;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Polyominoes;
-import org.eclipse.elk.alg.common.compaction.polyomino.util.UniqueTriple;
+import org.eclipse.elk.alg.common.polyomino.structures.Direction;
+import org.eclipse.elk.alg.common.polyomino.structures.PlanarGrid;
+import org.eclipse.elk.alg.common.polyomino.structures.Polyomino;
+import org.eclipse.elk.alg.common.polyomino.structures.Polyominoes;
+import org.eclipse.elk.alg.common.utils.UniqueTriple;
 import org.eclipse.elk.core.util.Pair;
 
 /**

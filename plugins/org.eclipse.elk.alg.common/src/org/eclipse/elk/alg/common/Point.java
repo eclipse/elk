@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.recthull;
+package org.eclipse.elk.alg.common;
 
 import java.util.Objects;
 

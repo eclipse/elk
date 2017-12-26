@@ -24,10 +24,10 @@ algorithm disco(DisCoLayoutProvider) {
     supports org.eclipse.elk.edge.thickness
     supports org.eclipse.elk.aspectRatio
     supports org.eclipse.elk.padding
-    supports org.eclipse.elk.alg.common.compaction.polyomino.lowLevelSort
-    supports org.eclipse.elk.alg.common.compaction.polyomino.highLevelSort
-    supports org.eclipse.elk.alg.common.compaction.polyomino.traversalStrategy
-    supports org.eclipse.elk.alg.common.compaction.polyomino.fill
+    supports org.eclipse.elk.alg.common.polyomino.lowLevelSort
+    supports org.eclipse.elk.alg.common.polyomino.highLevelSort
+    supports org.eclipse.elk.alg.common.polyomino.traversalStrategy
+    supports org.eclipse.elk.alg.common.polyomino.fill
     supports componentCompaction.strategy
     supports componentCompaction.componentLayoutAlgorithm
     supports debug.discoGraph

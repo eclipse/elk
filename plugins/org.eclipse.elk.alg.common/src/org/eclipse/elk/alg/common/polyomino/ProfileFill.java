@@ -5,9 +5,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.polyomino;
+package org.eclipse.elk.alg.common.polyomino;
 
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Polyomino;
+import org.eclipse.elk.alg.common.polyomino.structures.Polyomino;
 
 /**
  * Utility class providing a simple filling algorithm for polyominoes with holes whose cells are at least 8-connected

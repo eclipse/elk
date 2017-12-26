@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.elk.alg.common.compaction.options.PolyominoOptions;
-import org.eclipse.elk.alg.common.compaction.polyomino.PolyominoCompactor;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.PlanarGrid;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Polyomino;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Polyominoes;
+import org.eclipse.elk.alg.common.polyomino.PolyominoCompactor;
+import org.eclipse.elk.alg.common.polyomino.structures.PlanarGrid;
+import org.eclipse.elk.alg.common.polyomino.structures.Polyomino;
+import org.eclipse.elk.alg.common.polyomino.structures.Polyominoes;
 import org.eclipse.elk.alg.disco.graph.DCComponent;
 import org.eclipse.elk.alg.disco.graph.DCGraph;
 import org.eclipse.elk.alg.disco.options.DisCoOptions;

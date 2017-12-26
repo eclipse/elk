@@ -5,11 +5,11 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.polyomino;
+package org.eclipse.elk.alg.common.polyomino;
 
 import java.util.function.BiFunction;
 
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Polyomino;
+import org.eclipse.elk.alg.common.polyomino.structures.Polyomino;
 import org.eclipse.elk.core.util.Pair;
 
 /**

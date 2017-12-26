@@ -5,9 +5,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.polyomino.structures;
+package org.eclipse.elk.alg.common.polyomino.structures;
 
-import org.eclipse.elk.alg.common.compaction.polyomino.util.UniqueTriple;
+import org.eclipse.elk.alg.common.utils.UniqueTriple;
 import org.eclipse.elk.core.util.Quadruple;
 
 /**

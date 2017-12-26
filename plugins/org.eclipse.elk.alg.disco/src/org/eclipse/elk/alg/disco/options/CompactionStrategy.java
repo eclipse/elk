@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.disco.options;
 
-import org.eclipse.elk.alg.common.compaction.polyomino.PolyominoCompactor;
+import org.eclipse.elk.alg.common.polyomino.PolyominoCompactor;
 
 /**
  * <p>

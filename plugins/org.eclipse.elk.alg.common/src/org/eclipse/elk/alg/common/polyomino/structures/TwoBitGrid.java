@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.polyomino.structures;
+package org.eclipse.elk.alg.common.polyomino.structures;
 
 /**
  * Basic data structure for representing a discrete ℕ x ℕ grid, albeit bounded by a given width and height. The data

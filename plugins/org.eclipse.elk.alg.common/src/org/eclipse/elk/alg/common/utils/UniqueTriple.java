@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.polyomino.util;
+package org.eclipse.elk.alg.common.utils;
 
 /**
  * Data structure for storing three (different) values. Each triple is unique, two different instantiations will be

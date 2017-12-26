@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.common.compaction.recthull;
+package org.eclipse.elk.alg.common;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,7 +17,6 @@ import java.util.ListIterator;
 
 import org.eclipse.elk.alg.common.compaction.Scanline;
 import org.eclipse.elk.alg.common.compaction.Scanline.EventHandler;
-import org.eclipse.elk.alg.common.compaction.recthull.Point.Quadrant;
 import org.eclipse.elk.core.math.ElkRectangle;
 
 import com.google.common.collect.Lists;
