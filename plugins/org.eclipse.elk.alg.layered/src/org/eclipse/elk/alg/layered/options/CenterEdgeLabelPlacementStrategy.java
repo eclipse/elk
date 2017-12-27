@@ -44,7 +44,10 @@ public enum CenterEdgeLabelPlacementStrategy {
      * @return {@code true} iff that is the case.
      */
     public boolean usesLabelSizeInformation() {
-        return this == WIDEST_LAYER || this == CENTER_LAYER;
+        return this == WIDEST_LAYER
+                || this == CENTER_LAYER
+                || this == SPACE_EFFICIENT_LAYER
+                || this == SPACE_OPTIMAL_LAYER;
     }
     
 }

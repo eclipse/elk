@@ -33,3 +33,5 @@ Export-Package: org.eclipse.elk.alg.layered,
  org.eclipse.elk.alg.layered.p4nodes.bk;x-internal:=true,
  org.eclipse.elk.alg.layered.p5edges;x-internal:=true,
  org.eclipse.elk.alg.layered.p5edges.splines;x-internal:=true
+Bundle-ClassPath: lib/cplex.jar,
+ .

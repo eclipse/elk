@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -38,6 +37,13 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 import com.google.common.collect.Lists;
+
+import ilog.concert.IloException;
+import ilog.concert.IloIntVar;
+import ilog.concert.IloLinearIntExpr;
+import ilog.concert.IloNumExpr;
+import ilog.cplex.IloCplex;
+import ilog.cplex.IloCplex.Status;
 
 
 /**
@@ -534,45 +540,105 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             return;
         }
         
-        // Try every permutation
-        int[] layerAssignment = new int[nonTrivialLabels.size()];
-        int[] bestAssignment = new int[nonTrivialLabels.size()];
+        int labels = nonTrivialLabels.size();
+        int layers = layerWidths.length;
         
-        tryEveryPermutation(nonTrivialLabels, layerAssignment, 0, bestAssignment, -1);
-        
-        for (int i = 0; i < bestAssignment.length; i++) {
-            assignLayer(nonTrivialLabels.get(i), bestAssignment[i]);
+        // Turn the assignment into a linear program to be solved by CPLEX
+        try {
+            IloCplex cplex = new IloCplex();
+            
+            cplex.setOut(null);
+            cplex.setWarning(null);
+            
+            // The assignment array that will assign each dummy to a layer after the problem is solved
+            IloIntVar[][] assignment = new IloIntVar[labels][];
+            for (int d = 0; d < assignment.length; d++) {
+                assignment[d] = cplex.boolVarArray(layers, varNames2D("Assignment", d, layers));
+                
+                // Add constraints to ensure that each dummy is assigned to exactly one layer
+                IloLinearIntExpr sum = cplex.linearIntExpr();
+                for (int l = 0; l < layers; l++) {
+                    sum.addTerm(1, assignment[d][l]);
+                }
+                cplex.addEq(sum, 1);
+            }
+            
+            // The assignability array will, for each dummy, hold the information whether or not the dummy can be
+            // assigned to the different layers
+            IloIntVar[][] assignability = new IloIntVar[labels][];
+            for (int d = 0; d < assignability.length; d++) {
+                assignability[d] = cplex.boolVarArray(layers, varNames2D("Assignability", d, layers));
+                LabelDummyInfo info = nonTrivialLabels.get(d);
+                
+                for (int l = 0; l < layers; l++) {
+                    // Add constraint to initialize the array
+                    cplex.addEq(assignability[d][l], l >= info.leftmostLayerId && l <= info.rightmostLayerId ? 1 : 0);
+                    
+                    // Add constraint to ensure that dummies are only ever assigned to valid layers
+                    cplex.addLe(assignment[d][l], assignability[d][l]);
+                }
+            }
+            
+            // Calculate the layer widths
+            IloNumExpr[] computedLayerWidths = new IloNumExpr[layers];
+            for (int l = 0; l < layers; l++) {
+                IloNumExpr[] dummyWidths = new IloNumExpr[labels + 1];
+                
+                // Add the contributions of the different dummies (this could probably be optimized by adding only
+                // those labels that may be assigned to the current layer)
+                for (int d = 0; d < labels; d++) {
+                    dummyWidths[d] = cplex.prod(
+                            assignment[d][l],
+                            cplex.linearNumExpr(nonTrivialLabels.get(d).labelDummy.getSize().x));
+                }
+                
+                // The layer itself has a width as well
+                dummyWidths[dummyWidths.length - 1] = cplex.linearNumExpr(layerWidths[l]);
+                
+                computedLayerWidths[l] = cplex.max(dummyWidths);
+            }
+            
+            // Minimize total width
+            cplex.addMinimize(cplex.sum(computedLayerWidths));
+            
+            // Solve the model
+            if (cplex.solve()) {
+               if (cplex.getStatus() != Status.Optimal) {
+                   throw new RuntimeException("Did not find an OPTIMAL solution!!!");
+               }
+               
+               // Go throught the dummies and find out which layer they were assigned to
+               for (int d = 0; d < labels; d++) {
+                   LabelDummyInfo info = nonTrivialLabels.get(d);
+                   double[] ass = cplex.getValues(assignment[d]);
+                   
+                   for (int l = info.leftmostLayerId; l <= info.rightmostLayerId; l++) {
+                       if (ass[l] == 1) {
+                           assignLayer(info, l);
+                           break;
+                       }
+                   }
+               }
+            } else {
+                throw new RuntimeException("Did not find a solution!!!1111einself");
+            }
+            cplex.end();
+            
+        } catch (IloException e) {
+            e.printStackTrace();
         }
+        
+        return;
     }
     
-    private void tryEveryPermutation(final List<LabelDummyInfo> labelDummyInfos, final int[] layerAssignment,
-            final int currIndex, final int[] bestAssignment, final double bestWidth) {
-        
-        if (currIndex == bestAssignment.length) {
-            // Evaluate the current assignment
-            double[] newLayerWidths = Arrays.copyOf(layerWidths, layerWidths.length);
-            
-            for (int i = 0; i < layerAssignment.length; i++) {
-                newLayerWidths[layerAssignment[i]] = Math.max(
-                        newLayerWidths[layerAssignment[i]],
-                        labelDummyInfos.get(i).labelDummy.getSize().x);
-            }
-            
-            double width = Arrays.stream(newLayerWidths).sum();
-            if (bestWidth == -1 || width < bestWidth) {
-                System.arraycopy(layerAssignment, 0, bestAssignment, 0, layerAssignment.length);
-            }
-            
-        } else {
-            // Try all assignments for the current label dummy
-            LabelDummyInfo currDummy = labelDummyInfos.get(currIndex);
-            for (int layer = currDummy.leftmostLayerId; layer <= currDummy.rightmostLayerId; layer++) {
-                layerAssignment[currIndex] = layer;
-                tryEveryPermutation(labelDummyInfos, layerAssignment, currIndex + 1, bestAssignment, bestWidth);
-            }
+    private String[] varNames2D(final String base, final int firstDim, final int secondDimCount) {
+        String[] varNames = new String[secondDimCount];
+        for (int secondDim = 0; secondDim < secondDimCount; secondDim++) {
+            varNames[secondDim] = base + "(" + firstDim + ")(" + secondDim + ")";
         }
+        return varNames;
     }
-    
+
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Swapping Utilities
