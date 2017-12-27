@@ -913,6 +913,8 @@ public final class ElkUtil {
      * Returns a path where debug files can be stored. All debug folders end up in an ELK-specific folder placed
      * inside the user's home folder. The returned path can either be that ELK-specific folder itself or a
      * subfolder.
+     * <p>
+     * If the returned path does not exist, it is not automatically created.
      *
      * @param subfolder optional subfolder name. Can be {@code null} or empty, in which case the ELK-specific
      *                  subfolder of the user's home folder is returned.

@@ -1,0 +1,36 @@
+algorithm: force
+spacing.nodeNode:100
+model:FRUCHTERMAN_REINGOLD
+
+edge node1 -> node2
+edge node2 -> node4
+edge node2 -> node7
+edge node4 -> node6
+edge node6 -> node10
+edge node6 -> node12
+edge node7-> node10
+edge node7-> node11
+edge node10-> node12
+
+
+edge node3 -> node4
+edge node3 -> node5
+edge node3 -> node6
+edge node5 -> node8
+edge node5 -> node9
+edge node9 -> node11
+edge node9 -> node12
+
+node node1
+node node2
+node node3
+node node4
+node node5
+
+node node6
+node node7
+node node8
+node node9
+node node10
+node node11
+node node12

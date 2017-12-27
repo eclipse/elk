@@ -1,0 +1,138 @@
+/*******************************************************************************
+ * Copyright (c) 2017 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Kiel University - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.alg.spore
+
+import org.eclipse.elk.alg.spore.OverlapRemovalLayoutProvider
+import org.eclipse.elk.alg.spore.ShrinkTreeLayoutProvider
+import org.eclipse.elk.alg.spore.options.CompactionStrategy
+import org.eclipse.elk.alg.spore.options.RootSelection
+import org.eclipse.elk.alg.spore.options.SpanningTreeCostFunction
+import org.eclipse.elk.alg.spore.options.StructureExtractionStrategy
+import org.eclipse.elk.alg.spore.options.TreeConstructionStrategy
+import org.eclipse.elk.core.math.ElkPadding
+
+bundle {
+    label "Compaction by Shrinking a Tree"
+    metadataClass SporeMetaDataProvider
+    idPrefix org.eclipse.elk
+}
+
+algorithm growtree(OverlapRemovalLayoutProvider) {
+    label "Overlap Removal"
+    metadataClass options.OverlapRemovalOptions
+    description "A node overlap removal algorithm proposed by Nachmanson et al. in \"Node overlap removal 
+                by growing a tree\"."
+    preview images/overlap-removal.png
+    supports underlyingLayoutAlgorithm
+    supports org.eclipse.elk.padding
+    supports org.eclipse.elk.spacing.nodeNode
+    supports structure.structureExtractionStrategy
+    supports overlapRemoval.maxIterations
+    supports overlapRemoval.runScanline
+    supports org.eclipse.elk.debugMode = false
+}
+
+algorithm shrinktree(ShrinkTreeLayoutProvider) {
+    label "ShrinkTree Compaction Algorithm"
+    metadataClass options.ShrinkTreeOptions
+    description "ShrinkTree is a compaction algorithm that maintains the topology of a layout. 
+                The relocation of diagram elements is based on contracting a spanning tree."
+    preview images/compaction-example.png
+    documentation "@spore.md"
+    supports underlyingLayoutAlgorithm
+    supports processingOrder.treeConstruction
+    supports processingOrder.spanningTreeCostFunction
+    supports processingOrder.preferredRoot
+    supports processingOrder.rootSelection
+    supports org.eclipse.elk.padding = new ElkPadding(0)
+    supports org.eclipse.elk.spacing.nodeNode = 8
+    supports structure.structureExtractionStrategy
+    supports compaction.compactionStrategy
+    supports compaction.orthogonal
+    supports org.eclipse.elk.debugMode = false
+}
+
+// options --------------
+option underlyingLayoutAlgorithm: String {
+        label "Underlying Layout Algorithm"
+        description
+            "A layout algorithm that is applied to the graph before it is 
+             compacted. If this is null, nothing is applied before compaction."
+        targets parents
+        default = "fixed"
+    }
+group structure {
+     advanced option structureExtractionStrategy: StructureExtractionStrategy {
+        label "Structure Extraction Strategy"
+        description "This option defines what kind of triangulation or other partitioning of the plane 
+                    is applied to the vertices."
+        targets parents
+        default = StructureExtractionStrategy.DELAUNAY_TRIANGULATION
+    }
+}
+
+group processingOrder {
+    advanced option treeConstruction: TreeConstructionStrategy {
+        label "Tree Construction Strategy"
+        description "Whether a minimum spanning tree or a maximum spanning tree should be constructed."
+        targets parents
+        default = TreeConstructionStrategy.MINIMUM_SPANNING_TREE
+    }
+    
+    option spanningTreeCostFunction: SpanningTreeCostFunction {
+        label "Cost Function for Spanning Tree"
+        description "The cost function is used in the creation of the spanning tree."
+        targets parents
+        default = SpanningTreeCostFunction.CIRCLE_UNDERLAP
+    }
+    advanced option preferredRoot: String {
+        label "Root node for spanning tree construction"
+        description "The identifier of the node that is preferred as the root of the spanning tree. 
+                     If this is null, the first node is chosen."
+        targets parents
+        default = null
+        requires rootSelection == RootSelection.FIXED
+    }
+    advanced option rootSelection: RootSelection {
+        label "Root selection for spanning tree"
+        description "This sets the method used to select a root node for the construction of a spanning tree"
+        targets parents
+        default = RootSelection.CENTER_NODE
+    }
+}
+
+group compaction {
+    advanced option compactionStrategy: CompactionStrategy {
+        label "Compaction Strategy"
+        description "This option defines how the compaction is applied."
+        targets parents
+        default = CompactionStrategy.DEPTH_FIRST
+    }
+    advanced option orthogonal: boolean {
+        label "Orthogonal Compaction"
+        description "Restricts the translation of nodes to orthogonal directions in the compaction phase."
+        targets parents
+        default = false
+    }
+}
+
+group overlapRemoval {
+    option maxIterations: int {
+        label "Upper limit for iterations of overlap removal"
+        targets parents
+        default = 64
+    }
+    advanced option runScanline: boolean {
+        label "Whether to run a supplementary scanline overlap check."
+        targets parents
+        default = true
+    }
+}

@@ -14,5 +14,6 @@ Export-Package: org.eclipse.elk.alg.common,
  org.eclipse.elk.alg.common.compaction,
  org.eclipse.elk.alg.common.polyomino,
  org.eclipse.elk.alg.common.polyomino.structures,
- org.eclipse.elk.alg.common.utils
+ org.eclipse.elk.alg.common.utils,
+ org.eclipse.elk.alg.common.spore
 
