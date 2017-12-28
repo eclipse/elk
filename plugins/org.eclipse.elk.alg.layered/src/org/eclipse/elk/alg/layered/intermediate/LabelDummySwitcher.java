@@ -389,11 +389,11 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     // Space Efficient
     
     /* The space-efficient assignment strategy is a heuristic. We first perform all trivial assignments: labels
-     * that only have one valid layer available to them, or that can be assigned to a layer larger than he label.
-     * We are then left with labels that are too big for their layers. We define a layer's potential width to be
-     * the maximum of its current width and the width of all unassigned labels that can be assigned to the layer.
-     * We iterate over our labels from biggest to smallest and assign each to the layer with the largest potential
-     * width.
+     * that only have one valid layer available to them, or that can be assigned to a layer larger than the label.
+     * We are then left with labels that are too big for their layers. Given a current label, we define a layer's
+     * potential width to be the maximum of its current width and the width of all unassigned labels that can be
+     * assigned to the layer, except for the current label. We iterate over our labels from biggest to smallest and
+     * assign each to the layer with the currently largest potential width.
      */
     
     /**
