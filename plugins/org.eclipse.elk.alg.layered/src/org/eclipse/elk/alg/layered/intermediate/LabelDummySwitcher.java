@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -201,9 +199,6 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         // Check if the strategy has a special processing method
         if (labelDummyInfos.get(0).placementStrategy == CenterEdgeLabelPlacementStrategy.SPACE_EFFICIENT_LAYER) {
             computeSpaceEfficientAssignment(labelDummyInfos);
-            
-        } else if (labelDummyInfos.get(0).placementStrategy == CenterEdgeLabelPlacementStrategy.SPACE_OPTIMAL_LAYER) {
-            computeOptimalAssignment(labelDummyInfos);
             
         } else {
             // Execute the strategy for each label dummy
@@ -520,57 +515,6 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         }
         
         return widestLayerIndex;
-    }
-
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Space-Efficient (Optimum)
-    
-    private void computeOptimalAssignment(final List<LabelDummyInfo> labelDummyInfos) {
-        // We start by assigning all label dummies that only have a single layer to choose from or that can be
-        // assigned to a layer large enough for them and removing them from our list
-        List<LabelDummyInfo> nonTrivialLabels = performTrivialAssignments(labelDummyInfos);
-        if (nonTrivialLabels.isEmpty()) {
-            return;
-        }
-        
-        // Try every permutation
-        int[] layerAssignment = new int[nonTrivialLabels.size()];
-        int[] bestAssignment = new int[nonTrivialLabels.size()];
-        
-        tryEveryPermutation(nonTrivialLabels, layerAssignment, 0, bestAssignment, -1);
-        
-        for (int i = 0; i < bestAssignment.length; i++) {
-            assignLayer(nonTrivialLabels.get(i), bestAssignment[i]);
-        }
-    }
-    
-    private void tryEveryPermutation(final List<LabelDummyInfo> labelDummyInfos, final int[] layerAssignment,
-            final int currIndex, final int[] bestAssignment, final double bestWidth) {
-        
-        if (currIndex == bestAssignment.length) {
-            // Evaluate the current assignment
-            double[] newLayerWidths = Arrays.copyOf(layerWidths, layerWidths.length);
-            
-            for (int i = 0; i < layerAssignment.length; i++) {
-                newLayerWidths[layerAssignment[i]] = Math.max(
-                        newLayerWidths[layerAssignment[i]],
-                        labelDummyInfos.get(i).labelDummy.getSize().x);
-            }
-            
-            double width = Arrays.stream(newLayerWidths).sum();
-            if (bestWidth == -1 || width < bestWidth) {
-                System.arraycopy(layerAssignment, 0, bestAssignment, 0, layerAssignment.length);
-            }
-            
-        } else {
-            // Try all assignments for the current label dummy
-            LabelDummyInfo currDummy = labelDummyInfos.get(currIndex);
-            for (int layer = currDummy.leftmostLayerId; layer <= currDummy.rightmostLayerId; layer++) {
-                layerAssignment[currIndex] = layer;
-                tryEveryPermutation(labelDummyInfos, layerAssignment, currIndex + 1, bestAssignment, bestWidth);
-            }
-        }
     }
     
     
