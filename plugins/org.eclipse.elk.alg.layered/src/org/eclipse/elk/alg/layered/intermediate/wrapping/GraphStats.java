@@ -17,8 +17,8 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.options.Direction;
 
@@ -41,7 +41,8 @@ public class GraphStats {
     // computed on demand 
     private Double maxWidth;
     private Double maxHeight;
-
+    private Double sumWidth;
+    
     private double[] widths;
     private double[] heights;
     
@@ -73,9 +74,33 @@ public class GraphStats {
     }
     
     /* ------------------------------------------------------------------------------------------- */
+    /* Approximations
+    /* ------------------------------------------------------------------------------------------- */
+   
+    /** @return the max width of any node of the layer. */
+    public double getApproximateLayerWidth(final Layer l) {
+        return determineLayerWidth(l);
+    }
+    
+    /** @return the sum of each layer's width. */
+    public double getApproximateLayeringWidth() {
+        return getSumWidth();
+    }
+    
+    /** @return the sum of the layer's node heights. */
+    public double getApproximateLayerHeight(final Layer l) {
+        return determineLayerHeight(l);
+    }
+    
+    /** @return the max height of any layer. */
+    public double getApproximateLayeringHeight() {
+        return getMaxHeight();
+    }
+    
+    /* ------------------------------------------------------------------------------------------- */
     /* Widths
     /* ------------------------------------------------------------------------------------------- */
-    
+        
     /**
      * @return the maxWidth
      */
@@ -84,6 +109,13 @@ public class GraphStats {
             maxWidth = determineWidth(Math::max);
         }
         return maxWidth;
+    }
+    
+    public double getSumWidth() {
+        if (sumWidth == null) {
+            sumWidth = determineWidth((a, b) -> a + b);
+        }
+        return sumWidth;
     }
     
     /**
@@ -114,6 +146,9 @@ public class GraphStats {
             .reduce(fun).get();
     }
     
+    /**
+     * @return max of any node width in the layer plus spacing
+     */
     private double determineLayerWidth(final Layer l) {
         double maxW = 0;
         for (LNode n : l.getNodes()) {
@@ -246,4 +281,5 @@ public class GraphStats {
         }
         return cutAllowed;
     }
+    
 }
