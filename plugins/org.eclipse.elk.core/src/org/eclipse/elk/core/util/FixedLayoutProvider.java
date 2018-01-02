@@ -112,16 +112,17 @@ public class FixedLayoutProvider extends AbstractLayoutProvider {
                 }
             }
             
-            // set fixed routing for the connected edges, or leave them as they are
+            // set fixed routing for the node's outgoing edges (both simple and hierarchical), or leave them as they are
             for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
                 KVector maxv = processEdge(edge, edgeRouting);
                 maxx = Math.max(maxx, maxv.x);
                 maxy = Math.max(maxy, maxv.y);
             }
             
+            // additionally handle incoming hierarchical edges (both short and long) 
+            //  note that this potentially results in hierarchical edges being handled twice
             for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
-                // MIGRATE How about hyperedges?
-                if (ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)) != layoutNode) {
+                if (ElkGraphUtil.getSourceNode(edge).getParent() != layoutNode) {
                     KVector maxv = processEdge(edge, edgeRouting);
                     maxx = Math.max(maxx, maxv.x);
                     maxy = Math.max(maxy, maxv.y);
