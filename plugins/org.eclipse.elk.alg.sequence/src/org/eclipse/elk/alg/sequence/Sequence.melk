@@ -1,0 +1,253 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     Kiel University - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.elk.alg.sequence
+
+import org.eclipse.elk.alg.sequence.SequenceDiagramLayoutProvider
+import java.util.List
+import com.google.common.collect.Lists
+import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.alg.sequence.p4sorting.LifelineSortingStrategy
+
+/**
+ * Declarations for the Papyrus Sequence Diagram layout algorithm.
+ */
+bundle {
+    metadataClass properties.SequenceMetaDataProvider
+    idPrefix de.cau.cs.kieler.papyrus.sequence
+}
+
+// We may choose to replace this category by an official ELK "Special Purpose" category or something.
+category sequenceDiagrams {
+    label "UML Sequence Diagrams"
+    description
+        "Algorithms to lay out UML sequence diagrams with."
+}
+
+algorithm sequence(SequenceDiagramLayoutProvider) {
+    label "Sequence Diagram Layouter"
+    description
+        "A layout algorithm especially targeted at UML sequence diagrams."
+    metadataClass properties.SequenceDiagramOptions
+    category sequenceDiagrams
+    supports org.eclipse.elk.spacing.border = 12
+    supports elementId
+    supports nodeType
+    supports messageType
+    supports areas
+    supports areaIds
+    supports upperEmptyAreaId
+    supports parentAreaId
+    supports executions
+    supports executionType
+    supports sourceExecutionIds
+    supports targetExecutionIds
+    supports attachedElementType
+    supports attachedObjects
+    supports attachedObjectId
+    supports destructionNode
+    supports messageSpacing
+    supports lifelineSpacing
+    supports lifelineYPos
+    supports lifelineHeaderHeight
+    supports areaHeaderHeight
+    supports timeObservationWidth
+    supports containmentOffset
+    supports labelAlignment
+    supports lifelineSortingStrategy
+    supports groupAreas
+    supports coordinateSystem
+}
+
+programmatic option elementId : int {
+    label "Element ID"
+    description "An ID that can be given to diagram elements and referenced by other elements. The ID must be unique
+                in the diagram for it to be of any use and should be {@code >= 0}. Only used in KGraph mode."
+    targets nodes
+    default = 0
+}
+
+programmatic option nodeType : NodeType {
+    label "Node Type"
+    description "The kind of element a node represents."
+    targets nodes
+    default = NodeType.LIFELINE
+}
+
+programmatic option messageType : MessageType {
+    label "Message Type"
+    description "The kind of message an edge represents."
+    targets edges
+    default = MessageType.ASYNCHRONOUS
+}
+
+programmatic option areas : List<SequenceArea> {
+    label "Areas"
+    description "A list of area-like constructs in the diagram. Only used in Papyrus mode."
+    targets parents
+}
+
+programmatic option areaIds : List<Integer> {
+    label "Area IDs"
+    description "A list of IDs of element IDs of any areas (such as fragments) a message or lifeline belongs to, if
+                any. On lifelines, this only has to be set for empty areas. Only used in KGraph mode."
+    targets nodes, edges
+    default = Lists.newArrayList()
+}
+
+programmatic option upperEmptyAreaId : int {
+    label "Upper Empty Area ID"
+    description "Element IDs of an empty area (such as fragments) that should be placed directly above a message,
+                if any. Only used in KGraph mode."
+    targets edges
+    default = 0
+}
+
+programmatic option parentAreaId : int {
+    label "Parent Area ID"
+    description "Element ID of an area's parent area, if any. Only used in KGraph mode."
+    targets nodes
+    default = 0
+}
+
+programmatic option executions : List<SequenceExecution> {
+    label "Execution Specifications"
+    description "The list of execution specifications of a lifeline. Only used in Papyrus mode."
+    targets parents
+}
+
+programmatic option executionType : SequenceExecutionType {
+    label "Execution Type"
+    description "The type of execution a node represents. Only used in KGraph mode."
+    targets nodes
+    default = SequenceExecutionType.EXECUTION
+}
+
+programmatic option sourceExecutionIds : List<Integer> {
+    label "Source Execution IDs"
+    description "Element IDs of the executions a message starts at, if any. This is a list because a message can be
+                part of several nested executions. The most deeply nested execution will be the one the message will
+                actually be visually attached to. Only used in KGraph mode."
+    targets edges
+    default = Lists.newArrayList
+}
+
+programmatic option targetExecutionIds : List<Integer> {
+    label "Target Execution IDs"
+    description "Element IDs of the executions a message ends at, if any. This is a list because a message can be
+                part of several nested executions. The most deeply nested execution will be the one the message will
+                actually be visually attached to. Only used in KGraph mode."
+    targets edges
+    default = Lists.newArrayList
+}
+
+programmatic option attachedElementType : String {
+    label "Attached Element Type"
+    description "Property of a comment that indicates to what kind of element it is attached."
+    targets nodes
+}
+
+programmatic option attachedObjects : List<Object> {
+    label "Attached Objects"
+    description "The objects a comment is attached to. In Papyrus mode, this is a list of concrete diagram elements.
+                In KGraph mode, this is a list of IDs of diagram elements."
+    targets nodes
+}
+
+programmatic option attachedObjectId : int {
+    label "Attached Object ID"
+    description "Element ID of the object a comment is attached to, if any. Only used in KGraph mode."
+    targets nodes
+}
+
+programmatic option destructionNode : ElkNode {
+    label "Desctruction Node"
+    description "The node that represents the destruction event of a lifeline, if any. Only used in Papyrus mode. In
+                KGraph mode, the algorithm automatically finds the destruction event node, if there is one."
+    targets nodes
+}
+
+option messageSpacing : float {
+    label "Message Spacing"
+    description "The vertical spacing between two adjacent messages."
+    targets parents
+    default = 50
+}
+
+option lifelineSpacing : float {
+    label "Lifeline Spacing"
+    description "The horizontal spacing between two adjacent lifelines."
+    targets parents
+    default = 50
+}
+
+programmatic option lifelineYPos : float {
+    label "Vertical Lifeline Position"
+    description "The vertical position of lifelines, if they do start at the top."
+    targets parents
+    default = 10
+}
+
+programmatic option lifelineHeaderHeight : float {
+    label "Lifeline Header Height"
+    description "The height of the lifelien header."
+    targets parents
+    default = 30
+}
+
+programmatic option areaHeaderHeight : float {
+    label "Area Header Height"
+    description "The height of combined fragment headers."
+    targets parents
+    default = 25
+}
+
+programmatic option timeObservationWidth : float {
+    label "Time Observation Width"
+    description "The width of time observations."
+    targets parents
+    default = 20
+}
+
+programmatic option containmentOffset : float {
+    label "Containment Offset"
+    description "The offset between two nested areas."
+    targets parents
+    default = 5
+}
+
+option labelAlignment : LabelAlignment {
+    label "Label Alignment"
+    description "The strategy used to find the horizontal position for message labels."
+    targets parents
+    default = LabelAlignment.SOURCE_CENTER
+}
+
+option lifelineSortingStrategy : LifelineSortingStrategy {
+    label "Lifeline Sorting Strategy"
+    description "The strategy used to determine the horizontal order of lifelines."
+    targets parents
+    default = LifelineSortingStrategy.INTERACTIVE
+}
+
+option groupAreas : boolean {
+    label "Group Areas"
+    description "Whether messages in areas should be grouped together."
+    targets parents
+    default = false
+    requires lifelineSortingStrategy == LifelineSortingStrategy.SHORT_MESSAGES
+}
+
+programmatic option coordinateSystem : CoordinateSystem {
+    label "Coordinate System"
+    description "The coordinate system layout results are computed for."
+    targets parents
+    default = CoordinateSystem.KGRAPH
+}

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK Sequence Diagram Layout Algorithm
+Bundle-SymbolicName: org.eclipse.elk.alg.sequence
+Bundle-Version: 0.4.0.qualifier
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.elk.core,
+ org.eclipse.elk.graph,
+ org.eclipse.elk.alg.layered,
+ com.google.guava;bundle-version="15.0.0"
