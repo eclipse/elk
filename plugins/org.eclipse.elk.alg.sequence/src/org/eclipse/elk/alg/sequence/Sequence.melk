@@ -37,7 +37,7 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
         "A layout algorithm especially targeted at UML sequence diagrams."
     metadataClass properties.SequenceDiagramOptions
     category sequenceDiagrams
-    supports org.eclipse.elk.spacing.border = 12
+    supports org.eclipse.elk.padding
     supports elementId
     supports nodeType
     supports messageType

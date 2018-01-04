@@ -17,15 +17,15 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
 import org.eclipse.elk.alg.sequence.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.properties.InternalSequenceProperties;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -157,15 +157,14 @@ public final class SCycleBreaker implements ISequenceLayoutProcessor {
      */
     private void addUppermostNode(final LNode foundNode) {
         LNode uppermost = foundNode;
-        float uppermostPos = Float.MAX_VALUE;
+        double uppermostPos = Float.MAX_VALUE;
         int foundIndex = chain.indexOf(foundNode);
         for (int i = foundIndex; i < chain.size(); i++) {
             LNode node = chain.get(i);
             SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
-            KEdge edge = (KEdge) message.getProperty(InternalProperties.ORIGIN);
-            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+            ElkEdge edge = (ElkEdge) message.getProperty(InternalProperties.ORIGIN);
             // Compare only sourcePositions since messages can only lead downwards or horizontal
-            float sourceYPos = edgeLayout.getSourcePoint().getY();
+            double sourceYPos = ElkGraphUtil.firstEdgeSection(edge, false, false).getStartY();
             if (sourceYPos < uppermostPos) {
                 uppermostPos = sourceYPos;
                 uppermost = node;

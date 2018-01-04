@@ -18,7 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.properties.InternalProperties;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
 import org.eclipse.elk.alg.sequence.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
@@ -33,13 +33,12 @@ import org.eclipse.elk.alg.sequence.properties.SequenceArea;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
 import org.eclipse.elk.alg.sequence.properties.SequenceExecution;
 import org.eclipse.elk.alg.sequence.properties.SequenceExecutionType;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -70,10 +69,10 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // SGraph Creation
     
-    /** A map from KNodes in the layout graph to the lifelines created for them. */
-    private Map<KNode, SLifeline> lifelineMap = Maps.newHashMap();
-    /** A map from KEdges in the layout graph to messages created for them in the SGraph. */
-    private Map<KEdge, SMessage> messageMap = Maps.newHashMap();
+    /** A map from ElkNodes in the layout graph to the lifelines created for them. */
+    private Map<ElkNode, SLifeline> lifelineMap = Maps.newHashMap();
+    /** A map from ElkEdges in the layout graph to messages created for them in the SGraph. */
+    private Map<ElkEdge, SMessage> messageMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding executions. */
     private Map<Integer, SequenceExecution> executionIdMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding sequence area. */
@@ -81,14 +80,14 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
     
     
     /**
-     * Builds a PGraph out of a given KGraph by associating every KNode to a PLifeline and every
-     * KEdge to a PMessage.
+     * Builds a PGraph out of a given KGraph by associating every ElkNode to a PLifeline and every
+     * ElkEdge to a PMessage.
      * 
      * @param topNode
      *            the surrounding interaction node.
      * @return the built SGraph
      */
-    private SGraph importGraph(final KNode topNode) {
+    private SGraph importGraph(final ElkNode topNode) {
         // Create a graph object
         SGraph sgraph = new SGraph();
         
@@ -96,9 +95,8 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
         createSequenceAreas(topNode, sgraph);
 
         // Create lifelines
-        for (KNode node : topNode.getChildren()) {
-            NodeType nodeType = node.getData(KShapeLayout.class).getProperty(
-                    SequenceDiagramOptions.NODE_TYPE);
+        for (ElkNode node : topNode.getChildren()) {
+            NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
             
             if (nodeType == NodeType.LIFELINE) {
                 createLifeline(sgraph, node);
@@ -106,9 +104,8 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
         }
 
         // Walk through lifelines (create their messages) and comments
-        for (KNode node : topNode.getChildren()) {
-            NodeType nodeType = node.getData(KShapeLayout.class).getProperty(
-                    SequenceDiagramOptions.NODE_TYPE);
+        for (ElkNode node : topNode.getChildren()) {
+            NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
             
             if (nodeType == NodeType.LIFELINE) {
                 // Create SMessages for each of the outgoing edges
@@ -149,34 +146,31 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
      * @param sgraph
      *            the Sequence Graph
      */
-    private void createSequenceAreas(final KNode topNode, final SGraph sgraph) {
+    private void createSequenceAreas(final ElkNode topNode, final SGraph sgraph) {
         // Initialize the list of areas (fragments and such)
         List<SequenceArea> areas = Lists.newArrayList();
         
         // Find nodes that represent areas
-        for (KNode node : topNode.getChildren()) {
-            KLayoutData layoutData = node.getData(KLayoutData.class);
-            NodeType nodeType = layoutData.getProperty(SequenceDiagramOptions.NODE_TYPE);
+        for (ElkNode node : topNode.getChildren()) {
+            NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
             
             if (nodeType == NodeType.COMBINED_FRAGMENT || nodeType == NodeType.INTERACTION_USE) {
                 SequenceArea area = new SequenceArea(node);
                 areas.add(area);
-                areaIdMap.put(layoutData.getProperty(SequenceDiagramOptions.ELEMENT_ID), area);
+                areaIdMap.put(node.getProperty(SequenceDiagramOptions.ELEMENT_ID), area);
             }
         }
         
         // Now that all areas have been created, find nodes that represent nested areas
-        for (KNode node : topNode.getChildren()) {
-            KLayoutData layoutData = node.getData(KLayoutData.class);
-            NodeType nodeType = layoutData.getProperty(SequenceDiagramOptions.NODE_TYPE);
+        for (ElkNode node : topNode.getChildren()) {
+            NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
             
             if (nodeType == NodeType.COMBINED_FRAGMENT || nodeType == NodeType.INTERACTION_USE) {
-                int parentId = layoutData.getProperty(SequenceDiagramOptions.PARENT_AREA_ID);
+                int parentId = node.getProperty(SequenceDiagramOptions.PARENT_AREA_ID);
                 
                 if (parentId != -1) {
                     SequenceArea parentArea = areaIdMap.get(parentId);
-                    SequenceArea childArea = areaIdMap.get(
-                            layoutData.getProperty(SequenceDiagramOptions.ELEMENT_ID));
+                    SequenceArea childArea = areaIdMap.get(node.getProperty(SequenceDiagramOptions.ELEMENT_ID));
                     
                     if (parentArea != null && childArea != null) {
                         parentArea.getContainedAreas().add(childArea);
@@ -195,18 +189,16 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
     // Lifelines
 
     /**
-     * Creates the SLifeline for the given KNode, sets up its properties, and looks through its children
+     * Creates the SLifeline for the given ElkNode, sets up its properties, and looks through its children
      * to setup destructions and executions.
      * 
      * @param sgraph
      *            the Sequence Graph
      * @param klifeline
-     *            the KNode to create a lifeline for
+     *            the ElkNode to create a lifeline for
      */
-    private void createLifeline(final SGraph sgraph, final KNode klifeline) {
-        KShapeLayout klayout = klifeline.getData(KShapeLayout.class);
-        
-        assert klayout.getProperty(SequenceDiagramOptions.NODE_TYPE) == NodeType.LIFELINE;
+    private void createLifeline(final SGraph sgraph, final ElkNode klifeline) {
+        assert klifeline.getProperty(SequenceDiagramOptions.NODE_TYPE) == NodeType.LIFELINE;
         
         // Node is lifeline
         SLifeline slifeline = new SLifeline();
@@ -219,25 +211,23 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
         sgraph.addLifeline(slifeline);
 
         // Copy layout information to lifeline
-        slifeline.getPosition().x = klayout.getXpos();
-        slifeline.getPosition().y = klayout.getYpos();
-        slifeline.getSize().x = klayout.getWidth();
-        slifeline.getSize().y = klayout.getHeight();
+        slifeline.getPosition().x = klifeline.getX();
+        slifeline.getPosition().y = klifeline.getY();
+        slifeline.getSize().x = klifeline.getWidth();
+        slifeline.getSize().y = klifeline.getHeight();
         
         // Iterate through the lifeline's children to collect destructions and executions
         List<SequenceExecution> executions = Lists.newArrayList();
         
-        for (KNode kchild : klifeline.getChildren()) {
-            KShapeLayout kchildLayout = kchild.getData(KShapeLayout.class);
-            NodeType kchildNodeType = kchildLayout.getProperty(SequenceDiagramOptions.NODE_TYPE);
+        for (ElkNode kchild : klifeline.getChildren()) {
+            NodeType kchildNodeType = kchild.getProperty(SequenceDiagramOptions.NODE_TYPE);
             
             if (kchildNodeType.isExecutionType()) {
                 // Create a new sequence execution for this thing
                 SequenceExecution execution = new SequenceExecution(kchild);
                 execution.setType(SequenceExecutionType.fromNodeType(kchildNodeType));
                 executions.add(execution);
-                executionIdMap.put(
-                        kchildLayout.getProperty(SequenceDiagramOptions.ELEMENT_ID), execution);
+                executionIdMap.put(kchild.getProperty(SequenceDiagramOptions.ELEMENT_ID), execution);
             } else if (kchildNodeType == NodeType.DESTRUCTION_EVENT) {
                 slifeline.setProperty(SequenceDiagramOptions.DESTRUCTION_NODE, kchild);
             }
@@ -246,7 +236,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
         slifeline.setProperty(SequenceDiagramOptions.EXECUTIONS, executions);
         
         // Check if the lifeline has any empty areas
-        List<Integer> areaIds = klayout.getProperty(SequenceDiagramOptions.AREA_IDS);
+        List<Integer> areaIds = klifeline.getProperty(SequenceDiagramOptions.AREA_IDS);
         for (Integer areaId : areaIds) {
             SequenceArea area = areaIdMap.get(areaId);
             if (area != null) {
@@ -265,12 +255,12 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
      * @param sgraph
      *            the Sequence Graph
      * @param klifeline
-     *            the KNode to search its outgoing edges
+     *            the ElkNode to search its outgoing edges
      */
-    private void createOutgoingMessages(final SGraph sgraph, final KNode klifeline) {
-        for (KEdge kedge : klifeline.getOutgoingEdges()) {
-            SLifeline sourceLL = lifelineMap.get(kedge.getSource());
-            SLifeline targetLL = lifelineMap.get(kedge.getTarget());
+    private void createOutgoingMessages(final SGraph sgraph, final ElkNode klifeline) {
+        for (ElkEdge kedge : klifeline.getOutgoingEdges()) {
+            SLifeline sourceLL = lifelineMap.get(kedge.getSources().get(0));
+            SLifeline targetLL = lifelineMap.get(kedge.getTargets().get(0));
 
             // Lost-messages and messages to the surrounding interaction don't have a lifeline, so
             // create dummy lifeline
@@ -284,17 +274,16 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             // Create message object
             SMessage smessage = new SMessage(sourceLL, targetLL);
             smessage.setProperty(InternalProperties.ORIGIN, kedge);
-
-            KEdgeLayout kedgelayout = kedge.getData(KEdgeLayout.class);
-            smessage.setSourceYPos(kedgelayout.getSourcePoint().getY());
-            smessage.setTargetYPos(kedgelayout.getTargetPoint().getY());
+            
+            ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kedge, false, false);
+            smessage.setSourceYPos(edgeSection.getStartY());
+            smessage.setTargetYPos(edgeSection.getEndY());
 
             // Read size of the attached labels
             double maxLabelLength = 0;
-            for (KLabel klabel : kedge.getLabels()) {
-                KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                if (klabelLayout.getWidth() > maxLabelLength) {
-                    maxLabelLength = klabelLayout.getWidth();
+            for (ElkLabel klabel : kedge.getLabels()) {
+                if (klabel.getWidth() > maxLabelLength) {
+                    maxLabelLength = klabel.getWidth();
                 }
             }
             smessage.setLabelWidth(maxLabelLength);
@@ -307,8 +296,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             messageMap.put(kedge, smessage);
             
             // Check if the edge connects to executions
-            List<Integer> sourceExecutionIds =
-                    kedgelayout.getProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS);
+            List<Integer> sourceExecutionIds = kedge.getProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS);
             smessage.setProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS, sourceExecutionIds);
             for (Integer execId : sourceExecutionIds) {
                 SequenceExecution sourceExecution = executionIdMap.get(execId);
@@ -317,8 +305,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
                 }
             }
             
-            List<Integer> targetExecutionIds =
-                    kedgelayout.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS);
+            List<Integer> targetExecutionIds = kedge.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS);
             smessage.setProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS, sourceExecutionIds);
             for (Integer execId : targetExecutionIds) {
                 SequenceExecution targetExecution = executionIdMap.get(execId);
@@ -328,7 +315,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             }
 
             // Append the message type of the edge to the message
-            MessageType messageType = kedgelayout.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+            MessageType messageType = kedge.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
             if (messageType == MessageType.ASYNCHRONOUS
                     || messageType == MessageType.CREATE
                     || messageType == MessageType.DELETE
@@ -345,7 +332,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             }
 
             // Check if message is in any area
-            for (Integer areaId : kedgelayout.getProperty(SequenceDiagramOptions.AREA_IDS)) {
+            for (Integer areaId : kedge.getProperty(SequenceDiagramOptions.AREA_IDS)) {
                 SequenceArea area = areaIdMap.get(areaId);
                 if (area != null) {
                     area.getMessages().add(smessage);
@@ -356,8 +343,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             }
             
             // Check if this message has an empty area that is to be placed directly above it
-            int upperEmptyAreaId = kedgelayout.getProperty(
-                    SequenceDiagramOptions.UPPER_EMPTY_AREA_ID);
+            int upperEmptyAreaId = kedge.getProperty(SequenceDiagramOptions.UPPER_EMPTY_AREA_ID);
             SequenceArea upperArea = areaIdMap.get(upperEmptyAreaId);
             if (upperArea != null) {
                 upperArea.setNextMessage(smessage);
@@ -373,13 +359,11 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
      * @param sgraph
      *            the Sequence Graph
      * @param klifeline
-     *            the KNode to search its incoming edges.
+     *            the ElkNode to search its incoming edges.
      */
-    private void createIncomingMessages(final SGraph sgraph, final KNode klifeline) {
-        for (KEdge kedge : klifeline.getIncomingEdges()) {
-            KEdgeLayout kedgelayout = kedge.getData(KEdgeLayout.class);
-
-            SLifeline sourceLL = lifelineMap.get(kedge.getSource());
+    private void createIncomingMessages(final SGraph sgraph, final ElkNode klifeline) {
+        for (ElkEdge kedge : klifeline.getIncomingEdges()) {
+            SLifeline sourceLL = lifelineMap.get(kedge.getSources().get(0));
             
             // We are only interested in messages that don't come from a lifeline
             if (sourceLL != null) {
@@ -395,12 +379,14 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             sdummy.setGraph(sgraph);
             sourceLL = sdummy;
             
-            SLifeline targetLL = lifelineMap.get(kedge.getTarget());
+            SLifeline targetLL = lifelineMap.get(kedge.getTargets().get(0));
+            
+            ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kedge, false, false);
 
             // Create message object
             SMessage smessage = new SMessage(sourceLL, targetLL);
             smessage.setProperty(InternalProperties.ORIGIN, kedge);
-            smessage.setTargetYPos(kedgelayout.getTargetPoint().getY());
+            smessage.setTargetYPos(edgeSection.getEndY());
 
             // Add the message to the source and target lifeline's list of messages
             sourceLL.addMessage(smessage);
@@ -410,7 +396,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             messageMap.put(kedge, smessage);
 
             // Append the message type of the edge to the message
-            MessageType messageType = kedgelayout.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+            MessageType messageType = kedge.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
             if (messageType == MessageType.FOUND) {
                 smessage.setProperty(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.FOUND);
             } else {
@@ -428,8 +414,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             }
 
             // Check if the message connects to a target executions
-            List<Integer> targetExecutionIds =
-                    kedgelayout.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS);
+            List<Integer> targetExecutionIds = kedge.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS);
             smessage.setProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS, targetExecutionIds);
             for (Integer execId : targetExecutionIds) {
                 SequenceExecution targetExecution = executionIdMap.get(execId);
@@ -452,56 +437,51 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
      * @param node
      *            the node to create a comment object from
      */
-    private void createCommentLikeNode(final SGraph sgraph, final KNode node) {
-        KShapeLayout commentLayout = node.getData(KShapeLayout.class);
-
+    private void createCommentLikeNode(final SGraph sgraph, final ElkNode node) {
         // Get the node's type
-        NodeType nodeType = commentLayout.getProperty(SequenceDiagramOptions.NODE_TYPE);
+        NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
 
         // Create comment object
         SComment comment = new SComment();
         comment.setProperty(InternalProperties.ORIGIN, node);
         comment.setProperty(SequenceDiagramOptions.NODE_TYPE, nodeType);
         comment.setProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_TYPE,
-                commentLayout.getProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_TYPE));
+                node.getProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_TYPE));
         
         // Attach connected edge to comment
         if (!node.getOutgoingEdges().isEmpty()) {
-            comment.setProperty(InternalSequenceProperties.COMMENT_CONNECTION,
-                    node.getOutgoingEdges().get(0));
+            comment.setProperty(InternalSequenceProperties.COMMENT_CONNECTION, node.getOutgoingEdges().get(0));
         }
 
         // Copy all the entries of the list of attached elements to the comment object
-        List<Object> attachedTo = commentLayout.getProperty(
-                SequenceDiagramOptions.ATTACHED_OBJECTS);
+        List<Object> attachedTo = node.getProperty(SequenceDiagramOptions.ATTACHED_OBJECTS);
         if (attachedTo != null) {
             List<SGraphElement> attTo = comment.getAttachedTo();
             for (Object att : attachedTo) {
-                if (att instanceof KNode) {
+                if (att instanceof ElkNode) {
                     attTo.add(lifelineMap.get(att));
-                } else if (att instanceof KEdge) {
+                } else if (att instanceof ElkEdge) {
                     attTo.add(messageMap.get(att));
                 }
             }
         }
 
         // Copy layout information
-        comment.getPosition().x = commentLayout.getXpos();
-        comment.getPosition().y = commentLayout.getYpos();
-        comment.getSize().x = commentLayout.getWidth();
-        comment.getSize().y = commentLayout.getHeight();
+        comment.getPosition().x = node.getX();
+        comment.getPosition().y = node.getY();
+        comment.getSize().x = node.getWidth();
+        comment.getSize().y = node.getHeight();
 
         // Handle time observations
         if (nodeType == NodeType.TIME_OBSERVATION) {
-            comment.getSize().x = 
-                    sgraph.getProperty(SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
+            comment.getSize().x = sgraph.getProperty(SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
 
             // Find lifeline that is next to the time observation
             SLifeline nextLifeline = null;
             double smallestDistance = Double.MAX_VALUE;
             for (SLifeline lifeline : sgraph.getLifelines()) {
                 double distance = Math.abs((lifeline.getPosition().x + lifeline.getSize().x / 2)
-                        - (commentLayout.getXpos() + commentLayout.getWidth() / 2));
+                        - (node.getX() + node.getWidth() / 2));
                 if (distance < smallestDistance) {
                     smallestDistance = distance;
                     nextLifeline = lifeline;
@@ -512,15 +492,13 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
             SMessage nextMessage = null;
             smallestDistance = Double.MAX_VALUE;
             for (SMessage message : nextLifeline.getMessages()) {
-                KEdge edge = (KEdge) message.getProperty(InternalProperties.ORIGIN);
-                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                ElkEdge edge = (ElkEdge) message.getProperty(InternalProperties.ORIGIN);
+                ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
                 double distance;
                 if (message.getSource() == nextLifeline) {
-                    distance = Math.abs((edgeLayout.getSourcePoint().getY())
-                            - (commentLayout.getYpos() + commentLayout.getHeight() / 2));
+                    distance = Math.abs((edgeSection.getStartY()) - (node.getY() + node.getHeight() / 2));
                 } else {
-                    distance = Math.abs((edgeLayout.getTargetPoint().getY())
-                            - (commentLayout.getYpos() + commentLayout.getHeight() / 2));
+                    distance = Math.abs((edgeSection.getEndY()) - (node.getY() + node.getHeight() / 2));
                 }
                 
                 if (distance < smallestDistance) {

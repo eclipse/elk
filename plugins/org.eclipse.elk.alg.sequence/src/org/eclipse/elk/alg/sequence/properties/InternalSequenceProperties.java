@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.sequence.properties;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
-import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -22,15 +22,15 @@ import org.eclipse.elk.graph.properties.Property;
 public final class InternalSequenceProperties {
 
     /** The lifeline to which an element of the SGraph belongs. */
-    public static final IProperty<SLifeline> BELONGS_TO_LIFELINE = new Property<SLifeline>(
+    public static final IProperty<SLifeline> BELONGS_TO_LIFELINE = new Property<>(
             "de.cau.cs.kieler.papyrus.sequence.belongsToLifeline");
 
     /** The node in the layered graph that corresponds to a message. */
-    public static final IProperty<LNode> LAYERED_NODE = new Property<LNode>(
+    public static final IProperty<LNode> LAYERED_NODE = new Property<>(
             "de.cau.cs.kieler.papyrus.sequence.layeredNode");
 
     /** The KEdge that connects the comment to another element of the diagram. */
-    public static final IProperty<KEdge> COMMENT_CONNECTION = new Property<KEdge>(
+    public static final IProperty<ElkEdge> COMMENT_CONNECTION = new Property<>(
             "de.cau.cs.kieler.papyrus.sequence.commentConnection");
 
 

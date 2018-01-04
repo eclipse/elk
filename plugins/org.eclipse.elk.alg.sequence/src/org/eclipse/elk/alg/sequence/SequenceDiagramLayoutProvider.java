@@ -13,7 +13,6 @@ package org.eclipse.elk.alg.sequence;
 import java.util.List;
 
 import org.eclipse.elk.alg.sequence.p0import.KGraphImporter;
-import org.eclipse.elk.alg.sequence.p0import.PapyrusImporter;
 import org.eclipse.elk.alg.sequence.p1allocation.SpaceAllocator;
 import org.eclipse.elk.alg.sequence.p2cycles.SCycleBreaker;
 import org.eclipse.elk.alg.sequence.p3layering.MessageLayerer;
@@ -21,9 +20,7 @@ import org.eclipse.elk.alg.sequence.p4sorting.InteractiveLifelineSorter;
 import org.eclipse.elk.alg.sequence.p4sorting.LayerBasedLifelineSorter;
 import org.eclipse.elk.alg.sequence.p4sorting.ShortMessageLifelineSorter;
 import org.eclipse.elk.alg.sequence.p5coordinates.KGraphCoordinateCalculator;
-import org.eclipse.elk.alg.sequence.p5coordinates.PapyrusCoordinateCalculator;
 import org.eclipse.elk.alg.sequence.p6export.KGraphExporter;
-import org.eclipse.elk.alg.sequence.p6export.PapyrusExporter;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -77,17 +74,7 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
     private List<ISequenceLayoutProcessor> assembleLayoutProcessors(final LayoutContext context) {
         List<ISequenceLayoutProcessor> processors = Lists.newArrayList();
 
-        // The import algorithm depends on the coordinate system that is to be used
-        switch (context.coordinateSystem) {
-        case PAPYRUS:
-            processors.add(new PapyrusImporter());
-            break;
-            
-        default:
-            processors.add(new KGraphImporter());
-            break;   
-        }
-        
+        processors.add(new KGraphImporter());
         processors.add(new SpaceAllocator());
         processors.add(new SCycleBreaker());
         processors.add(new MessageLayerer());
@@ -107,18 +94,8 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
             break;
         }
         
-        // The rest of the algorithm depends on the coordinate system that is to be used
-        switch (context.coordinateSystem) {
-        case PAPYRUS:
-            processors.add(new PapyrusCoordinateCalculator());
-            processors.add(new PapyrusExporter());
-            break;
-            
-        default:
-            processors.add(new KGraphCoordinateCalculator());
-            processors.add(new KGraphExporter());
-            break;   
-        }
+        processors.add(new KGraphCoordinateCalculator());
+        processors.add(new KGraphExporter());
         
         return processors;
     }

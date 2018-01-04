@@ -19,8 +19,7 @@ import org.eclipse.elk.alg.sequence.p4sorting.LifelineSortingStrategy;
 import org.eclipse.elk.alg.sequence.properties.CoordinateSystem;
 import org.eclipse.elk.alg.sequence.properties.LabelAlignment;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * A simple data holder class used to pass data about the layout process around to the different phases
@@ -34,7 +33,7 @@ public final class LayoutContext {
     // Layout Graphs
     
     /** The original KGraph the layout algorithm was called with. */
-    public KNode kgraph;
+    public ElkNode kgraph;
     /** The {@link SGraph} to be laid out. */
     public SGraph sgraph;
     /** The {@link LGraph} created from the SGraph. */
@@ -88,29 +87,28 @@ public final class LayoutContext {
      *            parent node of the graph that is to be laid out.
      * @return initialized context object.
      */
-    public static LayoutContext fromLayoutData(final KNode parentNode) {
+    public static LayoutContext fromLayoutData(final ElkNode parentNode) {
         LayoutContext context = new LayoutContext();
-        
-        KLayoutData layoutData = parentNode.getData(KLayoutData.class);
         
         context.kgraph = parentNode;
         
-        context.borderSpacing = layoutData.getProperty(SequenceDiagramOptions.SPACING_BORDER);
-        context.messageSpacing = layoutData.getProperty(SequenceDiagramOptions.MESSAGE_SPACING);
-        context.lifelineSpacing = layoutData.getProperty(SequenceDiagramOptions.LIFELINE_SPACING);
-        context.lifelineYPos = layoutData.getProperty(SequenceDiagramOptions.LIFELINE_Y_POS);
-        context.lifelineHeader = layoutData.getProperty(
+        // TODO The padding needs to be respected to al four sides
+        context.borderSpacing = parentNode.getProperty(SequenceDiagramOptions.PADDING).top;
+        context.messageSpacing = parentNode.getProperty(SequenceDiagramOptions.MESSAGE_SPACING);
+        context.lifelineSpacing = parentNode.getProperty(SequenceDiagramOptions.LIFELINE_SPACING);
+        context.lifelineYPos = parentNode.getProperty(SequenceDiagramOptions.LIFELINE_Y_POS);
+        context.lifelineHeader = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_HEADER_HEIGHT);
-        context.areaHeader = layoutData.getProperty(SequenceDiagramOptions.AREA_HEADER_HEIGHT);
-        context.timeObservationWidth = layoutData.getProperty(
+        context.areaHeader = parentNode.getProperty(SequenceDiagramOptions.AREA_HEADER_HEIGHT);
+        context.timeObservationWidth = parentNode.getProperty(
                 SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
-        context.containmentOffset = layoutData.getProperty(
+        context.containmentOffset = parentNode.getProperty(
                 SequenceDiagramOptions.CONTAINMENT_OFFSET);
-        context.labelAlignment = layoutData.getProperty(SequenceDiagramOptions.LABEL_ALIGNMENT);
-        context.sortingStrategy = layoutData.getProperty(
+        context.labelAlignment = parentNode.getProperty(SequenceDiagramOptions.LABEL_ALIGNMENT);
+        context.sortingStrategy = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY);
-        context.groupAreasWhenSorting = layoutData.getProperty(SequenceDiagramOptions.GROUP_AREAS);
-        context.coordinateSystem = layoutData.getProperty(SequenceDiagramOptions.COORDINATE_SYSTEM);
+        context.groupAreasWhenSorting = parentNode.getProperty(SequenceDiagramOptions.GROUP_AREAS);
+        context.coordinateSystem = parentNode.getProperty(SequenceDiagramOptions.COORDINATE_SYSTEM);
         
         return context;
     }
