@@ -23,8 +23,8 @@ import org.eclipse.elk.alg.sequence.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
-import org.eclipse.elk.alg.sequence.properties.MessageType;
-import org.eclipse.elk.alg.sequence.properties.SequenceArea;
+import org.eclipse.elk.alg.sequence.options.MessageType;
+import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

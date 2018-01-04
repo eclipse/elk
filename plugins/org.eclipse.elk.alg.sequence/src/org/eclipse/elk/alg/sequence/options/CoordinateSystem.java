@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.properties;
+package org.eclipse.elk.alg.sequence.options;
 
 /**
  * The available coordinate systems. The selected system influences how coordinates are computed.

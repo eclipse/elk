@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.sequence.p4sorting.LifelineSortingStrategy
  * Declarations for the Papyrus Sequence Diagram layout algorithm.
  */
 bundle {
-    metadataClass properties.SequenceMetaDataProvider
+    metadataClass options.SequenceMetaDataProvider
     idPrefix de.cau.cs.kieler.papyrus.sequence
 }
 

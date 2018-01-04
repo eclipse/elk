@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
 import org.eclipse.elk.alg.sequence.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
-import org.eclipse.elk.alg.sequence.properties.InternalSequenceProperties;
+import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.util.ElkGraphUtil;

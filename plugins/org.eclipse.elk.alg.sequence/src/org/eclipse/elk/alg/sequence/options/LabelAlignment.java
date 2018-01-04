@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.properties;
+package org.eclipse.elk.alg.sequence.options;
 
 /**
  * The different message label alignment strategies.

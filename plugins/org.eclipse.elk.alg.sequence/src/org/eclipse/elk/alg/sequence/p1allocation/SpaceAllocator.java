@@ -23,9 +23,9 @@ import org.eclipse.elk.alg.sequence.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraphElement;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
-import org.eclipse.elk.alg.sequence.properties.CoordinateSystem;
-import org.eclipse.elk.alg.sequence.properties.InternalSequenceProperties;
-import org.eclipse.elk.alg.sequence.properties.SequenceArea;
+import org.eclipse.elk.alg.sequence.options.CoordinateSystem;
+import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
+import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

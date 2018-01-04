@@ -15,9 +15,9 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
+import org.eclipse.elk.alg.sequence.options.CoordinateSystem;
+import org.eclipse.elk.alg.sequence.options.LabelAlignment;
 import org.eclipse.elk.alg.sequence.p4sorting.LifelineSortingStrategy;
-import org.eclipse.elk.alg.sequence.properties.CoordinateSystem;
-import org.eclipse.elk.alg.sequence.properties.LabelAlignment;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
 import org.eclipse.elk.graph.ElkNode;
 
