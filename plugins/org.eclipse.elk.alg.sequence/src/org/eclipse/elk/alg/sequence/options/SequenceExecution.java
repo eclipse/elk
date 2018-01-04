@@ -26,8 +26,6 @@ import com.google.common.collect.Lists;
  * TODO: Add a generic type to replace Object in the code?
  * 
  * @author grh
- * @kieler.design proposed grh
- * @kieler.rating proposed yellow grh
  */
 public final class SequenceExecution {
     

@@ -15,19 +15,21 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
 import org.eclipse.elk.alg.sequence.SequenceLayoutConstants;
+import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraphElement;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.alg.sequence.graph.transform.ElkGraphExporter;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.NodeType;
 import org.eclipse.elk.alg.sequence.options.SequenceArea;
-import org.eclipse.elk.alg.sequence.p6export.KGraphExporter;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -37,22 +39,26 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
  * Calculates coordinates for many objects in a sequence diagram. The coordinates are calculated such
- * that the {@link org.eclipse.elk.alg.sequence.p6export.KGraphExporter} knows how to interpret
+ * that the {@link org.eclipse.elk.alg.sequence.graph.transform.ElkGraphExporter} knows how to interpret
  * them.
  * 
  * <p>
  * The division between this coordinate calculator and the {@link PapyrusCoordinateCalculator} is
- * mighty unfortunate. At some point, the {@link KGraphExporter} should be changed to work with the
+ * mighty unfortunate. At some point, the {@link ElkGraphExporter} should be changed to work with the
  * results produced by this class.
  * </p>
  * 
  * @author cds
  */
-public class KGraphCoordinateCalculator implements ISequenceLayoutProcessor {
+public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, LayoutContext> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(
+            final LayoutContext graph) {
+        
+        return LayoutProcessorConfiguration.create();
+    }
+
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Calculate coordinates", 1);

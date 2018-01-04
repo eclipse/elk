@@ -17,8 +17,6 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
  * enables the elements to hold properties.
  * 
  * @author grh
- * @kieler.design 2012-11-20 cds, msp
- * @kieler.rating yellow 2012-12-11 cds, ima
  */
 public class SGraphElement extends MapPropertyHolder {
     private static final long serialVersionUID = -7980530866752118344L;

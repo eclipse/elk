@@ -24,8 +24,6 @@ import com.google.common.collect.Lists;
  * their x coordinate. This is used in the interactive lifeline sorter.
  * 
  * @author grh
- * @kieler.design 2012-11-20 cds, msp
- * @kieler.rating yellow 2012-12-11 cds, ima
  */
 public final class SLifeline extends SGraphElement implements Comparable<SLifeline> {
     private static final long serialVersionUID = 1309361361029991404L;

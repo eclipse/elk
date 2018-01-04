@@ -30,8 +30,6 @@ import com.google.common.collect.Sets;
  * </p>
  * 
  * @author grh
- * @kieler.design proposed grh
- * @kieler.rating proposed yellow grh
  */
 public final class SequenceArea {
     /** The layout graph node that represents this sequence area. */

@@ -18,14 +18,16 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
+import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.HashBiMap;
@@ -36,10 +38,8 @@ import com.google.common.collect.HashBiMap;
  * <em>A new heuristic algorithm for the Linear Arrangement problem</em>.
  * 
  * @author grh
- * @kieler.design proposed grh
- * @kieler.rating proposed yellow grh
  */
-public final class ShortMessageLifelineSorter implements ISequenceLayoutProcessor {
+public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePhases, LayoutContext> {
 
     /** Option that indicates, if the starting node is searched by layering attributes. */
     private boolean layerBased = true;
@@ -47,11 +47,15 @@ public final class ShortMessageLifelineSorter implements ISequenceLayoutProcesso
     private List<EDLSNode> placedNodes;
     /** The map of lifeline <-> node correspondences. */
     private HashBiMap<SLifeline, EDLSNode> correspondences;
-
     
-    /**
-     * {@inheritDoc}
-     */
+
+    @Override
+    public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(
+            final LayoutContext graph) {
+        
+        return LayoutProcessorConfiguration.create();
+    }
+    
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Equal distribution lifeline sorting", 1);

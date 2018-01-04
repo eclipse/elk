@@ -21,8 +21,6 @@ import com.google.common.collect.Lists;
  * diagrams into this internal representation which is more practicable than the original one.
  * 
  * @author grh
- * @kieler.design 2012-11-20 cds, msp
- * @kieler.rating yellow 2012-12-11 cds, ima
  */
 public final class SGraph extends SGraphElement {
     private static final long serialVersionUID = -7952451128297135991L;

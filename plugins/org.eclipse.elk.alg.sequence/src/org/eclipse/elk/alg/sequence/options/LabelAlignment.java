@@ -14,8 +14,6 @@ package org.eclipse.elk.alg.sequence.options;
  * The different message label alignment strategies.
  *  
  * @author grh
- * @kieler.design proposed grh
- * @kieler.rating proposed yellow grh
  */
 public enum LabelAlignment {
     /** Centers the label between the source lifeline and its next neighbour lifeline. */

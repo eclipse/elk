@@ -14,8 +14,6 @@ package org.eclipse.elk.alg.sequence.options;
  * The available coordinate systems. The selected system influences how coordinates are computed.
  * 
  * @author cds
- * @kieler.design proposed grh
- * @kieler.rating proposed yellow grh
  */
 public enum CoordinateSystem {
 

@@ -17,10 +17,12 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
+import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
@@ -30,10 +32,9 @@ import com.google.common.collect.Lists;
  * messages. The "source" lifeline is placed leftmost, the successor lifelines following.
  * 
  * @author grh
- * @kieler.design proposed grh
- * @kieler.rating proposed yellow grh
  */
-public final class LayerBasedLifelineSorter implements ISequenceLayoutProcessor {
+public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhases, LayoutContext> {
+
     /** The next position a lifeline will be placed in. */
     private int nextPosition;
     /** List of lifelines to be processed. */
@@ -42,9 +43,13 @@ public final class LayerBasedLifelineSorter implements ISequenceLayoutProcessor 
     private List<SLifeline> sortedLifelines;
 
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(
+            final LayoutContext graph) {
+        
+        return LayoutProcessorConfiguration.create();
+    }
+
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Layer based lifeline sorting", 1);

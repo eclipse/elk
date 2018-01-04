@@ -8,14 +8,13 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.p6export;
+package org.eclipse.elk.alg.sequence.graph.transform;
 
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
 import org.eclipse.elk.alg.sequence.SequenceLayoutConstants;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
@@ -28,7 +27,6 @@ import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -44,15 +42,9 @@ import com.google.common.collect.Multimap;
  * 
  * @author cds
  */
-public final class KGraphExporter implements ISequenceLayoutProcessor {
+public final class ElkGraphExporter {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Applying Layout Results", 1);
-        
+    public void applyLayout(final LayoutContext context) {
         // Set position for lifelines/nodes
         for (SLifeline lifeline : context.lifelineOrder) {
             // Dummy lifelines don't need any layout
@@ -85,7 +77,7 @@ public final class KGraphExporter implements ISequenceLayoutProcessor {
             // Set position and height for the lifeline.
             node.setY(lifeline.getPosition().y);
             node.setX(lifeline.getPosition().x);
-            node.setHeight((float) lifeline.getSize().y);
+            node.setHeight(lifeline.getSize().y);
         }
 
         // Place all comments
@@ -93,14 +85,12 @@ public final class KGraphExporter implements ISequenceLayoutProcessor {
 
         // Set size and position of surrounding interaction
         ElkUtil.resizeNode(context.kgraph,
-                (float) context.sgraph.getSize().x,
-                (float) context.sgraph.getSize().y,
+                context.sgraph.getSize().x,
+                context.sgraph.getSize().y,
                 false,
                 false);
         
         context.kgraph.setLocation(context.borderSpacing, context.borderSpacing);
-        
-        progressMonitor.done();
     }
     
     

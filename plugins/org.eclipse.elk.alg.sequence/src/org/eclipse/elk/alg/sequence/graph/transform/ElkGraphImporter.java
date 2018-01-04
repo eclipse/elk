@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.p0import;
+package org.eclipse.elk.alg.sequence.graph.transform;
 
 import java.util.List;
 import java.util.Map;
@@ -19,8 +19,7 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SGraphElement;
@@ -33,7 +32,6 @@ import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.options.SequenceExecution;
 import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
-import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkLabel;
@@ -47,22 +45,16 @@ import com.google.common.collect.Maps;
  * Turns the KGraph of a layout context into an SGraph and an LGraph.
  * 
  * @author grh
- * @kieler.design 2012-11-20 cds, msp
- * @kieler.rating proposed yellow grh
  */
-public final class KGraphImporter implements ISequenceLayoutProcessor {
+public final class ElkGraphImporter {
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Graph import", 1);
+    public LayoutContext importGraph(final ElkNode elkGraph) {
+        LayoutContext context = LayoutContext.fromLayoutData(elkGraph);
         
-        context.sgraph = importGraph(context.kgraph);
+        context.sgraph = importSGraph(context.kgraph);
         context.lgraph = createLayeredGraph(context.sgraph);
         
-        progressMonitor.done();
+        return context;
     }
     
     
@@ -87,7 +79,7 @@ public final class KGraphImporter implements ISequenceLayoutProcessor {
      *            the surrounding interaction node.
      * @return the built SGraph
      */
-    private SGraph importGraph(final ElkNode topNode) {
+    private SGraph importSGraph(final ElkNode topNode) {
         // Create a graph object
         SGraph sgraph = new SGraph();
         

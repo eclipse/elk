@@ -18,11 +18,13 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
+import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
@@ -39,10 +41,9 @@ import com.google.common.collect.Sets;
  * is not drawn horizontally anymore.
  * 
  * @author grh
- * @kieler.design proposed grh
- * @kieler.rating proposed yellow grh
  */
-public final class SCycleBreaker implements ISequenceLayoutProcessor {
+public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutContext> {
+    
     /** A node with this ID was not visited yet. */
     private static final int NOT_VISITED = 0;
     /** A node with this ID was already visited, but not as part of the current path. */
@@ -54,11 +55,15 @@ public final class SCycleBreaker implements ISequenceLayoutProcessor {
     private Set<LNode> split;
     /** The list of nodes that were already visited in the current iteration. */
     private List<LNode> chain;
-    
 
-    /**
-     * {@inheritDoc}
-     */
+
+    @Override
+    public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(
+            final LayoutContext graph) {
+        
+        return LayoutProcessorConfiguration.create();
+    }
+
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Cycle Breaking", 1);

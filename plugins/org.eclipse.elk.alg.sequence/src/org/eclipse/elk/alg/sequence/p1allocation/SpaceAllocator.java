@@ -18,8 +18,8 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
+import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraphElement;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
@@ -27,6 +27,8 @@ import org.eclipse.elk.alg.sequence.options.CoordinateSystem;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -37,11 +39,15 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * @author grh
  * @author cds
  */
-public final class SpaceAllocator implements ISequenceLayoutProcessor {
+public final class SpaceAllocator implements ILayoutPhase<SequencePhases, LayoutContext> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(
+            final LayoutContext graph) {
+        
+        return LayoutProcessorConfiguration.create();
+    }
+
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Space Allocation", 1);

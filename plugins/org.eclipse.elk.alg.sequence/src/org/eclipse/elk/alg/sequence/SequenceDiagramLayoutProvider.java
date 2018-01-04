@@ -12,21 +12,20 @@ package org.eclipse.elk.alg.sequence;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.sequence.p0import.KGraphImporter;
-import org.eclipse.elk.alg.sequence.p1allocation.SpaceAllocator;
-import org.eclipse.elk.alg.sequence.p2cycles.SCycleBreaker;
-import org.eclipse.elk.alg.sequence.p3layering.MessageLayerer;
-import org.eclipse.elk.alg.sequence.p4sorting.InteractiveLifelineSorter;
-import org.eclipse.elk.alg.sequence.p4sorting.LayerBasedLifelineSorter;
-import org.eclipse.elk.alg.sequence.p4sorting.ShortMessageLifelineSorter;
-import org.eclipse.elk.alg.sequence.p5coordinates.KGraphCoordinateCalculator;
-import org.eclipse.elk.alg.sequence.p6export.KGraphExporter;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
+import org.eclipse.elk.alg.sequence.graph.transform.ElkGraphTransformer;
+import org.eclipse.elk.alg.sequence.graph.transform.IGraphTransformer;
+import org.eclipse.elk.alg.sequence.options.CoordinateAssignmentStrategy;
+import org.eclipse.elk.alg.sequence.options.CycleBreakingStrategy;
+import org.eclipse.elk.alg.sequence.options.MessageLayeringStrategy;
+import org.eclipse.elk.alg.sequence.options.SpaceAllocationStrategy;
+import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.UnsupportedGraphException;
+import org.eclipse.elk.core.alg.AlgorithmAssembler;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
-
-import com.google.common.collect.Lists;
 
 /**
  * Layout algorithm for Papyrus sequence diagrams.
@@ -35,31 +34,33 @@ import com.google.common.collect.Lists;
  */
 public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     
-    /** The layout provider's ID. */
-    public static final String ID = "de.cau.cs.kieler.papyrus.sequence.layout";
+    /** The algorithm assembler we use to assemble our algorithm configurations. */
+    private final AlgorithmAssembler<SequencePhases, LayoutContext> algorithmAssembler =
+            AlgorithmAssembler.<SequencePhases, LayoutContext>create(SequencePhases.class);
     
 
     @Override
     public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
         // Prevent the surrounding diagram from being laid out
         if (parentNode.getParent() == null) {
-            throw new UnsupportedGraphException(
-                    "Sequence diagram layout can only be run on surrounding interactions.");
+            throw new UnsupportedGraphException("Sequence diagram layout can only be run on surrounding interactions.");
         }
         
-        // Initialize our layout context
-        LayoutContext context = LayoutContext.fromLayoutData(parentNode);
+        // Import the graph
+        IGraphTransformer<ElkNode> graphTransformer = new ElkGraphTransformer();
+        LayoutContext context = graphTransformer.importGraph(parentNode);
 
         // Assemble and execute the algorithm
-        List<ISequenceLayoutProcessor> algorithm = assembleLayoutProcessors(context);
+        List<ILayoutProcessor<LayoutContext>> algorithm = assembleLayoutProcessors(context);
         
         progressMonitor.begin("Sequence Diagram Layouter", algorithm.size());
-        
-        for (ISequenceLayoutProcessor processor : algorithm) {
+        for (ILayoutProcessor<LayoutContext> processor : algorithm) {
             processor.process(context, progressMonitor.subTask(1));
         }
-        
         progressMonitor.done();
+        
+        // Apply the layout
+        graphTransformer.applyLayout(context);
     }
     
     /**
@@ -71,33 +72,22 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
      *            run.
      * @return list of layout processors.
      */
-    private List<ISequenceLayoutProcessor> assembleLayoutProcessors(final LayoutContext context) {
-        List<ISequenceLayoutProcessor> processors = Lists.newArrayList();
-
-        processors.add(new KGraphImporter());
-        processors.add(new SpaceAllocator());
-        processors.add(new SCycleBreaker());
-        processors.add(new MessageLayerer());
+    private List<ILayoutProcessor<LayoutContext>> assembleLayoutProcessors(final LayoutContext context) {
+        // Setup the algorithm assembler
+        algorithmAssembler.reset();
         
-        // Lifeline sorting provides different options
-        switch (context.sortingStrategy) {
-        case LAYER_BASED:
-            processors.add(new LayerBasedLifelineSorter());
-            break;
-            
-        case SHORT_MESSAGES:
-            processors.add(new ShortMessageLifelineSorter());
-            break;
-            
-        default:
-            processors.add(new InteractiveLifelineSorter());
-            break;
-        }
+        algorithmAssembler.setPhase(SequencePhases.P1_SPACE_ALLOCATION,
+                SpaceAllocationStrategy.DEFAULT);
+        algorithmAssembler.setPhase(SequencePhases.P2_CYCLE_BREAKING,
+                CycleBreakingStrategy.DEFAULT);
+        algorithmAssembler.setPhase(SequencePhases.P3_MESSAGE_LAYERING,
+                MessageLayeringStrategy.DEFAULT);
+        algorithmAssembler.setPhase(SequencePhases.P4_LIFELINE_SORTING,
+                context.kgraph.getProperty(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY));
+        algorithmAssembler.setPhase(SequencePhases.P5_COORDINATE_ASSIGNMENT,
+                CoordinateAssignmentStrategy.DEFAULT);
         
-        processors.add(new KGraphCoordinateCalculator());
-        processors.add(new KGraphExporter());
-        
-        return processors;
+        return algorithmAssembler.build(context);
     }
     
 }

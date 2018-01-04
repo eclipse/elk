@@ -20,8 +20,6 @@ import com.google.common.collect.Lists;
  * Comment representation for SGraphs.
  * 
  * @author grh
- * @kieler.design 2012-11-20 cds, msp
- * @kieler.rating yellow 2012-12-11 cds, ima
  */
 public final class SComment extends SGraphElement {
     private static final long serialVersionUID = 2543686433908319587L;

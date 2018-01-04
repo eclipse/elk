@@ -12,9 +12,11 @@ package org.eclipse.elk.alg.sequence.p4sorting;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
+import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -22,14 +24,16 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * numbered as they are ordered before.
  * 
  * @author grh
- * @kieler.design proposed grh
- * @kieler.rating proposed yellow grh
  */
-public final class InteractiveLifelineSorter implements ISequenceLayoutProcessor {
+public final class InteractiveLifelineSorter implements ILayoutPhase<SequencePhases, LayoutContext> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(
+            final LayoutContext graph) {
+        
+        return LayoutProcessorConfiguration.create();
+    }
+    
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Interactive lifeline sorting", 1);

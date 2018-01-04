@@ -11,8 +11,10 @@
 package org.eclipse.elk.alg.sequence.p3layering;
 
 import org.eclipse.elk.alg.layered.p2layers.NetworkSimplexLayerer;
-import org.eclipse.elk.alg.sequence.ISequenceLayoutProcessor;
-import org.eclipse.elk.alg.sequence.LayoutContext;
+import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.graph.LayoutContext;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -23,11 +25,15 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * 
  * @author cds
  */
-public final class MessageLayerer implements ISequenceLayoutProcessor {
+public final class MessageLayerer implements ILayoutPhase<SequencePhases, LayoutContext> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(
+            final LayoutContext graph) {
+        
+        return LayoutProcessorConfiguration.create();
+    }
+    
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         NetworkSimplexLayerer layerer = new NetworkSimplexLayerer();
