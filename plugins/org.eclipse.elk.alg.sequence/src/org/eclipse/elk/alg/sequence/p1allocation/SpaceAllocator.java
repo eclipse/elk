@@ -23,7 +23,6 @@ import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraphElement;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
-import org.eclipse.elk.alg.sequence.options.CoordinateSystem;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
@@ -85,39 +84,28 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
             // subgraph induced by the set of nodes whose messages are part of the fragment
             SMessage uppermostMessage = null;
             
-            if (context.coordinateSystem == CoordinateSystem.PAPYRUS) {
-                double minYPos = Double.MAX_VALUE;
-                for (Object messageObj : area.getMessages()) {
-                    SMessage message = (SMessage) messageObj;
-                    if (message.getSourceYPos() < minYPos) {
-                        minYPos = message.getSourceYPos();
-                        uppermostMessage = message;
-                    }
-                }
-            } else {
-                // Run through the messages and find a source in the layered subgraph induced by the
-                // nodes that are messages in this area
-                for (Object msgObj : area.getMessages()) {
-                    SMessage msg = (SMessage) msgObj;
+            // Run through the messages and find a source in the layered subgraph induced by the
+            // nodes that are messages in this area
+            for (Object msgObj : area.getMessages()) {
+                SMessage msg = (SMessage) msgObj;
+                
+                // Find out if any of the messages predecessors in the layered graph are part of
+                // the fragment. If not, we have found our best guess for the uppermost message
+                LNode msgNode = msg.getProperty(InternalSequenceProperties.LAYERED_NODE);
+                boolean isUppermost = true;
+                for (LEdge incomingEdge : msgNode.getIncomingEdges()) {
+                    Object predecessor = incomingEdge.getSource().getNode().getProperty(
+                            InternalProperties.ORIGIN);
                     
-                    // Find out if any of the messages predecessors in the layered graph are part of
-                    // the fragment. If not, we have found our best guess for the uppermost message
-                    LNode msgNode = msg.getProperty(InternalSequenceProperties.LAYERED_NODE);
-                    boolean isUppermost = true;
-                    for (LEdge incomingEdge : msgNode.getIncomingEdges()) {
-                        Object predecessor = incomingEdge.getSource().getNode().getProperty(
-                                InternalProperties.ORIGIN);
-                        
-                        if (area.getMessages().contains(predecessor)) {
-                            isUppermost = false;
-                            break;
-                        }
-                    }
-                    
-                    if (isUppermost) {
-                        uppermostMessage = msg;
+                    if (area.getMessages().contains(predecessor)) {
+                        isUppermost = false;
                         break;
                     }
+                }
+                
+                if (isUppermost) {
+                    uppermostMessage = msg;
+                    break;
                 }
             }
             

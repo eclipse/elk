@@ -13,8 +13,7 @@ package org.eclipse.elk.alg.sequence.graph;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.sequence.options.CoordinateSystem;
-import org.eclipse.elk.alg.sequence.options.LabelAlignment;
+import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.LifelineSortingStrategy;
 import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
 import org.eclipse.elk.graph.ElkNode;
@@ -59,13 +58,11 @@ public final class LayoutContext {
     /** The offset between two nested areas. */
     public double containmentOffset;
     /** The label alignment strategy. */
-    public LabelAlignment labelAlignment;
+    public LabelAlignmentStrategy labelAlignment;
     /** The lifeline sorting strategy. */
     public LifelineSortingStrategy sortingStrategy;
     /** Whether to include areas in the lifeline sorting process. Used by some sorters. */
     public boolean groupAreasWhenSorting;
-    /** The coordinate system to use. */
-    public CoordinateSystem coordinateSystem;
     
     // CHECKSTYLEON VisibilityModifier
     
@@ -106,7 +103,6 @@ public final class LayoutContext {
         context.sortingStrategy = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY);
         context.groupAreasWhenSorting = parentNode.getProperty(SequenceDiagramOptions.GROUP_AREAS);
-        context.coordinateSystem = parentNode.getProperty(SequenceDiagramOptions.COORDINATE_SYSTEM);
         
         return context;
     }

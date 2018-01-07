@@ -20,7 +20,7 @@ import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
-import org.eclipse.elk.alg.sequence.options.LabelAlignment;
+import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceExecution;
 import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
@@ -399,17 +399,17 @@ public final class ElkGraphExporter {
         labelLayout.setY(message.getSourceYPos() - labelLayout.getHeight() - 2);
         
         // For the horizontal alignment, we need to check which alignment strategy to use
-        LabelAlignment alignment = context.labelAlignment;
+        LabelAlignmentStrategy alignment = context.labelAlignment;
         
-        if (alignment == LabelAlignment.SOURCE_CENTER
+        if (alignment == LabelAlignmentStrategy.SOURCE_CENTER
                 && srcLifeline.getHorizontalSlot() + 1 == context.lifelineOrder.size()) {
             
             // This is a lost message; fall back to source placement
-            alignment = LabelAlignment.SOURCE;
+            alignment = LabelAlignmentStrategy.SOURCE;
         } else if (message.getProperty(SequenceDiagramOptions.MESSAGE_TYPE) == MessageType.CREATE) {
             // Create messages always use SOURCE placement to avoid overlapping the target lifeline
             // header
-            alignment = LabelAlignment.SOURCE;
+            alignment = LabelAlignmentStrategy.SOURCE;
         }
         
         // Actually calculate the horizontal position
@@ -453,11 +453,11 @@ public final class ElkGraphExporter {
         labelLayout.setY(message.getSourceYPos() + 2);
         
         // For the horizontal alignment, we need to check which alignment strategy to use
-        LabelAlignment alignment = context.labelAlignment;
+        LabelAlignmentStrategy alignment = context.labelAlignment;
         
-        if (alignment == LabelAlignment.SOURCE_CENTER && srcLifeline.getHorizontalSlot() == 0) {
+        if (alignment == LabelAlignmentStrategy.SOURCE_CENTER && srcLifeline.getHorizontalSlot() == 0) {
             // This is a found message; fall back to source placement
-            alignment = LabelAlignment.SOURCE;
+            alignment = LabelAlignmentStrategy.SOURCE;
         }
         
         // Actually calculate the horizontal position

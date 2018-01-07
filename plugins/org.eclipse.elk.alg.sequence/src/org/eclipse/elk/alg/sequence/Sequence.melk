@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.sequence.SequenceDiagramLayoutProvider
 import java.util.List
 import com.google.common.collect.Lists
 import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy
 
 /**
  * Declarations for the Papyrus Sequence Diagram layout algorithm.
@@ -62,7 +63,6 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports labelAlignment
     supports lifelineSortingStrategy
     supports groupAreas
-    supports coordinateSystem
 }
 
 programmatic option elementId : int {
@@ -222,11 +222,11 @@ programmatic option containmentOffset : float {
     default = 5
 }
 
-option labelAlignment : LabelAlignment {
+option labelAlignment : LabelAlignmentStrategy {
     label "Label Alignment"
     description "The strategy used to find the horizontal position for message labels."
     targets parents
-    default = LabelAlignment.SOURCE_CENTER
+    default = LabelAlignmentStrategy.SOURCE_CENTER
 }
 
 option lifelineSortingStrategy : LifelineSortingStrategy {
@@ -242,11 +242,4 @@ option groupAreas : boolean {
     targets parents
     default = false
     requires lifelineSortingStrategy == LifelineSortingStrategy.SHORT_MESSAGES
-}
-
-programmatic option coordinateSystem : CoordinateSystem {
-    label "Coordinate System"
-    description "The coordinate system layout results are computed for."
-    targets parents
-    default = CoordinateSystem.KGRAPH
 }
