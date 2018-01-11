@@ -19,10 +19,10 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
 import org.eclipse.elk.alg.layered.intermediate.LongEdgeSplitter;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter.Dependency;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter.SideToProcess;
 import org.eclipse.elk.core.math.ElkRectangle;
-import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
 
@@ -32,7 +32,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents a segment of a spline that is to be created. A segment represents one or more {@link LEdge}s between
- * adjacent layers. In the case that more than one edge is represented, the segments represents a part of a hyperedge.
+ * adjacent layers. In the case that more than one edge is represented, the segments represent a part of a hyperedge.
  * 
  * Since a segment represents {@link LEdge}(s) between adjacent layers, it may represent {@link LEdge}(s) that were
  * introduced during the splitting of long edges (see {@link LongEdgeSplitter}). The control points for the final spline
@@ -51,7 +51,12 @@ import com.google.common.collect.Sets;
 public final class SplineSegment implements Comparable<SplineSegment> {
     
     // For convenient usage, members are public
-    // SUPPRESS CHECKSTYLE NEXT 48 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 60 VisibilityModifier
+    /** Spline segments may be part of hyperedges, in which case the {@link FinalSplineBendpointsCalculator} may try to 
+     * handle them more than once. We avoid this by flagging the segment as 'handled' as soon as it has been seen. */
+    public boolean handled = false;
+    
+    // the following variables are used during cycle breaking and topological sorting
     /** A sets of ports, determining the ports left of the hyper-edge. */  
     public final Set<LPort> leftPorts = Sets.newHashSet();
     /** A sets of ports, determining the ports right of the hyper-edge. */  
@@ -60,7 +65,6 @@ public final class SplineSegment implements Comparable<SplineSegment> {
     public final List<Dependency> outgoing = Lists.newArrayList();
     /** Incoming dependencies are pointing to hyper-edges that must lay left of this hyper edge. */
     public final List<Dependency> incoming = Lists.newArrayList();
-
     /** Used to mark nodes in the cycle breaker. */
     public int mark;
     /** Determines how many elements are depending on this. */
@@ -70,24 +74,24 @@ public final class SplineSegment implements Comparable<SplineSegment> {
     /** the rank determines the horizontal distance to the preceding layer. */
     public int rank;
     
+    // variables representing the characteristics of the segment 
     /** A set of all LEdges that are combined in this hyper-edge. */
     public final Set<LEdge> edges = Sets.newHashSet();
-    
-    /** If true, the hyper-edge has no vertical segment, connecting two ports by a vertical edge. */
+    /** If true, the spline segment has no vertical segment, connecting two ports by a horizontal edge path. */
     public final boolean isStraight;
-    
     /** An imaginary bounding box in which this spline segment should reside. */
     public ElkRectangle boundingBox = new ElkRectangle();
+    /** Indicates if this segment lies west of the very first layer (e.g. the case for westwards inverted ports). */
+    public boolean isWestOfInitialLayer = false;
+    /** An x-coordinate offset to be used when the nodeNodeSpacing exceeds the required spacing between a pair of
+     *  layers, in which case it looks nicer to move the vertical segments halfway between the layers. */
+    public double xDelta;
     
-    /** If this segment represents a hyperedge, this is the top y coordinate of the segment that is used during
-     *  dependency graph creation for minimize edge crossings of vertical segments. */
-    public double hyperEdgeTopYPos;
-    /** If this segment represents a hyperedge, this is the bottom y coordinate of the segment that is used during
-     *  dependency graph creation for minimize edge crossings of vertical segments. */
-    public double hyperEdgeBottomYPos;
-    /** If this segment is non-straight, this is the center control point of the spline route to be created. */ 
-    public double centerControlPointY;
-    
+    /** Source port of an edge represented by this segment. */
+    public LPort sourcePort;
+    /** Target port of an edge represented by this segment. */
+    public LPort targetPort;
+
     /** Flag indicating if this segment is the initial segment of a spline. */
     public boolean initialSegment = false;
     /** Flag indicating if this segment is the last segment of a spline. */
@@ -98,6 +102,17 @@ public final class SplineSegment implements Comparable<SplineSegment> {
     /** If this segment is the {@link SplineSegment#lastSegment last segment} of a spline, this field holds
      * the target node of the spline. Otherwise it is {@code null}. */
     public LNode targetNode;
+
+    // hyperedge-related variables
+    /** If this segment represents a hyperedge, this is the top y coordinate of the segment that is used during
+     *  dependency graph creation for minimize edge crossings of vertical segments. */
+    public double hyperEdgeTopYPos;
+    /** If this segment represents a hyperedge, this is the bottom y coordinate of the segment that is used during
+     *  dependency graph creation for minimize edge crossings of vertical segments. */
+    public double hyperEdgeBottomYPos;
+    /** If this segment is non-straight, this is the center control point of the spline route to be created. */ 
+    public double centerControlPointY;
+
     
     /**
      * A segment represents an {@link LEdge} between adjacent layers. Thus, it may represent an {@link LEdge}
@@ -105,7 +120,7 @@ public final class SplineSegment implements Comparable<SplineSegment> {
      * 
      */
     public class EdgeInformation {
-        // SUPPRESS CHECKSTYLE NEXT 40 VisibilityModifier|Javadoc
+        // SUPPRESS CHECKSTYLE NEXT 12 VisibilityModifier|Javadoc
         public double startY;
         public double endY;
         
@@ -146,23 +161,23 @@ public final class SplineSegment implements Comparable<SplineSegment> {
             final SideToProcess side = pair.getFirst();
             final LEdge edge = pair.getSecond();
             
-            LPort targetPort = edge.getSource();
-            if (targetPort.equals(singlePort)) {
-                targetPort = edge.getTarget();
+            LPort tgtPort = edge.getSource();
+            if (tgtPort.equals(singlePort)) {
+                tgtPort = edge.getTarget();
             }
             
             if (side == SideToProcess.LEFT) {
-                leftPorts.add(targetPort);
+                leftPorts.add(tgtPort);
             } else {
-                rightPorts.add(targetPort);
+                rightPorts.add(tgtPort);
             }
             
-            final double yPosOfTarget = targetPort.getAbsoluteAnchor().y;
+            final double yPosOfTarget = anchorY(tgtPort);
             yMinPosOfTarget = Math.min(yMinPosOfTarget, yPosOfTarget);
             yMaxPosOfTarget = Math.max(yMaxPosOfTarget, yPosOfTarget);
         }
             
-        final double yPosOfSingleSide = singlePort.getAbsoluteAnchor().y;
+        final double yPosOfSingleSide = anchorY(singlePort);
 
         // set the relevant positions 
         setRelevantPositions(yPosOfSingleSide, yMinPosOfTarget, yMaxPosOfTarget);
@@ -200,8 +215,8 @@ public final class SplineSegment implements Comparable<SplineSegment> {
         addEdge(edge);
         
         // setting relevant positions
-        final double sourceY = edge.getSource().getAbsoluteAnchor().y;
-        final double targetY = edge.getTarget().getAbsoluteAnchor().y;
+        final double sourceY = anchorY(edge.getSource());
+        final double targetY = anchorY(edge.getTarget());
         setRelevantPositions(sourceY, targetY, targetY);
 
         isStraight = SplineEdgeRouter.isStraight(sourceY, targetY);
@@ -209,17 +224,23 @@ public final class SplineSegment implements Comparable<SplineSegment> {
     
     private void addEdge(final LEdge edge) {
         edges.add(edge);
-        final KVector sourceAnchor = edge.getSource().getAbsoluteAnchor();
-        final KVector targetAnchor = edge.getTarget().getAbsoluteAnchor();
         
         EdgeInformation ei = new EdgeInformation();
         edgeInformation.put(edge, ei);
-        ei.startY = sourceAnchor.y;
-        ei.endY = targetAnchor.y;
+        ei.startY = anchorY(edge.getSource());
+        ei.endY = anchorY(edge.getTarget());
         ei.normalSourceNode = SplineEdgeRouter.isNormalNode(edge.getSource().getNode());
         ei.normalTargetNode = SplineEdgeRouter.isNormalNode(edge.getTarget().getNode());
         ei.invertedLeft = edge.getSource().getSide() == PortSide.WEST;
         ei.invertedRight = edge.getTarget().getSide() == PortSide.EAST;
+    }
+    
+    private double anchorY(final LPort p) {
+        if (PortSide.SIDES_NORTH_SOUTH.contains(p.getSide())) {
+            return p.getProperty(InternalProperties.SPLINE_NS_PORT_Y_COORD);
+        } else {
+            return p.getAbsoluteAnchor().y;
+        }
     }
     
     /**
@@ -236,6 +257,18 @@ public final class SplineSegment implements Comparable<SplineSegment> {
         return this.mark - other.mark;
     }
     
+    //////////////////////////////////////////////////
+    // Hyper-Edge Constants
+    /**
+     * Defines the fraction of the outer y position of a hyper-edge for defining the "point of overlap"
+     * of two hyper-edges. 1.0 means the point lays on the outer border of the hyper-edge.
+     */
+    private static final double HYPEREDGE_POS_OUTER_RATE = 0.9;
+    /** See RELEVANT_POS_OUTER_RATE! */
+    private static final double HYPEREDGE_POS_MID_RATE = 1 - HYPEREDGE_POS_OUTER_RATE;
+    /** Avoiding magic number problems. */
+    private static final double ONE_HALF = 0.5;
+    
     /**
      * Sets the {@link #centerControlPointY} and the top and bottom hyperedge y coordinates to appropriate values.
      * 
@@ -249,18 +282,18 @@ public final class SplineSegment implements Comparable<SplineSegment> {
         
         if (sourceY < targetYMin) {
             // source lays below all target ports
-            centerControlPointY = SplineEdgeRouter.ONE_HALF * (sourceY + targetYMin);
-            hyperEdgeTopYPos = SplineEdgeRouter.RELEVANT_POS_MID_RATE * centerControlPointY 
-                               + SplineEdgeRouter.RELEVANT_POS_OUTER_RATE * sourceY;
-            hyperEdgeBottomYPos = SplineEdgeRouter.RELEVANT_POS_MID_RATE * centerControlPointY 
-                                  + SplineEdgeRouter.RELEVANT_POS_OUTER_RATE * targetYMin;
+            centerControlPointY = ONE_HALF * (sourceY + targetYMin);
+            hyperEdgeTopYPos = HYPEREDGE_POS_MID_RATE * centerControlPointY 
+                               + HYPEREDGE_POS_OUTER_RATE * sourceY;
+            hyperEdgeBottomYPos = HYPEREDGE_POS_MID_RATE * centerControlPointY 
+                                  + HYPEREDGE_POS_OUTER_RATE * targetYMin;
         } else {
             // source lays above all target ports
-            centerControlPointY = SplineEdgeRouter.ONE_HALF * (sourceY + targetYMax);
-            hyperEdgeTopYPos = SplineEdgeRouter.RELEVANT_POS_MID_RATE * centerControlPointY
-                               + SplineEdgeRouter.RELEVANT_POS_OUTER_RATE * targetYMax;
-            hyperEdgeBottomYPos = SplineEdgeRouter.RELEVANT_POS_MID_RATE * centerControlPointY 
-                                  + SplineEdgeRouter.RELEVANT_POS_OUTER_RATE * sourceY;
+            centerControlPointY = ONE_HALF * (sourceY + targetYMax);
+            hyperEdgeTopYPos = HYPEREDGE_POS_MID_RATE * centerControlPointY
+                               + HYPEREDGE_POS_OUTER_RATE * targetYMax;
+            hyperEdgeBottomYPos = HYPEREDGE_POS_MID_RATE * centerControlPointY 
+                                  + HYPEREDGE_POS_OUTER_RATE * sourceY;
         }
     }
 }

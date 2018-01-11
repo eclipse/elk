@@ -82,6 +82,9 @@ algorithm layered(LayeredLayoutProvider) {
     // flexible nodes during node placement
     supports nodePlacement.networkSimplex.nodeFlexibility
     supports nodePlacement.networkSimplex.nodeFlexibility.^default
+    // splines
+    supports edgeRouting.splines.mode
+    supports edgeRouting.splines.sloppy.layerSpacingFactor
 	// other options
 	supports org.eclipse.elk.padding = new ElkPadding(12)
 	supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
@@ -155,8 +158,6 @@ algorithm layered(LayeredLayoutProvider) {
     supports edgeLabels.sideSelection
 	supports edgeLabels.centerLabelPlacementStrategy
     supports org.eclipse.elk.margins
-    supports edgeRouting.sloppySplineRouting
-    supports edgeRouting.sloppySplineLayerSpacing
     supports layering.coffmanGraham.layerBound
     supports nodePlacement.favorStraightEdges
     supports org.eclipse.elk.spacing.portsSurrounding
@@ -435,6 +436,33 @@ group nodePlacement {
  *    phase 5
  * ------------------------*/
 group edgeRouting {
+    
+    group splines {
+        option mode: SplineRoutingMode {
+            label "Spline Routing Mode"
+            description 
+                "Specifies the way control points are assembled for each individual edge.
+                 CONSERVATIVE ensures that edges are properly routed around the nodes 
+                 but feels rather orthogonal at times.  
+                 SLOPPY uses fewer control points to obtain curvier edge routes but may result in 
+                 edges overlapping nodes. "
+            default = SplineRoutingMode.SLOPPY
+            targets parents
+            requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+        }
+        
+        group sloppy {
+            option layerSpacingFactor: double {
+                label "Sloppy Spline Layer Spacing Factor"
+                description "Spacing factor for routing area between layers when using sloppy spline routing."
+                default = 0.2
+                targets parents
+                requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+                requires splines.mode == SplineRoutingMode.SLOPPY
+            }            
+        }
+        
+    }
 
     option selfLoopPlacement: SelfLoopPlacement {
         label "Spline Self-Loop Placement"
@@ -444,23 +472,6 @@ group edgeRouting {
         requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
     }
 
-    option sloppySplineRouting: boolean {
-        label "Sloppy Spline Routing"
-        description 
-            "Use less spline control points at the start and end of an edge. Might lead to crossings edge/node overlap."
-        default = true
-        targets parents
-        requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
-    }
-    
-    option sloppySplineLayerSpacing: double {
-        label "Sloppy Spline Layer Spacing Factor"
-        description "Spacing factor for routing area between layers when using sloppy spline routing."
-        default = 0.4
-        targets parents
-        requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
-        requires sloppySplineRouting == true
-    }
 }
 
 

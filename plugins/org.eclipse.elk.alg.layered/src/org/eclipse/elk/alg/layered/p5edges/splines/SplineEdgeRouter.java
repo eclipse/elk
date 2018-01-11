@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 Kiel University and others.
+ * Copyright (c) 2010, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.splines;
 
@@ -32,6 +29,7 @@ import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.SplineRoutingMode;
 import org.eclipse.elk.alg.layered.p5edges.PolylineEdgeRouter;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
@@ -52,7 +50,12 @@ import com.google.common.collect.Sets;
  * <h3>Implementation Details.</h3>
  * A convenience class {@link SplineSegment} is used to represent spline segments between adjacent layers.
  * The segments are combined to a contiguous spline later by the {@link FinalSplineBendpointsCalculator}. As such, 
- * <b>no final</b> bendpoints are calculated by this layout phase implementation. 
+ * <b>no final</b> bend points are calculated by this layout phase implementation. The x-coordinates of the nodes are 
+ * fixed, however, usually to <code> max{nodeNodeSpacing, 2 * edgeNodeSpacing + (slots-1) * edgeEdgeSpacing}</code>.
+ * At this, a <code>slot</code> is a vertical strip between a pair of layers in which a non-straight edge will be 
+ * routed. The more edges in-between a pair of layers, the more slots are required. 
+ * If the splines are to be routed {@link SplineRoutingMode#SLOPPY}, the spacing may be increased further 
+ * as computed by the {@link #computeSloppySpacing(Layer, double, double, double)} method.
  * 
  * <dl>
  *   <dt>Precondition:</dt>
@@ -69,38 +72,14 @@ import com.google.common.collect.Sets;
 public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGraph> {
     
     // /////////////////////////////////////////////////////////////////////////////
-    // Constants and Variables
-    
+    // Constants
     /** An edge is drawn as a straight line if the y-difference of source/target is lower than this. */
     private static final double MAX_VERTICAL_DIFF_FOR_STRAIGHT = 0.2;
-    /** X-difference between two vertical segments. May be overwritten. */
-    private double hEdgeSpacing = SplinesMath.THREE;
-    /** Avoiding magic number problems. */
-    public static final double ONE_HALF = 0.5;
     /** Default dimension of an edge-spline. */
-    public static final int DIMENSION = 3;
-    /** Defines the gap between a node and the first vertical segment of an edge. */
-    public static final double NODE_TO_VERTICAL_SEGMENT_GAP = 10;
-    /**
-     * Defines the gap between the source/target anchor of an edge and the control point that is
-     * inserted to straighten the start/end of the edge-spline.
-     */
-    public static final double NODE_TO_STRAIGHTENING_CP_GAP = 5;
+    public static final int SPLINE_DIMENSION = 3;
 
     //////////////////////////////////////////////////
-    // Hyper-Edge Constants
-    
-    /**
-     * Defines the fraction of the outer y position of a hyper-edge for defining the "point of overlap"
-     * of two hyper-edges. 1.0 means the point lays on the outer border of the hyper-edge.
-     */
-    static final double RELEVANT_POS_OUTER_RATE = 0.9;
-    /** See RELEVANT_POS_OUTER_RATE! */
-    static final double RELEVANT_POS_MID_RATE = 1 - RELEVANT_POS_OUTER_RATE;
-    
-    //////////////////////////////////////////////////
     // Intermediate processing configurations
-    
     /** baseline processor dependencies, always required. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> BASELINE_PROCESSING_ADDITIONS =
             LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
@@ -181,10 +160,9 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
     //////////////////////////////////////////////////
     
     // some variables valid during one iteration (a pair of layers)
-    
-    /** current self loops of the layers in a current iteration. */
+    /** current edges of the layers in a current iteration. */
     private final List<LEdge> edgesRemainingLayer = Lists.newArrayList();
-    /** current self loops of the layers in a current iteration. */
+    /** current spline segments of the layers in a current iteration. */
     private final List<SplineSegment> splineSegmentsLayer = Lists.newArrayList();
     /** current ports on the left layer involved in a current iteration. */
     private final Set<LPort> leftPortsLayer = Sets.newLinkedHashSet();
@@ -193,8 +171,8 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
     /** current self loops of the layers in a current iteration. */
     private final Set<LEdge> selfLoopsLayer = Sets.newLinkedHashSet();
     
-    // variable for the whole edge routing process
-    
+    // variables for the whole edge routing process
+    private LGraph lGraph;
     /** a collection of all edges that have a normal node as their source. */
     private final List<LEdge> startEdges = Lists.newArrayList();
     /** all created spline segments. */
@@ -212,202 +190,195 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
      */
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Spline edge routing", 1);
+        
+        if (layeredGraph.getLayers().isEmpty()) {
+            layeredGraph.getSize().x = 0;
+            monitor.done();
+            return;
+        }
+        
         // Retrieve some generic values
-        final double hNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
-        hEdgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
+        final double nodeNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
+        final double edgeNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
+        final double edgeEdgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
         
         // Find out if splines should be routed thoroughly or sloppy
-        final boolean sloppyRouting = layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_ROUTING);
-        final double sloppyLayerSpacingFactor = layeredGraph.getProperty(
-                LayeredOptions.EDGE_ROUTING_SLOPPY_SPLINE_LAYER_SPACING);
+        final SplineRoutingMode mode = layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_SPLINES_MODE);
+        final boolean sloppyRouting = mode == SplineRoutingMode.SLOPPY;
+        final double sloppyLayerSpacingFactor =
+                layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_SPLINES_SLOPPY_LAYER_SPACING_FACTOR);
         
+        lGraph = layeredGraph;
         startEdges.clear();
         allSplineSegments.clear();
         successingEdge.clear();
 
-        double xpos = 0.0;
+        // check if the first and/or last layer are populated with external port dummies
+        final Layer firstLayer = layeredGraph.getLayers().get(0);
+        final boolean isLeftLayerExternal =
+                Iterables.all(firstLayer.getNodes(), PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
+        final Layer lastLayer = layeredGraph.getLayers().get(layeredGraph.getLayers().size() - 1);
+        final boolean isRightLayerExternal =
+                Iterables.all(lastLayer.getNodes(), PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
 
         final Iterator<Layer> layerIterator = layeredGraph.iterator();
         Layer leftLayer = null;
         Layer rightLayer;
-
-        boolean externalLeftLayer = true;
-        boolean externalRightLayer = true;
         
+        // initial x position 
+        double xpos = 0.0;
         do {
             rightLayer = layerIterator.hasNext() ? layerIterator.next() : null;
-
-            /////////////////////////////////////
-            // Creation of the SplineSegments
             
             // fresh start for this pair of layers
             clearThenFillMappings(leftLayer, rightLayer);
-            
-            // create the hyperEdges having their start port on the left side.
-            createSplineSegmentsForHyperEdges(leftPortsLayer, rightPortsLayer, SideToProcess.LEFT, 
-                    true, edgesRemainingLayer, splineSegmentsLayer);
-            createSplineSegmentsForHyperEdges(leftPortsLayer, rightPortsLayer, SideToProcess.LEFT, 
-                    false, edgesRemainingLayer, splineSegmentsLayer);
 
-            // create the hyperEdges having their start port on the right side.
-            createSplineSegmentsForHyperEdges(leftPortsLayer, rightPortsLayer, SideToProcess.RIGHT, 
-                    true, edgesRemainingLayer, splineSegmentsLayer);
-            createSplineSegmentsForHyperEdges(leftPortsLayer, rightPortsLayer, SideToProcess.RIGHT, 
-                    false, edgesRemainingLayer, splineSegmentsLayer);
+            // creation of the SplineSegments
+            createSegmentsAndComputeRanking();
 
-            // remaining edges are single edges that cannot be combined with others to a hyper-edge
-            createSplineSegments(edgesRemainingLayer, leftPortsLayer, rightPortsLayer, splineSegmentsLayer);
+            // count the number of required slots for vertical segments
+            //  (edges to be drawn straight are assigned a rank but must be omitted here)
+            final int slotCount = splineSegmentsLayer.stream()
+                    .filter(e -> !e.isStraight)
+                    .mapToInt(e -> e.rank + 1).max().orElse(0);
             
-            ////////////////////////////////////
-            // Creation of the dependencies of the spline segments
-            final ListIterator<SplineSegment> sourceIter = splineSegmentsLayer.listIterator();
-            while (sourceIter.hasNext()) {
-                final SplineSegment hyperEdge1 = sourceIter.next();
-                final ListIterator<SplineSegment> targetIter = splineSegmentsLayer.listIterator(sourceIter.nextIndex());
-                while (targetIter.hasNext()) {
-                    final SplineSegment hyperEdge2 = targetIter.next();
-                    createDependency(hyperEdge1, hyperEdge2);
+            // the code below ensures that at least nodeNodeSpacing is preserved between a pair of layers
+            //  if this spacing is larger than what would be required to route the vertical segments in-between
+            //  a pair of layers, it looks nicer to move the vertical segments halfway between the layers.
+            //  The xSegmentDelta variable holds the required offset 
+            double xSegmentDelta = 0;
+            double rightLayerPosition = xpos;
+            boolean isSpecialLeftLayer = leftLayer == null || isLeftLayerExternal;
+            boolean isSpecialRightLayer = rightLayer == null || isRightLayerExternal;
+            
+            // compute horizontal positions just as for the OrthogonalEdgeRouter
+            if (slotCount > 0) {
+                // the space between each pair of edge segments, and between nodes and edges
+                double increment = 0;
+                if (leftLayer != null) {
+                    increment += edgeNodeSpacing;
                 }
+                increment += (slotCount - 1) * edgeEdgeSpacing;
+                if (rightLayer != null) {
+                    increment += edgeNodeSpacing;
+                }
+                
+                // sloppy routing may want to reserve more space in-between a pair of layers
+                if (sloppyRouting && rightLayer != null) {
+                    increment = Math.max(increment, 
+                          computeSloppySpacing(rightLayer, edgeEdgeSpacing, nodeNodeSpacing, sloppyLayerSpacingFactor));
+                }
+                
+                // if we are between two layers, make sure their minimal spacing is preserved
+                if (increment < nodeNodeSpacing && !isSpecialLeftLayer && !isSpecialRightLayer) {
+                    xSegmentDelta = (nodeNodeSpacing - increment) / 2d;
+                    increment = nodeNodeSpacing;
+                }
+                rightLayerPosition += increment;
+            } else if (!isSpecialLeftLayer && !isSpecialRightLayer) {
+                // If all edges are straight, use the usual spacing 
+                rightLayerPosition += nodeNodeSpacing;
             }
 
-            ////////////////////////////////////
-            // Apply the topological numbering
-            // break cycles
-            breakCycles(splineSegmentsLayer, layeredGraph.getProperty(InternalProperties.RANDOM));
-            
-            // assign ranks to the hyper-nodes
-            topologicalNumbering(splineSegmentsLayer);
-
-            ////////////////////////////////////
-            // Place right layers's nodes. This needs to be done before calculating the bendPoints.
-            double rightLayersPosition = xpos;
+            // place right layer's nodes
             if (rightLayer != null) {
-                externalRightLayer =
-                        Iterables.all(rightLayer.getNodes(), PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
-
-                if (sloppyRouting) {
-                    // For sloppy routing we limit the angle of vertical segments similar to the polyline
-                    // edge router.
-                    // While routing edges, we remember the maximum vertical span of any edge between this and
-                    // the next layer to insert enough space between the layers to keep the edge slopes from
-                    // becoming too steep
-                    double maxVertDiff = 0.0;
-
-                    // Iterate over the layer's nodes
-                    for (LNode node : rightLayer) {
-                        // Calculate the maximal vertical span of output edges.
-                        double maxCurrInputYDiff = 0.0;
-                        for (LEdge incomingEdge : node.getIncomingEdges()) {
-                            double sourcePos = incomingEdge.getSource().getAbsoluteAnchor().y;
-                            double targetPos = incomingEdge.getTarget().getAbsoluteAnchor().y;
-
-                            maxCurrInputYDiff = Math.max(maxCurrInputYDiff, Math.abs(targetPos - sourcePos));
-                        }
-                        maxVertDiff = Math.max(maxVertDiff, maxCurrInputYDiff);
-                    }
-
-                    // Determine where next layer should start based on the maximal vertical span of edges
-                    // between the two layers
-                    double layerSpacing =
-                            sloppyLayerSpacingFactor * Math.min(1.0, hEdgeSpacing / hNodeSpacing) * maxVertDiff;
-
-                    // At least have minimal node spacing if all edges are straight
-                    if (layerSpacing < hNodeSpacing && !externalLeftLayer && !externalRightLayer) {
-                        layerSpacing = hNodeSpacing;
-                    }
-
-                    rightLayersPosition += layerSpacing;
-                } else {
-                    // For thorough edge routing we reserve horizontal space similar to orthogonal routing.
-                    rightLayersPosition += NODE_TO_VERTICAL_SEGMENT_GAP;
-                    int maxRank = -1;
-                    for (final SplineSegment edge : splineSegmentsLayer) {
-                        maxRank = Math.max(maxRank, edge.rank);
-                    }
-                    maxRank++;
-
-                    if (maxRank > 0) {
-                        // The space between each pair of edge segments, and between nodes and edges
-                        double increment = (maxRank + 1) * hEdgeSpacing;
-
-                        // If we are between two layers, make sure their minimal spacing is preserved
-                        if (increment < hNodeSpacing && !externalLeftLayer && !externalRightLayer) {
-                            increment = hNodeSpacing;
-                        }
-                        rightLayersPosition += increment;
-                    } else if (!(externalLeftLayer || externalRightLayer || layerOnlyContainsDummies(leftLayer)
-                            || layerOnlyContainsDummies(rightLayer))) {
-                        // If all edges are straight, use the usual spacing
-                        // (except when we are between two layers where both only contains dummy nodes)
-                        rightLayersPosition += hNodeSpacing;
-                    }
-                }
-                
-                LGraphUtil.placeNodesHorizontally(rightLayer, rightLayersPosition);
+                LGraphUtil.placeNodesHorizontally(rightLayer, rightLayerPosition);
             }
             
-            ////////////////////////////////////
-            // Self loops are already calculated. All we have to do is add the node offset
-            // to the bend points and the edge labels.
-            for (final LEdge selfLoop : selfLoopsLayer) {
-                final KVector offset = selfLoop.getSource().getNode().getPosition();
-
-                selfLoop.getBendPoints().offset(offset);
-                
-                for (final LLabel label : selfLoop.getLabels()) {
-                    label.getPosition().add(offset);
-                }
-            }
-
-            ////////////////////////////////////
+            // self loops
+            handleSelfloops();
+            
             // Assign tentative start and end points to the spline segments
-            // they may be modified before final spline coordinates 
-            // are determined by the FinalSplineBendpointsCaluclator
+            //  they may be modified before final spline coordinates 
+            //  are determined by the FinalSplineBendpointsCaluclator
             for (final SplineSegment segment : splineSegmentsLayer) {
                 segment.boundingBox.x = xpos;
-                segment.boundingBox.width = rightLayersPosition - xpos;
+                segment.boundingBox.width = rightLayerPosition - xpos;
+                segment.xDelta = xSegmentDelta;
+                segment.isWestOfInitialLayer = leftLayer == null;
             }
             allSplineSegments.addAll(splineSegmentsLayer);
 
-            ////////////////////////////////////
-            // proceed to next layer
+            // proceed to the next layer
+            xpos = rightLayerPosition;
             if (rightLayer != null) {
-                xpos = rightLayersPosition + rightLayer.getSize().x;
-                if (!sloppyRouting) {
-                    xpos += NODE_TO_VERTICAL_SEGMENT_GAP;
-                }
-            } else {
-                // When handling the last layer
-                // add spacing for the last routing area after the node
-                // Calculation taken from inter layer spacing calculation
-                int maxRank = -1;
-                for (final SplineSegment edge : splineSegmentsLayer) {
-                    maxRank = Math.max(maxRank, edge.rank);
-                }
-                if (maxRank >= 0) {
-                    xpos += (maxRank + 2) * hEdgeSpacing;
-                }
+                xpos += rightLayer.getSize().x;
             }
+            
             leftLayer = rightLayer;
-            externalLeftLayer = externalRightLayer;
-
+            isSpecialLeftLayer = isSpecialRightLayer;
         } while (rightLayer != null);
         
-        ////////////////////////////////////
-        // all layers are processed, now we can calculate the bezier bend-points for all edges
+        // all layers have been processed, remember the spline paths for
+        //  control point calculation to be done by a later intermediate processor
         for (LEdge edge : startEdges) {
             List<LEdge> edgeChain = getEdgeChain(edge);
             edge.setProperty(InternalProperties.SPLINE_EDGE_CHAIN, edgeChain);
-            
+
             List<SplineSegment> spline = getSplinePath(edge);
             edge.setProperty(InternalProperties.SPLINE_ROUTE_START, spline);
-            
         }
         
+        // assign final width of the layering and thus the overall graph
         layeredGraph.getSize().x = xpos;
+        
+        lGraph = null;
         monitor.done();
     }
 
+    private void createSegmentsAndComputeRanking() {
+        // create the hyperEdges having their start port on the left side.
+        createSplineSegmentsForHyperEdges(leftPortsLayer, rightPortsLayer, SideToProcess.LEFT, 
+                true, edgesRemainingLayer, splineSegmentsLayer);
+        createSplineSegmentsForHyperEdges(leftPortsLayer, rightPortsLayer, SideToProcess.LEFT, 
+                false, edgesRemainingLayer, splineSegmentsLayer);
+
+        // create the hyperEdges having their start port on the right side.
+        createSplineSegmentsForHyperEdges(leftPortsLayer, rightPortsLayer, SideToProcess.RIGHT, 
+                true, edgesRemainingLayer, splineSegmentsLayer);
+        createSplineSegmentsForHyperEdges(leftPortsLayer, rightPortsLayer, SideToProcess.RIGHT, 
+                false, edgesRemainingLayer, splineSegmentsLayer);
+
+        // remaining edges are single edges that cannot be combined with others to a hyper-edge
+        createSplineSegments(edgesRemainingLayer, leftPortsLayer, rightPortsLayer, splineSegmentsLayer);
+        
+        ////////////////////////////////////
+        // Creation of the dependencies of the spline segments
+        final ListIterator<SplineSegment> sourceIter = splineSegmentsLayer.listIterator();
+        while (sourceIter.hasNext()) {
+            final SplineSegment hyperEdge1 = sourceIter.next();
+            final ListIterator<SplineSegment> targetIter = splineSegmentsLayer.listIterator(sourceIter.nextIndex());
+            while (targetIter.hasNext()) {
+                final SplineSegment hyperEdge2 = targetIter.next();
+                createDependency(hyperEdge1, hyperEdge2);
+            }
+        }
+
+        ////////////////////////////////////
+        // Apply the topological numbering
+        // break cycles
+        breakCycles(splineSegmentsLayer, lGraph.getProperty(InternalProperties.RANDOM));
+        
+        // assign ranks to the hyper-nodes
+        topologicalNumbering(splineSegmentsLayer);
+    }
+    
+    /**
+     * Self loops are already calculated. All we have to do is add the node offset to the bend points and the edge
+     * labels.
+     */
+    private void handleSelfloops() {
+        for (final LEdge selfLoop : selfLoopsLayer) {
+            final KVector offset = selfLoop.getSource().getNode().getPosition();
+
+            selfLoop.getBendPoints().offset(offset);
+            
+            for (final LLabel label : selfLoop.getLabels()) {
+                label.getPosition().add(offset);
+            }
+        }
+    }
+    
     /**
      * Initially fills the mappings, collection and sets for a pair of layers.
      * 
@@ -507,6 +478,36 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
                 }
             }
         }
+    }
+    
+    /**
+     * For sloppy routing the idea is to limit the angle of vertical segments similar to what is done in the
+     * {@link PolylineEdgeRouter}. Consequently, the computed spacing depends on the maximum vertical span of any edge
+     * between {@code rightLayer} and the preceding layer.
+     */
+    private double computeSloppySpacing(final Layer rightLayer, final double edgeEdgeSpacing,
+            final double nodeNodeSpacing, final double sloppyLayerSpacingFactor) {
+        
+        double maxVertDiff = 0.0;
+        // Iterate over the layer's nodes
+        for (LNode node : rightLayer) {
+            // Calculate the maximal vertical span of output edges.
+            double maxCurrInputYDiff = 0.0;
+            for (LEdge incomingEdge : node.getIncomingEdges()) {
+                double sourcePos = incomingEdge.getSource().getAbsoluteAnchor().y;
+                double targetPos = incomingEdge.getTarget().getAbsoluteAnchor().y;
+
+                maxCurrInputYDiff = Math.max(maxCurrInputYDiff, Math.abs(targetPos - sourcePos));
+            }
+            maxVertDiff = Math.max(maxVertDiff, maxCurrInputYDiff);
+        }
+
+        // Determine where next layer should start based on the maximal vertical span of edges
+        // between the two layers
+        double layerSpacing =
+                sloppyLayerSpacingFactor * Math.min(1.0, edgeEdgeSpacing / nodeNodeSpacing) * maxVertDiff;
+        
+        return layerSpacing;
     }
     
     /**
@@ -734,7 +735,6 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
      * weight are exactly the two-cycles of the hypernode structure.
      * 
      * @param edges list of hypernodes
-     * @param random random number generator
      */
     private static void breakCycles(final List<SplineSegment> edges, final Random random) {
         final LinkedList<SplineSegment> sources = Lists.newLinkedList();
@@ -887,6 +887,7 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
         final List<SplineSegment> sources = Lists.newLinkedList();
         final List<SplineSegment> rightwardTargets = Lists.newLinkedList();
         for (final SplineSegment edge : edges) {
+            edge.rank = 0;
             edge.inweight = edge.incoming.size();
             edge.outweight = edge.outgoing.size();
             
@@ -922,7 +923,7 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
          * with horizontal segments only pointing rightwards as far right as possible.
          */
         if (maxRank > -1) {
-            // assign all target nodes with horzizontal segments pointing to the right the
+            // assign all target nodes with horizontal segments pointing to the right the
             // rightmost rank
             for (final SplineSegment edge : rightwardTargets) {
                 edge.rank = maxRank;
@@ -975,37 +976,25 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
     }
     
     private List<SplineSegment> getSplinePath(final LEdge start) {
-        List<SplineSegment> edgeChain = Lists.newArrayList();
+        List<SplineSegment> segmentChain = Lists.newArrayList();
         LEdge current = start;
         do {
-            edgeChain.add(edgeToSegmentMap.get(current));
+            SplineSegment segment = edgeToSegmentMap.get(current);
+            segment.sourcePort = current.getSource();
+            segment.targetPort = current.getTarget();
+            segmentChain.add(segment);
             current = successingEdge.get(current);
         } while (current != null);
         
-        SplineSegment initalEdge = edgeChain.get(0);
-        initalEdge.initialSegment = true;
-        initalEdge.sourceNode = initalEdge.edges.iterator().next().getSource().getNode(); 
+        SplineSegment initialSegment = segmentChain.get(0);
+        initialSegment.initialSegment = true;
+        initialSegment.sourceNode = initialSegment.edges.iterator().next().getSource().getNode(); 
                 
-        SplineSegment lastSegment = edgeChain.get(edgeChain.size() - 1);
+        SplineSegment lastSegment = segmentChain.get(segmentChain.size() - 1);
         lastSegment.lastSegment = true;
         lastSegment.targetNode = lastSegment.edges.iterator().next().getTarget().getNode();
         
-        return edgeChain;
-    }
-    
-    /**
-     * Check whether for every node {@code n} of {@code layer} {@code !isNormalNode(n)} holds.
-     * 
-     * @param layer The layer to check.
-     * @return {@code true}, if the layer only contains dummy nodes.
-     */
-    private boolean layerOnlyContainsDummies(final Layer layer) {
-        for (final LNode n : layer.getNodes()) {
-            if (isNormalNode(n)) {
-                return false;
-            }
-        }
-        return true;
+        return segmentChain;
     }
     
     /**
