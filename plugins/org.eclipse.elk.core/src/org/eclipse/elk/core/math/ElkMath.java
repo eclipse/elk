@@ -959,6 +959,7 @@ public final class ElkMath {
     /**
      * Double computations are potentially imprecise, we need a robust way of checking if a value is zero in
      * {@link #intersects(KVector, KVector, KVector, KVector)}, which is done using an epsilon comparison.
+     * Note that other algorithms may use this epsilon and depend on its value being no less than 0.00001.
      */
     private static final double DOUBLE_EQ_EPSILON = 0.00001d;
     
@@ -970,6 +971,7 @@ public final class ElkMath {
      * See also https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Mathematics.
      * </p>
      * 
+     * @see ElkMath#intersects2(KVector, KVector, KVector, KVector)
      * @param l11
      *            start point of first line
      * @param l12
@@ -1002,6 +1004,124 @@ public final class ElkMath {
         // use < instead of <= to not recognize "touching" as intersection
         return 0 < s && s < 1
             && 0 < t && t < 1;
+    }
+    
+    /**
+     * Returns the intersection point of two line segments.
+     * 
+     * <p>
+     * Approach by Ronald Goldman "Intersection of two lines in three-space"
+     * <p>
+     * The segments are defined as {@code p+t*r} and {@code q+u*s} with {@code 0 <= t,u <= 1}.
+     * If the line segments are collinear and overlapping there is not a single intersection point, so of
+     * the possible points the closest to the center of the second segment is returned.
+     * 
+     * @see ElkMath#intersects(KVector, KVector, KVector, KVector)
+     * @param p
+     * @param r
+     * @param q
+     * @param s
+     * @return the point of intersection or null if none exists
+     */
+    public static KVector intersects2(final KVector p, final KVector r, final KVector q, final KVector s) {
+        KVector pq = q.clone().sub(p);
+        double pqXr = KVector.crossProduct(pq, r);
+        double rXs = KVector.crossProduct(r, s);
+        double t = KVector.crossProduct(pq, s) / rXs;
+        double u = pqXr / rXs;
+        if (rXs == 0) {
+            if (pqXr == 0) { // segments are collinear: return point closest to center of s
+                // CHECKSTYLEOFF MagicNumber
+                KVector center = q.clone().add(s.clone().scale(0.5));
+                double d1 = p.distance(center);
+                double d2 = p.clone().add(r).distance(center);
+                double l = s.length() * 0.5;
+                // CHECKSTYLEON MagicNumber
+                if (d1 < d2 && d1 <= l) {
+                    return p.clone();
+                }
+                if (d2 <= l) {
+                    return p.clone().add(r);
+                }
+                return null;
+            } else { // segments are parallel
+                return null;
+            }
+        } else {
+            if (t >= 0 && t <= 1 && u >= 0 && u <= 1) { // segments intersect
+                return p.clone().add(r.clone().scale(t));
+            } else { // segments don't intersect
+                return null;
+            }
+        }
+    }
+    
+    /**
+     * Returns the distance between the line segments given by {@code (a1,a2)} and {@code (b1,b2)}.
+     * The distance is measured in the direction specified by vector {@code v} starting at segment {@code b}.
+     * If the segments are oriented or spaced such that {@code v} cannot reach one segment from the other, 
+     * {@code Double.POSITIVE_INFINITY} is returned.
+     * 
+     * @param a1 start point of first line segment
+     * @param a2 end point of first line segment
+     * @param b1 start point of second line segment
+     * @param b2 end point of second line segment
+     * @param v direction
+     * @return direction dependent distance between two line segments
+     */
+    public static double distance(final KVector a1, final KVector a2, final KVector b1, final KVector b2, 
+            final KVector v) {
+        
+        return Math.min(traceRays(a1, a2, b1, b2, v), 
+                        traceRays(b1, b2, a1, a2, v.clone().negate()));
+    }
+    
+    /**
+     * Traces rays from the endpoints of line segment {@code b=(b1, b2)} in the direction {@code v} and 
+     * with the length of {@code v}.
+     * The rays' intersections with {@code a} yield the distance between {@code a} and {@code b}.
+     * 
+     * @param a1 start point of segment a
+     * @param a2 end point of segment a
+     * @param b1 start point of segment b
+     * @param b2 end point of segment b
+     * @param v the direction
+     * @return the distance between {@code a} and {@code b} in direction {@code v} or infinity
+     */
+    private static double traceRays(final KVector a1, final KVector a2, final KVector b1, final KVector b2, 
+            final KVector v) {
+        double result = Double.POSITIVE_INFINITY;
+        KVector intersection;
+        boolean endpointHit = false;
+        
+        // check whether (b + v) intersects a to catch an edge case, where one ray exactly hits an endpoint
+        // of a but the other ray is too short to reach a.
+        intersection = intersects2(a1, a2.clone().sub(a1), b1.clone().add(v), b2.clone().sub(b1));
+        boolean edgeCase = intersection != null && !(intersection.equalsFuzzily(a1) || intersection.equalsFuzzily(a2));
+        
+        // trace ray from point b1 to segment a in direction v
+        intersection = intersects2(a1, a2.clone().sub(a1), b1, v);
+        if (intersection != null) {
+            if (intersection.equalsFuzzily(a1) == intersection.equalsFuzzily(a2) || edgeCase) {
+                // update the distance result
+                result = Math.min(result, intersection.sub(b1).length());
+            } else {
+                // ignore intersection if the ray exactly hits an endpoint of b
+                // but track it to allow it only for one ray per segment
+                endpointHit = true;
+            }
+        }
+        
+        // trace ray from point b2 to segment a in direction v
+        intersection = intersects2(a1, a2.clone().sub(a1), b2, v);
+        if (intersection != null) {
+            if (endpointHit || intersection.equalsFuzzily(a1) == intersection.equalsFuzzily(a2) || edgeCase) {
+                // update the distance result
+                result = Math.min(result, intersection.sub(b2).length());
+            }
+        }
+        
+        return result;
     }
     
     /**
@@ -1067,5 +1187,55 @@ public final class ElkMath {
         double maxY = rect.y + rect.height;
         
         return (p.x > minX && p.x < maxX) && (p.y > minY && p.y < maxY);     
+    }
+    
+    /**
+     * Calculates shortest distance between two axis aligned rectangles.
+     * If they intersect the returned distance becomes negative.
+     * There are three cases to consider:
+     * 1.
+     *              +----+
+     *    +----+....| r2 |
+     *    | r1 |    +----+
+     *    +----+
+     *    
+     * 2.
+     *              +----+
+     *              | r2 |
+     *             .+----+
+     *           .
+     *    +----+
+     *    | r1 |   
+     *    +----+
+     *    
+     * 3. 
+     *
+     *        +----+
+     *    +---|+r2 |
+     *    | r1+|---+   
+     *    +----+
+     *    
+     * In the first case the result is the axis aligned distance between the closest sides
+     * and in the other cases it's the euclidean distance between the closest corners.
+     * @param r1
+     * @param r2
+     * @return shortest distance between r1 and r2
+     */
+    public static double shortestDistance(final ElkRectangle r1, final ElkRectangle r2) {
+        double rightDist = r2.x - (r1.x + r1.width);
+        double leftDist = r1.x - (r2.x + r2.width);
+        double topDist = r1.y - (r2.y + r2.height);
+        double bottomDist = r2.y - (r1.y + r1.height);
+        double horzDist = Math.max(leftDist, rightDist);
+        double vertDist = Math.max(topDist, bottomDist);
+        if (DoubleMath.fuzzyCompare(horzDist, 0, DOUBLE_EQ_EPSILON) >= 0 
+                ^ DoubleMath.fuzzyCompare(vertDist, 0, DOUBLE_EQ_EPSILON) >= 0) { // case 1
+            return Math.max(vertDist, horzDist);
+        }
+        if (DoubleMath.fuzzyCompare(horzDist, 0, DOUBLE_EQ_EPSILON) > 0) { // case 2
+            return Math.sqrt(vertDist * vertDist + horzDist * horzDist);
+        }
+        // case 3
+        return -Math.sqrt(vertDist * vertDist + horzDist * horzDist);
     }
 }

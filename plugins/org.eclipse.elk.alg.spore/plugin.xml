@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.elk.core.layoutProviders">
+      <provider
+            class="org.eclipse.elk.alg.spore.SporeMetaDataProvider">
+      </provider>
+   </extension>
+
+</plugin>

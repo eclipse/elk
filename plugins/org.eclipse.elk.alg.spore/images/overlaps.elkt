@@ -1,0 +1,21 @@
+algorithm: fixed
+node n1 {
+        layout [
+            size: 50, 50
+            position: 0, 0
+        ]
+}
+node n2 {
+        layout [
+            size: 50, 50
+            position: 30, 30
+        ]
+}
+node n3 {
+        layout [
+            size: 50, 50
+            position: 60, 30
+        ]
+}
+edge n1 -> n2
+edge n2 -> n3

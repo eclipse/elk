@@ -9,8 +9,8 @@ package org.eclipse.elk.alg.disco.structures;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Direction;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Polyomino;
+import org.eclipse.elk.alg.common.polyomino.structures.Direction;
+import org.eclipse.elk.alg.common.polyomino.structures.Polyomino;
 import org.eclipse.elk.alg.disco.graph.DCComponent;
 import org.eclipse.elk.alg.disco.graph.DCDirection;
 import org.eclipse.elk.alg.disco.graph.DCElement;
