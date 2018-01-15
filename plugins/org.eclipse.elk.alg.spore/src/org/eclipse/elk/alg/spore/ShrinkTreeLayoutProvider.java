@@ -11,7 +11,7 @@
 package org.eclipse.elk.alg.spore;
 
 import org.eclipse.elk.alg.spore.graph.Graph;
-import org.eclipse.elk.alg.spore.options.ShrinkTreeOptions;
+import org.eclipse.elk.alg.spore.options.SporeCompactionOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
@@ -31,12 +31,15 @@ public class ShrinkTreeLayoutProvider extends AbstractLayoutProvider {
      */
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+        
         // If desired, apply a layout algorithm
-        String requestedAlgorithm = layoutGraph.getProperty(ShrinkTreeOptions.UNDERLYING_LAYOUT_ALGORITHM);
-        LayoutAlgorithmData lad = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffix(requestedAlgorithm);
-        if (lad != null) {
-            AbstractLayoutProvider layoutProvider = lad.getInstancePool().fetch();
-            layoutProvider.layout(layoutGraph, progressMonitor.subTask(1));
+        if (layoutGraph.hasProperty(SporeCompactionOptions.UNDERLYING_LAYOUT_ALGORITHM)) {
+            String requestedAlgorithm = layoutGraph.getProperty(SporeCompactionOptions.UNDERLYING_LAYOUT_ALGORITHM);
+            LayoutAlgorithmData lad = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffix(requestedAlgorithm);
+            if (lad != null) {
+                AbstractLayoutProvider layoutProvider = lad.getInstancePool().fetch();
+                layoutProvider.layout(layoutGraph, progressMonitor.subTask(1));
+            }
         }
         
         IGraphImporter<ElkNode> graphImporter = new ElkGraphImporter();

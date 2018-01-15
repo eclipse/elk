@@ -19,10 +19,10 @@ import org.eclipse.elk.alg.common.spore.InternalProperties;
 import org.eclipse.elk.alg.common.spore.ScanlineOverlapCheck;
 import org.eclipse.elk.alg.common.utils.SVGImage;
 import org.eclipse.elk.alg.spore.graph.Graph;
-import org.eclipse.elk.alg.spore.options.OverlapRemovalOptions;
+import org.eclipse.elk.alg.spore.options.SporeOverlapRemovalOptions;
 import org.eclipse.elk.alg.spore.options.OverlapRemovalStrategy;
 import org.eclipse.elk.alg.spore.options.RootSelection;
-import org.eclipse.elk.alg.spore.options.ShrinkTreeOptions;
+import org.eclipse.elk.alg.spore.options.SporeCompactionOptions;
 import org.eclipse.elk.alg.spore.options.SpanningTreeCostFunction;
 import org.eclipse.elk.alg.spore.options.StructureExtractionStrategy;
 import org.eclipse.elk.alg.spore.options.TreeConstructionStrategy;
@@ -55,26 +55,28 @@ public class OverlapRemovalLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         // If desired, apply a layout algorithm
-        String requestedAlgorithm = layoutGraph.getProperty(OverlapRemovalOptions.UNDERLYING_LAYOUT_ALGORITHM);
-        LayoutAlgorithmData lad = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffix(requestedAlgorithm);
-        if (lad != null) {
-            AbstractLayoutProvider layoutProvider = lad.getInstancePool().fetch();
-            layoutProvider.layout(layoutGraph, progressMonitor.subTask(1));
+        if (layoutGraph.hasProperty(SporeCompactionOptions.UNDERLYING_LAYOUT_ALGORITHM)) {
+            String requestedAlgorithm = layoutGraph.getProperty(SporeOverlapRemovalOptions.UNDERLYING_LAYOUT_ALGORITHM);
+            LayoutAlgorithmData lad = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffix(requestedAlgorithm);
+            if (lad != null) {
+                AbstractLayoutProvider layoutProvider = lad.getInstancePool().fetch();
+                layoutProvider.layout(layoutGraph, progressMonitor.subTask(1));
+            }
         }
         
         // set algorithm properties
-        layoutGraph.setProperty(ShrinkTreeOptions.PROCESSING_ORDER_ROOT_SELECTION, RootSelection.CENTER_NODE);
-        layoutGraph.setProperty(ShrinkTreeOptions.PROCESSING_ORDER_SPANNING_TREE_COST_FUNCTION, 
+        layoutGraph.setProperty(SporeCompactionOptions.PROCESSING_ORDER_ROOT_SELECTION, RootSelection.CENTER_NODE);
+        layoutGraph.setProperty(SporeCompactionOptions.PROCESSING_ORDER_SPANNING_TREE_COST_FUNCTION, 
                 SpanningTreeCostFunction.INVERTED_OVERLAP);
-        layoutGraph.setProperty(ShrinkTreeOptions.PROCESSING_ORDER_TREE_CONSTRUCTION, 
+        layoutGraph.setProperty(SporeCompactionOptions.PROCESSING_ORDER_TREE_CONSTRUCTION, 
                 TreeConstructionStrategy.MINIMUM_SPANNING_TREE);
-        int maxIterations = layoutGraph.getProperty(OverlapRemovalOptions.OVERLAP_REMOVAL_MAX_ITERATIONS);
+        int maxIterations = layoutGraph.getProperty(SporeOverlapRemovalOptions.OVERLAP_REMOVAL_MAX_ITERATIONS);
         
         progressMonitor.begin("Overlap removal", 1);
         
         // initialize debug output
         String debugOutputFile = null;
-        if (layoutGraph.getProperty(OverlapRemovalOptions.DEBUG_MODE)) {
+        if (layoutGraph.getProperty(SporeOverlapRemovalOptions.DEBUG_MODE)) {
             debugOutputFile = ElkUtil.debugFolderPath("spore") + "45scanlineOverlaps";
         }
         SVGImage svg = new SVGImage(debugOutputFile);
@@ -92,7 +94,7 @@ public class OverlapRemovalLayoutProvider extends AbstractLayoutProvider {
         while (iteration < maxIterations && overlapsExisted) {
             
             // scanline overlap check
-            if (layoutGraph.getProperty(OverlapRemovalOptions.OVERLAP_REMOVAL_RUN_SCANLINE)) {
+            if (layoutGraph.getProperty(SporeOverlapRemovalOptions.OVERLAP_REMOVAL_RUN_SCANLINE)) {
                 overlapEdges.clear();
                 new ScanlineOverlapCheck(overlapHandler, svg).sweep(graph.vertices);
                 if (overlapEdges.isEmpty()) {

@@ -922,9 +922,8 @@ public final class ElkUtil {
      *         home folder is not defined.
      */
     public static String debugFolderPath(final String subfolder) {
-        String userHome = System.getProperty("user.home");
-
         // elkjs-exclude-start
+        String userHome = System.getProperty("user.home");
         if (userHome != null) {
             StringBuilder path = new StringBuilder(userHome);
 

@@ -63,6 +63,7 @@ public final class NaiveMinST {
         
         // debug output ----------------------------------------------------------------------------------------------
         SVGImage svg = new SVGImage(debugOutputFile);
+        // elkjs-exclude-start
         svg.addGroups("e", "t");
         for (TEdge e : edges) {
             svg.g("e").addLine(e.u.x, e.u.y, e.v.x, e.v.y, "stroke=\"black\" stroke-width=\"1\"");
@@ -71,6 +72,7 @@ public final class NaiveMinST {
                 + " font-size=\"20px\">" + String.format("%.2f", weight.get(e)) + "</text>");
             }
         svg.isave();
+        // elkjs-exclude-end
         // -----------------------------------------------------------------------------------------------------------
         
         while (!edges.isEmpty()) {

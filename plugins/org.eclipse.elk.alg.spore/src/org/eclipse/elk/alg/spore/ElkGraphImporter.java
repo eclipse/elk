@@ -19,7 +19,7 @@ import org.eclipse.elk.alg.common.utils.Utils;
 import org.eclipse.elk.alg.spore.graph.Graph;
 import org.eclipse.elk.alg.spore.options.CompactionStrategy;
 import org.eclipse.elk.alg.spore.options.RootSelection;
-import org.eclipse.elk.alg.spore.options.ShrinkTreeOptions;
+import org.eclipse.elk.alg.spore.options.SporeCompactionOptions;
 import org.eclipse.elk.alg.spore.options.SpanningTreeCostFunction;
 import org.eclipse.elk.alg.spore.options.TreeConstructionStrategy;
 import org.eclipse.elk.core.math.ElkMargin;
@@ -113,15 +113,15 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         NodeDimensionCalculation.calculateNodeMargins(adapter);
         
         // retrieve layout options
-        String preferredRootID = elkGraph.getProperty(ShrinkTreeOptions.PROCESSING_ORDER_PREFERRED_ROOT);
+        String preferredRootID = elkGraph.getProperty(SporeCompactionOptions.PROCESSING_ORDER_PREFERRED_ROOT);
         SpanningTreeCostFunction costFunctionID = 
-                elkGraph.getProperty(ShrinkTreeOptions.PROCESSING_ORDER_SPANNING_TREE_COST_FUNCTION);
+                elkGraph.getProperty(SporeCompactionOptions.PROCESSING_ORDER_SPANNING_TREE_COST_FUNCTION);
         TreeConstructionStrategy treeConstructionStrategy = 
-                elkGraph.getProperty(ShrinkTreeOptions.PROCESSING_ORDER_TREE_CONSTRUCTION);
+                elkGraph.getProperty(SporeCompactionOptions.PROCESSING_ORDER_TREE_CONSTRUCTION);
         CompactionStrategy compactionStrategy =
-                elkGraph.getProperty(ShrinkTreeOptions.COMPACTION_COMPACTION_STRATEGY);
-        RootSelection rootSelection = elkGraph.getProperty(ShrinkTreeOptions.PROCESSING_ORDER_ROOT_SELECTION);
-        spacingNodeNode = elkGraph.getProperty(ShrinkTreeOptions.SPACING_NODE_NODE);
+                elkGraph.getProperty(SporeCompactionOptions.COMPACTION_COMPACTION_STRATEGY);
+        RootSelection rootSelection = elkGraph.getProperty(SporeCompactionOptions.PROCESSING_ORDER_ROOT_SELECTION);
+        spacingNodeNode = elkGraph.getProperty(SporeCompactionOptions.SPACING_NODE_NODE);
         
         ICostFunction costFunction = centerDistance;
         switch (costFunctionID) {
@@ -147,8 +147,8 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         
         // instantiate Graph
         graph = new Graph(costFunction, treeConstructionStrategy, compactionStrategy);
-        graph.setProperty(InternalProperties.DEBUG_SVG, elkGraph.getProperty(ShrinkTreeOptions.DEBUG_MODE));
-        graph.orthogonalCompaction = elkGraph.getProperty(ShrinkTreeOptions.COMPACTION_ORTHOGONAL);
+        graph.setProperty(InternalProperties.DEBUG_SVG, elkGraph.getProperty(SporeCompactionOptions.DEBUG_MODE));
+        graph.orthogonalCompaction = elkGraph.getProperty(SporeCompactionOptions.COMPACTION_ORTHOGONAL);
         
         if (elkGraph.getChildren().isEmpty()) {
             // don't bother
@@ -261,10 +261,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         }
         
         // set new dimensions of parent node
-        ElkPadding padding = elkGraph.getProperty(ShrinkTreeOptions.PADDING);
-        if (padding == null) {
-            padding = new ElkPadding();
-        }
+        ElkPadding padding = elkGraph.getProperty(SporeCompactionOptions.PADDING);
         ElkUtil.resizeNode(elkGraph, maxX - minX + padding.getHorizontal(), 
                 maxY - minY + padding.getVertical(), true, true);
         ElkUtil.translate(elkGraph, -minX + padding.left, -minY + padding.top);

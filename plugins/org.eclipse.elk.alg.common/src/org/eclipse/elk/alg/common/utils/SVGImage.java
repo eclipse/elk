@@ -24,6 +24,8 @@ import com.google.common.collect.Maps;
 
 /**
  * SVG output for debugging purposes.
+ * 
+ * Note: when adding/removing methods from this class, make sure to adjust the emulating class in elkjs.
  */
 public class SVGImage {
     // CHECKSTYLEOFF MagicNumber
@@ -34,7 +36,7 @@ public class SVGImage {
     private String current = "main";
     private Map<String, String> groups = Maps.newLinkedHashMap();
     // SUPPRESS CHECKSTYLE NEXT 8 VisibilityModifier
-    /** Path to the file where the image shoulod be saved. The file extension
+    /** Path to the file where the image should be saved. The file extension
      *  and a possible numeration are appended automatically. */
     public String fileName = null;
     private int index = 0;

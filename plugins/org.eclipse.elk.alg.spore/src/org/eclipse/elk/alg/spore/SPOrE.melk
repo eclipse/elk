@@ -4,9 +4,6 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.spore
 
@@ -20,30 +17,32 @@ import org.eclipse.elk.alg.spore.options.TreeConstructionStrategy
 import org.eclipse.elk.core.math.ElkPadding
 
 bundle {
-    metadataClass SporeMetaDataProvider
+    metadataClass options.SporeMetaDataProvider
     idPrefix org.eclipse.elk
 }
 
-algorithm growtree(OverlapRemovalLayoutProvider) {
-    label "ELK Overlap Removal"
-    metadataClass options.OverlapRemovalOptions
-    description "A node overlap removal algorithm proposed by Nachmanson et al. in \"Node overlap removal 
-                by growing a tree\"."
+algorithm sporeOverlap(OverlapRemovalLayoutProvider) {
+    label "ELK SPOrE Overlap Removal"
+    metadataClass options.SporeOverlapRemovalOptions
+    description 
+        "A node overlap removal algorithm proposed by Nachmanson et al. in \"Node overlap removal 
+         by growing a tree\"."
     preview images/overlap-removal.png
     supports underlyingLayoutAlgorithm
-    supports org.eclipse.elk.padding
-    supports org.eclipse.elk.spacing.nodeNode
+    supports org.eclipse.elk.padding = new ElkPadding(8)
+    supports org.eclipse.elk.spacing.nodeNode = 8
     supports structure.structureExtractionStrategy
     supports overlapRemoval.maxIterations
     supports overlapRemoval.runScanline
     supports org.eclipse.elk.debugMode = false
 }
 
-algorithm shrinktree(ShrinkTreeLayoutProvider) {
-    label "ELK Compaction"
-    metadataClass options.ShrinkTreeOptions
-    description "ShrinkTree is a compaction algorithm that maintains the topology of a layout. 
-                The relocation of diagram elements is based on contracting a spanning tree."
+algorithm sporeCompaction(ShrinkTreeLayoutProvider) {
+    label "ELK SPOrE Compaction"
+    metadataClass options.SporeCompactionOptions
+    description 
+        "ShrinkTree is a compaction algorithm that maintains the topology of a layout. 
+         The relocation of diagram elements is based on contracting a spanning tree."
     preview images/compaction-example.png
     documentation "@spore.md"
     supports underlyingLayoutAlgorithm
@@ -51,7 +50,7 @@ algorithm shrinktree(ShrinkTreeLayoutProvider) {
     supports processingOrder.spanningTreeCostFunction
     supports processingOrder.preferredRoot
     supports processingOrder.rootSelection
-    supports org.eclipse.elk.padding = new ElkPadding(0)
+    supports org.eclipse.elk.padding = new ElkPadding(8)
     supports org.eclipse.elk.spacing.nodeNode = 8
     supports structure.structureExtractionStrategy
     supports compaction.compactionStrategy
@@ -61,13 +60,13 @@ algorithm shrinktree(ShrinkTreeLayoutProvider) {
 
 // options --------------
 option underlyingLayoutAlgorithm: String {
-        label "Underlying Layout Algorithm"
-        description
-            "A layout algorithm that is applied to the graph before it is 
-             compacted. If this is null, nothing is applied before compaction."
-        targets parents
-        default = "fixed"
-    }
+    label "Underlying Layout Algorithm"
+    description
+        "A layout algorithm that is applied to the graph before it is 
+         compacted. If this is null, nothing is applied before compaction."
+    targets parents
+}
+    
 group structure {
      advanced option structureExtractionStrategy: StructureExtractionStrategy {
         label "Structure Extraction Strategy"
