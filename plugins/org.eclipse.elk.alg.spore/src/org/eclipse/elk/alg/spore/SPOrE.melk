@@ -20,13 +20,12 @@ import org.eclipse.elk.alg.spore.options.TreeConstructionStrategy
 import org.eclipse.elk.core.math.ElkPadding
 
 bundle {
-    label "Compaction by Shrinking a Tree"
     metadataClass SporeMetaDataProvider
     idPrefix org.eclipse.elk
 }
 
 algorithm growtree(OverlapRemovalLayoutProvider) {
-    label "Overlap Removal"
+    label "ELK Overlap Removal"
     metadataClass options.OverlapRemovalOptions
     description "A node overlap removal algorithm proposed by Nachmanson et al. in \"Node overlap removal 
                 by growing a tree\"."
@@ -41,7 +40,7 @@ algorithm growtree(OverlapRemovalLayoutProvider) {
 }
 
 algorithm shrinktree(ShrinkTreeLayoutProvider) {
-    label "ShrinkTree Compaction Algorithm"
+    label "ELK Compaction"
     metadataClass options.ShrinkTreeOptions
     description "ShrinkTree is a compaction algorithm that maintains the topology of a layout. 
                 The relocation of diagram elements is based on contracting a spanning tree."

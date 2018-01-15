@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.wrapping;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -22,8 +23,6 @@ import org.eclipse.elk.alg.layered.intermediate.wrapping.ICutIndexCalculator.Man
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;
@@ -93,26 +92,10 @@ public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
             case ARD:
                 icic = new ARDCutIndexHeuristic();
                 break;
-            case FILE:
-                icic = new FileCutCalculator();
-                break;
             default:
                 icic = new MSDCutIndexHeuristic();
         }
         List<Integer> cuts = icic.getCutIndexes(graph, gs);
-        
-        System.out.println(cuts);
-        // FIXME just debug
-        switch (graph.getProperty(LayeredOptions.WRAPPING_CUTTING_STRATEGY)) {
-        case ARD:
-        case FILE:
-            KVector v = new KVector(gs.getApproximateLayeringWidth() / (cuts.size() + 1),
-                    gs.getApproximateLayeringHeight() * (cuts.size() + 1));
-            graph.setProperty(CoreOptions.CUTTING_AREA, v);
-            System.out.println(v);
-            break;
-        }
-        
         
         // if they are not guaranteed to be valid, make them valid
         if (!icic.guaranteeValid()) {
@@ -136,7 +119,6 @@ public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
     }
     
     private static List<Integer> validifyIndexesGreedily(final GraphStats gs, final List<Integer> cuts) {
-        
         List<Integer> validCuts = Lists.newArrayList();
         int offset = 0;
 
