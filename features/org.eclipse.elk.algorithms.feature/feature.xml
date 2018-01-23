@@ -36,7 +36,7 @@ http://www.eclipse.org/legal/epl-v10.html.
    </requires>
 
    <plugin
-         id="org.eclipse.elk.alg.common.compaction"
+         id="org.eclipse.elk.alg.common"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -70,4 +70,18 @@ http://www.eclipse.org/legal/epl-v10.html.
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.eclipse.elk.alg.radial"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+  
+   <plugin
+         id="org.eclipse.elk.alg.spore"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+  
 </feature>
