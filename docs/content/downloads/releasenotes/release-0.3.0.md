@@ -7,6 +7,7 @@ menu:
 ---
 
 * [Release log](https://projects.eclipse.org/projects/modeling.elk/releases/0.3.0)
+* [Documentation](http://download.eclipse.org/elk/updates/releases/0.3.0/elk-0.3.0-docs.zip)
 * [Update site](http://download.eclipse.org/elk/updates/releases/0.3.0/)
 * [Zipped update site](http://download.eclipse.org/elk/updates/releases/0.3.0/elk-0.3.0.zip) (for offline use)
 * [Maven Repository](http://download.eclipse.org/elk/maven/releases/0.3.0) (for meta data language compiler)
