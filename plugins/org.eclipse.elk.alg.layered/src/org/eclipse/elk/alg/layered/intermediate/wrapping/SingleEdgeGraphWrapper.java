@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate.wrapping;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -109,15 +110,15 @@ public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
                     // leave the cuts as they are
             }
         }
-        
+
+
         // re-build the layering
         performCuts(graph, gs, cuts);
 
         progressMonitor.done();
     }
     
-    private List<Integer> validifyIndexesGreedily(final GraphStats gs, final List<Integer> cuts) {
-        
+    private static List<Integer> validifyIndexesGreedily(final GraphStats gs, final List<Integer> cuts) {
         List<Integer> validCuts = Lists.newArrayList();
         int offset = 0;
 
@@ -138,94 +139,69 @@ public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
         return validCuts;
     }
     
-    private List<Integer> validifyIndexesLookingBack(final GraphStats gs, final List<Integer> cuts) {
-
-        if (cuts.isEmpty()) {
-            return cuts;
+    private static List<Integer> validifyIndexesLookingBack(final GraphStats gs, final List<Integer> desiredCuts) {
+        if (desiredCuts.isEmpty()) {
+            return Collections.emptyList();
         }
-
+        
+        // initialize array with valid cuts
         List<Integer> validCuts = Lists.newArrayList();
-
-        int offset = 0;
-        int lastValidIndex = -1;
-        
-        Iterator<Integer> cutIt = cuts.iterator();
-        Integer nextCut = cutIt.next(); // guaranteed to exist
-        
-        boolean seek = false;
-        
-        int idx = 1;
-        outer: while (idx < gs.longestPath) {
-            
-            // #1 we are seeking for a valid position for a cut index
-            if (seek) {
-                
-                int foundIndex = -1;
-                // #1.1 distance to (existing) lastly valid index is smaller
-                int distBack = Math.abs(nextCut - lastValidIndex);
-                int distForward = Math.abs(idx - nextCut);
-                if (lastValidIndex > 0 && (distBack <= distForward)) {
-                    
-                    offset -= distBack;
-                    foundIndex = lastValidIndex;
-                    idx = lastValidIndex; // will be incremented at the end of the while loop
-                    
-                } else {
-                    // #1.2 look forwards
-                    if (gs.isCutAllowed(idx)) {
-                        offset += distForward;
-                        foundIndex = idx;
-                    }
-                }
-                
-                // #1.3 accept the identified valid cut index
-                if (foundIndex > 0) {
-                    validCuts.add(foundIndex);
-                    lastValidIndex = -1;
-                    seek = false;
-                    
-                    // find next desired cut index that is larger than the current index
-                    //  i.e. we possibly 'skip' desired cut indexes
-                    do {
-                        if (cutIt.hasNext()) {
-                            nextCut = cutIt.next() + offset;
-                        } else {
-                            break outer;
-                        }
-                    } while (nextCut <= idx);
-                }
-                
-            } else {
-            
-                // #2 update the 'lastValidIndex' variable
-                if (gs.isCutAllowed(idx)) {
-                    lastValidIndex = idx;
-                }
-                
-                // #3 accept next cut index
-                if (idx == nextCut) {
-
-                    // #3.1 the desired cut is ok
-                    if (gs.isCutAllowed(idx)) {
-                        validCuts.add(nextCut);
-                        lastValidIndex = -1;
-                        // retrieve next desired cut
-                        if (cutIt.hasNext()) {
-                            nextCut = cutIt.next() + offset;
-                        } else {
-                            // all done
-                            break;
-                        }
-                    } else {
-                        // #3.2 desired cut is forbidden
-                        seek = true;
-                    }
-                }
+        validCuts.add(Integer.MIN_VALUE); // -inf
+        for (int i = 1; i < gs.longestPath; ++i) {
+            if (gs.isCutAllowed(i)) {
+                validCuts.add(i);
             }
-            idx++;
         }
+        if (validCuts.size() == 1) {
+            return Collections.emptyList();
+        }
+        validCuts.add(Integer.MAX_VALUE); // +inf
         
-        return validCuts;
+        return validifyIndexesLookingBack(desiredCuts, validCuts);
+    }
+    
+    /**
+     * Validify the {@code desiredCuts} s.t. the resulting cuts are all out of {@code validCuts}. {@code validCuts}
+     * is expected to be a list that contains -inf as initial element and +inf as last element.
+     */
+    private static List<Integer> validifyIndexesLookingBack(final List<Integer> desiredCuts,
+            final List<Integer> validCuts) {
+        assert validCuts.get(0) == Integer.MIN_VALUE;
+        assert validCuts.get(validCuts.size() - 1) == Integer.MAX_VALUE;
+
+        // turn cuts into valid cuts
+        List<Integer> finalCuts = Lists.newArrayList();
+        int iIdx = 0;
+        int cIdx = 0;
+        int offset = 0;
+
+        while (iIdx < validCuts.size() - 1 && cIdx < desiredCuts.size()) {
+            int current = desiredCuts.get(cIdx) + offset;
+
+            while (validCuts.get(iIdx + 1) < current) {
+                iIdx++;
+            }
+
+            assert validCuts.get(iIdx) <= current;
+            assert current <= validCuts.get(iIdx + 1);
+
+            int select = 0;
+            int distLower = current - validCuts.get(iIdx);
+            int distHigher = validCuts.get(iIdx + 1) - current;
+            if (distLower > distHigher) {
+                select++;
+            }
+
+            finalCuts.add(validCuts.get(iIdx + select));
+            offset += validCuts.get(iIdx + select) - current;
+            cIdx++;
+            while (cIdx < desiredCuts.size() && desiredCuts.get(cIdx) + offset <= validCuts.get(iIdx + select)) {
+                cIdx++;
+            }
+            iIdx += 1 + select;
+        }
+
+        return finalCuts;
     }
 
     /**

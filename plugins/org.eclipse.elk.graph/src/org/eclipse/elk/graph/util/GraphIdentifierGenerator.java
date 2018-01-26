@@ -12,6 +12,7 @@ package org.eclipse.elk.graph.util;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 import org.eclipse.elk.graph.ElkEdge;
@@ -37,6 +38,8 @@ public final class GraphIdentifierGenerator {
     private boolean validate = false;
     private boolean generate = false;
     private boolean unique = false;
+    
+    private Random random = null;
     
     /**
      * @param graph the graph for which to generate identifiers. 
@@ -342,12 +345,34 @@ public final class GraphIdentifierGenerator {
         while (elementIt.hasNext()) {
             ElkGraphElement e = elementIt.next();
             while (knownIds.contains(e.getIdentifier())) {
-                e.setIdentifier(e.getIdentifier() + "_");
+                String newId = e.getIdentifier() + "_g" + fourDigitPaddedRandomNumber();
+                e.setIdentifier(newId);
             }
             knownIds.add(e.getIdentifier());
         }
         
         return this;
+    }
+    
+    private String fourDigitPaddedRandomNumber() {
+        if (random == null) {
+            random = new Random();
+        }
+        // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
+        int rand = random.nextInt(10000);
+        return padZeroes(Integer.toString(rand), 4);
+    }
+    
+    private String padZeroes(final String s, final int length) {
+        if (s.length() == length) {
+            return s;
+        }
+        StringBuffer r = new StringBuffer(length);
+        for (int i = 0; i < length - s.length(); ++i) {
+            r.append("0");
+        }
+        r.append(s);
+        return r.toString();
     }
     
 }

@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Direction;
-import org.eclipse.elk.alg.common.compaction.polyomino.structures.Polyomino;
-import org.eclipse.elk.alg.common.compaction.polyomino.util.UniqueTriple;
+import org.eclipse.elk.alg.common.polyomino.structures.Direction;
+import org.eclipse.elk.alg.common.polyomino.structures.Polyomino;
+import org.eclipse.elk.alg.common.utils.UniqueTriple;
 import org.eclipse.elk.alg.disco.graph.DCComponent;
 import org.eclipse.elk.alg.disco.graph.DCDirection;
 import org.eclipse.elk.alg.disco.graph.DCElement;

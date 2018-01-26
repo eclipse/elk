@@ -52,7 +52,7 @@ public class ARDCutIndexHeuristic implements ICutIndexCalculator {
      *         less.
      */
     public static int getChunkCount(final GraphStats gs) {
-        double rowsd = Math.sqrt((gs.longestPath * gs.getMaxWidth()) / (gs.dar * gs.getMaxHeight()));
+        double rowsd = Math.sqrt(gs.getSumWidth() / (gs.dar * gs.getMaxHeight()));
         int rows = (int) Math.round(rowsd);
         rows = Math.min(rows, gs.longestPath);
         return rows;

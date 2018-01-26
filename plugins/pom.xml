@@ -19,7 +19,7 @@
     <module>../build/org.eclipse.elk.targetplatform</module>
     <!-- Re-enable tests at some point. -->
     <!--<module>../test</module>-->
-    <module>org.eclipse.elk.alg.common.compaction</module>
+    <module>org.eclipse.elk.alg.common</module>
     <module>org.eclipse.elk.alg.disco</module>
     <module>org.eclipse.elk.alg.disco.debug</module>
     <module>org.eclipse.elk.alg.force</module>
@@ -29,6 +29,7 @@
     <module>org.eclipse.elk.alg.layered</module>
     <module>org.eclipse.elk.alg.mrtree</module>
     <module>org.eclipse.elk.alg.sequence</module>
+    <module>org.eclipse.elk.alg.spore</module>
     <module>org.eclipse.elk.conn.gmf</module>
     <module>org.eclipse.elk.conn.graphiti</module>
     <module>org.eclipse.elk.core</module>
