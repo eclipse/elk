@@ -35,7 +35,7 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     label "Sequence Diagram Layouter"
     description
         "A layout algorithm especially targeted at UML sequence diagrams."
-    metadataClass properties.SequenceDiagramOptions
+    metadataClass options.SequenceDiagramOptions
     category sequenceDiagrams
     supports org.eclipse.elk.padding
     supports elementId
@@ -173,49 +173,49 @@ programmatic option destructionNode : ElkNode {
     targets nodes
 }
 
-option messageSpacing : float {
+option messageSpacing : double {
     label "Message Spacing"
     description "The vertical spacing between two adjacent messages."
     targets parents
     default = 50
 }
 
-option lifelineSpacing : float {
+option lifelineSpacing : double {
     label "Lifeline Spacing"
     description "The horizontal spacing between two adjacent lifelines."
     targets parents
     default = 50
 }
 
-programmatic option lifelineYPos : float {
+programmatic option lifelineYPos : double {
     label "Vertical Lifeline Position"
     description "The vertical position of lifelines, if they do start at the top."
     targets parents
     default = 10
 }
 
-programmatic option lifelineHeaderHeight : float {
+programmatic option lifelineHeaderHeight : double {
     label "Lifeline Header Height"
     description "The height of the lifelien header."
     targets parents
     default = 30
 }
 
-programmatic option areaHeaderHeight : float {
+programmatic option areaHeaderHeight : double {
     label "Area Header Height"
     description "The height of combined fragment headers."
     targets parents
     default = 25
 }
 
-programmatic option timeObservationWidth : float {
+programmatic option timeObservationWidth : double {
     label "Time Observation Width"
     description "The width of time observations."
     targets parents
     default = 20
 }
 
-programmatic option containmentOffset : float {
+programmatic option containmentOffset : double {
     label "Containment Offset"
     description "The offset between two nested areas."
     targets parents

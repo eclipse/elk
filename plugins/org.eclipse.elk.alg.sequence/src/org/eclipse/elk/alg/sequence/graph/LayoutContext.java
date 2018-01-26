@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.LifelineSortingStrategy;
-import org.eclipse.elk.alg.sequence.properties.SequenceDiagramOptions;
+import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
