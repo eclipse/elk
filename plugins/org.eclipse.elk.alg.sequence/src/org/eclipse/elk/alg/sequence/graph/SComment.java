@@ -12,17 +12,16 @@ package org.eclipse.elk.alg.sequence.graph;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 /**
- * Represents a comment in the SGraph.
+ * Represents a comment-like object in the sequence graph. Comment-like objects are comments (duh...), constraints,
+ * time observations, and duration observations.
  */
 public final class SComment extends SShape {
     
     private static final long serialVersionUID = 2543686433908319587L;
     
-    /** The list of elements that the comment is attached to. */
-    private List<SGraphElement> attachments = Lists.newArrayList();
+    /** The element that the comment is attached to. */
+    private SGraphElement attachment;
     /** If the comment is attached to anything, this is the lifeline it will be drawn next to. */
     private SLifeline referenceLifeline;
     /** If the comment is attached to anything, this is the message it will be drawn next to. */
@@ -30,12 +29,22 @@ public final class SComment extends SShape {
 
 
     /**
-     * The graph elements the comment is attached to.
+     * The graph element the comment is attached to.
      * 
-     * @return the (possibly empty) list of attached elements.
+     * @return the (possibly {@code null}) attached element.
      */
-    public List<SGraphElement> getAttachments() {
-        return attachments;
+    public SGraphElement getAttachment() {
+        return attachment;
+    }
+    
+    /**
+     * Set the element to which the comment is attached.
+     * 
+     * @param element
+     *            the new element.
+     */
+    public void setAttachment(SGraphElement element) {
+        this.attachment = element;
     }
 
     /**

@@ -19,7 +19,6 @@ import org.eclipse.elk.alg.sequence.SequenceLayoutConstants;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
-import org.eclipse.elk.alg.sequence.graph.SGraphElement;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.graph.transform.ElkGraphExporter;
@@ -123,8 +122,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
         arrangeUnconnectedComments(context);
 
         // Handle areas (interactions / combined fragments / interaction operands)
-        List<SequenceArea> areas = context.sgraph.getProperty(SequenceDiagramOptions.AREAS);
-        calculateAreaPosition(context, areas);
+        calculateAreaPosition(context);
 
         progressMonitor.done();
     }
@@ -265,14 +263,13 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
         for (SComment comment : context.sgraph.getComments()) {
             SMessage message = null;
             SLifeline lifeline = null;
+            
             // Get random connected message and lifeline if existing
             // This may be optimized if there is more than one connection
-            for (SGraphElement element : comment.getAttachments()) {
-                if (element instanceof SMessage) {
-                    message = (SMessage) element;
-                } else if (element instanceof SLifeline) {
-                    lifeline = (SLifeline) element;
-                }
+            if (comment.getAttachment() instanceof SMessage) {
+                message = (SMessage) comment.getAttachment();
+            } else if (comment.getAttachment() instanceof SLifeline) {
+                lifeline = (SLifeline) comment.getAttachment();
             }
 
             comment.setReferenceMessage(message);
@@ -519,16 +516,10 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
      * 
      * @param context
      *            the layout context that contains all relevant information for the current layout run.
-     * @param areas
-     *            the list of areas in the graph
      */
-    private void calculateAreaPosition(final LayoutContext context, final List<SequenceArea> areas) {
-        if (areas == null || areas.isEmpty()) {
-            return;
-        }
-        
+    private void calculateAreaPosition(final LayoutContext context) {
         // Set size and position of area
-        for (SequenceArea area : areas) {
+        for (SequenceArea area : context.sgraph.getAreas()) {
             if (area.getMessages().size() > 0) {
                 setAreaPositionByMessages(area);
             } else {

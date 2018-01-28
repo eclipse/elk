@@ -84,13 +84,13 @@ public final class ElkGraphExporter {
         placeComments(context.sgraph);
 
         // Set size and position of surrounding interaction
-        ElkUtil.resizeNode(context.kgraph,
+        ElkUtil.resizeNode(context.elkgraph,
                 context.sgraph.getSize().x,
                 context.sgraph.getSize().y,
                 false,
                 false);
         
-        context.kgraph.setLocation(context.borderSpacing, context.borderSpacing);
+        context.elkgraph.setLocation(context.borderSpacing, context.borderSpacing);
     }
     
     
@@ -154,34 +154,30 @@ public final class ElkGraphExporter {
         edgeSection.setStartLocation(llCenter, message.getSourceYPos());
         
         // Check if the message connects to executions
-        List<SequenceExecution> executions = lifeline.getProperty(
-                SequenceDiagramOptions.EXECUTIONS);
-        if (executions != null) {
-            for (SequenceExecution execution : executions) {
-                if (execution.getMessages().contains(message)) {
-                    // Adjust the execution's vertical extend. This must be done with consideration for
-                    // self loops: If an execution is created by a self-loop, it needs to start at the
-                    // loop's lower border. If it is ended by a self-loop, it needs to end at the upper
-                    // border. For regular messages, upper and lower border are the same.
-                    double topYPos = upperSequencePositionForMessage(message, true, context);
-                    double bottYPos = lowerSequencePositionForMessage(message, true, context);
-                    
-                    if (execution.getPosition().y == 0) {
-                        // If this is the first message to encounter this execution, initialize the
-                        // execution's y coordinate and height
+        for (SequenceExecution execution : lifeline.getExcecutions()) {
+            if (execution.getMessages().contains(message)) {
+                // Adjust the execution's vertical extend. This must be done with consideration for
+                // self loops: If an execution is created by a self-loop, it needs to start at the
+                // loop's lower border. If it is ended by a self-loop, it needs to end at the upper
+                // border. For regular messages, upper and lower border are the same.
+                double topYPos = upperSequencePositionForMessage(message, true, context);
+                double bottYPos = lowerSequencePositionForMessage(message, true, context);
+                
+                if (execution.getPosition().y == 0) {
+                    // If this is the first message to encounter this execution, initialize the
+                    // execution's y coordinate and height
+                    execution.getPosition().y = topYPos;
+                    execution.getSize().y = 0;
+                } else {
+                    // The execution already has a position and size; adjust.
+                    if (topYPos < execution.getPosition().y) {
+                        double delta = execution.getPosition().y - topYPos;
                         execution.getPosition().y = topYPos;
-                        execution.getSize().y = 0;
-                    } else {
-                        // The execution already has a position and size; adjust.
-                        if (topYPos < execution.getPosition().y) {
-                            double delta = execution.getPosition().y - topYPos;
-                            execution.getPosition().y = topYPos;
-                            execution.getSize().y += delta;
-                        }
-                        
-                        if (bottYPos > execution.getPosition().y + execution.getSize().y) {
-                            execution.getSize().y = bottYPos - execution.getPosition().y;
-                        }
+                        execution.getSize().y += delta;
+                    }
+                    
+                    if (bottYPos > execution.getPosition().y + execution.getSize().y) {
+                        execution.getSize().y = bottYPos - execution.getPosition().y;
                     }
                 }
             }
@@ -254,34 +250,30 @@ public final class ElkGraphExporter {
         }
 
         // Check if the message connects to executions
-        List<SequenceExecution> executions = lifeline.getProperty(
-                SequenceDiagramOptions.EXECUTIONS);
-        if (executions != null) {
-            for (SequenceExecution execution : executions) {
-                if (execution.getMessages().contains(message)) {
-                    // Adjust the execution's vertical extend. This must be done with consideration for
-                    // self loops: If an execution is created by a self-loop, it needs to start at the
-                    // loop's lower border. If it is ended by a self-loop, it needs to end at the upper
-                    // border. For regular messages, upper and lower border are the same.
-                    double topYPos = upperSequencePositionForMessage(message, false, context);
-                    double bottYPos = lowerSequencePositionForMessage(message, false, context);
+        for (SequenceExecution execution : lifeline.getExcecutions()) {
+            if (execution.getMessages().contains(message)) {
+                // Adjust the execution's vertical extend. This must be done with consideration for
+                // self loops: If an execution is created by a self-loop, it needs to start at the
+                // loop's lower border. If it is ended by a self-loop, it needs to end at the upper
+                // border. For regular messages, upper and lower border are the same.
+                double topYPos = upperSequencePositionForMessage(message, false, context);
+                double bottYPos = lowerSequencePositionForMessage(message, false, context);
+                
+                if (execution.getPosition().y == 0) {
+                    // If this is the first message to encounter this execution, initialize the
+                    // execution's y coordinate and height
+                    execution.getPosition().y = bottYPos;
+                    execution.getSize().y = 0;
+                } else {
+                    // The execution already has a position and size; adjust.
+                    if (topYPos < execution.getPosition().y) {
+                        double delta = execution.getPosition().y - topYPos;
+                        execution.getPosition().y = topYPos;
+                        execution.getSize().y += delta;
+                    }
                     
-                    if (execution.getPosition().y == 0) {
-                        // If this is the first message to encounter this execution, initialize the
-                        // execution's y coordinate and height
-                        execution.getPosition().y = bottYPos;
-                        execution.getSize().y = 0;
-                    } else {
-                        // The execution already has a position and size; adjust.
-                        if (topYPos < execution.getPosition().y) {
-                            double delta = execution.getPosition().y - topYPos;
-                            execution.getPosition().y = topYPos;
-                            execution.getSize().y += delta;
-                        }
-                        
-                        if (bottYPos > execution.getPosition().y + execution.getSize().y) {
-                            execution.getSize().y = bottYPos - execution.getPosition().y;
-                        }
+                    if (bottYPos > execution.getPosition().y + execution.getSize().y) {
+                        execution.getSize().y = bottYPos - execution.getPosition().y;
                     }
                 }
             }
@@ -493,20 +485,18 @@ public final class ElkGraphExporter {
      *            the lifeline whose executions are to be placed.
      */
     private void applyExecutionCoordinates(final LayoutContext context, final SLifeline lifeline) {
-        List<SequenceExecution> executions = lifeline.getProperty(
-                SequenceDiagramOptions.EXECUTIONS);
-        if (executions == null || executions.isEmpty()) {
+        if (lifeline.getExcecutions().isEmpty()) {
             return;
         }
         
         // Set xPos, maxXPos and height / maxYPos
-        arrangeExecutions(executions, lifeline);
+        arrangeExecutions(lifeline);
 
         // Self-messages need to be processed later, once all executions are placed
         Multimap<SMessage, SequenceExecution> selfMessages = HashMultimap.create();
         
         // Walk through the lifeline's executions
-        for (SequenceExecution execution : executions) {
+        for (SequenceExecution execution : lifeline.getExcecutions()) {
             // TODO We need to calculate proper sizes for these guys
             if (execution.getType() == SequenceExecutionType.DURATION
                     || execution.getType() == SequenceExecutionType.TIME_CONSTRAINT) {
@@ -569,16 +559,15 @@ public final class ElkGraphExporter {
     /**
      * Set x position and width of an execution and check for minimum height.
      * 
-     * @param executions
-     *            List of {@link SequenceExecution} at the given {@link SLifeline}
      * @param lifeline
      *            the lifeline the executions belong to.
      */
-    private void arrangeExecutions(final List<SequenceExecution> executions, final SLifeline lifeline) {
+    private void arrangeExecutions(final SLifeline lifeline) {
+        List<SequenceExecution> executions = lifeline.getExcecutions();
+        
         // All executions are initially centered in their lifeline
         for (SequenceExecution execution : executions) {
-            execution.getPosition().x =
-                    (lifeline.getSize().x - SequenceLayoutConstants.EXECUCTION_WIDTH) / 2;
+            execution.getPosition().x = (lifeline.getSize().x - SequenceLayoutConstants.EXECUCTION_WIDTH) / 2;
         }
 
         // If there are multiple executions, some may have to be shifted horizontally if they overlap
@@ -763,37 +752,35 @@ public final class ElkGraphExporter {
             ElkNode origin = (ElkNode) comment.getProperty(InternalProperties.ORIGIN);
             origin.setLocation(comment.getPosition().x, comment.getPosition().y);
             if (comment.getReferenceMessage() != null) {
-                // Connected comments
-
                 // Set coordinates for the connection of the comment
                 double edgeSourceXPos, edgeSourceYPos, edgeTargetXPos, edgeTargetYPos;
-                String attachedElement = comment.getProperty(
-                        SequenceDiagramOptions.ATTACHED_ELEMENT_TYPE);
-                if (attachedElement.toLowerCase().startsWith("lifeline")
-                        || attachedElement.toLowerCase().contains("execution")) {
-                    
-                    // Connections to lifelines or executions are drawn horizontally
-                    SLifeline lifeline = comment.getLifeline();
-                    edgeSourceXPos = comment.getPosition().x;
-                    edgeSourceYPos = comment.getPosition().y + comment.getSize().y / 2;
-                    edgeTargetXPos = lifeline.getPosition().x + lifeline.getSize().x / 2;
-                    edgeTargetYPos = edgeSourceYPos;
-                } else {
-                    // Connections to messages are drawn vertically
-                    edgeSourceXPos = comment.getPosition().x + comment.getSize().x / 2;
-                    edgeTargetXPos = edgeSourceXPos;
-                    
-                    ElkEdge edge = (ElkEdge) comment.getReferenceMessage().getProperty(InternalProperties.ORIGIN);
-                    ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
-                    edgeSourceYPos = comment.getPosition().y + comment.getSize().y;
-                    edgeTargetYPos = (edgeSection.getEndY() + edgeSection.getStartY()) / 2;
-                }
+                
+                if (comment.getAttachment() != null) {
+                    if (comment.getAttachment() instanceof SLifeline) {
+                        // Connections to lifelines or executions are drawn horizontally
+                        SLifeline lifeline = comment.getLifeline();
+                        edgeSourceXPos = comment.getPosition().x;
+                        edgeSourceYPos = comment.getPosition().y + comment.getSize().y / 2;
+                        edgeTargetXPos = lifeline.getPosition().x + lifeline.getSize().x / 2;
+                        edgeTargetYPos = edgeSourceYPos;
+                        
+                    } else {
+                        // Connections to messages are drawn vertically
+                        edgeSourceXPos = comment.getPosition().x + comment.getSize().x / 2;
+                        edgeTargetXPos = edgeSourceXPos;
+                        
+                        ElkEdge edge = (ElkEdge) comment.getReferenceMessage().getProperty(InternalProperties.ORIGIN);
+                        ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
+                        edgeSourceYPos = comment.getPosition().y + comment.getSize().y;
+                        edgeTargetYPos = (edgeSection.getEndY() + edgeSection.getStartY()) / 2;
+                    }
 
-                // Apply connection coordinates to layout
-                ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(
-                        comment.getProperty(InternalSequenceProperties.COMMENT_CONNECTION), true, true);
-                edgeSection.setStartLocation(edgeSourceXPos, edgeSourceYPos);
-                edgeSection.setEndLocation(edgeTargetXPos, edgeTargetYPos);
+                    // Apply connection coordinates to layout
+                    ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(
+                            comment.getProperty(InternalSequenceProperties.COMMENT_CONNECTION), true, true);
+                    edgeSection.setStartLocation(edgeSourceXPos, edgeSourceYPos);
+                    edgeSection.setEndLocation(edgeTargetXPos, edgeTargetYPos);
+                }
             }
         }
     }

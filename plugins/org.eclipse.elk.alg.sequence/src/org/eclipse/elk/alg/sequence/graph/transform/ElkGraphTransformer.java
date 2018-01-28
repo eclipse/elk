@@ -11,7 +11,8 @@ import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Imports and exports sequence diagrams from ELK graphs.
+ * Imports and exports sequence diagrams from ELK graphs. The main data structure that each layout processor gets to
+ * work with is the {@link LayoutContext}, which contains everything necessary to compute a proper layout.
  */
 public class ElkGraphTransformer implements IGraphTransformer<ElkNode> {
 

@@ -140,17 +140,14 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         // Prepare this by filling a map of (message <-> number of its areas) pairs.
         HashMap<SMessage, Integer> areaMessages = new HashMap<SMessage, Integer>();
         if (context.groupAreasWhenSorting) {
-            List<SequenceArea> areas = context.sgraph.getProperty(SequenceDiagramOptions.AREAS);
-            if (areas != null) {
-                for (SequenceArea area : areas) {
-                    for (Object messageObject : area.getMessages()) {
-                        SMessage message = (SMessage) messageObject;
-                        Integer messageEntry = areaMessages.get(message);
-                        if (messageEntry == null) {
-                            areaMessages.put(message, 1);
-                        } else {
-                            areaMessages.put(message, areaMessages.get(messageEntry) + 1);
-                        }
+            for (SequenceArea area : context.sgraph.getAreas()) {
+                for (Object messageObject : area.getMessages()) {
+                    SMessage message = (SMessage) messageObject;
+                    Integer messageEntry = areaMessages.get(message);
+                    if (messageEntry == null) {
+                        areaMessages.put(message, 1);
+                    } else {
+                        areaMessages.put(message, areaMessages.get(messageEntry) + 1);
                     }
                 }
             }

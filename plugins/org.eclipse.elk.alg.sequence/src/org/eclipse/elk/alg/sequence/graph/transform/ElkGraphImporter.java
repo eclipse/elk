@@ -22,7 +22,6 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
-import org.eclipse.elk.alg.sequence.graph.SGraphElement;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
@@ -32,172 +31,173 @@ import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.alg.sequence.options.SequenceExecution;
 import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
+import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
-import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Turns the KGraph of a layout context into an SGraph and an LGraph.
- * 
- * @author grh
+ * Implements the import functionality of {@link ElkGraphTransformer} by turning an input ELK graph into a
+ * {@link LayoutContext}. We create both an {@link SGraph} as well as an {@link LGraph}.
  */
 public final class ElkGraphImporter {
-    
+
+    /**
+     * Imports the given ELK graph and computes the corresponding {@link LayoutContext} object.
+     * 
+     * @param elkGraph
+     *            the graph to be imported.
+     * @return the corresponding layout context.
+     */
     public LayoutContext importGraph(final ElkNode elkGraph) {
         LayoutContext context = new LayoutContext(elkGraph);
-        
-        context.sgraph = importSGraph(context.kgraph);
-        context.lgraph = createLayeredGraph(context.sgraph);
-        
+
+        importSGraph(context);
+        createLayeredGraph(context);
+
         return context;
     }
     
-    
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // SGraph Creation
-    
-    /** A map from ElkNodes in the layout graph to the lifelines created for them. */
+
+    /** Maps {@link ElkNode}s to the {@link SLifeline}s they were turned into. */
     private Map<ElkNode, SLifeline> lifelineMap = Maps.newHashMap();
-    /** A map from ElkEdges in the layout graph to messages created for them in the SGraph. */
+    /** Maps {@link ElkEdge}s to the {@link SMessage}s they were turned into. */
     private Map<ElkEdge, SMessage> messageMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding executions. */
     private Map<Integer, SequenceExecution> executionIdMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding sequence area. */
     private Map<Integer, SequenceArea> areaIdMap = Maps.newHashMap();
-    
-    
+
     /**
-     * Builds a PGraph out of a given KGraph by associating every ElkNode to a PLifeline and every
-     * ElkEdge to a PMessage.
+     * Builds a PGraph out of a given KGraph by associating every ElkNode to a PLifeline and every ElkEdge to a
+     * PMessage.
      * 
-     * @param topNode
-     *            the surrounding interaction node.
+     * @param context
+     *            the layout context we're currently building.
      * @return the built SGraph
      */
-    private SGraph importSGraph(final ElkNode topNode) {
+    private void importSGraph(final LayoutContext context) {
         // Create a graph object
         SGraph sgraph = new SGraph();
-        
-        // Create... well, as it says: sequence areas...
-        createSequenceAreas(topNode, sgraph);
+        context.sgraph = sgraph;
 
-        // Create lifelines
-        for (ElkNode node : topNode.getChildren()) {
-            NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
-            
-            if (nodeType == NodeType.LIFELINE) {
-                createLifeline(sgraph, node);
+        // Create... well, sequence areas...
+        createSequenceAreas(context);
+
+        // We need to import all lifelines first before importing messages and things
+        for (ElkNode node : context.elkgraph.getChildren()) {
+            if (node.getProperty(SequenceDiagramOptions.NODE_TYPE) == NodeType.LIFELINE) {
+                createLifeline(node, context);
             }
         }
 
-        // Walk through lifelines (create their messages) and comments
-        for (ElkNode node : topNode.getChildren()) {
-            NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
-            
-            if (nodeType == NodeType.LIFELINE) {
+        // Walk through lifelines to create their stuff
+        for (ElkNode node : context.elkgraph.getChildren()) {
+            if (node.getProperty(SequenceDiagramOptions.NODE_TYPE) == NodeType.LIFELINE) {
                 // Create SMessages for each of the outgoing edges
-                createOutgoingMessages(sgraph, node);
-
-                // Handle found messages (incoming messages)
-                createIncomingMessages(sgraph, node);
-            } else if (nodeType == NodeType.COMMENT
-                    || nodeType == NodeType.CONSTRAINT
-                    || nodeType == NodeType.DURATION_OBSERVATION
-                    || nodeType == NodeType.TIME_OBSERVATION) {
+                createOutgoingMessages(node, context);
                 
-                createCommentLikeNode(sgraph, node);
+                // Handle found messages (incoming messages)
+                createMessagesFromNonLifelineOrigin(node, context);
+            }
+        }
+        
+        // Create comment-like objects that may be attached to things we have created in previous iterations
+        for (ElkNode node : context.elkgraph.getChildren()) {
+            switch (node.getProperty(SequenceDiagramOptions.NODE_TYPE)) {
+            case COMMENT:
+            case CONSTRAINT:
+            case DURATION_OBSERVATION:
+            case TIME_OBSERVATION:
+                createCommentLikeNode(node, context);
+                break;
             }
         }
 
         // Reset graph size to zero before layouting
         sgraph.getSize().x = 0;
         sgraph.getSize().y = 0;
-        
+
         // Clear maps
         lifelineMap.clear();
         messageMap.clear();
         executionIdMap.clear();
-
-        return sgraph;
     }
-    
-    
+
     //////////////////////////////////////////////////////////////
     // Areas
-    
+
     /**
      * Creates all sequence areas for the given graph.
      * 
-     * @param topNode
-     *            the surrounding interaction node.
-     * @param sgraph
-     *            the Sequence Graph
+     * @param context
+     *            the layout context we're currently building.
      */
-    private void createSequenceAreas(final ElkNode topNode, final SGraph sgraph) {
-        // Initialize the list of areas (fragments and such)
-        List<SequenceArea> areas = Lists.newArrayList();
-        
+    private void createSequenceAreas(final LayoutContext context) {
         // Find nodes that represent areas
-        for (ElkNode node : topNode.getChildren()) {
+        for (ElkNode node : context.elkgraph.getChildren()) {
             NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
-            
+
             if (nodeType == NodeType.COMBINED_FRAGMENT || nodeType == NodeType.INTERACTION_USE) {
                 SequenceArea area = new SequenceArea(node);
-                areas.add(area);
+                context.sgraph.getAreas().add(area);
                 areaIdMap.put(node.getProperty(SequenceDiagramOptions.ELEMENT_ID), area);
             }
         }
-        
-        // Now that all areas have been created, find nodes that represent nested areas
-        for (ElkNode node : topNode.getChildren()) {
+
+        // Now that all areas have been created, set up their parent-child relationships
+        for (ElkNode node : context.elkgraph.getChildren()) {
             NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
-            
+
             if (nodeType == NodeType.COMBINED_FRAGMENT || nodeType == NodeType.INTERACTION_USE) {
-                int parentId = node.getProperty(SequenceDiagramOptions.PARENT_AREA_ID);
-                
-                if (parentId != -1) {
-                    SequenceArea parentArea = areaIdMap.get(parentId);
-                    SequenceArea childArea = areaIdMap.get(node.getProperty(SequenceDiagramOptions.ELEMENT_ID));
+                if (node.hasProperty(SequenceDiagramOptions.PARENT_AREA_ID)) {
+                    int parentAreaId = node.getProperty(SequenceDiagramOptions.PARENT_AREA_ID);
+                    int childAreaId = node.getProperty(SequenceDiagramOptions.ELEMENT_ID);
+                    
+                    SequenceArea parentArea = areaIdMap.get(parentAreaId);
+                    SequenceArea childArea = areaIdMap.get(childAreaId);
                     
                     if (parentArea != null && childArea != null) {
                         parentArea.getContainedAreas().add(childArea);
+                    } else {
+                        // The child area must exist, so the parent area must be the problem
+                        throw new UnsupportedGraphException("Parent area ID " + parentAreaId + " configured for area "
+                                    + childAreaId + " does not exist.");
                     }
-                    // TODO Possibly throw an exception in the else case
                 }
             }
         }
-        
-        // Remember the areas
-        sgraph.setProperty(SequenceDiagramOptions.AREAS, areas);
     }
-
 
     //////////////////////////////////////////////////////////////
     // Lifelines
 
     /**
-     * Creates the SLifeline for the given ElkNode, sets up its properties, and looks through its children
-     * to setup destructions and executions.
+     * Turns the given {@link ElkNode} into an {@link SLifeline}, sets up its properties, and looks through its
+     * children to setup destructions and executions.
      * 
-     * @param sgraph
-     *            the Sequence Graph
      * @param klifeline
-     *            the ElkNode to create a lifeline for
+     *            the ndoe to turn into a lifeline.
+     * @param context
+     *            the layout context we're currently building.
      */
-    private void createLifeline(final SGraph sgraph, final ElkNode klifeline) {
+    private void createLifeline(final ElkNode klifeline, final LayoutContext context) {
         assert klifeline.getProperty(SequenceDiagramOptions.NODE_TYPE) == NodeType.LIFELINE;
+
+        SLifeline slifeline = SLifeline.createLifeline(context.sgraph);
         
-        // Node is lifeline
-        SLifeline slifeline = SLifeline.createLifeline(sgraph);
+        // Setup the name
+        // TODO: This should eventually import proper labels.
         if (klifeline.getLabels().size() > 0) {
             slifeline.setName(klifeline.getLabels().get(0).getText());
         }
-        
+
         slifeline.setProperty(InternalProperties.ORIGIN, klifeline);
         lifelineMap.put(klifeline, slifeline);
 
@@ -206,225 +206,245 @@ public final class ElkGraphImporter {
         slifeline.getPosition().y = klifeline.getY();
         slifeline.getSize().x = klifeline.getWidth();
         slifeline.getSize().y = klifeline.getHeight();
-        
+
         // Iterate through the lifeline's children to collect destructions and executions
-        List<SequenceExecution> executions = Lists.newArrayList();
-        
         for (ElkNode kchild : klifeline.getChildren()) {
             NodeType kchildNodeType = kchild.getProperty(SequenceDiagramOptions.NODE_TYPE);
-            
+
             if (kchildNodeType.isExecutionType()) {
                 // Create a new sequence execution for this thing
                 SequenceExecution execution = new SequenceExecution(kchild);
                 execution.setType(SequenceExecutionType.fromNodeType(kchildNodeType));
-                executions.add(execution);
+                slifeline.getExcecutions().add(execution);
                 executionIdMap.put(kchild.getProperty(SequenceDiagramOptions.ELEMENT_ID), execution);
+                
             } else if (kchildNodeType == NodeType.DESTRUCTION_EVENT) {
                 slifeline.setProperty(SequenceDiagramOptions.DESTRUCTION_NODE, kchild);
             }
         }
-        
-        slifeline.setProperty(SequenceDiagramOptions.EXECUTIONS, executions);
-        
+
         // Check if the lifeline has any empty areas
-        List<Integer> areaIds = klifeline.getProperty(SequenceDiagramOptions.AREA_IDS);
-        for (Integer areaId : areaIds) {
+        if (klifeline.hasProperty(SequenceDiagramOptions.AREA_IDS))
+        for (Integer areaId : klifeline.getProperty(SequenceDiagramOptions.AREA_IDS)) {
             SequenceArea area = areaIdMap.get(areaId);
             if (area != null) {
                 area.getLifelines().add(slifeline);
+            } else {
+                throw new UnsupportedGraphException("Area " + areaId + " does not exist");
             }
         }
     }
-
 
     //////////////////////////////////////////////////////////////
     // Messages
 
     /**
-     * Walk through the lifeline's outgoing edges and create SMessages for each of them.
+     * Walk through the lifeline's outgoing edges and create {@link SMessage}s for each of them.
      * 
-     * @param sgraph
-     *            the Sequence Graph
      * @param klifeline
-     *            the ElkNode to search its outgoing edges
+     *            the lifeline's representation in the ELK graph.
+     * @param context
+     *            the layout context we're currently building.
      */
-    private void createOutgoingMessages(final SGraph sgraph, final ElkNode klifeline) {
-        for (ElkEdge kedge : klifeline.getOutgoingEdges()) {
-            SLifeline sourceLL = lifelineMap.get(kedge.getSources().get(0));
-            SLifeline targetLL = lifelineMap.get(kedge.getTargets().get(0));
+    private void createOutgoingMessages(final ElkNode klifeline, final LayoutContext context) {
+        for (ElkEdge kmessage : klifeline.getOutgoingEdges()) {
+            // We only support edges that have a single edge section and are simple edges
+            if (kmessage.getSections().size() != 1) {
+                throw new UnsupportedGraphException("Edges must have a single edge section.");
+            }
+            
+            if (kmessage.isHyperedge()) {
+                throw new UnsupportedGraphException("Edges must have a single source and a single target.");
+            }
+            
+            SLifeline sourceLL = lifelineMap.get(kmessage.getSources().get(0));
+            SLifeline targetLL = lifelineMap.get(kmessage.getTargets().get(0));
 
-            // Lost-messages and messages to the surrounding interaction don't have a lifeline, so
-            // create dummy lifeline
+            // Lost-messages and messages to the surrounding interaction don't have a lifeline, so create dummy
+            // lifeline
+            // TODO: Use a single dummy lifeline to put all of these dummies in?
             if (targetLL == null) {
-                SLifeline sdummy = SLifeline.createDummyLifeline(sgraph);
+                SLifeline sdummy = SLifeline.createDummyLifeline(context.sgraph);
                 targetLL = sdummy;
             }
 
-            // Create message object
+            // Create message object and apply its coordinates
             SMessage smessage = new SMessage(sourceLL, targetLL);
-            smessage.setProperty(InternalProperties.ORIGIN, kedge);
+            smessage.setProperty(InternalProperties.ORIGIN, kmessage);
             
-            ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kedge, false, false);
+            messageMap.put(kmessage, smessage);
+            
+            ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
             smessage.setSourceYPos(edgeSection.getStartY());
             smessage.setTargetYPos(edgeSection.getEndY());
-
-            // Read size of the attached labels
-            double maxLabelLength = 0;
-            for (ElkLabel klabel : kedge.getLabels()) {
-                if (klabel.getWidth() > maxLabelLength) {
-                    maxLabelLength = klabel.getWidth();
-                }
-            }
-            smessage.setLabelWidth(maxLabelLength);
 
             // Add message to the source and the target lifeline's list of messages
             sourceLL.addMessage(smessage);
             targetLL.addMessage(smessage);
 
-            // Put edge and message into the edge map
-            messageMap.put(kedge, smessage);
-            
+            // Read size of the attached labels
+            smessage.setLabelWidth(kmessage.getLabels().stream()
+                    .mapToDouble(klabel -> klabel.getWidth())
+                    .max()
+                    .orElse(0.0));
+
             // Check if the edge connects to executions
-            List<Integer> sourceExecutionIds = kedge.getProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS);
-            smessage.setProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS, sourceExecutionIds);
-            for (Integer execId : sourceExecutionIds) {
-                SequenceExecution sourceExecution = executionIdMap.get(execId);
-                if (sourceExecution != null) {
-                    sourceExecution.addMessage(smessage);
+            if (kmessage.hasProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS)) {
+                for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS)) {
+                    SequenceExecution sourceExecution = executionIdMap.get(execId);
+                    if (sourceExecution != null) {
+                        sourceExecution.addMessage(smessage);
+                    } else {
+                        throw new UnsupportedGraphException("Execution " + execId + " does not exist");
+                    }
                 }
             }
             
-            List<Integer> targetExecutionIds = kedge.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS);
-            smessage.setProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS, sourceExecutionIds);
-            for (Integer execId : targetExecutionIds) {
-                SequenceExecution targetExecution = executionIdMap.get(execId);
-                if (targetExecution != null) {
-                    targetExecution.addMessage(smessage);
+            if (kmessage.hasProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
+                for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
+                    SequenceExecution targetExecution = executionIdMap.get(execId);
+                    if (targetExecution != null) {
+                        targetExecution.addMessage(smessage);
+                    } else {
+                        throw new UnsupportedGraphException("Execution " + execId + " does not exist");
+                    }
                 }
             }
 
-            // Append the message type of the edge to the message
-            MessageType messageType = kedge.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
-            if (messageType == MessageType.ASYNCHRONOUS
-                    || messageType == MessageType.CREATE
-                    || messageType == MessageType.DELETE
-                    || messageType == MessageType.SYNCHRONOUS
-                    || messageType == MessageType.LOST) {
-                
+            // Append the message type of the edge to the message (for certain message types)
+            MessageType messageType = kmessage.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+            switch (messageType) {
+            case ASYNCHRONOUS:
+            case CREATE:
+            case DELETE:
+            case LOST:
+            case SYNCHRONOUS:
                 smessage.setProperty(SequenceDiagramOptions.MESSAGE_TYPE, messageType);
+                break;
             }
 
             // Outgoing messages to the surrounding interaction are drawn to the right and therefore
             // their target lifeline should have highest position
+            // TODO: There might have to be a single dummy lifeline that represents messages to the interaction.
             if (targetLL.isDummy() && messageType != MessageType.LOST) {
-                targetLL.setHorizontalSlot(sgraph.getLifelines().size() + 1);
+                targetLL.setHorizontalSlot(context.sgraph.getLifelines().size() + 1);
             }
 
             // Check if message is in any area
-            for (Integer areaId : kedge.getProperty(SequenceDiagramOptions.AREA_IDS)) {
+            for (Integer areaId : kmessage.getProperty(SequenceDiagramOptions.AREA_IDS)) {
                 SequenceArea area = areaIdMap.get(areaId);
                 if (area != null) {
                     area.getMessages().add(smessage);
                     area.getLifelines().add(smessage.getSource());
                     area.getLifelines().add(smessage.getTarget());
+                } else {
+                    throw new UnsupportedGraphException("Area " + areaId + " does not exist");
                 }
-                // TODO Possibly throw an exception in the else case
             }
-            
+
             // Check if this message has an empty area that is to be placed directly above it
-            int upperEmptyAreaId = kedge.getProperty(SequenceDiagramOptions.UPPER_EMPTY_AREA_ID);
-            SequenceArea upperArea = areaIdMap.get(upperEmptyAreaId);
-            if (upperArea != null) {
-                upperArea.setNextMessage(smessage);
+            if (kmessage.hasProperty(SequenceDiagramOptions.UPPER_EMPTY_AREA_ID)) {
+                int upperEmptyAreaId = kmessage.getProperty(SequenceDiagramOptions.UPPER_EMPTY_AREA_ID);
+                SequenceArea upperArea = areaIdMap.get(upperEmptyAreaId);
+                
+                if (upperArea != null) {
+                    upperArea.setNextMessage(smessage);
+                } else {
+                    throw new UnsupportedGraphException("Area " + upperEmptyAreaId + " does not exist");
+                }
             }
         }
     }
 
     /**
-     * Walk through incoming edges of the given lifeline and check if there are found messages
-     * or messages that come from the surrounding interaction. If so, create the corresponding
-     * SMessage.
+     * Walk through incoming edges of the given lifeline and check if there are found messages or messages that come
+     * from the surrounding interaction. If so, create the corresponding SMessage.
      * 
-     * @param sgraph
-     *            the Sequence Graph
      * @param klifeline
-     *            the ElkNode to search its incoming edges.
+     *            the lifeline's representation in the ELK graph.
+     * @param context
+     *            the layout context we're currently building.
      */
-    private void createIncomingMessages(final SGraph sgraph, final ElkNode klifeline) {
-        for (ElkEdge kedge : klifeline.getIncomingEdges()) {
-            SLifeline sourceLL = lifelineMap.get(kedge.getSources().get(0));
+    private void createMessagesFromNonLifelineOrigin(final ElkNode klifeline, final LayoutContext context) {
+        for (ElkEdge kmessage : klifeline.getIncomingEdges()) {
+            // We only support edges that have a single edge section and are simple edges
+            if (kmessage.getSections().size() != 1) {
+                throw new UnsupportedGraphException("Edges must have a single edge section.");
+            }
             
-            // We are only interested in messages that don't come from a lifeline
-            if (sourceLL != null) {
+            if (kmessage.isHyperedge()) {
+                throw new UnsupportedGraphException("Edges must have a single source and a single target.");
+            }
+            
+            if (lifelineMap.containsKey(kmessage.getSources().get(0))) {
+                // We are only interested in messages that don't come from a lifeline
                 continue;
             }
             
-            // TODO consider connections to comments and constraints!
+            // TODO consider connections to comments and constraints?
             
-            // Create dummy lifeline as source since the message has no source lifeline
-            // TODO We could think about using a single dummy lifeline for all found messages
-            SLifeline sdummy = SLifeline.createDummyLifeline(sgraph);
-            sourceLL = sdummy;
-            
-            SLifeline targetLL = lifelineMap.get(kedge.getTargets().get(0));
-            
-            ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kedge, false, false);
+            SLifeline sourceLL = SLifeline.createDummyLifeline(context.sgraph);
+            SLifeline targetLL = lifelineMap.get(kmessage.getTargets().get(0));
 
-            // Create message object
+
+            // Create message object and apply its coordinates
             SMessage smessage = new SMessage(sourceLL, targetLL);
-            smessage.setProperty(InternalProperties.ORIGIN, kedge);
+            smessage.setProperty(InternalProperties.ORIGIN, kmessage);
+            
+            messageMap.put(kmessage, smessage);
+            
+            ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
             smessage.setTargetYPos(edgeSection.getEndY());
 
             // Add the message to the source and target lifeline's list of messages
             sourceLL.addMessage(smessage);
             targetLL.addMessage(smessage);
-
-            // Put edge and message into the edge map
-            messageMap.put(kedge, smessage);
-
-            // Append the message type of the edge to the message
-            MessageType messageType = kedge.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
-            if (messageType == MessageType.FOUND) {
-                smessage.setProperty(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.FOUND);
-            } else {
-                // Since incoming messages come from the left side of the surrounding
-                // interaction, give its dummy lifeline position -1
-                sourceLL.setHorizontalSlot(-1);
-
-                if (messageType == MessageType.ASYNCHRONOUS
-                        || messageType == MessageType.CREATE
-                        || messageType == MessageType.DELETE
-                        || messageType == MessageType.SYNCHRONOUS) {
-                    
-                    smessage.setProperty(SequenceDiagramOptions.MESSAGE_TYPE, messageType);
+            
+            // Check if the message connects to target executions
+            if (kmessage.hasProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
+                for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
+                    SequenceExecution targetExecution = executionIdMap.get(execId);
+                    if (targetExecution != null) {
+                        targetExecution.addMessage(smessage);
+                    } else {
+                        throw new UnsupportedGraphException("Execution " + execId + " does not exist");
+                    }
                 }
             }
 
-            // Check if the message connects to a target executions
-            List<Integer> targetExecutionIds = kedge.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS);
-            smessage.setProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS, targetExecutionIds);
-            for (Integer execId : targetExecutionIds) {
-                SequenceExecution targetExecution = executionIdMap.get(execId);
-                if (targetExecution != null) {
-                    targetExecution.addMessage(smessage);
-                }
+            // Append the message type of the edge to the message
+            MessageType messageType = kmessage.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+            switch (messageType) {
+            case ASYNCHRONOUS:
+            case CREATE:
+            case DELETE:
+            case FOUND:
+            case SYNCHRONOUS:
+                smessage.setProperty(SequenceDiagramOptions.MESSAGE_TYPE, messageType);
+                break;
+            }
+            
+            // Since incoming messages come from the left side of the surrounding interaction, give its dummy lifeline
+            // position -1
+            // TODO: There might have to be a single dummy lifeline that represents messages to the interaction.
+            if (targetLL.isDummy() && messageType != MessageType.LOST) {
+                targetLL.setHorizontalSlot(context.sgraph.getLifelines().size() + 1);
             }
         }
     }
-    
-    
+
     //////////////////////////////////////////////////////////////
     // Comment-like Nodes
 
     /**
      * Create a comment object for comments or constraints (which are handled like comments).
      * 
-     * @param sgraph
-     *            the Sequence Graph
      * @param node
-     *            the node to create a comment object from
+     *            the node to create a comment object from.
+     * @param context
+     *            the layout context we're currently building.
      */
-    private void createCommentLikeNode(final SGraph sgraph, final ElkNode node) {
+    private void createCommentLikeNode(final ElkNode node, final LayoutContext context) {
         // Get the node's type
         NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
 
@@ -432,26 +452,6 @@ public final class ElkGraphImporter {
         SComment comment = new SComment();
         comment.setProperty(InternalProperties.ORIGIN, node);
         comment.setProperty(SequenceDiagramOptions.NODE_TYPE, nodeType);
-        comment.setProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_TYPE,
-                node.getProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_TYPE));
-        
-        // Attach connected edge to comment
-        if (!node.getOutgoingEdges().isEmpty()) {
-            comment.setProperty(InternalSequenceProperties.COMMENT_CONNECTION, node.getOutgoingEdges().get(0));
-        }
-
-        // Copy all the entries of the list of attached elements to the comment object
-        List<Object> attachedTo = node.getProperty(SequenceDiagramOptions.ATTACHED_OBJECTS);
-        if (attachedTo != null) {
-            List<SGraphElement> attTo = comment.getAttachments();
-            for (Object att : attachedTo) {
-                if (att instanceof ElkNode) {
-                    attTo.add(lifelineMap.get(att));
-                } else if (att instanceof ElkEdge) {
-                    attTo.add(messageMap.get(att));
-                }
-            }
-        }
 
         // Copy layout information
         comment.getPosition().x = node.getX();
@@ -459,16 +459,34 @@ public final class ElkGraphImporter {
         comment.getSize().x = node.getWidth();
         comment.getSize().y = node.getHeight();
 
+        // Attach connected edge to comment
+        if (!node.getOutgoingEdges().isEmpty()) {
+            comment.setProperty(InternalSequenceProperties.COMMENT_CONNECTION, node.getOutgoingEdges().get(0));
+        }
+        
+        // Provide the comment with a list of elements it is attached to
+        if (node.hasProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_ID)) {
+            Integer elementId = node.getProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_ID);
+            
+            // Comments can be attached either to lifelines or to messages
+            if (lifelineMap.containsKey(elementId)) {
+                comment.setAttachment(lifelineMap.get(elementId));
+            } else if (messageMap.containsKey(elementId)) {
+                comment.setAttachment(messageMap.get(elementId));
+            }
+        }
+
         // Handle time observations
+        // TODO: This should not be based on coordinate calculations, but on properties set by the layout connector.
         if (nodeType == NodeType.TIME_OBSERVATION) {
-            comment.getSize().x = sgraph.getProperty(SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
+            comment.getSize().x = context.sgraph.getProperty(SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
 
             // Find lifeline that is next to the time observation
             SLifeline nextLifeline = null;
             double smallestDistance = Double.MAX_VALUE;
-            for (SLifeline lifeline : sgraph.getLifelines()) {
-                double distance = Math.abs((lifeline.getPosition().x + lifeline.getSize().x / 2)
-                        - (node.getX() + node.getWidth() / 2));
+            for (SLifeline lifeline : context.sgraph.getLifelines()) {
+                double distance = Math.abs(
+                        (lifeline.getPosition().x + lifeline.getSize().x / 2) - (node.getX() + node.getWidth() / 2));
                 if (distance < smallestDistance) {
                     smallestDistance = distance;
                     nextLifeline = lifeline;
@@ -487,91 +505,89 @@ public final class ElkGraphImporter {
                 } else {
                     distance = Math.abs((edgeSection.getEndY()) - (node.getY() + node.getHeight() / 2));
                 }
-                
+
                 if (distance < smallestDistance) {
                     smallestDistance = distance;
                     nextMessage = message;
                 }
             }
 
-            // Set both, lifeline and message of the comment to indicate that it should be drawn
-            // near to the event
+            // Set both lifeline and message of the comment to indicate that it should be drawn near to the event
             comment.setLifeline(nextLifeline);
             comment.setReferenceMessage(nextMessage);
         }
 
-        sgraph.getComments().add(comment);
+        context.sgraph.getComments().add(comment);
     }
     
-    
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // LGraph Creation
 
     /**
-     * Builds a layered graph that contains every message as a node. Edges are representations of
-     * the relative order of the messages.
+     * Builds a layered graph that contains every message as a node. Edges are representations of the relative order of
+     * the messages.
      * 
-     * @param sgraph
-     *            the given SGraph
-     * @param progressMonitor
-     *            the progress monitor
-     * @return the layeredGraph
+     * @param context
+     *            the layout context we're currently building.
      */
-    private LGraph createLayeredGraph(final SGraph sgraph) {
+    private void createLayeredGraph(final LayoutContext context) {
         LGraph lgraph = new LGraph();
+        context.lgraph = lgraph;
 
         // Build a node for every message.
-        int i = 0;
-        for (SLifeline lifeline : sgraph.getLifelines()) {
+        int nodeNumber = 0;
+        for (SLifeline lifeline : context.sgraph.getLifelines()) {
             for (SMessage message : lifeline.getOutgoingMessages()) {
                 LNode node = new LNode(lgraph);
-                node.getLabels().add(new LLabel("Node" + i++));
+                lgraph.getLayerlessNodes().add(node);
+                
+                node.getLabels().add(new LLabel("Node" + nodeNumber++));
+                
                 node.setProperty(InternalProperties.ORIGIN, message);
                 message.setProperty(InternalSequenceProperties.LAYERED_NODE, node);
-                lgraph.getLayerlessNodes().add(node);
             }
+            
             // Handle found messages (they have no source lifeline)
             for (SMessage message : lifeline.getIncomingMessages()) {
                 if (message.getSource().isDummy()) {
                     LNode node = new LNode(lgraph);
-                    node.getLabels().add(new LLabel("Node" + i++));
+                    lgraph.getLayerlessNodes().add(node);
+                    
+                    node.getLabels().add(new LLabel("Node" + nodeNumber++));
+                    
                     node.setProperty(InternalProperties.ORIGIN, message);
                     message.setProperty(InternalSequenceProperties.LAYERED_NODE, node);
-                    lgraph.getLayerlessNodes().add(node);
                 }
             }
         }
 
-        // Add an edge for every neighbored pair of messages at every lifeline
-        // indicating the relative order of the messages.
-        for (SLifeline lifeline : sgraph.getLifelines()) {
+        // Add an edge for every pair of consecutive messages at every lifeline to indicate their relative order
+        for (SLifeline lifeline : context.sgraph.getLifelines()) {
             List<SMessage> messages = lifeline.getMessages();
             for (int j = 1; j < messages.size(); j++) {
-                // Add an edge from the node belonging to message j-1 to the node belonging to
-                // message j
-                LNode sourceNode = messages.get(j - 1).getProperty(
-                        InternalSequenceProperties.LAYERED_NODE);
-                LNode targetNode = messages.get(j).getProperty(
-                        InternalSequenceProperties.LAYERED_NODE);
+                // Add an edge from the node belonging to message j-1 to the node belonging to message j
+                LNode sourceNode = messages.get(j - 1).getProperty(InternalSequenceProperties.LAYERED_NODE);
+                LNode targetNode = messages.get(j).getProperty(InternalSequenceProperties.LAYERED_NODE);
+
+                assert sourceNode != null && targetNode != null;
                 
                 if (sourceNode != targetNode) {
                     LPort sourcePort = new LPort();
                     sourcePort.setNode(sourceNode);
-                    
+
                     LPort targetPort = new LPort();
                     targetPort.setNode(targetNode);
-                    
+
                     LEdge edge = new LEdge();
-                    
+
                     edge.setSource(sourcePort);
                     edge.setTarget(targetPort);
-                    
+
                     edge.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, lifeline);
                 }
             }
         }
-
-        return lgraph;
     }
-    
+
 }

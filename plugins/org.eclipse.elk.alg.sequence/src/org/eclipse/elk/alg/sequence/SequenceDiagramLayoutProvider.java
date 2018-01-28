@@ -80,7 +80,7 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
         algorithmAssembler.setPhase(SequencePhases.P3_MESSAGE_LAYERING,
                 MessageLayeringStrategy.DEFAULT);
         algorithmAssembler.setPhase(SequencePhases.P4_LIFELINE_SORTING,
-                context.kgraph.getProperty(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY));
+                context.elkgraph.getProperty(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY));
         algorithmAssembler.setPhase(SequencePhases.P5_COORDINATE_ASSIGNMENT,
                 CoordinateAssignmentStrategy.DEFAULT);
         

@@ -27,8 +27,8 @@ public final class LayoutContext {
     
     // Layout Graphs
     
-    /** The original KGraph the layout algorithm was called with. */
-    public final ElkNode kgraph;
+    /** The original ELK graph the layout algorithm was called with. */
+    public final ElkNode elkgraph;
     /** The {@link SGraph} to be laid out. */
     public SGraph sgraph;
     /** The {@link LGraph} created from the SGraph. */
@@ -77,7 +77,7 @@ public final class LayoutContext {
      *            parent node of the graph that is to be laid out.
      */
     public LayoutContext(final ElkNode parentNode) {
-        kgraph = parentNode;
+        elkgraph = parentNode;
         
         labelAlignment = parentNode.getProperty(
                 SequenceDiagramOptions.LABEL_ALIGNMENT);

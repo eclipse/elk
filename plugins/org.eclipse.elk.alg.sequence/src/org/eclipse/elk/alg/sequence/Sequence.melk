@@ -41,17 +41,13 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports elementId
     supports nodeType
     supports messageType
-    supports areas
     supports areaIds
     supports upperEmptyAreaId
     supports parentAreaId
-    supports executions
     supports executionType
     supports sourceExecutionIds
     supports targetExecutionIds
-    supports attachedElementType
-    supports attachedObjects
-    supports attachedObjectId
+    supports attachedElementId
     supports destructionNode
     supports messageSpacing
     supports lifelineSpacing
@@ -87,12 +83,6 @@ programmatic option messageType : MessageType {
     default = MessageType.ASYNCHRONOUS
 }
 
-programmatic option areas : List<SequenceArea> {
-    label "Areas"
-    description "A list of area-like constructs in the diagram. Only used in Papyrus mode."
-    targets parents
-}
-
 programmatic option areaIds : List<Integer> {
     label "Area IDs"
     description "A list of IDs of element IDs of any areas (such as fragments) a message or lifeline belongs to, if
@@ -114,12 +104,6 @@ programmatic option parentAreaId : int {
     description "Element ID of an area's parent area, if any. Only used in KGraph mode."
     targets nodes
     default = 0
-}
-
-programmatic option executions : List<SequenceExecution> {
-    label "Execution Specifications"
-    description "The list of execution specifications of a lifeline. Only used in Papyrus mode."
-    targets parents
 }
 
 programmatic option executionType : SequenceExecutionType {
@@ -147,22 +131,9 @@ programmatic option targetExecutionIds : List<Integer> {
     default = Lists.newArrayList
 }
 
-programmatic option attachedElementType : String {
-    label "Attached Element Type"
-    description "Property of a comment that indicates to what kind of element it is attached."
-    targets nodes
-}
-
-programmatic option attachedObjects : List<Object> {
-    label "Attached Objects"
-    description "The objects a comment is attached to. In Papyrus mode, this is a list of concrete diagram elements.
-                In KGraph mode, this is a list of IDs of diagram elements."
-    targets nodes
-}
-
-programmatic option attachedObjectId : int {
-    label "Attached Object ID"
-    description "Element ID of the object a comment is attached to, if any. Only used in KGraph mode."
+programmatic option attachedElementId : int {
+    label "Attached Element ID"
+    description "Element ID of the object a comment is attached to, if any."
     targets nodes
 }
 

@@ -21,11 +21,9 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
-import org.eclipse.elk.alg.sequence.graph.SGraphElement;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.SequenceArea;
-import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -71,12 +69,7 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
     private void allocateSpaceForAreaHeaders(final LayoutContext context) {
         // Add dummy nodes before the first messages of combined fragments to have enough space
         // above the topmost message of the area
-        List<SequenceArea> areas = context.sgraph.getProperty(SequenceDiagramOptions.AREAS);
-        if (areas == null || areas.isEmpty()) {
-            return;
-        }
-        
-        for (SequenceArea area : areas) {
+        for (SequenceArea area : context.sgraph.getAreas()) {
             // Find the uppermost message contained in the combined fragment. In Papyrus mode, we do
             // that using message y coordinates. In KGraph mode, there's not really a good solution
             // for finding the best message (actually, I'm not even convinced that the solution in
@@ -126,14 +119,9 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
     private void allocateSpaceForComments(final LayoutContext context) {
         for (SComment comment : context.sgraph.getComments()) {
             // Check to which kind of object the comment is attached
-            SMessage attachedMess = null;
-            for (SGraphElement element : comment.getAttachments()) {
-                if (element instanceof SMessage) {
-                    attachedMess = (SMessage) element;
-                }
-            }
-            
-            if (attachedMess != null) {
+            if (comment.getAttachment() instanceof SMessage) {
+                SMessage attachedMess = (SMessage) comment.getAttachment();
+                
                 // Get height of the comment and calculate number of dummy nodes needed
                 double height = comment.getSize().y;
                 int dummys = (int) Math.ceil(height / context.messageSpacing);
@@ -158,20 +146,17 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
      *            the layout context that contains all relevant information for the current layout run.
      */
     private void allocateSpaceForEmptyAreas(final LayoutContext context) {
-        List<SequenceArea> areas = context.sgraph.getProperty(SequenceDiagramOptions.AREAS);
-        if (areas != null) {
-            for (SequenceArea area : areas) {
-                if (area.getMessages().size() == 0) {
-                    Object nextMess = area.getNextMessage();
-                    if (nextMess != null) {
-                        LNode node = ((SMessage) nextMess)
-                                .getProperty(InternalSequenceProperties.LAYERED_NODE);
-                        if (node != null) {
-                            // Create two dummy nodes before node to have enough space for the empty
-                            // area
-                            createLGraphDummyNode(context.lgraph, node, true);
-                            createLGraphDummyNode(context.lgraph, node, true);
-                        }
+        for (SequenceArea area : context.sgraph.getAreas()) {
+            if (area.getMessages().size() == 0) {
+                Object nextMess = area.getNextMessage();
+                if (nextMess != null) {
+                    LNode node = ((SMessage) nextMess)
+                            .getProperty(InternalSequenceProperties.LAYERED_NODE);
+                    if (node != null) {
+                        // Create two dummy nodes before node to have enough space for the empty
+                        // area
+                        createLGraphDummyNode(context.lgraph, node, true);
+                        createLGraphDummyNode(context.lgraph, node, true);
                     }
                 }
             }

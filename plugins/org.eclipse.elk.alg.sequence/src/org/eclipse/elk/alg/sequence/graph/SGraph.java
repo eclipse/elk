@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.sequence.graph;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.Lists;
@@ -22,6 +23,10 @@ import com.google.common.collect.Lists;
 public final class SGraph extends SGraphElement {
     private static final long serialVersionUID = -7952451128297135991L;
     
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Properties
+    
     /** The size of the diagram. This is modified during the layout process. */
     private KVector size = new KVector();
     
@@ -31,7 +36,12 @@ public final class SGraph extends SGraphElement {
     /** The list of comments in the sequence diagram. It is not intended to have a special order. */
     // TODO: Why not make the order significant starting at a certain point in the algorithm?
     private List<SComment> comments = Lists.newArrayList();
-
+    /** The list of areas in the sequence diagram. */
+    private List<SequenceArea> areas = Lists.newArrayList();
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Accessors
     
     /**
      * Returns the size of the diagram.
@@ -61,6 +71,19 @@ public final class SGraph extends SGraphElement {
     }
 
     /**
+     * Returns the list of areas in the diagram.
+     * 
+     * @return the list of areas.
+     */
+    public List<SequenceArea> getAreas() {
+        return areas;
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Lifeline Management
+
+    /**
      * Add a lifeline to the diagram.
      * 
      * @param lifeline
@@ -79,6 +102,10 @@ public final class SGraph extends SGraphElement {
     public void removeLifeline(final SLifeline lifeline) {
         lifelines.remove(lifeline);
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Stuff that Does Things (tm)
     
     @Override
     public String toString() {
