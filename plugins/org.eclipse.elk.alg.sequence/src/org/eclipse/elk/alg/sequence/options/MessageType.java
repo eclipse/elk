@@ -12,10 +12,9 @@ package org.eclipse.elk.alg.sequence.options;
 
 /**
  * Enumeration of possible message types for sequence diagrams.
- * 
- * @author grh
  */
 public enum MessageType {
+    
     /** Standard messages for sequence diagrams. */
     ASYNCHRONOUS,
     /** Synchronous messages. */
@@ -30,4 +29,5 @@ public enum MessageType {
     LOST,
     /** Found messages. */
     FOUND;
+    
 }

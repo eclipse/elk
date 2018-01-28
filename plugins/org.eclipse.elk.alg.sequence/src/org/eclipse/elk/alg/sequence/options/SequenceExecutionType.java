@@ -12,8 +12,6 @@ package org.eclipse.elk.alg.sequence.options;
 
 /**
  * The type of sequence execution.
- * 
- * @author dja
  */
 public enum SequenceExecutionType {
     

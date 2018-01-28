@@ -20,19 +20,15 @@ import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
  * Definition of available lifeline sorting strategies for the sequence diagram layouter.
- * 
- * @author grh
  */
 public enum LifelineSortingStrategy implements ILayoutPhaseFactory<SequencePhases, LayoutContext> {
 
     /** Sort the lifelines according to their x-coordinates. */
     INTERACTIVE,
-    
     /** Sort the lifelines according to the layers of the associated messages. */
     LAYER_BASED,
-    
     /**
-     * Sort the lifelines according to McAllisters solution for the linear arrangement problem that
+     * Sort the lifelines according to McAllister's solution for the linear arrangement problem that
      * minimizes the total length of messages.
      */
     SHORT_MESSAGES;

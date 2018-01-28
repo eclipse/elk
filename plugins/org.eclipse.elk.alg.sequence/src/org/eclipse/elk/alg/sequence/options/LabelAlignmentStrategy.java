@@ -12,14 +12,14 @@ package org.eclipse.elk.alg.sequence.options;
 
 /**
  * The different message label alignment strategies.
- *  
- * @author grh
  */
 public enum LabelAlignmentStrategy {
+    
     /** Centers the label between the source lifeline and its next neighbour lifeline. */
     SOURCE_CENTER,
     /** Aligns the label directly at the source lifeline. */
     SOURCE,
-    /** Aligns the label in the center of its message. */
+    /** Aligns the label at the center of its message. */
     CENTER;
+    
 }

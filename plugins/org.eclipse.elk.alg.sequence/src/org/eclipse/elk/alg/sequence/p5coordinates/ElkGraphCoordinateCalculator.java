@@ -49,7 +49,7 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  * 
  * @author cds
  */
-public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, LayoutContext> {
+public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, LayoutContext> {
 
     @Override
     public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(

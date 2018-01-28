@@ -12,9 +12,6 @@ package org.eclipse.elk.alg.sequence.options;
 
 /**
  * Enumeration of possible node types for sequence diagrams.
- * 
- * @author cds
- * @author dja
  */
 public enum NodeType {
     
