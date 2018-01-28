@@ -21,8 +21,6 @@ import org.eclipse.elk.graph.ElkNode;
 /**
  * A simple data holder class used to pass data about the layout process around to the different phases
  * of the layout algorithm.
- * 
- * @author cds
  */
 public final class LayoutContext {
     // CHECKSTYLEOFF VisibilityModifier
@@ -30,7 +28,7 @@ public final class LayoutContext {
     // Layout Graphs
     
     /** The original KGraph the layout algorithm was called with. */
-    public ElkNode kgraph;
+    public final ElkNode kgraph;
     /** The {@link SGraph} to be laid out. */
     public SGraph sgraph;
     /** The {@link LGraph} created from the SGraph. */
@@ -40,70 +38,69 @@ public final class LayoutContext {
     
     
     // Layout Settings
-    
-    /** Border spacing. */
-    public double borderSpacing;
-    /** Vertical spacing between two neighbored layers of messages. */
-    public double messageSpacing;
-    /** Horizontal spacing between two neighbored lifelines. */
-    public double lifelineSpacing;
-    /** The vertical position of lifelines. */
-    public double lifelineYPos;
-    /** The height of the lifeline's header. */
-    public double lifelineHeader;
-    /** The height of the header of combined fragments. */
-    public double areaHeader;
-    /** The width of timing observations. */
-    public double timeObservationWidth;
-    /** The offset between two nested areas. */
-    public double containmentOffset;
+
     /** The label alignment strategy. */
-    public LabelAlignmentStrategy labelAlignment;
+    public final LabelAlignmentStrategy labelAlignment;
     /** The lifeline sorting strategy. */
-    public LifelineSortingStrategy sortingStrategy;
+    public final LifelineSortingStrategy sortingStrategy;
     /** Whether to include areas in the lifeline sorting process. Used by some sorters. */
-    public boolean groupAreasWhenSorting;
+    public final boolean groupAreasWhenSorting;
+    
+    /** Spacing between elements and the border of the interaction. */
+    // TODO: Use full-blown padding.
+    public final double borderSpacing;
+    /** Vertical spacing between two consecutive layers of messages. */
+    public final double messageSpacing;
+    /** Horizontal spacing between two consecutive lifelines. */
+    public final double lifelineSpacing;
+    /** The vertical position of lifelines. */
+    // TODO: Change the algorithm to use the top padding instead.
+    public final double lifelineYPos;
+    /** The height of lifeline headers. */
+    // TODO: This should actually be specific to each lifeline.
+    public final double lifelineHeader;
+    /** The height of the header of combined fragments. */
+    // TODO: We should rather use a proper padding instead of this and the following value.
+    public final double areaHeader;
+    /** The offset between two nested areas. */
+    public final double containmentOffset;
+    /** The width of timing observations. */
+    public final double timeObservationWidth;
     
     // CHECKSTYLEON VisibilityModifier
     
     
     /**
-     * Use {@link #fromLayoutData(KLayoutData)} to obtain a new instance.
-     */
-    private LayoutContext() {
-        
-    }
-    
-    /**
-     * Creates a new instance initialized based on the given layout data. Should be called with the
-     * layout data of the sequence diagram graph.
+     * Creates a new instance intialized based on the properties configured for the given interaction node.
      * 
-     * @param parentNode
+     * @param interactionNode
      *            parent node of the graph that is to be laid out.
-     * @return initialized context object.
      */
-    public static LayoutContext fromLayoutData(final ElkNode parentNode) {
-        LayoutContext context = new LayoutContext();
+    public LayoutContext(final ElkNode parentNode) {
+        kgraph = parentNode;
         
-        context.kgraph = parentNode;
-        
-        // TODO The padding needs to be respected to al four sides
-        context.borderSpacing = parentNode.getProperty(SequenceDiagramOptions.PADDING).top;
-        context.messageSpacing = parentNode.getProperty(SequenceDiagramOptions.MESSAGE_SPACING);
-        context.lifelineSpacing = parentNode.getProperty(SequenceDiagramOptions.LIFELINE_SPACING);
-        context.lifelineYPos = parentNode.getProperty(SequenceDiagramOptions.LIFELINE_Y_POS);
-        context.lifelineHeader = parentNode.getProperty(
-                SequenceDiagramOptions.LIFELINE_HEADER_HEIGHT);
-        context.areaHeader = parentNode.getProperty(SequenceDiagramOptions.AREA_HEADER_HEIGHT);
-        context.timeObservationWidth = parentNode.getProperty(
-                SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
-        context.containmentOffset = parentNode.getProperty(
-                SequenceDiagramOptions.CONTAINMENT_OFFSET);
-        context.labelAlignment = parentNode.getProperty(SequenceDiagramOptions.LABEL_ALIGNMENT);
-        context.sortingStrategy = parentNode.getProperty(
+        labelAlignment = parentNode.getProperty(
+                SequenceDiagramOptions.LABEL_ALIGNMENT);
+        sortingStrategy = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY);
-        context.groupAreasWhenSorting = parentNode.getProperty(SequenceDiagramOptions.GROUP_AREAS);
+        groupAreasWhenSorting = parentNode.getProperty(
+                SequenceDiagramOptions.GROUP_AREAS);
         
-        return context;
+        borderSpacing = parentNode.getProperty(
+                SequenceDiagramOptions.PADDING).top;
+        messageSpacing = parentNode.getProperty(
+                SequenceDiagramOptions.MESSAGE_SPACING);
+        lifelineSpacing = parentNode.getProperty(
+                SequenceDiagramOptions.LIFELINE_SPACING);
+        lifelineYPos = parentNode.getProperty(
+                SequenceDiagramOptions.LIFELINE_Y_POS);
+        lifelineHeader = parentNode.getProperty(
+                SequenceDiagramOptions.LIFELINE_HEADER_HEIGHT);
+        areaHeader = parentNode.getProperty(
+                SequenceDiagramOptions.AREA_HEADER_HEIGHT);
+        timeObservationWidth = parentNode.getProperty(
+                SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
+        containmentOffset = parentNode.getProperty(
+                SequenceDiagramOptions.CONTAINMENT_OFFSET);
     }
 }

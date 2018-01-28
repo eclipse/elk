@@ -17,75 +17,70 @@ import org.eclipse.elk.core.math.KVector;
 import com.google.common.collect.Lists;
 
 /**
- * The graph representation for sequence diagrams. The layout algorithm converts Papyrus sequence
- * diagrams into this internal representation which is more practicable than the original one.
- * 
- * @author grh
+ * The graph representation for sequence diagrams.
  */
 public final class SGraph extends SGraphElement {
     private static final long serialVersionUID = -7952451128297135991L;
     
-    /** The list of lifelines in the sequence diagram. It is not intended to have a special order. */
-    private List<SLifeline> lifelines = Lists.newArrayList();
-    /** The list of comments in the sequence diagram. It is not intended to have a special order. */
-    private List<SComment> comments = Lists.newArrayList();
     /** The size of the diagram. This is modified during the layout process. */
     private KVector size = new KVector();
+    
+    /** The list of lifelines in the sequence diagram. It is not intended to have a special order. */
+    // TODO: Why not make the order significant starting at a certain point in the algorithm?
+    private List<SLifeline> lifelines = Lists.newArrayList();
+    /** The list of comments in the sequence diagram. It is not intended to have a special order. */
+    // TODO: Why not make the order significant starting at a certain point in the algorithm?
+    private List<SComment> comments = Lists.newArrayList();
 
+    
     /**
-     * Get the size of the graph.
+     * Returns the size of the diagram.
      * 
-     * @return the KVector with the size
+     * @return the size.
      */
     public KVector getSize() {
         return size;
     }
 
     /**
-     * Get the list of lifelines in the SGraph. The list is NOT sorted in any way.
+     * Returns the list of lifelines in the diagram.
      * 
-     * @return the list of lifelines
+     * @return the list of lifelines.
      */
     public List<SLifeline> getLifelines() {
         return lifelines;
     }
 
     /**
-     * Get the list of comments in the SGraph.
+     * Returns the list of comments in the diagram.
      * 
-     * @return the list of comments
+     * @return the list of comments.
      */
     public List<SComment> getComments() {
         return comments;
     }
 
     /**
-     * Add a lifeline to the SGraph.
+     * Add a lifeline to the diagram.
      * 
      * @param lifeline
-     *            the new lifeline
+     *            the new lifeline.
      */
     public void addLifeline(final SLifeline lifeline) {
         this.lifelines.add(lifeline);
-        lifeline.setGraph(this);
     }
 
     /**
-     * Remove a lifeline from the SGraph.
+     * Remove a lifeline from the diagram.
      * 
      * @param lifeline
-     *            the lifeline to be removed
+     *            the lifeline to be removed.
      */
     public void removeLifeline(final SLifeline lifeline) {
         lifelines.remove(lifeline);
-        lifeline.setGraph(null);
     }
-
-    /**
-     * This is not needed by the layout algorithm. This debug functionality simply prints the names
-     * of the lifelines. 
-     * {@inheritDoc}
-     */
+    
+    @Override
     public String toString() {
         String ret = "SGraph: ( ";
         for (SLifeline lifeline : this.lifelines) {

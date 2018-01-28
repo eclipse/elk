@@ -13,11 +13,10 @@ package org.eclipse.elk.alg.sequence.graph;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
- * Superclass for all {@link SGraph} elements. The extension of the {@link MapPropertyHolder}
- * enables the elements to hold properties.
- * 
- * @author grh
+ * Abstract superclass of all lifelines, messages, comments, and the graph itself.
  */
 public class SGraphElement extends MapPropertyHolder {
+    
     private static final long serialVersionUID = -7980530866752118344L;
+    
 }

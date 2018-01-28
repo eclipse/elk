@@ -12,92 +12,58 @@ package org.eclipse.elk.alg.sequence.graph;
 
 import java.util.List;
 
-import org.eclipse.elk.core.math.KVector;
-
 import com.google.common.collect.Lists;
 
 /**
- * Comment representation for SGraphs.
- * 
- * @author grh
+ * Represents a comment in the SGraph.
  */
-public final class SComment extends SGraphElement {
+public final class SComment extends SShape {
+    
     private static final long serialVersionUID = 2543686433908319587L;
     
-    /**
-     * The list of elements that the comment is attached to. A comment may have connections to
-     * several different objects.
-     */
-    private List<SGraphElement> attachedTo = Lists.newArrayList();
-    /**
-     * The lifeline the comment will be drawn next to. This is only relevant if the comment is attached
-     * to any diagram element in the first place.
-     */
-    private SLifeline lifeline;
-    /**
-     * The message the comment will be drawn next to. This is only relevant if the comment is attached
-     * to any diagram element in the first place.
-     */
-    private SMessage message;
-    /** The size of the comment. */
-    private KVector size = new KVector();
-    /** The position of the comment. */
-    private KVector position = new KVector();
+    /** The list of elements that the comment is attached to. */
+    private List<SGraphElement> attachments = Lists.newArrayList();
+    /** If the comment is attached to anything, this is the lifeline it will be drawn next to. */
+    private SLifeline referenceLifeline;
+    /** If the comment is attached to anything, this is the message it will be drawn next to. */
+    private SMessage referenceMessage;
 
 
     /**
-     * Get the size of the comment.
+     * The graph elements the comment is attached to.
      * 
-     * @return the KVector with the size
+     * @return the (possibly empty) list of attached elements.
      */
-    public KVector getSize() {
-        return size;
+    public List<SGraphElement> getAttachments() {
+        return attachments;
     }
 
     /**
-     * Get the position of the comment.
+     * Get the lifeline next to which the comment will be placed.
      * 
-     * @return the KVector with the position
+     * @return the reference lifeline, or {@code null} if there is none.
      */
-    public KVector getPosition() {
-        return position;
+    public SLifeline getLifeline() {
+        return referenceLifeline;
     }
 
     /**
-     * Get the SGraphElement to which the comment is attached to.
+     * Set the lifeline next to which the comment will be placed.
      * 
-     * @return the connected element
+     * @param lifeline
+     *            the new lifeline
      */
-    public List<SGraphElement> getAttachedTo() {
-        return attachedTo;
-    }
-
-    /**
-     * Get the message near to which the comment will be drawn if existing.
-     * 
-     * @return the SMessage near to the comment or null if not existing
-     */
-    public SMessage getMessage() {
-        return message;
-    }
-
-    /**
-     * Set the message near to which the comment will be drawn.
-     * 
-     * @param message
-     *            the new message
-     */
-    public void setMessage(final SMessage message) {
-        // Delete comment from the old message's comments list
-        if (this.message != null) {
-            this.message.getComments().remove(this);
+    public void setLifeline(final SLifeline lifeline) {
+        // Delete comment from the old lifeline's comments list
+        if (this.referenceLifeline != null) {
+            this.referenceLifeline.getComments().remove(this);
         }
 
-        this.message = message;
+        this.referenceLifeline = lifeline;
 
-        // Add comment to the new message's comments list
-        if (message != null) {
-            List<SComment> comments = message.getComments();
+        // Add comment to the new lifeline's comments list
+        if (lifeline != null) {
+            List<SComment> comments = lifeline.getComments();
             // TODO: If the comments are converted to a set instead of a list, we can skip contains
             if (!comments.contains(this)) {
                 comments.add(this);
@@ -106,31 +72,31 @@ public final class SComment extends SGraphElement {
     }
 
     /**
-     * Get the lifeline near to which the comment will be drawn if existing.
+     * Get the message next to which the comment will be placed.
      * 
-     * @return the SLifeline near to the comment or null if not existing
+     * @return the reference message, or {@code null} if there is none.
      */
-    public SLifeline getLifeline() {
-        return lifeline;
+    public SMessage getReferenceMessage() {
+        return referenceMessage;
     }
 
     /**
-     * Set the lifeline near to which the comment will be drawn.
+     * Set the message next to which the comment will be placed.
      * 
-     * @param lifeline
-     *            the new lifeline
+     * @param message
+     *            the new message.
      */
-    public void setLifeline(final SLifeline lifeline) {
-        // Delete comment from the old lifeline's comments list
-        if (this.lifeline != null) {
-            this.lifeline.getComments().remove(this);
+    public void setReferenceMessage(final SMessage message) {
+        // Delete comment from the old message's comments list
+        if (this.referenceMessage != null) {
+            this.referenceMessage.getComments().remove(this);
         }
 
-        this.lifeline = lifeline;
+        this.referenceMessage = message;
 
-        // Add comment to the new lifeline's comments list
-        if (lifeline != null) {
-            List<SComment> comments = lifeline.getComments();
+        // Add comment to the new message's comments list
+        if (message != null) {
+            List<SComment> comments = message.getComments();
             // TODO: If the comments are converted to a set instead of a list, we can skip contains
             if (!comments.contains(this)) {
                 comments.add(this);

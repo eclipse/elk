@@ -166,7 +166,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
                 }
                 
                 // Skip the message if its position was already fully set
-                if (message.isLayerPositionSet()) {
+                if (message.isMessageLayerPositionSet()) {
                     continue;
                 }
 
@@ -188,7 +188,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
                             // If the other message starts or ends between the start and the end
                             // of the tested message, there is an overlapping
                             if (overlap(sourceSlot, targetSlot, otherSourceSlot, otherTargetSlot)) {
-                                if (otherMessage.isLayerPositionSet()) {
+                                if (otherMessage.isMessageLayerPositionSet()) {
                                     // If the other message was already placed, the current message has
                                     // to be placed in another layer
                                     layerpos += context.messageSpacing;
@@ -196,7 +196,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
                                 } else if (Math.abs(otherSourceSlot - otherTargetSlot) <= 1) {
                                     // If the other message has not been placed yet and is a short one,
                                     // it will be placed here
-                                    otherMessage.setLayerYPos(layerpos);
+                                    otherMessage.setMessageLayerYPos(layerpos);
                                     layerpos += context.messageSpacing;
                                     break;
                                 }
@@ -208,7 +208,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
                 }
                 
                 // Set the vertical position of the message
-                message.setLayerYPos(layerpos);
+                message.setMessageLayerYPos(layerpos);
 
                 // Handle selfloops
                 if (message.getSource() == message.getTarget()) {
@@ -267,7 +267,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
             SLifeline lifeline = null;
             // Get random connected message and lifeline if existing
             // This may be optimized if there is more than one connection
-            for (SGraphElement element : comment.getAttachedTo()) {
+            for (SGraphElement element : comment.getAttachments()) {
                 if (element instanceof SMessage) {
                     message = (SMessage) element;
                 } else if (element instanceof SLifeline) {
@@ -275,7 +275,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
                 }
             }
 
-            comment.setMessage(message);
+            comment.setReferenceMessage(message);
             comment.setLifeline(lifeline);
 
             /* If the comment is attached to a message, determine if it should be drawn near the
@@ -326,7 +326,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
         double commentNextYPos = context.lifelineHeader + context.lifelineYPos;
 
         for (SComment comment : context.sgraph.getComments()) {
-            if (comment.getMessage() == null) {
+            if (comment.getReferenceMessage() == null) {
                 // Unconnected comments
                 if (comment.getSize().x > commentMaxExtraWidth) {
                     commentMaxExtraWidth = comment.getSize().x;
@@ -462,7 +462,7 @@ public class KGraphCoordinateCalculator implements ILayoutPhase<SequencePhases, 
         HashMap<SMessage, SComment> hash = new HashMap<SMessage, SComment>(comments.size());
         for (SComment comment : comments) {
             if (comment.getLifeline() == lifeline) {
-                SMessage message = comment.getMessage();
+                SMessage message = comment.getReferenceMessage();
 
                 // Place comment in the center of the message if it is smaller than
                 // lifelineSpacing

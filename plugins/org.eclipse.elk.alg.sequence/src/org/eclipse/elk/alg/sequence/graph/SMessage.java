@@ -19,45 +19,61 @@ import com.google.common.collect.Lists;
  * arguments. These cannot be changed afterwards. A message has a source and a target point. These
  * points may have different vertical positions since asynchronous messages are not required to be
  * horizontal.
- * 
- * @author grh
  */
 public final class SMessage extends SGraphElement {
-    private static final long serialVersionUID = 6326794211792613083L;
-    /** The value of a position that has not been determined yet. */
-    public static final double POSITION_UNSET = -1.0;
     
-    /** The source lifeline of the message. This is set initially and cannot be modified. */
-    private SLifeline source;
+    private static final long serialVersionUID = 6326794211792613083L;
+    
+    /** The value of a position that has not been determined yet. */
+    public static final double POSITION_UNDEFINED = -1.0;
+    /** The value of a message layer that has not been determined yet. */
+    public static final int MESSAGE_LAYER_UNDEFINED = -1;
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Properties
+    
+    /** The source lifeline of the message. */
+    private final SLifeline source;
     /** The target lifeline of the message. This is set initially and cannot be modified. */
-    private SLifeline target;
+    private final SLifeline target;
     /** The vertical position of the source point of the message. */
-    private double sourceYPos = POSITION_UNSET;
+    private double sourceYPos = POSITION_UNDEFINED;
     /** The vertical position of the target point of the message. */
-    private double targetYPos = POSITION_UNSET;
+    private double targetYPos = POSITION_UNDEFINED;
     /** The number of the layer that the message is in. */
-    private int messageLayer;   // TODO: What layer are asynchronous messages in?
-    /** Whether the layer of this message was already set. */
-    private boolean isLayerPositionSet = false;
+    // TODO: What layer are asynchronous messages in?
+    private int messageLayer = -1;
+    /** Whether this message's layer has a y position set that has been applied to this message. */
+    private boolean messageLayerPositionSet = false;
     /** The width of the message's label. This is important for handling long labels. */
+    // TODO: Why not keep the label around as an object that can be positioned (and label-managed, for that matter)?
     private double labelWidth;
     /** The list of comments that will be drawn near to this message. */
-    private List<SComment> comments = Lists.newArrayList();  // TODO: Convert to a Set?
-
+    // TODO: Convert to a Set?
+    private List<SComment> comments = Lists.newArrayList();
     
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Construction
+
     /**
-     * Creates a new message connecting the given two lifelines.
+     * Creates a new message connecting the given two lifelines. Does not add the message to the lifelines yet
+     * since that will usually require the position of its end points to be set as well.
      * 
      * @param source
-     *            the source lifeline
+     *            the source lifeline.
      * @param target
-     *            the target lifeline
+     *            the target lifeline.
      */
     public SMessage(final SLifeline source, final SLifeline target) {
         this.source = source;
         this.target = target;
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Accessors
 
     /**
      * Get the source lifeline of the message.
@@ -78,95 +94,9 @@ public final class SMessage extends SGraphElement {
     }
 
     /**
-     * Get the list of comments that will be drawn near to this message.
-     * 
-     * @return the list of comments
-     */
-    public List<SComment> getComments() {
-        return comments;
-    }
-
-    /**
-     * Set the list of comments that will be drawn near to this message.
-     * 
-     * @param comments
-     *            the new list of comments
-     */
-    public void setComments(final List<SComment> comments) {
-        this.comments = comments;
-    }
-
-    /**
-     * Get the width of the label attached to the message.
-     * 
-     * @return the width of the label
-     */
-    public double getLabelWidth() {
-        return labelWidth;
-    }
-
-    /**
-     * Set the width of the label attached to the message.
-     * 
-     * @param labelWidth
-     *            the new width of the label
-     */
-    public void setLabelWidth(final double labelWidth) {
-        this.labelWidth = labelWidth;
-    }
-
-    /**
-     * Get the layer number of the message.
-     * 
-     * @return the layer number
-     */
-    public int getMessageLayer() {
-        return messageLayer;
-    }
-
-    /**
-     * Set the layer number of the message.
-     * 
-     * @param messageLayer
-     *            the new number of the layer
-     */
-    public void setMessageLayer(final int messageLayer) {
-        this.messageLayer = messageLayer;
-    }
-
-    /**
-     * If the layer of this message was already set.
-     * 
-     * @return {@code true} if the layer was already set
-     */
-    public boolean isLayerPositionSet() {
-        return isLayerPositionSet;
-    }
-
-    /**
-     * Set the vertical position of the layer of the message. This implicitly sets the source and
-     * target y position as well.
-     * 
-     * @param yPosition
-     *            the new vertical position
-     */
-    public void setLayerYPos(final double yPosition) {
-        sourceYPos = yPosition;
-        targetYPos = yPosition;
-        isLayerPositionSet = true;
-        
-        // Update the graph's size if the message's y position is greater than the graph's size.
-        // This is done in order to find the new vertical size of the diagram on the fly.
-        // TODO: What about lifeline sizes?
-        if (source.getGraph().getSize().y < yPosition) {
-            source.getGraph().getSize().y = yPosition;
-        }
-    }
-
-    /**
      * Get the vertical position at the source lifeline of the message.
      * 
-     * @return the vertical position at the source lifeline
+     * @return the vertical position at the source lifeline.
      */
     public double getSourceYPos() {
         return sourceYPos;
@@ -176,7 +106,7 @@ public final class SMessage extends SGraphElement {
      * Set the vertical position at the source lifeline of the message.
      * 
      * @param sourceYPos
-     *            the new vertical position at the source lifeline
+     *            the new vertical position at the source lifeline.
      */
     public void setSourceYPos(final double sourceYPos) {
         this.sourceYPos = sourceYPos;
@@ -184,6 +114,7 @@ public final class SMessage extends SGraphElement {
         // Update the graph's size if the message's y position is greater than the graph's size.
         // This is done in order to find the new vertical size of the diagram on the fly. Lifeline
         // sizes are adjusted later.
+        // TODO: This should be done in a processor at the end of the algorithm
         if (source.getGraph().getSize().y < sourceYPos) {
             source.getGraph().getSize().y = sourceYPos;
         }
@@ -192,7 +123,7 @@ public final class SMessage extends SGraphElement {
     /**
      * Get the vertical position at the target lifeline of the message.
      * 
-     * @return the vertical position at the target lifeline
+     * @return the vertical position at the target lifeline.
      */
     public double getTargetYPos() {
         return targetYPos;
@@ -202,16 +133,87 @@ public final class SMessage extends SGraphElement {
      * Set the vertical position at the target lifeline of the message.
      * 
      * @param targetYPos
-     *            the new vertical position at the target lifeline
+     *            the new vertical position at the target lifeline.
      */
     public void setTargetYPos(final double targetYPos) {
         this.targetYPos = targetYPos;
         
         // Update the graph's size if the message's y position is greater than the graph's size.
-        // This is done in order to find the new vertical size of the diagram on the fly.
-        // TODO: What about lifeline sizes?
+        // This is done in order to find the new vertical size of the diagram on the fly. Lifeline
+        // sizes are adjusted later.
+        // TODO: This should be done in a processor at the end of the algorithm
         if (target.getGraph().getSize().y < targetYPos) {
             target.getGraph().getSize().y = targetYPos;
         }
+    }
+
+    /**
+     * Get the numer of the layer the message is part of.
+     * 
+     * @return the layer number.
+     */
+    public int getMessageLayer() {
+        return messageLayer;
+    }
+
+    /**
+     * Set the numer of the layer the message is part of.
+     * 
+     * @param messageLayer
+     *            the new layer number.
+     */
+    public void setMessageLayer(final int messageLayer) {
+        this.messageLayer = messageLayer;
+    }
+
+    /**
+     * Check whether the message's layer has already had a position assigned to it.
+     * 
+     * @return {@code true} if the layer was already set.
+     */
+    public boolean isMessageLayerPositionSet() {
+        return messageLayerPositionSet;
+    }
+
+    /**
+     * Set the y coordinate of both the source and the target position and mark the position of the message's layer
+     * as having been set.
+     * 
+     * @param yPosition
+     *            the new vertical position.
+     */
+    public void setMessageLayerYPos(final double yPosition) {
+        setSourceYPos(yPosition);
+        setTargetYPos(yPosition);
+        
+        messageLayerPositionSet = true;
+    }
+
+    /**
+     * Get the width of the label attached to the message.
+     * 
+     * @return the width of the label.
+     */
+    public double getLabelWidth() {
+        return labelWidth;
+    }
+
+    /**
+     * Set the width of the label attached to the message.
+     * 
+     * @param labelWidth
+     *            the new width of the label.
+     */
+    public void setLabelWidth(final double labelWidth) {
+        this.labelWidth = labelWidth;
+    }
+
+    /**
+     * Get the list of comments that will be drawn near to this message.
+     * 
+     * @return the list of comments.
+     */
+    public List<SComment> getComments() {
+        return comments;
     }
 }

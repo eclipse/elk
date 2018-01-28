@@ -29,8 +29,6 @@ import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Layout algorithm for Papyrus sequence diagrams.
- * 
- * @author grh
  */
 public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     
@@ -64,12 +62,11 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
     }
     
     /**
-     * Assembles the list of layout processors that, when run in order, implement the sequence
-     * diagram layout algorithm. The list may be different based on the given layout context.
+     * Assembles the list of layout processors that, when run in order, implement the sequence diagram layout algorithm.
+     * The list may be different based on the given layout context.
      * 
      * @param context
-     *            the layout context that contains all relevant information for the current layout
-     *            run.
+     *            the layout context that contains all relevant information for the current layout run.
      * @return list of layout processors.
      */
     private List<ILayoutProcessor<LayoutContext>> assembleLayoutProcessors(final LayoutContext context) {

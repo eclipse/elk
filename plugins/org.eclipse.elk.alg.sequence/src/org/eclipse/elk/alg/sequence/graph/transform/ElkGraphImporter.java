@@ -49,7 +49,7 @@ import com.google.common.collect.Maps;
 public final class ElkGraphImporter {
     
     public LayoutContext importGraph(final ElkNode elkGraph) {
-        LayoutContext context = LayoutContext.fromLayoutData(elkGraph);
+        LayoutContext context = new LayoutContext(elkGraph);
         
         context.sgraph = importSGraph(context.kgraph);
         context.lgraph = createLayeredGraph(context.sgraph);
@@ -193,14 +193,13 @@ public final class ElkGraphImporter {
         assert klifeline.getProperty(SequenceDiagramOptions.NODE_TYPE) == NodeType.LIFELINE;
         
         // Node is lifeline
-        SLifeline slifeline = new SLifeline();
+        SLifeline slifeline = SLifeline.createLifeline(sgraph);
         if (klifeline.getLabels().size() > 0) {
             slifeline.setName(klifeline.getLabels().get(0).getText());
         }
         
         slifeline.setProperty(InternalProperties.ORIGIN, klifeline);
         lifelineMap.put(klifeline, slifeline);
-        sgraph.addLifeline(slifeline);
 
         // Copy layout information to lifeline
         slifeline.getPosition().x = klifeline.getX();
@@ -257,9 +256,7 @@ public final class ElkGraphImporter {
             // Lost-messages and messages to the surrounding interaction don't have a lifeline, so
             // create dummy lifeline
             if (targetLL == null) {
-                SLifeline sdummy = new SLifeline();
-                sdummy.setDummy(true);
-                sdummy.setGraph(sgraph);
+                SLifeline sdummy = SLifeline.createDummyLifeline(sgraph);
                 targetLL = sdummy;
             }
 
@@ -366,9 +363,7 @@ public final class ElkGraphImporter {
             
             // Create dummy lifeline as source since the message has no source lifeline
             // TODO We could think about using a single dummy lifeline for all found messages
-            SLifeline sdummy = new SLifeline();
-            sdummy.setDummy(true);
-            sdummy.setGraph(sgraph);
+            SLifeline sdummy = SLifeline.createDummyLifeline(sgraph);
             sourceLL = sdummy;
             
             SLifeline targetLL = lifelineMap.get(kedge.getTargets().get(0));
@@ -448,7 +443,7 @@ public final class ElkGraphImporter {
         // Copy all the entries of the list of attached elements to the comment object
         List<Object> attachedTo = node.getProperty(SequenceDiagramOptions.ATTACHED_OBJECTS);
         if (attachedTo != null) {
-            List<SGraphElement> attTo = comment.getAttachedTo();
+            List<SGraphElement> attTo = comment.getAttachments();
             for (Object att : attachedTo) {
                 if (att instanceof ElkNode) {
                     attTo.add(lifelineMap.get(att));
@@ -502,7 +497,7 @@ public final class ElkGraphImporter {
             // Set both, lifeline and message of the comment to indicate that it should be drawn
             // near to the event
             comment.setLifeline(nextLifeline);
-            comment.setMessage(nextMessage);
+            comment.setReferenceMessage(nextMessage);
         }
 
         sgraph.getComments().add(comment);

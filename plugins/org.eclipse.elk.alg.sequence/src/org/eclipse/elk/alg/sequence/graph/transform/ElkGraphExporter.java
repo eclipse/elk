@@ -762,7 +762,7 @@ public final class ElkGraphExporter {
         for (SComment comment : graph.getComments()) {
             ElkNode origin = (ElkNode) comment.getProperty(InternalProperties.ORIGIN);
             origin.setLocation(comment.getPosition().x, comment.getPosition().y);
-            if (comment.getMessage() != null) {
+            if (comment.getReferenceMessage() != null) {
                 // Connected comments
 
                 // Set coordinates for the connection of the comment
@@ -783,7 +783,7 @@ public final class ElkGraphExporter {
                     edgeSourceXPos = comment.getPosition().x + comment.getSize().x / 2;
                     edgeTargetXPos = edgeSourceXPos;
                     
-                    ElkEdge edge = (ElkEdge) comment.getMessage().getProperty(InternalProperties.ORIGIN);
+                    ElkEdge edge = (ElkEdge) comment.getReferenceMessage().getProperty(InternalProperties.ORIGIN);
                     ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
                     edgeSourceYPos = comment.getPosition().y + comment.getSize().y;
                     edgeTargetYPos = (edgeSection.getEndY() + edgeSection.getStartY()) / 2;

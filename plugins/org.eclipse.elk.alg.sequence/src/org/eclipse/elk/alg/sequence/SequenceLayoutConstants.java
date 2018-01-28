@@ -13,8 +13,6 @@ package org.eclipse.elk.alg.sequence;
 /**
  * Keeps a bunch of constants used throughout the algorithm. Most of this should probably be phased out
  * and replaced by proper layout options.
- * 
- * @author cds
  */
 public final class SequenceLayoutConstants {
     

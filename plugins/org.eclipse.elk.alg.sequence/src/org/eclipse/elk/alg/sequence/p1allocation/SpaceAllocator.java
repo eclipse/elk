@@ -127,7 +127,7 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
         for (SComment comment : context.sgraph.getComments()) {
             // Check to which kind of object the comment is attached
             SMessage attachedMess = null;
-            for (SGraphElement element : comment.getAttachedTo()) {
+            for (SGraphElement element : comment.getAttachments()) {
                 if (element instanceof SMessage) {
                     attachedMess = (SMessage) element;
                 }
@@ -144,7 +144,7 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
                     for (int i = 0; i < dummys; i++) {
                         createLGraphDummyNode(context.lgraph, lnode, true);
                     }
-                    comment.setMessage(attachedMess);
+                    comment.setReferenceMessage(attachedMess);
                     attachedMess.getComments().add(comment);
                 }
             }
