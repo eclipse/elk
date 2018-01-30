@@ -19,11 +19,11 @@ import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.alg.sequence.graph.SExecution;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
-import org.eclipse.elk.alg.sequence.options.SequenceExecution;
 import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -154,7 +154,7 @@ public final class ElkGraphExporter {
         edgeSection.setStartLocation(llCenter, message.getSourceYPos());
         
         // Check if the message connects to executions
-        for (SequenceExecution execution : lifeline.getExcecutions()) {
+        for (SExecution execution : lifeline.getExcecutions()) {
             if (execution.getMessages().contains(message)) {
                 // Adjust the execution's vertical extend. This must be done with consideration for
                 // self loops: If an execution is created by a self-loop, it needs to start at the
@@ -250,7 +250,7 @@ public final class ElkGraphExporter {
         }
 
         // Check if the message connects to executions
-        for (SequenceExecution execution : lifeline.getExcecutions()) {
+        for (SExecution execution : lifeline.getExcecutions()) {
             if (execution.getMessages().contains(message)) {
                 // Adjust the execution's vertical extend. This must be done with consideration for
                 // self loops: If an execution is created by a self-loop, it needs to start at the
@@ -493,10 +493,10 @@ public final class ElkGraphExporter {
         arrangeExecutions(lifeline);
 
         // Self-messages need to be processed later, once all executions are placed
-        Multimap<SMessage, SequenceExecution> selfMessages = HashMultimap.create();
+        Multimap<SMessage, SExecution> selfMessages = HashMultimap.create();
         
         // Walk through the lifeline's executions
-        for (SequenceExecution execution : lifeline.getExcecutions()) {
+        for (SExecution execution : lifeline.getExcecutions()) {
             // TODO We need to calculate proper sizes for these guys
             if (execution.getType() == SequenceExecutionType.DURATION
                     || execution.getType() == SequenceExecutionType.TIME_CONSTRAINT) {
@@ -505,7 +505,7 @@ public final class ElkGraphExporter {
             }
 
             // Apply calculated coordinates to the execution
-            ElkNode executionNode = (ElkNode) execution.getOrigin();
+            ElkNode executionNode = (ElkNode) execution.getProperty(InternalProperties.ORIGIN);
             executionNode.setX(execution.getPosition().x);
             executionNode.setY(execution.getPosition().y - lifeline.getPosition().y);
             executionNode.setWidth(execution.getSize().x);
@@ -563,16 +563,16 @@ public final class ElkGraphExporter {
      *            the lifeline the executions belong to.
      */
     private void arrangeExecutions(final SLifeline lifeline) {
-        List<SequenceExecution> executions = lifeline.getExcecutions();
+        List<SExecution> executions = lifeline.getExcecutions();
         
         // All executions are initially centered in their lifeline
-        for (SequenceExecution execution : executions) {
+        for (SExecution execution : executions) {
             execution.getPosition().x = (lifeline.getSize().x - SequenceLayoutConstants.EXECUCTION_WIDTH) / 2;
         }
 
         // If there are multiple executions, some may have to be shifted horizontally if they overlap
         if (executions.size() > 1) {
-            for (SequenceExecution execution : executions) {
+            for (SExecution execution : executions) {
                 if (execution.getType() == SequenceExecutionType.DURATION
                         || execution.getType() == SequenceExecutionType.TIME_CONSTRAINT) {
                     
@@ -580,7 +580,7 @@ public final class ElkGraphExporter {
                 }
                 
                 int slot = 0;
-                for (SequenceExecution otherExecution : executions) {
+                for (SExecution otherExecution : executions) {
                     if (execution != otherExecution) {
                         // The "less OR EQUAL" when calculating "bottomOverlaps" is significant here:
                         // in KGraph mode, several executions can end at the same message
@@ -600,7 +600,7 @@ public final class ElkGraphExporter {
         }
 
         // Check minimum height of executions and set width
-        for (SequenceExecution execution : executions) {
+        for (SExecution execution : executions) {
             if (execution.getSize().y < SequenceLayoutConstants.MIN_EXECUTION_HEIGHT) {
                 execution.getSize().y = SequenceLayoutConstants.MIN_EXECUTION_HEIGHT;
             }
@@ -632,7 +632,7 @@ public final class ElkGraphExporter {
      *            run.
      */
     private void applyExecutionCoordinatesToSelfMessages(final SLifeline lifeline,
-            final Multimap<SMessage, SequenceExecution> selfMsgs, final LayoutContext context) {
+            final Multimap<SMessage, SExecution> selfMsgs, final LayoutContext context) {
         
         double lifelineXCenter = lifeline.getSize().x / 2;
         
@@ -650,7 +650,7 @@ public final class ElkGraphExporter {
             double sourceOffset = 0;
             double targetOffset = 0;
             
-            for (SequenceExecution execution : selfMsgs.get(selfMsg)) {
+            for (SExecution execution : selfMsgs.get(selfMsg)) {
                 // The execution's coordinates and the bend points share the same coordinate system
                 double execTopYPos = execution.getPosition().y;
                 double execBotYPos = execTopYPos + execution.getSize().y;

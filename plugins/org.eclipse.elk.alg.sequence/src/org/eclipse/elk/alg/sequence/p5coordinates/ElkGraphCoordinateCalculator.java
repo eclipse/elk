@@ -21,11 +21,11 @@ import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.transform.ElkGraphExporter;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.NodeType;
-import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
@@ -519,14 +519,14 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
      */
     private void calculateAreaPosition(final LayoutContext context) {
         // Set size and position of area
-        for (SequenceArea area : context.sgraph.getAreas()) {
+        for (SArea area : context.sgraph.getAreas()) {
             if (area.getMessages().size() > 0) {
                 setAreaPositionByMessages(area);
             } else {
                 setAreaPositionByLifelinesAndMessage(context, area);
             }
             
-            ElkNode areaNode = (ElkNode) area.getLayoutNode();
+            ElkNode areaNode = (ElkNode) area.getProperty(InternalProperties.ORIGIN);
 
             // Check if there are contained areas
             int containmentDepth = checkHierarchy(area);
@@ -547,7 +547,7 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
 
             // Handle interaction operands
             // TODO Review this
-            if (area.getSubAreas().size() > 0) {
+            if (area.getSections().size() > 0) {
                 // Reset area yPos and height if subAreas exists (to have a "header" that isn't
                 // occupied by any subArea)
                 areaNode.setY(area.getPosition().y - context.messageSpacing / 2);
@@ -555,8 +555,8 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
 
                 double lastPos = 0;
                 ElkNode lastSubAreaNode = null;
-                for (SequenceArea subArea : area.getSubAreas()) {
-                    ElkNode subAreaNode = (ElkNode) subArea.getLayoutNode();
+                for (SArea subArea : area.getSections()) {
+                    ElkNode subAreaNode = (ElkNode) subArea.getProperty(InternalProperties.ORIGIN);
 
                     subAreaNode.setX(0);
                     subAreaNode.setWidth(
@@ -600,7 +600,7 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
      *            the edgeYpos factor, that is necessary to compute the real position of the
      *            SMessage
      */
-    private void setAreaPositionByMessages(final SequenceArea area) {
+    private void setAreaPositionByMessages(final SArea area) {
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = 0;
@@ -650,7 +650,7 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
      *            the sequence area
      */
     private void setAreaPositionByLifelinesAndMessage(final LayoutContext context,
-            final SequenceArea area) {
+            final SArea area) {
         
         // Set xPos and width according to the involved lifelines
         double minXPos = Double.MAX_VALUE;
@@ -691,13 +691,13 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
      * Check recursively if an area has contained areas and return the maximum depth.
      * 
      * @param area
-     *            the {@link SequenceArea}
+     *            the {@link SArea}
      * @return the maximum depth of hierarchy
      */
-    private int checkHierarchy(final SequenceArea area) {
+    private int checkHierarchy(final SArea area) {
         if (area.getContainedAreas().size() > 0) {
             int maxLevel = 0;
-            for (SequenceArea subArea : area.getContainedAreas()) {
+            for (SArea subArea : area.getContainedAreas()) {
                 int level = checkHierarchy(subArea);
                 if (level > maxLevel) {
                     maxLevel = level;
@@ -716,8 +716,8 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
      *            the area whose label to position. The corresponding layout node needs to have its size
      *            calculated already.
      */
-    private void calculateAreaLabelPosition(final LayoutContext context, final SequenceArea area) {
-        ElkNode areaNode = area.getLayoutNode();
+    private void calculateAreaLabelPosition(final LayoutContext context, final SArea area) {
+        ElkNode areaNode = (ElkNode) area.getProperty(InternalProperties.ORIGIN);
         if (areaNode.getLabels().isEmpty()) {
             return;
         }

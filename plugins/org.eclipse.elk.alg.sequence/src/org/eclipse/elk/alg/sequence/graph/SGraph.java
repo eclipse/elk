@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.sequence.graph;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.Lists;
@@ -37,7 +36,7 @@ public final class SGraph extends SGraphElement {
     // TODO: Why not make the order significant starting at a certain point in the algorithm?
     private List<SComment> comments = Lists.newArrayList();
     /** The list of areas in the sequence diagram. */
-    private List<SequenceArea> areas = Lists.newArrayList();
+    private List<SArea> areas = Lists.newArrayList();
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +74,7 @@ public final class SGraph extends SGraphElement {
      * 
      * @return the list of areas.
      */
-    public List<SequenceArea> getAreas() {
+    public List<SArea> getAreas() {
         return areas;
     }
     

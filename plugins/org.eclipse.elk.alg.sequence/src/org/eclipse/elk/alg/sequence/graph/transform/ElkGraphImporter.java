@@ -24,12 +24,12 @@ import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.alg.sequence.graph.SExecution;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.NodeType;
-import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
-import org.eclipse.elk.alg.sequence.options.SequenceExecution;
 import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.graph.ElkEdge;
@@ -70,9 +70,9 @@ public final class ElkGraphImporter {
     /** Maps {@link ElkEdge}s to the {@link SMessage}s they were turned into. */
     private Map<ElkEdge, SMessage> messageMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding executions. */
-    private Map<Integer, SequenceExecution> executionIdMap = Maps.newHashMap();
+    private Map<Integer, SExecution> executionIdMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding sequence area. */
-    private Map<Integer, SequenceArea> areaIdMap = Maps.newHashMap();
+    private Map<Integer, SArea> areaIdMap = Maps.newHashMap();
 
     /**
      * Builds a PGraph out of a given KGraph by associating every ElkNode to a PLifeline and every ElkEdge to a
@@ -145,7 +145,9 @@ public final class ElkGraphImporter {
             NodeType nodeType = node.getProperty(SequenceDiagramOptions.NODE_TYPE);
 
             if (nodeType == NodeType.COMBINED_FRAGMENT || nodeType == NodeType.INTERACTION_USE) {
-                SequenceArea area = new SequenceArea(node);
+                SArea area = new SArea();
+                area.setProperty(InternalProperties.ORIGIN, node);
+                
                 context.sgraph.getAreas().add(area);
                 areaIdMap.put(node.getProperty(SequenceDiagramOptions.ELEMENT_ID), area);
             }
@@ -160,8 +162,8 @@ public final class ElkGraphImporter {
                     int parentAreaId = node.getProperty(SequenceDiagramOptions.PARENT_AREA_ID);
                     int childAreaId = node.getProperty(SequenceDiagramOptions.ELEMENT_ID);
                     
-                    SequenceArea parentArea = areaIdMap.get(parentAreaId);
-                    SequenceArea childArea = areaIdMap.get(childAreaId);
+                    SArea parentArea = areaIdMap.get(parentAreaId);
+                    SArea childArea = areaIdMap.get(childAreaId);
                     
                     if (parentArea != null && childArea != null) {
                         parentArea.getContainedAreas().add(childArea);
@@ -213,7 +215,8 @@ public final class ElkGraphImporter {
 
             if (kchildNodeType.isExecutionType()) {
                 // Create a new sequence execution for this thing
-                SequenceExecution execution = new SequenceExecution(kchild);
+                SExecution execution = new SExecution();
+                execution.setProperty(InternalProperties.ORIGIN, kchild);
                 execution.setType(SequenceExecutionType.fromNodeType(kchildNodeType));
                 slifeline.getExcecutions().add(execution);
                 executionIdMap.put(kchild.getProperty(SequenceDiagramOptions.ELEMENT_ID), execution);
@@ -226,7 +229,7 @@ public final class ElkGraphImporter {
         // Check if the lifeline has any empty areas
         if (klifeline.hasProperty(SequenceDiagramOptions.AREA_IDS))
         for (Integer areaId : klifeline.getProperty(SequenceDiagramOptions.AREA_IDS)) {
-            SequenceArea area = areaIdMap.get(areaId);
+            SArea area = areaIdMap.get(areaId);
             if (area != null) {
                 area.getLifelines().add(slifeline);
             } else {
@@ -291,7 +294,7 @@ public final class ElkGraphImporter {
             // Check if the edge connects to executions
             if (kmessage.hasProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS)) {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS)) {
-                    SequenceExecution sourceExecution = executionIdMap.get(execId);
+                    SExecution sourceExecution = executionIdMap.get(execId);
                     if (sourceExecution != null) {
                         sourceExecution.addMessage(smessage);
                     } else {
@@ -302,7 +305,7 @@ public final class ElkGraphImporter {
             
             if (kmessage.hasProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
-                    SequenceExecution targetExecution = executionIdMap.get(execId);
+                    SExecution targetExecution = executionIdMap.get(execId);
                     if (targetExecution != null) {
                         targetExecution.addMessage(smessage);
                     } else {
@@ -332,7 +335,7 @@ public final class ElkGraphImporter {
 
             // Check if message is in any area
             for (Integer areaId : kmessage.getProperty(SequenceDiagramOptions.AREA_IDS)) {
-                SequenceArea area = areaIdMap.get(areaId);
+                SArea area = areaIdMap.get(areaId);
                 if (area != null) {
                     area.getMessages().add(smessage);
                     area.getLifelines().add(smessage.getSource());
@@ -345,7 +348,7 @@ public final class ElkGraphImporter {
             // Check if this message has an empty area that is to be placed directly above it
             if (kmessage.hasProperty(SequenceDiagramOptions.UPPER_EMPTY_AREA_ID)) {
                 int upperEmptyAreaId = kmessage.getProperty(SequenceDiagramOptions.UPPER_EMPTY_AREA_ID);
-                SequenceArea upperArea = areaIdMap.get(upperEmptyAreaId);
+                SArea upperArea = areaIdMap.get(upperEmptyAreaId);
                 
                 if (upperArea != null) {
                     upperArea.setNextMessage(smessage);
@@ -403,7 +406,7 @@ public final class ElkGraphImporter {
             // Check if the message connects to target executions
             if (kmessage.hasProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
-                    SequenceExecution targetExecution = executionIdMap.get(execId);
+                    SExecution targetExecution = executionIdMap.get(execId);
                     if (targetExecution != null) {
                         targetExecution.addMessage(smessage);
                     } else {

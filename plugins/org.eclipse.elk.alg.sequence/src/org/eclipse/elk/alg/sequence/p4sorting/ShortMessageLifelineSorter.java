@@ -23,8 +23,8 @@ import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.options.MessageType;
-import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
@@ -140,7 +140,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         // Prepare this by filling a map of (message <-> number of its areas) pairs.
         HashMap<SMessage, Integer> areaMessages = new HashMap<SMessage, Integer>();
         if (context.groupAreasWhenSorting) {
-            for (SequenceArea area : context.sgraph.getAreas()) {
+            for (SArea area : context.sgraph.getAreas()) {
                 for (Object messageObject : area.getMessages()) {
                     SMessage message = (SMessage) messageObject;
                     Integer messageEntry = areaMessages.get(message);

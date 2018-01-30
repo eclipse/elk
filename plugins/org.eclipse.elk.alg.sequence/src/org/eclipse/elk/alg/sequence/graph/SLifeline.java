@@ -14,8 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.elk.alg.sequence.options.SequenceExecution;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -57,7 +55,7 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
     /** The number of incoming messages. */
     private int incomingMessageCount = 0;
     /** The executions that hang out on the lifeline. */
-    private List<SequenceExecution> executions = Lists.newArrayList();
+    private List<SExecution> executions = Lists.newArrayList();
     /** The list of comments that are drawn near to this lifeline. */
     // TODO: Convert to a Set?
     private List<SComment> comments = Lists.newArrayList();
@@ -180,7 +178,7 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
      * 
      * @return the list of executions.
      */
-    public List<SequenceExecution> getExcecutions() {
+    public List<SExecution> getExcecutions() {
         return executions;
     }
 

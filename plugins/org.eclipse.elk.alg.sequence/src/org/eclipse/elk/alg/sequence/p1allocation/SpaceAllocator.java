@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.p1allocation;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -22,14 +19,16 @@ import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
-import org.eclipse.elk.alg.sequence.options.SequenceArea;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
+import com.google.common.collect.Iterables;
+
 /**
- * Allocates vertical space for various objects by introducing dummy nodes in the LGraph. Space is
+ * Allocates vertical space for various objects by introducing dummy nodes in the layered graph. Space is
  * required wherever messages cannot be allowed to be placed. This includes space required for message
  * comments or for headers of combined fragments.
  * 
@@ -67,18 +66,16 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
      *            the layout context that contains all relevant information for the current layout run.
      */
     private void allocateSpaceForAreaHeaders(final LayoutContext context) {
+        // TODO: This method would ideally add dummies for nested fragments as well
+        
         // Add dummy nodes before the first messages of combined fragments to have enough space
         // above the topmost message of the area
-        for (SequenceArea area : context.sgraph.getAreas()) {
-            // Find the uppermost message contained in the combined fragment. In Papyrus mode, we do
-            // that using message y coordinates. In KGraph mode, there's not really a good solution
-            // for finding the best message (actually, I'm not even convinced that the solution in
-            // Papyrus mode always works). There, we simply try to select a source in the layered
-            // subgraph induced by the set of nodes whose messages are part of the fragment
+        for (SArea area : context.sgraph.getAreas()) {
+            // Find the uppermost message contained in the combined fragment. It will be that of all messages
+            // contained in the area which has no predecessor in the layered graph which is itself part of the
+            // area
             SMessage uppermostMessage = null;
             
-            // Run through the messages and find a source in the layered subgraph induced by the
-            // nodes that are messages in this area
             for (Object msgObj : area.getMessages()) {
                 SMessage msg = (SMessage) msgObj;
                 
@@ -146,7 +143,7 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
      *            the layout context that contains all relevant information for the current layout run.
      */
     private void allocateSpaceForEmptyAreas(final LayoutContext context) {
-        for (SequenceArea area : context.sgraph.getAreas()) {
+        for (SArea area : context.sgraph.getAreas()) {
             if (area.getMessages().size() == 0) {
                 Object nextMess = area.getNextMessage();
                 if (nextMess != null) {
@@ -176,10 +173,12 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
      * @param node
      *            the node, that gets a predecessor
      * @param beforeNode
-     *            if true, the dummy will be inserted before the node, behind the node otherwise
+     *            if {@code true}, the dummy will be inserted before the node, behind the node otherwise
      */
     private void createLGraphDummyNode(final LGraph lgraph, final LNode node, final boolean beforeNode) {
+        // Create the new dummy node, along with ports
         LNode dummy = new LNode(lgraph);
+        lgraph.getLayerlessNodes().add(dummy);
         
         LPort dummyIn = new LPort();
         dummyIn.setNode(dummy);
@@ -187,41 +186,34 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
         LPort dummyOut = new LPort();
         dummyOut.setNode(dummy);
         
+        // Don't bother with existing ports, simply create a new one and be done with it
         LPort newPort = new LPort();
         newPort.setNode(node);
-
+        
+        // This edge will connect the dummy with the node before / after which it is going to be inserted
         LEdge dummyEdge = new LEdge();
 
         // To avoid concurrent modification, two lists are needed
         if (beforeNode) {
-            List<LEdge> incomingEdges = new LinkedList<LEdge>();
-            
-            for (LEdge edge : node.getIncomingEdges()) {
-                incomingEdges.add(edge);
-            }
-            
-            for (LEdge edge : incomingEdges) {
+            // Divert original predecessors to dummy node
+            for (LEdge edge : Iterables.toArray(node.getIncomingEdges(), LEdge.class)) {
                 edge.setTarget(dummyIn);
             }
             
+            // Connect the node to the new dummy
             dummyEdge.setSource(dummyOut);
             dummyEdge.setTarget(newPort);
+            
         } else {
-            List<LEdge> outgoingEdges = new LinkedList<LEdge>();
-            
-            for (LEdge edge : node.getOutgoingEdges()) {
-                outgoingEdges.add(edge);
-            }
-            
-            for (LEdge edge : outgoingEdges) {
+            // Divert original successors to dummy node
+            for (LEdge edge : Iterables.toArray(node.getOutgoingEdges(), LEdge.class)) {
                 edge.setSource(dummyOut);
             }
             
+            // Connect the node to the new dummy
             dummyEdge.setTarget(dummyIn);
             dummyEdge.setSource(newPort);
         }
-        
-        lgraph.getLayerlessNodes().add(dummy);
     }
 
 }

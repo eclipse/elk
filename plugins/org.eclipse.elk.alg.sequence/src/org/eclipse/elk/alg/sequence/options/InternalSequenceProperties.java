@@ -23,15 +23,15 @@ public final class InternalSequenceProperties {
 
     /** The lifeline to which an element of the SGraph belongs. */
     public static final IProperty<SLifeline> BELONGS_TO_LIFELINE = new Property<>(
-            "de.cau.cs.kieler.papyrus.sequence.belongsToLifeline");
+            "org.eclipse.elk.alg.sequence.belongsToLifeline");
 
     /** The node in the layered graph that corresponds to a message. */
     public static final IProperty<LNode> LAYERED_NODE = new Property<>(
-            "de.cau.cs.kieler.papyrus.sequence.layeredNode");
+            "org.eclipse.elk.alg.sequence.layeredNode");
 
     /** The KEdge that connects the comment to another element of the diagram. */
     public static final IProperty<ElkEdge> COMMENT_CONNECTION = new Property<>(
-            "de.cau.cs.kieler.papyrus.sequence.commentConnection");
+            "org.eclipse.elk.alg.sequence.commentConnection");
 
 
     private InternalSequenceProperties() {
