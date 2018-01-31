@@ -90,7 +90,7 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
         double xPos = calculateFirstLifelinePosition(context);
         
         // Set position for lifelines/nodes
-        for (SLifeline lifeline : context.lifelineOrder) {
+        for (SLifeline lifeline : context.sgraph.getLifelines()) {
             // Dummy lifelines don't need any layout
             if (lifeline.isDummy()) {
                 continue;
@@ -359,7 +359,7 @@ public class ElkGraphCoordinateCalculator implements ILayoutPhase<SequencePhases
         
         // Find the first non-dummy lifeline
         SLifeline firstLifeline = null;
-        for (SLifeline lifeline : context.lifelineOrder) {
+        for (SLifeline lifeline : context.sgraph.getLifelines()) {
             if (!lifeline.isDummy()) {
                 firstLifeline = lifeline;
                 break;

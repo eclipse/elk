@@ -36,12 +36,10 @@ import com.google.common.collect.HashBiMap;
  * Lifeline sorting algorithm that tries to minimize the length of message. The algorithm is
  * inspired by the heuristic solution to the linear arrangement problem as proposed by McAllister in
  * <em>A new heuristic algorithm for the Linear Arrangement problem</em>.
- * 
- * @author grh
  */
 public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePhases, LayoutContext> {
 
-    /** Option that indicates, if the starting node is searched by layering attributes. */
+    /** Option that indicates if the starting node is searched by layering attributes. */
     private boolean layerBased = true;
     /** List of nodes that are already placed by the algorithm. */
     private List<EDLSNode> placedNodes;
@@ -74,29 +72,30 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
             first = degreeBasedFirstNode(context.sgraph, context.lgraph);
         }
         placedNodes.add(first);
+        
         // Update the TL-values for connected nodes
         first.incrementNeighborsTL();
 
-        // Calculate following nodes one after another
+        // Calculate following nodes one by one
         for (int i = 2; i <= context.sgraph.getLifelines().size(); i++) {
             EDLSNode next = calculateNextNode(context.sgraph);
             placedNodes.add(next);
+            
             // Update the TL-value for connected nodes
             next.incrementNeighborsTL();
         }
 
         // Get the corresponding lifelines
+        List<SLifeline> lifelines = context.sgraph.getLifelines();
+        lifelines.clear();
+        
         int i = 0;
-        List<SLifeline> lifelines = new LinkedList<SLifeline>();
         for (EDLSNode node : placedNodes) {
             SLifeline lifeline = correspondences.inverse().get(node);
             lifelines.add(lifeline);
             lifeline.setHorizontalSlot(i);
             i++;
         }
-
-        // Return the list of lifelines in the calculated order
-        context.lifelineOrder = lifelines;
 
         // Free memory
         placedNodes = null;

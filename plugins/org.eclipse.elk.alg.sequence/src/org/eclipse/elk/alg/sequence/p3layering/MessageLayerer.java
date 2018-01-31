@@ -18,12 +18,10 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * Uses KLay Layered's {@link NetworkSimplexLayerer} to compute a layering for the messages in the
+ * Uses ELK Layered's {@link NetworkSimplexLayerer} to compute a layering for the messages in the
  * LGraph representation of a sequence diagram. This simply delegates to the network simplex layerer,
- * but needs to be in its own class because the network simplex layerer doesn't implement out layout
+ * but needs to be in its own class because the network simplex layerer doesn't implement our layout
  * processor interface.
- * 
- * @author cds
  */
 public final class MessageLayerer implements ILayoutPhase<SequencePhases, LayoutContext> {
 

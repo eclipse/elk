@@ -22,8 +22,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 /**
  * Lifeline sorting algorithm that respects the given order of the lifelines. The lifelines are
  * numbered as they are ordered before.
- * 
- * @author grh
  */
 public final class InteractiveLifelineSorter implements ILayoutPhase<SequencePhases, LayoutContext> {
 
@@ -46,9 +44,6 @@ public final class InteractiveLifelineSorter implements ILayoutPhase<SequencePha
         for (int i = 0; i < lifelines.size(); i++) {
             lifelines.get(i).setHorizontalSlot(i);
         }
-
-        // Return the list of lifelines in the calculated order
-        context.lifelineOrder = lifelines;
         
         progressMonitor.done();
     }

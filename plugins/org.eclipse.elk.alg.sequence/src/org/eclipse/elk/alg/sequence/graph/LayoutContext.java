@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.graph;
 
-import java.util.List;
-
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.LifelineSortingStrategy;
@@ -33,8 +31,6 @@ public final class LayoutContext {
     public SGraph sgraph;
     /** The {@link LGraph} created from the SGraph. */
     public LGraph lgraph;
-    /** The order of lifelines as determined later in the algorithm. */
-    public List<SLifeline> lifelineOrder;
     
     
     // Layout Settings

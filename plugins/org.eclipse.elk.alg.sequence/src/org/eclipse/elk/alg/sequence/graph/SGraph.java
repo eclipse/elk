@@ -29,8 +29,7 @@ public final class SGraph extends SGraphElement {
     /** The size of the diagram. This is modified during the layout process. */
     private KVector size = new KVector();
     
-    /** The list of lifelines in the sequence diagram. It is not intended to have a special order. */
-    // TODO: Why not make the order significant starting at a certain point in the algorithm?
+    /** The list of lifelines in the sequence diagram. After phase 4, the horizontal order is reflected here. */
     private List<SLifeline> lifelines = Lists.newArrayList();
     /** The list of comments in the sequence diagram. It is not intended to have a special order. */
     // TODO: Why not make the order significant starting at a certain point in the algorithm?

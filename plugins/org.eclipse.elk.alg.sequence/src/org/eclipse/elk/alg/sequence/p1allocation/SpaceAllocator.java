@@ -31,9 +31,6 @@ import com.google.common.collect.Iterables;
  * Allocates vertical space for various objects by introducing dummy nodes in the layered graph. Space is
  * required wherever messages cannot be allowed to be placed. This includes space required for message
  * comments or for headers of combined fragments.
- * 
- * @author grh
- * @author cds
  */
 public final class SpaceAllocator implements ILayoutPhase<SequencePhases, LayoutContext> {
 
@@ -76,9 +73,7 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
             // area
             SMessage uppermostMessage = null;
             
-            for (Object msgObj : area.getMessages()) {
-                SMessage msg = (SMessage) msgObj;
-                
+            for (SMessage msg : area.getMessages()) {
                 // Find out if any of the messages predecessors in the layered graph are part of
                 // the fragment. If not, we have found our best guess for the uppermost message
                 LNode msgNode = msg.getProperty(InternalSequenceProperties.LAYERED_NODE);
@@ -145,13 +140,11 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
     private void allocateSpaceForEmptyAreas(final LayoutContext context) {
         for (SArea area : context.sgraph.getAreas()) {
             if (area.getMessages().size() == 0) {
-                Object nextMess = area.getNextMessage();
-                if (nextMess != null) {
-                    LNode node = ((SMessage) nextMess)
-                            .getProperty(InternalSequenceProperties.LAYERED_NODE);
+                SMessage nextMsg = area.getNextMessage();
+                if (nextMsg != null) {
+                    LNode node = nextMsg.getProperty(InternalSequenceProperties.LAYERED_NODE);
                     if (node != null) {
-                        // Create two dummy nodes before node to have enough space for the empty
-                        // area
+                        // Create two dummy nodes before node to have enough space for the empty area
                         createLGraphDummyNode(context.lgraph, node, true);
                         createLGraphDummyNode(context.lgraph, node, true);
                     }

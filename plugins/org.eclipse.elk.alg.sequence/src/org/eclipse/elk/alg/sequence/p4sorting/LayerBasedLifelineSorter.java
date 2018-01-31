@@ -28,17 +28,13 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import com.google.common.collect.Lists;
 
 /**
- * Lifelinesorting algorithm that sorts the lifelines according to their uppermost outgoing
+ * Lifeline sorting algorithm that sorts the lifelines according to their uppermost outgoing
  * messages. The "source" lifeline is placed leftmost, the successor lifelines following.
- * 
- * @author grh
  */
 public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhases, LayoutContext> {
 
-    /** The next position a lifeline will be placed in. */
-    private int nextPosition;
     /** List of lifelines to be processed. */
-    private List<SLifeline> unprocessedLifelines = Lists.newArrayList();
+    private List<SLifeline> unprocessedLifelines;
     /** List of lifelines that have already been sorted. */
     private List<SLifeline> sortedLifelines;
 
@@ -52,21 +48,18 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
 
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Layer based lifeline sorting", 1);
+        progressMonitor.begin("Layer-based lifeline sorting", 1);
 
-        unprocessedLifelines.addAll(context.sgraph.getLifelines());
-        sortedLifelines = new LinkedList<SLifeline>();
-
+        // Abort, if no layers are set (e.g. outer node)
         if (context.lgraph.getLayers().size() == 0) {
-            // Abort, if no layers are set (e.g. outer node)
-            context.lifelineOrder = unprocessedLifelines;
             return;
         }
+        
+        unprocessedLifelines = context.sgraph.getLifelines();
+        sortedLifelines = Lists.newArrayListWithCapacity(unprocessedLifelines.size());
 
         // Add the layerIndex Property to messages
         addLayerToMessages(context.lgraph);
-
-        nextPosition = 0;
 
         while (!unprocessedLifelines.isEmpty()) {
             // Find the message with the uppermost position whose source has not been set
@@ -76,53 +69,45 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
                 assignToNextPosition(unprocessedLifelines.get(0));
                 continue;
             }
-            SLifeline x = uppermostMessage.getSource();
-
+            
             // Append Lifeline to the ordered lifelines list
-            assignToNextPosition(x);
+            SLifeline sourceLifeline = uppermostMessage.getSource();
+            assignToNextPosition(sourceLifeline);
 
             do {
                 // The target of this lifeline is set to next position
-                x = uppermostMessage.getTarget();
-
-                // Append Lifeline to the ordered lifelines list
-                assignToNextPosition(x);
+                SLifeline targetLifeline = uppermostMessage.getTarget();
+                assignToNextPosition(targetLifeline);
 
                 // Find the uppermost outgoing message of the next lifeline
-                uppermostMessage = findUppermostOutgoingMessage(context.lgraph, x);
+                uppermostMessage = findUppermostOutgoingMessage(context.lgraph, targetLifeline);
             } while (uppermostMessage != null);
         }
         
-        context.lifelineOrder = sortedLifelines;
+        // Add the newly sorted lifelines back to the original list
+        assert context.sgraph.getLifelines().isEmpty();
+        context.sgraph.getLifelines().addAll(sortedLifelines);
+        
+        // Reset
+        unprocessedLifelines = null;
+        sortedLifelines = null;
 
         progressMonitor.done();
     }
 
     /**
-     * Place the given lifeline to the next position.
-     * 
-     * @param lifeline
-     *            the next lifeline to be placed
-     */
-    private void assignToNextPosition(final SLifeline lifeline) {
-        if (!sortedLifelines.contains(lifeline)) {
-            sortedLifelines.add(lifeline);
-            lifeline.setHorizontalSlot(nextPosition);
-            nextPosition++;
-            unprocessedLifelines.remove(lifeline);
-        }
-    }
-
-    /**
      * Annotate the messages with a layer number.
+     * 
+     * TODO This would be a good candidate for an intermediate processor.
      * 
      * @param lgraph
      *            the layered graph
      */
     private void addLayerToMessages(final LGraph lgraph) {
-        for (Layer layer : lgraph.getLayers()) {
-            int layerIndex = layer.getIndex();
-            for (LNode node : layer.getNodes()) {
+        List<Layer> layers = lgraph.getLayers();
+        
+        for (int layerIndex = 0; layerIndex < layers.size(); layerIndex++) {
+            for (LNode node : layers.get(layerIndex)) {
                 SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
                 if (message != null) {
                     message.setMessageLayer(layerIndex);
@@ -130,7 +115,7 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
             }
         }
     }
-
+    
     /**
      * Select lifeline x with outgoing message m_0 in the uppermost layer. If there are different
      * messages in that layer, select lifeline with best incoming/outgoing relation (more outgoing
@@ -142,33 +127,38 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
      */
     private SMessage findUppermostMessage(final LGraph lgraph) {
         List<LNode> candidates = new LinkedList<LNode>();
-        for (Layer layer : lgraph.getLayers()) {
-            for (LNode node : layer.getNodes()) {
+        for (Layer layer : lgraph) {
+            for (LNode node : layer) {
                 SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
                 if (message != null && unprocessedLifelines.contains(message.getSource())) {
                     candidates.add(node);
                 }
             }
+            
             if (candidates.size() == 1) {
                 // If there is only one candidate, return it
                 return (SMessage) candidates.get(0).getProperty(InternalProperties.ORIGIN);
+                
             } else if (!candidates.isEmpty()) {
-                // If there are more candidates, check, which ones source has the best in/out
-                // relation
+                // If there are more candidates, check, which one's source has the best in/out relation
                 SMessage bestOne = (SMessage) candidates.get(0).getProperty(InternalProperties.ORIGIN);
                 int bestRelation = Integer.MIN_VALUE;
+                
                 for (LNode node : candidates) {
                     SMessage candidate = (SMessage) node.getProperty(InternalProperties.ORIGIN);
                     int relation = candidate.getSource().getNumberOfOutgoingMessages()
                             - candidate.getSource().getNumberOfIncomingMessages();
+                    
                     if (relation > bestRelation) {
                         bestRelation = relation;
                         bestOne = candidate;
                     }
                 }
+                
                 return bestOne;
             }
         }
+        
         // The left lifelines are not connected by any message
         return null;
     }
@@ -186,15 +176,31 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
     private SMessage findUppermostOutgoingMessage(final LGraph lgraph, final SLifeline lifeline) {
         SMessage uppermostMessage = null;
         int bestLayer = lgraph.getLayers().size();
+        
         for (SMessage outgoingMessage : lifeline.getOutgoingMessages()) {
             if (outgoingMessage.getMessageLayer() < bestLayer) {
-                // check if target lifeline was already set
+                // Check if target lifeline was already set
                 if (unprocessedLifelines.contains(outgoingMessage.getTarget())) {
                     uppermostMessage = outgoingMessage;
                     bestLayer = outgoingMessage.getMessageLayer();
                 }
             }
         }
+        
         return uppermostMessage;
+    }
+
+    /**
+     * Place the given lifeline to the next position.
+     * 
+     * @param lifeline
+     *            the next lifeline to be placed
+     */
+    private void assignToNextPosition(final SLifeline lifeline) {
+        if (!sortedLifelines.contains(lifeline)) {
+            lifeline.setHorizontalSlot(sortedLifelines.size());
+            sortedLifelines.add(lifeline);
+            unprocessedLifelines.remove(lifeline);
+        }
     }
 }

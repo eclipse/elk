@@ -24,7 +24,7 @@ public final class SArea extends SShape {
     private static final long serialVersionUID = -4129121595931929760L;
 
     /** The list of messages contained in the area. */
-    private final Set<Object> messages = Sets.newLinkedHashSet();
+    private final Set<SMessage> messages = Sets.newLinkedHashSet();
     /** The list of affected lifelines. */
     private final Set<SLifeline> lifelines = Sets.newLinkedHashSet();
     /** The list of sections / operators (in case of a combined fragment). */
@@ -39,7 +39,7 @@ public final class SArea extends SShape {
      * 
      * @return the list of messages
      */
-    public Set<Object> getMessages() {
+    public Set<SMessage> getMessages() {
         return messages;
     }
 

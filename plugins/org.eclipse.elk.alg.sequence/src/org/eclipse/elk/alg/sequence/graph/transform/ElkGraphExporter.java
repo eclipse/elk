@@ -46,7 +46,7 @@ public final class ElkGraphExporter {
 
     public void applyLayout(final LayoutContext context) {
         // Set position for lifelines/nodes
-        for (SLifeline lifeline : context.lifelineOrder) {
+        for (SLifeline lifeline : context.sgraph.getLifelines()) {
             // Dummy lifelines don't need any layout
             if (lifeline.isDummy()) {
                 continue;
@@ -394,7 +394,7 @@ public final class ElkGraphExporter {
         LabelAlignmentStrategy alignment = context.labelAlignment;
         
         if (alignment == LabelAlignmentStrategy.SOURCE_CENTER
-                && srcLifeline.getHorizontalSlot() + 1 == context.lifelineOrder.size()) {
+                && srcLifeline.getHorizontalSlot() + 1 == context.sgraph.getLifelines().size()) {
             
             // This is a lost message; fall back to source placement
             alignment = LabelAlignmentStrategy.SOURCE;
@@ -408,7 +408,7 @@ public final class ElkGraphExporter {
         switch (alignment) {
         case SOURCE_CENTER:
             // Place label centered between the source lifeline and the next lifeline
-            SLifeline nextLL = context.lifelineOrder.get(srcLifeline.getHorizontalSlot() + 1);
+            SLifeline nextLL = context.sgraph.getLifelines().get(srcLifeline.getHorizontalSlot() + 1);
             double center = (llCenter + nextLL.getPosition().x + nextLL.getSize().x / 2) / 2;
             labelLayout.setX(center - labelLayout.getWidth() / 2);
             break;
@@ -456,7 +456,7 @@ public final class ElkGraphExporter {
         switch (alignment) {
         case SOURCE_CENTER:
             // Place label centered between the source lifeline and the previous lifeline
-            SLifeline lastLL = context.lifelineOrder.get(srcLifeline.getHorizontalSlot() - 1);
+            SLifeline lastLL = context.sgraph.getLifelines().get(srcLifeline.getHorizontalSlot() - 1);
             double center = (llCenter + lastLL.getPosition().x + lastLL.getSize().x / 2) / 2;
             labelLayout.setX(center - labelLayout.getWidth() / 2);
             break;

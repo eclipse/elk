@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.p2cycles;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -34,13 +33,11 @@ import com.google.common.collect.Sets;
 
 /**
  * Heuristic implementation of cycle breaking. Breaks the cycles in the layered graph of the layout
- * context. The cycle breakers of the KLay Layered algorithm break cycles by reversing edges. That's not
+ * context. The cycle breakers of the Layered algorithm break cycles by reversing edges. That's not
  * what we want here. Instead, we break cycles by splitting one of the two end points of an edge that
  * would otherwise be reversed. While a node usually represents both the start and end point of a
  * message, split nodes only represent one of the end points each. With that, the corresponding message
  * is not drawn horizontally anymore.
- * 
- * @author grh
  */
 public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutContext> {
     
@@ -77,17 +74,21 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
             node.id = NOT_VISITED;
         }
 
-        // Start a dfs only when the node was not visited by any other earlier dfs
+        // Start a DFS run only when the node was not visited by any other earlier dfs
         for (LNode node : context.lgraph.getLayerlessNodes()) {
             if (node.id == NOT_VISITED) {
                 dfs(node);
             }
         }
 
-        // split all nodes in the hashSet
+        // Split nodes
         for (LNode node : split) {
             splitNode(context.lgraph, node);
         }
+        
+        // Reset
+        split = null;
+        chain = null;
 
         progressMonitor.done();
     }
@@ -101,27 +102,26 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
      *            the node to be split
      */
     private void splitNode(final LGraph lgraph, final LNode node) {
-        // Create new LNode in the LayeredGraph
+        // Create new node in the layered graph
         LNode newNode = new LNode(lgraph);
         lgraph.getLayerlessNodes().add(newNode);
 
         SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
         SLifeline sourceLL = message.getSource();
         SLifeline targetLL = message.getTarget();
-        Iterator<LEdge> oEdges = node.getConnectedEdges().iterator();
-        while (oEdges.hasNext()) {
-            LEdge edge = oEdges.next();
+        
+        for (LEdge edge : node.getConnectedEdges()) {
             SLifeline belongsTo = edge.getProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE);
+            // If edge belongs to targetLifeline, rebase it to newNode. Otherwise, leave things as they are
             if (belongsTo == targetLL) {
-                // if edge belongs to targetLifeline, rebase it to newNode
                 if (edge.getSource().getNode() == node) {
                     edge.getSource().setNode(newNode);
                 } else if (edge.getTarget().getNode() == node) {
                     edge.getTarget().setNode(newNode);
                 }
             }
-            // if edge belongs to sourceLifeline, leave it as it was
         }
+        
         node.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, sourceLL);
         newNode.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, targetLL);
         newNode.setProperty(InternalProperties.ORIGIN, message);
@@ -140,14 +140,14 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
             addUppermostNode(node);
         } else {
             // This node has not been visited in current path
-            chain.add(node);
-            // Mark as visited
             node.id = VISITED_CURRENT_PATH;
+            chain.add(node);
 
             // Process successors
             for (LEdge edge : node.getOutgoingEdges()) {
                 dfs(edge.getTarget().getNode());
             }
+            
             // Mark as visited in previous path
             node.id = VISITED_OTHER_PATH;
             chain.remove(chain.size() - 1);
@@ -162,12 +162,14 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
      */
     private void addUppermostNode(final LNode foundNode) {
         LNode uppermost = foundNode;
-        double uppermostPos = Float.MAX_VALUE;
+        double uppermostPos = Double.MAX_VALUE;
         int foundIndex = chain.indexOf(foundNode);
+        
         for (int i = foundIndex; i < chain.size(); i++) {
             LNode node = chain.get(i);
             SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
             ElkEdge edge = (ElkEdge) message.getProperty(InternalProperties.ORIGIN);
+            
             // Compare only sourcePositions since messages can only lead downwards or horizontal
             double sourceYPos = ElkGraphUtil.firstEdgeSection(edge, false, false).getStartY();
             if (sourceYPos < uppermostPos) {
@@ -175,6 +177,7 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
                 uppermost = node;
             }
         }
+        
         split.add(uppermost);
     }
     
