@@ -26,7 +26,6 @@ import org.eclipse.elk.core.options.PortSide;
 public final class AllCrossingsCounter implements IInitializable {
 
     private CrossingsCounter crossingCounter;
-    private NorthSouthEdgeAllCrossingsCounter northSouthEdgeCrossingCounter;
     private boolean[] hasHyperEdgesEastOfIndex;
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
 
@@ -81,7 +80,10 @@ public final class AllCrossingsCounter implements IInitializable {
             }
         }
 
-        totalCrossings += northSouthEdgeCrossingCounter.countCrossings(leftLayer);
+        if (hasNorthSouthPorts[layerIndex]) {
+            totalCrossings += crossingCounter.countNorthSouthPortCrossingsInLayer(leftLayer);
+        }
+        
         return totalCrossings;
     }
 
@@ -118,7 +120,6 @@ public final class AllCrossingsCounter implements IInitializable {
     public void initAfterTraversal() {
         int[] portPos = new int[nPorts];
         hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCounts, hasNorthSouthPorts, portPos);
-        northSouthEdgeCrossingCounter = new NorthSouthEdgeAllCrossingsCounter(portPos);
         crossingCounter = new CrossingsCounter(portPos);
     }
 }
