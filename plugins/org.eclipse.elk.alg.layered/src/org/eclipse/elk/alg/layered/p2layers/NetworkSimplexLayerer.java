@@ -288,7 +288,9 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
         }
 
         // layer graph, each connected component separately
-        for (List<LNode> connComp : connectedComponents(theNodes)) {
+        List<List<LNode>> connectedComponents = connectedComponents(theNodes);
+        int[] previousLayeringNodeCounts = null;
+        for (List<LNode> connComp : connectedComponents) {
             
             // determine a limit on the number of iterations
             int iterLimit = thoroughness * (int) Math.sqrt(connComp.size());
@@ -297,7 +299,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
 
             // execute the network simplex algorithm on the (sub-)graph
             NetworkSimplex.forGraph(graph).withIterationLimit(iterLimit)
-                    .withPreviousLayering(layeredGraph)
+                    .withPreviousLayering(previousLayeringNodeCounts)
                     .withBalancing(wideNodesStrategy == WideNodesStrategy.OFF)
                     .execute(monitor.subTask(1));
 
@@ -310,6 +312,14 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
                 }
                 LNode lNode = (LNode) nNode.origin;
                 lNode.setLayer(layers.get(nNode.layer));
+            }
+            
+            if (connectedComponents.size() > 1) {
+                previousLayeringNodeCounts = new int[layeredGraph.getLayers().size()];
+                int layerIdx = 0;
+                for (Layer l : layeredGraph) {
+                    previousLayeringNodeCounts[layerIdx++] = l.getNodes().size();
+                }
             }
         }
 
