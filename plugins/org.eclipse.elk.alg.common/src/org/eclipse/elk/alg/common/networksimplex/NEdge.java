@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.networksimplex;
+package org.eclipse.elk.alg.common.networksimplex;
 
 /**
  * An edge in the graph processed by the {@link NetworkSimplex} algorithm. It has a source and

@@ -15,6 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.alg.common.networksimplex.NEdge;
+import org.eclipse.elk.alg.common.networksimplex.NGraph;
+import org.eclipse.elk.alg.common.networksimplex.NNode;
+import org.eclipse.elk.alg.common.networksimplex.NetworkSimplex;
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -22,10 +26,6 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.layered.networksimplex.NEdge;
-import org.eclipse.elk.alg.layered.networksimplex.NGraph;
-import org.eclipse.elk.alg.layered.networksimplex.NNode;
-import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.WideNodesStrategy;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -288,7 +288,9 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
         }
 
         // layer graph, each connected component separately
-        for (List<LNode> connComp : connectedComponents(theNodes)) {
+        List<List<LNode>> connectedComponents = connectedComponents(theNodes);
+        int[] previousLayeringNodeCounts = null;
+        for (List<LNode> connComp : connectedComponents) {
             
             // determine a limit on the number of iterations
             int iterLimit = thoroughness * (int) Math.sqrt(connComp.size());
@@ -297,7 +299,7 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
 
             // execute the network simplex algorithm on the (sub-)graph
             NetworkSimplex.forGraph(graph).withIterationLimit(iterLimit)
-                    .withPreviousLayering(layeredGraph)
+                    .withPreviousLayering(previousLayeringNodeCounts)
                     .withBalancing(wideNodesStrategy == WideNodesStrategy.OFF)
                     .execute(monitor.subTask(1));
 
@@ -310,6 +312,14 @@ public final class NetworkSimplexLayerer implements ILayoutPhase<LayeredPhases, 
                 }
                 LNode lNode = (LNode) nNode.origin;
                 lNode.setLayer(layers.get(nNode.layer));
+            }
+            
+            if (connectedComponents.size() > 1) {
+                previousLayeringNodeCounts = new int[layeredGraph.getLayers().size()];
+                int layerIdx = 0;
+                for (Layer l : layeredGraph) {
+                    previousLayeringNodeCounts[layerIdx++] = l.getNodes().size();
+                }
             }
         }
 

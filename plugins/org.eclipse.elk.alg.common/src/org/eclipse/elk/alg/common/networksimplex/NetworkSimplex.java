@@ -8,17 +8,17 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.networksimplex;
+package org.eclipse.elk.alg.common.networksimplex;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 
-import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 
@@ -49,8 +49,10 @@ public final class NetworkSimplex  {
 
     // configuration of this network simplex instance
     
-    /** A previous layering to be considered during {@link #normalize()} and {@link #balance(int[])}. */
-    private LGraph previousLayering;
+    /** The number of nodes in each layer of a previous layering to be considered during {@link #normalize()} 
+     * and {@link #balance(int[])}. That is, for an index {@code i}, {@code previousLayeringNodeCounts[i]} holds 
+     * the number of nodes that are have previously been placed in layer {@code i}. */
+    private int[] previousLayeringNodeCounts;
     /** Whether to apply {@link #balance(int[])}. */
     private boolean balance = false;
     /** A limit on the number of iterations. */
@@ -101,8 +103,8 @@ public final class NetworkSimplex  {
      * @return the {@link NetworkSimplex} instance for further configuration or execution.
      * @see #withBalancing(boolean)
      */
-    public NetworkSimplex withPreviousLayering(final LGraph considerPreviousLayering) {
-        this.previousLayering = considerPreviousLayering;
+    public NetworkSimplex withPreviousLayering(final int[] considerPreviousLayering) {
+        this.previousLayeringNodeCounts = considerPreviousLayering;
         return this;
     }
 
@@ -184,7 +186,7 @@ public final class NetworkSimplex  {
      * @see #removeSubtrees()
      * @see #reattachSubtrees()
      */
-    private Stack<Pair<NNode, NEdge>> subtreeNodes;
+    private Deque<Pair<NNode, NEdge>> subtreeNodesStack;
 
     // =============================== Initialization Methods =====================================
 
@@ -250,20 +252,23 @@ public final class NetworkSimplex  {
         this.lowestPoID = null;
         this.poID = null;
         this.sources = null;
-        this.subtreeNodes = null;
+        this.subtreeNodesStack = null;
     }
 
     // ============================== Network-Simplex Algorithm ===================================
 
     /**
-     * The main method of the network simplex layerer. It determines an optimal layering of all
-     * nodes in the graph concerning a minimal length of all edges by using the network simplex
-     * algorithm described in {@literal Emden R. Gansner, Eleftherios Koutsofios, Stephen
-     * C. North, Kiem-Phong Vo: "A Technique for Drawing Directed Graphs", AT&T Bell Laboratories.
-     * Note that the execution time of this implemented algorithm has not been proven quadratic yet.
+     * Determine the optimal layering. 
+     */
+    public void execute() {
+        execute(new BasicProgressMonitor());
+    }
+    
+    /**
+     * Determine the optimal layering.  
      * 
      * @param monitor
-     *            the progress monitor
+     *            a progress monitor
      */
     public void execute(final IElkProgressMonitor monitor) {
         monitor.begin("Network simplex", 1);
@@ -323,7 +328,7 @@ public final class NetworkSimplex  {
      */
     private void removeSubtrees() {
         
-        subtreeNodes = new Stack<>();
+        subtreeNodesStack = new ArrayDeque<>();
         
         // find initial leafs
         Queue<NNode> leafs = Lists.newLinkedList();
@@ -355,7 +360,7 @@ public final class NetworkSimplex  {
             }
             
             Pair<NNode, NEdge> leafy = Pair.of(node, edge);
-            subtreeNodes.push(leafy);
+            subtreeNodesStack.push(leafy);
             // remove the node from the graph's nodes
             graph.nodes.remove(node);
         }
@@ -368,9 +373,9 @@ public final class NetworkSimplex  {
      */
     private void reattachSubtrees() {
         
-        while (!subtreeNodes.isEmpty()) {
+        while (!subtreeNodesStack.isEmpty()) {
             
-            Pair<NNode, NEdge> leafy = subtreeNodes.pop();
+            Pair<NNode, NEdge> leafy = subtreeNodesStack.pop();
             NNode node = leafy.getFirst();
             NEdge edge = leafy.getSecond();
             
@@ -828,7 +833,6 @@ public final class NetworkSimplex  {
             highest = Math.max(highest, node.layer);
         }
         // normalize and determine layer filling
-        int layerID = 0;
         int[] filling = new int[highest - lowest + 1];
         for (NNode node : graph.nodes) {
             node.layer -= lowest;
@@ -836,9 +840,10 @@ public final class NetworkSimplex  {
         }
         
         // also consider nodes of already layered connected components
-        if (previousLayering != null) {
-            for (Layer eLayer : previousLayering) {
-                filling[layerID++] += eLayer.getNodes().size();
+        int layerID = 0;
+        if (previousLayeringNodeCounts != null) {
+            for (int nodeCntInLayer : previousLayeringNodeCounts) {
+                filling[layerID++] += nodeCntInLayer;
                 if (filling.length == layerID) {
                     break;
                 }
