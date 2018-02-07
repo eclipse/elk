@@ -65,7 +65,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor<LGraph> {
      * Compaction algorithm based on the network simplex algorithm presented by Gansner et al. in
      * the context of layering.
      * 
-     * @see org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex
+     * @see org.eclipse.elk.alg.common.networksimplex.NetworkSimplex
      */
     public static final ICompactionAlgorithm NETWORK_SIMPLEX_COMPACTION =
             new NetworkSimplexCompaction();

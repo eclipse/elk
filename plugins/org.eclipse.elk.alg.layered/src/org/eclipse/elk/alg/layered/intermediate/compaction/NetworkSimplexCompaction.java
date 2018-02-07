@@ -17,13 +17,13 @@ import org.eclipse.elk.alg.common.compaction.oned.CGroup;
 import org.eclipse.elk.alg.common.compaction.oned.CNode;
 import org.eclipse.elk.alg.common.compaction.oned.ICompactionAlgorithm;
 import org.eclipse.elk.alg.common.compaction.oned.OneDimensionalCompactor;
+import org.eclipse.elk.alg.common.networksimplex.NEdge;
+import org.eclipse.elk.alg.common.networksimplex.NGraph;
+import org.eclipse.elk.alg.common.networksimplex.NNode;
+import org.eclipse.elk.alg.common.networksimplex.NetworkSimplex;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.networksimplex.NEdge;
-import org.eclipse.elk.alg.layered.networksimplex.NGraph;
-import org.eclipse.elk.alg.layered.networksimplex.NNode;
-import org.eclipse.elk.alg.layered.networksimplex.NetworkSimplex;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 

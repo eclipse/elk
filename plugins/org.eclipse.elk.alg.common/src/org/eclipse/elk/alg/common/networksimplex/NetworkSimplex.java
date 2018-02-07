@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.networksimplex;
+package org.eclipse.elk.alg.common.networksimplex;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
