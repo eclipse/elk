@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.sequence.options;
 
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
-import org.eclipse.elk.alg.sequence.p5coordinates.ElkGraphCoordinateCalculator;
+import org.eclipse.elk.alg.sequence.p5coordinates.CoordinateCalculator;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
@@ -29,7 +29,7 @@ public enum CoordinateAssignmentStrategy implements ILayoutPhaseFactory<Sequence
     public ILayoutPhase<SequencePhases, LayoutContext> create() {
         switch (this) {
         case DEFAULT:
-            return new ElkGraphCoordinateCalculator();
+            return new CoordinateCalculator();
             
         default:
             throw new IllegalArgumentException(

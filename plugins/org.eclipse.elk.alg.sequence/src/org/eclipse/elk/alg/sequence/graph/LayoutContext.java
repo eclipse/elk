@@ -42,19 +42,13 @@ public final class LayoutContext {
     /** Whether to include areas in the lifeline sorting process. Used by some sorters. */
     public final boolean groupAreasWhenSorting;
     
-    /** Spacing between elements and the border of the interaction. */
-    // TODO: Use full-blown padding.
-    public final double borderSpacing;
     /** Vertical spacing between two consecutive layers of messages. */
     public final double messageSpacing;
     /** Horizontal spacing between two consecutive lifelines. */
     public final double lifelineSpacing;
-    /** The vertical position of lifelines. */
-    // TODO: Change the algorithm to use the top padding instead.
-    public final double lifelineYPos;
     /** The height of lifeline headers. */
     // TODO: This should actually be specific to each lifeline.
-    public final double lifelineHeader;
+    public final double lifelineHeaderHeight;
     /** The height of the header of combined fragments. */
     // TODO: We should rather use a proper padding instead of this and the following value.
     public final double areaHeader;
@@ -82,15 +76,11 @@ public final class LayoutContext {
         groupAreasWhenSorting = parentNode.getProperty(
                 SequenceDiagramOptions.GROUP_AREAS);
         
-        borderSpacing = parentNode.getProperty(
-                SequenceDiagramOptions.PADDING).top;
         messageSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.MESSAGE_SPACING);
         lifelineSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_SPACING);
-        lifelineYPos = parentNode.getProperty(
-                SequenceDiagramOptions.LIFELINE_Y_POS);
-        lifelineHeader = parentNode.getProperty(
+        lifelineHeaderHeight = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_HEADER_HEIGHT);
         areaHeader = parentNode.getProperty(
                 SequenceDiagramOptions.AREA_HEADER_HEIGHT);

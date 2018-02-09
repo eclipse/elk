@@ -60,7 +60,6 @@ public final class ElkGraphImporter {
 
         return context;
     }
-    
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // SGraph Creation
@@ -69,6 +68,8 @@ public final class ElkGraphImporter {
     private Map<ElkNode, SLifeline> lifelineMap = Maps.newHashMap();
     /** Maps {@link ElkEdge}s to the {@link SMessage}s they were turned into. */
     private Map<ElkEdge, SMessage> messageMap = Maps.newHashMap();
+    /** A map from element IDs to the corresponding lifelines. */
+    private Map<Integer, SLifeline> lifelineIdMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding executions. */
     private Map<Integer, SExecution> executionIdMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding sequence area. */
@@ -87,7 +88,14 @@ public final class ElkGraphImporter {
         SGraph sgraph = new SGraph();
         context.sgraph = sgraph;
 
-        // Create... well, sequence areas...
+        // Apply relevant properties
+        if (context.elkgraph.hasProperty(SequenceDiagramOptions.INTERACTION_PADDING)) {
+            sgraph.getPadding().copy(context.elkgraph.getProperty(SequenceDiagramOptions.INTERACTION_PADDING));
+        } else {
+            sgraph.getPadding().copy(context.elkgraph.getProperty(SequenceDiagramOptions.PADDING));
+        }
+
+        // Create... well, sequence areas.
         createSequenceAreas(context);
 
         // We need to import all lifelines first before importing messages and things
@@ -97,17 +105,20 @@ public final class ElkGraphImporter {
             }
         }
 
+        // Executions and destruction events are added to existing lifelines as they are imported
+        createExecutions(context);
+
         // Walk through lifelines to create their stuff
         for (ElkNode node : context.elkgraph.getChildren()) {
             if (node.getProperty(SequenceDiagramOptions.NODE_TYPE) == NodeType.LIFELINE) {
                 // Create SMessages for each of the outgoing edges
                 createOutgoingMessages(node, context);
-                
+
                 // Handle found messages (incoming messages)
                 createMessagesFromNonLifelineOrigin(node, context);
             }
         }
-        
+
         // Create comment-like objects that may be attached to things we have created in previous iterations
         for (ElkNode node : context.elkgraph.getChildren()) {
             switch (node.getProperty(SequenceDiagramOptions.NODE_TYPE)) {
@@ -126,6 +137,7 @@ public final class ElkGraphImporter {
 
         // Clear maps
         lifelineMap.clear();
+        lifelineIdMap.clear();
         messageMap.clear();
         executionIdMap.clear();
     }
@@ -147,7 +159,7 @@ public final class ElkGraphImporter {
             if (nodeType == NodeType.COMBINED_FRAGMENT || nodeType == NodeType.INTERACTION_USE) {
                 SArea area = new SArea();
                 area.setProperty(InternalProperties.ORIGIN, node);
-                
+
                 context.sgraph.getAreas().add(area);
                 areaIdMap.put(node.getProperty(SequenceDiagramOptions.ELEMENT_ID), area);
             }
@@ -161,16 +173,16 @@ public final class ElkGraphImporter {
                 if (node.hasProperty(SequenceDiagramOptions.PARENT_AREA_ID)) {
                     int parentAreaId = node.getProperty(SequenceDiagramOptions.PARENT_AREA_ID);
                     int childAreaId = node.getProperty(SequenceDiagramOptions.ELEMENT_ID);
-                    
+
                     SArea parentArea = areaIdMap.get(parentAreaId);
                     SArea childArea = areaIdMap.get(childAreaId);
-                    
+
                     if (parentArea != null && childArea != null) {
                         parentArea.getContainedAreas().add(childArea);
                     } else {
                         // The child area must exist, so the parent area must be the problem
                         throw new UnsupportedGraphException("Parent area ID " + parentAreaId + " configured for area "
-                                    + childAreaId + " does not exist.");
+                                + childAreaId + " does not exist.");
                     }
                 }
             }
@@ -181,8 +193,8 @@ public final class ElkGraphImporter {
     // Lifelines
 
     /**
-     * Turns the given {@link ElkNode} into an {@link SLifeline}, sets up its properties, and looks through its
-     * children to setup destructions and executions.
+     * Turns the given {@link ElkNode} into an {@link SLifeline}, sets up its properties, and looks through its children
+     * to setup destructions and executions.
      * 
      * @param klifeline
      *            the ndoe to turn into a lifeline.
@@ -193,7 +205,7 @@ public final class ElkGraphImporter {
         assert klifeline.getProperty(SequenceDiagramOptions.NODE_TYPE) == NodeType.LIFELINE;
 
         SLifeline slifeline = SLifeline.createLifeline(context.sgraph);
-        
+
         // Setup the name
         // TODO: This should eventually import proper labels.
         if (klifeline.getLabels().size() > 0) {
@@ -202,6 +214,7 @@ public final class ElkGraphImporter {
 
         slifeline.setProperty(InternalProperties.ORIGIN, klifeline);
         lifelineMap.put(klifeline, slifeline);
+        lifelineIdMap.put(klifeline.getProperty(SequenceDiagramOptions.ELEMENT_ID), slifeline);
 
         // Copy layout information to lifeline
         slifeline.getPosition().x = klifeline.getX();
@@ -209,33 +222,70 @@ public final class ElkGraphImporter {
         slifeline.getSize().x = klifeline.getWidth();
         slifeline.getSize().y = klifeline.getHeight();
 
-        // Iterate through the lifeline's children to collect destructions and executions
-        for (ElkNode kchild : klifeline.getChildren()) {
+        // Check if the lifeline has any empty areas
+        if (klifeline.hasProperty(SequenceDiagramOptions.AREA_IDS))
+            for (Integer areaId : klifeline.getProperty(SequenceDiagramOptions.AREA_IDS)) {
+                SArea area = areaIdMap.get(areaId);
+                if (area != null) {
+                    area.getLifelines().add(slifeline);
+                } else {
+                    throw new UnsupportedGraphException("Area " + areaId + " does not exist");
+                }
+            }
+    }
+
+    //////////////////////////////////////////////////////////////
+    // Executions
+
+    /**
+     * Creates all executions and destruction events for the given graph.
+     * 
+     * @param context
+     *            the layout context we're currently building.
+     */
+    private void createExecutions(final LayoutContext context) {
+        for (ElkNode kchild : context.elkgraph.getChildren()) {
             NodeType kchildNodeType = kchild.getProperty(SequenceDiagramOptions.NODE_TYPE);
 
             if (kchildNodeType.isExecutionType()) {
                 // Create a new sequence execution for this thing
-                SExecution execution = new SExecution();
-                execution.setProperty(InternalProperties.ORIGIN, kchild);
-                execution.setType(SequenceExecutionType.fromNodeType(kchildNodeType));
-                slifeline.getExcecutions().add(execution);
-                executionIdMap.put(kchild.getProperty(SequenceDiagramOptions.ELEMENT_ID), execution);
-                
+                SExecution sexecution = new SExecution();
+                sexecution.setProperty(InternalProperties.ORIGIN, kchild);
+                sexecution.setType(SequenceExecutionType.fromNodeType(kchildNodeType));
+                executionIdMap.put(kchild.getProperty(SequenceDiagramOptions.ELEMENT_ID), sexecution);
+
+                getParentLifeline(kchild).getExcecutions().add(sexecution);
+
             } else if (kchildNodeType == NodeType.DESTRUCTION_EVENT) {
-                slifeline.setProperty(SequenceDiagramOptions.DESTRUCTION_NODE, kchild);
+                getParentLifeline(kchild).setProperty(InternalSequenceProperties.DESTRUCTION_NODE, kchild);
             }
+        }
+    }
+
+    /**
+     * Returns the lifeline the element represented by the given node says it belongs to or throws an exception if the
+     * lifeline is improperly specified.
+     * 
+     * @param node
+     *            the node.
+     * @return the parent lifeline.
+     * @throws UnsupportedGraphException
+     *             if the parent lifeline is invalid or not specified.
+     */
+    private SLifeline getParentLifeline(final ElkNode node) {
+        if (!node.hasProperty(SequenceDiagramOptions.PARENT_LIFELINE_ID)) {
+            throw new UnsupportedGraphException(
+                    "Executions and destruction events must specify the ID of the lifeline they belong to.");
         }
 
-        // Check if the lifeline has any empty areas
-        if (klifeline.hasProperty(SequenceDiagramOptions.AREA_IDS))
-        for (Integer areaId : klifeline.getProperty(SequenceDiagramOptions.AREA_IDS)) {
-            SArea area = areaIdMap.get(areaId);
-            if (area != null) {
-                area.getLifelines().add(slifeline);
-            } else {
-                throw new UnsupportedGraphException("Area " + areaId + " does not exist");
-            }
+        SLifeline lifeline = lifelineIdMap.get(node.getProperty(SequenceDiagramOptions.PARENT_LIFELINE_ID));
+
+        if (lifeline == null) {
+            throw new UnsupportedGraphException(
+                    "Executions and destruction events must specify the ID of the lifeline they belong to.");
         }
+
+        return lifeline;
     }
 
     //////////////////////////////////////////////////////////////
@@ -255,11 +305,11 @@ public final class ElkGraphImporter {
             if (kmessage.getSections().size() != 1) {
                 throw new UnsupportedGraphException("Edges must have a single edge section.");
             }
-            
+
             if (kmessage.isHyperedge()) {
                 throw new UnsupportedGraphException("Edges must have a single source and a single target.");
             }
-            
+
             SLifeline sourceLL = lifelineMap.get(kmessage.getSources().get(0));
             SLifeline targetLL = lifelineMap.get(kmessage.getTargets().get(0));
 
@@ -274,9 +324,9 @@ public final class ElkGraphImporter {
             // Create message object and apply its coordinates
             SMessage smessage = new SMessage(sourceLL, targetLL);
             smessage.setProperty(InternalProperties.ORIGIN, kmessage);
-            
+
             messageMap.put(kmessage, smessage);
-            
+
             ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
             smessage.setSourceYPos(edgeSection.getStartY());
             smessage.setTargetYPos(edgeSection.getEndY());
@@ -286,10 +336,8 @@ public final class ElkGraphImporter {
             targetLL.addMessage(smessage);
 
             // Read size of the attached labels
-            smessage.setLabelWidth(kmessage.getLabels().stream()
-                    .mapToDouble(klabel -> klabel.getWidth())
-                    .max()
-                    .orElse(0.0));
+            smessage.setLabelWidth(
+                    kmessage.getLabels().stream().mapToDouble(klabel -> klabel.getWidth()).max().orElse(0.0));
 
             // Check if the edge connects to executions
             if (kmessage.hasProperty(SequenceDiagramOptions.SOURCE_EXECUTION_IDS)) {
@@ -302,7 +350,7 @@ public final class ElkGraphImporter {
                     }
                 }
             }
-            
+
             if (kmessage.hasProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
                     SExecution targetExecution = executionIdMap.get(execId);
@@ -349,7 +397,7 @@ public final class ElkGraphImporter {
             if (kmessage.hasProperty(SequenceDiagramOptions.UPPER_EMPTY_AREA_ID)) {
                 int upperEmptyAreaId = kmessage.getProperty(SequenceDiagramOptions.UPPER_EMPTY_AREA_ID);
                 SArea upperArea = areaIdMap.get(upperEmptyAreaId);
-                
+
                 if (upperArea != null) {
                     upperArea.setNextMessage(smessage);
                 } else {
@@ -374,35 +422,34 @@ public final class ElkGraphImporter {
             if (kmessage.getSections().size() != 1) {
                 throw new UnsupportedGraphException("Edges must have a single edge section.");
             }
-            
+
             if (kmessage.isHyperedge()) {
                 throw new UnsupportedGraphException("Edges must have a single source and a single target.");
             }
-            
+
             if (lifelineMap.containsKey(kmessage.getSources().get(0))) {
                 // We are only interested in messages that don't come from a lifeline
                 continue;
             }
-            
+
             // TODO consider connections to comments and constraints?
-            
+
             SLifeline sourceLL = SLifeline.createDummyLifeline(context.sgraph);
             SLifeline targetLL = lifelineMap.get(kmessage.getTargets().get(0));
-
 
             // Create message object and apply its coordinates
             SMessage smessage = new SMessage(sourceLL, targetLL);
             smessage.setProperty(InternalProperties.ORIGIN, kmessage);
-            
+
             messageMap.put(kmessage, smessage);
-            
+
             ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
             smessage.setTargetYPos(edgeSection.getEndY());
 
             // Add the message to the source and target lifeline's list of messages
             sourceLL.addMessage(smessage);
             targetLL.addMessage(smessage);
-            
+
             // Check if the message connects to target executions
             if (kmessage.hasProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.TARGET_EXECUTION_IDS)) {
@@ -426,7 +473,7 @@ public final class ElkGraphImporter {
                 smessage.setProperty(SequenceDiagramOptions.MESSAGE_TYPE, messageType);
                 break;
             }
-            
+
             // Since incoming messages come from the left side of the surrounding interaction, give its dummy lifeline
             // position -1
             // TODO: There might have to be a single dummy lifeline that represents messages to the interaction.
@@ -466,11 +513,11 @@ public final class ElkGraphImporter {
         if (!node.getOutgoingEdges().isEmpty()) {
             comment.setProperty(InternalSequenceProperties.COMMENT_CONNECTION, node.getOutgoingEdges().get(0));
         }
-        
+
         // Provide the comment with a list of elements it is attached to
         if (node.hasProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_ID)) {
             Integer elementId = node.getProperty(SequenceDiagramOptions.ATTACHED_ELEMENT_ID);
-            
+
             // Comments can be attached either to lifelines or to messages
             if (lifelineMap.containsKey(elementId)) {
                 comment.setAttachment(lifelineMap.get(elementId));
@@ -522,7 +569,6 @@ public final class ElkGraphImporter {
 
         context.sgraph.getComments().add(comment);
     }
-    
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // LGraph Creation
@@ -544,21 +590,21 @@ public final class ElkGraphImporter {
             for (SMessage message : lifeline.getOutgoingMessages()) {
                 LNode node = new LNode(lgraph);
                 lgraph.getLayerlessNodes().add(node);
-                
+
                 node.getLabels().add(new LLabel("Node" + nodeNumber++));
-                
+
                 node.setProperty(InternalProperties.ORIGIN, message);
                 message.setProperty(InternalSequenceProperties.LAYERED_NODE, node);
             }
-            
+
             // Handle found messages (they have no source lifeline)
             for (SMessage message : lifeline.getIncomingMessages()) {
                 if (message.getSource().isDummy()) {
                     LNode node = new LNode(lgraph);
                     lgraph.getLayerlessNodes().add(node);
-                    
+
                     node.getLabels().add(new LLabel("Node" + nodeNumber++));
-                    
+
                     node.setProperty(InternalProperties.ORIGIN, message);
                     message.setProperty(InternalSequenceProperties.LAYERED_NODE, node);
                 }
@@ -574,7 +620,7 @@ public final class ElkGraphImporter {
                 LNode targetNode = messages.get(j).getProperty(InternalSequenceProperties.LAYERED_NODE);
 
                 assert sourceNode != null && targetNode != null;
-                
+
                 if (sourceNode != targetNode) {
                     LPort sourcePort = new LPort();
                     sourcePort.setNode(sourceNode);

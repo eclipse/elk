@@ -13,15 +13,15 @@ package org.eclipse.elk.alg.sequence
 import org.eclipse.elk.alg.sequence.SequenceDiagramLayoutProvider
 import java.util.List
 import com.google.common.collect.Lists
-import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy
+import org.eclipse.elk.core.math.ElkPadding
 
 /**
  * Declarations for the Papyrus Sequence Diagram layout algorithm.
  */
 bundle {
     metadataClass options.SequenceMetaDataProvider
-    idPrefix de.cau.cs.kieler.papyrus.sequence
+    idPrefix org.eclipse.elk.alg.sequence
 }
 
 // We may choose to replace this category by an official ELK "Special Purpose" category or something.
@@ -38,6 +38,7 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     metadataClass options.SequenceDiagramOptions
     category sequenceDiagrams
     supports org.eclipse.elk.padding
+    supports org.eclipse.elk.margins
     supports elementId
     supports nodeType
     supports messageType
@@ -45,13 +46,13 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports upperEmptyAreaId
     supports parentAreaId
     supports executionType
+    supports parentLifelineId
     supports sourceExecutionIds
     supports targetExecutionIds
     supports attachedElementId
-    supports destructionNode
+    supports interactionPadding
     supports messageSpacing
     supports lifelineSpacing
-    supports lifelineYPos
     supports lifelineHeaderHeight
     supports areaHeaderHeight
     supports timeObservationWidth
@@ -64,7 +65,14 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
 programmatic option elementId : int {
     label "Element ID"
     description "An ID that can be given to diagram elements and referenced by other elements. The ID must be unique
-                in the diagram for it to be of any use and should be {@code >= 0}. Only used in KGraph mode."
+                in the diagram for it to be of any use and should be {@code >= 0}."
+    targets nodes
+    default = 0
+}
+
+programmatic option parentLifelineId : int {
+    label "Parent Lifeline ID"
+    description "ID of the lifeline an execution or a destruction event belongs to."
     targets nodes
     default = 0
 }
@@ -86,7 +94,7 @@ programmatic option messageType : MessageType {
 programmatic option areaIds : List<Integer> {
     label "Area IDs"
     description "A list of IDs of element IDs of any areas (such as fragments) a message or lifeline belongs to, if
-                any. On lifelines, this only has to be set for empty areas. Only used in KGraph mode."
+                any. On lifelines, this only has to be set for empty areas."
     targets nodes, edges
     default = Lists.newArrayList()
 }
@@ -94,21 +102,21 @@ programmatic option areaIds : List<Integer> {
 programmatic option upperEmptyAreaId : int {
     label "Upper Empty Area ID"
     description "Element IDs of an empty area (such as fragments) that should be placed directly above a message,
-                if any. Only used in KGraph mode."
+                if any."
     targets edges
     default = 0
 }
 
 programmatic option parentAreaId : int {
     label "Parent Area ID"
-    description "Element ID of an area's parent area, if any. Only used in KGraph mode."
+    description "Element ID of an area's parent area, if any."
     targets nodes
     default = 0
 }
 
 programmatic option executionType : SequenceExecutionType {
     label "Execution Type"
-    description "The type of execution a node represents. Only used in KGraph mode."
+    description "The type of execution a node represents."
     targets nodes
     default = SequenceExecutionType.EXECUTION
 }
@@ -117,7 +125,7 @@ programmatic option sourceExecutionIds : List<Integer> {
     label "Source Execution IDs"
     description "Element IDs of the executions a message starts at, if any. This is a list because a message can be
                 part of several nested executions. The most deeply nested execution will be the one the message will
-                actually be visually attached to. Only used in KGraph mode."
+                actually be visually attached to."
     targets edges
     default = Lists.newArrayList
 }
@@ -126,7 +134,7 @@ programmatic option targetExecutionIds : List<Integer> {
     label "Target Execution IDs"
     description "Element IDs of the executions a message ends at, if any. This is a list because a message can be
                 part of several nested executions. The most deeply nested execution will be the one the message will
-                actually be visually attached to. Only used in KGraph mode."
+                actually be visually attached to."
     targets edges
     default = Lists.newArrayList
 }
@@ -137,11 +145,11 @@ programmatic option attachedElementId : int {
     targets nodes
 }
 
-programmatic option destructionNode : ElkNode {
-    label "Desctruction Node"
-    description "The node that represents the destruction event of a lifeline, if any. Only used in Papyrus mode. In
-                KGraph mode, the algorithm automatically finds the destruction event node, if there is one."
-    targets nodes
+option interactionPadding : ElkPadding {
+    label "Interaction Padding"
+    description "Space to leave between child elements and the border of the surrounding interaction."
+    targets parents
+    default = new ElkPadding(0)
 }
 
 option messageSpacing : double {

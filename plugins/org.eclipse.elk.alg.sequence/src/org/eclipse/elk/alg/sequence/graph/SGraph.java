@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.sequence.graph;
 
 import java.util.List;
 
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.Lists;
@@ -28,6 +29,8 @@ public final class SGraph extends SGraphElement {
     
     /** The size of the diagram. This is modified during the layout process. */
     private KVector size = new KVector();
+    /** Padding between the surrounding interaction's border and and child element. */
+    private ElkPadding padding = new ElkPadding();
     
     /** The list of lifelines in the sequence diagram. After phase 4, the horizontal order is reflected here. */
     private List<SLifeline> lifelines = Lists.newArrayList();
@@ -48,6 +51,15 @@ public final class SGraph extends SGraphElement {
      */
     public KVector getSize() {
         return size;
+    }
+    
+    /**
+     * Returns the surrounding interaction's padding.
+     * 
+     * @return the padding.
+     */
+    public ElkPadding getPadding() {
+        return padding;
     }
 
     /**
