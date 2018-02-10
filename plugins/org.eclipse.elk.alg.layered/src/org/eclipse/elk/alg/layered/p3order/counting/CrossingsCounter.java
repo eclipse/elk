@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2016 Kiel University and others.
+ * Copyright (c) 2016, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p3order.counting;
 
@@ -22,14 +19,29 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
+import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.Pair;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * Counts in-layer and between layer crossings. Does not count North-South crossings. Before usage, each port must have
- * a unique id and each node an id unique for it's layer.
+ * In ELK Layered we distinguish three types of edge crossings that can occur:
+ * <ul>
+ * <li>Between-layer crossings (the ones everybody knows),</li>
+ * <li>In-layer crossings (caused by out very own in-layer edges), and</li>
+ * <li>North-south crossings (caused by implicit edges between {@link NodeType#NORTH_SOUTH_PORT} dummies and their
+ * originating {@link NodeType#NORMAL} node).</li>
+ * 
+ * All three types of crossings are counted by this class, by transferring each counting problem into 
+ * counting in-layer edges as described below. 
+ * 
+ * <h3>In-layer crossings</h3>
+ * First, let's explain how counting in-layer crossings works, since we transfer the other two types of crossings 
+ * into this case. Before usage, each port must have a unique id and each node an id unique for it's layer.
+ * 
  * <p>
  * For counting in-layer crossings with {@link #countInLayerCrossingsOnSide(LNode[], PortSide)}, we step through each
  * edge and add the position of the end of the edge to a sorted list. Each time we meet the same edge again, we delete
@@ -46,6 +58,7 @@ import com.google.common.collect.Lists;
  * 3----     []
  * </pre>
  * 
+ * <h3>Between-layer crossings</h3>
  * Between-layer crossings become in-layer crossings if we fold and rotate the right layer downward and pretend that we
  * are in a single layer. For example:
  * 
@@ -55,17 +68,64 @@ import com.google.common.collect.Lists;
  *  /\
  * 1  2
  * becomes:
- * 0--
- * 1-+-|
+ * 0-┐
+ * 1-+-┐
  *   | |
- * 2-- |
- * 3----
+ * 2-┘ |
+ * 3---┘
  * Ta daaa!
  * </pre>
  * 
  * This is used in {@link #countCrossingsBetweenLayers(LNode[], LNode[])}.
  * 
- * @author alan
+ * <h3>North/south crossings</h3>
+ * North/south crossings are counted per layer and just as for between-layer edges we index the ports and nodes of a
+ * layer such that we can simply count in-layer edge crossings. This time the rotations are a bit more intricate, 
+ * however. The nice things is that we can directly incorporate long edges.
+ * 
+ * An example:
+ * <pre>
+ *            o----------- ne1
+ * nw1 ---o   |       o--- ne2
+ * nw2 ---+---+---o   |
+ *      __|___|___|___|__
+ *     | pn1 pn2 pn3 pn4 |
+ *     |                 |
+ *     |__ps1__ps2__ps3__|
+ *         |    |    |
+ * sw1 ----o    |    |
+ * lw  ---------+----+----- le
+ * sw2 ---------+----o
+ *              o---------- se1
+ * 
+ * becomes:
+ * 
+ * nw1 --┐
+ * nw2 --+-┐
+ * pn1 --┘ |
+ * pn2 --┐ |
+ * pn3 --+-┘
+ * pn4 -┐|
+ * ne2 -┘|
+ * ne1 --┘
+ * ps3 ---┐
+ * ps2 ---+-┐
+ * ps1 -┐ | |
+ * sw1 -┘ | |
+ * lw  -┐ | |
+ * sw2 -+-┘ |
+ * se1 -+---┘
+ * le --┘
+ * </pre>
+ * Thus, the top-down in-layer index order is (nsl means north/south/long edge dummy): 
+ * <ul>
+ * <li>northern nsl dummies with western edges north-to-south, 
+ * <li>northern ports west-to-east order
+ * <li>northern nsl dummies with eastern edges south-to-north
+ * <li>southern ports east-to-west order
+ * <li>southern nsl dummies with western edges north-to-south
+ * <li>southern nsl dummies with eastern edges south-to-north
+ * 
  */
 public final class CrossingsCounter {
     private final int[] portPositions;
@@ -85,6 +145,10 @@ public final class CrossingsCounter {
         this.portPositions = portPositions;
         ends = new ArrayDeque<>();
     }
+    
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //                                  PUBLIC API
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     /**
      * Count in-layer and between-layer crossings between the two given layers.
@@ -97,7 +161,7 @@ public final class CrossingsCounter {
      */
     public int countCrossingsBetweenLayers(final LNode[] leftLayerNodes,
             final LNode[] rightLayerNodes) {
-        List<LPort> ports = setPositionsCounterClockwise(leftLayerNodes, rightLayerNodes);
+        List<LPort> ports = initPortPositionsCounterClockwise(leftLayerNodes, rightLayerNodes);
         indexTree = new BinaryIndexedTree(ports.size());
         return countCrossingsOnPorts(ports);
     }
@@ -113,8 +177,21 @@ public final class CrossingsCounter {
      */
     public int countInLayerCrossingsOnSide(final LNode[] nodes, final PortSide side) {
         List<LPort> ports = initPortPositionsForInLayerCrossings(nodes, side);
-
         return countInLayerCrossingsOnPorts(ports);
+    }
+    
+    /**
+     * Count crossings between edges connected to north/south ports of the passed layer's nodes. Also counts crossings
+     * of these edges with long edges spanning the passed layer.
+     * 
+     * @param layer
+     *            a layer of the layering
+     * @return number of crossings.
+     */
+    public int countNorthSouthPortCrossingsInLayer(final LNode[] layer) {
+        List<LPort> ports = initPositionsForNorthSouthCounting(layer);
+        indexTree = new BinaryIndexedTree(ports.size());
+        return countNorthSouthCrossingsOnPorts(ports);
     }
 
     /**
@@ -183,7 +260,7 @@ public final class CrossingsCounter {
      *            Nodes in eastern layer.
      */
     public void initForCountingBetween(final LNode[] leftLayerNodes, final LNode[] rightLayerNodes) {
-        List<LPort> ports = setPositionsCounterClockwise(leftLayerNodes, rightLayerNodes);
+        List<LPort> ports = initPortPositionsCounterClockwise(leftLayerNodes, rightLayerNodes);
         indexTree = new BinaryIndexedTree(ports.size());
     }
 
@@ -244,6 +321,10 @@ public final class CrossingsCounter {
         }
     }
 
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //                                  PRIVATE API
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    
     private List<LPort> connectedInLayerPortsSortedByPosition(final LNode upperNode, final LNode lowerNode,
             final PortSide side) {
         Set<LPort> ports = new TreeSet<>((a, b) -> Integer.compare(positionOf(a), positionOf(b)));
@@ -273,10 +354,6 @@ public final class CrossingsCounter {
             }
         }
         return Lists.newArrayList(ports);
-    }
-
-    private boolean isPortSelfLoop(final LEdge edge) {
-        return edge.getSource() == edge.getTarget();
     }
 
     private int countCrossingsOnPorts(final Iterable<LPort> ports) {
@@ -326,18 +403,51 @@ public final class CrossingsCounter {
         return crossings;
     }
    
-    private boolean isInLayer(final LEdge edge) {
-        Layer sourceLayer = edge.getSource().getNode().getLayer();
-        Layer targetLayer = edge.getTarget().getNode().getLayer();
-        return sourceLayer == targetLayer;
-    }
+    private int countNorthSouthCrossingsOnPorts(final Iterable<LPort> ports) {
+        int crossings = 0;
+        final List<Pair<LPort, Integer>> targetsAndDegrees = Lists.newArrayList();
+        
+        for (LPort port : ports) {
+            indexTree.removeAll(positionOf(port));
+            targetsAndDegrees.clear();
 
-    private int positionOf(final LPort port) {
-        return portPositions[port.id];
-    }
+            // collect the edges that are incident to the port,
+            //  which is a bit tedious since north/south ports have no physical edge within the graph at this point
+            switch (port.getNode().getType()) {
+            case NORMAL:
+                LNode dummy = (LNode) port.getProperty(InternalProperties.PORT_DUMMY);
+                assert dummy != null; // guarded in #initPositionsForNorthSouthCounting(...)
+                dummy.getPorts().forEach(p -> targetsAndDegrees.add(Pair.of(p, p.getDegree()))); // western and eastern
+                break;
 
-    private LPort otherEndOf(final LEdge edge, final LPort fromPort) {
-        return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
+            case LONG_EDGE:
+                port.getNode().getPorts().stream()
+                    .filter(p -> p != port).findFirst() // add an edge to the dummy's other port
+                    .ifPresent(p -> targetsAndDegrees.add(Pair.of(p, p.getDegree())));
+                break;
+            
+            case NORTH_SOUTH_PORT:
+                LPort dummyPort = (LPort) port.getProperty(InternalProperties.ORIGIN);
+                targetsAndDegrees.add(Pair.of(dummyPort, port.getDegree()));
+                break;
+            }
+
+            // First get crossings for all edges.
+            for (Pair<LPort, Integer> targetAndDegree : targetsAndDegrees) {
+                int endPosition = positionOf(targetAndDegree.getFirst());
+                if (endPosition > positionOf(port)) {
+                    crossings += indexTree.rank(endPosition) * targetAndDegree.getSecond();
+                    ends.push(endPosition);
+                }
+            }
+
+            // Then add end points.
+            while (!ends.isEmpty()) {
+                indexTree.add(ends.pop());
+            }
+        }
+
+        return crossings;
     }
 
     private void initPositions(final LNode[] nodes, final List<LPort> ports,
@@ -359,6 +469,105 @@ public final class CrossingsCounter {
         }
     }
 
+    private List<LPort> initPortPositionsCounterClockwise(final LNode[] leftLayerNodes,
+            final LNode[] rightLayerNodes) {
+        List<LPort> ports = new ArrayList<>();
+        initPositions(leftLayerNodes, ports, PortSide.EAST, true, false);
+        initPositions(rightLayerNodes, ports, PortSide.WEST, false, false);
+        return ports;
+    }
+    
+    private static final PortSide INDEXING_SIDE = PortSide.WEST;
+    private static final PortSide STACK_SIDE = PortSide.EAST;
+    
+    private List<LPort> initPositionsForNorthSouthCounting(final LNode[] nodes) {
+        final List<LPort> ports = Lists.newArrayList();
+        final Deque<LNode> stack = new ArrayDeque<>();
+        
+        LNode lastLayoutUnit = null;
+        int index = 0;
+        for (int i = 0; i < nodes.length; ++i) {
+            LNode current = nodes[i];
+
+            if (isLayoutUnitChanged(lastLayoutUnit, current)) {
+                // work the stack (filled with southern dummies)
+                index = emptyStack(stack, ports, STACK_SIDE, index);
+            }
+            if (current.hasProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT)) {
+                lastLayoutUnit = current.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+            }
+            
+            switch (current.getType()) {
+            // what we consider normal
+            case NORMAL:
+            case BIG_NODE:
+                // index the northern ports west-to-east
+                for (LPort p : getNorthSouthPortsWithIncidentEdges(current, PortSide.NORTH)) {
+                    portPositions[p.id] = index++;
+                    ports.add(p);
+                }
+                
+                // work the stack (filled with northern dummies)
+                index = emptyStack(stack, ports, STACK_SIDE, index);
+                
+                // index the southern ports in regular clock-wise order
+                for (LPort p : getNorthSouthPortsWithIncidentEdges(current, PortSide.SOUTH)) {
+                    portPositions[p.id] = index++;
+                    ports.add(p);
+                }
+                break;
+                
+            case NORTH_SOUTH_PORT:
+                if (!current.getPortSideView(INDEXING_SIDE).isEmpty()) {
+                    // should be only one
+                    LPort p = current.getPortSideView(INDEXING_SIDE).get(0);
+                    portPositions[p.id] = index++;
+                    ports.add(p);
+                }
+                if (!current.getPortSideView(STACK_SIDE).isEmpty()) {
+                    stack.push(current);
+                }
+                break;
+                
+            case LONG_EDGE:
+                for (LPort p : current.getPortSideView(PortSide.WEST)) {
+                    portPositions[p.id] = index++;
+                    ports.add(p);
+                }
+                current.getPortSideView(PortSide.EAST).forEach(p -> stack.push(current));
+                break;
+                
+            default: // nothing to do here
+            }
+            
+        }
+        
+        // are there any southern dummy nodes left on the stack?
+        emptyStack(stack, ports, STACK_SIDE, index);
+        
+        return ports;
+    }
+
+    private int emptyStack(final Deque<LNode> stack, final List<LPort> ports, 
+            final PortSide side, final int startIndex) {
+        
+        int index = startIndex;
+        while (!stack.isEmpty()) {
+            LNode dummy = stack.pop(); 
+            // dummy is either a north/south port dummy or a long edge dummy
+            //  both of which have only a single port on the west and/or east side
+            LPort p = dummy.getPortSideView(side).get(0);
+            portPositions[p.id] = index++;
+            ports.add(p);
+        }
+        return index;
+    }
+    
+
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    //                                  CONVENIENCE
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    
     private List<LPort> getPorts(final LNode node, final PortSide side, final boolean topDown) {
         if (side == PortSide.EAST) {
             if (topDown) {
@@ -373,9 +582,14 @@ public final class CrossingsCounter {
         }
     }
 
+    private Iterable<LPort> getNorthSouthPortsWithIncidentEdges(final LNode node, final PortSide side) {
+        return Iterables.filter(node.getPortSideView(side), p -> p.hasProperty(InternalProperties.PORT_DUMMY));
+    }
+    
     private int start(final LNode[] nodes, final boolean topDown) {
         return topDown ? 0 : nodes.length - 1;
     }
+    
     private boolean end(final int i, final boolean topDown, final LNode[] nodes) {
         return topDown ? i < nodes.length : i >= 0;
     }
@@ -383,19 +597,30 @@ public final class CrossingsCounter {
     private int step(final boolean topDown) {
         return topDown ? 1 : -1;
     }
-
-    private List<LPort> setPositionsCounterClockwise(final LNode[] leftLayerNodes,
-            final LNode[] rightLayerNodes) {
-        List<LPort> ports = new ArrayList<>();
-        initPositions(leftLayerNodes, ports, PortSide.EAST, true, false);
-        initPositions(rightLayerNodes, ports, PortSide.WEST, false, false);
-        return ports;
+    
+    private boolean isInLayer(final LEdge edge) {
+        Layer sourceLayer = edge.getSource().getNode().getLayer();
+        Layer targetLayer = edge.getTarget().getNode().getLayer();
+        return sourceLayer == targetLayer;
     }
 
-    /**
-     * @return portPositions of this counter
-     */
-    public int[] getPortPositions() {
-        return portPositions;
+    private int positionOf(final LPort port) {
+        return portPositions[port.id];
+    }
+
+    private LPort otherEndOf(final LEdge edge, final LPort fromPort) {
+        return fromPort == edge.getSource() ? edge.getTarget() : edge.getSource();
+    }
+    
+    private boolean isPortSelfLoop(final LEdge edge) {
+        return edge.getSource() == edge.getTarget();
+    }
+    
+    private boolean isLayoutUnitChanged(final LNode lastUnit, final LNode node) {
+        if (lastUnit == null || lastUnit == node || !node.hasProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT)) {
+            return false;
+        }
+        LNode unit = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
+        return unit != lastUnit;
     }
 }

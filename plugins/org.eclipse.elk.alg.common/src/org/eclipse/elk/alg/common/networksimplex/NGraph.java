@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.networksimplex;
+package org.eclipse.elk.alg.common.networksimplex;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
@@ -48,7 +48,7 @@ public class NGraph {
     public void writeDebugGraph(final String filePath) {
         
         ElkNode elkGraph = ElkGraphUtil.createGraph();
-        elkGraph.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
+        elkGraph.setProperty(CoreOptions.DIRECTION, Direction.DOWN);
         Map<NNode, ElkNode> nodeMap = Maps.newHashMap();
         
         for (NNode nNode : nodes) {
