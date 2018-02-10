@@ -194,9 +194,13 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                 // Set the vertical position of the message
                 message.setMessageLayerYPos(layerPos);
 
-                // Make sure the source of a self-loop is moved upwards a bit
+                // Self-loops are sort of centered around the vertical position of their layer such that their source
+                // and target are half a message spacing apart
                 if (message.getSource() == message.getTarget()) {
-                    message.setSourceYPos(layerPos - context.messageSpacing / 2);
+                    double offset = context.messageSpacing / 4;
+                    
+                    message.setSourceYPos(layerPos - offset);
+                    message.setTargetYPos(layerPos + offset);
                 }
             }
             
@@ -380,32 +384,32 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         // Check, if there are labels longer than the available space
         // TODO This code assumes that message labels are simply placed on the lifeline, which is strange...
         for (SMessage message : lifeline.getIncomingMessages()) {
-            if (message.getLabelWidth() > lifeline.getSize().x + spacing) {
-                spacing = context.labelSpacing + message.getLabelWidth() - lifeline.getSize().x;
+            if (message.getLabel().getSize().x > lifeline.getSize().x + spacing) {
+                spacing = context.labelSpacing + message.getLabel().getSize().x - lifeline.getSize().x;
             }
         }
         
         for (SMessage message : lifeline.getOutgoingMessages()) {
-            if (message.getLabelWidth() > lifeline.getSize().x + spacing) {
-                spacing = context.labelSpacing + message.getLabelWidth() - lifeline.getSize().x;
+            if (message.getLabel().getSize().x > lifeline.getSize().x + spacing) {
+                spacing = context.labelSpacing + message.getLabel().getSize().x - lifeline.getSize().x;
             }
             
             // Labels of create messages should not overlap the target's header
             if (message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE) {
                 // TODO Shouldn't this be dependent on the target lifeline's size, not on this lifeline?
-                if (message.getLabelWidth() + context.labelSpacing > spacing + lifeline.getSize().x / 2) {
+                if (message.getLabel().getSize().x+ context.labelSpacing > spacing + lifeline.getSize().x / 2) {
                     
-                    spacing = context.labelSpacing + message.getLabelWidth()
+                    spacing = context.labelSpacing + message.getLabel().getSize().x
                             - message.getTarget().getSize().x / 2;
                 }
             } 
             
             // Selfloops need a little more space
             if (message.getSource() == message.getTarget()) {
-                if (message.getLabelWidth() + context.labelSpacing
+                if (message.getLabel().getSize().x + context.labelSpacing
                         + context.messageSpacing / 2 > spacing + lifeline.getSize().x / 2) {
                     
-                    spacing = context.labelSpacing + message.getLabelWidth() - lifeline.getSize().x / 2;
+                    spacing = context.labelSpacing + message.getLabel().getSize().x - lifeline.getSize().x / 2;
                 }
             }
         }

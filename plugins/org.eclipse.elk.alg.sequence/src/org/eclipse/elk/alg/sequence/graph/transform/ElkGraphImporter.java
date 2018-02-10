@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
+import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
@@ -33,6 +34,8 @@ import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
@@ -334,9 +337,8 @@ public final class ElkGraphImporter {
             sourceLL.addMessage(smessage);
             targetLL.addMessage(smessage);
 
-            // Read size of the attached labels
-            smessage.setLabelWidth(
-                    kmessage.getLabels().stream().mapToDouble(klabel -> klabel.getWidth()).max().orElse(0.0));
+            // Import labels
+            smessage.setLabel(importLabel(kmessage));
 
             // Check if the edge connects to executions
             if (kmessage.hasProperty(SequenceDiagramOptions.ID_SOURCE_EXECUTIONS)) {
@@ -567,6 +569,34 @@ public final class ElkGraphImporter {
         }
 
         context.sgraph.getComments().add(comment);
+    }
+
+    //////////////////////////////////////////////////////////////
+    // Labels
+    
+    /**
+     * Imports the label of the given element if it has exactly one.
+     * 
+     * @param kelement
+     *            the element whose label to import.
+     * @return the new label or {@code null} if there is none.
+     */
+    private SLabel importLabel(final ElkGraphElement kelement) {
+        if (kelement.getLabels().isEmpty()) {
+            return null;
+        } else if (kelement.getLabels().size() > 1) {
+            // We only support up to one label per element at the moment
+            throw new UnsupportedGraphException("Elements may only have up to one label.");
+        }
+        
+        ElkLabel klabel = kelement.getLabels().get(0);
+        
+        SLabel slabel = new SLabel(klabel.getText());
+        slabel.setProperty(InternalSequenceProperties.ORIGIN, klabel);
+        
+        slabel.getSize().set(klabel.getWidth(), klabel.getHeight());
+        
+        return slabel;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////

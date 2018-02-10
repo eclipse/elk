@@ -41,8 +41,6 @@ import com.google.common.collect.Multimap;
 /**
  * Applies the layout results back to the original ELK graph.
  * 
- * TODO Apply size and position of all areas.
- * 
  * <p><em>Note:</em> This exporter does a lot of things, several of which (such as placing destruction nodes) should
  * arguably be done in phase 5 of the algorithm. Someone might want to sort that at some point.</p>
  */

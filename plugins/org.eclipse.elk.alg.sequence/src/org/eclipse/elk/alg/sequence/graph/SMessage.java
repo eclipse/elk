@@ -47,8 +47,7 @@ public final class SMessage extends SGraphElement {
     /** Whether this message's layer has a y position set that has been applied to this message. */
     private boolean messageLayerPositionSet = false;
     /** The width of the message's label. This is important for handling long labels. */
-    // TODO: Why not keep the label around as an object that can be positioned (and label-managed, for that matter)?
-    private double labelWidth;
+    private SLabel label;
     /** The list of comments that will be drawn near to this message. */
     // TODO: Convert to a Set?
     private List<SComment> comments = Lists.newArrayList();
@@ -190,22 +189,22 @@ public final class SMessage extends SGraphElement {
     }
 
     /**
-     * Get the width of the label attached to the message.
+     * Get the label attached to the message.
      * 
-     * @return the width of the label.
+     * @return the label.
      */
-    public double getLabelWidth() {
-        return labelWidth;
+    public SLabel getLabel() {
+        return label;
     }
 
     /**
-     * Set the width of the label attached to the message.
+     * Set the label attached to the message.
      * 
-     * @param labelWidth
-     *            the new width of the label.
+     * @param label
+     *            the new label.
      */
-    public void setLabelWidth(final double labelWidth) {
-        this.labelWidth = labelWidth;
+    public void setLabel(final SLabel label) {
+        this.label = label;
     }
 
     /**
