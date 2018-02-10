@@ -18,14 +18,13 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
+import org.eclipse.elk.alg.sequence.graph.SExecution;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
-import org.eclipse.elk.alg.sequence.graph.SExecution;
-import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.NodeType;
@@ -158,7 +157,7 @@ public final class ElkGraphImporter {
 
             if (nodeType == NodeType.COMBINED_FRAGMENT || nodeType == NodeType.INTERACTION_USE) {
                 SArea area = new SArea();
-                area.setProperty(InternalProperties.ORIGIN, node);
+                area.setProperty(InternalSequenceProperties.ORIGIN, node);
 
                 context.sgraph.getAreas().add(area);
                 areaIdMap.put(node.getProperty(SequenceDiagramOptions.ELEMENT_ID), area);
@@ -212,7 +211,7 @@ public final class ElkGraphImporter {
             slifeline.setName(klifeline.getLabels().get(0).getText());
         }
 
-        slifeline.setProperty(InternalProperties.ORIGIN, klifeline);
+        slifeline.setProperty(InternalSequenceProperties.ORIGIN, klifeline);
         lifelineMap.put(klifeline, slifeline);
         lifelineIdMap.put(klifeline.getProperty(SequenceDiagramOptions.ELEMENT_ID), slifeline);
 
@@ -250,7 +249,7 @@ public final class ElkGraphImporter {
             if (kchildNodeType.isExecutionType()) {
                 // Create a new sequence execution for this thing
                 SExecution sexecution = new SExecution();
-                sexecution.setProperty(InternalProperties.ORIGIN, kchild);
+                sexecution.setProperty(InternalSequenceProperties.ORIGIN, kchild);
                 sexecution.setType(SequenceExecutionType.fromNodeType(kchildNodeType));
                 executionIdMap.put(kchild.getProperty(SequenceDiagramOptions.ELEMENT_ID), sexecution);
 
@@ -323,7 +322,7 @@ public final class ElkGraphImporter {
 
             // Create message object and apply its coordinates
             SMessage smessage = new SMessage(sourceLL, targetLL);
-            smessage.setProperty(InternalProperties.ORIGIN, kmessage);
+            smessage.setProperty(InternalSequenceProperties.ORIGIN, kmessage);
 
             messageMap.put(kmessage, smessage);
 
@@ -439,7 +438,7 @@ public final class ElkGraphImporter {
 
             // Create message object and apply its coordinates
             SMessage smessage = new SMessage(sourceLL, targetLL);
-            smessage.setProperty(InternalProperties.ORIGIN, kmessage);
+            smessage.setProperty(InternalSequenceProperties.ORIGIN, kmessage);
 
             messageMap.put(kmessage, smessage);
 
@@ -500,7 +499,7 @@ public final class ElkGraphImporter {
 
         // Create comment object
         SComment comment = new SComment();
-        comment.setProperty(InternalProperties.ORIGIN, node);
+        comment.setProperty(InternalSequenceProperties.ORIGIN, node);
         comment.setProperty(SequenceDiagramOptions.NODE_TYPE, nodeType);
 
         // Copy layout information
@@ -547,7 +546,7 @@ public final class ElkGraphImporter {
             SMessage nextMessage = null;
             smallestDistance = Double.MAX_VALUE;
             for (SMessage message : nextLifeline.getMessages()) {
-                ElkEdge edge = (ElkEdge) message.getProperty(InternalProperties.ORIGIN);
+                ElkEdge edge = (ElkEdge) message.getProperty(InternalSequenceProperties.ORIGIN);
                 ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
                 double distance;
                 if (message.getSource() == nextLifeline) {
@@ -593,7 +592,7 @@ public final class ElkGraphImporter {
 
                 node.getLabels().add(new LLabel("Node" + nodeNumber++));
 
-                node.setProperty(InternalProperties.ORIGIN, message);
+                node.setProperty(InternalSequenceProperties.ORIGIN, message);
                 message.setProperty(InternalSequenceProperties.LAYERED_NODE, node);
             }
 
@@ -605,7 +604,7 @@ public final class ElkGraphImporter {
 
                     node.getLabels().add(new LLabel("Node" + nodeNumber++));
 
-                    node.setProperty(InternalProperties.ORIGIN, message);
+                    node.setProperty(InternalSequenceProperties.ORIGIN, message);
                     message.setProperty(InternalSequenceProperties.LAYERED_NODE, node);
                 }
             }

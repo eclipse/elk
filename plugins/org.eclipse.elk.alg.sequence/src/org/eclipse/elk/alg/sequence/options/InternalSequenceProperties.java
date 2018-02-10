@@ -22,6 +22,9 @@ import org.eclipse.elk.graph.properties.Property;
  */
 public final class InternalSequenceProperties {
 
+    /** The original object from which a graph element was created. */
+    public static final IProperty<Object> ORIGIN = new Property<Object>("origin");
+
     /** The lifeline to which an element of the SGraph belongs. */
     public static final IProperty<SLifeline> BELONGS_TO_LIFELINE = new Property<>(
             "org.eclipse.elk.alg.sequence.belongsToLifeline");

@@ -16,7 +16,6 @@ import java.util.Set;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
@@ -106,7 +105,7 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
         LNode newNode = new LNode(lgraph);
         lgraph.getLayerlessNodes().add(newNode);
 
-        SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
+        SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
         SLifeline sourceLL = message.getSource();
         SLifeline targetLL = message.getTarget();
         
@@ -124,7 +123,7 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
         
         node.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, sourceLL);
         newNode.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, targetLL);
-        newNode.setProperty(InternalProperties.ORIGIN, message);
+        newNode.setProperty(InternalSequenceProperties.ORIGIN, message);
     }
 
     /**
@@ -167,8 +166,8 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
         
         for (int i = foundIndex; i < chain.size(); i++) {
             LNode node = chain.get(i);
-            SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
-            ElkEdge edge = (ElkEdge) message.getProperty(InternalProperties.ORIGIN);
+            SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
+            ElkEdge edge = (ElkEdge) message.getProperty(InternalSequenceProperties.ORIGIN);
             
             // Compare only sourcePositions since messages can only lead downwards or horizontal
             double sourceYPos = ElkGraphUtil.firstEdgeSection(edge, false, false).getStartY();

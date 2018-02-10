@@ -51,7 +51,7 @@ public final class LayoutContext {
     public final double lifelineHeaderHeight;
     /** The height of the header of combined fragments. */
     // TODO: We should rather use a proper padding instead of this and the following value.
-    public final double areaHeader;
+    public final double areaHeaderHeight;
     /** The offset between two nested areas. */
     public final double containmentOffset;
     /** The width of timing observations. */
@@ -82,7 +82,7 @@ public final class LayoutContext {
                 SequenceDiagramOptions.LIFELINE_SPACING);
         lifelineHeaderHeight = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_HEADER_HEIGHT);
-        areaHeader = parentNode.getProperty(
+        areaHeaderHeight = parentNode.getProperty(
                 SequenceDiagramOptions.AREA_HEADER_HEIGHT);
         timeObservationWidth = parentNode.getProperty(
                 SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);

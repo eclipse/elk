@@ -14,12 +14,11 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
-import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
@@ -80,7 +79,7 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
                 boolean isUppermost = true;
                 for (LEdge incomingEdge : msgNode.getIncomingEdges()) {
                     Object predecessor = incomingEdge.getSource().getNode().getProperty(
-                            InternalProperties.ORIGIN);
+                            InternalSequenceProperties.ORIGIN);
                     
                     if (area.getMessages().contains(predecessor)) {
                         isUppermost = false;

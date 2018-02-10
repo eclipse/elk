@@ -17,13 +17,13 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
-import org.eclipse.elk.alg.sequence.graph.SArea;
+import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
@@ -249,7 +249,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
             EDLSNode candidate = null;
             int bestDegree = Integer.MAX_VALUE;
             for (LNode node : nodes) {
-                SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
+                SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
                 SLifeline sourceLifeline = message.getSource();
                 EDLSNode cand = correspondences.get(sourceLifeline);
                 if (cand.getWeightedDegree() < bestDegree) {
@@ -262,7 +262,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         } else {
             // If there is just one message in the first layer, return the node corresponding to its
             // source lifeline
-            SMessage message = (SMessage) nodes.get(0).getProperty(InternalProperties.ORIGIN);
+            SMessage message = (SMessage) nodes.get(0).getProperty(InternalSequenceProperties.ORIGIN);
             SLifeline sourceLifeline = message.getSource();
             EDLSNode candidate = correspondences.get(sourceLifeline);
             if (candidate == null) {

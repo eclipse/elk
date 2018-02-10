@@ -16,11 +16,11 @@ import java.util.List;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -108,7 +108,7 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
         
         for (int layerIndex = 0; layerIndex < layers.size(); layerIndex++) {
             for (LNode node : layers.get(layerIndex)) {
-                SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
+                SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
                 if (message != null) {
                     message.setMessageLayer(layerIndex);
                 }
@@ -129,7 +129,7 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
         List<LNode> candidates = new LinkedList<LNode>();
         for (Layer layer : lgraph) {
             for (LNode node : layer) {
-                SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
+                SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
                 if (message != null && unprocessedLifelines.contains(message.getSource())) {
                     candidates.add(node);
                 }
@@ -137,15 +137,15 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
             
             if (candidates.size() == 1) {
                 // If there is only one candidate, return it
-                return (SMessage) candidates.get(0).getProperty(InternalProperties.ORIGIN);
+                return (SMessage) candidates.get(0).getProperty(InternalSequenceProperties.ORIGIN);
                 
             } else if (!candidates.isEmpty()) {
                 // If there are more candidates, check, which one's source has the best in/out relation
-                SMessage bestOne = (SMessage) candidates.get(0).getProperty(InternalProperties.ORIGIN);
+                SMessage bestOne = (SMessage) candidates.get(0).getProperty(InternalSequenceProperties.ORIGIN);
                 int bestRelation = Integer.MIN_VALUE;
                 
                 for (LNode node : candidates) {
-                    SMessage candidate = (SMessage) node.getProperty(InternalProperties.ORIGIN);
+                    SMessage candidate = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
                     int relation = candidate.getSource().getNumberOfOutgoingMessages()
                             - candidate.getSource().getNumberOfIncomingMessages();
                     

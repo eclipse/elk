@@ -12,12 +12,11 @@ package org.eclipse.elk.alg.sequence.graph.transform;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.SequenceLayoutConstants;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
-import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
@@ -60,7 +59,8 @@ public final class ElkGraphExporter {
         
         // Place things (in placing things, other things are placed as well, which is nice)
         placeLifelines(context);
-        placeComments(context.sgraph);
+        placeAreas(context);
+        placeComments(context);
         
         // Apply padding to the graph's size
         KVector sgraphSize = context.sgraph.getSize();
@@ -122,7 +122,7 @@ public final class ElkGraphExporter {
             }
 
             // Apply height and coordinates
-            ElkNode klifeline = (ElkNode) slifeline.getProperty(InternalProperties.ORIGIN);
+            ElkNode klifeline = (ElkNode) slifeline.getProperty(InternalSequenceProperties.ORIGIN);
             klifeline.setX(slifeline.getPosition().x + offset.x);
             klifeline.setY(slifeline.getPosition().y + offset.y);
             klifeline.setHeight(slifeline.getSize().y);
@@ -178,7 +178,7 @@ public final class ElkGraphExporter {
         // Clear the bend points of all edges (this is safe to do here since we will only be adding
         // bend points for self loops, which we encounter first as outgoing messages, so we're not
         // clearing bend points set by the incoming message handling)
-        ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalProperties.ORIGIN);
+        ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalSequenceProperties.ORIGIN);
         ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, true);
         
         // Compute the horizontal center of the lifeline to be used later
@@ -260,7 +260,7 @@ public final class ElkGraphExporter {
         double llCenter = slifeline.getPosition().x + slifeline.getSize().x / 2;
         
         // Apply target point position
-        ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalProperties.ORIGIN);
+        ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalSequenceProperties.ORIGIN);
         
         assert kmessage.getSections().size() == 1;
         ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, true);
@@ -567,7 +567,7 @@ public final class ElkGraphExporter {
             }
 
             // Apply calculated coordinates to the execution
-            ElkNode kexecution = (ElkNode) sexecution.getProperty(InternalProperties.ORIGIN);
+            ElkNode kexecution = (ElkNode) sexecution.getProperty(InternalSequenceProperties.ORIGIN);
             kexecution.setX(sexecution.getPosition().x + offset.x);
             kexecution.setY(sexecution.getPosition().y + offset.y);
             kexecution.setWidth(sexecution.getSize().x);
@@ -587,7 +587,7 @@ public final class ElkGraphExporter {
                 boolean messagePointsRightwards =
                         smessage.getSource().getHorizontalSlot() < smessage.getTarget().getHorizontalSlot();
 
-                ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalProperties.ORIGIN);
+                ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalSequenceProperties.ORIGIN);
                 ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
                 
                 // x coordinate for messages attached to the left side of the execution
@@ -694,7 +694,7 @@ public final class ElkGraphExporter {
             assert smessage.getSource() == slifeline && smessage.getTarget() == slifeline;
             
             // Retrieve message layout info
-            ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalProperties.ORIGIN);
+            ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalSequenceProperties.ORIGIN);
             ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
             
             // We iterate over all connected executions and check for both the source and the target
@@ -790,17 +790,36 @@ public final class ElkGraphExporter {
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////
+    // Areas
+    
+    /**
+     * Place the areas according to their calculated coordinates.
+     * 
+     * @param context
+     *            the layout context that contains all relevant information for the current layout run.
+     */
+    private void placeAreas(final LayoutContext context) {
+        for (SArea sarea : context.sgraph.getAreas()) {
+            ElkNode karea = (ElkNode) sarea.getProperty(InternalSequenceProperties.ORIGIN);
+            
+            karea.setLocation(sarea.getPosition().x + offset.x, sarea.getPosition().y + offset.y);
+            karea.setDimensions(sarea.getSize().x, sarea.getSize().y);
+        }
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////
     // Comments
 
     /**
      * Place the comment objects (comments, constraints) according to their calculated coordinates.
      * 
-     * @param sgraph
-     *            the Sequence Graph
+     * @param context
+     *            the layout context that contains all relevant information for the current layout run.
      */
-    private void placeComments(final SGraph sgraph) {
-        for (SComment scomment : sgraph.getComments()) {
-            ElkNode kcomment = (ElkNode) scomment.getProperty(InternalProperties.ORIGIN);
+    private void placeComments(final LayoutContext context) {
+        for (SComment scomment : context.sgraph.getComments()) {
+            ElkNode kcomment = (ElkNode) scomment.getProperty(InternalSequenceProperties.ORIGIN);
             
             kcomment.setLocation(
                     scomment.getPosition().x + offset.x,
@@ -825,7 +844,7 @@ public final class ElkGraphExporter {
                         edgeSourceXPos = scomment.getPosition().x + scomment.getSize().x / 2;
                         edgeTargetXPos = edgeSourceXPos;
                         
-                        ElkEdge edge = (ElkEdge) scomment.getReferenceMessage().getProperty(InternalProperties.ORIGIN);
+                        ElkEdge edge = (ElkEdge) scomment.getReferenceMessage().getProperty(InternalSequenceProperties.ORIGIN);
                         ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
                         edgeSourceYPos = scomment.getPosition().y + scomment.getSize().y;
                         edgeTargetYPos = (edgeSection.getEndY() + edgeSection.getStartY()) / 2;

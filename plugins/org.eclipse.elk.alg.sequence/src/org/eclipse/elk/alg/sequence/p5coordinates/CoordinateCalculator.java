@@ -17,7 +17,6 @@ import java.util.stream.StreamSupport;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.sequence.SequenceLayoutConstants;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
@@ -132,11 +131,11 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             // Iterate the nodes of the layer
             for (LNode node : layer) {
                 // Get the corresponding message and skip dummy nodes (which don't have a message)
-                if (!node.hasProperty(InternalProperties.ORIGIN)) {
+                if (!node.hasProperty(InternalSequenceProperties.ORIGIN)) {
                     continue;
                 }
                 
-                SMessage message = (SMessage) node.getProperty(InternalProperties.ORIGIN);
+                SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
                 
                 // If the message is represented by a single node, that node won't have a property to say that it
                 // belongs to a given lifeline. If it is represented by two nodes, however, those nodes will specify
@@ -168,7 +167,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                     // There are lifelines between the message's source and target. It might overlap other messages,
                     // so we need to assign non-conflicting positions to those messages
                     for (LNode otherNode : layer) {
-                        SMessage otherMessage = (SMessage) otherNode.getProperty(InternalProperties.ORIGIN);
+                        SMessage otherMessage = (SMessage) otherNode.getProperty(InternalSequenceProperties.ORIGIN);
                         
                         int otherSourceSlot = otherMessage.getSource().getHorizontalSlot();
                         int otherTargetSlot = otherMessage.getTarget().getHorizontalSlot();
@@ -502,10 +501,11 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             areaPos.x = area.getPosition().x - context.lifelineSpacing / 2 - containmentSpacing;
             areaSize.x = area.getSize().x + context.lifelineSpacing + 2 * containmentSpacing;
 
-            areaPos.y = area.getPosition().y - context.areaHeader - SequenceLayoutConstants.TWENTY
-                    - containmentSpacing;
-            areaSize.y = area.getSize().y + context.areaHeader + SequenceLayoutConstants.FOURTY
-                    + SequenceLayoutConstants.TEN + 2 * containmentSpacing;
+            // TODO This needs to be handled better
+            areaPos.y = area.getPosition().y - (containmentDepth + 1) * context.areaHeaderHeight
+                    - SequenceLayoutConstants.TWENTY;
+            areaSize.y = area.getSize().y + (containmentDepth + 1) * context.areaHeaderHeight + containmentSpacing
+                    + SequenceLayoutConstants.FOURTY;
             
             // The area might have a label that needs to be positioned as well
             calculateAreaLabelPosition(context, area);
@@ -545,7 +545,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                 
                 // Reset last subArea's height to fit
                 if (lastSubArea != null) {
-                    lastSubArea.getSize().y = areaSize.y - areaPos.y - context.areaHeader;
+                    lastSubArea.getSize().y = areaSize.y - areaPos.y - context.areaHeaderHeight;
                 }
             }
         }
@@ -673,7 +673,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      */
     private void calculateAreaLabelPosition(final LayoutContext context, final SArea area) {
         // TODO Labels should be properly represented in the SGraph
-        ElkNode areaNode = (ElkNode) area.getProperty(InternalProperties.ORIGIN);
+        ElkNode areaNode = (ElkNode) area.getProperty(InternalSequenceProperties.ORIGIN);
         if (areaNode.getLabels().isEmpty()) {
             return;
         }
