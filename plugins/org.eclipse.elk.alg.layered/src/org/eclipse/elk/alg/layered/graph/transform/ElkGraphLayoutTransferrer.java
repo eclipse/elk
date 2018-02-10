@@ -21,6 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.intermediate.LabelDummySwitcher;
 import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
@@ -275,6 +276,10 @@ class ElkGraphLayoutTransferrer {
             elklabel.setHeight(llabel.getSize().y);
             elklabel.setLocation(llabel.getPosition().x + edgeOffset.x,
                                  llabel.getPosition().y + edgeOffset.y);
+            
+            elklabel.setProperty(
+                    LabelDummySwitcher.INCLUDE_LABEL,
+                    llabel.getProperty(LabelDummySwitcher.INCLUDE_LABEL));
         }
         
         // Copy junction points
