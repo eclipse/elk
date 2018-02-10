@@ -185,8 +185,19 @@ public final class KVector implements IDataObject, Cloneable {
      * @return {@code this}
      */
     public KVector set(final KVector other) {
-        this.x = other.x;
-        this.y = other.y;
+        return set(other.x, other.y);
+    }
+    
+    /**
+     * Resets this vector to the given values.
+     * 
+     * @param x the new x value.
+     * @param y the new y value.
+     * @return {@code this}
+     */
+    public KVector set(final double x, final double y) {
+        this.x = x;
+        this.y = y;
         return this;
     }
 
