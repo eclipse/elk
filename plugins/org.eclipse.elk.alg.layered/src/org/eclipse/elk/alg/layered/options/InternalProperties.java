@@ -21,6 +21,7 @@ import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
@@ -427,6 +428,12 @@ public final class InternalProperties {
      */
     public static final IProperty<List<LEdge>> SPLINE_EDGE_CHAIN = new Property<>("splines.edgeChain");
 
+    /**
+     * Holds the y-coordinate of a deleted {@link NodeType#NORTH_SOUTH_PORT} dummy node. To be read by the
+     * {@link FinalSplineBendpointsCalculator}.
+     */
+    public static final IProperty<Double> SPLINE_NS_PORT_Y_COORD = new Property<>("splines.nsPortY");
+    
     /**
      * Hidden default constructor.
      */

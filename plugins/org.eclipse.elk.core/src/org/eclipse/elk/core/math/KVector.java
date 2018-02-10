@@ -390,6 +390,16 @@ public final class KVector implements IDataObject, Cloneable {
     public double dotProduct(final KVector v2) {
         return ((this.x * v2.x) + (this.y * v2.y));
     }
+    
+    /**
+     * Calculates the cross product of two vectors v and w.
+     * @param v
+     * @param w
+     * @return the cross product of v and w
+     */
+    public static double crossProduct(final KVector v, final KVector w) {
+        return v.x * w.y - v.y * w.x;
+    }
 
     /**
      * Apply the given bounds to this vector.

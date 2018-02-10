@@ -39,7 +39,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Slots:</dt>
  *     <dd>After phase 5.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>None.</dd>
+ *     <dd>Must run before {@link FinalSplineBendpointsCalculator}.</dd>
  * </dl>
  * 
  * @see NorthSouthPortPreprocessor
@@ -237,7 +237,8 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGrap
     private void processSplineInputPort(final LPort inputPort) {
         // Retrieve the port the dummy node was created from
         LPort originPort = (LPort) inputPort.getProperty(InternalProperties.ORIGIN);
-
+        originPort.setProperty(InternalProperties.SPLINE_NS_PORT_Y_COORD, inputPort.getNode().getPosition().y);
+        
         // Reroute the edges
         LEdge[] edgeArray = inputPort.getIncomingEdges().toArray(
                 new LEdge[inputPort.getIncomingEdges().size()]);
@@ -255,6 +256,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor<LGrap
     private void processSplineOutputPort(final LPort outputPort) {
         // Retrieve the port the dummy node was created from
         LPort originPort = (LPort) outputPort.getProperty(InternalProperties.ORIGIN);
+        originPort.setProperty(InternalProperties.SPLINE_NS_PORT_Y_COORD, outputPort.getNode().getPosition().y);
 
         // Reroute the edges
         LEdge[] edgeArray = outputPort.getOutgoingEdges().toArray(

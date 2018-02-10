@@ -15,6 +15,8 @@ import org.eclipse.elk.graph.text.serializer.ElkGraphTransientValueService
 import org.eclipse.xtext.naming.IQualifiedNameConverter
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService
 
+import static org.eclipse.elk.graph.ElkGraphPackage.Literals.*
+
 /**
  * Use this class to register components for the ElkGraph language.
  */
@@ -39,5 +41,4 @@ class ElkGraphRuntimeModule extends AbstractElkGraphRuntimeModule {
     override bindILinker() {
         ElkGraphLinker
     }
-    
 }

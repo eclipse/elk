@@ -128,6 +128,13 @@ public class ElkRectangle {
     }
     
     /**
+     * @return the center point of a rectangle.
+     */
+    public KVector getCenter() {
+        return new KVector(x + width / 2, y + height / 2);
+    }
+    
+    /**
      * Unions the receiver and the given <code>Rectangle</code> objects and puts the result into the
      * receiver.
      * 

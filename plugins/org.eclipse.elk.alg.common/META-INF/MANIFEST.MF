@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK Common Algorithms
+Bundle-SymbolicName: org.eclipse.elk.alg.common;singleton:=true
+Bundle-Version: 0.4.0.qualifier
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: com.google.guava;bundle-version="15.0.0",
+ org.eclipse.elk.core,
+ org.eclipse.elk.graph
+Export-Package: org.eclipse.elk.alg.common,
+ org.eclipse.elk.alg.common.compaction.oned,
+ org.eclipse.elk.alg.common.compaction.options,
+ org.eclipse.elk.alg.common.compaction,
+ org.eclipse.elk.alg.common.networksimplex,
+ org.eclipse.elk.alg.common.polyomino,
+ org.eclipse.elk.alg.common.polyomino.structures,
+ org.eclipse.elk.alg.common.utils,
+ org.eclipse.elk.alg.common.spore
+

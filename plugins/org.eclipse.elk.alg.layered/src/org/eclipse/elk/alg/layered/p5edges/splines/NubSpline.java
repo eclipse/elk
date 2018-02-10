@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.splines;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -140,15 +139,14 @@ public class NubSpline {
     }
 
     /**
-     * Creates a new uniform and clamped NubSpline with the specified control points. Dimension must be
-     * > 0.
+     * Creates a new uniform and clamped NubSpline with the specified control points. Dimension must be > 0.
      * 
      * @param clamped {@code true}, if the NubSpline shall be clamped.
      * @param dimension The dimension if this NubSpline.
      * @param kVectors The control points of this NubSpline.
      */
     public NubSpline(final boolean clamped, final int dimension, final KVector... kVectors) {
-        this(true, dimension, Arrays.asList(kVectors));
+        this(true, dimension, Lists.newArrayList(kVectors));
     }
 
     /**

@@ -1,5 +1,5 @@
 ---
-title: "Bla bla bla"
+title: "Eclipse Layout Kernel"
 description: "Blupp blupp blupp"
 ---
 

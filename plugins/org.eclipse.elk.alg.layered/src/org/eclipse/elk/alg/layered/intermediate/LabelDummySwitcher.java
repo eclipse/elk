@@ -11,7 +11,6 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,7 @@ import ilog.cplex.IloCplex.Status;
  * Processor that tries to move label dummy nodes into an "optimal" layer their long edges crosses. This
  * is done by switching the order of long edge dummies and label dummies. There are
  * {@link CenterEdgeLabelPlacementStrategy different strategies} available to determine the target layer.
- * 
+ *
  * <p>
  * If this was the only thing we did we could end up in situations where multiple edges forming a
  * hyperedge are merged such that it's not clear anymore which edge label belongs to which edge:
@@ -68,7 +67,7 @@ import ilog.cplex.IloCplex.Status;
  * label dummy as the new target of those long edge dummies). The same is true for the
  * {@link InternalProperties#LONG_EDGE_SOURCE} property of long edge dummies succeeding a label dummy.
  * </p>
- * 
+ *
  * <dl>
  *   <dt>Precondition:</dt>
  *     <dd>a properly layered graph</dd>
@@ -87,36 +86,36 @@ import ilog.cplex.IloCplex.Status;
  *     <dd>{@link NodeMarginCalculator}</dd>
  *     <dd>{@link EndLabelPreprocessor}</dd>
  * </dl>
- * 
+ *
  * @see CenterEdgeLabelPlacementStrategy
  */
 public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
-    
+
     /** Width of each layer. */
     private double[] layerWidths = null;
-    
+
     public static final IProperty<Boolean> INCLUDE_LABEL =
             new Property("edgelabelcenterednessanalysis.includelabel", Boolean.FALSE);
-    
+
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy switching", 1);
-        
+
         // The default placement strategy to be assumed if no more specific strategy is
         CenterEdgeLabelPlacementStrategy defaultPlacementStrategy =
                 layeredGraph.getProperty(LayeredOptions.EDGE_LABELS_CENTER_LABEL_PLACEMENT_STRATEGY);
-        
+
         // Assign layer IDs
         assignIdsToLayers(layeredGraph);
-        
+
         // Collect label dummy infos by placement strategy
         Map<CenterEdgeLabelPlacementStrategy, List<LabelDummyInfo>> labelDummyInfos =
                 gatherLabelDummyInfos(layeredGraph, defaultPlacementStrategy);
-        
+
         // If at least one width-based strategy is active, calculate layers widths. After this point, layer widths are
         // either all zero or equal to each layer's widest non-dummy node
         layerWidths = new double[layeredGraph.getLayers().size()];
-        
+
         for (CenterEdgeLabelPlacementStrategy strategy : CenterEdgeLabelPlacementStrategy.values()) {
             if (strategy.usesLabelSizeInformation() && !labelDummyInfos.get(strategy).isEmpty()) {
                 // We have found an active width-based strategy
@@ -124,7 +123,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 break;
             }
         }
-        
+
         // Work through the non-width-based strategies first. They might change the width of layers, which might
         // influence size-based strategies later on
         for (CenterEdgeLabelPlacementStrategy strategy : CenterEdgeLabelPlacementStrategy.values()) {
@@ -132,20 +131,20 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 processStrategy(labelDummyInfos.get(strategy));
             }
         }
-        
+
         // Now execute size-based strategies
         for (CenterEdgeLabelPlacementStrategy strategy : CenterEdgeLabelPlacementStrategy.values()) {
             if (strategy.usesLabelSizeInformation()) {
                 processStrategy(labelDummyInfos.get(strategy));
             }
         }
-        
+
         // Reset data
         layerWidths = null;
-        
+
         monitor.done();
     }
-    
+
     /**
      * Goes through the graph's layers and assigns zero-based IDs.
      */
@@ -156,29 +155,29 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             layerIndex++;
         }
     }
-    
+
     /**
      * Gathers the graph's label dummies, turns them into {@link LabelDummyInfo} objects, and returns them by placement
      * strategy.
      */
     private Map<CenterEdgeLabelPlacementStrategy, List<LabelDummyInfo>> gatherLabelDummyInfos(
             final LGraph layeredGraph, final CenterEdgeLabelPlacementStrategy defaultPlacementStrategy) {
-        
+
         // Initialize the map with empty lists
         Map<CenterEdgeLabelPlacementStrategy, List<LabelDummyInfo>> infos =
                 new EnumMap<>(CenterEdgeLabelPlacementStrategy.class);
-        
+
         for (CenterEdgeLabelPlacementStrategy strategy : CenterEdgeLabelPlacementStrategy.values()) {
             infos.put(strategy, new ArrayList<LabelDummyInfo>());
         }
-        
+
         // From the graph's nodes, filter out the label dummies and add them to the appropriate lists
         layeredGraph.getLayers().stream()
                 .flatMap((layer) -> layer.getNodes().stream())
                 .filter(node -> node.getType() == NodeType.LABEL)
                 .map(labelDummy -> new LabelDummyInfo(labelDummy, defaultPlacementStrategy))
                 .forEach(dummyInfo -> infos.get(dummyInfo.placementStrategy).add(dummyInfo));
-        
+
         return infos;
     }
 
@@ -187,12 +186,12 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
      */
     private void calculateLayerWidths(final LGraph layeredGraph) {
         assert layerWidths.length == layeredGraph.getLayers().size();
-        
+
         for (Layer layer : layeredGraph.getLayers()) {
             layerWidths[layer.id] = LGraphUtil.findMaxNonDummyNodeWidth(layer, false);
         }
     }
-    
+
     /**
      * Executes label dummy switching on the given list of label dummy infos. For most strategies, this method simply
      * invokes the strategy on each label dummy. However, if a strategy places all dummies at once, this method
@@ -203,14 +202,14 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         if (labelDummyInfos.isEmpty()) {
             return;
         }
-        
+
         // Check if the strategy has a special processing method
         if (labelDummyInfos.get(0).placementStrategy == CenterEdgeLabelPlacementStrategy.SPACE_EFFICIENT_LAYER) {
             computeSpaceEfficientAssignment(labelDummyInfos);
-            
+
         } else if (labelDummyInfos.get(0).placementStrategy == CenterEdgeLabelPlacementStrategy.SPACE_OPTIMAL_LAYER) {
             computeOptimalAssignment(labelDummyInfos);
-            
+
         } else {
             // Execute the strategy for each label dummy
             for (LabelDummyInfo labelDummyInfo : labelDummyInfos) {
@@ -218,32 +217,32 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 case CENTER_LAYER:
                     assignLayer(labelDummyInfo, findCenterLayerTargetId(labelDummyInfo));
                     break;
-                    
+
                 case MEDIAN_LAYER:
                     assignLayer(labelDummyInfo, findMedianLayerTargetId(labelDummyInfo));
                     break;
-                    
+
                 case WIDEST_LAYER:
                     assignLayer(labelDummyInfo, findWidestLayerTargetId(labelDummyInfo));
                     break;
-                    
+
                 case HEAD_LAYER:
                     setEndLayerNodeAlignment(labelDummyInfo);
                     assignLayer(labelDummyInfo, findEndLayerTargetId(labelDummyInfo, true));
                     break;
-                    
+
                 case TAIL_LAYER:
                     setEndLayerNodeAlignment(labelDummyInfo);
                     assignLayer(labelDummyInfo, findEndLayerTargetId(labelDummyInfo, false));
                     break;
                 }
-                
+
                 updateLongEdgeSourceLabelDummyInfo(labelDummyInfo);
             }
         }
     }
-    
-    
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Widest Layer
 
@@ -254,18 +253,18 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     private int findWidestLayerTargetId(final LabelDummyInfo labelDummyInfo) {
         // Find the widest layer among those the long edge dummies are placed in
         int widestLayerIndex = labelDummyInfo.leftmostLayerId;
-        
+
         for (int index = widestLayerIndex + 1; index <= labelDummyInfo.rightmostLayerId; index++) {
             if (layerWidths[index] > layerWidths[widestLayerIndex]) {
                 widestLayerIndex = index;
             }
         }
-        
+
         // Return the dummy node in the widest layer
         return widestLayerIndex;
     }
-    
-    
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Center Layer
 
@@ -276,55 +275,55 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     private int findCenterLayerTargetId(final LabelDummyInfo labelDummyInfo) {
         // Sum up the widths of all the layers this thing spans
         double[] layerWidthSums = computeLayerWidthSums(labelDummyInfo);
-        
+
         // Find the first layer that exceeds half the width
         double threshold = layerWidthSums[layerWidthSums.length - 1] / 2;
-        
+
         for (int i = 0; i < layerWidthSums.length; i++) {
             if (layerWidthSums[i] >= threshold) {
                 return labelDummyInfo.leftmostLayerId + i;
             }
         }
-        
+
         // This should actually not happen
         assert false;
         return labelDummyInfo.leftmostLayerId + labelDummyInfo.leftLongEdgeDummies.size();
     }
-    
+
     /**
      * Computes an array in which entry i refers to the combined width of layers [0, i]. The combined width is
      * estimated based on the currently estimated layer width and a wild guess as to the layer spacing.
      */
     private double[] computeLayerWidthSums(final LabelDummyInfo labelDummyInfo) {
-        // The minimum space that we think will be left between 
+        // The minimum space that we think will be left between
         LGraph lgraph = labelDummyInfo.labelDummy.getGraph();
         double edgeNodeSpacing = lgraph.getProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS) * 2;
         double nodeNodeSpacing = lgraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
         double minSpaceBetweenLayers = Math.max(edgeNodeSpacing, nodeNodeSpacing);
-        
+
         // The array that will hold the accumulated widths
         double[] layerWidthSums = new double[labelDummyInfo.totalDummyCount()];
-        
+
         double currentWidthSum = -minSpaceBetweenLayers;
         int currentIndex = 0;
-        
+
         for (LNode leftDummy : labelDummyInfo.leftLongEdgeDummies) {
             currentWidthSum += layerWidths[leftDummy.getLayer().id] + minSpaceBetweenLayers;
             layerWidthSums[currentIndex++] = currentWidthSum;
         }
-        
+
         currentWidthSum += layerWidths[labelDummyInfo.labelDummy.getLayer().id] + minSpaceBetweenLayers;
         layerWidthSums[currentIndex++] = currentWidthSum;
-        
+
         for (LNode rightDummy : labelDummyInfo.rightLongEdgeDummies) {
             currentWidthSum += layerWidths[rightDummy.getLayer().id] + minSpaceBetweenLayers;
             layerWidthSums[currentIndex++] = currentWidthSum;
         }
-        
+
         return layerWidthSums;
     }
 
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Median Layer
 
@@ -336,32 +335,32 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         // Find the median of the layers spanned by the long edge this label dummy is part of
         int layers = labelDummyInfo.totalDummyCount();
         int lowerMedian = (layers - 1) / 2;
-        
+
         return labelDummyInfo.leftmostLayerId + lowerMedian;
     }
-    
-    
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // End Layer
 
     /**
      * Find a layer to place the label dummy into. This method simply returns the dummy node closest to the original
      * edge's head or tail. It does take into account whether the edge is reversed or not.
-     * 
+     *
      * @param headLayer
      *            {@code true} if the label is to be placed at the edge's head, {@code false} if it is to be placed at
      *            the edge's tail.
      */
     private int findEndLayerTargetId(final LabelDummyInfo labelDummyInfo, final boolean headLayer) {
         boolean reversed = isPartOfReversedEdge(labelDummyInfo);
-        
+
         if ((headLayer && !reversed) || (!headLayer && reversed)) {
             return labelDummyInfo.rightmostLayerId;
         } else {
             return labelDummyInfo.leftmostLayerId;
         }
     }
-    
+
     /**
      * Sets the alignment property for the given label dummy. Its placement strategy is assumed to be one of the end
      * strategies.
@@ -369,17 +368,17 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     private void setEndLayerNodeAlignment(final LabelDummyInfo labelDummyInfo) {
         assert labelDummyInfo.placementStrategy == CenterEdgeLabelPlacementStrategy.HEAD_LAYER
                 || labelDummyInfo.placementStrategy == CenterEdgeLabelPlacementStrategy.TAIL_LAYER;
-        
+
         boolean isHeadLabel = labelDummyInfo.placementStrategy == CenterEdgeLabelPlacementStrategy.HEAD_LAYER;
         boolean isPartOfReversedEdge = isPartOfReversedEdge(labelDummyInfo);
-        
+
         if ((isHeadLabel && !isPartOfReversedEdge) || (!isHeadLabel && isPartOfReversedEdge)) {
             labelDummyInfo.labelDummy.setProperty(LayeredOptions.ALIGNMENT, Alignment.RIGHT);
         } else {
             labelDummyInfo.labelDummy.setProperty(LayeredOptions.ALIGNMENT, Alignment.LEFT);
         }
     }
-    
+
     /**
      * Checks if the given label dummy node is part of a reversed edge.
      */
@@ -387,26 +386,26 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         assert labelDummyInfo.labelDummy.getType() == NodeType.LABEL;
         assert labelDummyInfo.labelDummy.getIncomingEdges().iterator().hasNext();
         assert labelDummyInfo.labelDummy.getOutgoingEdges().iterator().hasNext();
-        
+
         // Find incoming and outgoing edge
         LEdge incoming = labelDummyInfo.labelDummy.getIncomingEdges().iterator().next();
         LEdge outgoing = labelDummyInfo.labelDummy.getOutgoingEdges().iterator().next();
-        
+
         return incoming.getProperty(InternalProperties.REVERSED) || outgoing.getProperty(InternalProperties.REVERSED);
     }
 
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Space Efficient
-    
+
     /* The space-efficient assignment strategy is a heuristic. We first perform all trivial assignments: labels
-     * that only have one valid layer available to them, or that can be assigned to a layer larger than he label.
-     * We are then left with labels that are too big for their layers. We define a layer's potential width to be
-     * the maximum of its current width and the width of all unassigned labels that can be assigned to the layer.
-     * We iterate over our labels from biggest to smallest and assign each to the layer with the largest potential
-     * width.
+     * that only have one valid layer available to them, or that can be assigned to a layer larger than the label.
+     * We are then left with labels that are too big for their layers. Given a current label, we define a layer's
+     * potential width to be the maximum of its current width and the width of all unassigned labels that can be
+     * assigned to the layer, except for the current label. We iterate over our labels from biggest to smallest and
+     * assign each to the layer with the currently largest potential width.
      */
-    
+
     /**
      * Runs a heuristic that tries to compute the least wide label dummy to layer assignment.
      */
@@ -417,11 +416,11 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         if (nonTrivialLabels.isEmpty()) {
             return;
         }
-        
+
         // The remaining labels are not as easy to assign. Sort descendingly by size.
         nonTrivialLabels.sort(
                 (info1, info2) -> Double.compare(info2.labelDummy.getSize().x, info1.labelDummy.getSize().x));
-        
+
         int labelCount = nonTrivialLabels.size();
         for (int labelIndex = 0; labelIndex < labelCount; labelIndex++) {
             assignLayer(nonTrivialLabels.get(labelIndex), findPotentiallyWidestLayer(nonTrivialLabels, labelIndex));
@@ -434,25 +433,25 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
      */
     private List<LabelDummyInfo> performTrivialAssignments(final List<LabelDummyInfo> labelDummyInfos) {
         List<LabelDummyInfo> remainingLabels = new ArrayList<>(labelDummyInfos.size());
-        
+
         for (LabelDummyInfo labelDummyInfo : labelDummyInfos) {
             if (labelDummyInfo.leftmostLayerId == labelDummyInfo.rightmostLayerId) {
                 // Assign to only available layer and remove from list
                 assignLayer(labelDummyInfo, labelDummyInfo.leftmostLayerId);
-                
+
             } else if (!assignToWiderLayer(labelDummyInfo)) {
                 // Ending up here means that we didn't find a layer wide enough for the node
                 remainingLabels.add(labelDummyInfo);
             }
         }
-        
+
         return remainingLabels;
     }
-    
+
     /**
      * Assigns the given label dummy to the first layer wide enough to house it. If there is no such layer, the label
      * remains unassigned.
-     * 
+     *
      * @return {@code true} if we succeeded in assigning the label to a layer.
      */
     private boolean assignToWiderLayer(final LabelDummyInfo labelDummyInfo) {
@@ -461,21 +460,21 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         List<Layer> validLayers = labelDummyInfo.labelDummy.getGraph().getLayers().subList(
                 labelDummyInfo.leftmostLayerId,
                 labelDummyInfo.rightmostLayerId + 1);
-        
+
         for (Layer layer : validLayers) {
             if (layer.getSize().x >= dummyWidth) {
                 assignLayer(labelDummyInfo, layer.id);
                 return true;
             }
         }
-        
+
         // Ending up here means that we didn't find a layer wide enough for our label
         return false;
     }
-    
+
     /**
      * Returns the index of the layer with the largest potential width.
-     * 
+     *
      * @param labelDummyInfos
      *            label dummy infos, sorted descendingly by label width.
      * @param labelIndex
@@ -485,24 +484,24 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
      */
     private int findPotentiallyWidestLayer(final List<LabelDummyInfo> labelDummyInfos, final int labelIndex) {
         assert labelIndex >= 0 && labelIndex < labelDummyInfos.size();
-        
+
         int labelCount = labelDummyInfos.size();
         LabelDummyInfo labelDummyInfo = labelDummyInfos.get(labelIndex);
         double labelDummyWidth = labelDummyInfo.labelDummy.getSize().x;
-        
+
         // Iterate over the label's valid layers
         int widestLayerIndex = labelDummyInfo.leftmostLayerId;
         double widestLayerWidth = 0;
-        
+
         for (int layer = labelDummyInfo.leftmostLayerId; layer <= labelDummyInfo.rightmostLayerId; layer++) {
             // If the layer is already at least as large as the current label, simply return that layer
             if (labelDummyWidth <= layerWidths[layer]) {
                 return layer;
             }
-            
+
             // The initial potential width is less wide than the label (otherwise we would have already returned)
             double potentialWidth = layerWidths[layer];
-            
+
             // Find the largest unassigned label that is part of this layer
             LabelDummyInfo largestUnassignedLabel = null;
             for (int label = labelIndex + 1; label < labelCount; label++) {
@@ -512,26 +511,26 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                     largestUnassignedLabel = currLabelInfo;
                 }
             }
-            
+
             // Update layer's potential size
             if (largestUnassignedLabel != null) {
                 potentialWidth = Math.max(potentialWidth, largestUnassignedLabel.labelDummy.getSize().x);
             }
-            
+
             // Update widest layer (if there are multiple widest layers, we use the leftmost one)
             if (potentialWidth > widestLayerWidth) {
                 widestLayerIndex = layer;
                 widestLayerWidth = potentialWidth;
             }
         }
-        
+
         return widestLayerIndex;
     }
 
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Space-Efficient (Optimum)
-    
+
     private void computeOptimalAssignment(final List<LabelDummyInfo> labelDummyInfos) {
         // We start by assigning all label dummies that only have a single layer to choose from or that can be
         // assigned to a layer large enough for them and removing them from our list
@@ -539,22 +538,22 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         if (nonTrivialLabels.isEmpty()) {
             return;
         }
-        
+
         int labels = nonTrivialLabels.size();
         int layers = layerWidths.length;
-        
+
         // Turn the assignment into a linear program to be solved by CPLEX
         try {
             IloCplex cplex = new IloCplex();
-            
+
             cplex.setOut(null);
             cplex.setWarning(null);
-            
+
             // The assignment array that will assign each dummy to a layer after the problem is solved
             IloIntVar[][] assignment = new IloIntVar[labels][];
             for (int d = 0; d < assignment.length; d++) {
                 assignment[d] = cplex.boolVarArray(layers, varNames2D("Assignment", d, layers));
-                
+
                 // Add constraints to ensure that each dummy is assigned to exactly one layer
                 IloLinearIntExpr sum = cplex.linearIntExpr();
                 for (int l = 0; l < layers; l++) {
@@ -562,28 +561,28 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 }
                 cplex.addEq(sum, 1);
             }
-            
+
             // The assignability array will, for each dummy, hold the information whether or not the dummy can be
             // assigned to the different layers
             IloIntVar[][] assignability = new IloIntVar[labels][];
             for (int d = 0; d < assignability.length; d++) {
                 assignability[d] = cplex.boolVarArray(layers, varNames2D("Assignability", d, layers));
                 LabelDummyInfo info = nonTrivialLabels.get(d);
-                
+
                 for (int l = 0; l < layers; l++) {
                     // Add constraint to initialize the array
                     cplex.addEq(assignability[d][l], l >= info.leftmostLayerId && l <= info.rightmostLayerId ? 1 : 0);
-                    
+
                     // Add constraint to ensure that dummies are only ever assigned to valid layers
                     cplex.addLe(assignment[d][l], assignability[d][l]);
                 }
             }
-            
+
             // Calculate the layer widths
             IloNumExpr[] computedLayerWidths = new IloNumExpr[layers];
             for (int l = 0; l < layers; l++) {
                 IloNumExpr[] dummyWidths = new IloNumExpr[labels + 1];
-                
+
                 // Add the contributions of the different dummies (this could probably be optimized by adding only
                 // those labels that may be assigned to the current layer)
                 for (int d = 0; d < labels; d++) {
@@ -591,27 +590,27 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                             assignment[d][l],
                             cplex.linearNumExpr(nonTrivialLabels.get(d).labelDummy.getSize().x));
                 }
-                
+
                 // The layer itself has a width as well
                 dummyWidths[dummyWidths.length - 1] = cplex.linearNumExpr(layerWidths[l]);
-                
+
                 computedLayerWidths[l] = cplex.max(dummyWidths);
             }
-            
+
             // Minimize total width
             cplex.addMinimize(cplex.sum(computedLayerWidths));
-            
+
             // Solve the model
             if (cplex.solve()) {
                if (cplex.getStatus() != Status.Optimal) {
                    throw new RuntimeException("Did not find an OPTIMAL solution!!!");
                }
-               
+
                // Go throught the dummies and find out which layer they were assigned to
                for (int d = 0; d < labels; d++) {
                    LabelDummyInfo info = nonTrivialLabels.get(d);
                    double[] ass = cplex.getValues(assignment[d]);
-                   
+
                    for (int l = info.leftmostLayerId; l <= info.rightmostLayerId; l++) {
                        if (ass[l] == 1) {
                            assignLayer(info, l);
@@ -623,14 +622,14 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 throw new RuntimeException("Did not find a solution!!!1111einself");
             }
             cplex.end();
-            
+
         } catch (IloException e) {
             e.printStackTrace();
         }
-        
+
         return;
     }
-    
+
     private String[] varNames2D(final String base, final int firstDim, final int secondDimCount) {
         String[] varNames = new String[secondDimCount];
         for (int secondDim = 0; secondDim < secondDimCount; secondDim++) {
@@ -639,27 +638,27 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         return varNames;
     }
 
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Swapping Utilities
-    
+
     /**
      * Assigns the given label dummy to the layer with the given index. Updates the layer size if the label enlarges
      * the layer.
      */
     private void assignLayer(final LabelDummyInfo labelDummyInfo, final int targetLayerIndex) {
         assert targetLayerIndex < labelDummyInfo.labelDummy.getGraph().getLayers().size();
-        
+
         // If the label dummy is not in the target layer yet, swap it with the long edge dummy that is
         if (targetLayerIndex != labelDummyInfo.leftmostLayerId + labelDummyInfo.leftLongEdgeDummies.size()) {
             swapNodes(labelDummyInfo.labelDummy,
                     labelDummyInfo.ithDummyNode(targetLayerIndex - labelDummyInfo.leftmostLayerId));
         }
-        
+
         // Update the size information of the label dummy's new layer
         int newLayerId = labelDummyInfo.labelDummy.getLayer().id;
         layerWidths[newLayerId] = Math.max(layerWidths[newLayerId], labelDummyInfo.labelDummy.getSize().x);
-        
+
         for (LLabel label : labelDummyInfo.labelDummy.getProperty(InternalProperties.REPRESENTED_LABELS)) {
             label.setProperty(INCLUDE_LABEL, true);
         }
@@ -677,17 +676,17 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         // properties instead, but we reckon that might actually be more work
         Layer layer1 = labelDummy.getLayer();
         Layer layer2 = longEdgeDummy.getLayer();
-        
+
         int dummy1LayerPosition = layer1.getNodes().indexOf(labelDummy);
         int dummy2LayerPosition = layer2.getNodes().indexOf(longEdgeDummy);
-        
+
         // Detect incoming and outgoing ports of the nodes (this of course assumes that there's just one of each kind,
         // which should be true for long edge and label dummy nodes)
         LPort inputPort1 = labelDummy.getPorts(PortType.INPUT).iterator().next();
         LPort outputPort1 = labelDummy.getPorts(PortType.OUTPUT).iterator().next();
         LPort inputPort2 = longEdgeDummy.getPorts(PortType.INPUT).iterator().next();
         LPort outputPort2 = longEdgeDummy.getPorts(PortType.OUTPUT).iterator().next();
-        
+
         // Store incoming and outgoing edges
         LEdge[] incomingEdges1 = inputPort1.getIncomingEdges().toArray(new LEdge[1]);
         LEdge[] outgoingEdges1 = outputPort1.getOutgoingEdges().toArray(new LEdge[1]);
@@ -712,7 +711,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             edge.setSource(outputPort2);
         }
     }
-    
+
     /**
      * Updates the {@link InternalProperties#LONG_EDGE_BEFORE_LABEL_DUMMY} property of long edge dummy
      * nodes preceding and succeeding the given label dummy node.
@@ -723,14 +722,14 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 labelDummyInfo.labelDummy,
                 node -> node.getIncomingEdges().iterator().next().getSource().getNode(),
                 true);
-        
+
         // We may want to do things to the successors as well at some point
     }
-    
+
     /**
      * Does the actual work of setting the long edge source or target of all nodes before or after
      * the given label dummy node to {@code null}.
-     * 
+     *
      * @param labelDummy
      *            the label dummy node to start from.
      * @param nextElement
@@ -742,23 +741,23 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
      */
     private void doUpdateLongEdgeLabelDummyInfo(final LNode labelDummy,
             final Function<LNode, LNode> nextElement, final boolean value) {
-        
+
         LNode longEdgeDummy = nextElement.apply(labelDummy);
         while (longEdgeDummy.getType() == NodeType.LONG_EDGE) {
             longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY, value);
             longEdgeDummy = nextElement.apply(longEdgeDummy);
         }
     }
-    
-    
+
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Label Dummy Info Class
-    
+
     /**
      * Encapsulates information about a label dummy along with the long edge dummies to its left and to its right.
      */
     private static final class LabelDummyInfo {
-        
+
         /** The label dummy node. */
         private LNode labelDummy;
         /** The label placement strategy to be used with this label. */
@@ -771,30 +770,30 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
         private int leftmostLayerId;
         /** ID of the rightmost layer the label dummy's long edge has a dummy node in. */
         private int rightmostLayerId;
-        
+
         /**
          * Create a new instance to represent the given label dummy. Automatically collects long edge dummies to its
          * left and to its right.
-         * 
+         *
          * @param labelDummy
          *            the label dummy.
          */
         private LabelDummyInfo(final LNode labelDummy,
                 final CenterEdgeLabelPlacementStrategy defaultPlacementStrategy) {
-            
+
             this.labelDummy = labelDummy;
             this.placementStrategy = defaultPlacementStrategy;
-            
+
             // Gather long edge dummies that are part of the label dummy's edge and find the end layer IDs
             gatherLeftLongEdgeDummies();
             gatherRightLongEdgeDummies();
-            
+
             if (leftLongEdgeDummies.isEmpty()) {
                 leftmostLayerId = labelDummy.getLayer().id;
             } else {
                 leftmostLayerId = leftLongEdgeDummies.get(0).getLayer().id;
             }
-            
+
             if (rightLongEdgeDummies.isEmpty()) {
                 rightmostLayerId = labelDummy.getLayer().id;
             } else {
@@ -824,11 +823,11 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                     leftLongEdgeDummies.add(source);
                 }
             } while (source.getType() == NodeType.LONG_EDGE);
-            
+
             // The list is currently not in the order we would expect, so produce a reversed version
             leftLongEdgeDummies = Lists.reverse(leftLongEdgeDummies);
         }
-        
+
         /**
          * Gathers the long edge dummies right of the label dummy which are part of its long edge. The order they are
          * in reflects the order of layers, that is, the label dummy is the predecessor of the first long edge dummy in
@@ -843,14 +842,14 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
                 }
             } while (target.getType() == NodeType.LONG_EDGE);
         }
-        
+
         /**
          * Returns the total number of long edge and label dummy nodes along the label dummy's edge.
          */
         public int totalDummyCount() {
             return rightmostLayerId - leftmostLayerId + 1;
         }
-        
+
         /**
          * Returns the i-th dummy node from the edge through the long edge dummies and the label dummy.
          */
@@ -858,16 +857,16 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             if (i < leftLongEdgeDummies.size()) {
                 // The i-th dummy is a long edge dummy to the label dummy's left
                 return leftLongEdgeDummies.get(i);
-                
+
             } else if (i == leftLongEdgeDummies.size()) {
                 // The i-th dummy is the label dummy itself
                 return labelDummy;
-                
+
             } else {
                 // the i-th dummy is a long edge dummy to the label dummy's right
                 return rightLongEdgeDummies.get(i - leftLongEdgeDummies.size() - 1);
             }
         }
     }
-    
+
 }

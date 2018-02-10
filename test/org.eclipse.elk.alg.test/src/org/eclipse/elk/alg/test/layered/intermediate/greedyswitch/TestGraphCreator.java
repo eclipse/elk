@@ -1029,6 +1029,7 @@ public class TestGraphCreator {
 
     public void setAsLongEdgeDummy(final LNode node) {
         node.setType(NodeType.LONG_EDGE);
+        node.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, null);
     }
 
     public void setPortOrderFixed(final LNode node) {

@@ -16,21 +16,27 @@ import static org.junit.Assert.assertThat;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.Layer;
-import org.eclipse.elk.alg.layered.p3order.counting.NorthSouthEdgeAllCrossingsCounter;
+import org.eclipse.elk.alg.layered.p3order.counting.CrossingsCounter;
 import org.eclipse.elk.alg.test.layered.intermediate.greedyswitch.NorthSouthEdgeTestGraphCreator;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.PortSide;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests {@link NorthSouthEdgeAllCrossingsCounter}.
- *
+ * Tests the north/south edge crossing counting of the {@link CrossingsCounter}.
  */
+@SuppressWarnings("restriction")
 public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGraphCreator {
-    private NorthSouthEdgeAllCrossingsCounter counter;
 
-    // CHECKSTYLEOFF javadoc
+    // CHECKSTYLEOFF Javadoc
     // CHECKSTYLEOFF MagicNumber
     // CHECKSTYLEOFF MethodName
+    
+    @Before
+    public void setup() {
+        LayoutMetaDataService.getInstance();
+    }
 
     @Test
     public void northernNorthSouthNodeSingleCrossing() {
@@ -163,10 +169,10 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
 
     /**
      * <pre>
-     *
-     * *----
-     *    /+--*
-     *   --+--*
+     * *---o
+     *     +--*  
+     *    /| 
+     *   o-+--*
      *   | |
      *  _|_|_
      *  |   |
@@ -195,12 +201,31 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
         assertThat(crossingCount, is(2));
     }
 
-    private void switchNodes(final LNode[] layer, final int i, final int j) {
-        LNode firstNode = layer[i];
-        layer[i] = layer[j];
-        layer[j] = firstNode;
+    /**
+     * *--------o
+     * *------o |
+     * *----o | |
+     * *--o | | |
+     *    | | | |
+     *   _|_|_|_|_ 
+     *  |         |
+     */
+    @Test 
+    public void theOneThatFailedWithTheOldCounting() {
+        LNode[] leftNodes = addNodesToLayer(4, makeLayer(getGraph()));
+        LNode[] middleNodes = addNodesToLayer(5, makeLayer(getGraph()));
+        
+        setFixedOrderConstraint(middleNodes[4]);
+        
+        for (int i = 3; i >= 0; --i) {
+            addNorthSouthEdge(PortSide.NORTH, middleNodes[4], middleNodes[i], leftNodes[i], false);
+        }
+        
+        int crossingCount = initCounterForLayerWithIndexAndCountInLayer(1);
+        
+        assertThat(crossingCount, is(0));
     }
-
+    
     private int initCounterForLayerWithIndexAndCountInLayer(final int layerIndex) {
         setUpIds();
         int numPorts = 0;
@@ -209,8 +234,8 @@ public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGra
                 numPorts += lNode.getPorts().size();
             }
         }
-        counter = new NorthSouthEdgeAllCrossingsCounter(new int[numPorts]);
-        return counter.countCrossings(getGraph().toNodeArray()[layerIndex]);
+        CrossingsCounter counter = new CrossingsCounter(new int[numPorts]);
+        return counter.countNorthSouthPortCrossingsInLayer(getGraph().toNodeArray()[layerIndex]);
     }
 
 }
