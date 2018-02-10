@@ -56,8 +56,11 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports lifelineHeaderHeight
     supports areaHeaderHeight
     supports timeObservationWidth
+    supports executionWidth
+    supports minExecutionHeight
     supports containmentOffset
     supports labelAlignment
+    supports labelSpacing
     supports lifelineSortingStrategy
     supports groupAreas
 }
@@ -159,6 +162,13 @@ option messageSpacing : double {
     default = 50
 }
 
+option labelSpacing : double {
+    label "Label Spacing"
+    description "Space to be left between labels and labeled elements."
+    targets parents
+    default = 5
+}
+
 option lifelineSpacing : double {
     label "Lifeline Spacing"
     description "The horizontal spacing between two adjacent lifelines."
@@ -190,6 +200,20 @@ programmatic option areaHeaderHeight : double {
 programmatic option timeObservationWidth : double {
     label "Time Observation Width"
     description "The width of time observations."
+    targets parents
+    default = 20
+}
+
+option executionWidth : double {
+    label "Execution Width"
+    description "The width of executions on lifelines."
+    targets parents
+    default = 16
+}
+
+option minExecutionHeight : double {
+    label "Minimum Execution Height"
+    description "Minimum height an execution must have."
     targets parents
     default = 20
 }

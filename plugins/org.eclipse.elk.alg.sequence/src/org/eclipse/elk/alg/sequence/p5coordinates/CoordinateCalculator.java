@@ -381,33 +381,31 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         // TODO This code assumes that message labels are simply placed on the lifeline, which is strange...
         for (SMessage message : lifeline.getIncomingMessages()) {
             if (message.getLabelWidth() > lifeline.getSize().x + spacing) {
-                spacing = SequenceLayoutConstants.LABEL_MARGIN + message.getLabelWidth() - lifeline.getSize().x;
+                spacing = context.labelSpacing + message.getLabelWidth() - lifeline.getSize().x;
             }
         }
         
         for (SMessage message : lifeline.getOutgoingMessages()) {
             if (message.getLabelWidth() > lifeline.getSize().x + spacing) {
-                spacing = SequenceLayoutConstants.LABEL_MARGIN + message.getLabelWidth() - lifeline.getSize().x;
+                spacing = context.labelSpacing + message.getLabelWidth() - lifeline.getSize().x;
             }
             
             // Labels of create messages should not overlap the target's header
             if (message.getProperty(SequenceDiagramOptions.MESSAGE_TYPE) == MessageType.CREATE) {
                 // TODO Shouldn't this be dependent on the target lifeline's size, not on this lifeline?
-                if (message.getLabelWidth() + SequenceLayoutConstants.LABEL_MARGIN
-                        > spacing + lifeline.getSize().x / 2) {
+                if (message.getLabelWidth() + context.labelSpacing > spacing + lifeline.getSize().x / 2) {
                     
-                    spacing = SequenceLayoutConstants.LABEL_MARGIN + message.getLabelWidth()
+                    spacing = context.labelSpacing + message.getLabelWidth()
                             - message.getTarget().getSize().x / 2;
                 }
             } 
             
             // Selfloops need a little more space
             if (message.getSource() == message.getTarget()) {
-                if (message.getLabelWidth() + SequenceLayoutConstants.LABEL_MARGIN
+                if (message.getLabelWidth() + context.labelSpacing
                         + context.messageSpacing / 2 > spacing + lifeline.getSize().x / 2) {
                     
-                    spacing = SequenceLayoutConstants.LABEL_MARGIN + message.getLabelWidth()
-                            - lifeline.getSize().x / 2;
+                    spacing = context.labelSpacing + message.getLabelWidth() - lifeline.getSize().x / 2;
                 }
             }
         }
@@ -680,7 +678,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         
         ElkLabel areaLabel = areaNode.getLabels().get(0);
         
-        areaLabel.setY(SequenceLayoutConstants.LABELSPACING);
-        areaLabel.setX(areaNode.getWidth() - areaNode.getWidth() - SequenceLayoutConstants.LABELSPACING);
+        areaLabel.setY(context.labelSpacing);
+        areaLabel.setX(areaNode.getWidth() - areaNode.getWidth() - context.labelSpacing);
     }
 }

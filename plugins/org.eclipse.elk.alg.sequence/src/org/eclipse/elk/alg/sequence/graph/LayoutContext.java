@@ -44,6 +44,8 @@ public final class LayoutContext {
     
     /** Vertical spacing between two consecutive layers of messages. */
     public final double messageSpacing;
+    /** Space to be left between labels and labeled elements. */
+    public final double labelSpacing;
     /** Horizontal spacing between two consecutive lifelines. */
     public final double lifelineSpacing;
     /** The height of lifeline headers. */
@@ -56,6 +58,10 @@ public final class LayoutContext {
     public final double containmentOffset;
     /** The width of timing observations. */
     public final double timeObservationWidth;
+    /** The width of executions. */
+    public final double executionWidth;
+    /** The minimum height of executions. */
+    public final double minExecutionHeight;
     
     // CHECKSTYLEON VisibilityModifier
     
@@ -78,15 +84,21 @@ public final class LayoutContext {
         
         messageSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.MESSAGE_SPACING);
+        labelSpacing = parentNode.getProperty(
+                SequenceDiagramOptions.LABEL_SPACING);
         lifelineSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_SPACING);
         lifelineHeaderHeight = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_HEADER_HEIGHT);
         areaHeaderHeight = parentNode.getProperty(
                 SequenceDiagramOptions.AREA_HEADER_HEIGHT);
-        timeObservationWidth = parentNode.getProperty(
-                SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
         containmentOffset = parentNode.getProperty(
                 SequenceDiagramOptions.CONTAINMENT_OFFSET);
+        timeObservationWidth = parentNode.getProperty(
+                SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
+        executionWidth = parentNode.getProperty(
+                SequenceDiagramOptions.EXECUTION_WIDTH);
+        minExecutionHeight = parentNode.getProperty(
+                SequenceDiagramOptions.MIN_EXECUTION_HEIGHT);
     }
 }

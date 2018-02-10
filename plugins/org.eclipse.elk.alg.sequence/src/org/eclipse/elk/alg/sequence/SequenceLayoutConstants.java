@@ -11,12 +11,11 @@
 package org.eclipse.elk.alg.sequence;
 
 /**
- * Keeps a bunch of constants used throughout the algorithm. Most of this should probably be phased out
- * and replaced by proper layout options.
+ * Keeps a bunch of constants used throughout the algorithm. Will be removed.
  */
 public final class SequenceLayoutConstants {
     
-    // TODO All these constants should really disappear or at least be more sensibly named
+    // TODO All these constants should disappear at some point.
     
     /** Constant that is needed to calculate some offsets. */
     public static final int TEN = 10;
@@ -24,14 +23,6 @@ public final class SequenceLayoutConstants {
     public static final int TWENTY = 20;
     /** Constant that is needed to calculate some offsets. */
     public static final int FOURTY = 40;
-    /** The vertical spacing between message and label. */
-    public static final int LABELSPACING = 5;
-    /** The horizontal margin for message labels. */
-    public static final int LABEL_MARGIN = 10;
-    /** The minimum height of an execution. */
-    public static final int MIN_EXECUTION_HEIGHT = 20;
-    /** The width of executions. This could well be turned into a layout option at some point. */
-    public static final int EXECUCTION_WIDTH = 16;
     
 
     /**

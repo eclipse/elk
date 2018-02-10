@@ -403,8 +403,8 @@ public final class ElkGraphExporter {
                     xPos = edgeSection.getStartX();
                 }
                 
-                label.setY(smessage.getSourceYPos() + SequenceLayoutConstants.LABELSPACING + offset.y);
-                label.setX(xPos + SequenceLayoutConstants.LABEL_MARGIN / 2);
+                label.setY(smessage.getSourceYPos() + context.labelSpacing + offset.y);
+                label.setX(xPos + context.labelSpacing / 2);
                 
                 ensureGraphIsWideEnough(context, label.getX() + label.getWidth());
             }
@@ -458,7 +458,7 @@ public final class ElkGraphExporter {
             
         case SOURCE:
             // Place label near the source lifeline
-            klabel.setX(llCenter + SequenceLayoutConstants.LABELSPACING + offset.x);
+            klabel.setX(llCenter + context.labelSpacing + offset.x);
             break;
             
         case CENTER:
@@ -513,7 +513,7 @@ public final class ElkGraphExporter {
             
         case SOURCE:
             // Place label near the source lifeline
-            klabel.setX(llCenter - klabel.getWidth() - SequenceLayoutConstants.LABELSPACING + offset.x);
+            klabel.setX(llCenter - klabel.getWidth() - context.labelSpacing + offset.x);
             break;
             
         case CENTER:
@@ -552,7 +552,7 @@ public final class ElkGraphExporter {
         }
         
         // Set xPos, maxXPos and height / maxYPos
-        arrangeExecutions(slifeline);
+        arrangeExecutions(context, slifeline);
 
         // Self-messages need to be processed later, once all executions are placed
         Multimap<SMessage, SExecution> selfMessages = HashMultimap.create();
@@ -619,14 +619,16 @@ public final class ElkGraphExporter {
     /**
      * Set x position and width of all executions and check for minimum height.
      * 
+     * @param context
+     *            the layout context that contains all relevant information for the current layout run.
      * @param slifeline
      *            the lifeline the executions belong to.
      */
-    private void arrangeExecutions(final SLifeline slifeline) {
+    private void arrangeExecutions(final LayoutContext context, final SLifeline slifeline) {
         List<SExecution> sexecutions = slifeline.getExcecutions();
         
         // All executions are initially centered in their lifeline (the width of some of them is set later)
-        double x = slifeline.getPosition().x + (slifeline.getSize().x - SequenceLayoutConstants.EXECUCTION_WIDTH) / 2;
+        double x = slifeline.getPosition().x + (slifeline.getSize().x - context.executionWidth) / 2;
         sexecutions.stream().forEach(exec -> exec.getPosition().x = x);
 
         // If there are multiple executions, some may have to be shifted horizontally if they overlap
@@ -654,7 +656,7 @@ public final class ElkGraphExporter {
                 }
                 
                 // Shift execution position
-                sexecution.getPosition().x += slot * SequenceLayoutConstants.EXECUCTION_WIDTH / 2;
+                sexecution.getPosition().x += slot * context.executionWidth / 2;
             }
         }
 
@@ -662,10 +664,10 @@ public final class ElkGraphExporter {
         for (SExecution sexecution : sexecutions) {
             KVector size = sexecution.getSize();
             
-            size.y = Math.max(size.y, SequenceLayoutConstants.MIN_EXECUTION_HEIGHT);
+            size.y = Math.max(size.y, context.minExecutionHeight);
             
             if (sexecution.getType() == SequenceExecutionType.EXECUTION) {
-                sexecution.getSize().x = SequenceLayoutConstants.EXECUCTION_WIDTH;
+                sexecution.getSize().x = context.executionWidth;
             }
         }
     }
