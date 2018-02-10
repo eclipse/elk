@@ -42,26 +42,26 @@ public final class LayoutContext {
     /** Whether to include areas in the lifeline sorting process. Used by some sorters. */
     public final boolean groupAreasWhenSorting;
     
+    /** Horizontal spacing between two consecutive lifelines. */
+    public final double lifelineSpacing;
     /** Vertical spacing between two consecutive layers of messages. */
     public final double messageSpacing;
     /** Space to be left between labels and labeled elements. */
     public final double labelSpacing;
-    /** Horizontal spacing between two consecutive lifelines. */
-    public final double lifelineSpacing;
     /** The height of lifeline headers. */
     // TODO: This should actually be specific to each lifeline.
     public final double lifelineHeaderHeight;
     /** The height of the header of combined fragments. */
     // TODO: We should rather use a proper padding instead of this and the following value.
     public final double areaHeaderHeight;
-    /** The offset between two nested areas. */
-    public final double containmentOffset;
-    /** The width of timing observations. */
-    public final double timeObservationWidth;
-    /** The width of executions. */
-    public final double executionWidth;
     /** The minimum height of executions. */
     public final double minExecutionHeight;
+    /** The width of executions. */
+    public final double executionWidth;
+    /** The width of timing observations. */
+    public final double timeObservationWidth;
+    /** The offset between two nested areas. */
+    public final double containmentOffset;
     
     // CHECKSTYLEON VisibilityModifier
     
@@ -82,23 +82,23 @@ public final class LayoutContext {
         groupAreasWhenSorting = parentNode.getProperty(
                 SequenceDiagramOptions.GROUP_AREAS);
         
-        messageSpacing = parentNode.getProperty(
-                SequenceDiagramOptions.MESSAGE_SPACING);
-        labelSpacing = parentNode.getProperty(
-                SequenceDiagramOptions.LABEL_SPACING);
         lifelineSpacing = parentNode.getProperty(
-                SequenceDiagramOptions.LIFELINE_SPACING);
+                SequenceDiagramOptions.SPACING_LIFELINE);
+        messageSpacing = parentNode.getProperty(
+                SequenceDiagramOptions.SPACING_MESSAGE);
+        labelSpacing = parentNode.getProperty(
+                SequenceDiagramOptions.SPACING_LABEL);
         lifelineHeaderHeight = parentNode.getProperty(
-                SequenceDiagramOptions.LIFELINE_HEADER_HEIGHT);
+                SequenceDiagramOptions.SIZE_LIFELINE_HEADER_HEIGHT);
         areaHeaderHeight = parentNode.getProperty(
-                SequenceDiagramOptions.AREA_HEADER_HEIGHT);
+                SequenceDiagramOptions.SIZE_AREA_HEADER_HEIGHT);
+        minExecutionHeight = parentNode.getProperty(
+                SequenceDiagramOptions.SIZE_MIN_EXECUTION_HEIGHT);
+        executionWidth = parentNode.getProperty(
+                SequenceDiagramOptions.SIZE_EXECUTION_WIDTH);
+        timeObservationWidth = parentNode.getProperty(
+                SequenceDiagramOptions.SIZE_TIME_OBSERVATION_WIDTH);
         containmentOffset = parentNode.getProperty(
                 SequenceDiagramOptions.CONTAINMENT_OFFSET);
-        timeObservationWidth = parentNode.getProperty(
-                SequenceDiagramOptions.TIME_OBSERVATION_WIDTH);
-        executionWidth = parentNode.getProperty(
-                SequenceDiagramOptions.EXECUTION_WIDTH);
-        minExecutionHeight = parentNode.getProperty(
-                SequenceDiagramOptions.MIN_EXECUTION_HEIGHT);
     }
 }

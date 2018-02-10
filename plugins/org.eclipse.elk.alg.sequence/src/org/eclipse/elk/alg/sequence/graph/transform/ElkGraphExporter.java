@@ -218,7 +218,7 @@ public final class ElkGraphExporter {
         }
 
         // Lost messages end between their source and the next lifeline
-        MessageType messageType = smessage.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+        MessageType messageType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
         if (messageType == MessageType.LOST) {
             edgeSection.setEndLocation(
                     slifeline.getPosition().x + slifeline.getSize().x + context.lifelineSpacing / 2 + offset.x,
@@ -269,7 +269,7 @@ public final class ElkGraphExporter {
                 smessage.getTargetYPos() + offset.y);
         
         // We need to adjust the lifeline's position / size if we have a create or delete message
-        MessageType messageType = smessage.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+        MessageType messageType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
         if (messageType == MessageType.CREATE) {
             // Set lifeline's yPos to the yPos of the create-message and modify lifeline height accordingly
             double delta = smessage.getTargetYPos() - context.lifelineHeaderHeight / 2 - slifeline.getPosition().y;
@@ -375,7 +375,7 @@ public final class ElkGraphExporter {
      *            the edge representing the message in the original graph
      */
     private void placeLabels(final LayoutContext context, final SMessage smessage, final ElkEdge kmessage) {
-        MessageType msgType = smessage.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+        MessageType msgType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
         SLifeline msgSource = smessage.getSource();
         SLifeline msgTarget = smessage.getTarget();
         
@@ -435,7 +435,7 @@ public final class ElkGraphExporter {
         // For the horizontal alignment, we need to check which alignment strategy to use
         LabelAlignmentStrategy alignment = context.labelAlignment;
 
-        MessageType msgType = smessage.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+        MessageType msgType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
         if (isRightmostLifeline(srcLL) && alignment == LabelAlignmentStrategy.SOURCE_CENTER) {
             // This is a lost message; fall back to source placement
             alignment = LabelAlignmentStrategy.SOURCE;

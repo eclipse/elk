@@ -348,7 +348,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         if (firstLifelineOptional.isPresent()) {
             boolean hasFoundMessages = StreamSupport
                     .stream(firstLifelineOptional.get().getIncomingMessages().spliterator(), false)
-                    .anyMatch(msg -> msg.getProperty(SequenceDiagramOptions.MESSAGE_TYPE) == MessageType.FOUND);
+                    .anyMatch(msg -> msg.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.FOUND);
             
             if (hasFoundMessages) {
                 // This is the only case where we need extra space
@@ -391,7 +391,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             }
             
             // Labels of create messages should not overlap the target's header
-            if (message.getProperty(SequenceDiagramOptions.MESSAGE_TYPE) == MessageType.CREATE) {
+            if (message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE) {
                 // TODO Shouldn't this be dependent on the target lifeline's size, not on this lifeline?
                 if (message.getLabelWidth() + context.labelSpacing > spacing + lifeline.getSize().x / 2) {
                     
@@ -443,7 +443,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                     // Handle conflicts (reset yPos if necessary)
                     SComment upper = comment;
                     SComment lower = messageCommentMap.get(message);
-                    NodeType nodeType = comment.getProperty(SequenceDiagramOptions.NODE_TYPE);
+                    NodeType nodeType = comment.getProperty(SequenceDiagramOptions.TYPE_NODE);
                     
                     // If comment is Observation, place it nearer to the message
                     if (nodeType == NodeType.DURATION_OBSERVATION || nodeType == NodeType.TIME_OBSERVATION) {

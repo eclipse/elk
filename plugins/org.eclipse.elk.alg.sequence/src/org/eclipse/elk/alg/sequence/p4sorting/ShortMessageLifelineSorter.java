@@ -185,7 +185,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
                 // Give a "penalty" to the TL-value of the node if there are messages leading to the
                 // surrounding interaction. This is necessary, because these messages point to the
                 // right border of the diagram and are not considered in the normal algorithm.
-                MessageType messageType = message.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+                MessageType messageType = message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
                 if (oppositeNode == null && messageType != MessageType.LOST) {
                     node.setTl(node.getTl() - 1);
                 }
@@ -197,7 +197,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
             for (SMessage message : lifeline.getIncomingMessages()) {
                 SLifeline source = message.getSource();
                 EDLSNode oppositeNode = correspondences.get(source);
-                MessageType messageType = message.getProperty(SequenceDiagramOptions.MESSAGE_TYPE);
+                MessageType messageType = message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
                 if (oppositeNode == null && messageType != MessageType.FOUND) {
                     node.setTl(node.getTl() + 1);
                 }

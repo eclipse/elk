@@ -37,185 +37,195 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
         "A layout algorithm especially targeted at UML sequence diagrams."
     metadataClass options.SequenceDiagramOptions
     category sequenceDiagrams
-    supports org.eclipse.elk.padding
+    
     supports org.eclipse.elk.margins
-    supports elementId
-    supports nodeType
-    supports messageType
-    supports areaIds
-    supports upperEmptyAreaId
-    supports parentAreaId
-    supports executionType
-    supports parentLifelineId
-    supports sourceExecutionIds
-    supports targetExecutionIds
-    supports attachedElementId
+    supports org.eclipse.elk.padding
     supports interactionPadding
-    supports messageSpacing
-    supports lifelineSpacing
-    supports lifelineHeaderHeight
-    supports areaHeaderHeight
-    supports timeObservationWidth
-    supports executionWidth
-    supports minExecutionHeight
+    
+    supports id.element
+    supports id.parentLifeline
+    supports id.areas
+    supports id.parentArea
+    supports id.upperEmptyArea
+    supports id.sourceExecutions
+    supports id.targetExecutions
+    supports id.attachedElement
+    
+    supports type.node
+    supports type.message
+    supports type.execution
+    
+    supports spacing.lifeline
+    supports spacing.message
+    supports spacing.^label
+    
+    supports size.lifelineHeaderHeight
+    supports size.areaHeaderHeight
+    supports size.minExecutionHeight
+    supports size.executionWidth
+    supports size.timeObservationWidth
+    
     supports containmentOffset
+    
     supports labelAlignment
-    supports labelSpacing
     supports lifelineSortingStrategy
     supports groupAreas
 }
 
-programmatic option elementId : int {
-    label "Element ID"
-    description "An ID that can be given to diagram elements and referenced by other elements. The ID must be unique
-                in the diagram for it to be of any use and should be {@code >= 0}."
-    targets nodes
-    default = 0
-}
-
-programmatic option parentLifelineId : int {
-    label "Parent Lifeline ID"
-    description "ID of the lifeline an execution or a destruction event belongs to."
-    targets nodes
-    default = 0
-}
-
-programmatic option nodeType : NodeType {
-    label "Node Type"
-    description "The kind of element a node represents."
-    targets nodes
-    default = NodeType.LIFELINE
-}
-
-programmatic option messageType : MessageType {
-    label "Message Type"
-    description "The kind of message an edge represents."
-    targets edges
-    default = MessageType.ASYNCHRONOUS
-}
-
-programmatic option areaIds : List<Integer> {
-    label "Area IDs"
-    description "A list of IDs of element IDs of any areas (such as fragments) a message or lifeline belongs to, if
-                any. On lifelines, this only has to be set for empty areas."
-    targets nodes, edges
-    default = Lists.newArrayList()
-}
-
-programmatic option upperEmptyAreaId : int {
-    label "Upper Empty Area ID"
-    description "Element IDs of an empty area (such as fragments) that should be placed directly above a message,
-                if any."
-    targets edges
-    default = 0
-}
-
-programmatic option parentAreaId : int {
-    label "Parent Area ID"
-    description "Element ID of an area's parent area, if any."
-    targets nodes
-    default = 0
-}
-
-programmatic option executionType : SequenceExecutionType {
-    label "Execution Type"
-    description "The type of execution a node represents."
-    targets nodes
-    default = SequenceExecutionType.EXECUTION
-}
-
-programmatic option sourceExecutionIds : List<Integer> {
-    label "Source Execution IDs"
-    description "Element IDs of the executions a message starts at, if any. This is a list because a message can be
-                part of several nested executions. The most deeply nested execution will be the one the message will
-                actually be visually attached to."
-    targets edges
-    default = Lists.newArrayList
-}
-
-programmatic option targetExecutionIds : List<Integer> {
-    label "Target Execution IDs"
-    description "Element IDs of the executions a message ends at, if any. This is a list because a message can be
-                part of several nested executions. The most deeply nested execution will be the one the message will
-                actually be visually attached to."
-    targets edges
-    default = Lists.newArrayList
-}
-
-programmatic option attachedElementId : int {
-    label "Attached Element ID"
-    description "Element ID of the object a comment is attached to, if any."
-    targets nodes
-}
-
 option interactionPadding : ElkPadding {
     label "Interaction Padding"
-    description "Space to leave between child elements and the border of the surrounding interaction."
+    description
+        "Space to leave between child elements and the border of the surrounding interaction. This option can be used
+        instead of the regular PADDING option if the latter is not available due to it being used automatically by the
+        drawing framework, which is the case for KLighD, for example."
     targets parents
     default = new ElkPadding(0)
 }
 
-option messageSpacing : double {
-    label "Message Spacing"
-    description "The vertical spacing between two adjacent messages."
-    targets parents
-    default = 50
+group id {
+    programmatic option element : int {
+        label "Element ID"
+        description "An ID that can be given to diagram elements and referenced by other elements. The ID must be unique
+                    in the diagram for it to be of any use and should be {@code >= 0}."
+        targets nodes
+        default = 0
+    }
+    
+    programmatic option parentLifeline : int {
+        label "Parent Lifeline ID"
+        description "ID of the lifeline an execution or a destruction event belongs to."
+        targets nodes
+        default = 0
+    }
+    
+    programmatic option areas : List<Integer> {
+        label "Area IDs"
+        description "A list of IDs of element IDs of any areas (such as fragments) a message or lifeline belongs to, if
+                    any. On lifelines, this only has to be set for empty areas."
+        targets nodes, edges
+        default = Lists.newArrayList()
+    }
+    
+    programmatic option parentArea : int {
+        label "Parent Area ID"
+        description "Element ID of an area's parent area, if any."
+        targets nodes
+        default = 0
+    }
+    
+    programmatic option upperEmptyArea : int {
+        label "Upper Empty Area ID"
+        description "Element IDs of an empty area (such as fragments) that should be placed directly above a message,
+                    if any."
+        targets edges
+        default = 0
+    }
+
+    programmatic option sourceExecutions : List<Integer> {
+        label "Source Execution IDs"
+        description "Element IDs of the executions a message starts at, if any. This is a list because a message can be
+                    part of several nested executions. The most deeply nested execution will be the one the message will
+                    actually be visually attached to."
+        targets edges
+        default = Lists.newArrayList
+    }
+    
+    programmatic option targetExecutions : List<Integer> {
+        label "Target Execution IDs"
+        description "Element IDs of the executions a message ends at, if any. This is a list because a message can be
+                    part of several nested executions. The most deeply nested execution will be the one the message will
+                    actually be visually attached to."
+        targets edges
+        default = Lists.newArrayList
+    }
+    
+    programmatic option attachedElement : int {
+        label "Attached Element ID"
+        description "Element ID of the object a comment is attached to, if any."
+        targets nodes
+    }
 }
 
-option labelSpacing : double {
-    label "Label Spacing"
-    description "Space to be left between labels and labeled elements."
-    targets parents
-    default = 5
+group type {
+    programmatic option node : NodeType {
+        label "Node Type"
+        description "The kind of element a node represents."
+        targets nodes
+        default = NodeType.LIFELINE
+    }
+    
+    programmatic option message : MessageType {
+        label "Message Type"
+        description "The kind of message an edge represents."
+        targets edges
+        default = MessageType.ASYNCHRONOUS
+    }
+    
+    programmatic option execution : SequenceExecutionType {
+        label "Execution Type"
+        description "The type of execution a node represents."
+        targets nodes
+        default = SequenceExecutionType.EXECUTION
+    }
 }
 
-option lifelineSpacing : double {
-    label "Lifeline Spacing"
-    description "The horizontal spacing between two adjacent lifelines."
-    targets parents
-    default = 50
+group spacing {
+    option lifeline : double {
+        label "Lifeline Spacing"
+        description "The horizontal spacing between two adjacent lifelines."
+        targets parents
+        default = 50
+    }
+    option message : double {
+        label "Message Spacing"
+        description "The vertical spacing between two adjacent messages."
+        targets parents
+        default = 50
+    }
+    
+    option ^label : double {
+        label "Label Spacing"
+        description "Space to be left between labels and labeled elements."
+        targets parents
+        default = 5
+    }
 }
 
-programmatic option lifelineYPos : double {
-    label "Vertical Lifeline Position"
-    description "The vertical position of lifelines, if they do start at the top."
-    targets parents
-    default = 10
-}
-
-programmatic option lifelineHeaderHeight : double {
-    label "Lifeline Header Height"
-    description "The height of the lifelien header."
-    targets parents
-    default = 30
-}
-
-programmatic option areaHeaderHeight : double {
-    label "Area Header Height"
-    description "The height of combined fragment headers."
-    targets parents
-    default = 25
-}
-
-programmatic option timeObservationWidth : double {
-    label "Time Observation Width"
-    description "The width of time observations."
-    targets parents
-    default = 20
-}
-
-option executionWidth : double {
-    label "Execution Width"
-    description "The width of executions on lifelines."
-    targets parents
-    default = 16
-}
-
-option minExecutionHeight : double {
-    label "Minimum Execution Height"
-    description "Minimum height an execution must have."
-    targets parents
-    default = 20
+group size {
+    programmatic option lifelineHeaderHeight : double {
+        label "Lifeline Header Height"
+        description "The height of the lifelien header."
+        targets parents
+        default = 30
+    }
+    
+    programmatic option areaHeaderHeight : double {
+        label "Area Header Height"
+        description "The height of combined fragment headers."
+        targets parents
+        default = 25
+    }
+    
+    option minExecutionHeight : double {
+        label "Minimum Execution Height"
+        description "Minimum height an execution must have."
+        targets parents
+        default = 20
+    }
+    
+    option executionWidth : double {
+        label "Execution Width"
+        description "The width of executions on lifelines."
+        targets parents
+        default = 16
+    }
+    
+    programmatic option timeObservationWidth : double {
+        label "Time Observation Width"
+        description "The width of time observations."
+        targets parents
+        default = 20
+    }
 }
 
 programmatic option containmentOffset : double {
