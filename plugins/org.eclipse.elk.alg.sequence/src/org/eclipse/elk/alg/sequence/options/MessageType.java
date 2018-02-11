@@ -11,16 +11,12 @@
 package org.eclipse.elk.alg.sequence.options;
 
 /**
- * Enumeration of possible message types for sequence diagrams.
+ * Enumeration of possible special message types for sequence diagrams. Whether a message is synchronous or
+ * asynchronous is of no interest to the layout algorithm. The algorithm is interested in messages that need to be
+ * handled in a special way, which is true for all message types in this enumeration.
  */
 public enum MessageType {
     
-    /** Standard messages for sequence diagrams. */
-    ASYNCHRONOUS,
-    /** Synchronous messages. */
-    SYNCHRONOUS,
-    /** Reply messages. */
-    REPLY,
     /** Create messages. */
     CREATE,
     /** Delete messages. */

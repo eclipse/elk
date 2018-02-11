@@ -365,14 +365,14 @@ public final class ElkGraphImporter {
 
             // Append the message type of the edge to the message (for certain message types)
             MessageType messageType = kmessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
-            switch (messageType) {
-            case ASYNCHRONOUS:
-            case CREATE:
-            case DELETE:
-            case LOST:
-            case SYNCHRONOUS:
-                smessage.setProperty(SequenceDiagramOptions.TYPE_MESSAGE, messageType);
-                break;
+            if (messageType != null) {
+                switch (messageType) {
+                case CREATE:
+                case DELETE:
+                case LOST:
+                    smessage.setProperty(SequenceDiagramOptions.TYPE_MESSAGE, messageType);
+                    break;
+                }
             }
 
             // Outgoing messages to the surrounding interaction are drawn to the right and therefore
@@ -451,6 +451,9 @@ public final class ElkGraphImporter {
             sourceLL.addMessage(smessage);
             targetLL.addMessage(smessage);
 
+            // Import labels
+            smessage.setLabel(importLabel(kmessage));
+
             // Check if the message connects to target executions
             if (kmessage.hasProperty(SequenceDiagramOptions.ID_TARGET_EXECUTIONS)) {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.ID_TARGET_EXECUTIONS)) {
@@ -465,14 +468,14 @@ public final class ElkGraphImporter {
 
             // Append the message type of the edge to the message
             MessageType messageType = kmessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
-            switch (messageType) {
-            case ASYNCHRONOUS:
-            case CREATE:
-            case DELETE:
-            case FOUND:
-            case SYNCHRONOUS:
-                smessage.setProperty(SequenceDiagramOptions.TYPE_MESSAGE, messageType);
-                break;
+            if (messageType != null) {
+                switch (messageType) {
+                case CREATE:
+                case DELETE:
+                case FOUND:
+                    smessage.setProperty(SequenceDiagramOptions.TYPE_MESSAGE, messageType);
+                    break;
+                }
             }
 
             // Since incoming messages come from the left side of the surrounding interaction, give its dummy lifeline
@@ -616,6 +619,11 @@ public final class ElkGraphImporter {
         // Build a node for every message.
         int nodeNumber = 0;
         for (SLifeline lifeline : context.sgraph.getLifelines()) {
+            // We ignore dummy lifelines
+            if (lifeline.isDummy()) {
+                continue;
+            }
+            
             for (SMessage message : lifeline.getOutgoingMessages()) {
                 LNode node = new LNode(lgraph);
                 lgraph.getLayerlessNodes().add(node);
@@ -626,7 +634,7 @@ public final class ElkGraphImporter {
                 message.setProperty(InternalSequenceProperties.LAYERED_NODE, node);
             }
 
-            // Handle found messages (they have no source lifeline)
+            // Handle found messages (whose source lifeline is a dummy lifeline)
             for (SMessage message : lifeline.getIncomingMessages()) {
                 if (message.getSource().isDummy()) {
                     LNode node = new LNode(lgraph);

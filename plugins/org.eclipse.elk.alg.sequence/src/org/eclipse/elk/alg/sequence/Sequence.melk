@@ -155,9 +155,10 @@ group type {
     
     programmatic option message : MessageType {
         label "Message Type"
-        description "The kind of message an edge represents."
+        description
+            "The kind of message an edge represents. Only message types that affect a sequence diagram's layout are
+            represented here."
         targets edges
-        default = MessageType.ASYNCHRONOUS
     }
     
     programmatic option execution : SequenceExecutionType {

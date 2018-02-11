@@ -690,7 +690,7 @@ public final class ElkGraphExporter {
     private void applyExecutionCoordinatesToSelfMessages(final SLifeline slifeline,
             final Multimap<SMessage, SExecution> selfMessages, final LayoutContext context) {
         
-        double lifelineXCenter = slifeline.getSize().x / 2;
+        double lifelineXCenter = slifeline.getPosition().x + slifeline.getSize().x / 2;
         
         for (final SMessage smessage : selfMessages.keySet()) {
             assert smessage.getSource() == slifeline && smessage.getTarget() == slifeline;
