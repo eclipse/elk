@@ -55,6 +55,9 @@ public final class ElkGraphExporter {
         ElkPadding sgraphPadding = context.sgraph.getPadding();
         offset = new KVector(sgraphPadding.left, sgraphPadding.top);
         
+        // Reset edge sections
+        context.elkgraph.getContainedEdges().stream().forEach(edge -> edge.getSections().clear());
+        
         // Place things (in placing things, other things are placed as well, which is nice)
         placeLifelines(context);
         placeAreas(context);
@@ -260,7 +263,6 @@ public final class ElkGraphExporter {
         // Apply target point position
         ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalSequenceProperties.ORIGIN);
         
-        assert kmessage.getSections().size() == 1;
         ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, true);
         edgeSection.setEndLocation(
                 llCenter + offset.x,

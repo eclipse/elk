@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.LifelineSortingStrategy;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
@@ -48,20 +49,17 @@ public final class LayoutContext {
     public final double messageSpacing;
     /** Space to be left between labels and labeled elements. */
     public final double labelSpacing;
+    /** Default padding between an area's border and its innards. Can be overriden by area nodes. */
+    public final ElkPadding areaPadding;
     /** The height of lifeline headers. */
     // TODO: This should actually be specific to each lifeline.
     public final double lifelineHeaderHeight;
-    /** The height of the header of combined fragments. */
-    // TODO: We should rather use a proper padding instead of this and the following value.
-    public final double areaHeaderHeight;
     /** The minimum height of executions. */
     public final double minExecutionHeight;
     /** The width of executions. */
     public final double executionWidth;
     /** The width of timing observations. */
     public final double timeObservationWidth;
-    /** The offset between two nested areas. */
-    public final double containmentOffset;
     
     // CHECKSTYLEON VisibilityModifier
     
@@ -80,7 +78,7 @@ public final class LayoutContext {
         sortingStrategy = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY);
         groupAreasWhenSorting = parentNode.getProperty(
-                SequenceDiagramOptions.GROUP_AREAS);
+                SequenceDiagramOptions.AREAS_GROUP);
         
         lifelineSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.SPACING_LIFELINE);
@@ -88,17 +86,15 @@ public final class LayoutContext {
                 SequenceDiagramOptions.SPACING_MESSAGE);
         labelSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.SPACING_LABEL);
+        areaPadding = parentNode.getProperty(
+                SequenceDiagramOptions.AREAS_PADDING);
         lifelineHeaderHeight = parentNode.getProperty(
                 SequenceDiagramOptions.SIZE_LIFELINE_HEADER_HEIGHT);
-        areaHeaderHeight = parentNode.getProperty(
-                SequenceDiagramOptions.SIZE_AREA_HEADER_HEIGHT);
         minExecutionHeight = parentNode.getProperty(
                 SequenceDiagramOptions.SIZE_MIN_EXECUTION_HEIGHT);
         executionWidth = parentNode.getProperty(
                 SequenceDiagramOptions.SIZE_EXECUTION_WIDTH);
         timeObservationWidth = parentNode.getProperty(
                 SequenceDiagramOptions.SIZE_TIME_OBSERVATION_WIDTH);
-        containmentOffset = parentNode.getProperty(
-                SequenceDiagramOptions.CONTAINMENT_OFFSET);
     }
 }

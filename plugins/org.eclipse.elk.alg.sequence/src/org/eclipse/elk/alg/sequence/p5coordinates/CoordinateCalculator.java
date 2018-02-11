@@ -30,6 +30,7 @@ import org.eclipse.elk.alg.sequence.options.NodeType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkLabel;
@@ -491,23 +492,19 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                 setAreaPositionByLifelinesAndMessage(context, area);
             }
 
-            // Check if there are contained areas
-            int containmentDepth = checkHierarchy(area);
-            
-            // If so, an offset has to be calculated in order not to have overlapping borders
-            int containmentSpacing = (int) (containmentDepth * context.containmentOffset);
-            
             KVector areaPos = area.getPosition();
             KVector areaSize = area.getSize();
+            ElkPadding areaPadding = paddingFor(area, context);
+            
+            // Check if there are contained areas
+            int hierarchyDepth = calculateHierarchyDepth(area);
 
-            areaPos.x = area.getPosition().x - context.lifelineSpacing / 2 - containmentSpacing;
-            areaSize.x = area.getSize().x + context.lifelineSpacing + 2 * containmentSpacing;
+            areaPos.x = area.getPosition().x - hierarchyDepth * areaPadding.left;
+            areaSize.x = area.getSize().x + hierarchyDepth * (areaPadding.left + areaPadding.right);
 
-            // TODO This needs to be handled better
-            areaPos.y = area.getPosition().y - (containmentDepth + 1) * context.areaHeaderHeight
-                    - SequenceLayoutConstants.TWENTY;
-            areaSize.y = area.getSize().y + (containmentDepth + 1) * context.areaHeaderHeight + containmentSpacing
-                    + SequenceLayoutConstants.FOURTY;
+            // TODO This needs to be handled better. We need to sum the actual paddings of surrounding areas.
+            areaPos.y = area.getPosition().y - hierarchyDepth * areaPadding.top;
+            areaSize.y = area.getSize().y + hierarchyDepth * (areaPadding.top + areaPadding.bottom);
             
             // The area might have a label that needs to be positioned as well
             calculateAreaLabelPosition(context, area);
@@ -547,7 +544,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                 
                 // Reset last subArea's height to fit
                 if (lastSubArea != null) {
-                    lastSubArea.getSize().y = areaSize.y - areaPos.y - context.areaHeaderHeight;
+                    lastSubArea.getSize().y = areaSize.y - areaPos.y - areaPadding.top;
                 }
             }
         }
@@ -643,26 +640,46 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             area.getPosition().y = messageYPos - area.getSize().y - context.messageSpacing;
         }
     }
+    
+    /**
+     * Retrieves the padding that applies to the given area.
+     * 
+     * @param sarea
+     *            the area whose padding to retrieve.
+     * @param context
+     *            the layout context that contains all relevant information for the current layout run.
+     * @return the padding.
+     */
+    private ElkPadding paddingFor(final SArea sarea, final LayoutContext context) {
+        ElkNode karea = (ElkNode) sarea.getProperty(InternalSequenceProperties.ORIGIN);
+        
+        if (karea.hasProperty(SequenceDiagramOptions.AREAS_PADDING)) {
+            return karea.getProperty(SequenceDiagramOptions.AREAS_PADDING);
+        } else {
+            return context.areaPadding;
+        }
+    }
 
     /**
-     * Check recursively if an area has contained areas and return the maximum depth.
+     * Check recursively if an area has contained areas and return the maximum depth. An area without contained areas
+     * has hierarchy depth 1.
      * 
      * @param area
      *            the {@link SArea}
      * @return the maximum depth of hierarchy
      */
-    private int checkHierarchy(final SArea area) {
+    private int calculateHierarchyDepth(final SArea area) {
         if (area.getContainedAreas().size() > 0) {
-            int maxLevel = 0;
+            int maxLevel = 1;
             for (SArea subArea : area.getContainedAreas()) {
-                int level = checkHierarchy(subArea);
+                int level = calculateHierarchyDepth(subArea);
                 if (level > maxLevel) {
                     maxLevel = level;
                 }
             }
             return maxLevel + 1;
         } else {
-            return 0;
+            return 1;
         }
     }
 

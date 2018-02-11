@@ -60,16 +60,15 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports spacing.^label
     
     supports size.lifelineHeaderHeight
-    supports size.areaHeaderHeight
     supports size.minExecutionHeight
     supports size.executionWidth
     supports size.timeObservationWidth
     
-    supports containmentOffset
+    supports areas.padding
+    supports areas.^group
     
     supports labelAlignment
     supports lifelineSortingStrategy
-    supports groupAreas
 }
 
 option interactionPadding : ElkPadding {
@@ -192,18 +191,11 @@ group spacing {
 }
 
 group size {
-    programmatic option lifelineHeaderHeight : double {
+    option lifelineHeaderHeight : double {
         label "Lifeline Header Height"
         description "The height of the lifelien header."
         targets parents
         default = 30
-    }
-    
-    programmatic option areaHeaderHeight : double {
-        label "Area Header Height"
-        description "The height of combined fragment headers."
-        targets parents
-        default = 25
     }
     
     option minExecutionHeight : double {
@@ -228,11 +220,21 @@ group size {
     }
 }
 
-programmatic option containmentOffset : double {
-    label "Containment Offset"
-    description "The offset between two nested areas."
-    targets parents
-    default = 5
+group areas {
+    option padding : ElkPadding {
+        label "Area Padding"
+        description "Spacing between the border of an area and its innards."
+        targets parents, nodes
+        default = new ElkPadding(25, 5, 5, 5)
+    }
+    
+    option ^group : boolean {
+        label "Group Areas"
+        description "Whether messages in areas should be grouped together."
+        targets parents
+        default = false
+        requires lifelineSortingStrategy == LifelineSortingStrategy.SHORT_MESSAGES
+    }
 }
 
 option labelAlignment : LabelAlignmentStrategy {
@@ -247,12 +249,4 @@ option lifelineSortingStrategy : LifelineSortingStrategy {
     description "The strategy used to determine the horizontal order of lifelines."
     targets parents
     default = LifelineSortingStrategy.INTERACTIVE
-}
-
-option groupAreas : boolean {
-    label "Group Areas"
-    description "Whether messages in areas should be grouped together."
-    targets parents
-    default = false
-    requires lifelineSortingStrategy == LifelineSortingStrategy.SHORT_MESSAGES
 }
