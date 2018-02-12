@@ -15,8 +15,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.elk.alg.common.compaction.oned.CompareFuzzy;
 import org.eclipse.elk.alg.common.spore.ScanlineOverlapCheck;
-import org.eclipse.elk.alg.spore.SporeMetaDataProvider;
-import org.eclipse.elk.alg.spore.options.OverlapRemovalOptions;
+import org.eclipse.elk.alg.spore.options.SporeMetaDataProvider;
+import org.eclipse.elk.alg.spore.options.SporeOverlapRemovalOptions;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.math.ElkMath;
@@ -53,10 +53,10 @@ public class ScanlineOverlapRemovalTest {
 		n1.setLocation(150, 40);
 		n2.setLocation(150, 0);
 		n3.setLocation(150, 70);
-		graph1.setProperty(CoreOptions.ALGORITHM, OverlapRemovalOptions.ALGORITHM_ID);
+		graph1.setProperty(CoreOptions.ALGORITHM, SporeOverlapRemovalOptions.ALGORITHM_ID);
 		Copier copier = new Copier();
         ElkNode graph2 = (ElkNode) copier.copy(graph1);
-        graph2.setProperty(OverlapRemovalOptions.OVERLAP_REMOVAL_RUN_SCANLINE, false);
+        graph2.setProperty(SporeOverlapRemovalOptions.OVERLAP_REMOVAL_RUN_SCANLINE, false);
         
         // execute overlap removal with and without ScanlineOverlapCheck
         LayoutMetaDataService lService = LayoutMetaDataService.getInstance();
