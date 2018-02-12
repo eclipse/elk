@@ -91,6 +91,15 @@ public final class SMessage extends SGraphElement {
     public SLifeline getTarget() {
         return target;
     }
+    
+    /**
+     * Checks whether this message is a self message.
+     * 
+     * @return {@code true} if the source lifeline equals the target lifeline.
+     */
+    public boolean isSelfMessage() {
+        return source == target;
+    }
 
     /**
      * Get the vertical position at the source lifeline of the message.

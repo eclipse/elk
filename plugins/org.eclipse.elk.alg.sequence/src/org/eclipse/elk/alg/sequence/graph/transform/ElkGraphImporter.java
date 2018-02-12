@@ -454,6 +454,18 @@ public final class ElkGraphImporter {
             // Import labels
             smessage.setLabel(importLabel(kmessage));
 
+            // Check if message is in any area
+            for (Integer areaId : kmessage.getProperty(SequenceDiagramOptions.ID_AREAS)) {
+                SArea area = areaIdMap.get(areaId);
+                if (area != null) {
+                    area.getMessages().add(smessage);
+                    area.getLifelines().add(smessage.getSource());
+                    area.getLifelines().add(smessage.getTarget());
+                } else {
+                    throw new UnsupportedGraphException("Area " + areaId + " does not exist");
+                }
+            }
+
             // Check if the message connects to target executions
             if (kmessage.hasProperty(SequenceDiagramOptions.ID_TARGET_EXECUTIONS)) {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.ID_TARGET_EXECUTIONS)) {

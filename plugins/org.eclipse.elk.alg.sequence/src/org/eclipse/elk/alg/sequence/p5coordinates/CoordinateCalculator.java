@@ -487,7 +487,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         // Set size and position of area
         for (SArea area : context.sgraph.getAreas()) {
             if (area.getMessages().size() > 0) {
-                setAreaPositionByMessages(area);
+                setAreaPositionByMessages(area, context);
             } else {
                 setAreaPositionByLifelinesAndMessage(context, area);
             }
@@ -524,7 +524,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                     
                     if (subArea.getMessages().size() > 0) {
                         // Calculate and set y-position by the area's messages
-                        setAreaPositionByMessages(subArea);
+                        setAreaPositionByMessages(subArea, context);
                         subArea.getSize().y = subArea.getPosition().y
                                 - area.getPosition().y + context.lifelineHeaderHeight
                                 - context.messageSpacing / 2;
@@ -557,41 +557,55 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      * 
      * @param area
      *            the SequenceArea
-     * @param factor
-     *            the edgeYpos factor, that is necessary to compute the real position of the
-     *            SMessage
      */
-    private void setAreaPositionByMessages(final SArea area) {
+    private void setAreaPositionByMessages(final SArea area, final LayoutContext context) {
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = 0;
         double maxY = 0;
         
         // Compute the bounding box of all contained messages
-        for (Object messObj : area.getMessages()) {
-            if (messObj instanceof SMessage) {
-                // Compute new y coordinates
-                SMessage message = (SMessage) messObj;
-                
-                double sourceYPos = message.getSourceYPos();
-                minY = Math.min(minY, sourceYPos);
-                maxY = Math.max(maxY, sourceYPos);
-                
-                double targetYPos = message.getTargetYPos();
-                minY = Math.min(minY, targetYPos);
-                maxY = Math.max(maxY, targetYPos);
-                
-                // Compute new x coordinates
-                SLifeline sourceLL = message.getSource();
-                double sourceXPos = sourceLL.getPosition().x + sourceLL.getSize().x / 2;
-                minX = Math.min(minX, sourceXPos);
-                maxX = Math.max(maxX, sourceXPos);
-                
-                SLifeline targetLL = message.getTarget();
-                double targetXPos = targetLL.getPosition().x + targetLL.getSize().x / 2;
-                minX = Math.min(minX, targetXPos);
-                maxX = Math.max(maxX, targetXPos);
+        for (SMessage smessage : area.getMessages()) {
+            // Compute new y coordinates
+            double sourceYPos = smessage.getSourceYPos();
+            minY = Math.min(minY, sourceYPos);
+            maxY = Math.max(maxY, sourceYPos);
+            
+            double targetYPos = smessage.getTargetYPos();
+            minY = Math.min(minY, targetYPos);
+            maxY = Math.max(maxY, targetYPos);
+            
+            SLifeline sourceLL = smessage.getSource();
+            SLifeline targetLL = smessage.getTarget();
+            
+            // Compute new x coordinates
+            double sourceXPos = sourceLL.getPosition().x + sourceLL.getSize().x / 2;
+            
+            if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.FOUND) {
+                // Found message don't have their source position properly set
+                sourceXPos = targetLL.getPosition().x - context.lifelineSpacing / 2;
             }
+            
+            minX = Math.min(minX, sourceXPos);
+            maxX = Math.max(maxX, sourceXPos);
+            
+            double targetXPos = targetLL.getPosition().x + targetLL.getSize().x / 2;
+            
+            if (smessage.isSelfMessage()) {
+                // The message is a self message, we need to take that into account
+                targetXPos += context.messageSpacing / 2;
+                
+                if (smessage.getLabel() != null) {
+                    targetXPos += context.labelSpacing / 2 + smessage.getLabel().getSize().x;
+                }
+            
+            } else if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.LOST) {
+                // Lost message don't have their target position properly set
+                targetXPos = sourceLL.getPosition().x + sourceLL.getSize().x + context.lifelineSpacing / 2;
+            }
+            
+            minX = Math.min(minX, targetXPos);
+            maxX = Math.max(maxX, targetXPos);
         }
         
         area.getPosition().x = minX;
