@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.sequence.graph.transform;
 import java.util.List;
 
 import org.eclipse.elk.alg.sequence.SequenceLayoutConstants;
+import org.eclipse.elk.alg.sequence.SequenceUtils;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
@@ -221,8 +222,10 @@ public final class ElkGraphExporter {
         // Lost messages end between their source and the next lifeline
         MessageType messageType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
         if (messageType == MessageType.LOST) {
+            double messageLength = SequenceUtils.calculateLostFoundMessageLength(smessage, slifeline, context);
+            
             edgeSection.setEndLocation(
-                    slifeline.getPosition().x + slifeline.getSize().x + context.lifelineSpacing / 2 + offset.x,
+                    slifeline.getPosition().x + slifeline.getSize().x / 2 + messageLength + offset.x,
                     smessage.getTargetYPos() + offset.y);
             
             // A lost message is supposed to have a target dummy node in the ELK Graph; set its position
@@ -319,8 +322,10 @@ public final class ElkGraphExporter {
 
         // Found messages start between their target and the previous lifeline
         if (messageType == MessageType.FOUND) {
+            double messageLength = SequenceUtils.calculateLostFoundMessageLength(smessage, slifeline, context);
+            
             edgeSection.setStartLocation(
-                    slifeline.getPosition().x - context.lifelineSpacing / 2 + offset.x,
+                    slifeline.getPosition().x - (messageLength - slifeline.getSize().x / 2) + offset.x,
                     smessage.getSourceYPos() + offset.y);
             
             // A found message is supposed to have a source dummy node in the KGraph; set its position
@@ -379,12 +384,14 @@ public final class ElkGraphExporter {
         SLifeline msgSource = smessage.getSource();
         SLifeline msgTarget = smessage.getTarget();
         
-        if (msgSource.getHorizontalSlot() < msgTarget.getHorizontalSlot() || msgType == MessageType.LOST) {
+        if (msgSource.getHorizontalSlot() < msgTarget.getHorizontalSlot() || msgType == MessageType.LOST
+                || msgType == MessageType.FOUND) {
+            
             // Message points rightwards
             kmessage.getLabels().stream()
                 .forEach(label -> placeRightPointingMessageLabels(context, smessage, label));
             
-        } else if (msgSource.getHorizontalSlot() > msgTarget.getHorizontalSlot() || msgType == MessageType.FOUND) {
+        } else if (msgSource.getHorizontalSlot() > msgTarget.getHorizontalSlot()) {
             // Message points leftwards
             kmessage.getLabels().stream()
                 .forEach(label -> placeLeftPointingMessageLabels(context, smessage, label));
@@ -436,6 +443,7 @@ public final class ElkGraphExporter {
         LabelAlignmentStrategy alignment = context.labelAlignment;
 
         MessageType msgType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
+        boolean lostFound = false;
         if (isRightmostLifeline(srcLL) && alignment == LabelAlignmentStrategy.SOURCE_CENTER) {
             // This is a lost message; fall back to source placement
             alignment = LabelAlignmentStrategy.SOURCE;
@@ -443,29 +451,44 @@ public final class ElkGraphExporter {
         } else if (msgType == MessageType.CREATE) {
             // Create messages always use SOURCE placement to avoid overlapping the target lifeline header
             alignment = LabelAlignmentStrategy.SOURCE;
+            
+        } else if (msgType == MessageType.FOUND || msgType == MessageType.LOST) {
+            // Lost and found message labels are always centered in their message, which is usually just large
+            // enough for their label.
+            lostFound = true;
         }
         
-        // Actually calculate the horizontal position
-        switch (alignment) {
-        case SOURCE_CENTER:
-            // Place label centered between the source lifeline and the next lifeline (which must exist at this point)
-            assert context.sgraph.getLifelines().size() > srcLL.getHorizontalSlot() + 1;
-            SLifeline nextLL = context.sgraph.getLifelines().get(srcLL.getHorizontalSlot() + 1);
+        if (lostFound) {
+            // Lost and found messages need to take the message's actual x end points into account
+            ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(
+                    (ElkEdge) smessage.getProperty(InternalSequenceProperties.ORIGIN), false, false);
+            klabel.setX(edgeSection.getStartX()
+                    + (edgeSection.getEndX() - edgeSection.getStartX() - klabel.getWidth()) / 2);
             
-            double center = (llCenter + nextLL.getPosition().x + nextLL.getSize().x / 2) / 2;
-            klabel.setX(center - klabel.getWidth() / 2 + offset.x);
-            break;
-            
-        case SOURCE:
-            // Place label near the source lifeline
-            klabel.setX(llCenter + context.labelSpacing + offset.x);
-            break;
-            
-        case CENTER:
-            // Place label at the center of the message
-            double targetCenter = smessage.getTarget().getPosition().x + smessage.getTarget().getSize().x / 2;
-            klabel.setX((llCenter + targetCenter) / 2 - klabel.getWidth() / 2 + offset.x);
-            break;
+        } else {
+            // Actually calculate the horizontal position
+            switch (alignment) {
+            case SOURCE_CENTER:
+                // Place label centered between the source lifeline and the next lifeline (which must exist at
+                // this point)
+                assert context.sgraph.getLifelines().size() > srcLL.getHorizontalSlot() + 1;
+                SLifeline nextLL = context.sgraph.getLifelines().get(srcLL.getHorizontalSlot() + 1);
+                
+                double center = (llCenter + nextLL.getPosition().x + nextLL.getSize().x / 2) / 2;
+                klabel.setX(center - klabel.getWidth() / 2 + offset.x);
+                break;
+                
+            case SOURCE:
+                // Place label near the source lifeline
+                klabel.setX(llCenter + context.labelSpacing + offset.x);
+                break;
+                
+            case CENTER:
+                // Place label at the center of the message
+                double targetCenter = smessage.getTarget().getPosition().x + smessage.getTarget().getSize().x / 2;
+                klabel.setX((llCenter + targetCenter) / 2 - klabel.getWidth() / 2 + offset.x);
+                break;
+            }
         }
         
         ensureGraphIsWideEnough(context, klabel.getX() + klabel.getWidth());
