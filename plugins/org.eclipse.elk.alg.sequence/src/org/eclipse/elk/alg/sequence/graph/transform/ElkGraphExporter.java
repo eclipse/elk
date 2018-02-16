@@ -850,37 +850,35 @@ public final class ElkGraphExporter {
                     scomment.getPosition().x + offset.x,
                     scomment.getPosition().y + offset.y);
             
-            if (scomment.getReferenceMessage() != null) {
-                // Set coordinates for the connection of the comment
-                double edgeSourceXPos, edgeSourceYPos, edgeTargetXPos, edgeTargetYPos;
+            if (scomment.hasProperty(InternalSequenceProperties.COMMENT_CONNECTION)) {
+                double edgeSourceXPos = 0, edgeSourceYPos = 0, edgeTargetXPos = 0, edgeTargetYPos = 0;
                 
-                if (scomment.getAttachment() != null) {
-                    if (scomment.getAttachment() instanceof SLifeline) {
-                        // Connections to lifelines or executions are drawn horizontally
-                        SLifeline slifeline = scomment.getLifeline();
-                        
-                        edgeSourceXPos = scomment.getPosition().x;
-                        edgeSourceYPos = scomment.getPosition().y + scomment.getSize().y / 2;
-                        edgeTargetXPos = slifeline.getPosition().x + slifeline.getSize().x / 2;
-                        edgeTargetYPos = edgeSourceYPos;
-                        
-                    } else {
-                        // Connections to messages are drawn vertically
-                        edgeSourceXPos = scomment.getPosition().x + scomment.getSize().x / 2;
-                        edgeTargetXPos = edgeSourceXPos;
-                        
-                        ElkEdge edge = (ElkEdge) scomment.getReferenceMessage().getProperty(InternalSequenceProperties.ORIGIN);
-                        ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
-                        edgeSourceYPos = scomment.getPosition().y + scomment.getSize().y;
-                        edgeTargetYPos = (edgeSection.getEndY() + edgeSection.getStartY()) / 2;
-                    }
-
-                    // Apply connection coordinates to layout
-                    ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(
-                            scomment.getProperty(InternalSequenceProperties.COMMENT_CONNECTION), true, true);
-                    edgeSection.setStartLocation(edgeSourceXPos, edgeSourceYPos);
-                    edgeSection.setEndLocation(edgeTargetXPos, edgeTargetYPos);
+                if (scomment.getReferenceMessage() != null) {
+                    // Connections to messages are drawn vertically
+                    edgeSourceXPos = scomment.getPosition().x + scomment.getSize().x / 2;
+                    edgeTargetXPos = edgeSourceXPos;
+                    
+                    ElkEdge kmsg = (ElkEdge) scomment.getReferenceMessage().getProperty(
+                            InternalSequenceProperties.ORIGIN);
+                    ElkEdgeSection kmsgSection = ElkGraphUtil.firstEdgeSection(kmsg, false, false);
+                    edgeSourceYPos = scomment.getPosition().y + scomment.getSize().y;
+                    edgeTargetYPos = (kmsgSection.getEndY() + kmsgSection.getStartY()) / 2;
+                    
+                } else if (scomment.getLifeline() != null) {
+                    // Connections to lifelines or executions are drawn horizontally
+                    SLifeline slifeline = scomment.getLifeline();
+                    
+                    edgeSourceXPos = scomment.getPosition().x;
+                    edgeSourceYPos = scomment.getPosition().y + scomment.getSize().y / 2;
+                    edgeTargetXPos = slifeline.getPosition().x + slifeline.getSize().x / 2;
+                    edgeTargetYPos = edgeSourceYPos;
                 }
+                
+                // Apply connection coordinates to layout
+                ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(
+                        scomment.getProperty(InternalSequenceProperties.COMMENT_CONNECTION), true, true);
+                edgeSection.setStartLocation(edgeSourceXPos, edgeSourceYPos);
+                edgeSection.setEndLocation(edgeTargetXPos, edgeTargetYPos);
             }
         }
     }

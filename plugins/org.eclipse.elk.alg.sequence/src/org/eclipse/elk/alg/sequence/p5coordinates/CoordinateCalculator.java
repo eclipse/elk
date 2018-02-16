@@ -253,37 +253,26 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      */
     private void arrangeConnectedComments(final LayoutContext context) {
         for (SComment comment : context.sgraph.getComments()) {
-            SMessage message = null;
-            SLifeline lifeline = null;
+            SLifeline refLl = comment.getLifeline();
+            SMessage refMsg = comment.getReferenceMessage();
             
-            // Get random connected message and lifeline if existing. This may be optimized if there is more than
-            // one connection
-            if (comment.getAttachment() instanceof SMessage) {
-                message = (SMessage) comment.getAttachment();
-            } else if (comment.getAttachment() instanceof SLifeline) {
-                lifeline = (SLifeline) comment.getAttachment();
-            }
-
-            comment.setReferenceMessage(message);
-            comment.setLifeline(lifeline);
-
             // If the comment is attached to a message, determine if it should be drawn near the beginning or near the
             // end of the message. If the comment is attached to a message and one of the message's lifelines, it
             // should be drawn near that lifeline (this is the case for time observations for example).
-            if (message != null) {
+            if (refMsg != null) {
                 SLifeline right, left;
                 
-                if (message.getSource().getHorizontalSlot() < message.getTarget().getHorizontalSlot()) {
+                if (refMsg.getSource().getHorizontalSlot() < refMsg.getTarget().getHorizontalSlot()) {
                     // Message leads rightwards
-                    left = message.getSource();
-                    right = message.getTarget();
+                    left = refMsg.getSource();
+                    right = refMsg.getTarget();
                 } else {
                     // Message leads leftwards or is self-loop
-                    left = message.getTarget();
-                    right = message.getSource();
+                    left = refMsg.getTarget();
+                    right = refMsg.getSource();
                 }
                 
-                if (lifeline == right) {
+                if (refLl == right) {
                     // Find lifeline left to "right" and attach comment to that lifeline because comments are drawn
                     // right of the connected lifeline.
                     int position = right.getHorizontalSlot();
@@ -507,6 +496,8 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      *            the layout context that contains all relevant information for the current layout run.
      */
     private void calculateAreaPosition(final LayoutContext context) {
+        // TODO This does not handle lost / found messages properly.
+        
         // Set size and position of area
         for (SArea area : context.sgraph.getAreas()) {
             if (area.getMessages().size() > 0) {

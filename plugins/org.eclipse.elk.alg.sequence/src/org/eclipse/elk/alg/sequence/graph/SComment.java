@@ -20,32 +20,11 @@ public final class SComment extends SShape {
     
     private static final long serialVersionUID = 2543686433908319587L;
     
-    /** The element that the comment is attached to. */
-    private SGraphElement attachment;
     /** If the comment is attached to anything, this is the lifeline it will be drawn next to. */
     private SLifeline referenceLifeline;
     /** If the comment is attached to anything, this is the message it will be drawn next to. */
     private SMessage referenceMessage;
 
-
-    /**
-     * The graph element the comment is attached to.
-     * 
-     * @return the (possibly {@code null}) attached element.
-     */
-    public SGraphElement getAttachment() {
-        return attachment;
-    }
-    
-    /**
-     * Set the element to which the comment is attached.
-     * 
-     * @param element
-     *            the new element.
-     */
-    public void setAttachment(SGraphElement element) {
-        this.attachment = element;
-    }
 
     /**
      * Get the lifeline next to which the comment will be placed.

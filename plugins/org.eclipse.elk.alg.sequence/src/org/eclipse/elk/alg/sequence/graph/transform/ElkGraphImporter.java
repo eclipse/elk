@@ -76,6 +76,8 @@ public final class ElkGraphImporter {
     private Map<Integer, SExecution> executionIdMap = Maps.newHashMap();
     /** A map from element IDs to the corresponding sequence area. */
     private Map<Integer, SArea> areaIdMap = Maps.newHashMap();
+    /** A map from element IDs to the corresponding message. */
+    private Map<Integer, SMessage> messageIdMap = Maps.newHashMap();
 
     /**
      * Builds a PGraph out of a given KGraph by associating every ElkNode to a PLifeline and every ElkEdge to a
@@ -141,7 +143,9 @@ public final class ElkGraphImporter {
         lifelineMap.clear();
         lifelineIdMap.clear();
         messageMap.clear();
+        messageIdMap.clear();
         executionIdMap.clear();
+        areaIdMap.clear();
     }
 
     //////////////////////////////////////////////////////////////
@@ -328,6 +332,7 @@ public final class ElkGraphImporter {
             smessage.setProperty(InternalSequenceProperties.ORIGIN, kmessage);
 
             messageMap.put(kmessage, smessage);
+            messageIdMap.put(kmessage.getProperty(SequenceDiagramOptions.ID_ELEMENT), smessage);
 
             ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
             smessage.setSourceYPos(edgeSection.getStartY());
@@ -443,6 +448,7 @@ public final class ElkGraphImporter {
             smessage.setProperty(InternalSequenceProperties.ORIGIN, kmessage);
 
             messageMap.put(kmessage, smessage);
+            messageIdMap.put(kmessage.getProperty(SequenceDiagramOptions.ID_ELEMENT), smessage);
 
             ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
             smessage.setTargetYPos(edgeSection.getEndY());
@@ -531,14 +537,14 @@ public final class ElkGraphImporter {
         }
 
         // Provide the comment with a list of elements it is attached to
-        if (node.hasProperty(SequenceDiagramOptions.ID_ATTACHED_ELEMENT)) {
-            Integer elementId = node.getProperty(SequenceDiagramOptions.ID_ATTACHED_ELEMENT);
-
-            // Comments can be attached either to lifelines or to messages
-            if (lifelineMap.containsKey(elementId)) {
-                comment.setAttachment(lifelineMap.get(elementId));
-            } else if (messageMap.containsKey(elementId)) {
-                comment.setAttachment(messageMap.get(elementId));
+        if (node.hasProperty(SequenceDiagramOptions.ID_ATTACHED_ELEMENTS)) {
+            for (Integer elementId : node.getProperty(SequenceDiagramOptions.ID_ATTACHED_ELEMENTS)) {
+                // Comments can be attached either to lifelines or to messages
+                if (lifelineIdMap.containsKey(elementId)) {
+                    comment.setLifeline(lifelineIdMap.get(elementId));
+                } else if (messageIdMap.containsKey(elementId)) {
+                    comment.setReferenceMessage(messageIdMap.get(elementId));
+                }
             }
         }
 

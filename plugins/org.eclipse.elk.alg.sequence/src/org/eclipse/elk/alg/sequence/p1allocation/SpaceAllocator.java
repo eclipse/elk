@@ -110,21 +110,17 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
     private void allocateSpaceForComments(final LayoutContext context) {
         for (SComment comment : context.sgraph.getComments()) {
             // Check to which kind of object the comment is attached
-            if (comment.getAttachment() instanceof SMessage) {
-                SMessage attachedMess = (SMessage) comment.getAttachment();
-                
+            if (comment.getReferenceMessage() != null) {
                 // Get height of the comment and calculate number of dummy nodes needed
                 double height = comment.getSize().y;
                 int dummys = (int) Math.ceil(height / context.messageSpacing);
                 
                 // Add dummy nodes in the layered graph
-                LNode lnode = attachedMess.getProperty(InternalSequenceProperties.LAYERED_NODE);
+                LNode lnode = comment.getReferenceMessage().getProperty(InternalSequenceProperties.LAYERED_NODE);
                 if (lnode != null) {
                     for (int i = 0; i < dummys; i++) {
                         createLGraphDummyNode(context.lgraph, lnode, true);
                     }
-                    comment.setReferenceMessage(attachedMess);
-                    attachedMess.getComments().add(comment);
                 }
             }
         }

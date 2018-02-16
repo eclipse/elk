@@ -49,7 +49,7 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports id.upperEmptyArea
     supports id.sourceExecutions
     supports id.targetExecutions
-    supports id.attachedElement
+    supports id.attachedElements
     
     supports type.node
     supports type.message
@@ -138,9 +138,11 @@ group id {
         default = Lists.newArrayList
     }
     
-    programmatic option attachedElement : int {
-        label "Attached Element ID"
-        description "Element ID of the object a comment is attached to, if any."
+    programmatic option attachedElements : List<Integer> {
+        label "Attached Element IDs"
+        description "Element IDs of the objects a comment is attached to, if any. A comment that refers to a message,
+                    for example, will usually be attached to both the message and one of the lifelines, depending on
+                    which lifeline it should be drawn next to."
         targets nodes
     }
 }
