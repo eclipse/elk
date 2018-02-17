@@ -613,6 +613,8 @@ public final class ElkGraphImporter {
         ElkLabel klabel = kelement.getLabels().get(0);
         
         SLabel slabel = new SLabel(klabel.getText());
+        
+        slabel.copyProperties(klabel);
         slabel.setProperty(InternalSequenceProperties.ORIGIN, klabel);
         
         slabel.getSize().set(klabel.getWidth(), klabel.getHeight());

@@ -15,6 +15,7 @@ import java.util.List
 import com.google.common.collect.Lists
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy
 import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.alg.sequence.options.LabelSideSelection
 
 /**
  * Declarations for the Papyrus Sequence Diagram layout algorithm.
@@ -57,7 +58,7 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     
     supports spacing.lifeline
     supports spacing.message
-    supports spacing.^label
+    supports org.eclipse.elk.spacing.edgeLabel = 2
     
     supports size.lifelineHeaderHeight
     supports size.minExecutionHeight
@@ -66,8 +67,10 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     
     supports areas.padding
     supports areas.^group
-    
+
+    supports labelSide    
     supports labelAlignment
+    supports org.eclipse.elk.edgeLabels.inline
     supports lifelineSortingStrategy
 }
 
@@ -184,13 +187,6 @@ group spacing {
         targets parents
         default = 50
     }
-    
-    option ^label : double {
-        label "Label Spacing"
-        description "Space to be left between labels and labeled elements."
-        targets parents
-        default = 5
-    }
 }
 
 group size {
@@ -238,6 +234,13 @@ group areas {
         default = false
         requires lifelineSortingStrategy == LifelineSortingStrategy.SHORT_MESSAGES
     }
+}
+
+option labelSide : LabelSideSelection {
+    label "Edge Label Side Selection"
+    description "Method to decide on edge label sides."
+    default = LabelSideSelection.ALWAYS_UP
+    targets parents
 }
 
 option labelAlignment : LabelAlignmentStrategy {

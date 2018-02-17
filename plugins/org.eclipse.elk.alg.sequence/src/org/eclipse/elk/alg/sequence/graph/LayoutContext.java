@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.sequence.graph;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
+import org.eclipse.elk.alg.sequence.options.LabelSideSelection;
 import org.eclipse.elk.alg.sequence.options.LifelineSortingStrategy;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.core.math.ElkPadding;
@@ -36,6 +37,8 @@ public final class LayoutContext {
     
     // Layout Settings
 
+    /** The label side selection strategy. */
+    public final LabelSideSelection labelSideSelection;
     /** The label alignment strategy. */
     public final LabelAlignmentStrategy labelAlignment;
     /** The lifeline sorting strategy. */
@@ -73,6 +76,8 @@ public final class LayoutContext {
     public LayoutContext(final ElkNode parentNode) {
         elkgraph = parentNode;
         
+        labelSideSelection = parentNode.getProperty(
+                SequenceDiagramOptions.LABEL_SIDE);
         labelAlignment = parentNode.getProperty(
                 SequenceDiagramOptions.LABEL_ALIGNMENT);
         sortingStrategy = parentNode.getProperty(
@@ -85,7 +90,7 @@ public final class LayoutContext {
         messageSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.SPACING_MESSAGE);
         labelSpacing = parentNode.getProperty(
-                SequenceDiagramOptions.SPACING_LABEL);
+                SequenceDiagramOptions.SPACING_EDGE_LABEL);
         areaPadding = parentNode.getProperty(
                 SequenceDiagramOptions.AREAS_PADDING);
         lifelineHeaderHeight = parentNode.getProperty(

@@ -239,10 +239,12 @@ public final class ElkGraphExporter {
             ElkGraphUtil.createBendPoint(edgeSection,
                     llCenter + context.messageSpacing / 2 + offset.x,
                     edgeSection.getStartY());
+        } else {
+            // Walk through the labels and adjust their position, except for the labels of self-loops, which are
+            // handled one all of the self-loop bend points are set
+            placeLabels(context, smessage, kmessage);
         }
 
-        // Walk through the labels and adjust their position
-        placeLabels(context, smessage, kmessage);
     }
 
     /**
@@ -342,6 +344,9 @@ public final class ElkGraphExporter {
             ElkGraphUtil.createBendPoint(edgeSection,
                     llCenter + context.messageSpacing / 2 + offset.x,
                     edgeSection.getEndY());
+            
+            // Labels of self-loops have not been placed yet because not all bend points were known
+            placeLabels(context, smessage, kmessage);
         }
     }
     
@@ -398,22 +403,27 @@ public final class ElkGraphExporter {
             
         } else {
             // Message is a self-loop
-            for (ElkLabel label : kmessage.getLabels()) {
+            for (ElkLabel klabel : kmessage.getLabels()) {
                 ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
-                double xPos;
+                assert edgeSection.getBendPoints().size() == 2;
                 
-                if (edgeSection.getBendPoints().size() > 0) {
-                    ElkBendPoint firstBend = edgeSection.getBendPoints().get(0);
-                    xPos = firstBend.getX();
+                klabel.setY(smessage.getSourceYPos() + context.labelSpacing + offset.y);
+                
+                // What we do with the x position depends on whether the label is an inside label or not
+                if (klabel.getProperty(SequenceDiagramOptions.EDGE_LABELS_INLINE)) {
+                    // For inside labels, we place the label on the vertical section, which means that we need to move
+                    // the two bend points
+                    klabel.setX(edgeSection.getStartX() + context.labelSpacing);
+                    
+                    double delta = klabel.getX() + klabel.getWidth() / 2 - edgeSection.getBendPoints().get(0).getX();
+                    offsetX(edgeSection, false, true, false, delta, context);
+                    
                 } else {
-                    // This shouldn't happen, in fact
-                    xPos = edgeSection.getStartX();
+                    // Regular labels are placed right next to the edge's vertical section
+                    klabel.setX(edgeSection.getBendPoints().get(0).getX() + context.labelSpacing / 2);
                 }
                 
-                label.setY(smessage.getSourceYPos() + context.labelSpacing + offset.y);
-                label.setX(xPos + context.labelSpacing / 2);
-                
-                ensureGraphIsWideEnough(context, label.getX() + label.getWidth());
+                ensureGraphIsWideEnough(context, klabel.getX() + klabel.getWidth());
             }
         }
     }
@@ -435,9 +445,7 @@ public final class ElkGraphExporter {
         SLifeline srcLL = smessage.getSource();
         double llCenter = srcLL.getPosition().x + srcLL.getSize().x / 2;
         
-        // Labels are placed above messages pointing rightwards
-        // TODO: Make label placement strategy configurable
-        klabel.setY(smessage.getSourceYPos() - klabel.getHeight() - 2 + offset.y);
+        placeLabelVertically(context, smessage, klabel, true);
         
         // For the horizontal alignment, we need to check which alignment strategy to use
         LabelAlignmentStrategy alignment = context.labelAlignment;
@@ -510,10 +518,8 @@ public final class ElkGraphExporter {
 
         SLifeline srcLL = smessage.getSource();
         double llCenter = srcLL.getPosition().x + srcLL.getSize().x / 2;
-
-        // Labels are placed below messages pointing leftwards
-        // TODO: Make label placement strategy configurable
-        klabel.setY(smessage.getSourceYPos() + 2 + offset.y);
+        
+        placeLabelVertically(context, smessage, klabel, false);
         
         // For the horizontal alignment, we need to check which alignment strategy to use
         LabelAlignmentStrategy alignment = context.labelAlignment;
@@ -555,6 +561,42 @@ public final class ElkGraphExporter {
     
     private boolean isRightmostLifeline(final SLifeline slifeline) {
         return slifeline.getHorizontalSlot() == slifeline.getGraph().getLifelines().size() - 1;
+    }
+    
+    private void placeLabelVertically(final LayoutContext context, final SMessage smessage, final ElkLabel klabel,
+            final boolean messagePointsRight) {
+
+        // Vertical position
+        if (klabel.getProperty(SequenceDiagramOptions.EDGE_LABELS_INLINE)) {
+            // Center the label on the message
+            klabel.setY(smessage.getSourceYPos() - klabel.getHeight() / 2);
+            
+        } else {
+            // Whether we place the label above or below its edge depends on the side selections trategy
+            boolean placeAbove = true;
+            
+            switch (context.labelSideSelection) {
+            case ALWAYS_DOWN:
+                placeAbove = false;
+                break;
+                
+            case DIRECTION_UP:
+                placeAbove = messagePointsRight;
+                break;
+                
+            case DIRECTION_DOWN:
+                placeAbove = !messagePointsRight;
+                break;
+            }
+            
+            if (placeAbove) {
+                klabel.setY(smessage.getSourceYPos() - klabel.getHeight() - 2);
+            } else {
+                klabel.setY(smessage.getSourceYPos() + 2);
+            }
+        }
+        
+        klabel.setY(klabel.getY() + offset.y);
     }
     
     
