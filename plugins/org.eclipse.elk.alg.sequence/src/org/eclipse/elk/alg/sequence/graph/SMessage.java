@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.graph;
 
-import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Message representation for SGraphs. Messages are created with their source and target lifeline as
@@ -49,8 +49,7 @@ public final class SMessage extends SGraphElement {
     /** The width of the message's label. This is important for handling long labels. */
     private SLabel label;
     /** The list of comments that will be drawn near to this message. */
-    // TODO: Convert to a Set?
-    private List<SComment> comments = Lists.newArrayList();
+    private Set<SComment> comments = Sets.newLinkedHashSet();
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,11 +216,11 @@ public final class SMessage extends SGraphElement {
     }
 
     /**
-     * Get the list of comments that will be drawn near to this message.
+     * Get the set of comments that will be drawn near to this message.
      * 
-     * @return the list of comments.
+     * @return the set of comments.
      */
-    public List<SComment> getComments() {
+    public Set<SComment> getComments() {
         return comments;
     }
 }

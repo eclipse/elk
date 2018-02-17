@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.graph;
 
-import java.util.List;
+import org.eclipse.elk.alg.sequence.options.MessageCommentAlignment;
 
 /**
  * Represents a comment-like object in the sequence graph. Comment-like objects are comments (duh...), constraints,
@@ -24,6 +24,8 @@ public final class SComment extends SShape {
     private SLifeline referenceLifeline;
     /** If the comment is attached to anything, this is the message it will be drawn next to. */
     private SMessage referenceMessage;
+    /** Where a comment will be aligned along a message. */
+    private MessageCommentAlignment alignment = MessageCommentAlignment.CENTER;
 
 
     /**
@@ -51,11 +53,7 @@ public final class SComment extends SShape {
 
         // Add comment to the new lifeline's comments list
         if (lifeline != null) {
-            List<SComment> comments = lifeline.getComments();
-            // TODO: If the comments are converted to a set instead of a list, we can skip contains
-            if (!comments.contains(this)) {
-                comments.add(this);
-            }
+            lifeline.getComments().add(this);
         }
     }
 
@@ -82,13 +80,29 @@ public final class SComment extends SShape {
 
         this.referenceMessage = message;
 
-        // Add comment to the new message's comments list
+        // Add comment to the new message's set of comments
         if (message != null) {
-            List<SComment> comments = message.getComments();
-            // TODO: If the comments are converted to a set instead of a list, we can skip contains
-            if (!comments.contains(this)) {
-                comments.add(this);
-            }
+            message.getComments().add(this);
         }
     }
+    
+    /**
+     * Returns the comment's alignment if {@link #getReferenceMessage()} returns a non-{@code null} value.
+     * 
+     * @return the alignment.
+     */
+    public MessageCommentAlignment getAlignment() {
+        return alignment;
+    }
+
+    /**
+     * Determines how the comment should be aligned if it refers to a message.
+     * 
+     * @param alignment
+     *            the alignment.
+     */
+    public void setAlignment(final MessageCommentAlignment alignment) {
+        this.alignment = alignment;
+    }
+    
 }

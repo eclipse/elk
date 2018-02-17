@@ -11,8 +11,9 @@
 package org.eclipse.elk.alg.sequence.p5coordinates;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
@@ -25,6 +26,7 @@ import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
+import org.eclipse.elk.alg.sequence.options.MessageCommentAlignment;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.NodeType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
@@ -75,33 +77,36 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         // Calculate where we need to place the first non-dummy lifeline
         double xPos = calculateFirstLifelineXPosition(context);
         
-        // Set position for lifelines/nodes
-        boolean foundNonDummyLifeline = false;
-        for (SLifeline slifeline : context.sgraph.getLifelines()) {
-            // Dummy lifelines don't need any layout
-            if (slifeline.isDummy()) {
-                continue;
+        // Set position for lifelines/nodes. To do that, we iterate over the lifelines and always keep two: the
+        // "current" and the "next". The current's position is set and spacings are calculated with regard to the next
+        Iterator<SLifeline> lifelineIterator = context.sgraph.getLifelines().stream()
+                .filter(ll -> !ll.isDummy()).iterator();
+        
+        if (lifelineIterator.hasNext()) {
+            SLifeline currLifeline = null;
+            SLifeline nextLifeline = lifelineIterator.next();
+            
+            while (nextLifeline != null) {
+                currLifeline = nextLifeline;
+                nextLifeline = lifelineIterator.hasNext() ? lifelineIterator.next() : null;
+                
+                // Calculate the spacing between this lifeline and its successor. Place comments.
+                // TODO This code currently does not consider the space required for found message of the successor
+                double thisLifelineSpacing = calculateLifelineSpacingAndPlaceComments(
+                        context, xPos, currLifeline, nextLifeline);
+                
+                // Set position and height for the lifeline. This may be overridden if there are create or delete
+                // messages involved.
+                currLifeline.getPosition().y = 0;
+                currLifeline.getPosition().x = xPos;
+                currLifeline.getSize().y = sgraphSize.y;
+                
+                // Advance x pointer and apply to graph size
+                xPos += currLifeline.getSize().x + thisLifelineSpacing;
+                sgraphSize.x = xPos;
+                
             }
             
-            foundNonDummyLifeline = true;
-
-            // Calculate the spacing between this lifeline and its successor. Place comments.
-            // TODO This code currently does not consider the space required for found message of the successor
-            double thisLifelineSpacing = calculateLifelineSpacingAndPlaceComments(context, xPos, slifeline);
-
-            // Set position and height for the lifeline. This may be overridden if there are create or delete
-            // messages involved.
-            slifeline.getPosition().y = 0;
-            slifeline.getPosition().x = xPos;
-            slifeline.getSize().y = sgraphSize.y;
-
-            // Advance x pointer and apply to graph size
-            xPos += slifeline.getSize().x + thisLifelineSpacing;
-            sgraphSize.x = xPos;
-        }
-        
-        // The graph's width may now include a lifeline spacing too much on the right side
-        if (foundNonDummyLifeline) {
             sgraphSize.x -= context.lifelineSpacing;
         }
         
@@ -252,9 +257,9 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      *            the layout context that contains all relevant information for the current layout run.
      */
     private void arrangeConnectedComments(final LayoutContext context) {
-        for (SComment comment : context.sgraph.getComments()) {
-            SLifeline refLl = comment.getLifeline();
-            SMessage refMsg = comment.getReferenceMessage();
+        for (SComment scomment : context.sgraph.getComments()) {
+            SLifeline refLl = scomment.getLifeline();
+            SMessage refMsg = scomment.getReferenceMessage();
             
             // If the comment is attached to a message, determine if it should be drawn near the beginning or near the
             // end of the message. If the comment is attached to a message and one of the message's lifelines, it
@@ -273,17 +278,21 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                 }
                 
                 if (refLl == right) {
-                    // Find lifeline left to "right" and attach comment to that lifeline because comments are drawn
-                    // right of the connected lifeline.
+                    // Find lifeline left to "right" and attach comment to that lifeline because internally we always
+                    // attach comments to the lifeline they should be placed to the right of
                     int position = right.getHorizontalSlot();
                     for (SLifeline ll : context.sgraph.getLifelines()) {
                         if (ll.getHorizontalSlot() == position - 1) {
-                            comment.setLifeline(ll);
+                            scomment.setLifeline(ll);
                             break;
                         }
                     }
+                    
+                    scomment.setAlignment(MessageCommentAlignment.RIGHT);
+                    
                 } else {
-                    comment.setLifeline(left);
+                    scomment.setLifeline(left);
+                    scomment.setAlignment(MessageCommentAlignment.LEFT);
                 }
             }
         }
@@ -301,19 +310,17 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         double commentMaxExtraWidth = 0;
         
         // The vertical position of the next comment that is drawn after the last lifeline
-        double commentNextYPos = context.lifelineHeaderHeight;
+        double commentXPos = context.sgraph.getSize().x + context.lifelineSpacing;
+        double commentYPos = 0;
 
-        for (SComment comment : context.sgraph.getComments()) {
-            if (comment.getReferenceMessage() == null) {
-                // Unconnected comments
-                if (comment.getSize().x > commentMaxExtraWidth) {
-                    commentMaxExtraWidth = comment.getSize().x;
-                }
+        for (SComment scomment : context.sgraph.getComments()) {
+            if (scomment.getReferenceMessage() == null && scomment.getLifeline() == null) {
+                scomment.getPosition().x = commentXPos;
+                scomment.getPosition().y = commentYPos;
                 
-                // Set position of unconnected comments next to the last lifeline
-                comment.getPosition().x = context.sgraph.getSize().x;
-                comment.getPosition().y = commentNextYPos;
-                commentNextYPos += comment.getSize().y + context.messageSpacing;
+                commentYPos += scomment.getSize().y + context.messageSpacing;
+                
+                commentMaxExtraWidth = Math.max(commentMaxExtraWidth, scomment.getSize().x);
             }
         }
 
@@ -369,60 +376,57 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      *            the layout context that contains all relevant information for the current layout run.
      * @param xPos
      *            the horizontal position where the last lifeline was placed
-     * @param slifeline
+     * @param currLifeline
      *            the current lifeline
+     * @param nextLifeline
+     *            the next lifeline, used to check how much space of that we can use.
      * @return the width of the lifeline plus comments.
      */
     private double calculateLifelineSpacingAndPlaceComments(final LayoutContext context, final double xPos,
-            final SLifeline slifeline) {
+            final SLifeline currLifeline, final SLifeline nextLifeline) {
         
-        double spacing = context.lifelineSpacing;
+        assert !currLifeline.isDummy();
+        assert nextLifeline == null || !nextLifeline.isDummy();
+        
+        final double spaceBetweenLifelines = currLifeline.getSize().x / 2
+                + (nextLifeline != null ? nextLifeline.getSize().x / 2 : 0)
+                + context.lifelineSpacing;
+        double requiredSpace = 0;
 
         // Check, if there are labels longer than the available space
-        for (SMessage smessage : slifeline.getIncomingMessages()) {
+        for (SMessage smessage : currLifeline.getIncomingMessages()) {
             // We are only interested in messages from our direct successor
-            if (smessage.getSource().getHorizontalSlot() != slifeline.getHorizontalSlot() + 1) {
+            if (smessage.getSource() == nextLifeline) {
                 continue;
             }
             
-            double minMessageLength = SequenceUtils.calculateMessageLength(smessage, context);
-            spacing = Math.max(
-                    spacing,
-                    minMessageLength - (slifeline.getSize().x + smessage.getSource().getSize().x) / 2);
+            double messageLength = SequenceUtils.calculateMessageLength(smessage, context);
+            requiredSpace = Math.max(requiredSpace, messageLength);
         }
         
-        for (SMessage smessage : slifeline.getOutgoingMessages()) {
+        for (SMessage smessage : currLifeline.getOutgoingMessages()) {
             // We are only interested certain kinds of messages
             if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.LOST) {
-                double minMessageLength = SequenceUtils.calculateLostFoundMessageLength(smessage, slifeline, context);
-                
-                // TODO This should take the successor lifeline's dimensions into account.
-                spacing = Math.max(
-                        spacing,
-                        minMessageLength - slifeline.getSize().x / 2);
+                double messageLength = SequenceUtils.calculateLostFoundMessageLength(
+                        smessage, currLifeline, context);
+                requiredSpace = Math.max(requiredSpace, messageLength);
                 
             } else if (smessage.getSource() == smessage.getTarget()) {
                 // Self message
-                if (smessage.getLabel().getSize().x + context.labelSpacing
-                        + context.messageSpacing / 2 > spacing + slifeline.getSize().x / 2) {
-                    
-                    spacing = context.labelSpacing + smessage.getLabel().getSize().x - slifeline.getSize().x / 2;
-                }
+                double messageWidth = smessage.getLabel().getSize().x + context.labelSpacing
+                        + context.messageSpacing / 2;
+                requiredSpace = Math.max(requiredSpace, messageWidth);
                 
-            } else if (smessage.getTarget().getHorizontalSlot() == slifeline.getHorizontalSlot() + 1) {
+            } else if (smessage.getTarget() == nextLifeline) {
                 // The message connects directly to the successor lifeline
-                double minMessageLength = SequenceUtils.calculateMessageLength(smessage, context);
+                double messageLength = SequenceUtils.calculateMessageLength(smessage, context);
                 
                 if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE) {
                     // Labels of create messages should not overlap the target's header
-                    spacing = Math.max(
-                            spacing,
-                            minMessageLength - (slifeline.getSize().x / 2));
+                    requiredSpace = Math.max(requiredSpace, messageLength + nextLifeline.getSize().x / 2);
                 } else {
                     // A regular message
-                    spacing = Math.max(
-                            spacing,
-                            minMessageLength - (slifeline.getSize().x + smessage.getTarget().getSize().x) / 2);
+                    requiredSpace = Math.max(requiredSpace, messageLength);
                 }
             }
         }
@@ -430,34 +434,56 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         // Get the list of comments attached to the current lifeline
 
         // Return if there are no comments attached
-        List<SComment> comments = slifeline.getComments();
+        Set<SComment> comments = currLifeline.getComments();
         if (comments.isEmpty()) {
-            return spacing;
+            return Math.max(0, requiredSpace - spaceBetweenLifelines) + context.lifelineSpacing;
         }
 
         // Check maximum size of comments attached to the lifeline
         for (SComment comment : comments) {
-            if (comment.getSize().x > spacing) {
-                spacing = comment.getSize().x;
-            }
+            requiredSpace = Math.max(requiredSpace, comment.getSize().x + 2 * context.labelSpacing);
+        }
+        
+        // By now, the required space might be smaller than the actual space that we will have available between the
+        // two lifelines
+        double actualSpace = requiredSpace;
+        if (nextLifeline != null) {
+            actualSpace = Math.max(requiredSpace,
+                    (currLifeline.getSize().x + nextLifeline.getSize().x) / 2 + context.lifelineSpacing);
         }
 
         // HashMap that organizes which comment belongs to which message. This is important if there are more than
         // one comments at a message.
-        // TODO This will only work for up to two comments, won't it?
         HashMap<SMessage, SComment> messageCommentMap = new HashMap<SMessage, SComment>(comments.size());
         for (SComment comment : comments) {
-            if (comment.getLifeline() == slifeline) {
+            if (comment.getLifeline() == currLifeline) {
                 SMessage message = comment.getReferenceMessage();
 
-                // Place comment centered above the message
+                // Place comment above the message
                 KVector commentPos = comment.getPosition();
-                
-                commentPos.x = xPos + slifeline.getSize().x + (spacing - comment.getSize().x) / 2;
                 commentPos.y = message.getSourceYPos() - (comment.getSize().y + context.messageSpacing);
-
+                
+                // x position depends on the comment's alignment
+                switch (comment.getAlignment()) {
+                case LEFT:
+                    commentPos.x = xPos + currLifeline.getSize().x / 2 + context.labelSpacing;
+                    break;
+                    
+                case CENTER:
+                    commentPos.x = xPos + currLifeline.getSize().x / 2 + context.labelSpacing
+                            + (actualSpace - comment.getSize().x - 2 * context.labelSpacing) / 2;
+                    break;
+                    
+                case RIGHT:
+                    // The required space might be smaller than the actual space
+                    commentPos.x = xPos + currLifeline.getSize().x / 2
+                            + actualSpace - context.labelSpacing - comment.getSize().x;
+                    break;
+                }
+                
+                // If another comment for the message has already been placed, handled conflicts by shifting the
+                // comment vertically
                 if (messageCommentMap.containsKey(message)) {
-                    // Handle conflicts (reset yPos if necessary)
                     SComment upper = comment;
                     SComment lower = messageCommentMap.get(message);
                     NodeType nodeType = comment.getProperty(SequenceDiagramOptions.TYPE_NODE);
@@ -469,11 +495,11 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                     }
 
                     // Place lower comment first
-                    commentPos.y = message.getSourceYPos() - (lower.getSize().y + context.messageSpacing);
+                    commentPos.y = message.getSourceYPos() - (lower.getSize().y + context.messageSpacing / 2);
                     lower.getPosition().y = commentPos.y;
 
                     // Place upper comment near to lower one
-                    double uYpos = lower.getPosition().y - upper.getSize().y - context.messageSpacing / 2;
+                    double uYpos = lower.getPosition().y - upper.getSize().y - context.labelSpacing;
                     upper.getPosition().y = uYpos;
                     
                 } else {
@@ -482,7 +508,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             }
         }
         
-        return spacing;
+        return Math.max(0, requiredSpace - spaceBetweenLifelines) + context.lifelineSpacing;
     }
     
     

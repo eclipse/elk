@@ -13,10 +13,12 @@ package org.eclipse.elk.alg.sequence.graph;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * A lifeline is one of the central components of a sequence diagram. This 
@@ -57,8 +59,7 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
     /** The executions that hang out on the lifeline. */
     private List<SExecution> executions = Lists.newArrayList();
     /** The list of comments that are drawn near to this lifeline. */
-    // TODO: Convert to a Set?
-    private List<SComment> comments = Lists.newArrayList();
+    private Set<SComment> comments = Sets.newLinkedHashSet();
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,11 +184,11 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
     }
 
     /**
-     * Get the list of comments that will be drawn near to this lifeline.
+     * Get the set of comments that will be drawn near to this lifeline.
      * 
-     * @return the list of comments.
+     * @return the set of comments.
      */
-    public List<SComment> getComments() {
+    public Set<SComment> getComments() {
         return comments;
     }
     
