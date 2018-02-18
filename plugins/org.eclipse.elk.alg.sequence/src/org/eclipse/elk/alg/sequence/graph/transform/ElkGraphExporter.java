@@ -390,6 +390,8 @@ public final class ElkGraphExporter {
         SLifeline msgSource = smessage.getSource();
         SLifeline msgTarget = smessage.getTarget();
         
+        applyLabelSize(smessage);
+        
         if (msgSource.getHorizontalSlot() < msgTarget.getHorizontalSlot() || msgType == MessageType.LOST
                 || msgType == MessageType.FOUND) {
             
@@ -426,6 +428,20 @@ public final class ElkGraphExporter {
                 
                 ensureGraphIsWideEnough(context, klabel.getX() + klabel.getWidth());
             }
+        }
+    }
+    
+    /**
+     * Applies the size of message labels to their ELK graph counterparts.
+     */
+    private void applyLabelSize(final SMessage smessage) {
+        if (smessage.getLabel() != null) {
+            SLabel slabel = smessage.getLabel();
+            ElkLabel klabel = (ElkLabel) slabel.getProperty(InternalSequenceProperties.ORIGIN);
+            
+            klabel.setDimensions(
+                    slabel.getSize().x,
+                    slabel.getSize().y);
         }
     }
 

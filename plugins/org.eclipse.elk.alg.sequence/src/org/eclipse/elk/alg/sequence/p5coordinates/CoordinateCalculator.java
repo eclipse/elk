@@ -24,6 +24,7 @@ import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SGraphAdapters;
+import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
@@ -318,7 +319,8 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
 
         for (SComment scomment : context.sgraph.getComments()) {
             if (scomment.getReferenceMessage() == null && scomment.getLifeline() == null) {
-                manageCommentLabelsAndSize(scomment, context);
+                // By default, we strip down unconnected comments to 80 pixels
+                manageCommentLabelsAndSize(scomment, 80, context);
                 
                 scomment.getPosition().x = commentXPos;
                 scomment.getPosition().y = commentYPos;
@@ -338,19 +340,28 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      * 
      * @param scomment
      *            the comment.
+     * @param targetWidth
+     *            the maximum width a comment should have.
      * @param context
      *            the layout context that contains all relevant information for the current layout run.
      */
-    private void manageCommentLabelsAndSize(final SComment scomment, final LayoutContext context) {
+    private void manageCommentLabelsAndSize(final SComment scomment, final double targetWidth,
+            final LayoutContext context) {
+        
         // Label management
-        if (context.labelManager != null) {
-            // TODO Call label management
+        if (context.labelManager != null && scomment.getLabel() != null) {
+            SLabel slabel = scomment.getLabel();
+            KVector newSize = context.labelManager.manageLabelSize(
+                    slabel.getProperty(InternalSequenceProperties.ORIGIN),
+                    targetWidth);
+            if (newSize != null) {
+                slabel.getSize().set(newSize);
+            }
         }
         
         // Size calculation
         Set<SizeConstraint> sizeConstraints = scomment.getProperty(SequenceDiagramOptions.NODE_SIZE_CONSTRAINTS);
         if (!sizeConstraints.isEmpty()) {
-            // TODO Call label and node size code
             NodeLabelAndSizeCalculator.process(context.sgraphAdapter,
                     SGraphAdapters.adaptComment(scomment, context.sgraphAdapter), true, false);
         }
@@ -375,20 +386,24 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                 .findFirst();
         
         if (firstLifelineOptional.isPresent()) {
+            SLifeline firstLifeline = firstLifelineOptional.get();
+            
             // Calculate the length of the longest found message
             double longestFoundMessage = 0;
-            for (SMessage smessage : firstLifelineOptional.get().getIncomingMessages()) {
+            for (SMessage smessage : firstLifeline.getIncomingMessages()) {
                 if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) != MessageType.FOUND) {
                     // We're only interested in found messages
                     continue;
                 }
                 
+                // Shorten the label such that it fits within the lifeline's space
+                manageMessageLabel(smessage, firstLifeline.getSize().x / 2, context);
                 longestFoundMessage = Math.max(
                         longestFoundMessage,
-                        SequenceUtils.calculateLostFoundMessageLength(smessage, firstLifelineOptional.get(), context));
+                        SequenceUtils.calculateLostFoundMessageLength(smessage, firstLifeline, context));
             }
             
-            return Math.max(0, longestFoundMessage - firstLifelineOptional.get().getSize().x / 2);
+            return Math.max(0, longestFoundMessage - firstLifeline.getSize().x / 2);
         }
         
         return 0.0;
@@ -419,14 +434,17 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                 + (nextLifeline != null ? nextLifeline.getSize().x / 2 : 0)
                 + context.lifelineSpacing;
         double requiredSpace = 0;
+        
+        final double messageLabelTargetWidth = spaceBetweenLifelines - 2 * context.labelSpacing;
 
         // Check, if there are labels longer than the available space
         for (SMessage smessage : currLifeline.getIncomingMessages()) {
             // We are only interested in messages from our direct successor
-            if (smessage.getSource() == nextLifeline) {
+            if (smessage.getSource() != nextLifeline) {
                 continue;
             }
-            
+
+            manageMessageLabel(smessage, messageLabelTargetWidth, context);
             double messageLength = SequenceUtils.calculateMessageLength(smessage, context);
             requiredSpace = Math.max(requiredSpace, messageLength);
         }
@@ -434,18 +452,21 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         for (SMessage smessage : currLifeline.getOutgoingMessages()) {
             // We are only interested certain kinds of messages
             if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.LOST) {
+                manageMessageLabel(smessage, messageLabelTargetWidth, context);
                 double messageLength = SequenceUtils.calculateLostFoundMessageLength(
                         smessage, currLifeline, context);
                 requiredSpace = Math.max(requiredSpace, messageLength);
                 
             } else if (smessage.getSource() == smessage.getTarget()) {
                 // Self message
+                manageMessageLabel(smessage, messageLabelTargetWidth - context.messageSpacing / 2, context);
                 double messageWidth = smessage.getLabel().getSize().x + context.labelSpacing
                         + context.messageSpacing / 2;
                 requiredSpace = Math.max(requiredSpace, messageWidth);
                 
             } else if (smessage.getTarget() == nextLifeline) {
                 // The message connects directly to the successor lifeline
+                manageMessageLabel(smessage, messageLabelTargetWidth, context);
                 double messageLength = SequenceUtils.calculateMessageLength(smessage, context);
                 
                 if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE) {
@@ -458,18 +479,19 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             }
         }
 
-        // Get the list of comments attached to the current lifeline
-
-        // Return if there are no comments attached
+        // If there are no comments attached to this lifeline, we're done here
         Set<SComment> comments = currLifeline.getComments();
         if (comments.isEmpty()) {
             return Math.max(0, requiredSpace - spaceBetweenLifelines) + context.lifelineSpacing;
         }
 
         // Check maximum size of comments attached to the lifeline
+        double maxCommentWidth = 0;
         for (SComment comment : comments) {
-            requiredSpace = Math.max(requiredSpace, comment.getSize().x + 2 * context.labelSpacing);
+            manageCommentLabelsAndSize(comment, Math.max(requiredSpace, spaceBetweenLifelines), context);
+            maxCommentWidth = Math.max(maxCommentWidth, comment.getSize().x + 2 * context.labelSpacing);
         }
+        requiredSpace = Math.max(requiredSpace, maxCommentWidth);
         
         // By now, the required space might be smaller than the actual space that we will have available between the
         // two lifelines
@@ -485,8 +507,6 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         for (SComment comment : comments) {
             if (comment.getLifeline() == currLifeline) {
                 SMessage message = comment.getReferenceMessage();
-                
-                manageCommentLabelsAndSize(comment, context);
 
                 // Place comment above the message
                 KVector commentPos = comment.getPosition();
@@ -538,6 +558,21 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         }
         
         return Math.max(0, requiredSpace - spaceBetweenLifelines) + context.lifelineSpacing;
+    }
+    
+    /**
+     * Applies label management to the label of the given message, if installed.
+     */
+    private void manageMessageLabel(final SMessage smessage, final double targetWidth, final LayoutContext context) {
+        if (context.labelManager != null && smessage.getLabel() != null) {
+            SLabel slabel = smessage.getLabel();
+            KVector newSize = context.labelManager.manageLabelSize(
+                    slabel.getProperty(InternalSequenceProperties.ORIGIN),
+                    targetWidth);
+            if (newSize != null) {
+                slabel.getSize().set(newSize);
+            }
+        }
     }
     
     
