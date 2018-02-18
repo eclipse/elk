@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
+import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
@@ -888,9 +889,24 @@ public final class ElkGraphExporter {
         for (SComment scomment : context.sgraph.getComments()) {
             ElkNode kcomment = (ElkNode) scomment.getProperty(InternalSequenceProperties.ORIGIN);
             
+            kcomment.setDimensions(
+                    scomment.getSize().x,
+                    scomment.getSize().y);
             kcomment.setLocation(
                     scomment.getPosition().x + offset.x,
                     scomment.getPosition().y + offset.y);
+            
+            if (scomment.getLabel() != null) {
+                SLabel slabel = scomment.getLabel();
+                ElkLabel klabel = (ElkLabel) slabel.getProperty(InternalSequenceProperties.ORIGIN);
+                
+                klabel.setDimensions(
+                        slabel.getSize().x,
+                        slabel.getSize().y);
+                klabel.setLocation(
+                        slabel.getPosition().x,
+                        slabel.getPosition().y);
+            }
             
             if (scomment.hasProperty(InternalSequenceProperties.COMMENT_CONNECTION)) {
                 double edgeSourceXPos = 0, edgeSourceYPos = 0, edgeTargetXPos = 0, edgeTargetYPos = 0;

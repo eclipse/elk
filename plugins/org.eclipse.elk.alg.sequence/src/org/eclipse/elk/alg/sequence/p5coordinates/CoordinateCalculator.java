@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.sequence.SequenceUtils;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
+import org.eclipse.elk.alg.sequence.graph.SGraphAdapters;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
@@ -34,7 +35,9 @@ import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -315,17 +318,41 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
 
         for (SComment scomment : context.sgraph.getComments()) {
             if (scomment.getReferenceMessage() == null && scomment.getLifeline() == null) {
+                manageCommentLabelsAndSize(scomment, context);
+                
                 scomment.getPosition().x = commentXPos;
                 scomment.getPosition().y = commentYPos;
                 
                 commentYPos += scomment.getSize().y + context.messageSpacing;
-                
                 commentMaxExtraWidth = Math.max(commentMaxExtraWidth, scomment.getSize().x);
             }
         }
 
         if (commentMaxExtraWidth > 0) {
             context.sgraph.getSize().x += commentMaxExtraWidth + context.lifelineSpacing;
+        }
+    }
+    
+    /**
+     * Invokes label management on the given comment and has the label and node size calculator calculate its size.
+     * 
+     * @param scomment
+     *            the comment.
+     * @param context
+     *            the layout context that contains all relevant information for the current layout run.
+     */
+    private void manageCommentLabelsAndSize(final SComment scomment, final LayoutContext context) {
+        // Label management
+        if (context.labelManager != null) {
+            // TODO Call label management
+        }
+        
+        // Size calculation
+        Set<SizeConstraint> sizeConstraints = scomment.getProperty(SequenceDiagramOptions.NODE_SIZE_CONSTRAINTS);
+        if (!sizeConstraints.isEmpty()) {
+            // TODO Call label and node size code
+            NodeLabelAndSizeCalculator.process(context.sgraphAdapter,
+                    SGraphAdapters.adaptComment(scomment, context.sgraphAdapter), true, false);
         }
     }
     
@@ -458,6 +485,8 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         for (SComment comment : comments) {
             if (comment.getLifeline() == currLifeline) {
                 SMessage message = comment.getReferenceMessage();
+                
+                manageCommentLabelsAndSize(comment, context);
 
                 // Place comment above the message
                 KVector commentPos = comment.getPosition();

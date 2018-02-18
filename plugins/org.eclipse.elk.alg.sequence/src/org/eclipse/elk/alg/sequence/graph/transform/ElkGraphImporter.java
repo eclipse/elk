@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
+import org.eclipse.elk.alg.sequence.graph.SGraphAdapters;
 import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
@@ -90,9 +91,12 @@ public final class ElkGraphImporter {
     private void importSGraph(final LayoutContext context) {
         // Create a graph object
         SGraph sgraph = new SGraph();
+        sgraph.copyProperties(context.elkgraph);
+        
         context.sgraph = sgraph;
+        context.sgraphAdapter = SGraphAdapters.adaptGraph(sgraph);
 
-        // Apply relevant properties
+        // Apply properties that have special fields in our graph data structure
         if (context.elkgraph.hasProperty(SequenceDiagramOptions.INTERACTION_PADDING)) {
             sgraph.getPadding().copy(context.elkgraph.getProperty(SequenceDiagramOptions.INTERACTION_PADDING));
         } else {
@@ -511,39 +515,42 @@ public final class ElkGraphImporter {
     /**
      * Create a comment object for comments or constraints (which are handled like comments).
      * 
-     * @param node
+     * @param kcomment
      *            the node to create a comment object from.
      * @param context
      *            the layout context we're currently building.
      */
-    private void createCommentLikeNode(final ElkNode node, final LayoutContext context) {
+    private void createCommentLikeNode(final ElkNode kcomment, final LayoutContext context) {
         // Get the node's type
-        NodeType nodeType = node.getProperty(SequenceDiagramOptions.TYPE_NODE);
+        NodeType nodeType = kcomment.getProperty(SequenceDiagramOptions.TYPE_NODE);
 
         // Create comment object
-        SComment comment = new SComment();
-        comment.setProperty(InternalSequenceProperties.ORIGIN, node);
-        comment.setProperty(SequenceDiagramOptions.TYPE_NODE, nodeType);
+        SComment scomment = new SComment();
+        scomment.copyProperties(kcomment);
+        scomment.setProperty(InternalSequenceProperties.ORIGIN, kcomment);
 
         // Copy layout information
-        comment.getPosition().x = node.getX();
-        comment.getPosition().y = node.getY();
-        comment.getSize().x = node.getWidth();
-        comment.getSize().y = node.getHeight();
+        scomment.getPosition().x = kcomment.getX();
+        scomment.getPosition().y = kcomment.getY();
+        scomment.getSize().x = kcomment.getWidth();
+        scomment.getSize().y = kcomment.getHeight();
+        
+        // Import the comment's label, if any
+        scomment.setLabel(importLabel(kcomment));
 
         // Attach connected edge to comment
-        if (!node.getOutgoingEdges().isEmpty()) {
-            comment.setProperty(InternalSequenceProperties.COMMENT_CONNECTION, node.getOutgoingEdges().get(0));
+        if (!kcomment.getOutgoingEdges().isEmpty()) {
+            scomment.setProperty(InternalSequenceProperties.COMMENT_CONNECTION, kcomment.getOutgoingEdges().get(0));
         }
 
         // Provide the comment with a list of elements it is attached to
-        if (node.hasProperty(SequenceDiagramOptions.ID_ATTACHED_ELEMENTS)) {
-            for (Integer elementId : node.getProperty(SequenceDiagramOptions.ID_ATTACHED_ELEMENTS)) {
+        if (kcomment.hasProperty(SequenceDiagramOptions.ID_ATTACHED_ELEMENTS)) {
+            for (Integer elementId : kcomment.getProperty(SequenceDiagramOptions.ID_ATTACHED_ELEMENTS)) {
                 // Comments can be attached either to lifelines or to messages
                 if (lifelineIdMap.containsKey(elementId)) {
-                    comment.setLifeline(lifelineIdMap.get(elementId));
+                    scomment.setLifeline(lifelineIdMap.get(elementId));
                 } else if (messageIdMap.containsKey(elementId)) {
-                    comment.setReferenceMessage(messageIdMap.get(elementId));
+                    scomment.setReferenceMessage(messageIdMap.get(elementId));
                 }
             }
         }
@@ -551,14 +558,14 @@ public final class ElkGraphImporter {
         // Handle time observations
         // TODO: This should not be based on coordinate calculations, but on properties set by the layout connector.
         if (nodeType == NodeType.TIME_OBSERVATION) {
-            comment.getSize().x = context.sgraph.getProperty(SequenceDiagramOptions.SIZE_TIME_OBSERVATION_WIDTH);
+            scomment.getSize().x = context.sgraph.getProperty(SequenceDiagramOptions.SIZE_TIME_OBSERVATION_WIDTH);
 
             // Find lifeline that is next to the time observation
             SLifeline nextLifeline = null;
             double smallestDistance = Double.MAX_VALUE;
             for (SLifeline lifeline : context.sgraph.getLifelines()) {
                 double distance = Math.abs(
-                        (lifeline.getPosition().x + lifeline.getSize().x / 2) - (node.getX() + node.getWidth() / 2));
+                        (lifeline.getPosition().x + lifeline.getSize().x / 2) - (kcomment.getX() + kcomment.getWidth() / 2));
                 if (distance < smallestDistance) {
                     smallestDistance = distance;
                     nextLifeline = lifeline;
@@ -573,9 +580,9 @@ public final class ElkGraphImporter {
                 ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
                 double distance;
                 if (message.getSource() == nextLifeline) {
-                    distance = Math.abs((edgeSection.getStartY()) - (node.getY() + node.getHeight() / 2));
+                    distance = Math.abs((edgeSection.getStartY()) - (kcomment.getY() + kcomment.getHeight() / 2));
                 } else {
-                    distance = Math.abs((edgeSection.getEndY()) - (node.getY() + node.getHeight() / 2));
+                    distance = Math.abs((edgeSection.getEndY()) - (kcomment.getY() + kcomment.getHeight() / 2));
                 }
 
                 if (distance < smallestDistance) {
@@ -585,11 +592,11 @@ public final class ElkGraphImporter {
             }
 
             // Set both lifeline and message of the comment to indicate that it should be drawn near to the event
-            comment.setLifeline(nextLifeline);
-            comment.setReferenceMessage(nextMessage);
+            scomment.setLifeline(nextLifeline);
+            scomment.setReferenceMessage(nextMessage);
         }
 
-        context.sgraph.getComments().add(comment);
+        context.sgraph.getComments().add(scomment);
     }
 
     //////////////////////////////////////////////////////////////

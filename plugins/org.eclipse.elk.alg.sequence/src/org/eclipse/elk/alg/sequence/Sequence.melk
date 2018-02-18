@@ -68,10 +68,16 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports areas.padding
     supports areas.^group
 
+    supports lifelineSortingStrategy
+    
     supports labelSide    
     supports labelAlignment
     supports org.eclipse.elk.edgeLabels.inline
-    supports lifelineSortingStrategy
+    
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.nodeLabels.padding = new ElkPadding(3)
 }
 
 option interactionPadding : ElkPadding {

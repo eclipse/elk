@@ -11,12 +11,17 @@
 package org.eclipse.elk.alg.sequence.graph;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.sequence.graph.SGraphAdapters.SGraphAdapter;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.LabelSideSelection;
 import org.eclipse.elk.alg.sequence.options.LifelineSortingStrategy;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
+import org.eclipse.elk.core.labels.ILabelManager;
+import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * A simple data holder class used to pass data about the layout process around to the different phases
@@ -34,13 +39,19 @@ public final class LayoutContext {
     /** The {@link LGraph} created from the SGraph. */
     public LGraph lgraph;
     
+    /** A wrapper around the {@link SGraph} used for comment size calculations. */ 
+    public SGraphAdapter sgraphAdapter;
+    
     
     // Layout Settings
-
+    
     /** The label side selection strategy. */
     public final LabelSideSelection labelSideSelection;
     /** The label alignment strategy. */
     public final LabelAlignmentStrategy labelAlignment;
+    /** The label managemer, if any. */
+    public final ILabelManager labelManager;
+    
     /** The lifeline sorting strategy. */
     public final LifelineSortingStrategy sortingStrategy;
     /** Whether to include areas in the lifeline sorting process. Used by some sorters. */
@@ -80,6 +91,15 @@ public final class LayoutContext {
                 SequenceDiagramOptions.LABEL_SIDE);
         labelAlignment = parentNode.getProperty(
                 SequenceDiagramOptions.LABEL_ALIGNMENT);
+        
+        // Label management can be installed either on the interaction node or the parent graph
+        if (elkgraph.hasProperty(LabelManagementOptions.LABEL_MANAGER)) {
+            labelManager = elkgraph.getProperty(LabelManagementOptions.LABEL_MANAGER);
+        } else {
+            ElkGraphElement root = (ElkGraphElement) EcoreUtil.getRootContainer(elkgraph);
+            labelManager = root.getProperty(LabelManagementOptions.LABEL_MANAGER);
+        }
+        
         sortingStrategy = parentNode.getProperty(
                 SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY);
         groupAreasWhenSorting = parentNode.getProperty(

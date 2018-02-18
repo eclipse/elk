@@ -26,6 +26,8 @@ public final class SComment extends SShape {
     private SMessage referenceMessage;
     /** Where a comment will be aligned along a message. */
     private MessageCommentAlignment alignment = MessageCommentAlignment.CENTER;
+    /** The label that contains the comment's text, if we know about any. */
+    private SLabel label;
 
 
     /**
@@ -103,6 +105,25 @@ public final class SComment extends SShape {
      */
     public void setAlignment(final MessageCommentAlignment alignment) {
         this.alignment = alignment;
+    }
+
+    /**
+     * Returns this comment's label, if any.
+     * 
+     * @return the label.
+     */
+    public SLabel getLabel() {
+        return label;
+    }
+
+    /**
+     * Sets this comment's label.
+     * 
+     * @param label
+     *            the label.
+     */
+    public void setLabel(final SLabel label) {
+        this.label = label;
     }
     
 }
