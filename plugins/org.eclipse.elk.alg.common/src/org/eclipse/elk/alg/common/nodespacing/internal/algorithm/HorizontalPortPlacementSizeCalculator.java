@@ -8,20 +8,20 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
+package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.PrimitiveIterator;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.AtomicCell;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
+import org.eclipse.elk.alg.common.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.options.PortAlignment;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 
 import com.google.common.math.DoubleMath;
 

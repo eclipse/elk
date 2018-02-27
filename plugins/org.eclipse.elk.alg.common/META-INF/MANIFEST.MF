@@ -9,12 +9,14 @@ Require-Bundle: com.google.guava;bundle-version="15.0.0",
  org.eclipse.elk.core,
  org.eclipse.elk.graph
 Export-Package: org.eclipse.elk.alg.common,
+ org.eclipse.elk.alg.common.compaction,
  org.eclipse.elk.alg.common.compaction.oned,
  org.eclipse.elk.alg.common.compaction.options,
- org.eclipse.elk.alg.common.compaction,
  org.eclipse.elk.alg.common.networksimplex,
+ org.eclipse.elk.alg.common.nodespacing,
+ org.eclipse.elk.alg.common.nodespacing.cellsystem,
  org.eclipse.elk.alg.common.polyomino,
  org.eclipse.elk.alg.common.polyomino.structures,
- org.eclipse.elk.alg.common.utils,
- org.eclipse.elk.alg.common.spore
+ org.eclipse.elk.alg.common.spore,
+ org.eclipse.elk.alg.common.utils
 

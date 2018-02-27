@@ -8,8 +8,11 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
+package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.AtomicCell;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
+import org.eclipse.elk.alg.common.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
@@ -19,9 +22,6 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
@@ -34,7 +34,7 @@ public final class PortPlacementCalculator {
      * Copy of the {@link de.cau.cs.kieler.klay.layered.properties.InternalProperties#PORT_RATIO_OR_POSITION}
      * option. For further information see the documentation found there. We added this copy here to
      * allow a generic treatment of spacing calculations for graph elements. See the
-     * {@link org.eclipse.elk.core.util.nodespacing} package. [programmatically set]
+     * {@link org.eclipse.elk.alg.common.nodespacing} package. [programmatically set]
      * 
      * TODO This should be replaced by a proper property declared in a MELK file.
      */

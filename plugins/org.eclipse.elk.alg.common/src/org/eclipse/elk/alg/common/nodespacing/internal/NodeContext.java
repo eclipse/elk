@@ -8,11 +8,17 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal;
+package org.eclipse.elk.alg.common.nodespacing.internal;
 
 import java.util.EnumMap;
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.AtomicCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.ContainerArea;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.GridContainerCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell.Strip;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
@@ -27,12 +33,6 @@ import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.IndividualSpacings;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.GridContainerCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.StripContainerCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.StripContainerCell.Strip;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;

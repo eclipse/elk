@@ -8,12 +8,12 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal;
+package org.eclipse.elk.alg.common.nodespacing.internal;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
 
 /**
  * Data holder class to be passed around to avoid having too much state in the size calculation classes. Port contexts

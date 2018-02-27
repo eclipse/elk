@@ -8,14 +8,14 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
+package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.StripContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
 
 /**
  * Knows how to properly size and position outer node label containers and to place node and port labels.

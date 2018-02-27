@@ -8,17 +8,17 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
+package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.AtomicCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.ContainerArea;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
+import org.eclipse.elk.alg.common.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.StripContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 
 /**
  * Sets up the inside port label cells. These are set up even when there are no inside port labels since they also

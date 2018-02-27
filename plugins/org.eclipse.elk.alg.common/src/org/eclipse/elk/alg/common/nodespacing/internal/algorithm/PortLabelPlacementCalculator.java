@@ -8,10 +8,16 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
+package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
 import java.util.Collection;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.AtomicCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.HorizontalLabelAlignment;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.VerticalLabelAlignment;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
+import org.eclipse.elk.alg.common.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
@@ -20,12 +26,6 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.AtomicCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.HorizontalLabelAlignment;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.VerticalLabelAlignment;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover;
 import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover.OverlapRemovalDirection;
 

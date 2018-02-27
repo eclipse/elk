@@ -15,8 +15,8 @@ import java.util.Comparator;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.LabelSide;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.nodespacing.LabelSide;
 import org.eclipse.elk.graph.properties.IProperty;
 
 /**

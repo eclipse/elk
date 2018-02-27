@@ -8,17 +8,17 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.cellsystem;
+package org.eclipse.elk.alg.common.nodespacing.cellsystem;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeLabelLocation;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
 
 import com.google.common.collect.Lists;
 

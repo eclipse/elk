@@ -8,14 +8,14 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
+package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
+import org.eclipse.elk.alg.common.nodespacing.internal.PortContext;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.PortContext;
 
 /**
  * Creates port context objects and assigns volatile IDs to all ports. Also, unless port labels are fixed, the labels

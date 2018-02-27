@@ -8,22 +8,22 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal.algorithm;
+package org.eclipse.elk.alg.common.nodespacing.internal.algorithm;
 
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.ContainerArea;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.GridContainerCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.StripContainerCell.Strip;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeLabelLocation;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.GridContainerCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.StripContainerCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.StripContainerCell.Strip;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeLabelLocation;
 
 /**
  * Knows how to take all of a node's labels and create the appropriate grid cells.

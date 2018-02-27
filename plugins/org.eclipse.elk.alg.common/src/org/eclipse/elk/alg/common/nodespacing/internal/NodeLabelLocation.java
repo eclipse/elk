@@ -8,17 +8,17 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing.internal;
+package org.eclipse.elk.alg.common.nodespacing.internal;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.ContainerArea;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.HorizontalLabelAlignment;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.VerticalLabelAlignment;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.HorizontalLabelAlignment;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.VerticalLabelAlignment;
 
 import com.google.common.collect.Lists;
 

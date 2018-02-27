@@ -8,27 +8,27 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.nodespacing;
+package org.eclipse.elk.alg.common.nodespacing;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.Cell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.ContainerArea;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.GridContainerCell;
+import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.CellSystemConfigurator;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.HorizontalPortPlacementSizeCalculator;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.InsidePortLabelCellCreator;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.LabelPlacer;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.NodeLabelAndSizeUtilities;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.NodeLabelCellCreator;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.NodeSizeCalculator;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.PortContextCreator;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.PortLabelPlacementCalculator;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.PortPlacementCalculator;
+import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.VerticalPortPlacementSizeCalculator;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.Cell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.ContainerArea;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.GridContainerCell;
-import org.eclipse.elk.core.util.nodespacing.internal.NodeContext;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.CellSystemConfigurator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.HorizontalPortPlacementSizeCalculator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.InsidePortLabelCellCreator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.LabelPlacer;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.NodeLabelAndSizeUtilities;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.NodeLabelCellCreator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.NodeSizeCalculator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortContextCreator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortLabelPlacementCalculator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.PortPlacementCalculator;
-import org.eclipse.elk.core.util.nodespacing.internal.algorithm.VerticalPortPlacementSizeCalculator;
 
 /**
  * Knows how to calculate the size of a node and how to place its ports. Takes all
