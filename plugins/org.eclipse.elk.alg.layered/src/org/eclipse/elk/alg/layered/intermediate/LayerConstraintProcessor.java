@@ -52,9 +52,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Layer constraint application", 1);
         
@@ -88,26 +86,24 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
                 switch (constraint) {
                 case FIRST:
                     node.setLayer(firstLayer);
-                    throwUpUnlessNoIncoming(node, false);
+                    throwUpUnlessNoIncomingEdges(node, true);
                     moveLabelsToLabelLayer(node, true, firstLabelLayer);
-                    
                     break;
                 
                 case FIRST_SEPARATE:
                     node.setLayer(veryFirstLayer);
-                    throwUpUnlessNoIncoming(node, true);
+                    throwUpUnlessNoIncomingEdges(node, false);
                     break;
                 
                 case LAST:
                     node.setLayer(lastLayer);
-                    throwUpUnlessNoOutgoing(node, false);
+                    throwUpUnlessNoOutgoingEdges(node, true);
                     moveLabelsToLabelLayer(node, false, lastLabelLayer);
-                    
                     break;
                 
                 case LAST_SEPARATE:
                     node.setLayer(veryLastLayer);
-                    throwUpUnlessNoOutgoing(node, false);
+                    throwUpUnlessNoOutgoingEdges(node, false);
                     break;
                 }
             }
@@ -232,26 +228,26 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
     // FIRST(_SEPARATE) Node Checks
     
     /**
-     * Check that the node has no incoming edges, and fail if it has any.
+     * Check that the node has no incoming edges, and fail if it has any. Edges that connect two hierarchical port
+     * dummies are always allowed.
      * 
-     * @param node a node
-     * @param strict {@code false} if incoming connections from {@code FIRST_SEPARATE} nodes are allowed,
-     *               {@code true} otherwise.
+     * @param node
+     *            a node.
+     * @param allowFromFirstSeparate
+     *            {@code true} if incoming connections from {@code FIRST_SEPARATE} nodes are allowed.
      */
-    private void throwUpUnlessNoIncoming(final LNode node, final boolean strict) {
+    private void throwUpUnlessNoIncomingEdges(final LNode node, final boolean allowFromFirstSeparate) {
         for (LPort port : node.getPorts()) {
-            if (strict) {
-                if (!port.getIncomingEdges().isEmpty()) {
-                    throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
-                            + "' has its layer constraint set to FIRST_SEPARATE, but has at least one incoming edge. "
-                            + "FIRST_SEPARATE nodes must not have incoming edges.");
-                }
-            } else {
-                for (LEdge incoming : port.getIncomingEdges()) {
-                    if (!isAcceptableIncomingEdge(incoming)) {
+            for (LEdge incoming : port.getIncomingEdges()) {
+                if (!isAcceptableIncomingEdge(incoming)) {
+                    if (allowFromFirstSeparate) {
                         throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
                                 + "' has its layer constraint set to FIRST, but has at least one incoming edge that "
                                 + " does not come from a FIRST_SEPARATE node. That must not happen.");
+                    } else {
+                        throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
+                                + "' has its layer constraint set to FIRST_SEPARATE, but has at least one incoming "
+                                + "edge. FIRST_SEPARATE nodes must not have incoming edges.");
                     }
                 }
             }
@@ -262,12 +258,18 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
      * Checks whether or not the given edge incoming to a {@code FIRST} layer node is allowed to do so.
      */
     private boolean isAcceptableIncomingEdge(final LEdge edge) {
-        // The target node is expected to be in the FIRST layer
-        assert edge.getTarget().getNode()
-                .getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.FIRST;
+        LNode sourceNode = edge.getSource().getNode();
+        LNode targetNode = edge.getTarget().getNode();
+        
+        // If both nodes are external port dummies, that's fine
+        if (sourceNode.getType() == NodeType.EXTERNAL_PORT && targetNode.getType() == NodeType.EXTERNAL_PORT) {
+            return true;
+        }
+        
+        // Otherwise, the target node is expected to be in the FIRST layer
+        assert targetNode.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.FIRST;
         
         // If the source node is in the very first layer, that's okay
-        LNode sourceNode = edge.getSource().getNode();
         if (sourceNode.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.FIRST_SEPARATE) {
             return true;
         }
@@ -283,24 +285,23 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
     /**
      * Check that the node has no outgoing edges, and fail if it has any.
      * 
-     * @param node a node
-     * @param strict {@code false} if outgoing connections from {@code LAST_SEPARATE} nodes are allowed,
-     *               {@code true} otherwise.
+     * @param node
+     *            a node
+     * @param allowToLastSeparate
+     *            {@code true} if outgoing connections to {@code LAST_SEPARATE} nodes are allowed.
      */
-    private void throwUpUnlessNoOutgoing(final LNode node, final boolean strict) {
+    private void throwUpUnlessNoOutgoingEdges(final LNode node, final boolean allowToLastSeparate) {
         for (LPort port : node.getPorts()) {
-            if (strict) {
-                if (!port.getOutgoingEdges().isEmpty()) {
-                    throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
-                    + "' has its layer constraint set to LAST_SEPARATE, but has at least one outgoing edge. "
-                    + "LAST_SEPARATE nodes must not have outgoing edges.");
-                }
-            } else {
-                for (LEdge outgoing : port.getOutgoingEdges()) {
-                    if (!isAcceptableOutgoingEdge(outgoing)) {
+            for (LEdge outgoing : port.getOutgoingEdges()) {
+                if (!isAcceptableOutgoingEdge(outgoing)) {
+                    if (allowToLastSeparate) {
                         throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
                                 + "' has its layer constraint set to LAST, but has at least one outgoing edge that "
                                 + " does not go to a LAST_SEPARATE node. That must not happen.");
+                    } else {
+                        throw new UnsupportedConfigurationException("Node '" + node.getDesignation()
+                                + "' has its layer constraint set to LAST_SEPARATE, but has at least one outgoing "
+                                + "edge. LAST_SEPARATE nodes must not have outgoing edges.");
                     }
                 }
             }
@@ -311,12 +312,18 @@ public final class LayerConstraintProcessor implements ILayoutProcessor<LGraph> 
      * Checks whether or not the given edge leacing a {@code LAST} layer node is allowed to do so.
      */
     private boolean isAcceptableOutgoingEdge(final LEdge edge) {
-        // The source node is expected to be in the LAST layer
-        assert edge.getSource().getNode()
-                .getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.LAST;
+        LNode sourceNode = edge.getSource().getNode();
+        LNode targetNode = edge.getTarget().getNode();
+        
+        // If both nodes are external port dummies, that's fine
+        if (sourceNode.getType() == NodeType.EXTERNAL_PORT && targetNode.getType() == NodeType.EXTERNAL_PORT) {
+            return true;
+        }
+        
+        // Otherwise, the source node is expected to be in the LAST layer
+        assert sourceNode.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.LAST;
         
         // If the target node is in the very last layer, that's okay
-        LNode targetNode = edge.getTarget().getNode();
         if (targetNode.getProperty(LayeredOptions.LAYERING_LAYER_CONSTRAINT) == LayerConstraint.LAST_SEPARATE) {
             return true;
         }
