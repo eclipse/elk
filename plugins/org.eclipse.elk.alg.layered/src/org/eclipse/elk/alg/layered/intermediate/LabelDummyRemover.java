@@ -24,8 +24,8 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.LabelSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.nodespacing.LabelSide;
 
 /**
  * <p>Processor that removes the inserted center label dummies and places the labels on their

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.alg.layered.compound.CrossHierarchyEdge;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -33,9 +34,8 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.LabelSide;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.nodespacing.LabelSide;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 

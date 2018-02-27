@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.radial;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.radial.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.radial.options.CompactionStrategy;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
@@ -22,7 +23,6 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
-import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.graph.ElkNode;
 
 /**

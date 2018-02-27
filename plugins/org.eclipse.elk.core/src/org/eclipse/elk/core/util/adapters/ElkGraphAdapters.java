@@ -17,6 +17,7 @@ import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.LabelSide;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
@@ -24,7 +25,6 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphElementAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
-import org.eclipse.elk.core.util.nodespacing.LabelSide;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkGraphElement;
@@ -108,9 +108,6 @@ public final class ElkGraphAdapters {
         }
 
 
-        /**
-         * {@inheritDoc}
-         */
         @SuppressWarnings("unchecked")
         public <P> P getProperty(final IProperty<P> prop) {
             // the node spacing implementation requires a default value for the offset property
@@ -121,47 +118,33 @@ public final class ElkGraphAdapters {
             return element.getProperty(prop);
         }
         
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public <P> boolean hasProperty(final IProperty<P> prop) {
             return element.hasProperty(prop);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public KVector getPosition() {
             return new KVector(element.getX(), element.getY());
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public KVector getSize() {
             return new KVector(element.getWidth(), element.getHeight());
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setSize(final KVector size) {
             element.setWidth(size.x);
             element.setHeight(size.y);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setPosition(final KVector pos) {
             element.setX(pos.x);
             element.setY(pos.y);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public ElkPadding getPadding() {
             ElkPadding elkPadding = element.getProperty(CoreOptions.PADDING);
             if (elkPadding == null) {
@@ -171,16 +154,10 @@ public final class ElkGraphAdapters {
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public void setPadding(final ElkPadding padding) {
             element.setProperty(CoreOptions.PADDING, new ElkPadding(padding));
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public ElkMargin getMargin() {
             ElkMargin margins = element.getProperty(CoreOptions.MARGINS);
             if (margins == null) {
@@ -189,25 +166,18 @@ public final class ElkGraphAdapters {
             return margins;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public void setMargin(final ElkMargin margin) {
             // analog to the padding case, we copy the margins object here
             ElkMargin newMargin = new ElkMargin(margin); 
             element.setProperty(CoreOptions.MARGINS, newMargin);
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public int getVolatileId() {
             return id;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void setVolatileId(final int volatileId) {
             this.id = volatileId;
         }
@@ -231,9 +201,7 @@ public final class ElkGraphAdapters {
             super(node);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public Iterable<NodeAdapter<?>> getNodes() {
             if (childNodes == null) {
                 childNodes = Lists.newArrayListWithExpectedSize(element.getChildren().size());
@@ -277,16 +245,12 @@ public final class ElkGraphAdapters {
         }
         
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public GraphAdapter<?> getGraph() {
             return parentGraphAdapter;
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public List<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
@@ -297,9 +261,7 @@ public final class ElkGraphAdapters {
             return labelAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public List<PortAdapter<?>> getPorts() {
             if (portAdapters == null) {
                 portAdapters = Lists.newArrayListWithExpectedSize(element.getPorts().size());
@@ -309,10 +271,8 @@ public final class ElkGraphAdapters {
             }
             return portAdapters;
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             if (incomingEdgeAdapters == null) {
                 incomingEdgeAdapters = Lists.newArrayList();
@@ -322,10 +282,8 @@ public final class ElkGraphAdapters {
             }
             return incomingEdgeAdapters;
         }
-        
-        /**
-         * {@inheritDoc}
-         */
+
+        @Override
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
             if (outgoingEdgeAdapters == null) {
                 outgoingEdgeAdapters = Lists.newArrayList();
@@ -336,16 +294,12 @@ public final class ElkGraphAdapters {
             return outgoingEdgeAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public void sortPortList() {
             sortPortList(DEFAULT_PORTLIST_SORTER);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         @SuppressWarnings("unchecked")
         public void sortPortList(final Comparator<?> comparator) {
             // Iterate through the nodes of all layers
@@ -354,9 +308,7 @@ public final class ElkGraphAdapters {
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public boolean isCompoundNode() {
             return !element.getChildren().isEmpty() || element.getProperty(CoreOptions.INSIDE_SELF_LOOPS_ACTIVATE);
         }
@@ -379,9 +331,6 @@ public final class ElkGraphAdapters {
         }
         
 
-        /**
-         * {@inheritDoc}
-         */
         public LabelSide getSide() {
             return element.getProperty(LabelSide.LABEL_SIDE);
         }
@@ -411,16 +360,10 @@ public final class ElkGraphAdapters {
         }
 
         
-        /**
-         * {@inheritDoc}
-         */
         public PortSide getSide() {
             return element.getProperty(CoreOptions.PORT_SIDE);
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public List<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
@@ -431,9 +374,6 @@ public final class ElkGraphAdapters {
             return labelAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
             if (incomingEdgeAdapters == null) {
                 incomingEdgeAdapters = Lists.newArrayListWithCapacity(element.getIncomingEdges().size());
@@ -444,9 +384,6 @@ public final class ElkGraphAdapters {
             return incomingEdgeAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
             if (outgoingEdgeAdapters == null) {
                 outgoingEdgeAdapters = Lists.newArrayListWithCapacity(element.getOutgoingEdges().size());
@@ -457,9 +394,6 @@ public final class ElkGraphAdapters {
             return outgoingEdgeAdapters;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public boolean hasCompoundConnections() {
             ElkNode node = element.getParent();
             
@@ -510,9 +444,6 @@ public final class ElkGraphAdapters {
             this.element = edge;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         public Iterable<LabelAdapter<?>> getLabels() {
             if (labelAdapters == null) {
                 labelAdapters = Lists.newArrayListWithExpectedSize(element.getLabels().size());
@@ -536,9 +467,7 @@ public final class ElkGraphAdapters {
      */
     public static class PortComparator implements Comparator<ElkPort> {
         
-        /**
-         * {@inheritDoc}
-         */
+        @Override
         public int compare(final ElkPort port1, final ElkPort port2) {
             int ordinalDifference =
                     port1.getProperty(CoreOptions.PORT_SIDE).ordinal()

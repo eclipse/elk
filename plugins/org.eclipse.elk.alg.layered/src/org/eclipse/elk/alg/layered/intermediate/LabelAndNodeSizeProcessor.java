@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
 import org.eclipse.elk.alg.layered.graph.LLabel;
@@ -25,7 +26,6 @@ import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 
 /**
  * Calculates node sizes, places ports, and places node and port labels.

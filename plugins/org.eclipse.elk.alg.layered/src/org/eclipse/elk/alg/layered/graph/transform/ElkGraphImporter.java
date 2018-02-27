@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
@@ -46,7 +47,6 @@ import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
-import org.eclipse.elk.core.util.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -86,6 +86,9 @@ class ElkGraphImporter {
         // Create the layered graph
         final LGraph topLevelGraph = createLGraph(elkgraph);
         
+        // Assign defined port sides to all external ports 
+        elkgraph.getPorts().stream().forEach(elkport -> ensureDefinedPortSide(topLevelGraph, elkport));
+        
         // Transform the external ports, if any
         Set<GraphProperties> graphProperties = topLevelGraph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         checkExternalPorts(elkgraph, graphProperties);
@@ -95,8 +98,7 @@ class ElkGraphImporter {
             }
         }
         
-        // Calculate the graph's minimum size (which requires that external ports have defined port sides, which
-        // the call to transformExternalPort(...) above ensures)
+        // Calculate the graph's minimum size
         calculateMinimumGraphSize(elkgraph, topLevelGraph);
         
         // Remember things
@@ -112,6 +114,40 @@ class ElkGraphImporter {
         }
         
         return topLevelGraph;
+    }
+    
+    /**
+     * Ensures that the given port has a defined port side.
+     */
+    private void ensureDefinedPortSide(final LGraph lgraph, final ElkPort elkport) {
+        Direction layoutDirection = lgraph.getProperty(LayeredOptions.DIRECTION);
+        PortSide portSide = elkport.getProperty(LayeredOptions.PORT_SIDE);
+        
+        // If the port side is undefined, try to get the ELK utilities to infer one for us
+        if (portSide == PortSide.UNDEFINED) {
+            portSide = ElkUtil.calcPortSide(elkport, layoutDirection);
+        }
+        
+        // There are circumstances where the ELK utilities fail to infer port sides. Default to the layout direction's
+        // default input port side
+        if (portSide == PortSide.UNDEFINED) {
+            switch (layoutDirection) {
+            case RIGHT:
+                portSide = PortSide.WEST;
+                break;
+            case LEFT:
+                portSide = PortSide.EAST;
+                break;
+            case DOWN:
+                portSide = PortSide.NORTH;
+                break;
+            case UP:
+                portSide = PortSide.SOUTH;
+                break;
+            }
+        }
+        
+        elkport.setProperty(LayeredOptions.PORT_SIDE, portSide);
     }
     
     /**
@@ -531,15 +567,11 @@ class ElkGraphImporter {
                 elkport.getX() + elkport.getWidth() / 2.0,
                 elkport.getY() + elkport.getHeight() / 2.0);
         int netFlow = calculateNetFlow(elkport);
-        PortSide portSide = elkport.getProperty(LayeredOptions.PORT_SIDE);
         PortConstraints portConstraints = elkgraph.getProperty(LayeredOptions.PORT_CONSTRAINTS);
         
         // If we don't have a proper port side, calculate one
-        Direction layoutDirection = lgraph.getProperty(LayeredOptions.DIRECTION);
-        if (portSide == PortSide.UNDEFINED) {
-            portSide = ElkUtil.calcPortSide(elkport, layoutDirection);
-            elkport.setProperty(LayeredOptions.PORT_SIDE, portSide);
-        }
+        PortSide portSide = elkport.getProperty(LayeredOptions.PORT_SIDE);
+        assert portSide != PortSide.UNDEFINED;
         
         // If we don't have a port offset, infer one
         if (!elkport.getAllProperties().containsKey(LayeredOptions.PORT_BORDER_OFFSET)) {
@@ -558,7 +590,7 @@ class ElkGraphImporter {
         LNode dummy = LGraphUtil.createExternalPortDummy(
                 elkport, portConstraints, portSide, netFlow, graphSize,
                 elkportPosition, new KVector(elkport.getWidth(), elkport.getHeight()),
-                layoutDirection, lgraph);
+                lgraph.getProperty(LayeredOptions.DIRECTION), lgraph);
         dummy.setProperty(InternalProperties.ORIGIN, elkport);
         
         // The dummy only has one port
