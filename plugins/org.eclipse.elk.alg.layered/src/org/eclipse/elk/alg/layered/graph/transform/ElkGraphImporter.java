@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
@@ -46,7 +47,6 @@ import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
-import org.eclipse.elk.core.util.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;

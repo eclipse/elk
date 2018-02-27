@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
@@ -31,7 +32,6 @@ import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 

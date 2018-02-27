@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
@@ -36,7 +37,6 @@ import org.eclipse.elk.core.options.PortLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

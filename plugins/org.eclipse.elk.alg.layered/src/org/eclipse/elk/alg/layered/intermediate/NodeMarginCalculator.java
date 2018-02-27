@@ -12,6 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
 import org.eclipse.elk.alg.layered.graph.LMargin;
@@ -22,7 +23,6 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 
 /**
  * Sets the node margins. Node margins are influenced by both port positions and sizes

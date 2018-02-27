@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.spore;
 import java.util.Map;
 
 import org.eclipse.elk.alg.common.ICostFunction;
+import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.alg.common.spore.InternalProperties;
 import org.eclipse.elk.alg.common.spore.Node;
 import org.eclipse.elk.alg.common.utils.Utils;
@@ -32,7 +33,6 @@ import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
-import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;

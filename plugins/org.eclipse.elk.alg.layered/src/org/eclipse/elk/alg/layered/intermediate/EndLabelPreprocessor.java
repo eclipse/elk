@@ -12,6 +12,9 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.HorizontalLabelAlignment;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
+import org.eclipse.elk.alg.common.nodespacing.cellsystem.VerticalLabelAlignment;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
@@ -25,14 +28,11 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
+import org.eclipse.elk.core.options.LabelSide;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover;
 import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover.OverlapRemovalDirection;
-import org.eclipse.elk.core.util.nodespacing.LabelSide;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.HorizontalLabelAlignment;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.LabelCell;
-import org.eclipse.elk.core.util.nodespacing.cellsystem.VerticalLabelAlignment;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
