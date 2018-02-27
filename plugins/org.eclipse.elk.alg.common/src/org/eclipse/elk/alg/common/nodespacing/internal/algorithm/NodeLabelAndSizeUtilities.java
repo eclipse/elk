@@ -158,10 +158,6 @@ public final class NodeLabelAndSizeUtilities {
             }
         }
         
-        if (nodeContext.sizeOptions.contains(SizeOptions.ENLARGE_ONLY)) {
-            return getMinimumNodeOrClientAreaSize(nodeContext);
-        }
-        
         return null;
     }
     
@@ -181,12 +177,6 @@ public final class NodeLabelAndSizeUtilities {
             if (minSize.y <= 0) {
                 minSize.y = ElkUtil.DEFAULT_MIN_HEIGHT;
             }
-        }
-        
-        // If the node is configured such that it cannot shrink, be sure to take that into account
-        if (nodeContext.sizeOptions.contains(SizeOptions.ENLARGE_ONLY)) {
-            minSize.x = Math.max(minSize.x, nodeContext.nodeSize.x);
-            minSize.y = Math.max(minSize.y, nodeContext.nodeSize.y);
         }
         
         return minSize;
