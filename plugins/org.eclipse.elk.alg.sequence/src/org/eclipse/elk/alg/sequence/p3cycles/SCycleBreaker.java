@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.p2cycles;
+package org.eclipse.elk.alg.sequence.p3cycles;
 
 import java.util.List;
 import java.util.Set;

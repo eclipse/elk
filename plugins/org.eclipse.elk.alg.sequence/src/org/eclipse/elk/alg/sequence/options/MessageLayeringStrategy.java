@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.sequence.options;
 
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
-import org.eclipse.elk.alg.sequence.p3layering.MessageLayerer;
+import org.eclipse.elk.alg.sequence.p4layering.MessageLayerer;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 

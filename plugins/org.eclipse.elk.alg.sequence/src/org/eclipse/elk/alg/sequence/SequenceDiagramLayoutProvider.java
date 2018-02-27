@@ -73,13 +73,13 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
         // Setup the algorithm assembler
         algorithmAssembler.reset();
         
-        algorithmAssembler.setPhase(SequencePhases.P1_SPACE_ALLOCATION,
+        algorithmAssembler.setPhase(SequencePhases.P2_SPACE_ALLOCATION,
                 SpaceAllocationStrategy.DEFAULT);
-        algorithmAssembler.setPhase(SequencePhases.P2_CYCLE_BREAKING,
+        algorithmAssembler.setPhase(SequencePhases.P3_CYCLE_BREAKING,
                 CycleBreakingStrategy.DEFAULT);
-        algorithmAssembler.setPhase(SequencePhases.P3_MESSAGE_LAYERING,
+        algorithmAssembler.setPhase(SequencePhases.P4_MESSAGE_LAYERING,
                 MessageLayeringStrategy.DEFAULT);
-        algorithmAssembler.setPhase(SequencePhases.P4_LIFELINE_SORTING,
+        algorithmAssembler.setPhase(SequencePhases.P1_LIFELINE_SORTING,
                 context.elkgraph.getProperty(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY));
         algorithmAssembler.setPhase(SequencePhases.P5_COORDINATE_ASSIGNMENT,
                 CoordinateAssignmentStrategy.DEFAULT);

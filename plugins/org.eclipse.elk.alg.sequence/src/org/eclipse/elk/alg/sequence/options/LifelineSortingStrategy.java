@@ -12,9 +12,9 @@ package org.eclipse.elk.alg.sequence.options;
 
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
-import org.eclipse.elk.alg.sequence.p4sorting.InteractiveLifelineSorter;
-import org.eclipse.elk.alg.sequence.p4sorting.LayerBasedLifelineSorter;
-import org.eclipse.elk.alg.sequence.p4sorting.ShortMessageLifelineSorter;
+import org.eclipse.elk.alg.sequence.p1sorting.InteractiveLifelineSorter;
+import org.eclipse.elk.alg.sequence.p1sorting.LayerBasedLifelineSorter;
+import org.eclipse.elk.alg.sequence.p1sorting.ShortMessageLifelineSorter;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 

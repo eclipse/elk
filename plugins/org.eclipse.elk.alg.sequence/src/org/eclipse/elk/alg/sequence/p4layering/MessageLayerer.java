@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.p3layering;
+package org.eclipse.elk.alg.sequence.p4layering;
 
 import org.eclipse.elk.alg.layered.p2layers.NetworkSimplexLayerer;
 import org.eclipse.elk.alg.sequence.SequencePhases;

@@ -12,17 +12,17 @@ package org.eclipse.elk.alg.sequence;
  */
 public enum SequencePhases {
     
+    /** Determines the horizontal order of lifelines. */
+    P1_LIFELINE_SORTING,
+    
     /** Allocates vertical space for things. */
-    P1_SPACE_ALLOCATION,
+    P2_SPACE_ALLOCATION,
     
     /** Breaks cycles. */
-    P2_CYCLE_BREAKING,
+    P3_CYCLE_BREAKING,
     
     /** Assigns messages to layers, which will later determine their Y coordinate. */
-    P3_MESSAGE_LAYERING,
-    
-    /** Determines the horizontal order of lifelines. */
-    P4_LIFELINE_SORTING,
+    P4_MESSAGE_LAYERING,
     
     /** Assigns coordinates to things. */
     P5_COORDINATE_ASSIGNMENT;

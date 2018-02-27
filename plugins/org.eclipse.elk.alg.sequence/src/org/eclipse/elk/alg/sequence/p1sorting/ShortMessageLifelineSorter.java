@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.p4sorting;
+package org.eclipse.elk.alg.sequence.p1sorting;
 
 import java.util.HashMap;
 import java.util.LinkedList;

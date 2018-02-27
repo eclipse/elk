@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.p1allocation;
+package org.eclipse.elk.alg.sequence.p2allocation;
 
 import java.util.List;
 
