@@ -14,13 +14,13 @@ import java.util.List;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.LabelSide;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.EdgeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphElementAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.LabelAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
-import org.eclipse.elk.core.util.nodespacing.LabelSide;
 import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Lists;

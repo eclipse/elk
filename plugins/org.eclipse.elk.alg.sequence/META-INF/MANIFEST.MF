@@ -8,6 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.elk.core,
  org.eclipse.elk.graph,
  org.eclipse.elk.alg.layered,
+ org.eclipse.elk.alg.common,
  com.google.guava;bundle-version="15.0.0"
 Export-Package: org.eclipse.elk.alg.sequence,
  org.eclipse.elk.alg.sequence.options

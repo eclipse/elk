@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.sequence.SequenceLayoutConstants;
@@ -38,7 +39,6 @@ import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 
