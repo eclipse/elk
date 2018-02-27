@@ -8,12 +8,12 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.overlaps;
+package org.eclipse.elk.alg.common.overlaps;
 
 import java.util.Set;
 
+import org.eclipse.elk.alg.common.overlaps.RectangleStripOverlapRemover.RectangleNode;
 import org.eclipse.elk.core.math.ElkRectangle;
-import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover.RectangleNode;
 
 import com.google.common.collect.Sets;
 

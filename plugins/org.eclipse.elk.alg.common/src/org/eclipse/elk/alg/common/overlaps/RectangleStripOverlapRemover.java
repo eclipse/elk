@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.util.overlaps;
+package org.eclipse.elk.alg.common.overlaps;
 
 import java.util.List;
 import java.util.SortedSet;

@@ -18,6 +18,8 @@ import org.eclipse.elk.alg.common.nodespacing.cellsystem.LabelCell;
 import org.eclipse.elk.alg.common.nodespacing.cellsystem.VerticalLabelAlignment;
 import org.eclipse.elk.alg.common.nodespacing.internal.NodeContext;
 import org.eclipse.elk.alg.common.nodespacing.internal.PortContext;
+import org.eclipse.elk.alg.common.overlaps.RectangleStripOverlapRemover;
+import org.eclipse.elk.alg.common.overlaps.RectangleStripOverlapRemover.OverlapRemovalDirection;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
@@ -26,8 +28,6 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
-import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover;
-import org.eclipse.elk.core.util.overlaps.RectangleStripOverlapRemover.OverlapRemovalDirection;
 
 /**
  * Knows how to place port labels.
