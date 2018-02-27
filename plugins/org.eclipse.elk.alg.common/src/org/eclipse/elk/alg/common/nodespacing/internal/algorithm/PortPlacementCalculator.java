@@ -125,7 +125,9 @@ public final class PortPlacementCalculator {
         
         // If the port alignment is distributed or justified, but there's only a single port, we change the alignment
         // to center to keep things from looking stupid
-        if (nodeContext.portContexts.get(portSide).size() == 1) {
+        if ((portAlignment == PortAlignment.DISTRIBUTED || portAlignment == PortAlignment.JUSTIFIED)
+                && nodeContext.portContexts.get(portSide).size() == 1) {
+            
             calculatedPortPlacementWidth = modifiedPortPlacementSize(
                     nodeContext, portAlignment, calculatedPortPlacementWidth);
             portAlignment = PortAlignment.CENTER;
@@ -299,7 +301,9 @@ public final class PortPlacementCalculator {
         
         // If the port alignment is distributed or justified, but there's only a single port, we change the alignment
         // to center to keep things from looking stupid
-        if (nodeContext.portContexts.get(portSide).size() == 1) {
+        if ((portAlignment == PortAlignment.DISTRIBUTED || portAlignment == PortAlignment.JUSTIFIED)
+                && nodeContext.portContexts.get(portSide).size() == 1) {
+            
             calculatedPortPlacementHeight = modifiedPortPlacementSize(
                     nodeContext, portAlignment, calculatedPortPlacementHeight);
             portAlignment = PortAlignment.CENTER;
