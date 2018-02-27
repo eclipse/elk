@@ -177,6 +177,8 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                 if (Math.abs(sourceSlot - targetSlot) > 1) {
                     // There are lifelines between the message's source and target. It might overlap other messages,
                     // so we need to assign non-conflicting positions to those messages
+                    // TODO: We should compute a conflict graph for the messages in each layer and try to get away
+                    //       with as few communication lines as possible.
                     for (LNode otherNode : layer) {
                         SMessage otherMessage = (SMessage) otherNode.getProperty(InternalSequenceProperties.ORIGIN);
                         
