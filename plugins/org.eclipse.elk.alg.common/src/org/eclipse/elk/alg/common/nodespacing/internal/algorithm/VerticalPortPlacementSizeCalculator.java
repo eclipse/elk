@@ -405,9 +405,10 @@ public final class VerticalPortPlacementSizeCalculator {
             }
             
             if (labelHeight > 0) {
-                if (insidePortLabels && NodeLabelAndSizeUtilities.effectiveCompoundNodeMode(portContext)) {
-                    // The port is to be treated as a port with inside connections, so reserve space for its label
-                    // below the port
+                if (!insidePortLabels || NodeLabelAndSizeUtilities.effectiveCompoundNodeMode(portContext)) {
+                    // The label is either placed outside (below the port) or possibly inside, but for a compound node,
+                    // which means that it is placed below the port as well to keep it from overlapping with inside
+                    // edges
                     portContext.portMargin.bottom = nodeContext.portLabelSpacing + labelHeight;
                     
                 } else {
