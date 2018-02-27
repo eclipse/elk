@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.transform.ElkGraphTransformer;
 import org.eclipse.elk.alg.sequence.graph.transform.IGraphTransformer;
+import org.eclipse.elk.alg.sequence.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.sequence.options.CoordinateAssignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.CycleBreakingStrategy;
 import org.eclipse.elk.alg.sequence.options.MessageLayeringStrategy;
@@ -24,6 +25,7 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -31,6 +33,11 @@ import org.eclipse.elk.graph.ElkNode;
  * Layout algorithm for Papyrus sequence diagrams.
  */
 public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
+    
+    /** The processors we always want to have in our algorithm. */
+    private static final LayoutProcessorConfiguration<SequencePhases, LayoutContext> BASELINE_CONFIGURATION =
+            LayoutProcessorConfiguration.<SequencePhases, LayoutContext>create()
+                .addBefore(SequencePhases.P1_LIFELINE_SORTING, IntermediateProcessorStrategy.LAYERED_GRAPH_CREATOR);
     
     /** The algorithm assembler we use to assemble our algorithm configurations. */
     private final AlgorithmAssembler<SequencePhases, LayoutContext> algorithmAssembler =
@@ -83,6 +90,8 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
                 context.elkgraph.getProperty(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY));
         algorithmAssembler.setPhase(SequencePhases.P5_COORDINATE_ASSIGNMENT,
                 CoordinateAssignmentStrategy.DEFAULT);
+        
+        algorithmAssembler.addProcessorConfiguration(BASELINE_CONFIGURATION);
         
         return algorithmAssembler.build(context);
     }
