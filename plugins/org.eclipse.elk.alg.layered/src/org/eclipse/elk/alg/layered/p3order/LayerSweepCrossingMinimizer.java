@@ -98,10 +98,12 @@ public class LayerSweepCrossingMinimizer
     public void process(final LGraph layeredGraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Minimize Crossings " + crossMinType, 1);
 
-        // short-circuit cases in which no crossings can be minimized
-        //  note that in-layer edges may be subject to crossing minimization if |layers| = 1  
-        //  and that hierarchical crossing minimization may dive into a graph with a single node
-        final boolean emptyGraph = layeredGraph.getLayers().isEmpty();
+        // Short-circuit cases in which no crossings can be minimized. Note that in-layer edges may be subject to
+        // crossing minimization if |layers| = 1 and that hierarchical crossing minimization may dive into a graph with
+        // a single node. There can be graphs that consist only of empty layers, for example due to inside self-loops
+        // with unconnected ports (see #298)
+        final boolean emptyGraph = layeredGraph.getLayers().isEmpty()
+                || layeredGraph.getLayers().stream().allMatch(layer -> layer.getNodes().isEmpty());
         final boolean singleNode = layeredGraph.getLayers().size() == 1 
                 && layeredGraph.getLayers().get(0).getNodes().size() == 1;
         final boolean hierarchicalLayout =
