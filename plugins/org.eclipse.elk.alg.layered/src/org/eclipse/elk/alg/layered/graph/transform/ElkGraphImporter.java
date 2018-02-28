@@ -86,8 +86,9 @@ class ElkGraphImporter {
         // Create the layered graph
         final LGraph topLevelGraph = createLGraph(elkgraph);
         
-        // Calculate the graph's minimum size
-        calculateMinimumGraphSize(elkgraph, topLevelGraph);
+        for (ElkPort elkport : elkgraph.getPorts()) {
+            ensureDefinedPortSide(topLevelGraph, elkport);
+        }
         
         // Transform the external ports, if any
         Set<GraphProperties> graphProperties = topLevelGraph.getProperty(InternalProperties.GRAPH_PROPERTIES);
@@ -97,6 +98,9 @@ class ElkGraphImporter {
                 transformExternalPort(elkgraph, topLevelGraph, elkport);
             }
         }
+        
+        // Calculate the graph's minimum size
+        calculateMinimumGraphSize(elkgraph, topLevelGraph);
         
         if (topLevelGraph.getProperty(LayeredOptions.PARTITIONING_ACTIVATE)) {
             graphProperties.add(GraphProperties.PARTITIONS);
@@ -110,6 +114,40 @@ class ElkGraphImporter {
         }
         
         return topLevelGraph;
+    }
+    
+    /**
+     * Ensures that the given port has a defined port side.
+     */
+    private void ensureDefinedPortSide(final LGraph lgraph, final ElkPort elkport) {
+        Direction layoutDirection = lgraph.getProperty(LayeredOptions.DIRECTION);
+        PortSide portSide = elkport.getProperty(LayeredOptions.PORT_SIDE);
+        
+        // If the port side is undefined, try to get the ELK utilities to infer one for us
+        if (portSide == PortSide.UNDEFINED) {
+            portSide = ElkUtil.calcPortSide(elkport, layoutDirection);
+        }
+        
+        // There are circumstances where the ELK utilities fail to infer port sides. Default to the layout direction's
+        // default input port side
+        if (portSide == PortSide.UNDEFINED) {
+            switch (layoutDirection) {
+            case RIGHT:
+                portSide = PortSide.WEST;
+                break;
+            case LEFT:
+                portSide = PortSide.EAST;
+                break;
+            case DOWN:
+                portSide = PortSide.NORTH;
+                break;
+            case UP:
+                portSide = PortSide.SOUTH;
+                break;
+            }
+        }
+        
+        elkport.setProperty(LayeredOptions.PORT_SIDE, portSide);
     }
 
     /**
