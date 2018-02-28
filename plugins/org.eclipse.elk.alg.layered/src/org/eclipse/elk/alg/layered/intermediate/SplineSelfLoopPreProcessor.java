@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -114,7 +115,12 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor<LGraph
             // Now we will hide self-loop ports from the node.
             // We don't hide the ports of nodes with portConstraint "fixedOrder",
             // or if the port has a non-loop edge connected.
-            if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
+            // Also, due to #288 hiding is prohibited during hierarchical layout
+            boolean hidingPortsAllowed = 
+                    !(node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()
+                  || node.getProperty(LayeredOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN);
+            
+            if (hidingPortsAllowed) {
                 final Set<LPort> portsToHide = Sets.newHashSet();
                 for (final ConnectedSelfLoopComponent component : allComponents) {
                     portsToHide.addAll(component.getHidablePorts());
