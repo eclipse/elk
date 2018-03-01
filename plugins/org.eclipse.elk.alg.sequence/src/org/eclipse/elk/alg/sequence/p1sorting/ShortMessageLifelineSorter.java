@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.p1sorting;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
@@ -39,12 +39,8 @@ import com.google.common.collect.HashBiMap;
  */
 public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePhases, LayoutContext> {
 
-    /** Option that indicates if the starting node is searched by layering attributes. */
-    private boolean layerBased = true;
-    /** List of nodes that are already placed by the algorithm. */
-    private List<EDLSNode> placedNodes;
     /** The map of lifeline <-> node correspondences. */
-    private HashBiMap<SLifeline, EDLSNode> correspondences;
+    private HashBiMap<SLifeline, LifelineNode> lifelineToNodeMap;
     
 
     @Override
@@ -56,64 +52,38 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
     
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Equal distribution lifeline sorting", 1);
+        progressMonitor.begin("Short Message Lifeline Sorting", 1);
 
         // Create the simple graph representation that this algorithm works with.
-        createEDLSNodes(context);
-
-        // Initialize list of nodes that are already placed. Nodes will be inserted one by one here.
-        placedNodes = new LinkedList<EDLSNode>();
-
-        // Calculate the starting node in a first step
-        EDLSNode first;
-        if (layerBased) {
-            first = layerBasedFirstNode(context.sgraph, context.lgraph);
-        } else {
-            first = degreeBasedFirstNode(context.sgraph, context.lgraph);
-        }
-        placedNodes.add(first);
+        createAuxiliaryGraph(context);
         
-        // Update the TL-values for connected nodes
-        first.incrementNeighborsTL();
+        // Place lifeline nodes
+        LifelineNode first = context.lgraph.getProperty(SequenceDiagramOptions.DEGREE_BASED_LEFTMOST_LIFELINE)
+                ? degreeBasedFirstNode()
+                : layerBasedFirstNode(context.lgraph);
+        List<LifelineNode> placedNodes = placeNodes(context, first);
 
-        // Calculate following nodes one by one
-        for (int i = 2; i <= context.sgraph.getLifelines().size(); i++) {
-            EDLSNode next = calculateNextNode(context.sgraph);
-            placedNodes.add(next);
-            
-            // Update the TL-value for connected nodes
-            next.incrementNeighborsTL();
-        }
-
-        // Get the corresponding lifelines
+        // Apply the order
         List<SLifeline> lifelines = context.sgraph.getLifelines();
         lifelines.clear();
         
-        int i = 0;
-        for (EDLSNode node : placedNodes) {
-            SLifeline lifeline = correspondences.inverse().get(node);
+        int slot = 0;
+        for (LifelineNode node : placedNodes) {
+            SLifeline lifeline = lifelineToNodeMap.inverse().get(node);
             lifelines.add(lifeline);
-            lifeline.setHorizontalSlot(i);
-            i++;
+            lifeline.setHorizontalSlot(slot++);
         }
 
         // Free memory
         placedNodes = null;
-        correspondences = null;
+        lifelineToNodeMap = null;
         
         progressMonitor.done();
     }
     
-
-    /**
-     * Set the layer-based option.
-     * 
-     * @param layerBased
-     *            the new value for the layer-based option
-     */
-    public void setLayerBased(final boolean layerBased) {
-        this.layerBased = layerBased;
-    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Graph Creation
 
     /**
      * Create the lightweight graph implementation out of the SGraph.
@@ -121,27 +91,23 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
      * @param context
      *            the layout context that contains all relevant information for the current layout run.
      */
-    private void createEDLSNodes(final LayoutContext context) {
-        // List of lifelines
+    private void createAuxiliaryGraph(final LayoutContext context) {
         List<SLifeline> lifelines = context.sgraph.getLifelines();
 
-        // Initialize correspondences list
-        correspondences = HashBiMap.create(lifelines.size());
-
-        // Create nodes
+        // Create a node for each lifeline and remember the mapping
+        lifelineToNodeMap = HashBiMap.create(lifelines.size());
+        
         for (SLifeline lifeline : lifelines) {
-            EDLSNode node = new EDLSNode();
-            correspondences.put(lifeline, node);
+            LifelineNode node = new LifelineNode();
+            lifelineToNodeMap.put(lifeline, node);
         }
 
-        // If the considerAreas option is set, increase the weight of every edge whose message is
-        // contained in an area.
+        // If the considerAreas option is set, increase the weight of every edge whose message is contained in an area.
         // Prepare this by filling a map of (message <-> number of its areas) pairs.
         HashMap<SMessage, Integer> areaMessages = new HashMap<SMessage, Integer>();
         if (context.groupAreasWhenSorting) {
             for (SArea area : context.sgraph.getAreas()) {
-                for (Object messageObject : area.getMessages()) {
-                    SMessage message = (SMessage) messageObject;
+                for (SMessage message : area.getMessages()) {
                     Integer messageEntry = areaMessages.get(message);
                     if (messageEntry == null) {
                         areaMessages.put(message, 1);
@@ -155,29 +121,28 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         // Insert edges
         for (SLifeline lifeline : lifelines) {
             // Get the corresponding node
-            EDLSNode node = correspondences.get(lifeline);
+            LifelineNode node = lifelineToNodeMap.get(lifeline);
 
             // Update or create entry in the edges map for every message
             for (SMessage message : lifeline.getOutgoingMessages()) {
                 int increaseValue = 1;
-                if (context.groupAreasWhenSorting) {
-                    if (areaMessages.containsKey(message)) {
-                        increaseValue += areaMessages.get(message);
-                    }
+                
+                // Apply additional weight if present
+                if (areaMessages.containsKey(message)) {
+                    increaseValue += areaMessages.get(message);
                 }
 
                 SLifeline target = message.getTarget();
-                EDLSNode oppositeNode = correspondences.get(target);
+                LifelineNode oppositeNode = lifelineToNodeMap.get(target);
                 if (oppositeNode != null) {
                     if (node.edges.containsKey(oppositeNode)) {
-                        // Increment edge-weight by one to represent this message
+                        // Increment edge-weight to represent this message (on both incident lifelines)
                         node.edges.put(oppositeNode, node.edges.get(oppositeNode) + increaseValue);
-                        // Increment opposite's map too
                         oppositeNode.edges.put(node, oppositeNode.edges.get(node) + increaseValue);
+                        
                     } else {
-                        // Insert edge
+                        // Insert edge (at both incident lifelines)
                         node.edges.put(oppositeNode, increaseValue);
-                        // Insert edge at opposite node too
                         oppositeNode.edges.put(node, increaseValue);
                     }
                 }
@@ -187,7 +152,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
                 // right border of the diagram and are not considered in the normal algorithm.
                 MessageType messageType = message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
                 if (oppositeNode == null && messageType != MessageType.LOST) {
-                    node.setTl(node.getTl() - 1);
+                    node.tl--;
                 }
             }
 
@@ -196,82 +161,94 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
             // border of the diagram and are not considered in the normal algorithm.
             for (SMessage message : lifeline.getIncomingMessages()) {
                 SLifeline source = message.getSource();
-                EDLSNode oppositeNode = correspondences.get(source);
+                LifelineNode oppositeNode = lifelineToNodeMap.get(source);
                 MessageType messageType = message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
                 if (oppositeNode == null && messageType != MessageType.FOUND) {
-                    node.setTl(node.getTl() + 1);
+                    node.tl++;
                 }
             }
         }
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Start Node Selection
 
     /**
      * Calculate the first node to be set. Standard way in the linear arrangement problem is to
      * choose the one with the fewest connected edges.
      * 
-     * @param sgraph
-     *            the sequence graph
-     * @param lgraph
-     *            the layered graph
      * @return the node that should be placed in first position
      */
-    private EDLSNode degreeBasedFirstNode(final SGraph sgraph, final LGraph lgraph) {
-        // Search the node with the lowest weighted degree
-        int minDegree = Integer.MAX_VALUE;
-        EDLSNode candidate = null;
-        for (EDLSNode node : correspondences.values()) {
-            if (node.getWeightedDegree() < minDegree) {
-                minDegree = node.getWeightedDegree();
-                candidate = node;
-            }
-        }
-        candidate.setPlaced(true);
-        return candidate;
+    private LifelineNode degreeBasedFirstNode() {
+        return lifelineToNodeMap.values().stream()
+            .min((node1, node2) -> node1.getWeightedDegree() - node2.getWeightedDegree())
+            .get();
     }
 
     /**
-     * Calculate the first node to be set. Sequence diagram specific algorithm that chooses the
-     * lifeline with the highest outgoing message.
+     * Calculate the first node to be set. Sequence diagram specific algorithm that chooses the lifeline with the
+     * highest outgoing message.
      * 
-     * @param sgraph
-     *            the sequence graph
      * @param lgraph
      *            the layered graph
      * @return the node that should be placed in first location
      */
-    private EDLSNode layerBasedFirstNode(final SGraph sgraph, final LGraph lgraph) {
-        List<Layer> layers = lgraph.getLayers();
-        Layer firstLayer = layers.get(0);
-        List<LNode> nodes = firstLayer.getNodes();
-        if (nodes.size() > 1) {
-            // If there is more than one message in the first layer, return the one with the lowest
-            // weighted node degree
-            EDLSNode candidate = null;
-            int bestDegree = Integer.MAX_VALUE;
-            for (LNode node : nodes) {
-                SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
-                SLifeline sourceLifeline = message.getSource();
-                EDLSNode cand = correspondences.get(sourceLifeline);
-                if (cand.getWeightedDegree() < bestDegree) {
-                    bestDegree = cand.getWeightedDegree();
-                    candidate = cand;
-                }
-            }
-            candidate.setPlaced(true);
-            return candidate;
+    private LifelineNode layerBasedFirstNode(final LGraph lgraph) {
+        List<LNode> candidates = lgraph.getLayerlessNodes().stream()
+                .filter(node -> !node.getIncomingEdges().iterator().hasNext())
+                .collect(Collectors.toList());
+        
+        if (candidates.size() > 1) {
+            return candidates.stream()
+                    .map(node -> ((SMessage) node.getProperty(InternalSequenceProperties.ORIGIN)).getSource())
+                    .map(ll -> lifelineToNodeMap.get(ll))
+                    .min((node1, node2) -> node1.getWeightedDegree() - node2.getWeightedDegree())
+                    .get();
+            
         } else {
-            // If there is just one message in the first layer, return the node corresponding to its
-            // source lifeline
-            SMessage message = (SMessage) nodes.get(0).getProperty(InternalSequenceProperties.ORIGIN);
+            // If there is just one message in the first layer, return the node corresponding to its source lifeline
+            SMessage message = (SMessage) candidates.get(0).getProperty(InternalSequenceProperties.ORIGIN);
             SLifeline sourceLifeline = message.getSource();
-            EDLSNode candidate = correspondences.get(sourceLifeline);
-            if (candidate == null) {
+            
+            LifelineNode lifelineNode = lifelineToNodeMap.get(sourceLifeline);
+            if (lifelineNode == null) {
                 // Found messages have no source lifeline. Therefore their target is the first lifeline 
-                candidate = correspondences.get(message.getTarget());
+                lifelineNode = lifelineToNodeMap.get(message.getTarget());
             }
-            candidate.setPlaced(true);
-            return candidate;
+            
+            return lifelineNode;
         }
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Placement Algorithm
+    
+    /**
+     * Places all lifelines, starting with the first.
+     */
+    private List<LifelineNode> placeNodes(final LayoutContext context, final LifelineNode firstNode) {
+        List<LifelineNode> placedNodes = new ArrayList<>();
+        
+        firstNode.placed = true;
+        placedNodes.add(firstNode);
+        
+        // Update the TL-values for connected nodes
+        firstNode.incrementNeighborsTL();
+
+        // Calculate following nodes one by one
+        for (int i = 2; i <= context.sgraph.getLifelines().size(); i++) {
+            LifelineNode next = calculateNextNode(context.sgraph);
+            
+            next.placed = true;
+            placedNodes.add(next);
+            
+            // Update the TL-value for connected nodes
+            next.incrementNeighborsTL();
+        }
+        
+        return placedNodes;
     }
 
     /**
@@ -281,73 +258,58 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
      *            the sequence graph
      * @return the node that should be placed in the next position
      */
-    private EDLSNode calculateNextNode(final SGraph sgraph) {
+    private LifelineNode calculateNextNode(final SGraph sgraph) {
         int minSF = Integer.MAX_VALUE;
-        EDLSNode candidate = null;
-        for (EDLSNode node : correspondences.values()) {
-            if (!node.isPlaced()) {
+        LifelineNode candidate = null;
+        
+        for (LifelineNode node : lifelineToNodeMap.values()) {
+            if (!node.placed) {
                 // Calculate the selection factor as proposed by McAllister
-                int sf = node.getWeightedDegree() - 2 * node.getTl();
-                // If the selection factor is smaller than the ones of other nodes, this is the next
-                // node
+                int sf = node.getWeightedDegree() - 2 * node.tl;
+                
+                // If the selection factor is smaller than the ones of other nodes, this is the next node
                 if (sf < minSF) {
                     minSF = sf;
                     candidate = node;
+                    
                 } else if (sf == minSF) {
-                    // If the factor is equal, choose the one that is more connected to aready
-                    // placed nodes than the other
-                    if (candidate.getTl() < node.getTl()) {
+                    // Factor is equal. Choose the node that is more connected to aready placed nodes
+                    if (candidate.tl < node.tl) {
                         candidate = node;
                     }
                 }
             }
         }
-        candidate.setPlaced(true);
+        
         return candidate;
     }
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // EDSLNode Class
+    // LifelineNode Class
 
     /**
-     * A list of these nodes is a very basic implementation of a simple graph. Every node has a map
-     * with adjacent nodes and the weight of the connecting edge. Every node corresponds to a
-     * lifeline in the sequence diagram. The degree of an edge represents the number of messages
-     * connecting the corresponding lifelines.
+     * A list of these nodes is a very basic implementation of a simple graph. Every node has a map with adjacent nodes
+     * and the weight of the connecting edge. Every node corresponds to a lifeline in the sequence diagram. The degree
+     * of an edge represents the number of messages connecting the corresponding lifelines.
      */
-    private static final class EDLSNode {
+    private static final class LifelineNode {
+        
         /**
-         * A map that contains every adjacent node and the weight of the corresponding edge. Edges
-         * are stored in both of their connected nodes.
+         * A map that contains every adjacent lifeline node and the number of messages that connect the two.
          */
-        private HashMap<EDLSNode, Integer> edges;
+        private HashMap<LifelineNode, Integer> edges;
         /**
-         * For an unplaced node, the weighted sum of edges to nodes that are already placed. At
-         * first, this value is 0 since there are no nodes placed so far.
+         * For an unplaced node, the weighted sum of edges to nodes that are already placed. At first, this value is 0
+         * since there are no nodes placed so far. The name corresponds to the original paper.
          */
         private int tl = 0;
-        /** Indicates, if the node was already placed. */
+        /** Whether the lifeline has already been placed or not. */
         private boolean placed = false;
 
         /** Constructor. */
-        public EDLSNode() {
-            edges = new HashMap<ShortMessageLifelineSorter.EDLSNode, Integer>();
-        }
-
-        /**
-         * @return the tl value
-         */
-        public int getTl() {
-            return tl;
-        }
-
-        /**
-         * @param tl
-         *            the new tl value
-         */
-        public void setTl(final int tl) {
-            this.tl = tl;
+        public LifelineNode() {
+            edges = new HashMap<ShortMessageLifelineSorter.LifelineNode, Integer>();
         }
 
         /**
@@ -355,33 +317,17 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
          * node was placed in the last step.
          */
         public void incrementNeighborsTL() {
-            for (EDLSNode node : edges.keySet()) {
+            for (LifelineNode node : edges.keySet()) {
                 // If a connected node is node placed yet, its TL-value has to be incremented by the
                 // connecting edge's weight
-                if (!node.isPlaced()) {
-                    node.setTl(node.getTl() + edges.get(node));
+                if (!node.placed) {
+                    node.tl = node.tl + edges.get(node);
                 }
             }
         }
 
         /**
-         * @return the placed value
-         */
-        public boolean isPlaced() {
-            return placed;
-        }
-
-        /**
-         * @param placed
-         *            the new placed value
-         */
-        public void setPlaced(final boolean placed) {
-            this.placed = placed;
-        }
-
-        /**
-         * Get the weighted degree of a node. The weighted degree is the sum of all edge-weights of
-         * connected edges.
+         * Get the weighted degree of a node. The weighted degree is the sum of all edge-weights of connected edges.
          * 
          * @return the weighted degree for the node
          */
