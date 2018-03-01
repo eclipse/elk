@@ -11,9 +11,7 @@
 package org.eclipse.elk.alg.sequence.p1sorting;
 
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -37,8 +35,6 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
     /** Lifelines that have not been assigned a horizontal slot yet have this value as their slot. */
     private static final int UNPROCESSED = -1;
     
-    /** Set of lifelines to be processed. */
-    private Set<SLifeline> unprocessedLifelines;
     /** List of lifelines that have already been sorted. */
     private List<SLifeline> sortedLifelines;
 
@@ -54,10 +50,8 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Layer-based lifeline sorting", 1);
         
-        unprocessedLifelines = new LinkedHashSet<>(context.sgraph.getLifelines());
-        sortedLifelines = Lists.newArrayListWithCapacity(unprocessedLifelines.size());
-        
-        unprocessedLifelines.stream().forEach(ll -> ll.setHorizontalSlot(UNPROCESSED));
+        context.sgraph.getLifelines().stream().forEach(ll -> ll.setHorizontalSlot(UNPROCESSED));
+        sortedLifelines = Lists.newArrayListWithCapacity(context.sgraph.getLifelines().size());
         
         // Find all LNodes that have no incoming connections. Those represent (locally) uppermost messages.
         List<LNode> uppermostMessageNodes = uppermostMessagesSortedBySuitability(context);
@@ -73,16 +67,15 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
         }
         
         // There may be lifelines left that we need to take care of.
-        handleRemainingLifelines();
+        handleRemainingLifelines(context);
         
-        assert unprocessedLifelines.isEmpty();
+        assert context.sgraph.getLifelines().stream().allMatch(ll -> ll.getHorizontalSlot() != UNPROCESSED);
         
         // Add the newly sorted lifelines back to the original list
         context.sgraph.getLifelines().clear();
         context.sgraph.getLifelines().addAll(sortedLifelines);
         
         // Reset
-        unprocessedLifelines = null;
         sortedLifelines = null;
 
         progressMonitor.done();
@@ -100,8 +93,9 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
      * empty lifelines being placed to the right.
      * </p>
      */
-    private void handleRemainingLifelines() {
-        Iterator<SLifeline> remainingLifelines = unprocessedLifelines.stream()
+    private void handleRemainingLifelines(final LayoutContext context) {
+        Iterator<SLifeline> remainingLifelines = context.sgraph.getLifelines().stream()
+                .filter(ll -> ll.getHorizontalSlot() == UNPROCESSED)
                 .sorted(LayerBasedLifelineSorter::compareLifelinesByOutgoingEdges).iterator();
         
         while (remainingLifelines.hasNext()) {
@@ -153,10 +147,9 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
      * Assign the given lifeline to the next position.
      */
     private void assignToNextPosition(final SLifeline lifeline) {
-        if (unprocessedLifelines.contains(lifeline)) {
+        if (lifeline.getHorizontalSlot() == UNPROCESSED) {
             lifeline.setHorizontalSlot(sortedLifelines.size());
             sortedLifelines.add(lifeline);
-            unprocessedLifelines.remove(lifeline);
         }
     }
     
