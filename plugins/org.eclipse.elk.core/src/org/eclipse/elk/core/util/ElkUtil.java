@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.elk.core.GraphIssue;
@@ -45,6 +46,8 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Utility methods for layout-related things.
@@ -492,128 +495,151 @@ public final class ElkUtil {
     /**
      * Determine the junction points of the given edge. This is done by comparing the bend points
      * of the given edge with the bend points of all other edges that are connected to the same
-     * source port or the same target port.
+     * source port or the same target port. Note that this method requires all edges to have exactly one
+     * edge section.
      * 
      * @param edge an edge
      * @return a list of junction points
+     * @throws IllegalArgumentException if the edge has no or more than one edge section.
      */
     public static KVectorChain determineJunctionPoints(final ElkEdge edge) {
-        // MIGRATE This method will have to take different coordinate systems resulting from different edge containments into account
-        
+        if (edge.getSections().size() != 1) {
+            throw new IllegalArgumentException(
+                    "The edge needs to have exactly one edge section. Found: " + edge.getSections().size());
+        }
+
         KVectorChain junctionPoints = new KVectorChain();
-        
-//        Map<KEdge, KVector[]> pointsMap = Maps.newHashMap();
-//        pointsMap.put(edge, getPoints(edge));
-//        
-//        // for each connected port p
-//        List<KPort> connectedPorts = Lists.newArrayListWithCapacity(2);
-//        if (edge.getSourcePort() != null) {
-//            connectedPorts.add(edge.getSourcePort());
-//        }
-//        if (edge.getTargetPort() != null) {
-//            connectedPorts.add(edge.getTargetPort());
-//        }
-//        for (KPort p : connectedPorts) {
-//            
-//            // let allConnectedEdges be the set of edges connected to p without the main edge
-//            List<KEdge> allConnectedEdges = Lists.newLinkedList();
-//            allConnectedEdges.addAll(p.getEdges());
-//            allConnectedEdges.remove(edge);
-//            if (!allConnectedEdges.isEmpty()) {
-//                KVector[] thisPoints = pointsMap.get(edge);
-//                boolean reverse;
-//                
-//                // let p1 be the start point
-//                KVector p1;
-//                if (p == edge.getTargetPort()) {
-//                    p1 = thisPoints[thisPoints.length - 1];
-//                    reverse = true;
-//                } else {
-//                    p1 = thisPoints[0];
-//                    reverse = false;
-//                }
-//                
-//                // for all bend points of this connection
-//                for (int i = 1; i < thisPoints.length; i++) {
-//                    // let p2 be the next bend point on this connection
-//                    KVector p2;
-//                    if (reverse) {
-//                        p2 = thisPoints[thisPoints.length - 1 - i];
-//                    } else {
-//                        p2 = thisPoints[i];
-//                    }
-//                    
-//                    // for all other connections that are still on the same track as this one
-//                    Iterator<KEdge> allEdgeIter = allConnectedEdges.iterator();
-//                    while (allEdgeIter.hasNext()) {
-//                        KEdge otherEdge = allEdgeIter.next();
-//                        KVector[] otherPoints = pointsMap.get(otherEdge);
-//                        if (otherPoints == null) {
-//                            otherPoints = getPoints(otherEdge);
-//                            pointsMap.put(otherEdge, otherPoints);
-//                        }
-//                        if (otherPoints.length <= i) {
-//                            allEdgeIter.remove();
-//                        } else {
-//                            
-//                            // let p3 be the next bend point of the other connection
-//                            KVector p3;
-//                            if (reverse) {
-//                                p3 = otherPoints[otherPoints.length - 1 - i];
-//                            } else {
-//                                p3 = otherPoints[i];
-//                            }
-//                            if (p2.x != p3.x || p2.y != p3.y) {
-//                                // the next point of this and the other connection differ
-//                                double dx2 = p2.x - p1.x;
-//                                double dy2 = p2.y - p1.y;
-//                                double dx3 = p3.x - p1.x;
-//                                double dy3 = p3.y - p1.y;
-//                                if ((dx3 * dy2) == (dy3 * dx2)
-//                                        && signum(dx2) == signum(dx3)
-//                                        && signum(dy2) == signum(dy3)) {
-//                                    
-//                                    // the points p1, p2, p3 form a straight line,
-//                                    // now check whether p2 is between p1 and p3
-//                                    if (Math.abs(dx2) < Math.abs(dx3)
-//                                            || Math.abs(dy2) < Math.abs(dy3)) {
-//                                        junctionPoints.add(p2);
-//                                    }
-//                                    
-//                                } else if (i > 1) {
-//                                    // p2 and p3 have diverged, so the last common point is p1
-//                                    junctionPoints.add(p1);
-//                                }
-//
-//                                // do not consider the other connection in the next iterations
-//                                allEdgeIter.remove();
-//                            }
-//                        }
-//                    }
-//                    // for the next iteration p2 is taken as reference point
-//                    p1 = p2;
-//                }
-//            }
-//        }
-        
+
+        if (ElkGraphUtil.connectableShapeToPort(edge.getSources().get(0)) != null) {
+            junctionPoints.addAll(determineJunctionPoints(edge,
+                    ElkGraphUtil.connectableShapeToPort(edge.getSources().get(0)), false));
+        }
+        if (ElkGraphUtil.connectableShapeToPort(edge.getTargets().get(0)) != null) {
+            junctionPoints.addAll(
+                    determineJunctionPoints(edge, ElkGraphUtil.connectableShapeToPort(edge.getTargets().get(0)), true));
+        }
+
+        return junctionPoints;
+    }
+
+    /**
+     * Determine the junction points of the given edge with any edge connected to the given port.
+     * This is done by comparing the bend points of the given edge with the bend points of all other edges
+     * that are connected to the given port. Note that this method requires all edges to have exactly one
+     * edge section.
+     * 
+     * @param edge an edge
+     * @param port one of the ports the edge is connected to
+     * @param reverse flag to indicate whether the points are traversed forward or reverse
+     * @return a list of junction points
+     * @throws IllegalArgumentException if a connected edge has no or more than one edge section.
+     */
+    private static KVectorChain determineJunctionPoints(final ElkEdge edge, final ElkPort port, final boolean reverse) {
+        // Ensure exactly one section
+        assert edge.getSections().size() == 1;
+
+        // Grab the edge section
+        final ElkEdgeSection section = edge.getSections().get(0);
+
+        // Collection for the junction points of the current edge
+        KVectorChain junctionPoints = new KVectorChain();
+
+        // Store the points of the edge in a map for efficiency
+        Map<ElkEdgeSection, KVector[]> pointsMap = Maps.newHashMap();
+        KVector[] sectionPoints = getPoints(section);
+        pointsMap.put(section, sectionPoints);
+
+        // Store the offset of the other edges
+        Map<ElkEdgeSection, KVector> offsetMap = Maps.newHashMap();
+
+        // let allConnectedEdges be the set of edge sections connected to port without the main edge
+        List<ElkEdgeSection> allConnectedSections = Lists.newLinkedList();
+        for (ElkEdge otherEdge : ElkGraphUtil.allIncidentEdges(port)) {
+            if (edge.getSections().size() != 1) {
+                throw new IllegalArgumentException(
+                        "The edge needs to have exactly one edge section. Found: " + edge.getSections().size());
+            }
+            if (otherEdge != edge) {
+                ElkEdgeSection otherSection = otherEdge.getSections().get(0);
+                allConnectedSections.add(otherSection);
+
+                // Edges might have different containments leading to different coordinate systems
+                // We can calculate the offset between the edges by comparing the shared port
+                KVector[] otherPoints = pointsMap.get(otherSection);
+                if (otherPoints == null) {
+                    otherPoints = getPoints(otherSection);
+                    pointsMap.put(otherSection, otherPoints);
+                }
+
+                KVector offset = reverse
+                        ? new KVector(sectionPoints[sectionPoints.length - 1]).sub(otherPoints[otherPoints.length - 1])
+                        : new KVector(sectionPoints[0]).sub(otherPoints[0]);
+
+                offsetMap.put(otherSection, offset);
+            }
+        }
+
+        if (!allConnectedSections.isEmpty()) {
+
+            // let p1 be the start point
+            KVector p1 = sectionPoints[reverse ? sectionPoints.length - 1 : 0];
+
+            // for all bend points of this connection
+            for (int i = 1; i < sectionPoints.length; i++) {
+                // let p2 be the next bend point on this connection
+                KVector p2 = sectionPoints[reverse ? sectionPoints.length - 1 - i : i];
+
+                // for all other connections that are still on the same track as this one
+                Iterator<ElkEdgeSection> allSectIter = allConnectedSections.iterator();
+                while (allSectIter.hasNext()) {
+                    ElkEdgeSection otherSection = allSectIter.next();
+                    KVector[] otherPoints = pointsMap.get(otherSection);
+                    if (otherPoints.length <= i) {
+                        allSectIter.remove();
+                    } else {
+                        // let p3 be the next bend point of the other connection
+                        KVector p3 = new KVector(otherPoints[reverse ? otherPoints.length - 1 - i : i])
+                                .add(offsetMap.get(otherSection));
+                        if (p2.x != p3.x || p2.y != p3.y) {
+                            // the next point of this and the other connection differ
+                            double dx2 = p2.x - p1.x;
+                            double dy2 = p2.y - p1.y;
+                            double dx3 = p3.x - p1.x;
+                            double dy3 = p3.y - p1.y;
+                            if ((dx3 * dy2) == (dy3 * dx2) && Math.signum(dx2) == Math.signum(dx3)
+                                    && Math.signum(dy2) == Math.signum(dy3)) {
+
+                                // the points p1, p2, p3 form a straight line,
+                                // now check whether p2 is between p1 and p3
+                                if (Math.abs(dx2) < Math.abs(dx3) || Math.abs(dy2) < Math.abs(dy3)) {
+                                    junctionPoints.add(p2);
+                                }
+
+                            } else if (i > 1) {
+                                // p2 and p3 have diverged, so the last common point is p1
+                                junctionPoints.add(p1);
+                            }
+
+                            // do not consider the other connection in the next iterations
+                            allSectIter.remove();
+                        }
+                    }
+                }
+                // for the next iteration p2 is taken as reference point
+                p1 = p2;
+            }
+        }
+
         return junctionPoints;
     }
     
     /**
-     * Get the edge points as an array of vectors. Note that this method requires the edge to have exactly one
-     * edge section.
+     * Get the edge section points as an array of vectors.
      * 
-     * @param edge an edge
-     * @return an array with all edge points
-     * @throws IllegalArgumentException if the edge has no or more than one edge section.
+     * @param section an edge section
+     * @return an array with all edge section points
      */
-    private static KVector[] getPoints(final ElkEdge edge) {
-        if (edge.getSections().size() != 1) {
-            throw new IllegalArgumentException("The edge needs to have exactly one edge section. Found: "
-                    + edge.getSections().size());
-        }
-        
-        ElkEdgeSection section = edge.getSections().get(0);
+    private static KVector[] getPoints(final ElkEdgeSection section) {
         
         int n = section.getBendPoints().size() + 2;
         KVector[] points = new KVector[n];
