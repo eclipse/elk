@@ -89,9 +89,10 @@
 	<extension
 			point="org.eclipse.ui.preferencePages">
 		<page
-			class="org.eclipse.elk.core.meta.ui.MetaDataExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-			id="org.eclipse.elk.core.meta.MetaData"
-			name="ELK Meta Data">
+        category="org.eclipse.elk.core.ui.preferences.layout"
+        class="org.eclipse.elk.core.meta.ui.MetaDataExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+        id="org.eclipse.elk.core.meta.MetaData"
+        name="ELK Meta Data">
 			<keywordReference id="org.eclipse.elk.core.meta.ui.keyword_MetaData"/>
 		</page>
 		<page
