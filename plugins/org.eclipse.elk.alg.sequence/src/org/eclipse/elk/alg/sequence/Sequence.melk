@@ -69,8 +69,9 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports areas.^group
 
     supports lifelineSortingStrategy
+    supports degreeBasedLeftmostLifeline
     
-    supports labelSide    
+    supports labelSide
     supports labelAlignment
     supports org.eclipse.elk.edgeLabels.inline
     
@@ -261,4 +262,15 @@ option lifelineSortingStrategy : LifelineSortingStrategy {
     description "The strategy used to determine the horizontal order of lifelines."
     targets parents
     default = LifelineSortingStrategy.INTERACTIVE
+}
+
+option degreeBasedLeftmostLifeline : boolean {
+    label "Leftmost Lifeline Base on Degree"
+    description "If short message lifeline sorting is active, the leftmost lifeline can be determined either by
+                choosing the lifeline that has the highest number of incident messages or by choosing the lifeline that
+                seems to initiate the interaction. We default to the latter, but setting this value to true changes
+                that behavior."
+    targets parents
+    default = false
+    requires lifelineSortingStrategy == LifelineSortingStrategy.SHORT_MESSAGES
 }
