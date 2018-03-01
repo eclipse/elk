@@ -59,6 +59,8 @@ public final class JsonImporter {
     private val Map<ElkEdge, Object> edgeJsonMap = Maps.newHashMap
     private val Map<ElkEdgeSection, Object> edgeSectionJsonMap = Maps.newHashMap
     private val Map<ElkLabel, Object> labelJsonMap = Maps.newHashMap
+    
+    private var Object inputModel
 
     /* ---------------------------------------------------------------------------
      *   JSON --> ElkGraph
@@ -68,6 +70,7 @@ public final class JsonImporter {
       * of the graph (nodes, ports, edges, edge sections) and creates correlating ELK graph elements.
       */
     public def ElkNode transform(Object graph) {
+        inputModel = graph
         clearMaps
 
         // transform the root node along with its children
@@ -78,6 +81,10 @@ public final class JsonImporter {
 
         // return the transformed ELK graph
         return root
+    }
+
+    public def getInputModel() {
+        return inputModel
     }
 
     private def clearMaps() {
@@ -613,14 +620,16 @@ public final class JsonImporter {
         // transfer junction points, if existent
         if (edge.hasProperty(CoreOptions.JUNCTION_POINTS)) {
             val jps = edge.getProperty(CoreOptions.JUNCTION_POINTS)
-            val jsonJPs = newJsonArray
-            jps.forEach[ jp |
-                val jsonPnt = newJsonObject
-                jsonPnt.addJsonObj("x", jp.x)
-                jsonPnt.addJsonObj("y", jp.y)
-                jsonJPs.addJsonArr(jsonPnt)
-            ]
-            jsonObj.addJsonObj("junctionPoints", jsonJPs)
+            if (!jps.nullOrEmpty) {
+                val jsonJPs = newJsonArray
+                jps.forEach[ jp |
+                    val jsonPnt = newJsonObject
+                    jsonPnt.addJsonObj("x", jp.x)
+                    jsonPnt.addJsonObj("y", jp.y)
+                    jsonJPs.addJsonArr(jsonPnt)
+                ]
+                jsonObj.addJsonObj("junctionPoints", jsonJPs)
+            }
         }
     }
     
