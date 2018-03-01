@@ -12,7 +12,10 @@ package org.eclipse.elk.alg.sequence.p1sorting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -30,17 +33,19 @@ import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
-import com.google.common.collect.HashBiMap;
-
 /**
  * Lifeline sorting algorithm that tries to minimize the length of message. The algorithm is
  * inspired by the heuristic solution to the linear arrangement problem as proposed by McAllister in
  * <em>A new heuristic algorithm for the Linear Arrangement problem</em>.
  */
 public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePhases, LayoutContext> {
-
-    /** The map of lifeline <-> node correspondences. */
-    private HashBiMap<SLifeline, LifelineNode> lifelineToNodeMap;
+    
+    /** The number of lifelines in the graph. */
+    private int lifelineCount = 0;
+    /** The number of messages in the graph. */
+    private int messageCount = 0;
+    /** Map of lifelines to lifeline nodes in the auxiliary graph. */
+    private Map<SLifeline, LifelineNode> lifelineNodeMap;
     
 
     @Override
@@ -54,6 +59,8 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Short Message Lifeline Sorting", 1);
 
+        initialize(context);
+        
         // Create the simple graph representation that this algorithm works with.
         createAuxiliaryGraph(context);
         
@@ -68,17 +75,33 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         lifelines.clear();
         
         int slot = 0;
-        for (LifelineNode node : placedNodes) {
-            SLifeline lifeline = lifelineToNodeMap.inverse().get(node);
+        for (LifelineNode lifelineNode : placedNodes) {
+            SLifeline lifeline = lifelineNode.lifeline;
             lifelines.add(lifeline);
             lifeline.setHorizontalSlot(slot++);
         }
-
-        // Free memory
-        placedNodes = null;
-        lifelineToNodeMap = null;
+        
+        // Clean up
+        lifelineNodeMap = null;
         
         progressMonitor.done();
+    }
+    
+    /**
+     * Assigns IDs to the lifelines and messages and counts them in the process. IDs are unique in their respective
+     * sets.
+     */
+    private void initialize(final LayoutContext context) {
+        lifelineCount = 0;
+        messageCount = 0;
+        
+        for (SLifeline lifeline : context.sgraph.getLifelines()) {
+            lifeline.id = lifelineCount++;
+            
+            for (SMessage message : lifeline.getOutgoingMessages()) {
+                message.id = messageCount++;
+            }
+        }
     }
     
     
@@ -93,81 +116,62 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
      */
     private void createAuxiliaryGraph(final LayoutContext context) {
         List<SLifeline> lifelines = context.sgraph.getLifelines();
-
-        // Create a node for each lifeline and remember the mapping
-        lifelineToNodeMap = HashBiMap.create(lifelines.size());
         
+        lifelineNodeMap = new HashMap<>();
         for (SLifeline lifeline : lifelines) {
-            LifelineNode node = new LifelineNode();
-            lifelineToNodeMap.put(lifeline, node);
+            LifelineNode lifelineNode = new LifelineNode(lifeline);
+            lifelineNodeMap.put(lifeline, lifelineNode);
         }
-
+        
         // If the considerAreas option is set, increase the weight of every edge whose message is contained in an area.
         // Prepare this by filling a map of (message <-> number of its areas) pairs.
-        HashMap<SMessage, Integer> areaMessages = new HashMap<SMessage, Integer>();
+        int[] messageWeightIncrement = new int[messageCount];
         if (context.groupAreasWhenSorting) {
             for (SArea area : context.sgraph.getAreas()) {
                 for (SMessage message : area.getMessages()) {
-                    Integer messageEntry = areaMessages.get(message);
-                    if (messageEntry == null) {
-                        areaMessages.put(message, 1);
-                    } else {
-                        areaMessages.put(message, areaMessages.get(messageEntry) + 1);
-                    }
+                    messageWeightIncrement[message.id]++;
                 }
             }
         }
 
         // Insert edges
-        for (SLifeline lifeline : lifelines) {
-            // Get the corresponding node
-            LifelineNode node = lifelineToNodeMap.get(lifeline);
-
+        for (LifelineNode node : lifelineNodeMap.values()) {
             // Update or create entry in the edges map for every message
-            for (SMessage message : lifeline.getOutgoingMessages()) {
-                int increaseValue = 1;
-                
-                // Apply additional weight if present
-                if (areaMessages.containsKey(message)) {
-                    increaseValue += areaMessages.get(message);
-                }
+            for (SMessage message : node.lifeline.getOutgoingMessages()) {
+                int increaseValue = 1 + messageWeightIncrement[message.id];
 
                 SLifeline target = message.getTarget();
-                LifelineNode oppositeNode = lifelineToNodeMap.get(target);
-                if (oppositeNode != null) {
-                    if (node.edges.containsKey(oppositeNode)) {
-                        // Increment edge-weight to represent this message (on both incident lifelines)
-                        node.edges.put(oppositeNode, node.edges.get(oppositeNode) + increaseValue);
-                        oppositeNode.edges.put(node, oppositeNode.edges.get(node) + increaseValue);
-                        
-                    } else {
-                        // Insert edge (at both incident lifelines)
-                        node.edges.put(oppositeNode, increaseValue);
-                        oppositeNode.edges.put(node, increaseValue);
-                    }
+                LifelineNode targetNode = lifelineNodeMap.get(target);
+                if (targetNode != null) {
+                    node.addConnectionTo(targetNode, increaseValue);
+                    targetNode.addConnectionTo(node, increaseValue);
                 }
 
-                // Give a "penalty" to the TL-value of the node if there are messages leading to the
-                // surrounding interaction. This is necessary, because these messages point to the
-                // right border of the diagram and are not considered in the normal algorithm.
+                // Give a "penalty" to the TL-value of the node if there are messages leading to the surrounding
+                // interaction. This is necessary, because these messages point to the right border of the diagram and
+                // are not considered in the normal algorithm.
                 MessageType messageType = message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
-                if (oppositeNode == null && messageType != MessageType.LOST) {
+                if (targetNode == null && messageType != MessageType.LOST) {
                     node.tl--;
                 }
             }
 
-            // Give an "advantage" to the TL-value of the node if there are messages coming from the
-            // surrounding interaction. This is necessary, because these messages come from the left
-            // border of the diagram and are not considered in the normal algorithm.
-            for (SMessage message : lifeline.getIncomingMessages()) {
+            // Give an "advantage" to the TL-value of the node if there are messages coming from the surrounding
+            // interaction. This is necessary, because these messages come from the left border of the diagram and are
+            // not considered in the normal algorithm.
+            for (SMessage message : node.lifeline.getIncomingMessages()) {
                 SLifeline source = message.getSource();
-                LifelineNode oppositeNode = lifelineToNodeMap.get(source);
+                LifelineNode oppositeNode = lifelineNodeMap.get(source);
                 MessageType messageType = message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
                 if (oppositeNode == null && messageType != MessageType.FOUND) {
                     node.tl++;
                 }
             }
         }
+        
+        // Calculate the weighted degrees of all lifeline nodes
+        lifelineNodeMap.values().stream()
+            .forEach(ln -> ln.calculateWeightedDegree());
     }
     
     
@@ -181,8 +185,8 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
      * @return the node that should be placed in first position
      */
     private LifelineNode degreeBasedFirstNode() {
-        return lifelineToNodeMap.values().stream()
-            .min((node1, node2) -> node1.getWeightedDegree() - node2.getWeightedDegree())
+        return lifelineNodeMap.values().stream()
+            .min(ShortMessageLifelineSorter::compareLifelineNodesByWeightedDegree)
             .get();
     }
 
@@ -202,8 +206,8 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         if (candidates.size() > 1) {
             return candidates.stream()
                     .map(node -> ((SMessage) node.getProperty(InternalSequenceProperties.ORIGIN)).getSource())
-                    .map(ll -> lifelineToNodeMap.get(ll))
-                    .min((node1, node2) -> node1.getWeightedDegree() - node2.getWeightedDegree())
+                    .map(ll -> lifelineNodeMap.get(ll))
+                    .min(ShortMessageLifelineSorter::compareLifelineNodesByWeightedDegree)
                     .get();
             
         } else {
@@ -211,14 +215,18 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
             SMessage message = (SMessage) candidates.get(0).getProperty(InternalSequenceProperties.ORIGIN);
             SLifeline sourceLifeline = message.getSource();
             
-            LifelineNode lifelineNode = lifelineToNodeMap.get(sourceLifeline);
+            LifelineNode lifelineNode = lifelineNodeMap.get(sourceLifeline);
             if (lifelineNode == null) {
                 // Found messages have no source lifeline. Therefore their target is the first lifeline 
-                lifelineNode = lifelineToNodeMap.get(message.getTarget());
+                lifelineNode = lifelineNodeMap.get(message.getTarget());
             }
             
             return lifelineNode;
         }
+    }
+    
+    private static int compareLifelineNodesByWeightedDegree(final LifelineNode node1, final LifelineNode node2) {
+        return node1.weightedDegree - node2.weightedDegree;
     }
     
     
@@ -238,11 +246,10 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         firstNode.incrementNeighborsTL();
 
         // Calculate following nodes one by one
-        for (int i = 2; i <= context.sgraph.getLifelines().size(); i++) {
+        while (placedNodes.size() < context.sgraph.getLifelines().size()) {
             LifelineNode next = calculateNextNode(context.sgraph);
-            
-            next.placed = true;
             placedNodes.add(next);
+            next.placed = true;
             
             // Update the TL-value for connected nodes
             next.incrementNeighborsTL();
@@ -262,10 +269,10 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         int minSF = Integer.MAX_VALUE;
         LifelineNode candidate = null;
         
-        for (LifelineNode node : lifelineToNodeMap.values()) {
+        for (LifelineNode node : lifelineNodeMap.values()) {
             if (!node.placed) {
                 // Calculate the selection factor as proposed by McAllister
-                int sf = node.getWeightedDegree() - 2 * node.tl;
+                int sf = node.weightedDegree - 2 * node.tl;
                 
                 // If the selection factor is smaller than the ones of other nodes, this is the next node
                 if (sf < minSF) {
@@ -293,23 +300,37 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
      * and the weight of the connecting edge. Every node corresponds to a lifeline in the sequence diagram. The degree
      * of an edge represents the number of messages connecting the corresponding lifelines.
      */
-    private static final class LifelineNode {
+    private final class LifelineNode {
         
-        /**
-         * A map that contains every adjacent lifeline node and the number of messages that connect the two.
-         */
-        private HashMap<LifelineNode, Integer> edges;
+        /** The lifeline this node represents. */
+        private SLifeline lifeline;
+        /** Whether the lifeline has already been placed or not. */
+        private boolean placed = false;
+        /** The set of this node's neighbors. */
+        private Set<LifelineNode> neighbors = new HashSet<>();
+        /** Weight of the edges that connect this node to other nodes. */
+        private int[] edgeWeights = new int[lifelineCount];
+        /** The weighted degree is the sum of all edge-weights of connected edges. */
+        private int weightedDegree = 0;
         /**
          * For an unplaced node, the weighted sum of edges to nodes that are already placed. At first, this value is 0
          * since there are no nodes placed so far. The name corresponds to the original paper.
          */
         private int tl = 0;
-        /** Whether the lifeline has already been placed or not. */
-        private boolean placed = false;
 
-        /** Constructor. */
-        public LifelineNode() {
-            edges = new HashMap<ShortMessageLifelineSorter.LifelineNode, Integer>();
+        /**
+         * Creates a new instance that represents the given lifeline.
+         */
+        public LifelineNode(final SLifeline lifeline) {
+            this.lifeline = lifeline;
+        }
+        
+        /**
+         * Adds weight to the connection to the other lifeline node.
+         */
+        public void addConnectionTo(final LifelineNode other, final int weight) {
+            neighbors.add(other);
+            edgeWeights[other.lifeline.id] += weight;
         }
 
         /**
@@ -317,26 +338,22 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
          * node was placed in the last step.
          */
         public void incrementNeighborsTL() {
-            for (LifelineNode node : edges.keySet()) {
+            for (LifelineNode node : neighbors) {
                 // If a connected node is node placed yet, its TL-value has to be incremented by the
                 // connecting edge's weight
                 if (!node.placed) {
-                    node.tl = node.tl + edges.get(node);
+                    node.tl = node.tl + edgeWeights[node.lifeline.id];
                 }
             }
         }
 
         /**
          * Get the weighted degree of a node. The weighted degree is the sum of all edge-weights of connected edges.
-         * 
-         * @return the weighted degree for the node
          */
-        public int getWeightedDegree() {
-            int ret = 0;
-            for (int value : edges.values()) {
-                ret += value;
-            }
-            return ret;
+        public void calculateWeightedDegree() {
+            weightedDegree = neighbors.stream()
+                .mapToInt(ln -> edgeWeights[ln.lifeline.id])
+                .sum();
         }
     }
     
