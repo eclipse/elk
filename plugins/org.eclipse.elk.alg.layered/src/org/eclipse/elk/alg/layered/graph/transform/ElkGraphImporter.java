@@ -122,28 +122,28 @@ class ElkGraphImporter {
     private void ensureDefinedPortSide(final LGraph lgraph, final ElkPort elkport) {
         Direction layoutDirection = lgraph.getProperty(LayeredOptions.DIRECTION);
         PortSide portSide = elkport.getProperty(LayeredOptions.PORT_SIDE);
+        PortConstraints portConstraints = lgraph.getProperty(LayeredOptions.PORT_CONSTRAINTS);
         
-        // If the port side is undefined, try to get the ELK utilities to infer one for us
-        if (portSide == PortSide.UNDEFINED) {
-            portSide = ElkUtil.calcPortSide(elkport, layoutDirection);
-        }
-        
-        // There are circumstances where the ELK utilities fail to infer port sides. Default to the layout direction's
-        // default input port side
-        if (portSide == PortSide.UNDEFINED) {
-            switch (layoutDirection) {
-            case RIGHT:
-                portSide = PortSide.WEST;
-                break;
-            case LEFT:
-                portSide = PortSide.EAST;
-                break;
-            case DOWN:
-                portSide = PortSide.NORTH;
-                break;
-            case UP:
-                portSide = PortSide.SOUTH;
-                break;
+        if (!portConstraints.isSideFixed()) {
+            // We are free to assign ports to sides, so the port side will depend on the layout direction and the
+            // port's net flow
+            int netFlow = calculateNetFlow(elkport);
+            
+            if (netFlow > 0) {
+                portSide = PortSide.fromDirection(layoutDirection);
+            } else {
+                portSide = PortSide.fromDirection(layoutDirection).opposed();
+            }
+            
+        } else {
+            // We are not free to assign port sides. If none is set, try inferring it from the port's position
+            if (portSide == PortSide.UNDEFINED) {
+                portSide = ElkUtil.calcPortSide(elkport, layoutDirection);
+                
+                // There are cases where ELK may have failed to infer the port side
+                if (portSide == PortSide.UNDEFINED) {
+                    portSide = PortSide.fromDirection(layoutDirection);
+                }
             }
         }
         
