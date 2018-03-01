@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.sequence.SequenceUtils;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
@@ -55,9 +56,7 @@ public class LayeredGraphCreator implements ILayoutProcessor<LayoutContext> {
             
             // Handle outgoing messages
             for (SMessage message : lifeline.getOutgoingMessages()) {
-                LNode node = new LNode(context.lgraph);
-                context.lgraph.getLayerlessNodes().add(node);
-
+                LNode node = SequenceUtils.createLNode(context.lgraph);
                 node.getLabels().add(new LLabel("Node" + nodeNumber++));
 
                 node.setProperty(InternalSequenceProperties.ORIGIN, message);
@@ -67,9 +66,7 @@ public class LayeredGraphCreator implements ILayoutProcessor<LayoutContext> {
             // Handle found messages (whose source lifeline is a dummy lifeline)
             for (SMessage message : lifeline.getIncomingMessages()) {
                 if (message.getSource().isDummy()) {
-                    LNode node = new LNode(context.lgraph);
-                    context.lgraph.getLayerlessNodes().add(node);
-
+                    LNode node = SequenceUtils.createLNode(context.lgraph);
                     node.getLabels().add(new LLabel("Node" + nodeNumber++));
 
                     node.setProperty(InternalSequenceProperties.ORIGIN, message);
@@ -93,18 +90,11 @@ public class LayeredGraphCreator implements ILayoutProcessor<LayoutContext> {
                 assert sourceNode != null && targetNode != null;
 
                 if (sourceNode != targetNode) {
-                    LPort sourcePort = new LPort();
-                    sourcePort.setNode(sourceNode);
-
-                    LPort targetPort = new LPort();
-                    targetPort.setNode(targetNode);
-
                     LEdge edge = new LEdge();
-
-                    edge.setSource(sourcePort);
-                    edge.setTarget(targetPort);
-
                     edge.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, lifeline);
+                    
+                    edge.setSource(sourceNode.getPorts().get(0));
+                    edge.setTarget(targetNode.getPorts().get(0));
                 }
             }
         }

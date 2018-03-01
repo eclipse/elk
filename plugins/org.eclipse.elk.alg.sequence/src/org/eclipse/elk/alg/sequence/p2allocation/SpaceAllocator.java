@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.p2allocation;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.elk.alg.layered.graph.LEdge;
-import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.SequenceUtils;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
@@ -25,6 +29,7 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * Allocates vertical space for various objects by introducing dummy nodes into the layered graph. Space is
@@ -53,7 +58,29 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // Space Allocation
+    // Space Allocation for Non-Empty Areas
+    
+    /* The following code needs to make sure that two conditions are met:
+     * 
+     *   A. Space is reserved for the area's header.
+     *   B. No message runs into the area that does not belong there.
+     * 
+     * To explain how these conditions are met we need to define four sets of messages:
+     * 
+     *   1. Above message are messages that are not part of the area, but directly precede at least one of the area's
+     *      messages.
+     *   2. Uppermost messages are all messages inside the area that have no precedessor that is also part of the area.
+     *      No message inside the area precedes them.
+     *   3. Bottommost messages are the corresponding concept applied to the other direction.
+     *   4. Below messages are like above messages, but in the other direction.
+     * 
+     * Meeting condition A entails introducing a dummy node to reserve a layer of space for the area's header. The
+     * dummy node is connected to all uppermost messages to ensure that they are placed below the header.
+     * 
+     * Meeting condition B entails connecting all above messages to the dummy node to ensure that they cannot move past
+     * the header into the area. Similarly, all bottommost messages are connected to all below messages to ensure that
+     * below messages cannot sneak past the area's bottom border.
+     */
 
     /**
      * Allocate space for the header of combined fragments and interaction uses.
@@ -62,44 +89,69 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
      *            the layout context that contains all relevant information for the current layout run.
      */
     private void allocateSpaceForAreaHeaders(final LayoutContext context) {
-        // TODO: This method would ideally add dummies for nested fragments as well
-        
-        // Add dummy nodes before the first messages of combined fragments to have enough space
-        // above the topmost message of the area
         for (SArea area : context.sgraph.getAreas()) {
-            // Find the uppermost message contained in the combined fragment. It will be that of all messages
-            // contained in the area which has no predecessor in the layered graph which is itself part of the
-            // area
-            SMessage uppermostMessage = null;
-            
+            Set<LNode> aboveNodes = new HashSet<>();
+            Set<LNode> uppermostNodes = new HashSet<>();
+            Set<LNode> lowermostNodes = new HashSet<>();
+            Set<LNode> belowNodes = new HashSet<>();
+
+            // Go through each of the area's messages and find 
             for (SMessage msg : area.getMessages()) {
-                // Find out if any of the messages predecessors in the layered graph are part of
-                // the fragment. If not, we have found our best guess for the uppermost message
                 LNode msgNode = msg.getProperty(InternalSequenceProperties.LAYERED_NODE);
-                boolean isUppermost = true;
-                for (LEdge incomingEdge : msgNode.getIncomingEdges()) {
-                    Object predecessor = incomingEdge.getSource().getNode().getProperty(
-                            InternalSequenceProperties.ORIGIN);
-                    
-                    if (area.getMessages().contains(predecessor)) {
-                        isUppermost = false;
-                        break;
+                
+                boolean hasPredecessorsInArea = false;
+                boolean hasSuccessorsInArea = false;
+                
+                // Iterate through the node's edges and inspect the other end points
+                for (LEdge edge : msgNode.getConnectedEdges()) {
+                    if (edge.getSource().getNode() == msgNode) {
+                        // It's an outgoing edge
+                        if (area.getMessages().contains(origin(edge.getTarget().getNode()))) {
+                            // The successor is in the area itself
+                            hasSuccessorsInArea = true;
+                        } else {
+                            // The successor is not in the area
+                            belowNodes.add(edge.getTarget().getNode());
+                        }
+                        
+                    } else if (edge.getTarget().getNode() == msgNode) {
+                        // It's an incoming edge
+                        if (area.getMessages().contains(origin(edge.getSource().getNode()))) {
+                            // The predecessor is in the area itself
+                            hasPredecessorsInArea = true;
+                        } else {
+                            // The predecessor is not in the area
+                            aboveNodes.add(edge.getSource().getNode());
+                        }
                     }
                 }
                 
-                if (isUppermost) {
-                    uppermostMessage = msg;
-                    break;
+                // Depending on predecessors and successors in the same area this node may be uppermost, lowermost,
+                // both, or none
+                if (!hasPredecessorsInArea) {
+                    uppermostNodes.add(msgNode);
+                }
+                
+                if (!hasSuccessorsInArea) {
+                    lowermostNodes.add(msgNode);
                 }
             }
             
-            // If we were able to find an uppermost message, insert a dummy node to reserve space
-            if (uppermostMessage != null) {
-                LNode node = uppermostMessage.getProperty(InternalSequenceProperties.LAYERED_NODE);
-                createLGraphDummyNode(context.lgraph, node, true);
-            }
+            // Insert a dummy node above the area to reserve space for the header
+            LNode dummy = SequenceUtils.createLNode(context.lgraph);
+            Set<LNode> dummySet = Sets.newHashSet(dummy);
+            
+            connect(aboveNodes, dummySet);
+            connect(dummySet, uppermostNodes);
+            
+            // Connect lowermost nodes to below nodes
+            connect(lowermostNodes, belowNodes);
         }
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Space Allocation for Comments
 
     /**
      * Allocate space for placing the comments near to their attached elements.
@@ -119,12 +171,16 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
                 LNode lnode = comment.getReferenceMessage().getProperty(InternalSequenceProperties.LAYERED_NODE);
                 if (lnode != null) {
                     for (int i = 0; i < dummys; i++) {
-                        createLGraphDummyNode(context.lgraph, lnode, true);
+                        insertDummyNodeBefore(lnode);
                     }
                 }
             }
         }
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Space Allocation for Empty Areas
 
     /**
      * Add dummy nodes to the layered graph in order to allocate space for empty areas.
@@ -140,8 +196,8 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
                     LNode node = nextMsg.getProperty(InternalSequenceProperties.LAYERED_NODE);
                     if (node != null) {
                         // Create two dummy nodes before node to have enough space for the empty area
-                        createLGraphDummyNode(context.lgraph, node, true);
-                        createLGraphDummyNode(context.lgraph, node, true);
+                        insertDummyNodeBefore(node);
+                        insertDummyNodeBefore(node);
                     }
                 }
             }
@@ -150,58 +206,55 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////
-    // Utility Methods
+    // Dummy Node Stuff
 
     /**
-     * Creates a dummy node in the layered graph, that is placed near the given node. Every
-     * connected edge of the original node is redirected to the dummy node.
+     * Creates a dummy node in the layered graph that preceeds the given node. Every incoming edge of the original
+     * node is redirected to the dummy node.
      * 
-     * @param lgraph
-     *            the layered graph
-     * @param node
-     *            the node, that gets a predecessor
-     * @param beforeNode
-     *            if {@code true}, the dummy will be inserted before the node, behind the node otherwise
+     * @param nodes
+     *            the nodes that get a new predecessor.
      */
-    private void createLGraphDummyNode(final LGraph lgraph, final LNode node, final boolean beforeNode) {
-        // Create the new dummy node, along with ports
-        LNode dummy = new LNode(lgraph);
-        lgraph.getLayerlessNodes().add(dummy);
+    private void insertDummyNodeBefore(final LNode node) {
+        LNode dummy = SequenceUtils.createLNode(node.getGraph());
+        LPort dummyPort = dummy.getPorts().get(0);
         
-        LPort dummyIn = new LPort();
-        dummyIn.setNode(dummy);
-        
-        LPort dummyOut = new LPort();
-        dummyOut.setNode(dummy);
-        
-        // Don't bother with existing ports, simply create a new one and be done with it
-        LPort newPort = new LPort();
-        newPort.setNode(node);
-        
-        // This edge will connect the dummy with the node before / after which it is going to be inserted
-        LEdge dummyEdge = new LEdge();
-
-        // To avoid concurrent modification, two lists are needed
-        if (beforeNode) {
-            // Divert original predecessors to dummy node
-            for (LEdge edge : Iterables.toArray(node.getIncomingEdges(), LEdge.class)) {
-                edge.setTarget(dummyIn);
-            }
-            
-            // Connect the node to the new dummy
-            dummyEdge.setSource(dummyOut);
-            dummyEdge.setTarget(newPort);
-            
-        } else {
-            // Divert original successors to dummy node
-            for (LEdge edge : Iterables.toArray(node.getOutgoingEdges(), LEdge.class)) {
-                edge.setSource(dummyOut);
-            }
-            
-            // Connect the node to the new dummy
-            dummyEdge.setTarget(dummyIn);
-            dummyEdge.setSource(newPort);
+        // Divert original predecessors to dummy node (we could use the other methods below to simply add new
+        // connections, but this works just as wel and uses fewer edges)
+        for (LEdge edge : Iterables.toArray(node.getIncomingEdges(), LEdge.class)) {
+            edge.setTarget(dummyPort);
         }
+        
+        // Connect the new dummy to the existing node
+        LEdge dummyEdge = new LEdge();
+        dummyEdge.setSource(dummyPort);
+        dummyEdge.setTarget(node.getPorts().get(0));
+    }
+    
+    /**
+     * Connects each source to each target.
+     */
+    private void connect(final Collection<LNode> sources, final Collection<LNode> targets) {
+        for (LNode source : sources) {
+            LPort sourcePort = source.getPorts().get(0);
+            
+            for (LNode target : targets) {
+                LEdge edge = new LEdge();
+                edge.setSource(sourcePort);
+                edge.setTarget(target.getPorts().get(0));
+            }
+        }
+    }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utility Methods
+    
+    /**
+     * Returns the value of the origin property set on the given node.
+     */
+    private Object origin(final LNode node) {
+        return node.getProperty(InternalSequenceProperties.ORIGIN);
     }
 
 }

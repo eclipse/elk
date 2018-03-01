@@ -7,6 +7,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence;
 
+import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
@@ -62,6 +65,18 @@ public final class SequenceUtils {
         return messageLength;
     }
     
+    /**
+     * Creates a new layered node with a single port and adds it to the given graph.
+     */
+    public static LNode createLNode(final LGraph graph) {
+        LNode node = new LNode(graph);
+        graph.getLayerlessNodes().add(node);
+        
+        LPort port = new LPort();
+        port.setNode(node);
+        
+        return node;
+    }
     
     
     private SequenceUtils() {
