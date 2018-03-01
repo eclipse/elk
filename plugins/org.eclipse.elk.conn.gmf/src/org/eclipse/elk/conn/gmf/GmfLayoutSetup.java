@@ -12,6 +12,7 @@ package org.eclipse.elk.conn.gmf;
 
 import java.util.Collection;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.ILayoutSetup;
@@ -43,7 +44,8 @@ public class GmfLayoutSetup implements ILayoutSetup {
             }
             return false;
         }
-        return object instanceof DiagramEditor || object instanceof IGraphicalEditPart;
+        return object instanceof DiagramEditor || object instanceof IGraphicalEditPart
+                || object instanceof IAdaptable && ((IAdaptable) object).getAdapter(DiagramEditor.class) != null;
     }
     
     /**
