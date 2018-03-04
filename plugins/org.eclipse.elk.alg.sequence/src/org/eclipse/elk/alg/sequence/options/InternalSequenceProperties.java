@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.options;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.graph.ElkEdge;
@@ -40,7 +43,11 @@ public final class InternalSequenceProperties {
     /** The ElkNode that represents the destruction event for a lifeline. */
     public static final IProperty<ElkNode> DESTRUCTION_NODE = new Property<>(
             "org.eclipse.elk.alg.sequence.destruction");
-
+    
+    /** The LNodes that belong to an area and have no successor that belongs to the same area. */
+    public static final IProperty<Set<LNode>> LOWERMOST_NODES = new Property<>(
+            "org.eclipse.elk.alg.sequence.areas.lowermostNodes", new HashSet<>());
+    
 
     private InternalSequenceProperties() {
         // Hide the constructor

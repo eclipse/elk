@@ -141,12 +141,12 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         for (Layer layer : context.lgraph.getLayers()) {
             // Iterate the nodes of the layer
             for (LNode node : layer) {
-                // Get the corresponding message and skip dummy nodes (which don't have a message)
-                if (!node.hasProperty(InternalSequenceProperties.ORIGIN)) {
+                // Get the corresponding message and skip dummy nodes
+                SMessage message = SequenceUtils.originObjectFor(node, SMessage.class);
+                
+                if (message == null) {
                     continue;
                 }
-                
-                SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
                 
                 // If the message is represented by a single node, that node won't have a property to say that it
                 // belongs to a given lifeline. If it is represented by two nodes, however, those nodes will specify

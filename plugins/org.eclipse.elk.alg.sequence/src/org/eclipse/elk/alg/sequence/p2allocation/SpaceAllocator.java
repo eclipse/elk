@@ -139,6 +139,7 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
             
             // Insert a dummy node above the area to reserve space for the header
             LNode dummy = SequenceUtils.createLNode(context.lgraph);
+            dummy.setProperty(InternalSequenceProperties.ORIGIN, area);
             Set<LNode> dummySet = Sets.newHashSet(dummy);
             
             connect(aboveNodes, dummySet);
@@ -146,6 +147,9 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
             
             // Connect lowermost nodes to below nodes
             connect(lowermostNodes, belowNodes);
+            
+            // Remember the lowermost nodes
+            area.setProperty(InternalSequenceProperties.LOWERMOST_NODES, lowermostNodes);
         }
     }
     

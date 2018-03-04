@@ -8,11 +8,13 @@
 package org.eclipse.elk.alg.sequence;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
+import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 
@@ -76,6 +78,26 @@ public final class SequenceUtils {
         port.setNode(node);
         
         return node;
+    }
+
+    /**
+     * Returns the origin object set on the given element if it is of the specified type.
+     * 
+     * @param element
+     *            the element whose origin property to query.
+     * @param type
+     *            the type we expect the origin to be of.
+     * @return the origin cast to the specified type, or {@code null} if it is {@code null} or not an instance of that
+     *         type.
+     */
+    public static <T> T originObjectFor(final LGraphElement element, final Class<T> type) {
+        Object origin = element.getProperty(InternalSequenceProperties.ORIGIN);
+        
+        if (type.isInstance(origin)) {
+            return type.cast(origin);
+        } else {
+            return null;
+        }
     }
     
     
