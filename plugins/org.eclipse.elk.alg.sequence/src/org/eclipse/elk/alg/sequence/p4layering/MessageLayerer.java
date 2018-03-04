@@ -79,7 +79,8 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
     // Fix Layering Algorithm
     
     /* The algorithm works as follows. We iterate over the layers. For each layer, we determine which areas become
-     * active by looking through all nodes and checking if they are part of an area that is not active yet. We then
+     * active by looking through all nodes and checking if they are part of an area that is not active yet. An area
+     * does not become active if it would span another area that it is not a child area of (or vice versa). We then
      * use these information to determine which areas are active in each lifeline. A lifeline may have active areas
      * even though it does not have incident messages that belong to the area, simply due to the fact that the area
      * spans that lifeline. It is such messages that we then need to move to the next layer. Finally, we determine
@@ -91,9 +92,15 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
      * Fixes the layering by moving nodes that don't belong in an area down until they are not in the area anymore.
      */
     private void fixInvalidAreaOverlaps(final LayoutContext context) {
-        // The map of active areas and their data as well as the the set of areas active for each lifeline 
-        Map<SArea, AreaData> activeAreas = new HashMap<>();
+        // Precompute helpful data for all areas
+        Map<SArea, AreaData> areaDataMap = new HashMap<>();
+        for (SArea area : context.sgraph.getAreas()) {
+            areaDataMap.put(area, new AreaData(area, context));
+        }
+        
+        // The set of active areas per lifeline as well as their union 
         List<Set<SArea>> activeAreasPerLifeline = new ArrayList<>(context.sgraph.getLifelines().size());
+        Set<SArea> activeAreas = new HashSet<>();
         
         // Create empty sets for each lifeline
         context.sgraph.getLifelines().stream()
@@ -105,13 +112,13 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
             Layer layer = layers.get(layerIndex);
             
             // Step 1: Add areas that become active in this layer
-            addThemActiveAreas(context, layer, activeAreas, activeAreasPerLifeline);
+            addThemActiveAreas(context, layer, areaDataMap, activeAreas, activeAreasPerLifeline);
             
             // Step 2: Move nodes downwards that don't belong in this layer due to area constraints
             moveInvalidNodes(layer, activeAreas, activeAreasPerLifeline);
             
             // Step 3: Remove areas that become inactive after this layer
-            removeThemActiveAreas(layer, activeAreas, activeAreasPerLifeline);
+            removeThemActiveAreas(layer, areaDataMap, activeAreas, activeAreasPerLifeline);
         }
     }
     
@@ -120,44 +127,53 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
     // Active Area Management
     
     /**
-     * Creates {@link AreaData} objects for all areas that start spring into existence in this layer. The new areas are
-     * added to the map of active areas, and to the set of active areas of each lifeline they span.
+     * Creates {@link AreaData} objects for all areas that start spring into existence in this layer. An area may end
+     * up not springing into existence if another incompatible area is already active. The new areas are added to the
+     * set of active areas, and to the set of active areas of each lifeline they span.
      */
-    private void addThemActiveAreas(final LayoutContext context, final Layer layer,
-            final Map<SArea, AreaData> activeAreas, final List<Set<SArea>> activeAreasPerLifeline) {
+    private void addThemActiveAreas(final LayoutContext context, final Layer layer, 
+            final Map<SArea, AreaData> areaDataMap, final Set<SArea> activeAreas,
+            final List<Set<SArea>> activeAreasPerLifeline) {
         
-        outerLoop:
         for (LNode node : layer) {
             // We're looking for the dummy nodes inserted for the area's header
             SArea area = SequenceUtils.originObjectFor(node, SArea.class);
             if (area != null) {
                 // Found one!!!
-                assert !activeAreas.containsKey(area);
+                assert !activeAreas.contains(area);
                 
-                // Check if there are areas currently active that this area cannot overlap with. That is the case if
-                // the current area does not contain the other areas as its child areas or vice versa.
-                AreaData areaData = new AreaData(area, context);
+                // Check if there are areas currently active that this area cannot overlap with
+                AreaData areaData = areaDataMap.get(area);
                 
-                for (int llIndex = areaData.leftmostLifeline; llIndex <= areaData.rightmostLifeline; llIndex++) {
-                    // Every area active at the current lifeline must either include our current lifeline or must be
-                    // included by our current lifeline
-                    for (SArea activeArea : activeAreasPerLifeline.get(llIndex)) {
-                        if (!activeArea.getContainedAreas().contains(area)
-                                && !area.getContainedAreas().contains(activeArea)) {
-                            
-                            continue outerLoop;
-                        }
+                if (!isIncompatibleAreaActive(areaData, activeAreasPerLifeline)) {
+                    activeAreas.add(area);
+                    for (int i = areaData.leftmostLifeline; i <= areaData.rightmostLifeline; i++) {
+                        activeAreasPerLifeline.get(i).add(area);
                     }
                 }
                 
-                activeAreas.put(area, areaData);
-                
-                // Add to set of active areas for each lifeline they span
-                for (int i = areaData.leftmostLifeline; i <= areaData.rightmostLifeline; i++) {
-                    activeAreasPerLifeline.get(i).add(area);
+            }
+        }
+    }
+    
+    /**
+     * Checks if there are areas currently active that the given area cannot overlap with. That is the case if the
+     * current area does not contain the other areas as its child areas or vice versa.
+     */
+    private boolean isIncompatibleAreaActive(final AreaData areaData, final List<Set<SArea>> activeAreasPerLifeline) {
+        for (int llIndex = areaData.leftmostLifeline; llIndex <= areaData.rightmostLifeline; llIndex++) {
+            // Every area active at the current lifeline must either include our current lifeline or must be
+            // included by our current lifeline
+            for (SArea activeArea : activeAreasPerLifeline.get(llIndex)) {
+                if (!activeArea.getContainedAreas().contains(areaData.area)
+                        && !areaData.area.getContainedAreas().contains(activeArea)) {
+                    
+                    return true;
                 }
             }
         }
+        
+        return false;
     }
     
     /**
@@ -165,30 +181,28 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
      * we have encountered all of an area's lowermost nodes, that area is removed both from the set of active areas and
      * from each lifeline's set of active areas.
      */
-    private void removeThemActiveAreas(final Layer layer, final Map<SArea, AreaData> activeAreas,
-            final List<Set<SArea>> activeAreasPerLifeline) {
+    private void removeThemActiveAreas(final Layer layer, final Map<SArea, AreaData> areaDataMap,
+            final Set<SArea> activeAreas, final List<Set<SArea>> activeAreasPerLifeline) {
         
         for (LNode node : layer) {
             // Try removing the node from each active area. We use an iterator here to be able to remove areas that
             // are becoming inactive on the fly
-            Iterator<Map.Entry<SArea, AreaData>> areaDataIterator = activeAreas.entrySet().iterator();
-            while (areaDataIterator.hasNext()) {
-                Map.Entry<SArea, AreaData> areaDataEntry = areaDataIterator.next();
+            Iterator<SArea> activeAreaIterator = activeAreas.iterator();
+            while (activeAreaIterator.hasNext()) {
+                SArea area = activeAreaIterator.next();
                 
                 // Try removing the current node from the area's set of lowermost nodes
-                AreaData areaData = areaDataEntry.getValue();
+                AreaData areaData = areaDataMap.get(area);
                 areaData.unencounteredLowermostNodes.remove(node);
                 
                 if (areaData.unencounteredLowermostNodes.isEmpty()) {
-                    SArea area = areaDataEntry.getKey();
-                    
                     // We have encountered all of the areas lowermost nodes, so remove it
                     for (int i = areaData.leftmostLifeline; i <= areaData.rightmostLifeline; i++) {
                         activeAreasPerLifeline.get(i).remove(area);
                     }
                     
                     // Remove this entry from the map of active areas
-                    areaDataIterator.remove();
+                    activeAreaIterator.remove();
                 }
             }
         }
@@ -202,13 +216,13 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
      * Finds nodes that don't belong in the given layer and moves those to the next. Once this method returns, the
      * layering is valid again.
      */
-    private void moveInvalidNodes(final Layer layer, final Map<SArea, AreaData> activeAreas,
+    private void moveInvalidNodes(final Layer layer, final Set<SArea> activeAreas,
             final List<Set<SArea>> activeAreasPerLifeline) {
         
         List<LNode> nodesToBeMoved = new ArrayList<>(layer.getNodes().size());
         
         for (LNode node : layer) {
-            if (!canStayInLayer(node, layer, activeAreas.keySet(), activeAreasPerLifeline)) {
+            if (!canStayInLayer(node, layer, activeAreas, activeAreasPerLifeline)) {
                 // The node cannot stay in this layer, so schedule if to be moved to the next. Do that later to avoid
                 // ConcurrentModificationExceptions
                 nodesToBeMoved.add(node);
@@ -371,6 +385,8 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
     // AreaData Class
 
     private static class AreaData {
+        /** The area this data object describes. */
+        private final SArea area;
         /** Those of the area's lowermost nodes that we have not seen yet. Once this is empty, the area is over. */
         private final Set<LNode> unencounteredLowermostNodes;
         /** The leftmost lifeline spanned by this area. */
@@ -379,6 +395,7 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
         private int rightmostLifeline;
         
         public AreaData(final SArea area, final LayoutContext context) {
+            this.area = area;
             unencounteredLowermostNodes = new HashSet<>(area.getProperty(InternalSequenceProperties.LOWERMOST_NODES));
             
             leftmostLifeline = context.sgraph.getLifelines().size();
