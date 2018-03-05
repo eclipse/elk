@@ -78,13 +78,14 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Fix Layering Algorithm
     
-    /* The algorithm works as follows. We iterate over the layers. For each layer, we determine which areas become
-     * active by looking through all nodes and checking if they are part of an area that is not active yet. An area
-     * does not become active if it would span another area that it is not a child area of (or vice versa). We then
-     * use these information to determine which areas are active in each lifeline. A lifeline may have active areas
-     * even though it does not have incident messages that belong to the area, simply due to the fact that the area
-     * spans that lifeline. It is such messages that we then need to move to the next layer. Finally, we determine
-     * which areas cease to be active in the layer. An area ceases to be active once we have seen all of its
+    /* The algorithm works as follows. We iterate over the layers. Due to how the algorithm works, the layer may
+     * contain nodes that are connected. We start by moving those to the next layer. For each layer, we determine
+     * which areas become active by looking through all nodes and checking if they are part of an area that is not
+     * active yet. An area does not become active if it would span another area that it is not a child area of (or vice
+     * versa). We then use these information to determine which areas are active in each lifeline. A lifeline may have
+     * active areas even though it does not have incident messages that belong to the area, simply due to the fact that
+     * the area spans that lifeline. It is such messages that we then need to move to the next layer. Finally, we
+     * determine which areas cease to be active in the layer. An area ceases to be active once we have seen all of its
      * lowermost nodes. 
      */
     
@@ -111,14 +112,51 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
         for (int layerIndex = 0; layerIndex < layers.size(); layerIndex++) {
             Layer layer = layers.get(layerIndex);
             
-            // Step 1: Add areas that become active in this layer
+            // Step 1: Move nodes into the next layer if their predecessors are in the current layer
+            fixInLayerEdges(layer);
+            
+            // Step 2: Add areas that become active in this layer
             addThemActiveAreas(context, layer, areaDataMap, activeAreas, activeAreasPerLifeline);
             
-            // Step 2: Move nodes downwards that don't belong in this layer due to area constraints
+            // Step 3: Move nodes downwards that don't belong in this layer due to area constraints
             moveInvalidNodes(layer, activeAreas, activeAreasPerLifeline);
             
-            // Step 3: Remove areas that become inactive after this layer
+            // Step 4: Remove areas that become inactive after this layer
             removeThemActiveAreas(layer, areaDataMap, activeAreas, activeAreasPerLifeline);
+        }
+    }
+    
+    
+    //////////////////////////////////
+    // Fixing the Layering
+    
+    /**
+     * Fixes the layering starting at the given layer. For each edge {@code (a, b)}, if {@code b} is in the layer, it
+     * gets moved into the next layer. Once at least one node was moved into the next layer, this method continues
+     * there.
+     */
+    private void fixInLayerEdges(final Layer layer) {
+        List<LNode> nodesToBeMoved = new ArrayList<>();
+        
+        for (LNode node : layer) {
+            for (LEdge outgoingEdge : node.getOutgoingEdges()) {
+                LNode targetNode = outgoingEdge.getTarget().getNode();
+                
+                if (targetNode != node && targetNode.getLayer().id == layer.id) {
+                    // Mark the target node as having to be moved (we cannot do that in this loop without causing
+                    // a ConcurrentModificationException
+                    nodesToBeMoved.add(targetNode);
+                }
+            }
+        }
+        
+        // If we have nodes that need to be moved, move them
+        if (!nodesToBeMoved.isEmpty()) {
+            Layer nextLayer = retrieveNextLayer(layer);
+            
+            for (LNode node : nodesToBeMoved) {
+                node.setLayer(nextLayer);
+            }
         }
     }
     
@@ -229,15 +267,13 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
             }
         }
         
-        // If we have moved any nodes to the next layer, we may have made the layering invalid
+        // Move nodes to the next layer. This may mess up the layering, but we'll fix that during the algorithm's next
+        // iteration
         if (!nodesToBeMoved.isEmpty()) {
             Layer nextLayer = retrieveNextLayer(layer);
             for (LNode node : nodesToBeMoved) {
                 node.setLayer(nextLayer);
             }
-            
-            // This may have caused the layering to be messed up. Fix that.
-            fixLayering(nextLayer);
         }
     }
 
@@ -337,47 +373,6 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
         }
         
         return layer.getGraph().getLayers().get(layerIndex);
-    }
-    
-    /**
-     * Fixes the layering starting at the given layer. For each edge {@code (a, b)}, if {@code b} is in the layer, it
-     * gets moved into the next layer. Once at least one node was moved into the next layer, this method continues
-     * there.
-     */
-    private void fixLayering(final Layer layer) {
-        boolean continueFixing = true;
-        Layer currLayer = layer;
-        List<LNode> nodesToBeMoved = new ArrayList<>();
-        
-        while (continueFixing) {
-            // We initially assume for each layer that we don't have to move any node to its successor
-            continueFixing = false;
-            
-            for (LNode node : currLayer) {
-                for (LEdge outgoingEdge : node.getOutgoingEdges()) {
-                    LNode targetNode = outgoingEdge.getTarget().getNode();
-                    
-                    if (targetNode != node && targetNode.getLayer().id == currLayer.id) {
-                        // Mark the target node as having to be moved (we cannot do that in this loop without causing
-                        // a ConcurrentModificationException
-                        nodesToBeMoved.add(targetNode);
-                    }
-                }
-            }
-            
-            // If we have nodes that need to be moved, move them and set things up for the next iteration
-            if (!nodesToBeMoved.isEmpty()) {
-                Layer nextLayer = retrieveNextLayer(currLayer);
-                
-                for (LNode node : nodesToBeMoved) {
-                    node.setLayer(nextLayer);
-                }
-                
-                continueFixing = true;
-                nodesToBeMoved.clear();
-                currLayer = nextLayer;
-            }
-        }
     }
     
     
