@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site
       associateSitesURL="associateSites.xml">
-   <description name="Eclipse Layout Kernel (Release 0.2.2)" url="http://download.eclipse.org/elk/updates/releases/0.2.2/">
-      Release 0.2.2 update site for the Eclipse Layout Kernel.
+   <description name="Eclipse Layout Kernel (Release 0.2.3)" url="http://download.eclipse.org/elk/updates/releases/0.2.3/">
+      Release 0.2.3 update site for the Eclipse Layout Kernel.
    </description>
-   <feature url="features/org.eclipse.elk_0.2.2.qualifier.jar" id="org.eclipse.elk.feature" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk_0.2.3.qualifier.jar" id="org.eclipse.elk.feature" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.source_0.2.2.qualifier.jar" id="org.eclipse.elk.feature.source" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.source_0.2.3.qualifier.jar" id="org.eclipse.elk.feature.source" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.sdk_0.2.2.qualifier.jar" id="org.eclipse.elk.sdk.feature" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.sdk_0.2.3.qualifier.jar" id="org.eclipse.elk.sdk.feature" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.sdk.source_0.2.2.qualifier.jar" id="org.eclipse.elk.sdk.feature.source" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.sdk.source_0.2.3.qualifier.jar" id="org.eclipse.elk.sdk.feature.source" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.gmf_0.2.2.qualifier.jar" id="org.eclipse.elk.gmf.feature" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.gmf_0.2.3.qualifier.jar" id="org.eclipse.elk.gmf.feature" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.gmf.source_0.2.2.qualifier.jar" id="org.eclipse.elk.gmf.feature.source" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.gmf.source_0.2.3.qualifier.jar" id="org.eclipse.elk.gmf.feature.source" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.graphiti_0.2.2.qualifier.jar" id="org.eclipse.elk.graphiti.feature" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.graphiti_0.2.3.qualifier.jar" id="org.eclipse.elk.graphiti.feature" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.graphiti.source_0.2.2.qualifier.jar" id="org.eclipse.elk.graphiti.feature.source" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.graphiti.source_0.2.3.qualifier.jar" id="org.eclipse.elk.graphiti.feature.source" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.graphviz_0.2.2.qualifier.jar" id="org.eclipse.elk.graphviz.feature" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.graphviz_0.2.3.qualifier.jar" id="org.eclipse.elk.graphviz.feature" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.graphviz.source_0.2.2.qualifier.jar" id="org.eclipse.elk.graphviz.feature.source" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.graphviz.source_0.2.3.qualifier.jar" id="org.eclipse.elk.graphviz.feature.source" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.ui_0.2.2.qualifier.jar" id="org.eclipse.elk.ui.feature" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.ui_0.2.3.qualifier.jar" id="org.eclipse.elk.ui.feature" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
-   <feature url="features/org.eclipse.elk.ui.source_0.2.2.qualifier.jar" id="org.eclipse.elk.ui.feature.source" version="0.2.2.qualifier">
+   <feature url="features/org.eclipse.elk.ui.source_0.2.3.qualifier.jar" id="org.eclipse.elk.ui.feature.source" version="0.2.3.qualifier">
       <category name="elk"/>
    </feature>
    <category-def name="elk" label="Eclipse Layout Kernel">
