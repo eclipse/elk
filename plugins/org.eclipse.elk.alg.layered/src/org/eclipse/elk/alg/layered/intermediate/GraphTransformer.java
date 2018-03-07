@@ -248,11 +248,11 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
      * @param shape the node or label whose placement should be transposed.
      */
     private void mirrorNodeLabelPlacementX(final LShape shape) {
-        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
-        if (oldPlacement.isEmpty()) {
+        if (!shape.hasProperty(LayeredOptions.NODE_LABELS_PLACEMENT)) {
             return;
         }
-        
+
+        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.contains(NodeLabelPlacement.H_LEFT)) {
             oldPlacement.remove(NodeLabelPlacement.H_LEFT);
             oldPlacement.add(NodeLabelPlacement.H_RIGHT);
@@ -447,11 +447,11 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
      * @param shape the node or label whose placement should be mirrored.
      */
     private void mirrorNodeLabelPlacementY(final LShape shape) {
-        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
-        if (oldPlacement.isEmpty()) {
+        if (!shape.hasProperty(LayeredOptions.NODE_LABELS_PLACEMENT)) {
             return;
         }
         
+        Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.contains(NodeLabelPlacement.V_TOP)) {
             oldPlacement.remove(NodeLabelPlacement.V_TOP);
             oldPlacement.add(NodeLabelPlacement.V_BOTTOM);
@@ -621,6 +621,10 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
      * @param shape the node or label whose placement should be transposed.
      */
     private void transposeNodeLabelPlacement(final LShape shape) {
+        if (!shape.hasProperty(LayeredOptions.NODE_LABELS_PLACEMENT)) {
+            return;
+        }
+        // note: do not merge with the previous condition, #getProperty may have a side-effect
         Set<NodeLabelPlacement> oldPlacement = shape.getProperty(LayeredOptions.NODE_LABELS_PLACEMENT);
         if (oldPlacement.isEmpty()) {
             return;
