@@ -648,11 +648,11 @@ group wrapping {
     }
     
     advanced option correctionFactor: double {
-        label "Correction factor for the wrapping"
+        label "Correction Factor for Wrapping"
         description 
             "At times and for certain types of graphs the executed wrapping may produce results that 
              are consistently biased in the same fashion: either wrapping to often or to rarely. 
-             This factor can be used to correct the bias. Internally, it is simplay multiplied with 
+             This factor can be used to correct the bias. Internally, it is simply multiplied with 
              the 'aspect ratio' layout option."
         default = 1.0
         targets parents
@@ -814,6 +814,16 @@ advanced option mergeHierarchyEdges: boolean {
 	legacyIds de.cau.cs.kieler.klay.layered.mergeHierarchyEdges
 }
 
+advanced option northOrSouthPort: boolean {
+    label "North or South Port"
+    description
+        "Specifies that this port can either be placed on the north side of a node or on the south
+        side (if port constraints permit)"
+    default = false
+    targets ports
+    legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
+}
+
 advanced option thoroughness: int {
 	label "Thoroughness"
 	description "How much effort should be spent to produce a nice layout."
@@ -833,14 +843,4 @@ advanced option unnecessaryBendpoints: boolean {
 	default = false
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.unnecessaryBendpoints
-}
-
-advanced option northOrSouthPort: boolean {
-	label "North or South Port"
-	description
-        "Specifies that this port can either be placed on the north side of a node or on the south
-        side (if port constraints permit)"
-	default = false
-	targets ports
-	legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
 }
