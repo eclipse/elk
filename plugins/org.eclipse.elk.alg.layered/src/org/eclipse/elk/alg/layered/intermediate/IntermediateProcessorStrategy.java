@@ -35,12 +35,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
     // Before Phase 1
 
-    /** Mirrors the graph to perform a right-to-left drawing. */
-    LEFT_DIR_PREPROCESSOR,
-    /** Transposes the graph to perform a top-bottom drawing. */
-    DOWN_DIR_PREPROCESSOR,
-    /** Mirrors and transposes the graph to perform a bottom-up drawing. */
-    UP_DIR_PREPROCESSOR,
+    /** Transforms the graph to internally perform a left-to-right drawing. */
+    DIRECTION_PREPROCESSOR,
     /** Removes some comment boxes to place them separately in a post-processor. */
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
@@ -164,12 +160,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     END_LABEL_POSTPROCESSOR,
     /** In hierarchical graphs, maps a child graph to its parent node. */
     HIERARCHICAL_NODE_RESIZER,
-    /** Mirrors the graph to perform a right-to-left drawing. */
-    LEFT_DIR_POSTPROCESSOR,
-    /** Transposes the graph to perform a top-bottom drawing. */
-    DOWN_DIR_POSTPROCESSOR,
-    /** Mirrors and transposes the graph to perform a bottom-up drawing. */
-    UP_DIR_POSTPROCESSOR;
+    /** Transforms the internal left-to-right drawing back to the original direction. */
+    DIRECTION_POSTPROCESSOR;
 
     /**
      * Creates an instance of the layout processor described by this instance.
@@ -210,9 +202,11 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
         case COMMENT_PREPROCESSOR:
             return new CommentPreprocessor();
 
-        case DOWN_DIR_POSTPROCESSOR:
-        case DOWN_DIR_PREPROCESSOR:
-            return new GraphTransformer(GraphTransformer.Mode.TRANSPOSE);
+        case DIRECTION_POSTPROCESSOR:
+            return new GraphTransformer(GraphTransformer.Mode.TO_INTERNAL_LTR);
+            
+        case DIRECTION_PREPROCESSOR:
+            return new GraphTransformer(GraphTransformer.Mode.TO_INPUT_DIRECTION);
 
         case EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER:
             return new EdgeAndLayerConstraintEdgeReverser();
@@ -289,10 +283,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
         case LAYER_SIZE_AND_GRAPH_HEIGHT_CALCULATOR:
             return new LayerSizeAndGraphHeightCalculator();
 
-        case LEFT_DIR_POSTPROCESSOR:
-        case LEFT_DIR_PREPROCESSOR:
-            return new GraphTransformer(GraphTransformer.Mode.MIRROR_X);
-
         case LONG_EDGE_JOINER:
             return new LongEdgeJoiner();
 
@@ -347,10 +337,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
         case SPLINE_SELF_LOOP_ROUTER:
             return new SplineSelfLoopRouter();
             
-        case UP_DIR_POSTPROCESSOR:
-        case UP_DIR_PREPROCESSOR:
-            return new GraphTransformer(GraphTransformer.Mode.MIRROR_AND_TRANSPOSE);
-
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the layout processor " + toString());

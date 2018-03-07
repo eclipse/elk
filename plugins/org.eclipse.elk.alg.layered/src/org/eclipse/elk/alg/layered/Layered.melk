@@ -161,6 +161,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports layering.coffmanGraham.layerBound
     supports nodePlacement.favorStraightEdges
     supports org.eclipse.elk.spacing.portsSurrounding
+    supports directionCongruency
 }
 
 
@@ -769,6 +770,16 @@ advanced option contentAlignment: EnumSet<ContentAlignment> {
 	default = EnumSet.noneOf(ContentAlignment)
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
+}
+
+advanced option directionCongruency: DirectionCongruency {
+    label "Direction Congruency"
+    description
+        "Specifies how drawings of the same graph with different layout directions compare to each other: 
+         either a natural reading direction is preserved or the drawings are rotated versions of each other."
+    default = DirectionCongruency.READING_DIRECTION
+    targets parents
+    documentation "@transformation.md"
 }
 
 advanced option feedbackEdges: boolean {

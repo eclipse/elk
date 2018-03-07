@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
@@ -23,6 +20,7 @@ import org.eclipse.elk.alg.layered.graph.LPadding;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.graph.LShape;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.DirectionCongruency;
 import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.layered.options.InLayerConstraint;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
@@ -40,27 +38,19 @@ import com.google.common.collect.Lists;
 
 /**
  * A layout processor that is able to perform transformations on the coordinates of a graph.
- *
- * @author msp
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class GraphTransformer implements ILayoutProcessor<LGraph> {
 
     /** definition of transformation modes. */
     public enum Mode {
-        /** mirror the coordinates of the graph. */
-        MIRROR_X,
-        /** transpose by swapping x and y coordinates. */
-        TRANSPOSE,
-        /** mirror and then transpose the graph. */
-        MIRROR_AND_TRANSPOSE;
+        /** the input graph's direction to internal direction (left-to-right). */
+        TO_INTERNAL_LTR,
+        /** internal direction back to input graph's direction. */
+        TO_INPUT_DIRECTION,
     }
-    
     
     /** the configured mode of the graph transformer. */
     private final Mode mode;
-    
     
     /**
      * Creates a graph transformer with the given mode.
@@ -70,7 +60,6 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
     public GraphTransformer(final Mode themode) {
         this.mode = themode;
     }
-    
     
     /**
      * {@inheritDoc}
@@ -85,35 +74,98 @@ public final class GraphTransformer implements ILayoutProcessor<LGraph> {
             nodes.addAll(layer.getNodes());
         }
         
-        switch (mode) {
-        case MIRROR_X:
-            mirrorX(nodes, layeredGraph);
-            mirrorX(layeredGraph.getPadding());
-            break;
-            
-        case TRANSPOSE:
-            transpose(nodes);
-            transposeEdgeLabelPlacement(layeredGraph);
-            transpose(layeredGraph.getOffset());
-            transpose(layeredGraph.getSize());
-            transpose(layeredGraph.getPadding());
-            break;
-            
-        case MIRROR_AND_TRANSPOSE:
-            mirrorX(nodes, layeredGraph);
-            mirrorY(nodes, layeredGraph);
-            mirrorX(layeredGraph.getPadding());
-            mirrorY(layeredGraph.getPadding());
-            transpose(nodes);
-            transposeEdgeLabelPlacement(layeredGraph);
-            transpose(layeredGraph.getOffset());
-            transpose(layeredGraph.getSize());
-            transpose(layeredGraph.getPadding());
-            break;
+        // graph transformations for unusual layout directions
+        DirectionCongruency congruency = layeredGraph.getProperty(LayeredOptions.DIRECTION_CONGRUENCY);
+        if (congruency == DirectionCongruency.READING_DIRECTION) {
+            // --------------------------------------------------------------
+            //          variant that preserves reading direction
+            // --------------------------------------------------------------
+            switch (layeredGraph.getProperty(LayeredOptions.DIRECTION)) {
+            case LEFT:
+                mirrorAllX(layeredGraph, nodes);
+                break;
+            case DOWN:
+                transposeAll(layeredGraph, nodes);
+                break;
+            case UP:
+                if (mode == Mode.TO_INTERNAL_LTR) {
+                    transposeAll(layeredGraph, nodes);
+                    mirrorAllY(layeredGraph, nodes);
+                } else {
+                    mirrorAllY(layeredGraph, nodes);
+                    transposeAll(layeredGraph, nodes);
+                }
+                break;
+            }
+        } else {
+            if (mode == Mode.TO_INTERNAL_LTR) {
+                // --------------------------------------------------------------
+                //          to internally used left-to-right direction
+                // --------------------------------------------------------------
+                switch (layeredGraph.getProperty(LayeredOptions.DIRECTION)) {
+                case LEFT:
+                    mirrorAllX(layeredGraph, nodes);
+                    mirrorAllY(layeredGraph, nodes);
+                    break;
+                case DOWN:
+                    rotate90Clockwise(layeredGraph, nodes);
+                    break;
+                case UP:
+                    rotate90CounterClockwise(layeredGraph, nodes);
+                    break;
+                } 
+            } else {
+                // --------------------------------------------------------------
+                //                 back to original direction
+                // --------------------------------------------------------------
+                switch (layeredGraph.getProperty(LayeredOptions.DIRECTION)) {
+                case LEFT:
+                    mirrorAllX(layeredGraph, nodes);
+                    mirrorAllY(layeredGraph, nodes);
+                    break;
+                case DOWN:
+                    rotate90CounterClockwise(layeredGraph, nodes);
+                    break;
+                case UP:
+                    rotate90Clockwise(layeredGraph, nodes);
+                    break;
+                } 
+            }
         }
+        
         monitor.done();
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Convenience
     
+    private void rotate90Clockwise(final LGraph layeredGraph, final List<LNode> nodes) {
+        transposeAll(layeredGraph, nodes);
+        mirrorAllX(layeredGraph, nodes);
+    }
+    
+    private void rotate90CounterClockwise(final LGraph layeredGraph, final List<LNode> nodes) {
+        mirrorAllX(layeredGraph, nodes);
+        transposeAll(layeredGraph, nodes);
+    }
+    
+    private void mirrorAllX(final LGraph layeredGraph, final List<LNode> nodes) {
+        mirrorX(nodes, layeredGraph);
+        mirrorX(layeredGraph.getPadding());
+    }
+    
+    private void mirrorAllY(final LGraph layeredGraph, final List<LNode> nodes) {
+        mirrorY(nodes, layeredGraph);
+        mirrorY(layeredGraph.getPadding());
+    }
+    
+    private void transposeAll(final LGraph layeredGraph, final List<LNode> nodes) {
+        transpose(nodes);
+        transposeEdgeLabelPlacement(layeredGraph);
+        transpose(layeredGraph.getOffset());
+        transpose(layeredGraph.getSize());
+        transpose(layeredGraph.getPadding());
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // Mirror Horizontally
