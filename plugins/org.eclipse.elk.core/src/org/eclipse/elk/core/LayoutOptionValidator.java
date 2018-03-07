@@ -23,7 +23,7 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyValueProxy;
 
 /**
- * A validator for lower and upper bounds of layout options.
+ * A validator for layout options that checks lower and upper bounds as well as other constraints.
  */
 public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
     

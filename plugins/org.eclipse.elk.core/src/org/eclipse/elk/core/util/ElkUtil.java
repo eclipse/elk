@@ -877,7 +877,9 @@ public final class ElkUtil {
             }
         }
 
-        if (allIssues != null) {
+        // TODO print warnings to log if there are no errors
+        if (allIssues != null
+                && allIssues.stream().anyMatch(issue -> issue.getSeverity() == GraphIssue.Severity.ERROR)) {
             StringBuilder message = new StringBuilder();
             for (GraphIssue issue : allIssues) {
                 if (message.length() > 0) {
@@ -917,19 +919,23 @@ public final class ElkUtil {
             builder.append(className);
         }
 
+        String identifier = element.getIdentifier();
+        if (!Strings.isNullOrEmpty(identifier)) {
+            builder.append(' ').append(identifier);
+            return;
+        }
         if (element instanceof ElkLabel) {
             String text = ((ElkLabel) element).getText();
             if (!Strings.isNullOrEmpty(text)) {
                 builder.append(' ').append(text);
+                return;
             }
-        } else  if (element instanceof ElkGraphElement) {
-            ElkGraphElement labeledElement = (ElkGraphElement) element;
-            if (!labeledElement.getLabels().isEmpty()) {
-                ElkLabel firstLabel = labeledElement.getLabels().get(0);
-                String text = firstLabel.getText();
-                if (!Strings.isNullOrEmpty(text)) {
-                    builder.append(' ').append(text);
-                }
+        }
+        for (ElkLabel label : element.getLabels()) {
+            String text = label.getText();
+            if (!Strings.isNullOrEmpty(text)) {
+                builder.append(' ').append(text);
+                return;
             }
         }
     }

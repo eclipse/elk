@@ -837,6 +837,16 @@ global option progressBar: boolean {
 	legacyIds de.cau.cs.kieler.progressBar
 }
 
+global option validateGraph: boolean {
+    label "Validate Graph"
+    description
+        "Whether the graph shall be validated before any layout algorithm is applied. If this
+        option is enabled and at least one error is found, the layout process is aborted and a message
+        is shown to the user."
+    default = false
+    targets parents
+}
+
 global option validateOptions: boolean {
     label "Validate Options"
     description
