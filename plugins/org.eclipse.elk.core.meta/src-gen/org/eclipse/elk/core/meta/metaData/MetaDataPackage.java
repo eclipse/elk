@@ -607,13 +607,22 @@ public interface MetaDataPackage extends EPackage
   int MD_ALGORITHM__SUPPORTED_FEATURES = MD_BUNDLE_MEMBER_FEATURE_COUNT + 8;
 
   /**
+   * The feature id for the '<em><b>Validator</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MD_ALGORITHM__VALIDATOR = MD_BUNDLE_MEMBER_FEATURE_COUNT + 9;
+
+  /**
    * The feature id for the '<em><b>Supported Options</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM__SUPPORTED_OPTIONS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 9;
+  int MD_ALGORITHM__SUPPORTED_OPTIONS = MD_BUNDLE_MEMBER_FEATURE_COUNT + 10;
 
   /**
    * The number of structural features of the '<em>Md Algorithm</em>' class.
@@ -622,7 +631,7 @@ public interface MetaDataPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MD_ALGORITHM_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 10;
+  int MD_ALGORITHM_FEATURE_COUNT = MD_BUNDLE_MEMBER_FEATURE_COUNT + 11;
 
   /**
    * The meta object id for the '{@link org.eclipse.elk.core.meta.metaData.impl.MdCategoryImpl <em>Md Category</em>}' class.
@@ -1232,6 +1241,17 @@ public interface MetaDataPackage extends EPackage
   EAttribute getMdAlgorithm_SupportedFeatures();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getValidator <em>Validator</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Validator</em>'.
+   * @see org.eclipse.elk.core.meta.metaData.MdAlgorithm#getValidator()
+   * @see #getMdAlgorithm()
+   * @generated
+   */
+  EReference getMdAlgorithm_Validator();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getSupportedOptions <em>Supported Options</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1738,6 +1758,14 @@ public interface MetaDataPackage extends EPackage
      * @generated
      */
     EAttribute MD_ALGORITHM__SUPPORTED_FEATURES = eINSTANCE.getMdAlgorithm_SupportedFeatures();
+
+    /**
+     * The meta object literal for the '<em><b>Validator</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MD_ALGORITHM__VALIDATOR = eINSTANCE.getMdAlgorithm_Validator();
 
     /**
      * The meta object literal for the '<em><b>Supported Options</b></em>' containment reference list feature.

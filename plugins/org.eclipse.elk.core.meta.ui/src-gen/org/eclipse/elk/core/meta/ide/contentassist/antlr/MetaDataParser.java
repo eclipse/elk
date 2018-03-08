@@ -116,6 +116,7 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdAlgorithmAccess().getGroup_8_5(), "rule__MdAlgorithm__Group_8_5__0");
 					put(grammarAccess.getMdAlgorithmAccess().getGroup_8_6(), "rule__MdAlgorithm__Group_8_6__0");
 					put(grammarAccess.getMdAlgorithmAccess().getGroup_8_6_2(), "rule__MdAlgorithm__Group_8_6_2__0");
+					put(grammarAccess.getMdAlgorithmAccess().getGroup_8_7(), "rule__MdAlgorithm__Group_8_7__0");
 					put(grammarAccess.getMdCategoryAccess().getGroup(), "rule__MdCategory__Group__0");
 					put(grammarAccess.getMdCategoryAccess().getGroup_4_0(), "rule__MdCategory__Group_4_0__0");
 					put(grammarAccess.getMdCategoryAccess().getGroup_4_1(), "rule__MdCategory__Group_4_1__0");
@@ -347,6 +348,7 @@ public class MetaDataParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMdAlgorithmAccess().getPreviewImageAssignment_8_5_1(), "rule__MdAlgorithm__PreviewImageAssignment_8_5_1");
 					put(grammarAccess.getMdAlgorithmAccess().getSupportedFeaturesAssignment_8_6_1(), "rule__MdAlgorithm__SupportedFeaturesAssignment_8_6_1");
 					put(grammarAccess.getMdAlgorithmAccess().getSupportedFeaturesAssignment_8_6_2_1(), "rule__MdAlgorithm__SupportedFeaturesAssignment_8_6_2_1");
+					put(grammarAccess.getMdAlgorithmAccess().getValidatorAssignment_8_7_1(), "rule__MdAlgorithm__ValidatorAssignment_8_7_1");
 					put(grammarAccess.getMdAlgorithmAccess().getSupportedOptionsAssignment_9(), "rule__MdAlgorithm__SupportedOptionsAssignment_9");
 					put(grammarAccess.getMdCategoryAccess().getDeprecatedAssignment_0(), "rule__MdCategory__DeprecatedAssignment_0");
 					put(grammarAccess.getMdCategoryAccess().getNameAssignment_2(), "rule__MdCategory__NameAssignment_2");

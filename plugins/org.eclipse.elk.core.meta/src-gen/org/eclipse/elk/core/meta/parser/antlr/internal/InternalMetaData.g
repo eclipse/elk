@@ -1476,6 +1476,40 @@ ruleMdAlgorithm returns [EObject current=null]
 						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getMdAlgorithmAccess().getUnorderedGroup_8());
 					}
 				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getMdAlgorithmAccess().getUnorderedGroup_8(), 7)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getMdAlgorithmAccess().getUnorderedGroup_8(), 7);
+					}
+								({true}?=>(otherlv_26='validator'
+								{
+									newLeafNode(otherlv_26, grammarAccess.getMdAlgorithmAccess().getValidatorKeyword_8_7_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getMdAlgorithmAccess().getValidatorJvmTypeReferenceParserRuleCall_8_7_1_0());
+										}
+										lv_validator_27_0=ruleJvmTypeReference
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getMdAlgorithmRule());
+											}
+											set(
+												$current,
+												"validator",
+												lv_validator_27_0,
+												"org.eclipse.xtext.xbase.Xtype.JvmTypeReference");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getMdAlgorithmAccess().getUnorderedGroup_8());
+					}
+				)
 			)
 					)*
 				)
@@ -1489,7 +1523,7 @@ ruleMdAlgorithm returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getMdAlgorithmAccess().getSupportedOptionsMdOptionSupportParserRuleCall_9_0());
 				}
-				lv_supportedOptions_26_0=ruleMdOptionSupport
+				lv_supportedOptions_28_0=ruleMdOptionSupport
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMdAlgorithmRule());
@@ -1497,15 +1531,15 @@ ruleMdAlgorithm returns [EObject current=null]
 					add(
 						$current,
 						"supportedOptions",
-						lv_supportedOptions_26_0,
+						lv_supportedOptions_28_0,
 						"org.eclipse.elk.core.meta.MetaData.MdOptionSupport");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)*
-		otherlv_27='}'
+		otherlv_29='}'
 		{
-			newLeafNode(otherlv_27, grammarAccess.getMdAlgorithmAccess().getRightCurlyBracketKeyword_10());
+			newLeafNode(otherlv_29, grammarAccess.getMdAlgorithmAccess().getRightCurlyBracketKeyword_10());
 		}
 	)
 ;

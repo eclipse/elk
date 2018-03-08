@@ -76,6 +76,7 @@ MdAlgorithm:
             & ('category' category=[MdCategory|QualifiedName])?
             & ('preview' previewImage=Path)?
             & ('features' supportedFeatures+=MdGraphFeature (',' supportedFeatures+=MdGraphFeature)*)?
+            & ('validator' validator=JvmTypeReference)?
         )
         (supportedOptions+=MdOptionSupport)*
     '}';

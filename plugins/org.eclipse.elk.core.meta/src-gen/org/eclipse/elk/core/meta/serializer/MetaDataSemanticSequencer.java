@@ -375,7 +375,8 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *                 description=STRING | 
 	 *                 documentation=STRING | 
 	 *                 category=[MdCategory|QualifiedName] | 
-	 *                 previewImage=Path
+	 *                 previewImage=Path | 
+	 *                 validator=JvmTypeReference
 	 *             )? 
 	 *             (supportedFeatures+=MdGraphFeature supportedFeatures+=MdGraphFeature*)?
 	 *         )+ 

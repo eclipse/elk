@@ -645,9 +645,19 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getMdAlgorithm_SupportedOptions()
+  public EReference getMdAlgorithm_Validator()
   {
     return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getMdAlgorithm_SupportedOptions()
+  {
+    return (EReference)mdAlgorithmEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -831,6 +841,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     createEReference(mdAlgorithmEClass, MD_ALGORITHM__CATEGORY);
     createEAttribute(mdAlgorithmEClass, MD_ALGORITHM__PREVIEW_IMAGE);
     createEAttribute(mdAlgorithmEClass, MD_ALGORITHM__SUPPORTED_FEATURES);
+    createEReference(mdAlgorithmEClass, MD_ALGORITHM__VALIDATOR);
     createEReference(mdAlgorithmEClass, MD_ALGORITHM__SUPPORTED_OPTIONS);
 
     mdCategoryEClass = createEClass(MD_CATEGORY);
@@ -940,6 +951,7 @@ public class MetaDataPackageImpl extends EPackageImpl implements MetaDataPackage
     initEReference(getMdAlgorithm_Category(), this.getMdCategory(), null, "category", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdAlgorithm_PreviewImage(), ecorePackage.getEString(), "previewImage", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMdAlgorithm_SupportedFeatures(), this.getMdGraphFeature(), "supportedFeatures", null, 0, -1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMdAlgorithm_Validator(), theTypesPackage.getJvmTypeReference(), null, "validator", null, 0, 1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMdAlgorithm_SupportedOptions(), this.getMdOptionSupport(), null, "supportedOptions", null, 0, -1, MdAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(mdCategoryEClass, MdCategory.class, "MdCategory", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

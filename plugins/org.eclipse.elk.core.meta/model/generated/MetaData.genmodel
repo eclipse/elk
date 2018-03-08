@@ -73,6 +73,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference MetaData.ecore#//MdAlgorithm/category"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MetaData.ecore#//MdAlgorithm/previewImage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MetaData.ecore#//MdAlgorithm/supportedFeatures"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MetaData.ecore#//MdAlgorithm/validator"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MetaData.ecore#//MdAlgorithm/supportedOptions"/>
     </genClasses>
     <genClasses ecoreClass="MetaData.ecore#//MdCategory">

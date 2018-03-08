@@ -65,6 +65,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="previewImage" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="supportedFeatures" unique="false"
         upperBound="-1" eType="#//MdGraphFeature"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="validator" eType="ecore:EClass platform:/resource/org.eclipse.xtext.common.types/model/JavaVMTypes.ecore#//JvmTypeReference"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="supportedOptions" upperBound="-1"
         eType="#//MdOptionSupport" containment="true"/>
   </eClassifiers>
