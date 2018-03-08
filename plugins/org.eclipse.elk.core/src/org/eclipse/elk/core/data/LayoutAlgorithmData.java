@@ -16,8 +16,8 @@ import java.util.Set;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IFactory;
-import org.eclipse.elk.core.util.IValidatingGraphElementVisitor;
 import org.eclipse.elk.core.util.InstancePool;
+import org.eclipse.elk.core.validation.IValidatingGraphElementVisitor;
 import org.eclipse.elk.graph.properties.GraphFeature;
 import org.eclipse.elk.graph.properties.IProperty;
 

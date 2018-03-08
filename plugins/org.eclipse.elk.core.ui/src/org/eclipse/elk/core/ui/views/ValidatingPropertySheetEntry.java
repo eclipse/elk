@@ -13,9 +13,9 @@ package org.eclipse.elk.core.ui.views;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.elk.core.GraphIssue;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
+import org.eclipse.elk.core.validation.GraphIssue;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
