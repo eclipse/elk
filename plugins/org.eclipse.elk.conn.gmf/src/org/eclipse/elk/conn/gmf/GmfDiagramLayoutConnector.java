@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.draw2d.Animation;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.ConnectionLocator;
@@ -172,6 +173,8 @@ public class GmfDiagramLayoutConnector implements IDiagramLayoutConnector {
     protected DiagramEditor getDiagramEditor(final IWorkbenchPart workbenchPart) {
         if (workbenchPart instanceof DiagramEditor) {
             return (DiagramEditor) workbenchPart;
+        } else if (workbenchPart instanceof IAdaptable) {
+        	return ((IAdaptable) workbenchPart).getAdapter(DiagramEditor.class);
         }
         return null;
     }

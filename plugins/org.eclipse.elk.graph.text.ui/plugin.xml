@@ -79,9 +79,10 @@
 	<extension
 			point="org.eclipse.ui.preferencePages">
 		<page
-			class="org.eclipse.elk.graph.text.ui.ElkGraphExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-			id="org.eclipse.elk.graph.text.ElkGraph"
-			name="ElkGraph">
+        category="org.eclipse.elk.core.ui.preferences.layout"
+        class="org.eclipse.elk.graph.text.ui.ElkGraphExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+        id="org.eclipse.elk.graph.text.ElkGraph"
+        name="ElkGraph">
 			<keywordReference id="org.eclipse.elk.graph.text.ui.keyword_ElkGraph"/>
 		</page>
 		<page

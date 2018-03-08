@@ -136,14 +136,14 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         title: "«algorithm.label ?: algorithm.name»"
         menu:
           main:
-            identifier: "«algorithm.qualifiedName»"
+            identifier: "«algorithm.qualifiedName.toHugoIdentifier»"
             parent: "Algorithms"
         ---
         
         '''
         
         if (algorithm.previewImage !== null) {
-            val newFileName = algorithm.qualifiedName.replace('.', '-') + "_preview_" 
+            val newFileName = algorithm.qualifiedName.toHugoIdentifier + "_preview_" 
                                 + algorithm.previewImage.substring(algorithm.previewImage.lastIndexOf('/') + 1)
                                 
             // copy previewImage into images folder within the rest of the documentation
@@ -203,7 +203,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
             doc += '''
             ## Additional Documentation
             
-            «algorithm.documentation.additionalDocumentation(algorithm.qualifiedName.replace('.', '-'))»
+            «algorithm.documentation.additionalDocumentation(algorithm.qualifiedName.toHugoIdentifier)»
             
             '''
         }
@@ -217,13 +217,14 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
             ----|----
             '''
             for (supportedOption : algorithm.supportedOptions.sortBy[(it.option.label ?: it.option.name).toLowerCase]) {
-                var optionFileName = supportedOption.option.qualifiedName.replace('.', '-')
+                var optionFileName = supportedOption.option.qualifiedName.toHugoIdentifier
+                
                 // If the supported option specifies additional documentation, it is specific to this algorithm,
                 // therefore an alternative file is created for the option documentation that differs from the general
                 // documentation.
                 if (supportedOption.documentation !== null) {
-                    optionFileName = supportedOption.option.qualifiedName.replace('.', '-') + "_" +
-                        algorithm.qualifiedName.replace('.', '-')
+                    optionFileName = supportedOption.option.qualifiedName.toHugoIdentifier + "_" +
+                        algorithm.qualifiedName.toHugoIdentifier
                     writeDoc(
                         optionFileName,
                         optionsOutputPath,
@@ -260,7 +261,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      */
     private def dispatch String generateDoc(MdOption option) {
         generateDoc(option, option.label ?: option.name,
-            option.documentation.additionalDocumentation(option.qualifiedName.replace('.', '-')))
+            option.documentation.additionalDocumentation(option.qualifiedName.toHugoIdentifier))
     }
     
     /**
@@ -285,7 +286,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         title: "«title»"
         menu:
           main:
-            identifier: "«option.qualifiedName»"
+            identifier: "«option.qualifiedName.toHugoIdentifier»"
             parent: "LayoutOptions"
         ---
         
@@ -319,9 +320,9 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         «if (!option.targets.empty) "*Applies To:* | " + option.targets.map[it.literal].join(", ")»
         «if (!option.legacyIds.empty) "*Legacy Id:* | " + option.legacyIds.map(["`" + it + "`"]).join(", ")»
         «if (!option.dependencies.empty) "*Dependencies:* | " + option.dependencies.map["[" + it.target.qualifiedName
-                                                  + "](" + it.target.qualifiedName.replace('.', '-') + ")"].join(", ")»
+                                                  + "](" + it.target.qualifiedName.toHugoIdentifier + ")"].join(", ")»
         «if (!option.groups.empty) "*Containing Group:* | " + option.groups.map["[" + it.name+ "]({{< relref \"reference/groups/" + 
-                                                                it.qualifiedName.replace('.', '-') + ".md\" >}})"].join(" -> ")»
+                                                                it.qualifiedName.toHugoIdentifier + ".md\" >}})"].join(" -> ")»
         «if (option.description !== null) "\n### Description\n\n" + option.description.trimNewlineTabsAndReduceToSingleSpace»
         «if (!additionalDoc.nullOrEmpty) "\n## Additional Documentation\n\n" + additionalDoc»
         '''
@@ -352,7 +353,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         title: "«title.toString()»"
         menu:
           main:
-            identifier: "«group.qualifiedName»"
+            identifier: "«group.qualifiedName.toHugoIdentifier»"
             parent: "LayoutOptionGroups"
         ---
         
@@ -361,11 +362,11 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         *Identifier:* | `«group.qualifiedName»`
         
         «if (!group.children.filter(MdOption).empty) "\n## Options\n\n" + group.children.filter(MdOption).map[
-            "* [" + (it.label ?: it.name) + "]({{< relref \"reference/options/" + it.qualifiedName.replace('.', '-') + ".md\" >}})"].join("\n")»
+            "* [" + (it.label ?: it.name) + "]({{< relref \"reference/options/" + it.qualifiedName.toHugoIdentifier + ".md\" >}})"].join("\n")»
         «if (!group.children.filter(MdGroup).empty) "\n## Subgroups\n\n" + group.children.filter(MdGroup).map[
-            "* [" + it.name + "]({{< relref \"reference/groups/" + it.qualifiedName.replace('.', '-') + ".md\" >}})"].join("\n")»
+            "* [" + it.name + "]({{< relref \"reference/groups/" + it.qualifiedName.toHugoIdentifier + ".md\" >}})"].join("\n")»
         «if (group.documentation !== null) "\n## Additional Documentation\n\n" 
-            + group.documentation.additionalDocumentation(group.qualifiedName.replace('.', '-'))»
+            + group.documentation.additionalDocumentation(group.qualifiedName.toHugoIdentifier)»
         '''
         return doc
     }
@@ -380,7 +381,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      *      the folder the bundle member's documentation is to be generated into
      */
     private def void writeDoc(MdBundleMember member, Path outputPath) {
-        val fileName = member.qualifiedName.replace('.', '-')
+        val fileName = member.qualifiedName.toHugoIdentifier
         writeDoc(fileName, outputPath, member.generateDoc)
     }
     
@@ -526,6 +527,22 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         // Images folder (remove and create to purge the thing)
         imageOutputPath = docsOutputPath.resolve("static").resolve("img_gen");
         Files.createDirectories(imageOutputPath);
+    }
+    
+    /**
+     * Turns the given option identifier into an identifier to be used by Hugo. This includes replacing dots by
+     * hyphens, and ensuring that no identifier ends with "index" since that causes Hugo to do strange things.
+     * 
+     * @param optionName the option name to turn into an identifier fit for use with Hugo.
+     * @return the Hugo-compatible identifier.
+     */
+    private def String toHugoIdentifier(String optionName) {
+        if (optionName.endsWith(".index")) {
+            // If the last component of the name ends in "index", Hugo doesn't generate links properly (#268)
+            return (optionName + "2").replace('.', '-');
+        } else {
+            return optionName.replace('.', '-');
+        }
     }
     
     /**

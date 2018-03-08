@@ -78,8 +78,10 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
     // Port Rank Assignment
 
     @Override
-    public boolean distributePortsWhileSweeping(final LNode[][] nodeOrder, final int currentIndex,
+    public boolean distributePortsWhileSweeping(final LNode[][] nodeOrder, 
+            final int currentIndex,
             final boolean isForwardSweep) {
+        
         updateNodePositions(nodeOrder, currentIndex);
         LNode[] freeLayer = nodeOrder[currentIndex];
         PortSide side = isForwardSweep ? PortSide.WEST : PortSide.EAST;
@@ -139,12 +141,11 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
      *         {@code rankSum + consumedRank}
      * @see {@link org.eclipse.alg.layered.intermediate.PortListSorter} 
      */
-    protected abstract float calculatePortRanks(final LNode node, final float rankSum,
-            final PortType type);
+    protected abstract float calculatePortRanks(LNode node, float rankSum, PortType type);
+
 
     // /////////////////////////////////////////////////////////////////////////////
     // Port Distribution
-
 
     private void distributePorts(final LNode node, final PortSide side) {
         if (!node.getProperty(LayeredOptions.PORT_CONSTRAINTS).isOrderFixed()) {
@@ -180,9 +181,10 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
         // a float value large enough to ensure that barycenters of south ports work fine
         final float absurdlyLargeFloat = 2 * node.getLayer().getNodes().size() + 1;
         // calculate barycenter values for the ports of the node
-        PortIteration: for (LPort port : ports) {
-            boolean northSouthPort =
-                    port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH;
+        PortIteration: 
+        for (LPort port : ports) {
+            
+            boolean northSouthPort = port.getSide() == PortSide.NORTH || port.getSide() == PortSide.SOUTH;
             float sum = 0;
 
             if (northSouthPort) {
@@ -369,28 +371,28 @@ public abstract class AbstractBarycenterPortDistributor implements ISweepPortDis
         });
     }
 
-        private int nPorts;
+    private int nPorts;
 
-        @Override
+    @Override
     public void initAtLayerLevel(final int l, final LNode[][] nodeOrder) {
         nodePositions[l] = new int[nodeOrder[l].length];
-        }
+    }
 
-        @Override
+    @Override
     public void initAtNodeLevel(final int l, final int n, final LNode[][] nodeOrder) {
         LNode node = nodeOrder[l][n];
-            node.id = n;
-            nodePositions[l][n] = n;
-        }
+        node.id = n;
+        nodePositions[l][n] = n;
+    }
 
-        @Override
+    @Override
     public void initAtPortLevel(final int l, final int n, final int p, final LNode[][] nodeOrder) {
         nodeOrder[l][n].getPorts().get(p).id = nPorts++;
-        }
+    }
 
-        @Override
-        public void initAfterTraversal() {
-            portRanks = new float[nPorts];
-            portBarycenter = new float[nPorts];
-        }
+    @Override
+    public void initAfterTraversal() {
+        portRanks = new float[nPorts];
+        portBarycenter = new float[nPorts];
+    }
 }
