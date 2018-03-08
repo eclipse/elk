@@ -34,6 +34,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getPreviewImage <em>Preview Image</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getSupportedFeatures <em>Supported Features</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getValidator <em>Validator</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getSupportedOptions <em>Supported Options</em>}</li>
  * </ul>
  *
@@ -268,6 +269,32 @@ public interface MdAlgorithm extends MdBundleMember
    * @generated
    */
   EList<MdGraphFeature> getSupportedFeatures();
+
+  /**
+   * Returns the value of the '<em><b>Validator</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Validator</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Validator</em>' containment reference.
+   * @see #setValidator(JvmTypeReference)
+   * @see org.eclipse.elk.core.meta.metaData.MetaDataPackage#getMdAlgorithm_Validator()
+   * @model containment="true"
+   * @generated
+   */
+  JvmTypeReference getValidator();
+
+  /**
+   * Sets the value of the '{@link org.eclipse.elk.core.meta.metaData.MdAlgorithm#getValidator <em>Validator</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Validator</em>' containment reference.
+   * @see #getValidator()
+   * @generated
+   */
+  void setValidator(JvmTypeReference value);
 
   /**
    * Returns the value of the '<em><b>Supported Options</b></em>' containment reference list.
