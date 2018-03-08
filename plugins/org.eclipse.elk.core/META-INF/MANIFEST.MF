@@ -19,7 +19,8 @@ Export-Package: org.eclipse.elk.core,
  org.eclipse.elk.core.util.adapters,
  org.eclipse.elk.core.util.internal;x-friends:="org.eclipse.elk.graph.text",
  org.eclipse.elk.core.util.persistence,
- org.eclipse.elk.core.util.selection
+ org.eclipse.elk.core.util.selection,
+ org.eclipse.elk.core.validation
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

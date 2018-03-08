@@ -8,7 +8,7 @@
  * Contributors:
  *    spoenemann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core;
+package org.eclipse.elk.core.validation;
 
 import java.util.Collection;
 

@@ -15,8 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.core.GraphIssue;
-import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
@@ -27,6 +25,8 @@ import org.eclipse.elk.core.service.LayoutConfigurationManager;
 import org.eclipse.elk.core.ui.Messages;
 import org.eclipse.elk.core.ui.util.ElkUiUtil;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.core.validation.GraphIssue;
+import org.eclipse.elk.core.validation.LayoutOptionValidator;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
