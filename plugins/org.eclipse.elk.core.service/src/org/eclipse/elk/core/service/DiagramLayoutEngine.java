@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.LayoutConfigurator.IOptionFilter;
+import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -315,6 +316,12 @@ public class DiagramLayoutEngine {
     private IGraphLayoutEngine graphLayoutEngine;
     
     /**
+     * Resolves layout algorithms for nodes in the graph.
+     */
+    @Inject
+    private LayoutAlgorithmResolver algorithmResolver;
+    
+    /**
      * Provider for validators of layout graphs.
      */
     @Inject
@@ -598,7 +605,7 @@ public class DiagramLayoutEngine {
      * passed, the layout engine is executed exactly once. If multiple layout configurators are
      * passed, the layout engine is executed accordingly often, but the resulting layout is applied
      * only once. This is useful for composition of multiple algorithms that process only parts of
-     * the graph. Layout listeners are notified after the layout has been computed.
+     * the graph. Layout listeners are notified before and after the layout has been computed.
      * 
      * @param mapping
      *            a mapping for the layout graph
@@ -613,8 +620,10 @@ public class DiagramLayoutEngine {
         mapping.setProperty(MAPPING_CONNECTOR, connector);
         handleAncestors(mapping, params);
         
-        // Set up graph validators
         LinkedList<IGraphElementVisitor> visitors = new LinkedList<IGraphElementVisitor>();
+        visitors.add(algorithmResolver);
+        
+        // Set up graph validators
         if (params.getGlobalSettings().getProperty(CoreOptions.VALIDATE_OPTIONS)) {
             visitors.add(layoutOptionValidatorProvider.get());
         }
