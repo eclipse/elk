@@ -57,7 +57,7 @@ public class GraphValidator implements IValidatingGraphElementVisitor {
     }
     
     /**
-     * Check the structural properties of the given edge.
+     * Apply generic checks to the given edge.
      */
     protected void checkEdge(final ElkEdge edge) {
         if (!edge.isConnected()) {
@@ -101,6 +101,9 @@ public class GraphValidator implements IValidatingGraphElementVisitor {
         }
     }
     
+    /**
+     * Apply algorithm-specific checks to the given graph element.
+     */
     protected void runAlgorithmSpecificChecks(final ElkGraphElement element, final ElkNode parent) {
         LayoutAlgorithmData algoData = parent.getProperty(CoreOptions.RESOLVED_ALGORITHM);
         if (algoData != null) {
@@ -111,6 +114,10 @@ public class GraphValidator implements IValidatingGraphElementVisitor {
         }
     }
     
+    /**
+     * Create an instance of the algorithm-specific validator for the given layout algorithm.
+     * The instance is cached for performance optimization.
+     */
     protected IValidatingGraphElementVisitor getValidator(final LayoutAlgorithmData algoData) {
         IValidatingGraphElementVisitor validator = algorithmSpecificValidators.get(algoData);
         if (validator != null) {

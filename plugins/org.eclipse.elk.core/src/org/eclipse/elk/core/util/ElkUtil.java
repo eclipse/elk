@@ -834,9 +834,6 @@ public final class ElkUtil {
      * @param visitors the visitors to apply.
      */
     public static void applyVisitors(final ElkNode graph, final IGraphElementVisitor... visitors) {
-        for (int i = 0; i < visitors.length; i++) {
-            visitors[i].visit(graph);
-        }
         Iterator<EObject> allElements = ElkGraphUtil.propertiesSkippingIteratorFor(graph, true);
         while (allElements.hasNext()) {
             EObject nextElement = allElements.next();

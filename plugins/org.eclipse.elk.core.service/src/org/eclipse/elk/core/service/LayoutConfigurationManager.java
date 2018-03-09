@@ -14,9 +14,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -47,7 +47,7 @@ public class LayoutConfigurationManager {
     
     /** The graph layout engine defines the default layout algorithm to be used. */
     @Inject
-    private IGraphLayoutEngine graphLayoutEngine;
+    private LayoutAlgorithmResolver layoutAlgorithmResolver;
     
     /**
      * Return a layout algorithm data instance from the given configuration store. If no specific
@@ -58,7 +58,7 @@ public class LayoutConfigurationManager {
     public LayoutAlgorithmData getAlgorithm(final ILayoutConfigurationStore config) {
         return LayoutMetaDataService.getInstance().getAlgorithmDataBySuffixOrDefault(
                 (String) getRawOptionValue(CoreOptions.ALGORITHM, config),
-                graphLayoutEngine.getDefaultLayoutAlgorithmID());
+                layoutAlgorithmResolver.getDefaultLayoutAlgorithmID());
     }
     
     /**
@@ -103,7 +103,7 @@ public class LayoutConfigurationManager {
         Object result = getRawOptionValue(optionData, config);
         if (optionData.equals(CoreOptions.ALGORITHM)) {
             LayoutAlgorithmData algoData = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffixOrDefault(
-                    (String) result, graphLayoutEngine.getDefaultLayoutAlgorithmID());
+                    (String) result, layoutAlgorithmResolver.getDefaultLayoutAlgorithmID());
             if (algoData != null) {
                 return algoData.getId();
             }
