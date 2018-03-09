@@ -50,7 +50,7 @@ public interface EMapPropertyHolder extends EObject, IPropertyHolder {
      * <!-- end-model-doc -->
      * @return the value of the '<em>Properties</em>' map.
      * @see org.eclipse.elk.graph.ElkGraphPackage#getEMapPropertyHolder_Properties()
-     * @model mapType="org.eclipse.elk.graph.ElkPropertyToValueMapEntry<org.eclipse.elk.graph.IProperty<?>, org.eclipse.elk.graph.PropertyValue>"
+     * @model mapType="org.eclipse.elk.graph.ElkPropertyToValueMapEntry&lt;org.eclipse.elk.graph.IProperty&lt;?&gt;, org.eclipse.elk.graph.PropertyValue&gt;"
      * @generated
      */
     EMap<IProperty<?>, Object> getProperties();
