@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.core.validation;
 
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkGraphElement;
 
 /**
@@ -115,7 +116,11 @@ public class GraphIssue {
      */
     @Override
     public String toString() {
-        return severity.toString() + ": " + message + " (" + element + ")";
+        StringBuilder result = new StringBuilder();
+        result.append(severity).append(": ").append(message).append(" (");
+        ElkUtil.printElementPath(element, result);
+        result.append(")");
+        return result.toString();
     }
 
 }
