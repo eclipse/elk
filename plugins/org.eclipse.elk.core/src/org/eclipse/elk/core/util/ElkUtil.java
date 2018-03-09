@@ -33,6 +33,7 @@ import org.eclipse.elk.core.validation.GraphIssue;
 import org.eclipse.elk.core.validation.GraphValidationException;
 import org.eclipse.elk.core.validation.IValidatingGraphElementVisitor;
 import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkGraphElement;
@@ -901,6 +902,7 @@ public final class ElkUtil {
      * Print information on the given graph element to the given string builder.
      */
     public static void printElementPath(final ElkGraphElement element, final StringBuilder builder) {
+        // Print the containing element
         if (element.eContainer() instanceof ElkGraphElement) {
             printElementPath((ElkGraphElement) element.eContainer(), builder);
             builder.append(" > ");
@@ -908,6 +910,7 @@ public final class ElkUtil {
             builder.append("Root ");
         }
 
+        // Print the class name
         String className = element.eClass().getName();
         if (className.startsWith("Elk")) {
             // CHECKSTYLEOFF MagicNumber
@@ -917,11 +920,13 @@ public final class ElkUtil {
             builder.append(className);
         }
 
+        // Print the identifier if present
         String identifier = element.getIdentifier();
         if (!Strings.isNullOrEmpty(identifier)) {
             builder.append(' ').append(identifier);
             return;
         }
+        // Print the label if present
         if (element instanceof ElkLabel) {
             String text = ((ElkLabel) element).getText();
             if (!Strings.isNullOrEmpty(text)) {
@@ -934,6 +939,29 @@ public final class ElkUtil {
             if (!Strings.isNullOrEmpty(text)) {
                 builder.append(' ').append(text);
                 return;
+            }
+        }
+        // If it's an edge and no identifier nor label is present, print source and target
+        if (element instanceof ElkEdge) {
+            ElkEdge edge = (ElkEdge) element;
+            if (edge.isConnected()) {
+                builder.append(" (");
+                ListIterator<ElkConnectableShape> sourceIter = edge.getSources().listIterator();
+                while (sourceIter.hasNext()) {
+                    if (sourceIter.nextIndex() > 0) {
+                        builder.append(", ");
+                    }
+                    printElementPath(sourceIter.next(), builder);
+                }
+                builder.append(" -> ");
+                ListIterator<ElkConnectableShape> targetIter = edge.getTargets().listIterator();
+                while (targetIter.hasNext()) {
+                    if (targetIter.nextIndex() > 0) {
+                        builder.append(", ");
+                    }
+                    printElementPath(targetIter.next(), builder);
+                }
+                builder.append(")");
             }
         }
     }

@@ -8,7 +8,7 @@
  * Contributors:
  *    Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.alg;
+package org.eclipse.elk.core.test;
 
 import static org.junit.Assert.assertEquals;
 
