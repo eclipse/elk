@@ -208,48 +208,45 @@ class ElkGraphImporter {
             }
         }
         
-        // Transform the outgoing edges of children (this is not part of the previous loop since all
-        // children must have already been transformed)
-        for (ElkNode child : elkgraph.getChildren()) {
-            // Is inside self loop processing enabled for this node?
-            boolean enableInsideSelfLoops = child.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
+        // iterate the list of contained edges to preserve the 'input order' of the edges
+        // (this is not part of the previous loop since all children must have already been transformed)
+        for (ElkEdge elkedge : elkgraph.getContainedEdges()) {
+            ElkNode source = ElkGraphUtil.getSourceNode(elkedge);
+            ElkNode target = ElkGraphUtil.getTargetNode(elkedge);
             
-            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(child)) {
-                // Find the edge's target node
-                ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
-                
-                // Find out basic information about the edge
-                boolean isToBeLaidOut = !elkedge.getProperty(LayeredOptions.NO_LAYOUT);
-                boolean isInsideSelfLoop = enableInsideSelfLoops && elkedge.isSelfloop()
-                        && elkedge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
-                boolean connectsToGraph = targetNode == elkgraph;
-                boolean connectsToSibling = targetNode.getParent() == elkgraph;
-                
-                // Only transform the edge if we are to layout the edge and if it stays in the current
-                // level of hierarchy (which implies that we don't transform inside self loops)
-                if (isToBeLaidOut && !isInsideSelfLoop && (connectsToGraph || connectsToSibling)) {
-                    transformEdge(elkedge, elkgraph, lgraph);
+            // Is inside self loop processing enabled for this node?
+            boolean enableInsideSelfLoops = source.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
+            
+            // Find out basic information about the edge
+            boolean isToBeLaidOut = !elkedge.getProperty(LayeredOptions.NO_LAYOUT);
+            boolean isInsideSelfLoop = enableInsideSelfLoops && elkedge.isSelfloop()
+                    && elkedge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
+            boolean connectsSiblings = source.getParent() == elkgraph && source.getParent() == target.getParent();
+            boolean connectsToGraph = (source.getParent() == elkgraph && target == elkgraph) 
+                    ^ (target.getParent() == elkgraph && source == elkgraph);
+            
+            // Only transform the edge if we are to layout the edge and if it stays in the current
+            // level of hierarchy (which implies that here we don't transform inside self loops)
+            if (isToBeLaidOut && !isInsideSelfLoop && (connectsToGraph || connectsSiblings)) {
+                transformEdge(elkedge, elkgraph, lgraph);
+            } 
+        }
+
+        // now collect inside self loops of 'elkgraph'
+        if (elkgraph.getParent() != null) {
+            for (ElkEdge elkedge : elkgraph.getParent().getContainedEdges()) {
+                ElkNode source = ElkGraphUtil.getSourceNode(elkedge);
+                if (source == elkgraph && elkedge.isSelfloop()) {
+                    boolean enableInsideSelfLoops = source.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
+                    boolean isInsideSelfLoop = enableInsideSelfLoops && elkedge.isSelfloop()
+                            && elkedge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
+                    if (isInsideSelfLoop) {
+                        transformEdge(elkedge, elkgraph, lgraph);
+                    }
                 }
             }
         }
         
-        // Transform the outgoing edges of the graph itself (either inside self loops or edges connected
-        // to its children)
-        boolean enableInsideSelfLoops = elkgraph.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
-        
-        for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elkgraph)) {
-            // Find the edge's target node
-            ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
-            
-            boolean isToBeLaidOut = !elkedge.getProperty(LayeredOptions.NO_LAYOUT);
-            boolean isInsideSelfLoop = enableInsideSelfLoops && elkedge.isSelfloop()
-                    && elkedge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
-            boolean connectsToChild = targetNode.getParent() == elkgraph;
-            
-            if (isToBeLaidOut && (connectsToChild || isInsideSelfLoop)) {
-                transformEdge(elkedge, elkgraph, lgraph);
-            }
-        }
     }
 
     /**
