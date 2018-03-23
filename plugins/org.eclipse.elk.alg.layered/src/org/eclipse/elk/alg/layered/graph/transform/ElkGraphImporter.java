@@ -237,8 +237,7 @@ class ElkGraphImporter {
             for (ElkEdge elkedge : elkgraph.getParent().getContainedEdges()) {
                 ElkNode source = ElkGraphUtil.getSourceNode(elkedge);
                 if (source == elkgraph && elkedge.isSelfloop()) {
-                    boolean enableInsideSelfLoops = source.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE);
-                    boolean isInsideSelfLoop = enableInsideSelfLoops && elkedge.isSelfloop()
+                    boolean isInsideSelfLoop = source.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_ACTIVATE)
                             && elkedge.getProperty(LayeredOptions.INSIDE_SELF_LOOPS_YO);
                     if (isInsideSelfLoop) {
                         transformEdge(elkedge, elkgraph, lgraph);

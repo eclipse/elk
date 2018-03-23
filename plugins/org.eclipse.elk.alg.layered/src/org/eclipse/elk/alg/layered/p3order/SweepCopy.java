@@ -125,7 +125,7 @@ class SweepCopy {
         // the list of ports must be re-sorted (see PortListSorter) 
         // and the port list views must be re-cached.
         for (LNode node : updatePortOrder) {
-            Collections.sort(node.getPorts(), PortListSorter.DEFAULT_SORT_COMPARATOR);
+            Collections.sort(node.getPorts(), PortListSorter.CMP_COMBINED);
             node.cachePortSides();
         }
     }

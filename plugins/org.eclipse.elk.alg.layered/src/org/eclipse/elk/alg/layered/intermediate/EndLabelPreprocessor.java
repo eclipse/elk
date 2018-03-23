@@ -88,8 +88,8 @@ public final class EndLabelPreprocessor implements ILayoutProcessor<LGraph> {
         
         // At this stage, the port list should be sorted (once this line stops compiling with newer Guava versions,
         // use the Comparators class instead of Ordering, which is scheduled to be deleted sometime > Guava 21)
-        assert Ordering.from(new PortListSorter.PortComparator()).isOrdered(node.getPorts());
-        
+        assert Ordering.from(PortListSorter.CMP_COMBINED).isOrdered(node.getPorts());
+
         // Iterate over all ports and collect their labels in label cells
         int portCount = node.getPorts().size(); 
         LabelCell[] portLabelCells = new LabelCell[portCount];
