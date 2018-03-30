@@ -7,13 +7,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.intermediate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.sequence.SequenceUtils;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
@@ -39,6 +39,11 @@ public class LayeredGraphCreator implements ILayoutProcessor<LayoutContext> {
         // Build a node for every message and infer the successor constraints between them
         createNodes(context);
         createEdges(context);
+        
+        if (!context.verticalCompaction) {
+            // We need to add additional edges
+            createAdditionalEdges(context);
+        }
         
         progressMonitor.done();
     }
@@ -90,14 +95,60 @@ public class LayeredGraphCreator implements ILayoutProcessor<LayoutContext> {
                 assert sourceNode != null && targetNode != null;
 
                 if (sourceNode != targetNode) {
-                    LEdge edge = new LEdge();
-                    edge.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, lifeline);
-                    
-                    edge.setSource(sourceNode.getPorts().get(0));
-                    edge.setTarget(targetNode.getPorts().get(0));
+                    connect(sourceNode, targetNode)
+                        .setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, lifeline);
                 }
             }
         }
+    }
+    
+    /**
+     * Creates more edges between message nodes to keep them from being compacted vertically.
+     */
+    private void createAdditionalEdges(final LayoutContext context) {
+        // Collect all messages
+        List<SMessage> messages = new ArrayList<>();
+        
+        for (SLifeline lifeline : context.sgraph.getLifelines()) {
+            // We ignore dummy lifelines since their incident messages are also incident to non-dummy lifelines anyway
+            if (lifeline.isDummy()) {
+                continue;
+            }
+            
+            // Handle outgoing messages
+            for (SMessage message : lifeline.getOutgoingMessages()) {
+                messages.add(message);
+            }
+
+            // Handle found messages (whose source lifeline is a dummy lifeline)
+            for (SMessage message : lifeline.getIncomingMessages()) {
+                if (message.getSource().isDummy()) {
+                    messages.add(message);
+                }
+            }
+        }
+        
+        // Sort the messages ascendingly by y coordinate
+        messages.sort((msg1, msg2) -> Double.compare(msg1.getSourceYPos(), msg2.getSourceYPos()));
+        
+        // Connect the message nodes
+        for (int i = messages.size() - 2; i >= 0; i--) {
+            connect(
+                    (LNode) messages.get(i).getProperty(InternalSequenceProperties.LAYERED_NODE),
+                    (LNode) messages.get(i + 1).getProperty(InternalSequenceProperties.LAYERED_NODE));
+        }
+    }
+    
+    /**
+     * Connects the two nodes by an edge and returns the new edge.
+     */
+    private LEdge connect(final LNode node1, final LNode node2) {
+        LEdge edge = new LEdge();
+        
+        edge.setSource(node1.getPorts().get(0));
+        edge.setTarget(node2.getPorts().get(0));
+        
+        return edge;
     }
 
 }

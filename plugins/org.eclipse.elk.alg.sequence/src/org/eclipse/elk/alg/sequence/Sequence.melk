@@ -73,6 +73,7 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     
     supports labelSide
     supports labelAlignment
+    supports verticalCompaction
     supports org.eclipse.elk.edgeLabels.inline
     
     supports org.eclipse.elk.nodeSize.constraints
@@ -243,20 +244,6 @@ group areas {
     }
 }
 
-option labelSide : LabelSideSelection {
-    label "Edge Label Side Selection"
-    description "Method to decide on edge label sides."
-    default = LabelSideSelection.ALWAYS_UP
-    targets parents
-}
-
-option labelAlignment : LabelAlignmentStrategy {
-    label "Label Alignment"
-    description "The strategy used to find the horizontal position for message labels."
-    targets parents
-    default = LabelAlignmentStrategy.SOURCE_CENTER
-}
-
 option lifelineSortingStrategy : LifelineSortingStrategy {
     label "Lifeline Sorting Strategy"
     description "The strategy used to determine the horizontal order of lifelines."
@@ -273,4 +260,27 @@ option degreeBasedLeftmostLifeline : boolean {
     targets parents
     default = false
     requires lifelineSortingStrategy == LifelineSortingStrategy.SHORT_MESSAGES
+}
+
+option labelSide : LabelSideSelection {
+    label "Edge Label Side Selection"
+    description "Method to decide on edge label sides."
+    default = LabelSideSelection.ALWAYS_UP
+    targets parents
+}
+
+option labelAlignment : LabelAlignmentStrategy {
+    label "Label Alignment"
+    description "The strategy used to find the horizontal position for message labels."
+    targets parents
+    default = LabelAlignmentStrategy.SOURCE_CENTER
+}
+
+option verticalCompaction : boolean {
+    label "Vertical Compaction"
+    description "If enabled, messages can be assigned the same y coordinates to be able to reduce the height of
+                a sequence diagram. Not all sequence diagrams will exhibit the possibilty to exploit this behavior,
+                and not always will one want the result."
+    targets parents
+    default = true
 }

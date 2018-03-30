@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.graph;
 
+import java.security.cert.Certificate;
+
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.sequence.graph.SGraphAdapters.SGraphAdapter;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
@@ -51,6 +53,8 @@ public final class LayoutContext {
     public final LabelAlignmentStrategy labelAlignment;
     /** The label managemer, if any. */
     public final ILabelManager labelManager;
+    /** Whether messages are allowed to share communication lines or not. */
+    public final boolean verticalCompaction;
     
     /** The lifeline sorting strategy. */
     public final LifelineSortingStrategy sortingStrategy;
@@ -91,6 +95,8 @@ public final class LayoutContext {
                 SequenceDiagramOptions.LABEL_SIDE);
         labelAlignment = parentNode.getProperty(
                 SequenceDiagramOptions.LABEL_ALIGNMENT);
+        verticalCompaction = parentNode.getProperty(
+                SequenceDiagramOptions.VERTICAL_COMPACTION);
         
         // Label management can be installed either on the interaction node or the parent graph
         if (elkgraph.hasProperty(LabelManagementOptions.LABEL_MANAGER)) {
