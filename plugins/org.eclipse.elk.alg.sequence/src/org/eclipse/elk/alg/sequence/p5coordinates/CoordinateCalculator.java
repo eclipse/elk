@@ -590,12 +590,15 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
     private void calculateAreaPosition(final LayoutContext context) {
         // TODO This does not handle lost / found messages properly.
         
+        // We might be updating the SGraph's size if we ifind an area which contains a CREATE message
+        KVector sgraphSize = context.sgraph.getSize();
+        
         // Set size and position of area
         for (SArea area : context.sgraph.getAreas()) {
             if (area.getMessages().size() > 0) {
-                setAreaPositionByMessages(area, context);
+                setAreaPositionAndSizeByMessages(area, context);
             } else {
-                setAreaPositionByLifelinesAndMessage(context, area);
+                setAreaPositionAndSizeByLifelinesAndMessage(context, area);
             }
 
             KVector areaPos = area.getPosition();
@@ -611,6 +614,9 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             // TODO This needs to be handled better. We need to sum the actual paddings of surrounding areas.
             areaPos.y = area.getPosition().y - hierarchyDepth * areaPadding.top;
             areaSize.y = area.getSize().y + hierarchyDepth * (areaPadding.top + areaPadding.bottom);
+            
+            // Make sure the SGraph is large enough to contain the area
+            sgraphSize.x = Math.max(sgraphSize.x, areaPos.x + areaSize.x);
             
             // The area might have a label that needs to be positioned as well
             calculateAreaLabelPosition(context, area);
@@ -630,7 +636,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                     
                     if (subArea.getMessages().size() > 0) {
                         // Calculate and set y-position by the area's messages
-                        setAreaPositionByMessages(subArea, context);
+                        setAreaPositionAndSizeByMessages(subArea, context);
                         subArea.getSize().y = subArea.getPosition().y
                                 - area.getPosition().y + context.lifelineHeaderHeight
                                 - context.messageSpacing / 2;
@@ -664,7 +670,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      * @param area
      *            the SequenceArea
      */
-    private void setAreaPositionByMessages(final SArea area, final LayoutContext context) {
+    private void setAreaPositionAndSizeByMessages(final SArea area, final LayoutContext context) {
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = 0;
@@ -672,6 +678,11 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         
         // Compute the bounding box of all contained messages
         for (SMessage smessage : area.getMessages()) {
+            // Extract common message properties
+            MessageType smessageType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
+            SLifeline sourceLL = smessage.getSource();
+            SLifeline targetLL = smessage.getTarget();
+            
             // Compute new y coordinates
             double sourceYPos = smessage.getSourceYPos();
             minY = Math.min(minY, sourceYPos);
@@ -681,13 +692,10 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             minY = Math.min(minY, targetYPos);
             maxY = Math.max(maxY, targetYPos);
             
-            SLifeline sourceLL = smessage.getSource();
-            SLifeline targetLL = smessage.getTarget();
-            
             // Compute new x coordinates
             double sourceXPos = sourceLL.getPosition().x + sourceLL.getSize().x / 2;
             
-            if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.FOUND) {
+            if (smessageType == MessageType.FOUND) {
                 // Found message don't have their source position properly set
                 sourceXPos = targetLL.getPosition().x - context.lifelineSpacing / 2;
             }
@@ -705,9 +713,13 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                     targetXPos += context.labelSpacing / 2 + smessage.getLabel().getSize().x;
                 }
             
-            } else if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.LOST) {
+            } else if (smessageType == MessageType.LOST) {
                 // Lost message don't have their target position properly set
                 targetXPos = sourceLL.getPosition().x + sourceLL.getSize().x + context.lifelineSpacing / 2;
+            
+            } else if (smessageType == MessageType.CREATE) {
+                // The area must be extended to contain the created lifeline's header
+                targetXPos = targetLL.getPosition().x + targetLL.getSize().x;
             }
             
             minX = Math.min(minX, targetXPos);
@@ -730,7 +742,7 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      * @param area
      *            the sequence area
      */
-    private void setAreaPositionByLifelinesAndMessage(final LayoutContext context, final SArea area) {
+    private void setAreaPositionAndSizeByLifelinesAndMessage(final LayoutContext context, final SArea area) {
         // Set xPos and width according to the involved lifelines
         double minXPos = Double.MAX_VALUE;
         double maxXPos = 0;
