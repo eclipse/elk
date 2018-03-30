@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.p4layering;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -122,7 +124,7 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
             moveInvalidNodes(layer, activeAreas, activeAreasPerLifeline);
             
             // Step 4: Remove areas that become inactive after this layer
-            removeThemActiveAreas(layer, areaDataMap, activeAreas, activeAreasPerLifeline);
+            removeThemInactiveAreas(layer, areaDataMap, activeAreas, activeAreasPerLifeline);
         }
     }
     
@@ -203,9 +205,7 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
             // Every area active at the current lifeline must either include our current lifeline or must be
             // included by our current lifeline
             for (SArea activeArea : activeAreasPerLifeline.get(llIndex)) {
-                if (!activeArea.getContainedAreas().contains(areaData.area)
-                        && !areaData.area.getContainedAreas().contains(activeArea)) {
-                    
+                if (!isDescendantArea(activeArea, areaData.area) && !isDescendantArea(areaData.area, activeArea)) {
                     return true;
                 }
             }
@@ -215,11 +215,33 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
     }
     
     /**
+     * Checks if the descendant area is really a descendant of the ancestor area.
+     */
+    private boolean isDescendantArea(SArea descendant, SArea ancestor) {
+        // We iterate over all contained areas of the ancestor, and their contained areas, etc.
+        Deque<SArea> areaQueue = new ArrayDeque<>();
+        areaQueue.addAll(ancestor.getContainedAreas());
+        
+        while (!areaQueue.isEmpty()) {
+            SArea currArea = areaQueue.pollFirst();
+            
+            // Is this there area we're looking for? Well? IS IT???
+            if (currArea == descendant) {
+                return true;
+            } else {
+                areaQueue.addAll(currArea.getContainedAreas());
+            }
+        }
+        
+        return false;
+    }
+
+    /**
      * Iterates over the layer's nodes and removes them from each area's set of yet unencountered lowermost nodes. Once
      * we have encountered all of an area's lowermost nodes, that area is removed both from the set of active areas and
      * from each lifeline's set of active areas.
      */
-    private void removeThemActiveAreas(final Layer layer, final Map<SArea, AreaData> areaDataMap,
+    private void removeThemInactiveAreas(final Layer layer, final Map<SArea, AreaData> areaDataMap,
             final Set<SArea> activeAreas, final List<Set<SArea>> activeAreasPerLifeline) {
         
         for (LNode node : layer) {
