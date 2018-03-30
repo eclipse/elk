@@ -29,6 +29,7 @@ import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
+import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.MessageCommentAlignment;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.NodeType;
@@ -438,17 +439,26 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         double requiredSpace = 0;
         
         final double messageLabelTargetWidth = spaceBetweenLifelines - 2 * context.labelSpacing;
+        final boolean sourceLabels = context.labelAlignment == LabelAlignmentStrategy.SOURCE ||
+                context.labelAlignment == LabelAlignmentStrategy.SOURCE_CENTER;
 
-        // Check, if there are labels longer than the available space
-        for (SMessage smessage : currLifeline.getIncomingMessages()) {
-            // We are only interested in messages from our direct successor
-            if (smessage.getSource() != nextLifeline) {
-                continue;
+        // Check if our successor has outgoing messages with labels
+        if (nextLifeline != null) {
+            for (SMessage smessage : nextLifeline.getOutgoingMessages()) {
+                // We are only interested in certain kinds of messages
+                if (smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.FOUND) {
+                    manageMessageLabel(smessage, messageLabelTargetWidth, context);
+                    double messageLength = SequenceUtils.calculateLostFoundMessageLength(
+                            smessage, nextLifeline, context);
+                    requiredSpace = Math.max(requiredSpace, messageLength);
+                    
+                } else if (sourceLabels && smessage.getTarget().getHorizontalSlot() < nextLifeline.getHorizontalSlot()) {
+                    // The message runs leftwards and we use source label placement, which means that we need to reserve
+                    // enough space
+                    manageMessageLabel(smessage, messageLabelTargetWidth, context);
+                    requiredSpace = Math.max(requiredSpace, SequenceUtils.calculateMessageLength(smessage, context));
+                }
             }
-
-            manageMessageLabel(smessage, messageLabelTargetWidth, context);
-            double messageLength = SequenceUtils.calculateMessageLength(smessage, context);
-            requiredSpace = Math.max(requiredSpace, messageLength);
         }
         
         for (SMessage smessage : currLifeline.getOutgoingMessages()) {
@@ -478,6 +488,11 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                     // A regular message
                     requiredSpace = Math.max(requiredSpace, messageLength);
                 }
+                
+            } else if (sourceLabels) {
+                // The message connects to some other lifeline, but its label will be placed here
+                manageMessageLabel(smessage, messageLabelTargetWidth, context);
+                requiredSpace = Math.max(requiredSpace, SequenceUtils.calculateMessageLength(smessage, context));
             }
         }
 
@@ -593,27 +608,35 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         // We might be updating the SGraph's size if we ifind an area which contains a CREATE message
         KVector sgraphSize = context.sgraph.getSize();
         
-        // Set size and position of area
+        // Set size and position of each area to cover just its content
         for (SArea area : context.sgraph.getAreas()) {
             if (area.getMessages().size() > 0) {
                 setAreaPositionAndSizeByMessages(area, context);
             } else {
                 setAreaPositionAndSizeByLifelinesAndMessage(context, area);
             }
-
+        }
+        
+        // The rest of this code tries to fix overlaps and things
+        for (SArea area : context.sgraph.getAreas()) {
             KVector areaPos = area.getPosition();
             KVector areaSize = area.getSize();
             ElkPadding areaPadding = paddingFor(area, context);
             
             // Check if there are contained areas
-            int hierarchyDepth = calculateHierarchyDepth(area);
+            HierarchyDepth hierarchyDepth = calculateHierarchyDepth(area);
 
-            areaPos.x = area.getPosition().x - hierarchyDepth * areaPadding.left;
-            areaSize.x = area.getSize().x + hierarchyDepth * (areaPadding.left + areaPadding.right);
+            areaPos.x = area.getPosition().x
+                    - hierarchyDepth.left * areaPadding.left;
+            areaSize.x = area.getSize().x
+                    + hierarchyDepth.left * areaPadding.left
+                    + hierarchyDepth.right * areaPadding.right;
 
-            // TODO This needs to be handled better. We need to sum the actual paddings of surrounding areas.
-            areaPos.y = area.getPosition().y - hierarchyDepth * areaPadding.top;
-            areaSize.y = area.getSize().y + hierarchyDepth * (areaPadding.top + areaPadding.bottom);
+            areaPos.y = area.getPosition().y
+                    - hierarchyDepth.top * areaPadding.top;
+            areaSize.y = area.getSize().y
+                    + hierarchyDepth.top * areaPadding.top
+                    + hierarchyDepth.bottom * areaPadding.bottom;
             
             // Make sure the SGraph is large enough to contain the area
             sgraphSize.x = Math.max(sgraphSize.x, areaPos.x + areaSize.x);
@@ -689,6 +712,13 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
             maxY = Math.max(maxY, sourceYPos);
             
             double targetYPos = smessage.getTargetYPos();
+            
+            if (smessageType == MessageType.CREATE) {
+                // If a create message is the only message in an area, this can lead the area to run through the
+                // created lifeline's header
+                targetYPos += context.lifelineHeaderHeight / 2;
+            }
+            
             minY = Math.min(minY, targetYPos);
             maxY = Math.max(maxY, targetYPos);
             
@@ -793,29 +823,6 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
     }
 
     /**
-     * Check recursively if an area has contained areas and return the maximum depth. An area without contained areas
-     * has hierarchy depth 1.
-     * 
-     * @param area
-     *            the {@link SArea}
-     * @return the maximum depth of hierarchy
-     */
-    private int calculateHierarchyDepth(final SArea area) {
-        if (area.getContainedAreas().size() > 0) {
-            int maxLevel = 1;
-            for (SArea subArea : area.getContainedAreas()) {
-                int level = calculateHierarchyDepth(subArea);
-                if (level > maxLevel) {
-                    maxLevel = level;
-                }
-            }
-            return maxLevel + 1;
-        } else {
-            return 1;
-        }
-    }
-
-    /**
      * Positions an area's label, if any.
      * 
      * @param area
@@ -833,5 +840,70 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
         
         areaLabel.setY(context.labelSpacing);
         areaLabel.setX(areaNode.getWidth() - areaNode.getWidth() - context.labelSpacing);
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Area Hierarchy
+    
+    /**
+     * The hierarchy depth decides how far out the borders of an area have to be moved to not overlap with child areas.
+     * Since child areas need not be as large as the parent are and can touch only a subset of its parent's borders,
+     * a separate hierarchy level is required for each side. A hierarchy depth of 1 is normal for each side, each
+     * child may add to that.
+     */
+    private static class HierarchyDepth {
+        private int top = 1;
+        private int right = 1;
+        private int bottom = 1;
+        private int left = 1;
+    }
+    
+    /**
+     * Check recursively if an area has contained areas and return the maximum depth. An area without contained areas
+     * has hierarchy depth 1.
+     * 
+     * @param area
+     *            the {@link SArea}
+     * @return the maximum depth of hierarchy
+     */
+    private HierarchyDepth calculateHierarchyDepth(final SArea area) {
+        HierarchyDepth depth = new HierarchyDepth();
+        
+        KVector areaPos = area.getPosition();
+        KVector areaSize = area.getSize();
+        
+        for (SArea subArea : area.getContainedAreas()) {
+            KVector subAreaPos = subArea.getPosition();
+            KVector subAreaSize = subArea.getSize();
+            
+            boolean topBordersTouch = areaPos.y == subAreaPos.y;
+            boolean rightBordersTouch = areaPos.x + areaSize.x == subAreaPos.x + subAreaSize.x;
+            boolean bottomBordersTouch = areaPos.y + areaSize.y == subAreaPos.y + subAreaSize.y;
+            boolean leftBordersTouch = areaPos.x == subAreaPos.x;
+            
+            if (topBordersTouch || rightBordersTouch || bottomBordersTouch || leftBordersTouch) {
+                // We actually need to calculate the area's hierarchy depth
+                HierarchyDepth subDepth = calculateHierarchyDepth(subArea);
+                
+                if (topBordersTouch) {
+                    depth.top = Math.max(depth.top, 1 + subDepth.top);
+                }
+                
+                if (rightBordersTouch) {
+                    depth.right = Math.max(depth.right, 1 + subDepth.right);
+                }
+                
+                if (bottomBordersTouch) {
+                    depth.bottom = Math.max(depth.bottom, 1 + subDepth.bottom);
+                }
+                
+                if (leftBordersTouch) {
+                    depth.left = Math.max(depth.left, 1 + subDepth.left);
+                }
+            }
+        }
+        
+        return depth;
     }
 }

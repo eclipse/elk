@@ -474,8 +474,13 @@ public final class ElkGraphExporter {
             alignment = LabelAlignmentStrategy.SOURCE;
             
         } else if (msgType == MessageType.CREATE) {
-            // Create messages always use SOURCE placement to avoid overlapping the target lifeline header
-            alignment = LabelAlignmentStrategy.SOURCE;
+            // If the two lifelines connected by the message are adjacent, we fall back to SOURCE placement to avoid
+            // overlapping the target lifeline header
+            SLifeline targetLL = smessage.getTarget();
+            
+            if (srcLL.getHorizontalSlot() == targetLL.getHorizontalSlot() - 1) {
+                alignment = LabelAlignmentStrategy.SOURCE;
+            }
             
         } else if (msgType == MessageType.FOUND || msgType == MessageType.LOST) {
             // Lost and found message labels are always centered in their message, which is usually just large
