@@ -603,10 +603,12 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
      *            the layout context that contains all relevant information for the current layout run.
      */
     private void calculateAreaPosition(final LayoutContext context) {
-        // TODO This does not handle lost / found messages properly.
-        
         // We might be updating the SGraph's size if we ifind an area which contains a CREATE message
         KVector sgraphSize = context.sgraph.getSize();
+        
+        // The minimum x coordinate assigned to an area (we will only be interested in negative coordinates later,
+        // so it suffices to intialize it with zero here)
+        double minXPos = 0;
         
         // Set size and position of each area to cover just its content
         for (SArea area : context.sgraph.getAreas()) {
@@ -682,6 +684,16 @@ public class CoordinateCalculator implements ILayoutPhase<SequencePhases, Layout
                     lastSubArea.getSize().y = areaSize.y - areaPos.y - areaPadding.top;
                 }
             }
+            
+            minXPos = Math.min(minXPos, areaPos.x);
+        }
+        
+        // If the minimum x position is negative, we need to set the graph's offset and enlarge the graph accordingly
+        if (minXPos < 0) {
+            KVector graphOffset = context.sgraph.getOffset();
+            graphOffset.x = Math.max(graphOffset.x, -minXPos);
+            
+            context.sgraph.getSize().x += -minXPos;
         }
     }
 

@@ -55,7 +55,8 @@ public final class ElkGraphExporter {
         // The padding will be applied in this step, so calculate the resulting offset as a KVector that we can
         // easily add to things
         ElkPadding sgraphPadding = context.sgraph.getPadding();
-        offset = new KVector(sgraphPadding.left, sgraphPadding.top);
+        offset = new KVector(context.sgraph.getOffset());
+        offset.add(sgraphPadding.left, sgraphPadding.top);
         
         // Reset edge sections
         context.elkgraph.getContainedEdges().stream().forEach(edge -> edge.getSections().clear());

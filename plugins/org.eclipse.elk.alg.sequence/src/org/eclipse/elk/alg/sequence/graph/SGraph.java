@@ -31,6 +31,11 @@ public final class SGraph extends SGraphElement {
     private KVector size = new KVector();
     /** Padding between the surrounding interaction's border and and child element. */
     private ElkPadding padding = new ElkPadding();
+    /**
+     * An offset that will have to be added to coordinates when applying them. Offsets happen when elements move out
+     * of the graph's area by being assigned negative coordinates.
+     */
+    private KVector offset = new KVector();
     
     /** The list of lifelines in the sequence diagram. After phase 4, the horizontal order is reflected here. */
     private List<SLifeline> lifelines = Lists.newArrayList();
@@ -60,6 +65,15 @@ public final class SGraph extends SGraphElement {
      */
     public ElkPadding getPadding() {
         return padding;
+    }
+    
+    /**
+     * Returns the offset to be applied to coordinates later.
+     * 
+     * @return the offset.
+     */
+    public KVector getOffset() {
+        return offset;
     }
 
     /**
