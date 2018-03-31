@@ -97,7 +97,7 @@ group id {
         label "Element ID"
         description "An ID that can be given to diagram elements and referenced by other elements. The ID must be unique
                     in the diagram for it to be of any use and should be {@code >= 0}."
-        targets nodes
+        targets nodes, edges
         default = 0
     }
     
