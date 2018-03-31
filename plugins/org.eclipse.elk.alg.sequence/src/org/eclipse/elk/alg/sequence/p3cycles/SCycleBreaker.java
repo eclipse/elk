@@ -49,8 +49,10 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
     
     /** The list of nodes that have to be split. */
     private Set<LNode> split;
-    /** The list of nodes that were already visited in the current iteration. */
-    private List<LNode> chain;
+    /** The list of nodes that constitute our current DFS path. */
+    private List<LNode> path;
+    /** Array indicating which nodes have already been visited. Indexed by node ID. */
+    private boolean[] visited;
 
 
     @Override
@@ -63,19 +65,21 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
     @Override
     public void process(final LayoutContext context, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Cycle Breaking", 1);
-
-        // The set of edges to be split after the cycle detecting phase
+        
+        // Initialize data
         split = Sets.newHashSet();
-        chain = Lists.newArrayListWithCapacity(context.lgraph.getLayerlessNodes().size());
-
-        // Use node IDs to indicate if a node was already visited
+        path = Lists.newArrayListWithCapacity(context.lgraph.getLayerlessNodes().size());
+        visited = new boolean[context.lgraph.getLayerlessNodes().size()];
+        
+        // Initialize node IDs
+        int nextId = 0;
         for (LNode node : context.lgraph.getLayerlessNodes()) {
-            node.id = NOT_VISITED;
+            node.id = nextId++;
         }
-
-        // Start a DFS run only when the node was not visited by any other earlier dfs
+        
+        // DFS run through the graph to find the set of nodes that will have to be split
         for (LNode node : context.lgraph.getLayerlessNodes()) {
-            if (node.id == NOT_VISITED) {
+            if (!visited[node.id]) {
                 dfs(node);
             }
         }
@@ -85,13 +89,138 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
             splitNode(context.lgraph, node);
         }
         
-        // Reset
+        // Release memory
         split = null;
-        chain = null;
+        path = null;
+        visited = null;
 
         progressMonitor.done();
     }
     
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // DFS
+    
+    private void dfs(final LNode node) {
+        if (visited[node.id]) {
+            // We may have found a cycle. Track back along the current path until we find this node again and pick out
+            // the node that represents the message with the uppermost y coordinate
+            LNode uppermostNode = findUppermostNodeIfCycle(node);
+            if (uppermostNode != null) {
+                split.add(uppermostNode);
+            }
+            
+        } else {
+            visited[node.id] = true;
+            path.add(node);
+            
+            // Start DFS on all outgoing edges
+            for (LEdge edge : node.getOutgoingEdges()) {
+                dfs(edge.getTarget().getNode());
+            }
+            
+            assert path.get(path.size() - 1) == node;
+            path.remove(path.size() - 1);
+        }
+    }
+    
+    /**
+     * If the current DFS path constitutes a cycle that ends in the given cyclic node, we return the uppermost node
+     * in the cycle. If there is no cycle, we return {@code null}.
+     */
+    private LNode findUppermostNodeIfCycle(final LNode cyclicNode) {
+        LNode uppermostNode = null;
+        double uppermostPos = Double.MAX_VALUE;
+        
+        int index = path.size() - 1;
+        while (index >= 0) {
+            LNode currentNode = path.get(index);
+            
+            // Check if the current node on the path represents a message (only those can be uppermost nodes)
+            Object currentOrigin = currentNode.getProperty(InternalSequenceProperties.ORIGIN);
+            if (currentOrigin instanceof SMessage) {
+                // Find the current node's y position
+                SMessage message = (SMessage) currentOrigin;
+                double currentPos = Math.min(message.getSourceYPos(), message.getTargetYPos());
+                
+                if (uppermostNode == null || currentPos < uppermostPos) {
+                    uppermostNode = currentNode;
+                    uppermostPos = currentPos;
+                }
+            }
+            
+            if (currentNode == cyclicNode) {
+                // We have found a cycle and know what the uppermost node is
+                return uppermostNode;
+            }
+            
+            index--;
+        }
+        
+        // If we haven't returned during the loop, there was no cycle
+        return null;
+    }
+    
+    
+    
+
+    /**
+     * Process a depth first search starting with the given node and check for cycles.
+     * 
+     * @param node
+     *            the node to start with
+     */
+    private void _dfs(final LNode node) {
+        if (node.id == VISITED_CURRENT_PATH) {
+            // This node was already visited in current path
+            // Find uppermost LNode in current chain and add it to split
+            _addUppermostNode(node);
+        } else {
+            // This node has not been visited in current path
+            node.id = VISITED_CURRENT_PATH;
+            path.add(node);
+
+            // Process successors
+            for (LEdge edge : node.getOutgoingEdges()) {
+                _dfs(edge.getTarget().getNode());
+            }
+            
+            // Mark as visited in previous path
+            node.id = VISITED_OTHER_PATH;
+            path.remove(path.size() - 1);
+        }
+    }
+
+    /**
+     * Find uppermost LNode in the current cyclic chain and add it to the set of LNodes to be split.
+     * 
+     * @param foundNode
+     *            the uppermost node in the current chain
+     */
+    private void _addUppermostNode(final LNode foundNode) {
+        LNode uppermost = foundNode;
+        double uppermostPos = Double.MAX_VALUE;
+        int foundIndex = path.indexOf(foundNode);
+        
+        for (int i = foundIndex; i < path.size(); i++) {
+            LNode node = path.get(i);
+            SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
+            ElkEdge edge = (ElkEdge) message.getProperty(InternalSequenceProperties.ORIGIN);
+            
+            // Compare only sourcePositions since messages can only lead downwards or horizontal
+            double sourceYPos = ElkGraphUtil.firstEdgeSection(edge, false, false).getStartY();
+            if (sourceYPos < uppermostPos) {
+                uppermostPos = sourceYPos;
+                uppermost = node;
+            }
+        }
+        
+        split.add(uppermost);
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Node Splitting
 
     /**
      * Split the given node into two nodes for each of the corresponding lifelines. Rearrange edges
@@ -124,60 +253,6 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
         node.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, sourceLL);
         newNode.setProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE, targetLL);
         newNode.setProperty(InternalSequenceProperties.ORIGIN, message);
-    }
-
-    /**
-     * Process a depth first search starting with the given node and check for cycles.
-     * 
-     * @param node
-     *            the node to start with
-     */
-    private void dfs(final LNode node) {
-        if (node.id == VISITED_CURRENT_PATH) {
-            // This node was already visited in current path
-            // Find uppermost LNode in current chain and add it to split
-            addUppermostNode(node);
-        } else {
-            // This node has not been visited in current path
-            node.id = VISITED_CURRENT_PATH;
-            chain.add(node);
-
-            // Process successors
-            for (LEdge edge : node.getOutgoingEdges()) {
-                dfs(edge.getTarget().getNode());
-            }
-            
-            // Mark as visited in previous path
-            node.id = VISITED_OTHER_PATH;
-            chain.remove(chain.size() - 1);
-        }
-    }
-
-    /**
-     * Find uppermost LNode in the current cyclic chain and add it to the set of LNodes to be split.
-     * 
-     * @param foundNode
-     *            the uppermost node in the current chain
-     */
-    private void addUppermostNode(final LNode foundNode) {
-        LNode uppermost = foundNode;
-        double uppermostPos = Double.MAX_VALUE;
-        int foundIndex = chain.indexOf(foundNode);
-        
-        for (int i = foundIndex; i < chain.size(); i++) {
-            LNode node = chain.get(i);
-            SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
-            ElkEdge edge = (ElkEdge) message.getProperty(InternalSequenceProperties.ORIGIN);
-            
-            // Compare only sourcePositions since messages can only lead downwards or horizontal
-            double sourceYPos = ElkGraphUtil.firstEdgeSection(edge, false, false).getStartY();
-            if (sourceYPos < uppermostPos) {
-                uppermostPos = sourceYPos;
-                uppermost = node;
-            }
-        }
-        
-        split.add(uppermost);
     }
     
 }
