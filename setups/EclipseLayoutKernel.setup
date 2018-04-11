@@ -334,7 +334,7 @@
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
-            name="org.eclipse.gmf.sdk.feature.group"/>
+            name="org.eclipse.gmf.runtime.sdk.feature.group"/>
         <requirement
             name="org.eclipse.graphiti.sdk.feature.feature.group"/>
         <sourceLocator
