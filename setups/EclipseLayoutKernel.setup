@@ -362,6 +362,17 @@
           <repository
               url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
         </repositoryList>
+        <repositoryList
+            name="Oxygen">
+          <repository
+              url="http://download.eclipse.org/releases/oxygen"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180330011457/repository"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
+          <repository
+              url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
+        </repositoryList>
       </targlet>
     </setupTask>
   </stream>
