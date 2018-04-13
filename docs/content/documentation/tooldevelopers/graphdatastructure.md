@@ -68,6 +68,14 @@ Inclusion trees capture the hierarchical structure of a graph. See below for the
 
 TODO Describe
 
-### Programming With the Graph Data Structure
+### Working With the Graph Data Structure
 
-TODO Describe
+Since ELK graphs are based on EMF, you can simply obtain an instance of the `ElkGraphFactory` interface and start creating graph elements. To make things easier, however, the `ElkGraphUtil` contains a number of utility methods in different categories:
+
+* **Graph Creation:** There are a number of methods whose names begin with `create` that can be used to create and initialize graph elements. For instance, the `createSimpleEdge(source, target)` method not only creates an `ElkEdge`, but also sets its source and target and, as a bonus, adds it to the list of contained edges of the correct node, all in a single method call.
+
+    One method of particular value to layout algorithm developers is `firstEdgeSection(edge, reset, removeOthers)`, which returns the first edge section of the given edge, optionally resetting its layout data and removing all other edge sections. If the edge doesn't have any edge sections yet, one is created and added to it. This method is handy for applying layout results.
+
+* **Edge Containment:** Unless one uses one of the `create` methods to create edges, finding the node an edge should be contained in may be annoying. The `updateContainment(ElkEdge)` method automatically computes the best containment and puts the edge there. This requires at least one of the edge's end points to be set, since that is what determines the best containment.
+
+* **Convenience Methods:** There are a number of convenience methods, for example to iterate over all of a node's incoming or outgoing edges, to find the node that represents the simple graph an element is part of, and more.

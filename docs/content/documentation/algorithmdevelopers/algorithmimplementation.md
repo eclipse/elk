@@ -42,3 +42,80 @@ There are two more methods your algorithm can, but does not have to implement:
 ## Layout Options
 
 It is worth reiterating here that it is important which `IProperty` instance your algorithm uses to retrieve the value of a layout option set on a graph element. Since the [ELK metadata tooling]({{< relref "documentation/algorithmdevelopers/metadatalanguage.md">}}) generates a separate class with a complete set of `IProperty` instances for each algorithm, it makes sense to use these instances. The reason is that using them ensures that you get the correct default values configured for your layout algorithm when accessing layout options that were not set on a graph element.
+
+
+## A Simple Example
+
+The code below is a simple implementation of the `layout(...)` method. It includes variable behavior based on property values and produces results such as this:
+
+{{< image src="algdev_algorithmimplementation_layout.png" alt="The kind of layout produced by the algorithm below." >}}
+
+```java
+progressMonitor.begin("Simple layout", 2);
+        
+// Retrieve several properties
+ElkPadding padding = layoutGraph.getProperty(SimpleOptions.PADDING);
+
+double edgeEdgeSpacing = layoutGraph.getProperty(SimpleOptions.SPACING_EDGE_EDGE);
+double edgeNodeSpacing = layoutGraph.getProperty(SimpleOptions.SPACING_EDGE_NODE);
+double nodeNodeSpacing = layoutGraph.getProperty(SimpleOptions.SPACING_NODE_NODE);
+
+// Get and possibly reverse the list of nodes to lay out
+List<ElkNode> nodes = new ArrayList<>(layoutGraph.getChildren());
+if (layoutGraph.getProperty(SimpleOptions.REVERSE_INPUT)) {
+    Collections.reverse(nodes);
+}
+
+// Place the nodes
+double currX = padding.left;
+double currY = padding.top;
+
+for (ElkNode node : nodes) {
+    // Set the node's coordinates
+    node.setX(currX);
+    node.setY(padding.top);
+    
+    // Advance the coordinates
+    currX += node.getWidth() + nodeNodeSpacing;
+    currY = Math.max(currY, padding.top + node.getHeight());
+}
+
+if (!nodes.isEmpty()) {
+    currX -= nodeNodeSpacing;
+}
+
+progressMonitor.worked(1);
+
+// Route the edges
+if (!layoutGraph.getContainedEdges().isEmpty()) {
+    currY += edgeNodeSpacing;
+    
+    for (ElkEdge edge : layoutGraph.getContainedEdges()) {
+        ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+        ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
+        
+        ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, true, true);
+        
+        section.setStartLocation(
+                source.getX() + source.getWidth() / 2,
+                source.getY() + source.getHeight());
+        section.setEndLocation(
+                target.getX() + target.getWidth() / 2,
+                target.getY() + target.getHeight());
+        
+        ElkGraphUtil.createBendPoint(section, section.getStartX(), currY);
+        ElkGraphUtil.createBendPoint(section, section.getEndX(), currY);
+                        
+        currY += edgeEdgeSpacing;
+    }
+    
+    currY -= edgeEdgeSpacing;
+}
+
+
+// Set the size of the final diagram
+layoutGraph.setWidth(currX + padding.right);
+layoutGraph.setHeight(currY + padding.bottom);
+
+progressMonitor.done();
+```

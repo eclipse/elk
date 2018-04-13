@@ -17,10 +17,13 @@ Implementing your own layout algorithm basically consists of the following steps
 1. Implement your algorithm, updating the `melk` file along the way.
 1. Debug your algorithm.
 
-Note that we have deliberately left out the part of "pulling your hair out while trying to understand which wretched detail of your complicated algorithm causes it to fail spectacularly" (we've been there...).
+Over the course of this section, we will be developing a very simple layout algorithm to illustrate the concepts we're about to encounter.
 
 **Before you start:**
 This section assumes that you have basic knowledge of how the _Eclipse Layout Kernel_ works. You should at least have worked through the [Graph Data Structure]({{< relref "documentation/tooldevelopers/graphdatastructure.md" >}}) and [Using Algorithms Directly]({{< relref "documentation/tooldevelopers/usingalgorithmsdirectly.md" >}}) sections.
 
 **Once you are ready to start:**
 Use the navigation bar to the right to work your way through each of those steps.
+
+**Note:**
+We have deliberately left out the part of "pulling your hair out while trying to understand which wretched detail of your complicated algorithm causes it to fail spectacularly" (we've been there...).
