@@ -66,7 +66,48 @@ Inclusion trees capture the hierarchical structure of a graph. See below for the
 
 ### The Meta Model
 
-TODO Describe
+The ELK Graph meta modelh looks like this:
+
+{{< image src="graph_metamodel.png" alt="The ELK Graph meta model." >}}
+
+It contains the following types:
+
+* `IPropertyHolder`
+
+    Instances of this type hold a map of properties to values. The usual use case is for clients to set properties on elements that influence the behavior of layout algorithms, but nothing stops layout algorithms from using properties internally as well. Properties are so important, in fact, that they have [their own page of documentation]({{< relref "documentation/tooldevelopers/graphdatastructure/layoutoptions.md" >}}).
+
+* `ElkGraphElement`
+
+    Everything in an ELK graph is an `ElkGraphElement`. All graph elements hold properties and a list of labels.
+
+* `ElkShape`
+
+    The supertype of every kind of graph element that can be described by a rectangular area: nodes, ports, and labels. Shapes have an x and y coordinate as well as a width and a height.
+
+* `ElkLabel`
+
+    Labels are used to represent text in a diagram and can be attached to all other elements, including other labels. Although we currently have no layout algorithm that supports labeled labels. Each label has the text it should display as a property.
+
+* `ElkConnectableShape`
+
+    Edges can connect to ports that belong to nodes or directly to nodes. Both are connectable shapes, which can act as the sources or targets of edges. The `ElkGraphUtil` class contains methods to turn a connectable shape into the corresponding port (if any) or node.
+
+* `ElkPort`
+
+    Ports represent explicit attachment points provided by nodes. Each port belongs to exactly one node.
+
+* `ElkNode`
+
+    Nodes could be considered the primary ingredient of an ELK graph. They can contain child nodes, which is why the graph itself is represented by an `ElkNode` as well (instead of introducing an additional `ElkGraph` class). Nodes can contain ports that edges can connect to. They also contain a list of edges. These edges are not the ones that connect to a node itself, but are the edges that connect its children. The reason for this is that EMF, the technology behind the ELK graph, requires every model element to be contained in another, which influences how a graph is serialized. Clients that build ELK graphs using the methods in `ElkGraphUtil` usually need not worry about this.
+
+* `ElkEdge`
+
+    An edge connects at least one source to at least one target, implying that they are always directed and can be hyperedges (multiplie sources or targets). The path an edge takes through a diagram is described by its list of `ElkEdgeSection` instances.
+
+* `ElkEdgeSection`
+
+    Describes part of the path an edge takes through a diagram. First and foremost, each edge section has a single parent edge. Routing-wise, it has x and y coordinates for its start and end points and a possibly empty list of bend points. Edges that connect only one source to one target have a single edge section. Hyperedges will have more. To be able to structure them properly, an edge section has a beginning and an end. Both can be either a connectable shape (if the section is an outer section of the edge) or another edge section.
+
 
 ### Working With the Graph Data Structure
 
