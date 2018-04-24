@@ -14,7 +14,6 @@ import org.eclipse.elk.alg.mrtree.TreeLayoutProvider
 import org.eclipse.elk.alg.mrtree.options.OrderWeighting
 import org.eclipse.elk.alg.mrtree.options.TreeifyingOrder
 import org.eclipse.elk.core.math.ElkPadding
-import org.eclipse.elk.core.options.Direction
 
 /**
  * Declarations for the ELK Tree layout algorithm.
@@ -39,7 +38,6 @@ algorithm mrtree(TreeLayoutProvider) {
     supports org.eclipse.elk.aspectRatio = 1.6f
     supports org.eclipse.elk.priority = 1
     supports org.eclipse.elk.separateConnectedComponents = true 
-    supports org.eclipse.elk.direction = Direction.DOWN
     supports org.eclipse.elk.debugMode
     supports weighting
     supports searchOrder

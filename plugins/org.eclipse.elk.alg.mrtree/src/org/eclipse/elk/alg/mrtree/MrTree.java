@@ -168,7 +168,7 @@ public final class MrTree {
             // Prints the algorithm configuration and outputs the whole graph to a file
             // before each slot execution
 
-            System.out.println("KLay MrTree uses the following " + algorithm.size() + " modules:");
+            System.out.println("ELK MrTree uses the following " + algorithm.size() + " modules:");
             for (int i = 0; i < algorithm.size(); i++) {
                 String slot = (i < 10 ? "0" : "") + (i++); // SUPPRESS CHECKSTYLE MagicNumber
                 System.out.println("   Slot " + slot + ": " + algorithm.get(i).getClass().getName());
