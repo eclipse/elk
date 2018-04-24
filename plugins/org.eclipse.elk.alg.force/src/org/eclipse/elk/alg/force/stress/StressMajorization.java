@@ -86,7 +86,8 @@ public class StressMajorization {
         w = new double[n][n];
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
-                double wij = 1f / (float) (apsp[i][j] * apsp[i][j]);
+                double dij = apsp[i][j];
+                double wij = 1.0 / (dij * dij);
                 w[i][j] = wij;
             }
         }
@@ -189,7 +190,8 @@ public class StressMajorization {
             for (int j = i + 1; j < nodes.size(); ++j) {
                 FNode v = nodes.get(j);
                 double eucDist = u.getPosition().distance(v.getPosition());
-                stress += w[u.id][v.id] * Math.pow(eucDist - apsp[u.id][v.id], 2);
+                double eucDisplacement = eucDist - apsp[u.id][v.id];
+                stress += w[u.id][v.id] * eucDisplacement * eucDisplacement;
             }
         }
         return stress;
