@@ -55,6 +55,9 @@ public class StressLayoutProvider extends AbstractLayoutProvider {
 
         // perform the actual layout
         for (FGraph subGraph : components) {
+            if (subGraph.getNodes().size() <= 1) {
+                continue;
+            }
             stressMajorization.initialize(subGraph);
             stressMajorization.execute();
         }
