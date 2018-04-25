@@ -5,7 +5,7 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.core.alg;
+package org.eclipse.elk.core.test;
 
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.ElkRectangle;

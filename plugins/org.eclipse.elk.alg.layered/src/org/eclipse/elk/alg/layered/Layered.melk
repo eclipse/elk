@@ -161,6 +161,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports layering.coffmanGraham.layerBound
     supports nodePlacement.favorStraightEdges
     supports org.eclipse.elk.spacing.portsSurrounding
+    supports directionCongruency
 }
 
 
@@ -648,11 +649,11 @@ group wrapping {
     }
     
     advanced option correctionFactor: double {
-        label "Correction factor for the wrapping"
+        label "Correction Factor for Wrapping"
         description 
             "At times and for certain types of graphs the executed wrapping may produce results that 
              are consistently biased in the same fashion: either wrapping to often or to rarely. 
-             This factor can be used to correct the bias. Internally, it is simplay multiplied with 
+             This factor can be used to correct the bias. Internally, it is simply multiplied with 
              the 'aspect ratio' layout option."
         default = 1.0
         targets parents
@@ -771,6 +772,16 @@ advanced option contentAlignment: EnumSet<ContentAlignment> {
 	legacyIds de.cau.cs.kieler.klay.layered.contentAlignment
 }
 
+advanced option directionCongruency: DirectionCongruency {
+    label "Direction Congruency"
+    description
+        "Specifies how drawings of the same graph with different layout directions compare to each other: 
+         either a natural reading direction is preserved or the drawings are rotated versions of each other."
+    default = DirectionCongruency.READING_DIRECTION
+    targets parents
+    documentation "@transformation.md"
+}
+
 advanced option feedbackEdges: boolean {
 	label "Feedback Edges"
 	description "Whether feedback edges should be highlighted by routing around the nodes."
@@ -814,6 +825,16 @@ advanced option mergeHierarchyEdges: boolean {
 	legacyIds de.cau.cs.kieler.klay.layered.mergeHierarchyEdges
 }
 
+advanced option northOrSouthPort: boolean {
+    label "North or South Port"
+    description
+        "Specifies that this port can either be placed on the north side of a node or on the south
+        side (if port constraints permit)"
+    default = false
+    targets ports
+    legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
+}
+
 advanced option thoroughness: int {
 	label "Thoroughness"
 	description "How much effort should be spent to produce a nice layout."
@@ -833,14 +854,4 @@ advanced option unnecessaryBendpoints: boolean {
 	default = false
 	targets parents
 	legacyIds de.cau.cs.kieler.klay.layered.unnecessaryBendpoints
-}
-
-advanced option northOrSouthPort: boolean {
-	label "North or South Port"
-	description
-        "Specifies that this port can either be placed on the north side of a node or on the south
-        side (if port constraints permit)"
-	default = false
-	targets ports
-	legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
 }

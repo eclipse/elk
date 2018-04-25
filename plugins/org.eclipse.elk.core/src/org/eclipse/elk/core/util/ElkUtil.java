@@ -19,8 +19,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.elk.core.GraphIssue;
-import org.eclipse.elk.core.GraphValidationException;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -31,7 +29,11 @@ import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.validation.GraphIssue;
+import org.eclipse.elk.core.validation.GraphValidationException;
+import org.eclipse.elk.core.validation.IValidatingGraphElementVisitor;
 import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkGraphElement;
@@ -833,9 +835,6 @@ public final class ElkUtil {
      * @param visitors the visitors to apply.
      */
     public static void applyVisitors(final ElkNode graph, final IGraphElementVisitor... visitors) {
-        for (int i = 0; i < visitors.length; i++) {
-            visitors[i].visit(graph);
-        }
         Iterator<EObject> allElements = ElkGraphUtil.propertiesSkippingIteratorFor(graph, true);
         while (allElements.hasNext()) {
             EObject nextElement = allElements.next();
@@ -877,7 +876,9 @@ public final class ElkUtil {
             }
         }
 
-        if (allIssues != null) {
+        // TODO print warnings to log if there are no errors
+        if (allIssues != null
+                && allIssues.stream().anyMatch(issue -> issue.getSeverity() == GraphIssue.Severity.ERROR)) {
             StringBuilder message = new StringBuilder();
             for (GraphIssue issue : allIssues) {
                 if (message.length() > 0) {
@@ -901,6 +902,7 @@ public final class ElkUtil {
      * Print information on the given graph element to the given string builder.
      */
     public static void printElementPath(final ElkGraphElement element, final StringBuilder builder) {
+        // Print the containing element
         if (element.eContainer() instanceof ElkGraphElement) {
             printElementPath((ElkGraphElement) element.eContainer(), builder);
             builder.append(" > ");
@@ -908,6 +910,7 @@ public final class ElkUtil {
             builder.append("Root ");
         }
 
+        // Print the class name
         String className = element.eClass().getName();
         if (className.startsWith("Elk")) {
             // CHECKSTYLEOFF MagicNumber
@@ -917,19 +920,48 @@ public final class ElkUtil {
             builder.append(className);
         }
 
+        // Print the identifier if present
+        String identifier = element.getIdentifier();
+        if (!Strings.isNullOrEmpty(identifier)) {
+            builder.append(' ').append(identifier);
+            return;
+        }
+        // Print the label if present
         if (element instanceof ElkLabel) {
             String text = ((ElkLabel) element).getText();
             if (!Strings.isNullOrEmpty(text)) {
                 builder.append(' ').append(text);
+                return;
             }
-        } else  if (element instanceof ElkGraphElement) {
-            ElkGraphElement labeledElement = (ElkGraphElement) element;
-            if (!labeledElement.getLabels().isEmpty()) {
-                ElkLabel firstLabel = labeledElement.getLabels().get(0);
-                String text = firstLabel.getText();
-                if (!Strings.isNullOrEmpty(text)) {
-                    builder.append(' ').append(text);
+        }
+        for (ElkLabel label : element.getLabels()) {
+            String text = label.getText();
+            if (!Strings.isNullOrEmpty(text)) {
+                builder.append(' ').append(text);
+                return;
+            }
+        }
+        // If it's an edge and no identifier nor label is present, print source and target
+        if (element instanceof ElkEdge) {
+            ElkEdge edge = (ElkEdge) element;
+            if (edge.isConnected()) {
+                builder.append(" (");
+                ListIterator<ElkConnectableShape> sourceIter = edge.getSources().listIterator();
+                while (sourceIter.hasNext()) {
+                    if (sourceIter.nextIndex() > 0) {
+                        builder.append(", ");
+                    }
+                    printElementPath(sourceIter.next(), builder);
                 }
+                builder.append(" -> ");
+                ListIterator<ElkConnectableShape> targetIter = edge.getTargets().listIterator();
+                while (targetIter.hasNext()) {
+                    if (targetIter.nextIndex() > 0) {
+                        builder.append(", ");
+                    }
+                    printElementPath(targetIter.next(), builder);
+                }
+                builder.append(")");
             }
         }
     }

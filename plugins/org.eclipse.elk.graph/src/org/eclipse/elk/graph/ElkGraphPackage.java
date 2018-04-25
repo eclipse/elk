@@ -1569,7 +1569,7 @@ public interface ElkGraphPackage extends EPackage {
      * <!-- end-user-doc -->
      * @return the meta object for class '<em>Elk Property To Value Map Entry</em>'.
      * @see java.util.Map.Entry
-     * @model keyDataType="org.eclipse.elk.graph.IProperty<?>"
+     * @model keyDataType="org.eclipse.elk.graph.IProperty&lt;?&gt;"
      *        valueDataType="org.eclipse.elk.graph.PropertyValue"
      * @generated
      */

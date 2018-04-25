@@ -30,7 +30,7 @@ import com.google.common.collect.Multimap;
  * Emden Gansner, Yehuda Koren, and Stephen North. Graph drawing by stress majorization. <em>Graph Drawing</em>, 2005.
  * </li></ul>
  * 
- * The implementation supports performing a layout in one dimension only, preserving the coordinates of other
+ * The implementation supports performing a layout in one dimension only, preserving the coordinates of the other
  * dimension. For this, set {@link StressOptions#DIMENSION} to either {@link Dimension#X} or {@link Dimension#Y}.
  * Furthermore, nodes can be fixed using the {@link StressOptions#FIXED} option.
  */
@@ -62,8 +62,12 @@ public class StressMajorization {
      * @param fgraph the graph to be laid out. 
      */
     public void initialize(final FGraph fgraph) {
+        if (fgraph.getNodes().size() <= 1) {
+            return;
+        }
+
         this.graph = fgraph;
-        
+
         this.dim = graph.getProperty(StressOptions.DIMENSION);
         this.iterationLimit = graph.getProperty(StressOptions.ITERATION_LIMIT);
         this.epsilon = graph.getProperty(StressOptions.EPSILON);
@@ -86,7 +90,8 @@ public class StressMajorization {
         w = new double[n][n];
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
-                double wij = 1f / (float) (apsp[i][j] * apsp[i][j]);
+                double dij = apsp[i][j];
+                double wij = 1.0 / (dij * dij);
                 w[i][j] = wij;
             }
         }
@@ -96,6 +101,10 @@ public class StressMajorization {
      * Execute the stress-minimizing iteration until a termination criterion is reached. 
      */
     public void execute() {
+        if (graph.getNodes().size() <= 1) {
+            return;
+        }
+        
         int count = 0;
         double prevStress = computeStress();
         double curStress = Double.POSITIVE_INFINITY;
@@ -152,7 +161,7 @@ public class StressMajorization {
                 }
                 // get e's desired length
                 double el;
-                if (e.getAllProperties().containsKey(StressOptions.DESIRED_EDGE_LENGTH)) {
+                if (e.hasProperty(StressOptions.DESIRED_EDGE_LENGTH)) {
                     el = e.getProperty(StressOptions.DESIRED_EDGE_LENGTH);
                 } else { 
                     el = desiredEdgeLength;
@@ -189,7 +198,8 @@ public class StressMajorization {
             for (int j = i + 1; j < nodes.size(); ++j) {
                 FNode v = nodes.get(j);
                 double eucDist = u.getPosition().distance(v.getPosition());
-                stress += w[u.id][v.id] * Math.pow(eucDist - apsp[u.id][v.id], 2);
+                double eucDisplacement = eucDist - apsp[u.id][v.id];
+                stress += w[u.id][v.id] * eucDisplacement * eucDisplacement;
             }
         }
         return stress;
@@ -203,6 +213,9 @@ public class StressMajorization {
         double weightSum = 0;
         double xDisp = 0;
         double yDisp = 0;
+        
+        // we need at least two nodes here, otherwise we would divide by zero below 
+        assert graph.getNodes().size() > 1;
 
         for (FNode v : graph.getNodes()) {
             if (u == v) {

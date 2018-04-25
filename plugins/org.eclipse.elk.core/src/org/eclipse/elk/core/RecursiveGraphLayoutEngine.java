@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Queue;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -34,6 +34,17 @@ import com.google.common.collect.Lists;
  * Performs layout on a graph with hierarchy by executing a layout algorithm on each level of the
  * hierarchy. This is done recursively from the leafs to the root of the nodes in the graph, using
  * size information from lower levels in the levels above.
+ * 
+ * <p>
+ * The actual layout algorithms to execute are determined with the {@link CoreOptions#RESOLVED_ALGORITHM}
+ * option. This option is configured by the {@link LayoutAlgorithmResolver}. If it is not yet set on
+ * the top-level node, this implementation applies the default algorithm resolver by running
+ * <pre>
+ * ElkUtil.applyVisitors(layoutGraph, new LayoutAlgorithmResolver());
+ * </pre>
+ * If you need to customize the algorithm resolution or apply validation, you should run the algorithm
+ * resolver before invoking this class.
+ * </p>
  * 
  * <p>
  * MIGRATE Extend the graph layout engine to offset edge coordinates properly
@@ -56,7 +67,12 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         int nodeCount = countNodesRecursively(layoutGraph, true);
         progressMonitor.begin("Recursive Graph Layout", nodeCount);
         
-        // perform recursive layout of the whole substructure of the given node
+        if (!layoutGraph.hasProperty(CoreOptions.RESOLVED_ALGORITHM)) {
+            // Apply the default algorithm resolver to the graph in order to obtain algorithm meta data
+            ElkUtil.applyVisitors(layoutGraph, new LayoutAlgorithmResolver());
+        }
+        
+        // Perform recursive layout of the whole substructure of the given node
         layoutRecursively(layoutGraph, progressMonitor);
         
         progressMonitor.done();
@@ -95,9 +111,12 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         final boolean hasInsideSelfLoops = !insideSelfLoops.isEmpty();
         
         if (hasChildren || hasInsideSelfLoops) {
-            // this node has children and is thus a compound node;
-            // fetch the layout algorithm that should be used to compute a layout for its content
-            final LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
+            // Fetch the layout algorithm that should be used to compute a layout for its content
+            final LayoutAlgorithmData algorithmData = layoutNode.getProperty(CoreOptions.RESOLVED_ALGORITHM);
+            if (algorithmData == null) {
+                throw new UnsupportedConfigurationException("Resolved algorithm is not set;"
+                        + " apply a LayoutAlgorithmResolver before computing layout.");
+            }
             final boolean supportsInsideSelfLoops = algorithmData.supportsFeature(GraphFeature.INSIDE_SELF_LOOPS);
            
             // Persist the Hierarchy Handling in the nodes by querying the parent node
@@ -112,56 +131,55 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             // We collect inside self loops of children and post-process them later
             List<ElkEdge> childrenInsideSelfLoops = Lists.newArrayList();
             
-            // if the layout provider supports hierarchy, it is expected to layout the node's compound
+            // If the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
             int nodeCount;
             if (layoutNode.getProperty(CoreOptions.HIERARCHY_HANDLING) == HierarchyHandling.INCLUDE_CHILDREN
                     && (algorithmData.supportsFeature(GraphFeature.COMPOUND)
                             || algorithmData.supportsFeature(GraphFeature.CLUSTERS))) {
                 
-                // the layout algorithm will compute a layout for multiple levels of hierarchy under the current one
+                // The layout algorithm will compute a layout for multiple levels of hierarchy under the current one
                 nodeCount = countNodesWithHierarchy(layoutNode);
                 
                 // Look for nodes that stop the hierarchy handling, evaluating the inheritance on the way
-                final Queue<ElkNode> kNodeQueue = Lists.newLinkedList();
-                kNodeQueue.addAll(layoutNode.getChildren());
+                final Queue<ElkNode> nodeQueue = Lists.newLinkedList();
+                nodeQueue.addAll(layoutNode.getChildren());
                 
-                while (!kNodeQueue.isEmpty()) {
-                    ElkNode knode = kNodeQueue.poll();
+                while (!nodeQueue.isEmpty()) {
+                    ElkNode node = nodeQueue.poll();
                     // Persist the Hierarchy Handling in every case. (Won't hurt with nodes that are
                     // evaluated in the next recursion)
-                    evaluateHierarchyHandlingInheritance(knode);
-                    final boolean stopHierarchy = knode.getProperty(CoreOptions.HIERARCHY_HANDLING)
+                    evaluateHierarchyHandlingInheritance(node);
+                    final boolean stopHierarchy = node.getProperty(CoreOptions.HIERARCHY_HANDLING)
                             == HierarchyHandling.SEPARATE_CHILDREN;
 
                     // Hierarchical layout is stopped by explicitly disabling or switching the algorithm. 
                     // In that case, a separate recursive call is used for child nodes
                     if (stopHierarchy 
-                          || (knode.hasProperty(CoreOptions.ALGORITHM) 
-                                  && !getAlgorithm(knode).equals(algorithmData))) {
-                        List<ElkEdge> childLayoutSelfLoops = layoutRecursively(knode, progressMonitor);
+                          || (node.hasProperty(CoreOptions.ALGORITHM) 
+                                  && !algorithmData.equals(node.getProperty(CoreOptions.RESOLVED_ALGORITHM)))) {
+                        List<ElkEdge> childLayoutSelfLoops = layoutRecursively(node, progressMonitor);
                         childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                         // Explicitly disable hierarchical layout for the child node. Simplifies the
                         // handling of switching algorithms in the layouter.
-                        knode.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.SEPARATE_CHILDREN);
+                        node.setProperty(CoreOptions.HIERARCHY_HANDLING, HierarchyHandling.SEPARATE_CHILDREN);
 
-                        // apply the LayoutOptions.SCALE_FACTOR if present
-                        ElkUtil.applyConfiguredNodeScaling(knode);
+                        // Apply the LayoutOptions.SCALE_FACTOR if present
+                        ElkUtil.applyConfiguredNodeScaling(node);
                     } else {
-                        // Child should be included in current layout, possibly adding its own
-                        // children
-                        kNodeQueue.addAll(knode.getChildren());
+                        // Child should be included in current layout, possibly adding its own children
+                        nodeQueue.addAll(node.getChildren());
                     }
                 }
 
             } else {
-                // layout each compound node contained in this node separately
+                // Layout each compound node contained in this node separately
                 nodeCount = layoutNode.getChildren().size();
                 for (ElkNode child : layoutNode.getChildren()) {
                     List<ElkEdge> childLayoutSelfLoops = layoutRecursively(child, progressMonitor); 
                     childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                     
-                    // apply the LayoutOptions.SCALE_FACTOR if present
+                    // Apply the LayoutOptions.SCALE_FACTOR if present
                     ElkUtil.applyConfiguredNodeScaling(child);
                 }
             }
@@ -176,17 +194,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 selfLoop.setProperty(CoreOptions.NO_LAYOUT, true);
             }
 
-            // get an instance of the layout provider
-            AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
-            try {
-                // perform layout on the current hierarchy level
-                layoutProvider.layout(layoutNode, progressMonitor.subTask(nodeCount));
-                algorithmData.getInstancePool().release(layoutProvider);
-            } catch (RuntimeException exception) {
-                // the layout provider has failed - destroy it slowly and painfully
-                layoutProvider.dispose();
-                throw exception;
-            }
+            executeAlgorithm(layoutNode, algorithmData, progressMonitor.subTask(nodeCount));
             
             // Post-process the inner self loops we collected
             postProcessInsideSelfLoops(childrenInsideSelfLoops);
@@ -203,34 +211,21 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     }
 
     /**
-     * Returns the most appropriate layout algorithm for the given node.
-     * 
-     * @param layoutNode node for which a layout provider is requested
-     * @return a layout algorithm that fits the layout hints for the given node
+     * Execute the given layout algorithm on a parent node.
      */
-    protected LayoutAlgorithmData getAlgorithm(final ElkNode layoutNode) {
-        String algorithmId = layoutNode.getProperty(CoreOptions.ALGORITHM);
-        LayoutAlgorithmData result = LayoutMetaDataService.getInstance().getAlgorithmDataBySuffixOrDefault(
-                algorithmId, getDefaultLayoutAlgorithmID());
-        
-        if (result == null) {
-            if (algorithmId == null || algorithmId.isEmpty()) {
-                throw new UnsupportedConfigurationException("No layout algorithm has been specified ("
-                        + layoutNode + ").");
-            } else {
-                throw new UnsupportedConfigurationException("Layout algorithm not found: " + algorithmId);
-            }
+    protected void executeAlgorithm(final ElkNode layoutNode, final LayoutAlgorithmData algorithmData,
+            final IElkProgressMonitor progressMonitor) {
+        // Get an instance of the layout provider
+        AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
+        try {
+            // Perform layout on the current hierarchy level
+            layoutProvider.layout(layoutNode, progressMonitor);
+            algorithmData.getInstancePool().release(layoutProvider);
+        } catch (Exception exception) {
+            // The layout provider has failed - destroy it slowly and painfully
+            layoutProvider.dispose();
+            throw exception;
         }
-        return result;
-    }
-    
-    /**
-     * Returns the ID of the layout algorithm to be used by default.
-     * 
-     * @return the default layout algorithm's ID.
-     */
-    public String getDefaultLayoutAlgorithmID() {
-        return "org.eclipse.elk.layered";
     }
 
     /**
@@ -294,20 +289,20 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * hierarchy. Counting is stopped at nodes which disable the hierarchical layout or are
      * configured to use a different layout algorithm.
      * 
-     * @param layoutNode
+     * @param parentNode
      *            parent layout node to examine
      * @return total number of child layout nodes
      */
-    private int countNodesWithHierarchy(final ElkNode layoutNode) {
-        // count the content of the given node
-        int count = layoutNode.getChildren().size();
-        for (ElkNode childNode : layoutNode.getChildren()) {
-            if (childNode.getProperty(CoreOptions.HIERARCHY_HANDLING) 
-                    != HierarchyHandling.SEPARATE_CHILDREN
-                    && getAlgorithm(layoutNode).equals(getAlgorithm(childNode))) {
-                
+    private int countNodesWithHierarchy(final ElkNode parentNode) {
+        // Count the content of the given node
+        int count = parentNode.getChildren().size();
+        for (ElkNode childNode : parentNode.getChildren()) {
+            if (childNode.getProperty(CoreOptions.HIERARCHY_HANDLING) != HierarchyHandling.SEPARATE_CHILDREN) {
+                LayoutAlgorithmData parentData = parentNode.getProperty(CoreOptions.RESOLVED_ALGORITHM);
+                LayoutAlgorithmData childData = childNode.getProperty(CoreOptions.RESOLVED_ALGORITHM);
                 // Only count nodes that don't abort the hierarchical layout
-                if (!childNode.getChildren().isEmpty()) {
+                if ((parentData == childData || parentData != null && parentData.equals(childData))
+                        && !childNode.getChildren().isEmpty()) {
                     count += countNodesWithHierarchy(childNode);
                 }
             }

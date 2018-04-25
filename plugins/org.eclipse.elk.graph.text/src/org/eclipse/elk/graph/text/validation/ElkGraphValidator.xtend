@@ -10,7 +10,7 @@ package org.eclipse.elk.graph.text.validation
 import com.google.inject.Inject
 import java.util.EnumSet
 import java.util.Map
-import org.eclipse.elk.core.LayoutOptionValidator
+import org.eclipse.elk.core.validation.LayoutOptionValidator
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.data.LayoutOptionData
 import org.eclipse.elk.core.options.CoreOptions

@@ -196,19 +196,11 @@ final class GraphConfigurator {
         // graph transformations for unusual layout directions
         switch (lgraph.getProperty(LayeredOptions.DIRECTION)) {
         case LEFT:
-            configuration
-                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.LEFT_DIR_PREPROCESSOR)
-                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.LEFT_DIR_POSTPROCESSOR);
-            break;
         case DOWN:
-            configuration
-                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.DOWN_DIR_PREPROCESSOR)
-                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.DOWN_DIR_POSTPROCESSOR);
-            break;
         case UP:
             configuration
-                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.UP_DIR_PREPROCESSOR)
-                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.UP_DIR_POSTPROCESSOR);
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.DIRECTION_PREPROCESSOR)
+                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.DIRECTION_POSTPROCESSOR);
             break;
         default:
             // This is either RIGHT or UNDEFINED, which is just mapped to RIGHT. Either way, we

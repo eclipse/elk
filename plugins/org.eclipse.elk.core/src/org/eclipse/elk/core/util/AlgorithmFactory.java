@@ -13,7 +13,7 @@ package org.eclipse.elk.core.util;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 
 /**
- * A factory for layout algorithms.
+ * A generic factory for layout algorithms.
  */
 public class AlgorithmFactory implements IFactory<AbstractLayoutProvider> {
     
@@ -24,6 +24,15 @@ public class AlgorithmFactory implements IFactory<AbstractLayoutProvider> {
     
     /**
      * Creates an instance factory for the given layout provider class.
+     * 
+     * @param theclazz the class for which instances shall be created
+     */
+    public AlgorithmFactory(final Class<? extends AbstractLayoutProvider> theclazz) {
+        this(theclazz, null);
+    }
+    
+    /**
+     * Creates an instance factory for the given layout provider class, initialized with a parameter.
      * 
      * @param theclazz the class for which instances shall be created
      * @param theparameter the parameter used for initialization of layout providers

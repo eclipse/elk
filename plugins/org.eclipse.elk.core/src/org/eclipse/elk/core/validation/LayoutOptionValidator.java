@@ -8,7 +8,7 @@
  * Contributors:
  *    spoenemann - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core;
+package org.eclipse.elk.core.validation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,13 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.core.data.LayoutOptionData;
-import org.eclipse.elk.core.util.IValidatingGraphElementVisitor;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyValueProxy;
 
 /**
- * A validator for lower and upper bounds of layout options.
+ * A validator for layout options that checks lower and upper bounds as well as other constraints.
  */
 public class LayoutOptionValidator implements IValidatingGraphElementVisitor {
     

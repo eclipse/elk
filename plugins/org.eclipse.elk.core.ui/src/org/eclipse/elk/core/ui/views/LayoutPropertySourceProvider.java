@@ -13,10 +13,10 @@ package org.eclipse.elk.core.ui.views;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.ILayoutSetup;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
+import org.eclipse.elk.core.validation.LayoutOptionValidator;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySourceProvider;

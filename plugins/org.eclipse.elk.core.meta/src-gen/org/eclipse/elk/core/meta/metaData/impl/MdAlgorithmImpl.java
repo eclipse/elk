@@ -53,6 +53,7 @@ import org.eclipse.xtext.common.types.JvmTypeReference;
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getPreviewImage <em>Preview Image</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getSupportedFeatures <em>Supported Features</em>}</li>
+ *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getValidator <em>Validator</em>}</li>
  *   <li>{@link org.eclipse.elk.core.meta.metaData.impl.MdAlgorithmImpl#getSupportedOptions <em>Supported Options</em>}</li>
  * </ul>
  *
@@ -209,6 +210,16 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * @ordered
    */
   protected EList<MdGraphFeature> supportedFeatures;
+
+  /**
+   * The cached value of the '{@link #getValidator() <em>Validator</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getValidator()
+   * @generated
+   * @ordered
+   */
+  protected JvmTypeReference validator;
 
   /**
    * The cached value of the '{@link #getSupportedOptions() <em>Supported Options</em>}' containment reference list.
@@ -489,6 +500,54 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
    * <!-- end-user-doc -->
    * @generated
    */
+  public JvmTypeReference getValidator()
+  {
+    return validator;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetValidator(JvmTypeReference newValidator, NotificationChain msgs)
+  {
+    JvmTypeReference oldValidator = validator;
+    validator = newValidator;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_ALGORITHM__VALIDATOR, oldValidator, newValidator);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setValidator(JvmTypeReference newValidator)
+  {
+    if (newValidator != validator)
+    {
+      NotificationChain msgs = null;
+      if (validator != null)
+        msgs = ((InternalEObject)validator).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_ALGORITHM__VALIDATOR, null, msgs);
+      if (newValidator != null)
+        msgs = ((InternalEObject)newValidator).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MetaDataPackage.MD_ALGORITHM__VALIDATOR, null, msgs);
+      msgs = basicSetValidator(newValidator, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, MetaDataPackage.MD_ALGORITHM__VALIDATOR, newValidator, newValidator));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<MdOptionSupport> getSupportedOptions()
   {
     if (supportedOptions == null)
@@ -510,6 +569,8 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
     {
       case MetaDataPackage.MD_ALGORITHM__PROVIDER:
         return basicSetProvider(null, msgs);
+      case MetaDataPackage.MD_ALGORITHM__VALIDATOR:
+        return basicSetValidator(null, msgs);
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_OPTIONS:
         return ((InternalEList<?>)getSupportedOptions()).basicRemove(otherEnd, msgs);
     }
@@ -545,6 +606,8 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return getPreviewImage();
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_FEATURES:
         return getSupportedFeatures();
+      case MetaDataPackage.MD_ALGORITHM__VALIDATOR:
+        return getValidator();
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_OPTIONS:
         return getSupportedOptions();
     }
@@ -589,6 +652,9 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_FEATURES:
         getSupportedFeatures().clear();
         getSupportedFeatures().addAll((Collection<? extends MdGraphFeature>)newValue);
+        return;
+      case MetaDataPackage.MD_ALGORITHM__VALIDATOR:
+        setValidator((JvmTypeReference)newValue);
         return;
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_OPTIONS:
         getSupportedOptions().clear();
@@ -635,6 +701,9 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_FEATURES:
         getSupportedFeatures().clear();
         return;
+      case MetaDataPackage.MD_ALGORITHM__VALIDATOR:
+        setValidator((JvmTypeReference)null);
+        return;
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_OPTIONS:
         getSupportedOptions().clear();
         return;
@@ -670,6 +739,8 @@ public class MdAlgorithmImpl extends MdBundleMemberImpl implements MdAlgorithm
         return PREVIEW_IMAGE_EDEFAULT == null ? previewImage != null : !PREVIEW_IMAGE_EDEFAULT.equals(previewImage);
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_FEATURES:
         return supportedFeatures != null && !supportedFeatures.isEmpty();
+      case MetaDataPackage.MD_ALGORITHM__VALIDATOR:
+        return validator != null;
       case MetaDataPackage.MD_ALGORITHM__SUPPORTED_OPTIONS:
         return supportedOptions != null && !supportedOptions.isEmpty();
     }

@@ -334,7 +334,7 @@
         <requirement
             name="de.itemis.xtext.antlr.sdk.feature.group"/>
         <requirement
-            name="org.eclipse.gmf.sdk.feature.group"/>
+            name="org.eclipse.gmf.runtime.sdk.feature.group"/>
         <requirement
             name="org.eclipse.graphiti.sdk.feature.feature.group"/>
         <sourceLocator
@@ -357,6 +357,17 @@
               url="http://download.eclipse.org/releases/neon"/>
           <repository
               url="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
+          <repository
+              url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
+          <repository
+              url="http://xtext.github.io/download/updates/releases/2.1.1/"/>
+        </repositoryList>
+        <repositoryList
+            name="Oxygen">
+          <repository
+              url="http://download.eclipse.org/releases/oxygen"/>
+          <repository
+              url="http://download.eclipse.org/tools/orbit/downloads/drops/R20180330011457/repository"/>
           <repository
               url="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
           <repository

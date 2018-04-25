@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IFactory;
 import org.eclipse.elk.core.util.InstancePool;
+import org.eclipse.elk.core.validation.IValidatingGraphElementVisitor;
 import org.eclipse.elk.graph.properties.GraphFeature;
 import org.eclipse.elk.graph.properties.IProperty;
 
@@ -49,6 +50,8 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     private final String imagePath;
     /** Set of supported graph features. */
     private final Set<GraphFeature> supportedFeatures;
+    /** Validator that can be applied to input graphs before the algorithm is executed. */
+    private final Class<? extends IValidatingGraphElementVisitor> validatorClass;
     
     /** Map of known layout options. Keys are option IDs, values are the default values. */
     private final Map<String, Object> knownOptions = Maps.newHashMap();
@@ -70,6 +73,7 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
         } else {
             this.supportedFeatures = builder.supportedFeatures;
         }
+        this.validatorClass = builder.validatorClass;
     }
     
     /**
@@ -204,6 +208,15 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     public InstancePool<AbstractLayoutProvider> getInstancePool() {
         return providerPool;
     }
+    
+    /**
+     * Return a validator class that can be applied to input graphs before the algorithm is executed.
+     * 
+     * @return the graph validator class, or {@code null}
+     */
+    public Class<? extends IValidatingGraphElementVisitor> getValidatorClass() {
+        return validatorClass;
+    }
 
     /**
      * Returns the layout category identifier. Layout categories are represented by {@link LayoutCategoryData}
@@ -255,6 +268,7 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
         private String description;
         private String imagePath;
         private Set<GraphFeature> supportedFeatures;
+        private Class<? extends IValidatingGraphElementVisitor> validatorClass;
         
         /**
          * Create an instance with the configured values.
@@ -332,6 +346,14 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
          */
         public Builder supportedFeatures(final Set<GraphFeature> asupportedFeatures) {
             this.supportedFeatures = asupportedFeatures;
+            return this;
+        }
+        
+        /**
+         * Configure the {@link LayoutAlgorithmData#getValidatorClass() validatorClass}.
+         */
+        public Builder validatorClass(final Class<? extends IValidatingGraphElementVisitor> avalidator) {
+            this.validatorClass = avalidator;
             return this;
         }
         

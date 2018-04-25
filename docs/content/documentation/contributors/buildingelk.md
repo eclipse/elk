@@ -75,3 +75,11 @@ The documentation website itself is built with [Hugo](https://gohugo.io/), a sta
 ```bash
 hugo
 ```
+
+To edit the website, start a Hugo server instance in the repository's `docs/` folder:
+
+```bash
+hugo server
+```
+
+You can then direct your browser to `http://localhost:1313/elk/`. As you edit the website's files and save them, the browser's content is dynamically updated.

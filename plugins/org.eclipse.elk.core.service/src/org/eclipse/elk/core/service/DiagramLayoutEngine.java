@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.LayoutConfigurator.IOptionFilter;
-import org.eclipse.elk.core.LayoutOptionValidator;
+import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -34,6 +34,8 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.core.validation.GraphValidator;
+import org.eclipse.elk.core.validation.LayoutOptionValidator;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkLabel;
@@ -293,7 +295,7 @@ public class DiagramLayoutEngine {
     
     
     
-    //------- NON-STATIC PART (customizable via dependency injection) -------//
+    //--------------------- NON-STATIC PART (customizable via dependency injection) ---------------------//
     
     /**
      * The diagram layout connector used to import the layout graph and apply the resulting layout.
@@ -312,6 +314,18 @@ public class DiagramLayoutEngine {
      */
     @Inject
     private IGraphLayoutEngine graphLayoutEngine;
+    
+    /**
+     * Resolves layout algorithms for nodes in the graph.
+     */
+    @Inject
+    private LayoutAlgorithmResolver algorithmResolver;
+    
+    /**
+     * Provider for validators of layout graphs.
+     */
+    @Inject
+    private Provider<GraphValidator> graphValidatorProvider;
     
     /**
      * Provider for validators of layout options.
@@ -546,24 +560,16 @@ public class DiagramLayoutEngine {
     }
     
     /**
-     * Perform layout on the given layout graph mapping. If zero or one layout configurator is
-     * passed, the layout engine is executed exactly once. If multiple layout configurators are
-     * passed, the layout engine is executed accordingly often, but the resulting layout is applied
-     * only once. This is useful for composition of multiple algorithms that process only parts of
-     * the graph. Layout listeners are notified after the layout has been computed.
+     * Handle the ancestors of the parent element if {@link CoreOptions#LAYOUT_ANCESTORS} is set.
+     * For every ancestor node of the parent element (i.e. {@link LayoutMapping#getParentElement()}),
+     * all containing elements that are not ancestors are excluded from layout.
      * 
      * @param mapping
      *            a mapping for the layout graph
-     * @param progressMonitor
-     *            a progress monitor to which progress of the layout algorithm is reported
      * @param params
      *            layout parameters
-     * @return a status indicating success or failure
      */
-    public IStatus layout(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor,
-            final Parameters params) {
-        mapping.setProperty(MAPPING_CONNECTOR, connector);
-        
+    protected void handleAncestors(final LayoutMapping mapping, final Parameters params) {
         boolean layoutAncestors = params.getGlobalSettings().getProperty(CoreOptions.LAYOUT_ANCESTORS);
         if (layoutAncestors) {
             // Mark all parallel areas for exclusion from layout
@@ -592,11 +598,37 @@ public class DiagramLayoutEngine {
                 } while (node.getParent() != null);
             }
         }
+    }
+    
+    /**
+     * Perform layout on the given layout graph mapping. If zero or one layout configurator is
+     * passed, the layout engine is executed exactly once. If multiple layout configurators are
+     * passed, the layout engine is executed accordingly often, but the resulting layout is applied
+     * only once. This is useful for composition of multiple algorithms that process only parts of
+     * the graph. Layout listeners are notified before and after the layout has been computed.
+     * 
+     * @param mapping
+     *            a mapping for the layout graph
+     * @param progressMonitor
+     *            a progress monitor to which progress of the layout algorithm is reported
+     * @param params
+     *            layout parameters
+     * @return a status indicating success or failure
+     */
+    public IStatus layout(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor,
+            final Parameters params) {
+        mapping.setProperty(MAPPING_CONNECTOR, connector);
+        handleAncestors(mapping, params);
+        
+        LinkedList<IGraphElementVisitor> visitors = new LinkedList<IGraphElementVisitor>();
+        visitors.add(algorithmResolver);
         
         // Set up graph validators
-        LinkedList<IGraphElementVisitor> visitors = new LinkedList<IGraphElementVisitor>();
         if (params.getGlobalSettings().getProperty(CoreOptions.VALIDATE_OPTIONS)) {
             visitors.add(layoutOptionValidatorProvider.get());
+        }
+        if (params.getGlobalSettings().getProperty(CoreOptions.VALIDATE_GRAPH)) {
+            visitors.add(graphValidatorProvider.get());
         }
         
         // Notify listeners of the to-be-executed layout

@@ -36,15 +36,4 @@ public interface IGraphLayoutEngine {
      */
     void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor);
 
-    /**
-     * Returns the ID of the layout algorithm used by this layout engine if no algorithm is explicitly set in the graph.
-     * 
-     * @implSpec The default implementation returns {@code "org.eclipse.elk.layered"}.
-     * 
-     * @return ID of the default layout algorithm.
-     */
-    default String getDefaultLayoutAlgorithmID() {
-        return "org.eclipse.elk.layered";
-    }
-
 }

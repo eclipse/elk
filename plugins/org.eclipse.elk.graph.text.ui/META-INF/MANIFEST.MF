@@ -6,6 +6,8 @@ Bundle-Version: 0.4.0.qualifier
 Bundle-SymbolicName: org.eclipse.elk.graph.text.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.elk.core,
+ org.eclipse.elk.core.service,
+ org.eclipse.elk.core.ui,
  org.eclipse.elk.graph,
  org.eclipse.elk.graph.text,
  org.eclipse.elk.graph.text.ide,

@@ -12,7 +12,7 @@ As described [in other parts of the documentation]({{< relref "documentation/too
 * An `ILayoutMetaDataProvider` that contains `IProperty` objects for each layout option you declare, along with a method that registers these options and layout algorithm categories with the `LayoutMetaDataService`. It is this class that needs to be registered with ELK's extension point.
 * One `ILayoutMetaDataProvider` for each algorithm you declare. This contains one `IProperty` object for each layout option your algorithm supports (with the configured default value), as well as a method that registers your algorithm and its supported options with the `LayoutMetaDataService`. You should use the `IProperty` objects in this class to retrieve layout option values to ensure that you get correct defaults if an option is not set. These classes do not have to be registered with ELK's extension point because they are automatically registered through the main metadata class.
 
-This page explains how to write a metadata file. (Imagine the guy that narrates action film trailers reading the previous sentence to make it that much more compelling.)
+This page explains how to write a metadata file. See the end of the page for an example metadata file of a very simple layout algorithm. (Pro-tip: Reading the previous sentence in action-movie-trailer-narrator voice makes it more compelling.)
 
 
 ## Creating and Registering Your Metadata File
@@ -31,7 +31,7 @@ Follow these steps to add a metadata file to your layout algorithm project:
     bundle {
         // Change the following line according to what you want the
         // package and name of your meta data provider to be
-        metadataClass properties.AwesomeOptions
+        metadataClass options.MetaDataProvider
     }
     ```
 
@@ -41,7 +41,10 @@ Follow these steps to add a metadata file to your layout algorithm project:
 1. Open the editor's _Extensions_ tab.
 1. Click the _Add..._ button, look for the `org.eclipse.elk.core.layoutProviders` extension point and click _Finish_.
 1. The editor now shows the extension point in the list. Right-click the list entry and select _New - provider_.
-1. Select the new entry and configure the _class_ attribute on the right to point to your new `ILayoutMetaDataProvider` that was generated for you by the ELK SDK.
+1. Select the new entry and configure the _class_ attribute on the right to point to your new `ILayoutMetaDataProvider` that was generated for you by the ELK SDK. Your configuration might look something like this:
+
+    {{< image src="algdev_metadatalanguage_extension.png" alt="Configuring a new layout algorithm project." >}}
+
 1. Save and close the editor.
 
 
@@ -53,7 +56,7 @@ The ELK metadata language contains everything you need to make the following inf
 * Which layout options your plug-in contributes, and which layout options your algorithms support.
 * Which layout algorithm categories your plug-in contributes, and which of them your algorithms belong to.
 
-The basic layout of a `melk` file looks something like this:
+The basic layout of a metadata file looks something like this:
 
 ```plain
 <package declaration>
@@ -226,17 +229,20 @@ Of course, everything we have done so far was simply in support of the main act:
 ```melk
 // The algorithm's ID
 algorithm algorithmid(<class>) {
-    // User-readable short name for the algorithm
+    // User-readable short name and description for the algorithm
     label "Excellent Algorithm"
 
     description
         "A brief and completely sensible description of what this algorithm
          does. Will be shown to users."
 
-    // The name of the ILayoutMetaDataProvider class generated for this
-    // algorithm. Use the constants defined in that class from within your
-    // algorithm to access layout option values.
-    metadataClass properties.AlgorithmProperties
+    // Optional name of the ILayoutMetaDataProvider class generated for this
+    // algorithm
+    metadataClass <metadataClass>
+
+    // Optional validator class called by ELK before actually running the
+    // layout algorithm.
+    validator <validatorClass>
 
     // Optional path to an image that provides a preview of the kinds of
     // layouts this algorithm will produce. Relative to the plug-in's
@@ -264,6 +270,14 @@ Three details deserve more explanation:
     algorithm myAlgorithm(TheAbstractLayoutProviderSubclass#TheParamterValue)
     ```
 
+* `metadataClass`
+
+    The metadata class will contain the property constants you should use to access your algorithm's property values. If no name is specified, a class with a default name will be generated in the package specified by the metadata file.
+
+* `validatorClass`
+
+    Layout algorithms may have certain requirements concerning the graphs they are run on, including connectivity, hierarchy, or simlpy configuration. Instead of checking the input graph's validity in the algorithm itself, a validator class can be specified that is run automatically when layout is invoked through the `DiagramLayoutEngine`. The class must implement the `org.eclipse.elk.core.validation.IValidatingGraphElementVisitor` interface.
+
 * `features`
 
     This is a comma-separated list of structural graph features that an algorithm explicitly supports. Most of these declarations are purely informational, but graph layout engines might decide to change the layout graph passed to your algorithm depending on whether it supports the original graph's features or not. At the time of writing, these are the possible graph features:
@@ -289,3 +303,44 @@ Three details deserve more explanation:
     supports the.option.id          // Standard default value
     supports the.option.id = 42     // Overridden default value
     ```
+
+
+## Example
+
+The following is an example metadata file for a very simple layout algorithm:
+
+```melk
+package cds.layout.simple
+
+import cds.layout.simple.SimpleLayoutProvider
+import org.eclipse.elk.core.math.ElkPadding
+
+bundle {
+    metadataClass options.SimpleMetaDataProvider
+    idPrefix cds.layout.simple
+}
+
+option reverseInput : boolean {
+    label "Reverse Input"
+    description
+        "True if nodes should be placed in reverse order of their
+        appearance in the graph."
+    default = false
+    targets parents
+}
+
+algorithm simple(SimpleLayoutProvider) {
+    label "Simple Layout Algorithm"
+    description
+        "This layout provider places nodes along a horizontal or a vertical line."
+    metadataClass options.SimpleOptions
+    
+    supports reverseInput
+    supports org.eclipse.elk.padding = new ElkPadding(10)
+    supports org.eclipse.elk.spacing.edgeEdge = 5
+    supports org.eclipse.elk.spacing.edgeNode = 10
+    supports org.eclipse.elk.spacing.nodeNode = 10
+}
+```
+
+Note how we override the default value of several properties for this algorithm.
