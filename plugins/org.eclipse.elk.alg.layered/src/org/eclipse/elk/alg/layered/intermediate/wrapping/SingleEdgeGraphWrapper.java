@@ -99,7 +99,7 @@ public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
         
         // if they are not guaranteed to be valid, make them valid
         if (!icic.guaranteeValid()) {
-            switch (graph.getProperty(LayeredOptions.WRAPPING_SINGLE_EDGE_VALIDIFY_STRATEGY)) {
+            switch (graph.getProperty(LayeredOptions.WRAPPING_VALIDIFY_STRATEGY)) {
                 case LOOK_BACK:
                     cuts = validifyIndexesLookingBack(gs, cuts);
                     break;
@@ -118,7 +118,10 @@ public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
         progressMonitor.done();
     }
     
-    private static List<Integer> validifyIndexesGreedily(final GraphStats gs, final List<Integer> cuts) {
+    /**
+     * Validify {@code desiredCuts} by increasing every forbidden index (and its successors) until they are valid.
+     */
+    public static List<Integer> validifyIndexesGreedily(final GraphStats gs, final List<Integer> cuts) {
         List<Integer> validCuts = Lists.newArrayList();
         int offset = 0;
 
@@ -139,7 +142,10 @@ public class SingleEdgeGraphWrapper implements ILayoutProcessor<LGraph> {
         return validCuts;
     }
     
-    private static List<Integer> validifyIndexesLookingBack(final GraphStats gs, final List<Integer> desiredCuts) {
+    /**
+     * Validify {@code desiredCuts} by finding the closest valid cuts. 
+     */
+    public static List<Integer> validifyIndexesLookingBack(final GraphStats gs, final List<Integer> desiredCuts) {
         if (desiredCuts.isEmpty()) {
             return Collections.emptyList();
         }

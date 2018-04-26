@@ -11,6 +11,7 @@
 package org.eclipse.elk.alg.layered.intermediate.wrapping;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.BinaryOperator;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -82,19 +83,55 @@ public class GraphStats {
         return determineLayerWidth(l);
     }
     
-    /** @return the sum of each layer's width. */
+    /** @return the approximate width of the <em>current</em> layering (the sum of each layer's width). */
     public double getApproximateLayeringWidth() {
         return getSumWidth();
     }
-    
+
+    /**
+     * @return the approximate width of the <em>new</em> layering that would be created if the {@code cuts} were
+     *         applied.
+     */
+    public double getApproximateChunkBasedLayeringWidth(final List<Integer> cuts) {
+        if (cuts.isEmpty()) {
+            return getApproximateLayeringWidth();
+        }
+        double width = 0;
+        int lowIdx = 0;
+        for (Integer highIdx : cuts) {
+            width = Math.max(width, determineChunkWidth(lowIdx, highIdx));
+            lowIdx = highIdx;
+        }
+        width = Math.max(width, determineChunkWidth(lowIdx, graph.getLayers().size()));
+        return width;
+    }
+        
     /** @return the sum of the layer's node heights. */
     public double getApproximateLayerHeight(final Layer l) {
         return determineLayerHeight(l);
     }
     
-    /** @return the max height of any layer. */
+    /** @return the approximate height of the <em>current</em> layering (the max height of any layer). */
     public double getApproximateLayeringHeight() {
         return getMaxHeight();
+    }
+    
+    /**
+     * @return the approximate height of the <em>new</em> layering that would be created if the {@code cuts} were
+     *         applied.
+     */
+    public double getApproximateChunkBasedLayeringHeight(final List<Integer> cuts) {
+        if (cuts.isEmpty()) {
+            return 0;
+        }
+        double height = 0;
+        int lowIdx = 0;
+        for (Integer highIdx : cuts) {
+            height += determineChunkHeight(lowIdx, highIdx);
+            lowIdx = highIdx;
+        }
+        height += determineChunkHeight(lowIdx, graph.getLayers().size());
+        return height;
     }
     
     /* ------------------------------------------------------------------------------------------- */
@@ -123,12 +160,12 @@ public class GraphStats {
      */
     public double[] getWidths() {
         if (widths == null) {
-            initWidths();
+            initWidthsAndHeights();
         }
         return widths;
     }
     
-    private void initWidths() {
+    private void initWidthsAndHeights() {
         int n = longestPath;
         this.widths = new double[n];
         this.heights = new double[n];
@@ -157,6 +194,16 @@ public class GraphStats {
         }
         return maxW;
     }
+    
+    /**
+     * @return the sum of layer widths between lowIdx (inclusive) and highIdx (exclusive).
+     */
+    private double determineChunkWidth(final int lowIdx, final int highIdx) {
+        return graph.getLayers().subList(lowIdx, highIdx).stream()
+                .mapToDouble(l -> determineLayerWidth(l))
+                .reduce(Double::sum)
+                .orElse(0);
+    }
 
     /* ------------------------------------------------------------------------------------------- */
     /* Heights
@@ -177,7 +224,7 @@ public class GraphStats {
      */
     public double[] getHeights() {
         if (heights == null) {
-            initWidths();
+            initWidthsAndHeights();
         }
         return heights;
     }
@@ -207,6 +254,16 @@ public class GraphStats {
         return lH;
     }
   
+    /**
+     * @return the maximum layer height between lowIdx (inclusive) and highIdx (exclusive).
+     */
+    private double determineChunkHeight(final int lowIdx, final int highIdx) {
+        return graph.getLayers().subList(lowIdx, highIdx).stream()
+                .mapToDouble(l -> determineLayerHeight(l))
+                .max()
+                .orElse(0);
+    }
+    
     /* ------------------------------------------------------------------------------------------- */
     /* Cutting allowed?
     /* ------------------------------------------------------------------------------------------- */
@@ -227,18 +284,31 @@ public class GraphStats {
         if (cutsAllowed != null) {
             return;
         }
+        
         cutsAllowed = new boolean[graph.getLayers().size()];
         cutsAllowed[0] = false;
-        Iterator<Layer> layerIt = graph.getLayers().iterator();
-        // skip the first layer
-        if (layerIt.hasNext()) {
-            layerIt.next();
-        }
-        // now check for valid cut indexes
-        int i = 1;
-        while (layerIt.hasNext()) {
-            Layer layer = layerIt.next();
-            cutsAllowed[i++] = isCutAllowed(layer);
+        
+        if (graph.hasProperty(LayeredOptions.WRAPPING_VALIDIFY_FORBIDDEN_INDICES)) {
+            // user-specified forbidden indices
+            List<Integer> forbidden = graph.getProperty(LayeredOptions.WRAPPING_VALIDIFY_FORBIDDEN_INDICES);
+            for (int f : forbidden) {
+                if (f > 0 && f < cutsAllowed.length) {
+                    cutsAllowed[f] = false;
+                }
+            }
+        } else {
+            // 'default' behavior as implemented by 'isCutAllowed(..)'
+            Iterator<Layer> layerIt = graph.getLayers().iterator();
+            // skip the first layer
+            if (layerIt.hasNext()) {
+                layerIt.next();
+            }
+            // now check for valid cut indexes
+            int i = 1;
+            while (layerIt.hasNext()) {
+                Layer layer = layerIt.next();
+                cutsAllowed[i++] = isCutAllowed(layer);
+            }
         }
     }
     

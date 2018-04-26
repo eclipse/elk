@@ -19,7 +19,6 @@ import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
-import org.eclipse.elk.alg.layered.options.CenterEdgeLabelPlacementStrategy
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -75,7 +74,8 @@ algorithm layered(LayeredLayoutProvider) {
     supports wrapping.cutting.strategy
     supports wrapping.cutting.cuts
     supports wrapping.cutting.msd.freedom
-    supports wrapping.singleEdge.validify.strategy 
+    supports wrapping.validify.strategy
+    supports wrapping.validify.forbiddenIndices 
     supports wrapping.multiEdge.improveCuts
     supports wrapping.multiEdge.distancePenalty
     supports wrapping.multiEdge.improveWrappedEdges
@@ -692,20 +692,26 @@ group wrapping {
         }
     }
  
-    group singleEdge {
-    
-        group validify {
-            
-            advanced option strategy: ValidifyStrategy {
-                label "Path-Like Validify Strategy"
-                description 
-                    "When wrapping path-like graphs, the graph must not be split between any pair of layers.
-                     The validify strategy makes sure every computed split point is allowed."
-                default = ValidifyStrategy.GREEDY 
-                targets parents
-                requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
-            }
+    group validify {
+        
+        advanced option strategy: ValidifyStrategy {
+            label "Validification Strategy"
+            description 
+                "When wrapping graphs, one can specify indices that are not allowed as split points.  
+                 The validification strategy makes sure every computed split point is allowed."
+            default = ValidifyStrategy.GREEDY 
+            targets parents
+            // requires wrapping.strategy != WrappingStrategy.OFF TODO
         }
+        
+        advanced option forbiddenIndices: List<Integer> {
+            label "Valid Indices for Wrapping"
+            targets parents 
+            // requires wrapping.strategy != WrappingStrategy.OFF TODO
+        }
+    }
+        
+    group singleEdge {
     }
  
     group multiEdge {
