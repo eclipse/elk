@@ -18,5 +18,5 @@ The following drawings illustrate the different behaviors.
 ### Reading Direction
 ![readingdirection](/images/options/transformation_readingdirection_based.png)
  
- ### Rotation 
+### Rotation 
 ![rotation](/images/options/transformation_rotation_based.png) 
