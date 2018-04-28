@@ -1,46 +1,59 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Kiel University and others.
+ * Copyright (c) 2014, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.common.nodespacing;
 
+import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 
 /**
  * Entry points to apply several methods for node dimension calculation, including positioning of
  * labels, ports, etc.
- * 
- * @author uru
  */
-public final class NodeDimensionCalculation {
+public final class NodeMicroLayout {
 
     /**
      * Private constructor - utility class.
      */
-    private NodeDimensionCalculation() {
-    }
+    private NodeMicroLayout() { }
 
     /**
-     * Calculates label sizes and node sizes also considering ports. Make sure that the port lists
+     * Performs micro layout for all of the graph's nodes. That is, this method sorts ports, 
+     * positions labels and ports, computes the nodes' sizes and their margins.
+     * 
+     * @see {@link #sortPortLists(GraphAdapter)}
+     * @see {@link #positionLabelsAndPortsAndComputeNodeSizes(GraphAdapter)}
+     * @see {@link #calculateNodeMargins(GraphAdapter)}
+     * 
+     * @param adapter
+     *            an instance of an adapter for the passed graph's type.
+     * @param <T>
+     *            the graphs type, e.g. a root ElkNode (see {@link ElkGraphAdapters}.
+     */
+    public static <T> void executeAll(final GraphAdapter<T> adapter) {
+        sortPortLists(adapter);
+        positionLabelsAndPortsAndComputeNodeSizes(adapter);
+        calculateNodeMargins(adapter);
+    }
+    
+    /**
+     * Positions the labels and ports of the graph's nodes. Make sure that the port lists
      * are sorted properly.
      * 
-     * @see LabelAndNodeSizeProcessor
      * @see #sortPortLists(GraphAdapter)
      * 
      * @param adapter
      *            an instance of an adapter for the passed graph's type.
      * @param <T>
-     *            the graphs type, e.g. a root KNode
+     *            the graphs type, e.g. a root ElkNode (see {@link ElkGraphAdapters}.
      */
-    public static <T> void calculateLabelAndNodeSizes(final GraphAdapter<T> adapter) {
-        NodeLabelAndSizeCalculator.process(adapter);
+    public static <T> void positionLabelsAndPortsAndComputeNodeSizes(final GraphAdapter<T> adapter) {
+        LabelAndPortPositionerAndNodeSizeCalculator.process(adapter);
     }
 
     /**
@@ -55,7 +68,7 @@ public final class NodeDimensionCalculation {
      * @param adapter
      *            an instance of an adapter for the passed graph's type.
      * @param <T>
-     *            the graphs type, e.g. a root KNode
+     *            the graphs type, e.g. a root ElkNode (see {@link ElkGraphAdapters}.
      */
     public static <T> void calculateNodeMargins(final GraphAdapter<T> adapter) {
         NodeMarginCalculator calcu = new NodeMarginCalculator(adapter);
@@ -76,7 +89,7 @@ public final class NodeDimensionCalculation {
      * @param adapter
      *            an instance of an adapter for the passed graph's type.
      * @param <T>
-     *            the graphs type, e.g. a root KNode
+     *            the graphs type, e.g. a root ElkNode (see {@link ElkGraphAdapters}.
      * @return an instance of a {@link NodeMarginCalculator} that can be configured to specific
      *         needs.
      */

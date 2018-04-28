@@ -12,7 +12,7 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
+import org.eclipse.elk.alg.common.nodespacing.NodeMicroLayout;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
 import org.eclipse.elk.alg.layered.graph.LMargin;
@@ -53,7 +53,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor<LGraph> {
         
         // Calculate the margins using ELK's utility methods. What is not included in the margins yet are is space
         // required for self loops and comment boxes. We will deal with all of those later.
-        NodeDimensionCalculation.getNodeMarginCalculator(LGraphAdapters.adapt(layeredGraph, false))
+        NodeMicroLayout.getNodeMarginCalculator(LGraphAdapters.adapt(layeredGraph, false))
                 .excludeEdgeHeadTailLabels()
                 .process();
 

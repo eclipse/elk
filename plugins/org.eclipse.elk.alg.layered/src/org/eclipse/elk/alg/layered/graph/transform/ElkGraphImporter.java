@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
+import org.eclipse.elk.alg.common.nodespacing.LabelAndPortPositionerAndNodeSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
@@ -181,7 +181,7 @@ class ElkGraphImporter {
         GraphAdapter<?> graphAdapter = ElkGraphAdapters.adapt(elkgraph.getParent());
         NodeAdapter<?> nodeAdapter = ElkGraphAdapters.adaptSingleNode(elkgraph);
         
-        KVector minSize = NodeLabelAndSizeCalculator.process(graphAdapter, nodeAdapter, false, true);
+        KVector minSize = LabelAndPortPositionerAndNodeSizeCalculator.process(graphAdapter, nodeAdapter, false, true);
         
         // Apply the minimum size a sa property and make sure the minimum size is respected by ELK Layered by making
         // sure the necessary size constraint exists
@@ -459,7 +459,7 @@ class ElkGraphImporter {
         
         // Adjust the padding to respect inside labels (if the graph has a parent, we need to supply that as well
         // since size information stored there may apply to the current graph node)
-        ElkPadding nodeLabelpadding = NodeLabelAndSizeCalculator.computeInsideNodeLabelPadding(
+        ElkPadding nodeLabelpadding = LabelAndPortPositionerAndNodeSizeCalculator.computeInsideNodeLabelPadding(
                 elkgraph.getParent() == null ? null : ElkGraphAdapters.adapt(elkgraph.getParent()),
                 ElkGraphAdapters.adaptSingleNode(elkgraph));
         ElkPadding nodePadding = lgraph.getProperty(LayeredOptions.PADDING);

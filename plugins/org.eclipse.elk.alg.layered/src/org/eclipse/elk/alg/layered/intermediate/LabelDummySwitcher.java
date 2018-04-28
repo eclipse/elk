@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
+import org.eclipse.elk.alg.common.nodespacing.LabelAndPortPositionerAndNodeSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
@@ -75,7 +75,7 @@ import com.google.common.collect.Lists;
  *   <dt>Slots:</dt>
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
- *     <dd>{@link NodeLabelAndSizeCalculator}</dd>
+ *     <dd>{@link LabelAndPortPositionerAndNodeSizeCalculator}</dd>
  *     <dd>{@link NodeMarginCalculator}</dd>
  *     <dd>{@link EndLabelPreprocessor}</dd>
  * </dl>

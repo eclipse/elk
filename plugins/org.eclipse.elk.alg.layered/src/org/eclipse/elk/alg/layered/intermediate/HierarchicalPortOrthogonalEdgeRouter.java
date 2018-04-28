@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
+import org.eclipse.elk.alg.common.nodespacing.NodeMicroLayout;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
@@ -239,7 +239,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
             }
             
             // Calculate margins
-            NodeDimensionCalculation.getNodeMarginCalculator(LGraphAdapters.adapt(graph, false))
+            NodeMicroLayout.getNodeMarginCalculator(LGraphAdapters.adapt(graph, false))
                 .processNode(LGraphAdapters.adapt(dummy, false));
         }
     }

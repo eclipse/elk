@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
+import org.eclipse.elk.alg.common.nodespacing.NodeMicroLayout;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
 import org.eclipse.elk.alg.layered.graph.LLabel;
@@ -62,7 +62,7 @@ public final class LabelAndNodeSizeProcessor implements ILayoutProcessor<LGraph>
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Node and Port Label Placement and Node Sizing", 1);
         
-        NodeDimensionCalculation.calculateLabelAndNodeSizes(LGraphAdapters.adapt(
+        NodeMicroLayout.positionLabelsAndPortsAndComputeNodeSizes(LGraphAdapters.adapt(
                 layeredGraph,
                 false,
                 true,

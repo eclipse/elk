@@ -13,7 +13,7 @@ package org.eclipse.elk.alg.spore;
 import java.util.Map;
 
 import org.eclipse.elk.alg.common.ICostFunction;
-import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
+import org.eclipse.elk.alg.common.nodespacing.NodeMicroLayout;
 import org.eclipse.elk.alg.common.spore.InternalProperties;
 import org.eclipse.elk.alg.common.spore.Node;
 import org.eclipse.elk.alg.common.utils.Utils;
@@ -110,7 +110,7 @@ public class ElkGraphImporter implements IGraphImporter<ElkNode> {
         
         // calculate margins
         ElkGraphAdapter adapter = ElkGraphAdapters.adapt(elkGraph);
-        NodeDimensionCalculation.calculateNodeMargins(adapter);
+        NodeMicroLayout.calculateNodeMargins(adapter);
         
         // retrieve layout options
         String preferredRootID = elkGraph.getProperty(SporeCompactionOptions.PROCESSING_ORDER_PREFERRED_ROOT);

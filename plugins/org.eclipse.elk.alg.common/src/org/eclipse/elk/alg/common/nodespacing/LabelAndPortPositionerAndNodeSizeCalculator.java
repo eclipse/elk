@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.common.nodespacing;
 
@@ -27,26 +24,35 @@ import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.PortPlacementCa
 import org.eclipse.elk.alg.common.nodespacing.internal.algorithm.VerticalPortPlacementSizeCalculator;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.GraphAdapter;
 import org.eclipse.elk.core.util.adapters.GraphAdapters.NodeAdapter;
 
 /**
- * Knows how to calculate the size of a node and how to place its ports. Takes all
- * {@link org.eclipse.elk.core.options.SizeConstraint size constraints} and
- * {@link org.eclipse.elk.core.options.SizeOptions options} into account.
+ * This processor performs large parts of what can be seen as the <em>micro layout</em> of a graph's nodes.
+ * More precisely, it:
+ * <ul>
+ *  <li>positions node labels,</li>
+ *  <li>positions ports,</li>
+ *  <li>positions port labels, and</li>
+ *  <li>computes node sizes (if requested).</li>
+ * </ul>
+ * 
+ * The concrete behavior of the processor for each of this points can be configured using various layout options,
+ * most importantly: 
+ * {@link CoreOptions#NODE_LABELS_PLACEMENT}, {@link CoreOptions#PORT_LABELS_PLACEMENT},
+ * {@link CoreOptions#NODE_SIZE_CONSTRAINTS}, and {@link CoreOptions#NODE_SIZE_OPTIONS}.
  * 
  * <p>This calculator internally understands the layout of the node as a grid-like system of cells in which different
  * labels and ports are placed. Each cell has a padding and a minimum size, which may or may not be taken into
  * account when calculating the minimum size of the node.</p>
  */
-public final class NodeLabelAndSizeCalculator {
+public final class LabelAndPortPositionerAndNodeSizeCalculator {
     
     /**
      * No instance required.
      */
-    private NodeLabelAndSizeCalculator() {
-        
-    }
+    private LabelAndPortPositionerAndNodeSizeCalculator() { }
     
     
     /**
