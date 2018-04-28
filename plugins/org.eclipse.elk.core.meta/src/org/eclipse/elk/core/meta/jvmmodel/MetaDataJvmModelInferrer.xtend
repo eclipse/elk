@@ -663,7 +663,7 @@ class MetaDataJvmModelInferrer extends AbstractModelInferrer {
     
     private def getDependencyConstantName(MdOptionDependency dependency) {
         val option = dependency.eContainer as MdOption
-        option.constantName + '_DEP_' + dependency.target.constantName
+        option.constantName + '_DEP_' + dependency.target.constantName + '_' + option.dependencies.indexOf(dependency)
     }
     
     private def String toCodeString(String s) {
