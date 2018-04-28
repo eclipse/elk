@@ -15,6 +15,7 @@ import org.eclipse.elk.alg.radial.options.AnnulusWedgeCriteria
 import org.eclipse.elk.alg.radial.options.CompactionStrategy
 import org.eclipse.elk.alg.radial.options.RadialTranslationStrategy
 import org.eclipse.elk.alg.radial.options.SortingStrategy
+import org.eclipse.elk.core.options.PortAlignment
 
 bundle {
     metadataClass options.RadialMetaDataProvider
@@ -41,6 +42,20 @@ algorithm radial(RadialLayoutProvider) {
     supports radius
     supports sorter
     supports wedgeCriteria
+    supports org.eclipse.elk.portConstraints
+    // options handled by the common node label, port label and node size processing
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.nodeLabels.padding
+    supports org.eclipse.elk.portLabels.placement
+    supports org.eclipse.elk.portLabels.nextToPortIfPossible
+    supports org.eclipse.elk.port.borderOffset = 0
+    supports org.eclipse.elk.portAlignment.^default = PortAlignment.JUSTIFIED
+    supports org.eclipse.elk.portAlignment.north
+    supports org.eclipse.elk.portAlignment.south
+    supports org.eclipse.elk.portAlignment.west
+    supports org.eclipse.elk.portAlignment.east
 }
 
 /////////////////////////////////Options///////////////////////////////

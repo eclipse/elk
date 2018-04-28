@@ -4,15 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.radial;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
+import org.eclipse.elk.alg.common.nodespacing.NodeMicroLayout;
 import org.eclipse.elk.alg.radial.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.radial.options.CompactionStrategy;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
@@ -22,31 +19,32 @@ import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
-import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * The RadialLayoutProvider provides an interface for radial layout algorithms. It expects a tree for layout. It divides
- * in the phase of node placement and edge routing. It can be adapted by different layout strategies which can be found
- * in "org.eclipse.elk.radial.options".
+ * The RadialLayoutProvider provides an interface for radial layout algorithms. It expects the input graph to be a tree
+ * and divides the layout task into the phase of node placement and edge routing.
+ * 
+ *  It can configured using a number of layout options that can be found in the {@link RadialOptions} classs.
  */
 public class RadialLayoutProvider extends AbstractLayoutProvider {
+    
     private final AlgorithmAssembler<RadialLayoutPhases, ElkNode> algorithmAssembler =
             AlgorithmAssembler.<RadialLayoutPhases, ElkNode> create(RadialLayoutPhases.class);
 
     @Override
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
-        List<ILayoutProcessor<ElkNode>> algorithm = assembleAlgorithm(layoutGraph);
 
+        List<ILayoutProcessor<ElkNode>> algorithm = assembleAlgorithm(layoutGraph);
         progressMonitor.begin("Radial layout", algorithm.size());
 
         // pre calculate the root node and save it
         ElkNode root = RadialUtil.findRoot(layoutGraph);
-        layoutGraph.setProperty(InternalProperties.ROOT_NODE, root);
-
         if (root == null) {
             throw new IllegalArgumentException("The given graph is not a tree!");
         }
+        layoutGraph.setProperty(InternalProperties.ROOT_NODE, root);
+        
         // Calculate the radius or take the one given by the user.
         double layoutRadius = layoutGraph.getProperty(RadialOptions.RADIUS);
         if (layoutRadius == 0) {
@@ -54,11 +52,8 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
         }
         layoutGraph.setProperty(RadialOptions.RADIUS, layoutRadius);
         
-        //add support for the NodeDimensionCaluclation
-        ElkGraphAdapter adapter = ElkGraphAdapters.adapt(layoutGraph);
-        layoutGraph.getWidth();
-        NodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);   
-        NodeDimensionCalculation.calculateNodeMargins(adapter);
+        // position labels, ports, and the like ...O
+        NodeMicroLayout.executeAll(ElkGraphAdapters.adapt(layoutGraph));
                 
         // execute the different phases
         for (ILayoutProcessor<ElkNode> processor : assembleAlgorithm(layoutGraph)) {

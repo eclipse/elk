@@ -1,18 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.force;
 
 import java.util.List;
 import java.util.Random;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeMicroLayout;
 import org.eclipse.elk.alg.force.graph.FGraph;
 import org.eclipse.elk.alg.force.model.AbstractForceModel;
 import org.eclipse.elk.alg.force.model.EadesModel;
@@ -22,14 +20,11 @@ import org.eclipse.elk.alg.force.options.ForceOptions;
 import org.eclipse.elk.alg.force.options.InternalProperties;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Layout provider for the force layout algorithms.
- *
- * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class ForceLayoutProvider extends AbstractLayoutProvider {
 
@@ -42,15 +37,17 @@ public final class ForceLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode graph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("ELK Force", 1);
+        
+        NodeMicroLayout.executeAll(ElkGraphAdapters.adapt(graph));
         
         // transform the input graph
         IGraphImporter<ElkNode> graphImporter = new ElkGraphImporter();
-        FGraph fgraph = graphImporter.importGraph(kgraph);
+        FGraph fgraph = graphImporter.importGraph(graph);
 
         // set special properties for the layered graph
-        setOptions(fgraph, kgraph);
+        setOptions(fgraph, graph);
 
         // update the force model depending on user selection
         updateModel(fgraph.getProperty(ForceOptions.MODEL));

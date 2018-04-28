@@ -13,6 +13,7 @@ package org.eclipse.elk.alg.force
 import org.eclipse.elk.alg.force.ForceLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.options.PortAlignment
 
 /**
  * Declarations for the ELK Force layout algorithm.
@@ -47,6 +48,19 @@ algorithm force(ForceLayoutProvider) {
     supports iterations
     supports repulsion
     supports repulsivePower
+    // options handled by the common node label, port label and node size processing
+    supports org.eclipse.elk.nodeSize.constraints
+    supports org.eclipse.elk.nodeSize.options
+    supports org.eclipse.elk.nodeLabels.placement
+    supports org.eclipse.elk.nodeLabels.padding
+    supports org.eclipse.elk.portLabels.placement
+    supports org.eclipse.elk.portLabels.nextToPortIfPossible
+    supports org.eclipse.elk.port.borderOffset = 0
+    supports org.eclipse.elk.portAlignment.^default = PortAlignment.JUSTIFIED
+    supports org.eclipse.elk.portAlignment.north
+    supports org.eclipse.elk.portAlignment.south
+    supports org.eclipse.elk.portAlignment.west
+    supports org.eclipse.elk.portAlignment.east
 }
 
 option model: ForceModelStrategy {
