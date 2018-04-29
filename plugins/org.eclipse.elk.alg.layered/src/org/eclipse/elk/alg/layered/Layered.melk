@@ -19,6 +19,7 @@ import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
+import org.eclipse.elk.core.options.HierarchyHandling
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -294,11 +295,12 @@ group crossingMinimization {
         legacyIds de.cau.cs.kieler.klay.layered.crossMin
     } 
     
-    option hierarchicalSweepiness: double {
+    advanced option hierarchicalSweepiness: double {
         label "Hierarchical Sweepiness"
         description "How likely it is to use cross-hierarchy (1) vs bottom-up (-1)."  
         default = 0.1
-        targets parents 
+        targets parents
+        requires org.eclipse.elk.hierarchyHandling == HierarchyHandling.INCLUDE_CHILDREN 
     }
     
     group greedySwitch {
@@ -333,6 +335,7 @@ group crossingMinimization {
              layout option. Requires a crossing minimization strategy that is able to process 'in-layer' constraints."
 		default = false
 		targets parents
+		requires crossingMinimization.strategy == CrossingMinimizationStrategy.LAYER_SWEEP
     }
     
 }
@@ -346,7 +349,7 @@ group nodePlacement {
     option strategy: NodePlacementStrategy {
         label "Node Placement Strategy"
         description "Strategy for node placement."
-        default = NodePlacementStrategy.BRANDES_KOEPF
+        default = NodePlacementStrategy.BRANDES_KOEPF 
         targets parents
         legacyIds de.cau.cs.kieler.klay.layered.nodePlace
     }
@@ -360,7 +363,7 @@ group nodePlacement {
         // no default, see description
         targets parents
         requires strategy == NodePlacementStrategy.NETWORK_SIMPLEX 
-          // ||  strategy == NodePlacementStrategy.BRANDES_KOEPF TODO
+        requires strategy == NodePlacementStrategy.BRANDES_KOEPF
     }
     
     group bk {
@@ -426,7 +429,8 @@ group nodePlacement {
                 label "Node Flexibility Default"
                 description "Default value of the 'nodeFlexibility' option for the children of a hierarchical node."
                 default = NodeFlexibility.NONE
-                targets parents        
+                targets parents   
+                requires nodePlacement.strategy == NodePlacementStrategy.NETWORK_SIMPLEX     
             }
         }
     }
@@ -458,7 +462,7 @@ group edgeRouting {
                 description "Spacing factor for routing area between layers when using sloppy spline routing."
                 default = 0.2
                 targets parents
-                requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+                requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES // TODO this should be an AND
                 requires splines.mode == SplineRoutingMode.SLOPPY
             }            
         }
@@ -646,6 +650,8 @@ group wrapping {
              can be specified in form of this layout option. The spacing is added to the regular edgeNode spacing."
         default = 10
         targets parents
+        requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
+        requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
     }
     
     advanced option correctionFactor: double {
@@ -657,6 +663,8 @@ group wrapping {
              the 'aspect ratio' layout option."
         default = 1.0
         targets parents
+        requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
+        requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
     }
 
     group cutting {
@@ -667,7 +675,8 @@ group wrapping {
                 "The strategy by which the layer indexes are determined at which the layering crumbles into chunks."
             default = CuttingStrategy.MSD
             targets parents
-            //requires wrapping.strategy != WrappingStrategy.OFF
+            requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
+            requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
         } 
       
         advanced option cuts: List<Integer> {
@@ -701,13 +710,15 @@ group wrapping {
                  The validification strategy makes sure every computed split point is allowed."
             default = ValidifyStrategy.GREEDY 
             targets parents
-            // requires wrapping.strategy != WrappingStrategy.OFF TODO
+            requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
+            requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
         }
         
         advanced option forbiddenIndices: List<Integer> {
             label "Valid Indices for Wrapping"
             targets parents 
-            // requires wrapping.strategy != WrappingStrategy.OFF TODO
+            requires wrapping.strategy == WrappingStrategy.SINGLE_EDGE
+            requires wrapping.strategy == WrappingStrategy.MULTI_EDGE
         }
     }
         
