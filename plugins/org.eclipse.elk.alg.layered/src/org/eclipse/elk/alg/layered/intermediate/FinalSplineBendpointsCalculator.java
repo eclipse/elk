@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,8 +101,9 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
         
         // ... then convert them to bezier splines
         for (LEdge e : startEdges) {
+            LEdge survivingEdge = e.getProperty(InternalProperties.SPLINE_SURVIVING_EDGE); // may be null
             List<LEdge> edgeChain = e.getProperty(InternalProperties.SPLINE_EDGE_CHAIN);
-            calculateBezierBendPoints(edgeChain);
+            calculateBezierBendPoints(edgeChain, survivingEdge);
             // clear property
             e.setProperty(InternalProperties.SPLINE_EDGE_CHAIN, null);
         }
@@ -162,6 +164,10 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
             } else {
                 calculateControlPointsConservative(edge, segment);
             }
+        }
+        
+        if (segment.inverseOrder) {
+            segment.edges.forEach(e -> Collections.reverse(e.getBendPoints()));
         }
     }
     
@@ -449,14 +455,15 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
      * Collects all NUB control points computed for a spline segment and converts them to bezier control points.
      * Note that additional NUB control points <em>may</em> be added before the conversion is performed.   
      */
-    private void calculateBezierBendPoints(final List<LEdge> edgeChain) {
+    private void calculateBezierBendPoints(final List<LEdge> edgeChain, final LEdge survivingEdge) {
         if (edgeChain.isEmpty()) {
             return;
         }
         
         // in this chain we will put all NURBS control points.
         final KVectorChain allCP = new KVectorChain();
-        final LEdge edge = edgeChain.get(0);
+        // add the computed bendpoints to the specified edge (default to the first edge in the edge chain)
+        final LEdge edge = survivingEdge != null ? survivingEdge : edgeChain.get(0);
         // Process the source end of the edge-chain. 
         final LPort sourcePort = edge.getSource();
         

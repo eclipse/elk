@@ -417,6 +417,14 @@ public final class InternalProperties {
             new Property<BreakingPointInserter.BPInfo>("breakingPoint.info");
 
     /**
+     * The edge to which to assign the final bendpoints when edges are routed as splines. By default this is the first
+     * edge of the {@link InternalProperties#SPLINE_EDGE_CHAIN}, in which case this property should be {@code null}.
+     * However, in certain scenarios, e.g. if graph wrapping is used, the edge must be specified explicitly. This must
+     * be done using this property.
+     */
+    public static final IProperty<LEdge> SPLINE_SURVIVING_EDGE = new Property<>("splines.survivingEdge");
+    
+    /**
      * Collection of all spline routes created by the {@link SplineEdgeRouter}. Set on an {@link LEdge}, to be read by
      * the {@link FinalSplineBendpointsCalculator}.
      */
