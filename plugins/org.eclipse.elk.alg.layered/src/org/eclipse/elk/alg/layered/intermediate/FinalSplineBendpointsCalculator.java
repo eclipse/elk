@@ -355,10 +355,12 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
         KVector[] approx = ElkMath.approximateBezierSegment(2, v1, v2, v3);
         
         boolean shortCutSource = false;
-        if (ei.normalSourceNode) {
+        final LNode src = containingSegment.sourcePort.getNode();
+        // when graph wrapping is activated, it can happen that the 'src' node doesn't exist anymore (the same goes for
+        // the node's layer)
+        if (src != null && src.getLayer() != null && ei.normalSourceNode) {
             // possible intersections must only be checked if there are nodes 
             // with which the edge could potentially intersect
-            final LNode src = containingSegment.sourcePort.getNode();
             final boolean needToCheckSrc = 
                         edgePointsDownwards && src.id < src.getLayer().getNodes().size() - 1
                     || !edgePointsDownwards && src.id > 0;
@@ -383,8 +385,9 @@ public class FinalSplineBendpointsCalculator implements ILayoutProcessor<LGraph>
         }
         
         boolean shortCutTarget = false;
-        if (ei.normalTargetNode) {
-            final LNode tgt = containingSegment.targetPort.getNode();
+        final LNode tgt = containingSegment.targetPort.getNode();
+        // see comment above
+        if (tgt != null && tgt.getLayer() != null && ei.normalTargetNode) {
             final boolean needToCheckTgt = 
                         edgePointsDownwards && tgt.id > 0
                     || !edgePointsDownwards && tgt.id < tgt.getLayer().getNodes().size() - 1;
