@@ -94,7 +94,7 @@ public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
         }
         
         // #3 if they are not guaranteed to be valid, make them valid
-        if (!icic.guaranteeValid()) {
+        if (!icic.guaranteeValid() && graph.hasProperty(LayeredOptions.WRAPPING_VALIDIFY_STRATEGY)) {
             switch (graph.getProperty(LayeredOptions.WRAPPING_VALIDIFY_STRATEGY)) {
                 case LOOK_BACK:
                     cuts = SingleEdgeGraphWrapper.validifyIndexesLookingBack(gs, cuts);
