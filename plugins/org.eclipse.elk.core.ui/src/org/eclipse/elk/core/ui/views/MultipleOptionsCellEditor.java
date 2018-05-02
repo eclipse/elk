@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Kiel University and others.
+ * Copyright (c) 2011, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.core.ui.views;
 
@@ -22,8 +19,6 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * A cell editor that opens a dialog to select a subset from a given number of options.
- *
- * @author cds
  */
 public class MultipleOptionsCellEditor extends DialogCellEditor {
     /**
@@ -53,9 +48,6 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
         decoratedItemValues = enumerationSet;
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Control createContents(final Composite cell) {
         Control label = super.createContents(cell);
@@ -66,6 +58,8 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
                     markDirty();
                     doSetValue(newValue);
                     fireApplyEditorValue();
+                } else {
+                    fireCancelEditor();
                 }
                 // set focus on the layout view in order to be able to respond to key bindings
                 LayoutViewPart layoutView = LayoutViewPart.findView();
@@ -77,9 +71,6 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
         return label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void updateContents(final Object value) {
         if (value instanceof String[]) {
@@ -100,9 +91,6 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Object openDialogBox(final Control cellEditorWindow) {
         ListSelectionDialog dialog = new ListSelectionDialog(
@@ -123,7 +111,7 @@ public class MultipleOptionsCellEditor extends DialogCellEditor {
             
             return stringResult;
         } else {
-            return new String[0];
+            return null;
         }
     }
     
