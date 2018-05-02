@@ -242,16 +242,17 @@ public class LayoutConfigurationManager {
     }
     
     /**
-     * Transfer option values from a configuration store of a graph element to a configurator.
+     * Transfer option values from a configuration store of a graph element to a configurator. The
+     * configuration store is obtained for the diagram part that corresponds to the given graph element
+     * in the layout mapping. 
      */
     protected void configureElement(final ElkGraphElement element, final LayoutMapping layoutMapping,
             final LayoutConfigurator configurator) {
-        
         Object diagramPart = layoutMapping.getGraphMap().get(element);
         ILayoutConfigurationStore configurationStore = configProvider.get(layoutMapping.getWorkbenchPart(),
                 diagramPart);
         if (configurationStore != null) {
-            configureElement(element, configurationStore, configurator, false);
+            configureElement(element, configurationStore, configurator);
         }
     }
     
@@ -260,24 +261,16 @@ public class LayoutConfigurationManager {
      * element as key.
      */
     protected void configureElement(final ElkGraphElement element, final ILayoutConfigurationStore configStore,
-            final LayoutConfigurator configurator, final boolean recursiveOnly) {
-        
-        ILayoutConfigurationStore parentStore = configStore.getParent();
-        if (parentStore != null) {
-            configureElement(element, parentStore, configurator, true);
-        }
-        
-        if (!recursiveOnly) {
-            LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
-            for (String optionId : configStore.getAffectedOptions()) {
-                Object value = configStore.getOptionValue(optionId);
-                LayoutOptionData optionData = layoutDataService.getOptionData(optionId);
-                if (optionData != null && value != null) {
-                    if (value instanceof String) {
-                        value = optionData.parseValue((String) value);
-                    }
-                    configurator.configure(element).setProperty(optionData, value);
+            final LayoutConfigurator configurator) {
+        LayoutMetaDataService layoutDataService = LayoutMetaDataService.getInstance();
+        for (String optionId : configStore.getAffectedOptions()) {
+            Object value = configStore.getOptionValue(optionId);
+            LayoutOptionData optionData = layoutDataService.getOptionData(optionId);
+            if (optionData != null && value != null) {
+                if (value instanceof String) {
+                    value = optionData.parseValue((String) value);
                 }
+                configurator.configure(element).setProperty(optionData, value);
             }
         }
     }
