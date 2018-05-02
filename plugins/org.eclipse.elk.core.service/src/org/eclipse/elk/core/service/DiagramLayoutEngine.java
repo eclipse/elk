@@ -376,6 +376,12 @@ public class DiagramLayoutEngine {
                 } else {
                     mapping = connector.buildLayoutGraph(workbenchPart, diagramPart);
                 }
+                
+                if (mapping != null && mapping.getLayoutGraph() != null) {
+                    // Extract the diagram configuration
+                    addDiagramConfig(finalParams, mapping);
+                }
+                
                 layoutMapping.set(mapping);
             }
 
@@ -389,8 +395,6 @@ public class DiagramLayoutEngine {
                 LayoutMapping mapping = layoutMapping.get();
                 IStatus status;
                 if (mapping != null && mapping.getLayoutGraph() != null) {
-                    // Extract the diagram configuration
-                    addDiagramConfig(finalParams, mapping);
                     
                     // Perform the actual layout
                     status = layout(mapping, monitor, finalParams);
