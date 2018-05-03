@@ -163,6 +163,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports nodePlacement.favorStraightEdges
     supports org.eclipse.elk.spacing.portsSurrounding
     supports directionCongruency
+    supports portSortingStrategy
 }
 
 
@@ -851,6 +852,15 @@ advanced option northOrSouthPort: boolean {
     targets ports
     legacyIds de.cau.cs.kieler.klay.layered.northOrSouthPort
 }
+
+advanced option portSortingStrategy: PortSortingStrategy {
+    label "Port Sorting Strategy"
+    description 
+        "Only relevant for nodes with FIXED_SIDE port constraints. Determines the way a node's ports are 
+         distributed on the sides of a node if their order is not prescribed. The option is set on parent nodes."
+    default = PortSortingStrategy.INPUT_ORDER
+    targets parents
+} 
 
 advanced option thoroughness: int {
 	label "Thoroughness"
