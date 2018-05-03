@@ -398,7 +398,7 @@ public abstract class ThresholdStrategy {
             
             if (delta > 0 && delta < THRESHOLD) {
                 // target y larger than source y --> shift upwards?
-                double availableSpace = bal.checkSpaceAbove(block.getNode(), delta);
+                double availableSpace = bal.checkSpaceAbove(block.getNode(), delta, ni);
                 assert DoubleMath.fuzzyEquals(availableSpace, 0, EPSILON) || availableSpace >= 0;
                 bal.shiftBlock(block.getNode(), -availableSpace);
                 return availableSpace > 0;
@@ -406,7 +406,7 @@ public abstract class ThresholdStrategy {
                 
                 // direction is up, we possibly shifted some blocks too far upward 
                 // for an edge to be straight, so check if we can shift down again
-                double availableSpace = bal.checkSpaceBelow(block.getNode(), -delta);
+                double availableSpace = bal.checkSpaceBelow(block.getNode(), -delta, ni);
                 assert DoubleMath.fuzzyEquals(availableSpace, 0, EPSILON) || availableSpace >= 0;
                 bal.shiftBlock(block.getNode(), availableSpace);
                 return availableSpace > 0;

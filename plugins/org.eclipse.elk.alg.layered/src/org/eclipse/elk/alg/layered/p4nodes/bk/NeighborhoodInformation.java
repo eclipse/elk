@@ -37,9 +37,9 @@ public final class NeighborhoodInformation {
     
     /** Number of nodes in the graph. */
     public int nodeCount;
-    /** For a layer l the entry at layerIndex[l.id] holds the index of layer l. */
+    /** For a layer {@code l} the entry at {@code layerIndex[l.id]} holds the index of layer {@code l}. */
     public int[] layerIndex;
-    /** For a node n the entry at nodeIndex[n.id] holds the index of n in its layer. */
+    /** For a node {@code n} the entry at {@code nodeIndex[n.id]} holds the index of {@code n} within its layer. */
     public int[] nodeIndex;
     /**
      * For a node n holds leftNeighbors.get(n.id) holds a list with all left neighbors along with

@@ -177,7 +177,7 @@ public final class BKAlignedLayout {
      * @return A value smaller or equal to {@code delta} indicating the maximal distance the
      *         block can be moved upward.
      */
-    public double checkSpaceAbove(final LNode blockRoot, final double delta) {
+    public double checkSpaceAbove(final LNode blockRoot, final double delta, final NeighborhoodInformation ni) {
         
         double availableSpace = delta;
         final LNode rootNode = blockRoot;
@@ -188,7 +188,7 @@ public final class BKAlignedLayout {
             // get minimum possible position of the current node
             double minYCurrent = getMinY(current);
 
-            LNode neighbor = getUpperNeighbor(current, current.getIndex()); // FIXME getindex SLOW
+            LNode neighbor = getUpperNeighbor(current, ni);
             if (neighbor != null) {
                 double maxYNeighbor = getMaxY(neighbor);
                 // minimal position at which the current block node could validly be placed
@@ -214,7 +214,7 @@ public final class BKAlignedLayout {
      * @return A value smaller or equal to {@code delta} indicating the maximal distance the
      *         block can be moved upward.
      */
-    public double checkSpaceBelow(final LNode blockRoot, final double delta) {
+    public double checkSpaceBelow(final LNode blockRoot, final double delta, final NeighborhoodInformation ni) {
 
         double availableSpace = delta;
         final LNode rootNode = blockRoot;
@@ -226,7 +226,7 @@ public final class BKAlignedLayout {
             double maxYCurrent = getMaxY(current);
 
             // get the lower neighbor and check its position allows shifting
-            LNode neighbor = getLowerNeighbor(current, current.getIndex()); // FIXME getindex SLOW
+            LNode neighbor = getLowerNeighbor(current, ni);
             if (neighbor != null) {
                 double minYNeighbor = getMinY(neighbor);
 
@@ -281,13 +281,14 @@ public final class BKAlignedLayout {
     /**
      * @param n
      *            the node for which the neighbor is requested.
-     * @param layerIndex
-     *            the index of {@code n} within its layer.
+     * @param ni
+     *            the {@link NeighborhoodInformation} of {@code n}.
      * @return the node with a <b>larger</b> y than {@code n} within {@code n}'s layer if it exists,
      *         otherwise {@code null}.
      */
-    private LNode getLowerNeighbor(final LNode n, final int layerIndex) {
+    private LNode getLowerNeighbor(final LNode n, final NeighborhoodInformation ni) {
         Layer l = n.getLayer();
+        int layerIndex = ni.nodeIndex[n.id];
         if (layerIndex < l.getNodes().size() - 1) {
             return l.getNodes().get(layerIndex + 1);
         }
@@ -297,13 +298,14 @@ public final class BKAlignedLayout {
     /**
      * @param n
      *            the node for which the neighbor is requested.
-     * @param layerIndex
-     *            the index of {@code n} within its layer.
+     * @param ni
+     *            the {@link NeighborhoodInformation} of {@code n}.
      * @return the node with a <b>smaller</b> y than {@code n} within {@code n}'s layer if it
      *         exists, otherwise {@code null}.
      */
-    private LNode getUpperNeighbor(final LNode n, final int layerIndex) {
+    private LNode getUpperNeighbor(final LNode n, final NeighborhoodInformation ni) {
         Layer l = n.getLayer();
+        int layerIndex = ni.nodeIndex[n.id];
         if (layerIndex > 0) {
             return l.getNodes().get(layerIndex - 1); 
         }
