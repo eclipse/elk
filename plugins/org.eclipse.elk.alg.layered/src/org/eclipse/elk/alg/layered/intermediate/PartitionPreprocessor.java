@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Add constraint edges between partitions. </br>
- * In partitioned graphs, each node has an assigned partition. For every node holds, that every other node
+ * In partitioned graphs, nodes may have an assigned partition. For every such node holds, that every other node
  * with a smaller partition is placed left to it. This is accomplished by adding partition constraint
  * edges. For each node, we add an edge to every node in the next greater partition. These edges get a
  * high priority assigned such that during cycle breaking, none of these constraint edges gets reversed.
@@ -64,10 +64,10 @@ public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
         partitions = Lists.newArrayList();
         // Sort nodes into partitions.
         for (LNode node : lGraph.getLayerlessNodes()) {
-            Integer index = node.getProperty(LayeredOptions.PARTITIONING_PARTITION);
-            // We assume every node has a partition set.
-            assert index != null : "Missing partition property at " + node.toString();
-            retrievePartition(index).add(node);
+            if (node.hasProperty(LayeredOptions.PARTITIONING_PARTITION)) {
+                Integer index = node.getProperty(LayeredOptions.PARTITIONING_PARTITION);
+                retrievePartition(index).add(node);
+            }
         }
 
         // Add edges from each node to every node in the next greater partition.
@@ -106,7 +106,7 @@ public class PartitionPreprocessor implements ILayoutProcessor<LGraph> {
      */
     private List<LNode> retrievePartition(final int index) {
         while (index >= partitions.size()) {
-            partitions.add(new LinkedList<LNode>());
+            partitions.add(new ArrayList<LNode>());
         }
         return partitions.get(index);
     }

@@ -389,7 +389,8 @@ group partitioning {
 		label "Layout Partition"
 		description 
 			"Partition to which the node belongs to. If 'layoutPartitions' is true,
-			all nodes are expected to have a partition."
+			 a pair of nodes with different partition indices is placed such that 
+             the node with lower index is placed to the left of the other node (with left-to-right layout direction)."
 		targets parents, nodes
 		legacyIds de.cau.cs.kieler.partition
 	}
