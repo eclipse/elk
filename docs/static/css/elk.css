@@ -10,6 +10,10 @@
 }
 
 /* DEFINITIONS FOR THE NAVIGATION */
+nav {
+  background-color: #4c4d4e;
+}
+
 .secnav {
   font-size: 90%;
   padding: 0px;
@@ -45,8 +49,7 @@
 
 /* DEFINITIONS FOR THE FOOTER */
 footer {
-  background:no-repeat center center #242426;
-  /*font-family:"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;*/
+  background:no-repeat center center #4c4d4e;
   -webkit-background-size:cover;
   -moz-background-size:cover;
   -o-background-size:cover;
@@ -75,13 +78,11 @@ footer a:hover {
 }
 footer .logo-eclipse-white {
   float: left;
-  margin-top: 10px;
   margin-bottom: 15px;
   margin-right: 15px;
   clear: both;
   max-width: 161px;
 }
 footer .copyright-text {
-  padding-top: 21px;
   text-align: right;
 }
