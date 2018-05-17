@@ -943,7 +943,7 @@
       <requirement
           name="org.eclipse.elk.sdk.feature.feature.group"/>
       <repository
-          url="http://build.eclipse.org/modeling/elk/releases/0.4.0/"/>
+          url="http://build.eclipse.org/modeling/elk/updates/0.4.0/"/>
     </setupTask>
     <setupTask
         xsi:type="setup.targlets:TargletTask">
