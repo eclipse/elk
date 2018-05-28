@@ -276,7 +276,7 @@ group spacing {
 	    description 
 	       "Spacing to be preserved between pairs of connected components. 
             This option is only relevant if 'separateConnectedComponents' is activated."
-        default = 12f
+        default = 20f
         lowerBound = 0.0
         targets parents
         legacyIds de.cau.cs.kieler.borderSpacing
