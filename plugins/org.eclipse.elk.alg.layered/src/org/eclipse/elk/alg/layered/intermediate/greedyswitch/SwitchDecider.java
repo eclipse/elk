@@ -184,8 +184,8 @@ public final class SwitchDecider {
 
     private boolean haveLayoutUnitConstraints(final LNode upperNode, final LNode lowerNode) {
         boolean neitherNodeIsLongEdgeDummy =
-                upperNode.getType() != NodeType.LONG_EDGE
-                        && lowerNode.getType() != NodeType.LONG_EDGE;
+                !upperNode.getType().isLongEdgeDummy()
+                        && !lowerNode.getType().isLongEdgeDummy();
 
         // If upperNode and lowerNode are part of a layout unit not only containing themselves,
         // then the layout units must be equal for a switch to be allowed.
@@ -237,7 +237,7 @@ public final class SwitchDecider {
     }
 
     private boolean isNorthSouthPortNode(final LNode node) {
-        return node.getType() == NodeType.NORTH_SOUTH_PORT;
+        return node.getType().isNorthSouthDummy();
     }
 
 

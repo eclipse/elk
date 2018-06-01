@@ -622,7 +622,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             final Function<LNode, LNode> nextElement, final boolean value) {
         
         LNode longEdgeDummy = nextElement.apply(labelDummy);
-        while (longEdgeDummy.getType() == NodeType.LONG_EDGE) {
+        while (longEdgeDummy.getType().isLongEdgeDummy()) {
             longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_BEFORE_LABEL_DUMMY, value);
             longEdgeDummy = nextElement.apply(longEdgeDummy);
         }
@@ -698,10 +698,10 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             LNode source = labelDummy;
             do {
                 source = source.getIncomingEdges().iterator().next().getSource().getNode();
-                if (source.getType() == NodeType.LONG_EDGE) {
+                if (source.getType().isLongEdgeDummy()) {
                     leftLongEdgeDummies.add(source);
                 }
-            } while (source.getType() == NodeType.LONG_EDGE);
+            } while (source.getType().isLongEdgeDummy());
             
             // The list is currently not in the order we would expect, so produce a reversed version
             leftLongEdgeDummies = Lists.reverse(leftLongEdgeDummies);
@@ -716,10 +716,10 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
             LNode target = labelDummy;
             do {
                 target = target.getOutgoingEdges().iterator().next().getTarget().getNode();
-                if (target.getType() == NodeType.LONG_EDGE) {
+                if (target.getType().isLongEdgeDummy()) {
                     rightLongEdgeDummies.add(target);
                 }
-            } while (target.getType() == NodeType.LONG_EDGE);
+            } while (target.getType().isLongEdgeDummy());
         }
         
         /**

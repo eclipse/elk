@@ -128,7 +128,7 @@ public class BKAligner {
                                     bal.align[u_m.id] = v_i_k;
                                     bal.root[v_i_k.id] = bal.root[u_m.id];
                                     bal.align[v_i_k.id] = bal.root[v_i_k.id];
-                                    bal.od[bal.root[v_i_k.id].id] &= v_i_k.getType() == NodeType.LONG_EDGE;  
+                                    bal.od[bal.root[v_i_k.id].id] &= v_i_k.getType().isLongEdgeDummy();  
                                     
                                     r = ni.nodeIndex[u_m.id];
                                 }
@@ -146,7 +146,7 @@ public class BKAligner {
                                     bal.align[um.id] = v_i_k;
                                     bal.root[v_i_k.id] = bal.root[um.id];
                                     bal.align[v_i_k.id] = bal.root[v_i_k.id];
-                                    bal.od[bal.root[v_i_k.id].id] &= v_i_k.getType() == NodeType.LONG_EDGE;
+                                    bal.od[bal.root[v_i_k.id].id] &= v_i_k.getType().isLongEdgeDummy();
                                     
                                     r = ni.nodeIndex[um.id];
                                 }

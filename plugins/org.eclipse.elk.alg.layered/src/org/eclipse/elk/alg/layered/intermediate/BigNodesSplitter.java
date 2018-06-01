@@ -269,7 +269,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
         // either exactly one incoming edge that originates from a long edge dummy
         if (Iterables.size(westwardEdges) == 1) {
             LNode source = Iterables.get(westwardEdges, 0).getSource().getNode();
-            if (source.getType() == NodeType.LONG_EDGE
+            if (source.getType().isLongEdgeDummy()
             // and the long edge dummy does not represent a self loop
                     && !source.getProperty(InternalProperties.LONG_EDGE_SOURCE).getNode()
                             .equals(node.node)) {
@@ -281,7 +281,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
         // on outgoing edge analog
         if (Iterables.size(eastwardEdges) == 1) {
             LNode target = Iterables.get(eastwardEdges, 0).getTarget().getNode();
-            if (target.getType() == NodeType.LONG_EDGE
+            if (target.getType().isLongEdgeDummy()
                     && !target.getProperty(InternalProperties.LONG_EDGE_TARGET).getNode()
                             .equals(node.node)) {
                 node.type = BigNodeType.OUT_LONG_EDGE;
@@ -415,8 +415,8 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
             
             // we require exactly one incoming edge
             if (Iterables.size(start.getIncomingEdges()) != 1
-                    || Iterables.get(start.getIncomingEdges(), 0).getSource().getNode()
-                            .getType() != NodeType.LONG_EDGE) {
+                    || !Iterables.get(start.getIncomingEdges(), 0).getSource().getNode()
+                            .getType().isLongEdgeDummy()) {
                 return null;
             }
             
@@ -541,8 +541,8 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
         private LNode replaceOutLongEdgeDummy(final LNode start) {
 
             if (Iterables.size(start.getOutgoingEdges()) != 1
-                    || Iterables.get(start.getOutgoingEdges(), 0).getTarget().getNode()
-                            .getType() != NodeType.LONG_EDGE) {
+                    || !Iterables.get(start.getOutgoingEdges(), 0).getTarget().getNode()
+                            .getType().isLongEdgeDummy()) {
                 return null;
             }
 
@@ -930,7 +930,7 @@ public class BigNodesSplitter implements ILayoutProcessor<LGraph> {
                 // FIXME this is too restrictive!
                 // It would be better if an interleaving exists.
                 for (LNode n : currentLayer.getNodes()) {
-                    if (n.getType() == NodeType.NORTH_SOUTH_PORT) {
+                    if (n.getType().isNorthSouthDummy()) {
                         return null;
                     }
                 }

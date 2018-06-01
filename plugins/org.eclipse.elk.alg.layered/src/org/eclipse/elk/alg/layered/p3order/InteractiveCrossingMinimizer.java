@@ -117,7 +117,7 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase<LayeredP
                 // if we have a long edge dummy node, save the calculated position in a property
                 // to be used by the interactive node placer (for dummy nodes other than long edge
                 // dummies, we haven't calculated meaningful positions)
-                if (node.getType() == NodeType.LONG_EDGE) {
+                if (node.getType().isLongEdgeDummy()) {
                     node.setProperty(InternalProperties.ORIGINAL_DUMMY_NODE_POSITION, pos[node.id]);
                 }
             }

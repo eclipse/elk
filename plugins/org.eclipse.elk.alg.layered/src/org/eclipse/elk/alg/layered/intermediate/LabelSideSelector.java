@@ -247,7 +247,7 @@ public final class LabelSideSelector implements ILayoutProcessor<LGraph> {
         LNode prevLongEdgeTarget = null;
         
         for (LNode currentDummy : dummyNodes) {
-            assert currentDummy.getType() == NodeType.LABEL || currentDummy.getType() == NodeType.LONG_EDGE;
+            assert currentDummy.getType() == NodeType.LABEL || currentDummy.getType().isLongEdgeDummy();
             
             // Check if we are continuing a previous run
             LNode currLongEdgeSource = getLongEdgeEndNode(currentDummy, true);

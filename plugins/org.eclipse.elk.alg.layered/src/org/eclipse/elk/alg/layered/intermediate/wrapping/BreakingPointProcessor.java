@@ -365,7 +365,7 @@ public class BreakingPointProcessor implements ILayoutProcessor<LGraph> {
         for (LEdge e : edges) {
             LNode other = e.getOther(start);
             
-            if (other.getType() == NodeType.LONG_EDGE
+            if (other.getType().isLongEdgeDummy()
                     && other.getLayer() != start.getLayer()) {
                 return other;
             } 
@@ -374,7 +374,7 @@ public class BreakingPointProcessor implements ILayoutProcessor<LGraph> {
     }
     
     private boolean isInLayerDummy(final LNode node) {
-        if (node.getType() == NodeType.LONG_EDGE) {
+        if (node.getType().isLongEdgeDummy()) {
             for (LEdge e : node.getConnectedEdges()) {
                 if (!e.isSelfLoop() 
                         && node.getLayer() == e.getOther(node).getLayer()) {

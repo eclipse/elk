@@ -205,7 +205,7 @@ public final class DotDebugUtil {
                 } else {
                     options.append("n_" + node.id + " ");
                 }
-                if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getType().isNorthSouthDummy()) {
                     Object origin = node.getProperty(InternalProperties.ORIGIN);
                     if (origin instanceof LNode) {
                         options.append("(" + ((LNode) origin).toString() + ")");

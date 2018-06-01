@@ -144,7 +144,7 @@ public final class CuttingUtils {
     private static void setDummyProperties(final LNode dummy, final LEdge inEdge, final LEdge outEdge) {
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
         
-        if (inEdgeSourceNode.getType() == NodeType.LONG_EDGE) {
+        if (inEdgeSourceNode.getType().isLongEdgeDummy()) {
             // The incoming edge originates from a long edge dummy node, so we can
             // just copy its properties
             dummy.setProperty(InternalProperties.LONG_EDGE_SOURCE,

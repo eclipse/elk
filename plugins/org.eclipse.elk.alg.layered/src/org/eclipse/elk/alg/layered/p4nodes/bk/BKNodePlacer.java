@@ -502,11 +502,11 @@ public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
             }
         }
         
-        if (node.getType() == NodeType.LONG_EDGE) {
+        if (node.getType().isLongEdgeDummy()) {
             for (LEdge edge : node.getIncomingEdges()) {
                 NodeType sourceNodeType = edge.getSource().getNode().getType();
                 
-                if (sourceNodeType == NodeType.LONG_EDGE
+                if (sourceNodeType.isLongEdgeDummy()
                         && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2
                         && ni.layerIndex[node.getLayer().id] == layer1) {
                     

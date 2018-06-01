@@ -1023,7 +1023,7 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
     public static boolean isQualifiedAsStartingNode(final LNode node) {
         NodeType nt = node.getType();
         return nt == NodeType.NORMAL 
-            || nt == NodeType.NORTH_SOUTH_PORT 
+            || nt.isNorthSouthDummy() 
             || nt == NodeType.EXTERNAL_PORT 
             || nt == NodeType.BIG_NODE
             || nt == NodeType.BREAKING_POINT;

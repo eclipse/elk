@@ -297,7 +297,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
         NodeType targetNodeType = targetNode.getType();
         
         // Set the LONG_EDGE_SOURCE property
-        if (sourceNodeType == NodeType.LONG_EDGE) {
+        if (sourceNodeType.isLongEdgeDummy()) {
             // The source is a LONG_EDGE node; use its LONG_EDGE_SOURCE
             longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_SOURCE,
                     sourceNode.getProperty(InternalProperties.LONG_EDGE_SOURCE));
@@ -307,7 +307,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor<LGraph> {
         }
 
         // Set the LONG_EDGE_TARGET property
-        if (targetNodeType == NodeType.LONG_EDGE) {
+        if (targetNodeType.isLongEdgeDummy()) {
             // The target is a LONG_EDGE node; use its LONG_EDGE_TARGET
             longEdgeDummy.setProperty(InternalProperties.LONG_EDGE_TARGET,
                     targetNode.getProperty(InternalProperties.LONG_EDGE_TARGET));

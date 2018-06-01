@@ -103,7 +103,7 @@ class SweepCopy {
                 LNode node = nodeOrder[i][j];
                 // use the id field to remember the order within the layer
                 node.id = j;
-                if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getType().isNorthSouthDummy()) {
                     northSouthPortDummies.add(node);
                 }
                 
@@ -135,7 +135,7 @@ class SweepCopy {
      * @return The {@link LNode} ('origin') whose port {@code dummy} represents. 
      */
     private LNode assertCorrectPortSides(final LNode dummy) {
-        assert dummy.getType() == NodeType.NORTH_SOUTH_PORT;
+        assert dummy.getType().isNorthSouthDummy();
 
         LNode origin = dummy.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
 

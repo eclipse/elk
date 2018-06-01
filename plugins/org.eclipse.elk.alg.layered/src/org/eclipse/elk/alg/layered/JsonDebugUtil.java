@@ -693,7 +693,7 @@ public final class JsonDebugUtil {
             } else {
                 name = "n_" + node.id;
             }
-            if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
+            if (node.getType().isNorthSouthDummy()) {
                 Object origin = node.getProperty(InternalProperties.ORIGIN);
                 if (origin instanceof LNode) {
                     name += "(" + ((LNode) origin).toString() + ")";

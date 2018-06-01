@@ -202,7 +202,7 @@ public class LayerSweepTypeDecider implements IInitializable {
     }
 
     private boolean isNorthSouthDummy(final LNode node) {
-        return node.getType() == NodeType.NORTH_SOUTH_PORT;
+        return node.getType().isNorthSouthDummy();
     }
 
     private boolean isEasternDummy(final LNode node) {

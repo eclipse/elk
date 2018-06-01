@@ -959,12 +959,12 @@ public class NetworkSimplexPlacer implements ILayoutPhase<LayeredPhases, LGraph>
             if (this.isEmpty()) {
                 return false;
             }
-            if (get(0).getSource().getNode().getType() == NodeType.LONG_EDGE) {
+            if (get(0).getSource().getNode().getType().isLongEdgeDummy()) {
                 return true;
             }
             return this.stream()
                     .map(e -> e.getTarget().getNode().getType())
-                    .anyMatch(t -> t == NodeType.LONG_EDGE);
+                    .anyMatch(t -> t.isLongEdgeDummy());
         }
         
         /**

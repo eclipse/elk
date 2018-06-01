@@ -79,7 +79,7 @@ public final class LongEdgeJoiner implements ILayoutProcessor<LGraph> {
                 LNode node = nodeIterator.next();
                 
                 // Check if it's a dummy edge we're looking for
-                if (node.getType() == NodeType.LONG_EDGE) {
+                if (node.getType().isLongEdgeDummy()) {
                     joinAt(node, addUnnecessaryBendpoints);
                     
                     // Remove the node

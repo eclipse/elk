@@ -192,7 +192,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor<LGraph> {
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
         LNode outEdgeTargetNode = outEdge.getTarget().getNode();
         
-        if (inEdgeSourceNode.getType() == NodeType.LONG_EDGE) {
+        if (inEdgeSourceNode.getType().isLongEdgeDummy()) {
             // The incoming edge originates from a long edge dummy node, so we can just copy its properties
             dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE,
                     inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_SOURCE));

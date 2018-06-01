@@ -80,6 +80,23 @@ public final class LNode extends LShape {
             }
         }
 
+        public boolean isNorthSouthDummy() {
+            switch (this) {
+            case NORTH_SOUTH_PORT:
+                return true;
+            default:
+                return false;
+            }
+        }
+        
+        public boolean isLongEdgeDummy() {
+            switch (this) {
+            case LONG_EDGE:
+                return true;
+            default:
+                return false;
+            }
+        }
     }
     
     /** the serial version UID. */

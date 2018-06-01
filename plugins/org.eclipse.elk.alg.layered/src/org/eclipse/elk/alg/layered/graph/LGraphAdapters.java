@@ -560,7 +560,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getIncomingEdges() {
-            if (transparentNorthSouthEdges && element.getNode().getType() == NodeType.NORTH_SOUTH_PORT) {
+            if (transparentNorthSouthEdges && element.getNode().getType().isNorthSouthDummy()) {
                 return Collections.emptyList();
             } else if (incomingEdgeAdapters == null) {
                 incomingEdgeAdapters = Lists.newArrayList();
@@ -583,7 +583,7 @@ public final class LGraphAdapters {
          * {@inheritDoc}
          */
         public Iterable<EdgeAdapter<?>> getOutgoingEdges() {
-            if (transparentNorthSouthEdges && element.getNode().getType() == NodeType.NORTH_SOUTH_PORT) {
+            if (transparentNorthSouthEdges && element.getNode().getType().isNorthSouthDummy()) {
                 return Collections.emptyList();
             } else if (outgoingEdgeAdapters == null) {
                 outgoingEdgeAdapters = Lists.newArrayList();

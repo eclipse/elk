@@ -494,8 +494,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
         }
         segment.nodeType = nodeType;
 
-        if (nodeType == NodeType.LONG_EDGE
-                || nodeType == NodeType.NORTH_SOUTH_PORT
+        if (nodeType.isLongEdgeDummy()
+                || nodeType.isNorthSouthDummy()
                 || nodeType == NodeType.BIG_NODE) {
 
             // This is a LONG_EDGE, NORTH_SOUTH_PORT or BIG_NODE dummy; check if any of its
@@ -522,8 +522,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhase
                             }
                         } else {
                             // current no bignode and next node is LONG_EDGE and NORTH_SOUTH_PORT
-                            if (targetNodeType == NodeType.LONG_EDGE
-                                    || targetNodeType == NodeType.NORTH_SOUTH_PORT) {
+                            if (targetNodeType.isLongEdgeDummy()
+                                    || targetNodeType.isNorthSouthDummy()) {
                                 if (fillSegment(targetNode, segment)) {
                                     // We just added another node to this node's linear segment.
                                     // That's quite enough.

@@ -242,7 +242,7 @@ public class GraphStats {
             lH += n.getSize().y + n.getMargin().bottom + n.getMargin().top + inLayerSpacing;
             
             for (LEdge inc : n.getIncomingEdges()) {
-                if (inc.getSource().getNode().getType() == NodeType.NORTH_SOUTH_PORT) {
+                if (inc.getSource().getNode().getType().isNorthSouthDummy()) {
                     LNode src = inc.getSource().getNode();
                     LNode origin = (LNode) src.getProperty(InternalProperties.ORIGIN);
                     lH += origin.getSize().y + origin.getMargin().bottom + origin.getMargin().top; 

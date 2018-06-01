@@ -463,7 +463,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
      * an in-layer edge. 
      */
     private boolean isInLayerDummy(final LNode node) {
-        if (node.getType() == NodeType.LONG_EDGE) {
+        if (node.getType().isLongEdgeDummy()) {
             for (LEdge e : node.getConnectedEdges()) {
                 if (e.isInLayerEdge()) {
                     return true;

@@ -179,11 +179,11 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     }
 
     private boolean isLongEdgeDummy(final LNode node) {
-        return node.getType() == NodeType.LONG_EDGE;
+        return node.getType().isLongEdgeDummy();
     }
 
     private boolean isNorthSouth(final LNode node) {
-        return node.getType() == NodeType.NORTH_SOUTH_PORT;
+        return node.getType().isNorthSouthDummy();
     }
 
     private boolean isNormal(final LNode node) {

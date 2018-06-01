@@ -87,7 +87,7 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor<LGraph> {
                 currNodeType = currNode.getType();
                 
                 // We're only interested if the current and last nodes are long edge dummies
-                if (currNodeType == NodeType.LONG_EDGE && lastNodeType == NodeType.LONG_EDGE) {
+                if (currNodeType.isLongEdgeDummy() && lastNodeType.isLongEdgeDummy()) {
                     
                     // If the source or the target are identical and we are allowed to merge, merge the current node
                     // into the last
@@ -239,7 +239,7 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor<LGraph> {
             }
         }
         // follow edges connected to the same long edge dummy
-        if (p.getNode().getType() == NodeType.LONG_EDGE) {
+        if (p.getNode().getType().isLongEdgeDummy()) {
             for (LPort p2 : p.getNode().getPorts()) {
                 if (p2 != p && p2.id == -1) {
                     dfs(p2, index);
