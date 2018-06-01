@@ -41,15 +41,18 @@ class PropertyKeyValueConverter extends AbstractValueConverter<IProperty<?>> {
                 suffix = idValueConverter.toString(split.get(i--))
             else
                 suffix = idValueConverter.toString(split.get(i--)) + '.' + suffix
-            if (metaDataService.getOptionDataBySuffix(suffix) !== null)
-                return suffix
+                
+            val knownOption = metaDataService.getOptionDataBySuffix(suffix)
+            // make sure to always add the option's group
+            if (knownOption !== null && (knownOption.group.nullOrEmpty || suffix.contains(knownOption.group)))
+                return suffix 
         }
         return split.map[idValueConverter.toString(it)].join('.')
     }
     
     override toValue(String string, INode node) throws ValueConverterException {
         if (string.nullOrEmpty)
-            throw new ValueConverterException("Cannot convert empty string to a property idenfifier.", node, null)
+            throw new ValueConverterException("Cannot convert empty string to a property identifier.", node, null)
         val idSuffix = Strings.split(string, '.').map[idValueConverter.toValue(it, node)].join('.')
         val optionData = LayoutMetaDataService.instance.getOptionDataBySuffix(idSuffix)
         if (optionData === null)
