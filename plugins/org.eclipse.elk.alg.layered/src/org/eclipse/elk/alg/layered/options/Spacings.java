@@ -127,6 +127,9 @@ public final class Spacings {
         nodeTypeSpacing(NodeType.BREAKING_POINT, NodeType.NORMAL, 
                 LayeredOptions.SPACING_EDGE_NODE,
                 LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
+        nodeTypeSpacing(NodeType.BREAKING_POINT, NodeType.LABEL,  
+                LayeredOptions.SPACING_EDGE_NODE, 
+                LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS); 
         nodeTypeSpacing(NodeType.BREAKING_POINT, NodeType.LONG_EDGE, 
                 LayeredOptions.SPACING_EDGE_NODE,
                 LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS);
