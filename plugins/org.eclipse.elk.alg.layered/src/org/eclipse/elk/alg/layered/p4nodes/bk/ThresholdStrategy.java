@@ -243,9 +243,9 @@ public abstract class ThresholdStrategy {
             for (LEdge e : edges) {
                 
                 // ignore in-layer edges unless the block is solely connected by in-layer edges
-                //  rationale: With self-loops and feedback edges it can happen that blocks contain only dummy nodes 
-                //  are not connected to other blocks by non-inlayer edges. To avoid unnecessarily long edges such 
-                //  blocks are allowed to be handled here as well
+                //  rationale: With self-loops and feedback edges it can happen that blocks contain only dummy nodes, 
+                //  thus are not connected to other blocks by non-inlayer edges. To avoid unnecessarily long edges 
+                //  in these cases, such blocks are allowed to be handled here as well (to shorten the edges)
                 boolean onlyDummies = bal.od[bal.root[pp.free.id].id];
                 if (!onlyDummies && e.isInLayerEdge()) {
                     continue;
