@@ -436,8 +436,8 @@ public final class ElkUtil {
         KVectorChain junctionPoints = new KVectorChain();
 
         // Store the points of the edge in a map for efficiency
-        Map<ElkEdgeSection, KVector[]> pointsMap = Maps.newHashMap();
-        KVector[] sectionPoints = getPoints(section);
+        Map<ElkEdgeSection, ArrayList<KVector>> pointsMap = Maps.newHashMap();
+        ArrayList<KVector> sectionPoints = getPoints(section);
         pointsMap.put(section, sectionPoints);
 
         // Store the offset of the other edges
@@ -456,15 +456,15 @@ public final class ElkUtil {
 
                 // Edges might have different containments leading to different coordinate systems
                 // We can calculate the offset between the edges by comparing the shared port
-                KVector[] otherPoints = pointsMap.get(otherSection);
+                ArrayList<KVector> otherPoints = pointsMap.get(otherSection);
                 if (otherPoints == null) {
                     otherPoints = getPoints(otherSection);
                     pointsMap.put(otherSection, otherPoints);
                 }
 
                 KVector offset = reverse
-                        ? new KVector(sectionPoints[sectionPoints.length - 1]).sub(otherPoints[otherPoints.length - 1])
-                        : new KVector(sectionPoints[0]).sub(otherPoints[0]);
+                        ? new KVector(sectionPoints.get(sectionPoints.size() - 1)).sub(otherPoints.get(otherPoints.size() - 1))
+                        : new KVector(sectionPoints.get(0)).sub(otherPoints.get(0));
 
                 offsetMap.put(otherSection, offset);
             }
@@ -473,23 +473,23 @@ public final class ElkUtil {
         if (!allConnectedSections.isEmpty()) {
 
             // let p1 be the start point
-            KVector p1 = sectionPoints[reverse ? sectionPoints.length - 1 : 0];
+            KVector p1 = sectionPoints.get(reverse ? sectionPoints.size() - 1 : 0);
 
             // for all bend points of this connection
-            for (int i = 1; i < sectionPoints.length; i++) {
+            for (int i = 1; i < sectionPoints.size(); i++) {
                 // let p2 be the next bend point on this connection
-                KVector p2 = sectionPoints[reverse ? sectionPoints.length - 1 - i : i];
+                KVector p2 = sectionPoints.get(reverse ? sectionPoints.size() - 1 - i : i);
 
                 // for all other connections that are still on the same track as this one
                 Iterator<ElkEdgeSection> allSectIter = allConnectedSections.iterator();
                 while (allSectIter.hasNext()) {
                     ElkEdgeSection otherSection = allSectIter.next();
-                    KVector[] otherPoints = pointsMap.get(otherSection);
-                    if (otherPoints.length <= i) {
+                    ArrayList<KVector> otherPoints = pointsMap.get(otherSection);
+                    if (otherPoints.size() <= i) {
                         allSectIter.remove();
                     } else {
                         // let p3 be the next bend point of the other connection
-                        KVector p3 = new KVector(otherPoints[reverse ? otherPoints.length - 1 - i : i])
+                        KVector p3 = new KVector(otherPoints.get(reverse ? otherPoints.size() - 1 - i : i))
                                 .add(offsetMap.get(otherSection));
                         if (p2.x != p3.x || p2.y != p3.y) {
                             // the next point of this and the other connection differ
@@ -626,28 +626,43 @@ public final class ElkUtil {
     }
 
     /**
-     * Get the edge section points as an array of vectors.
+     * Get the edge section points as an array of vectors. 
+     * Unnecessary bend points are filtered out automatically. 
      * 
      * @param section an edge section
-     * @return an array with all edge section points
+     * @return an array with all needed edge section points
      */
-    private static KVector[] getPoints(final ElkEdgeSection section) {
+    private static ArrayList<KVector> getPoints(final ElkEdgeSection section) {
         int n = section.getBendPoints().size() + 2;
-        KVector[] points = new KVector[n];
+        ArrayList<KVector> points = new ArrayList<KVector>(n);
 
         // Source point
-        points[0] = new KVector(section.getStartX(), section.getStartY());
+        points.add(new KVector(section.getStartX(), section.getStartY()));
 
         // Bend points
-        ListIterator<ElkBendPoint> pointIter = section.getBendPoints().listIterator();
-        while (pointIter.hasNext()) {
-            ElkBendPoint bendPoint = pointIter.next();
-            points[pointIter.nextIndex()] = new KVector(bendPoint.getX(), bendPoint.getY());
-        }
+        section.getBendPoints().stream()
+                .forEach(bendPoint -> points.add(new KVector(bendPoint.getX(), bendPoint.getY())));
 
         // Target point
-        points[n - 1] = new KVector(section.getEndX(), section.getEndY());
+        points.add(new KVector(section.getEndX(), section.getEndY()));
 
+        // Filter unnecessary bend points from the list
+        int i = 1;
+        while (i < points.size() - 1) {
+            // Unnecessary bend points are given if three points in a row have the same x or y coordinate
+            KVector p1 = points.get(i - 1);
+            KVector p2 = points.get(i);
+            KVector p3 = points.get(i + 1);
+            
+            if ((p1.x == p2.x && p2.x == p3.x) || (p1.y == p2.y && p2.y == p3.y)) {
+                // Found a straight segment, drop p2 and re-check with the same i
+                points.remove(i);
+            } else {
+                // Points are not a straight line, advance
+                ++i;
+            }
+        }
+        
         return points;
     }
 
