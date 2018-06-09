@@ -73,6 +73,31 @@
       </distributionManagement>
     </profile>
 
+    <!-- Activate to have the generated artifacts signed by Eclipse. -->
+    <!-- Only works if the build is run on the Eclipse infrastructure. -->
+    <profile>
+      <id>sign</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.cbi.maven.plugins</groupId>
+            <artifactId>eclipse-jarsigner-plugin</artifactId>
+            <version>1.1.3</version>
+            <executions>
+              <execution>
+                <id>sign</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
     <!-- The Maven publishing configuration. -->
     <profile>
       <id>maven-publish</id>
@@ -146,31 +171,6 @@
             <executions>
               <execution>
                 <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Activate to have the generated artifacts signed by Eclipse. -->
-    <!-- Only works if the build is run on the Eclipse infrastructure. -->
-    <profile>
-      <id>sign</id>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.eclipse.cbi.maven.plugins</groupId>
-            <artifactId>eclipse-jarsigner-plugin</artifactId>
-            <version>1.1.3</version>
-            <executions>
-              <execution>
-                <id>sign</id>
                 <phase>verify</phase>
                 <goals>
                   <goal>sign</goal>
