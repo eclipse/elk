@@ -136,7 +136,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         title: "«algorithm.label ?: algorithm.name»"
         menu:
           main:
-            identifier: "«algorithm.qualifiedName.toHugoIdentifier»"
+            identifier: alg-"«algorithm.qualifiedName.toHugoIdentifier»"
             parent: "Algorithms"
         ---
         
@@ -290,7 +290,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         title: "«title»"
         menu:
           main:
-            identifier: "«id»"
+            identifier: option-"«id»"
             parent: "LayoutOptions"
         ---
         
@@ -357,7 +357,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         title: "«title.toString()»"
         menu:
           main:
-            identifier: "«group.qualifiedName.toHugoIdentifier»"
+            identifier: group-"«group.qualifiedName.toHugoIdentifier»"
             parent: "LayoutOptionGroups"
         ---
         
