@@ -231,6 +231,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
                         supportedOption.option.generateDoc(
                             (supportedOption.option.label ?: supportedOption.option.name) + " ("
                                 + (algorithm.label ?: algorithm.name) + ")",
+                            optionFileName,
                             supportedOption.documentation.additionalDocumentation(optionFileName))
                     )
                 }
@@ -261,6 +262,7 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      */
     private def dispatch String generateDoc(MdOption option) {
         generateDoc(option, option.label ?: option.name,
+            option.qualifiedName.toHugoIdentifier,
             option.documentation.additionalDocumentation(option.qualifiedName.toHugoIdentifier))
     }
     
@@ -273,20 +275,22 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
      *      the {@link MdOption} from the {@link MdModel}
      * @param title
      *      the title for the documentation page
+     * @param id
+     *      the identifier of the options page to be generated
      * @param additionalDoc
      *      a String of additional documentation that will be appended 
      * @return
      *      the Markdown String
      * @see #additionalDocumentation
      */
-    private def String generateDoc(MdOption option, String title, String additionalDoc) {
+    private def String generateDoc(MdOption option, String title, String id, String additionalDoc) {
         // The frontmatter header (between dashes) tells the static-site-generator how to render this document.
         var doc = '''
         ---
         title: "«title»"
         menu:
           main:
-            identifier: "«option.qualifiedName.toHugoIdentifier»"
+            identifier: "«id»"
             parent: "LayoutOptions"
         ---
         
