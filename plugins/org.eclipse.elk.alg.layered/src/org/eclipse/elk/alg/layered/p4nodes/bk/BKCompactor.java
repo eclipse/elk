@@ -18,6 +18,7 @@ import java.util.Queue;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.alg.layered.options.EdgeStraighteningStrategy;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKAlignedLayout.HDirection;

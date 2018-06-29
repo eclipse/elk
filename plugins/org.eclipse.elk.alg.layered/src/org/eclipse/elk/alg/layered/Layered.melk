@@ -13,7 +13,6 @@ package org.eclipse.elk.alg.layered
 import java.util.EnumSet
 import java.util.List
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider
-import org.eclipse.elk.alg.layered.p4nodes.bk.EdgeStraighteningStrategy
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
