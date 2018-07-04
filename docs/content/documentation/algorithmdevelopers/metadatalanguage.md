@@ -272,7 +272,7 @@ Three details deserve more explanation:
 
 * `metadataClass`
 
-    The metadata class will contain the property constants you should use to access your algorithm's property values. If no name is specified, a class with a default name will be generated in the package specified by the metadata file.
+    The metadata class will contain the property constants you should use to access your algorithm's property values. If no name is specified, a class with a default name will be generated in the package specified by the metadata file. *This class name must be distinct from any other metadata class name, both for algorithms and for the bundle itself.*
 
 * `validatorClass`
 
