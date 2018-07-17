@@ -249,6 +249,15 @@
           <groupId>org.eclipse.xtext</groupId>
           <artifactId>xtext-maven-plugin</artifactId>
           <version>${xtext-version}</version>
+          <!-- Workaround for broken build from https://github.com/eclipse/xtext/issues/1231#issuecomment-401125569 -->
+          <dependencies>
+            <dependency>
+              <groupId>org.eclipse.platform</groupId>
+              <artifactId>org.eclipse.equinox.common</artifactId>
+              <version>3.10.0</version>
+            </dependency>
+          </dependencies>
+          <!-- End Workaround -->
           <executions>
             <execution>
               <goals>
@@ -287,6 +296,15 @@
           <groupId>org.eclipse.xtend</groupId>
           <artifactId>xtend-maven-plugin</artifactId>
           <version>${xtext-version}</version>
+          <!-- Workaround for broken build from https://github.com/eclipse/xtext/issues/1231#issuecomment-401125569 -->
+          <dependencies>
+            <dependency>
+              <groupId>org.eclipse.platform</groupId>
+              <artifactId>org.eclipse.equinox.common</artifactId>
+              <version>3.10.0</version>
+            </dependency>
+          </dependencies>
+          <!-- End Workaround -->
           <configuration>
             <outputDirectory>${basedir}/xtend-gen</outputDirectory>
           </configuration>
