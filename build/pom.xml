@@ -14,7 +14,7 @@
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
     <targetJdk>1.8</targetJdk>
-    <tycho-version>1.0.0</tycho-version>
+    <tycho-version>1.2.0</tycho-version>
     <xtext-version>2.12.0</xtext-version>
     <elk-version>${project.version}</elk-version>
 
