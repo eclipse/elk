@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.common.compaction
 
-import org.eclipse.elk.alg.common.compaction.options.TraversalStrategy
-
 bundle {
     label "Options for Polyomino Compaction"
     metadataClass options.PolyominoOptions
