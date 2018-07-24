@@ -47,7 +47,7 @@
     <layoutProvider
           class="org.eclipse.elk.conn.gmf.ElkLayoutProvider">
        <Priority
-             name="Highest">
+             name="High">
        </Priority>
     </layoutProvider>
  </extension>
