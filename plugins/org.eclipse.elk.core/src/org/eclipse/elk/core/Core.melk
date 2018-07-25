@@ -518,9 +518,9 @@ group nodeSize {
 	option constraints: EnumSet<SizeConstraint> {
 		label "Node Size Constraints"
 		description
-			"Constraints for determining node sizes. Each member of the set specifies something that
-			should be taken into account when calculating node sizes. The empty set corresponds to
-			node sizes being fixed."
+			"What should be taken into account when calculating a node's size. Empty size constraints
+            specify that a node's size is already fixed and should not be changed."
+        documentation "@sizeconstraints.md"
 		default = EnumSet.noneOf(SizeConstraint)
 		targets nodes
 	} 
