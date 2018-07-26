@@ -369,7 +369,7 @@
           </configuration>
         </plugin>
 
-        <!-- Child projects may use this to be excempted from inclusion in the Maven repository -->
+        <!-- Child projects may use this to be exempted from inclusion in the Maven repository -->
         <plugin>
            <groupId>org.apache.maven.plugins</groupId>
            <artifactId>maven-deploy-plugin</artifactId>
@@ -379,6 +379,21 @@
       </plugins>
     </pluginManagement>
   </build>
+  
+  
+  <!-- Maven dependency resolution repositories -->
+  <repositories>
+    <repository>
+        <id>central</id>
+        <url>http://central.maven.org/maven2</url>
+        <releases>
+           <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+     </repository>
+  </repositories>
 
 
   <!-- Maven plugin repositories -->
