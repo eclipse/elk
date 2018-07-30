@@ -383,7 +383,7 @@
   
   <!-- Maven dependency resolution repositories -->
   <repositories>
-    <repository>
+    <!--<repository>
         <id>central</id>
         <url>http://central.maven.org/maven2</url>
         <releases>
@@ -392,13 +392,13 @@
         <snapshots>
           <enabled>false</enabled>
         </snapshots>
-     </repository>
+     </repository>-->
   </repositories>
 
 
   <!-- Maven plugin repositories -->
   <pluginRepositories>
-    <pluginRepository>
+    <!--<pluginRepository>
       <id>central</id>
       <name>Maven Plugin Repository</name>
       <url>http://central.maven.org/maven2</url>
@@ -406,7 +406,7 @@
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
-    </pluginRepository>
+    </pluginRepository>-->
 
     <pluginRepository>
       <id>eclipse-cbi</id>
