@@ -379,21 +379,6 @@
       </plugins>
     </pluginManagement>
   </build>
-  
-  
-  <!-- Maven dependency resolution repositories -->
-  <repositories>
-    <!--<repository>
-        <id>central</id>
-        <url>http://central.maven.org/maven2</url>
-        <releases>
-           <enabled>true</enabled>
-        </releases>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-     </repository>-->
-  </repositories>
 
 
   <!-- Maven plugin repositories -->
