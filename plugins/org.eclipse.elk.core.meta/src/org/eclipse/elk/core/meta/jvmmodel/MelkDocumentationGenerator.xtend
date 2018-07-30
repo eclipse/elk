@@ -134,9 +134,10 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         var doc = '''
         ---
         title: "«algorithm.label ?: algorithm.name»"
+        displayid: "«algorithm.qualifiedName»"
         menu:
           main:
-            identifier: alg-"«algorithm.qualifiedName.toHugoIdentifier»"
+            identifier: "alg-«algorithm.qualifiedName.toHugoIdentifier»"
             parent: "Algorithms"
         ---
         
@@ -288,9 +289,10 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         var doc = '''
         ---
         title: "«title»"
+        displayid: "«option.qualifiedName»"
         menu:
           main:
-            identifier: option-"«id»"
+            identifier: "option-«id»"
             parent: "LayoutOptions"
         ---
         
@@ -355,9 +357,10 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         var doc = '''
         ---
         title: "«title.toString()»"
+        displayid: "«group.qualifiedName»"
         menu:
           main:
-            identifier: group-"«group.qualifiedName.toHugoIdentifier»"
+            identifier: "group-«group.qualifiedName.toHugoIdentifier»"
             parent: "LayoutOptionGroups"
         ---
         
