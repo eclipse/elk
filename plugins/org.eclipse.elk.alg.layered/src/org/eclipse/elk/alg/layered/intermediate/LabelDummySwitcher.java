@@ -530,6 +530,14 @@ public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Space-Efficient (Optimum)
+    
+    /* This version of the code uses CPLEX to compute an optimum. To run this, do the following steps:
+     * 
+     * 1. Add cplex.jar from your CPLEX distribution to this plug-in's lib folder.
+     * 2. Add cplex.jar to the plug-in's referenced libraries.
+     * 3. Add the following to the VM arguments of your run configuration, substituting the path as appropriate:
+     *      -Djava.library.path="/Applications/CPLEX_Studio128/cplex/bin/x86-64_osx"
+     */
 
     private void computeOptimalAssignment(final List<LabelDummyInfo> labelDummyInfos) {
         // We start by assigning all label dummies that only have a single layer to choose from or that can be
