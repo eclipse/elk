@@ -43,8 +43,6 @@ public enum SizeOptions {
      * algorithm's result. If port labels or node labels are placed, they may influence the size of
      * the padding. Note that, depending on the algorithm, this option may only apply to
      * non-hierarchical nodes. This option is independent of the size constraint set on a node.
-     * This options is also independent from {@link #APPLY_ADDITIONAL_PADDING}. If both are set, one has to deal
-     * with the effectively doubled padding.
      */
     COMPUTE_PADDING,
     
@@ -63,7 +61,7 @@ public enum SizeOptions {
     /**
      * If port labels are taken into consideration, differently sized labels can result in a different amount of space
      * between different pairs of ports. This option causes all ports to be evenly spaced by enlarging the space
-     * between every pair of ports to the larges amount of space between any pair of ports.
+     * between every pair of ports to the largest amount of space between any pair of ports.
      */
     UNIFORM_PORT_SPACING,
     

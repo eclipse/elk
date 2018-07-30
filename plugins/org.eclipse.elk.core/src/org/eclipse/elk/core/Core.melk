@@ -531,6 +531,7 @@ group nodeSize {
 			"Options modifying the behavior of the size constraints set on a node. Each member of the
 			set specifies something that should be taken into account when calculating node sizes.
 			The empty set corresponds to no further modifications."
+        documentation "@sizeoptions.md"
 		default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE)
 		targets nodes
 	}
