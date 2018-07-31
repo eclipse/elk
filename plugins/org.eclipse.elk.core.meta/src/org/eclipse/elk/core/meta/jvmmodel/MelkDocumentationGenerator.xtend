@@ -37,6 +37,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.xbase.XExpression
 import org.eclipse.xtext.xbase.compiler.JvmModelGenerator
+import org.eclipse.elk.core.meta.metaData.MdOptionDependency
 
 /**
  * Generates documentation from the source model that pertains to a *.melk file.
@@ -50,8 +51,10 @@ import org.eclipse.xtext.xbase.compiler.JvmModelGenerator
  * @author dag
  */
 class MelkDocumentationGenerator extends JvmModelGenerator {
-    /** The {@code IFileSystemAccess} used to read additional documentation files stored within
-     *  the eclipse project that contains the model. */
+    /**
+     * The {@code IFileSystemAccess} used to read additional documentation files stored within the Eclipse project that
+     * contains the model.
+     */
     private IFileSystemAccess fsa
     /** The place where the generated algorithm documentation is stored. */
     private Path algorithmsOutputPath
@@ -115,9 +118,108 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
             group.writeDoc(optionGroupsOutputPath)
         }
     }
+    
 
-    ////////////////////////////////////////////////////////////////////////////////
-    // generation functions
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Input / Output
+    
+    /**
+     * Sets up the documentation output paths. Normally, we would try and purge the directories first to be sure that
+     * there is no old content. However, in a typical automatic build this generator will be invoked multiple times. If
+     * each invocation purged the output directories, there wouldn't be much documentation left.
+     * 
+     * @param docsOutputFolder the folder the documentation should be generated into.
+     */
+    private def setupOutputPaths(String docsOutputPathString) {
+        val Path docsOutputPath = Paths.get(docsOutputPathString);
+        
+        // Inside the documentation folder, we need to obtain access to the content/reference subfolder
+        val Path referencePath = docsOutputPath.resolve("content").resolve("reference");
+        
+        // Algorithms folder (remove and create to purge the thing)
+        algorithmsOutputPath = referencePath.resolve("algorithms");
+        Files.createDirectories(algorithmsOutputPath);
+        
+        // Layout options folder (remove and create to purge the thing)
+        optionsOutputPath = referencePath.resolve("options");
+        Files.createDirectories(optionsOutputPath);
+        
+        // Layout option groups folder (remove and create to purge the thing)
+        optionGroupsOutputPath = referencePath.resolve("groups");
+        Files.createDirectories(optionGroupsOutputPath);
+        
+        // Images folder (remove and create to purge the thing)
+        imageOutputPath = docsOutputPath.resolve("static").resolve("img_gen");
+        Files.createDirectories(imageOutputPath);
+    }
+    
+    /** 
+     * This is a wrapper for {@link #writeDoc(String, String) writeDoc(String, String)} 
+     * that uses the full name of a member as filename.
+     * 
+     * @param member
+     *      the {@link MdBundleMember} that documentation is generated for
+     * @param outputPath
+     *      the folder the bundle member's documentation is to be generated into
+     */
+    private def void writeDoc(MdBundleMember member, Path outputPath) {
+        val fileName = member.qualifiedName.toHugoIdentifier
+        writeDoc(fileName, outputPath, member.generateDoc)
+    }
+    
+    /**
+     * Creates a file in {@code outputPath} to store the generated Markdown in.
+     * 
+     * @param fileName
+     *      name of the file
+     * @param outputPath
+     *      the folder the bundle member's documentation is to be generated into
+     * @param documentation
+     *      generated markdown string
+     */
+    private def void writeDoc(String fileName, Path outputPath, String documentation) {
+        var file = fileName
+        // add file extension for Markdown
+        if (!file.endsWith(".md")) {
+            file += ".md"
+        }
+
+        var PrintWriter out
+        try {
+            out = new PrintWriter(outputPath.resolve(file).toString);
+            out.print(documentation)
+        } catch (Exception exception) {
+            exception.printStackTrace
+        } finally {
+            out?.close
+        }
+    }
+    
+    /**
+     * Copies images or any file from within the project to the place where the generated documentation is located.
+     * 
+     * @param path
+     *      the path to the image relative to the eclipse project
+     * @param newFilename
+     *      file name for the copy (should be associable to the issuing member)
+     */
+    private def copyImageToOutputPath(String path, String newFileName) {
+        if (path === null || newFileName === null) {
+            return
+        }
+
+        try {
+            var iStream = (fsa as AbstractFileSystemAccess2).readBinaryFile(path,
+                MelkOutputConfigurationProvider.AD_INPUT)
+            Files.copy(iStream, imageOutputPath.resolve(newFileName), StandardCopyOption.REPLACE_EXISTING)
+        } catch (Exception exception) {
+            exception.printStackTrace
+        }
+    }
+    
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Algorithm Documentation
 
     /**
      * The dispatch method {@code generateDoc} is called for each {@link MdBundleMember} that is supposed to be
@@ -251,6 +353,10 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         return doc
     }
     
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Option Documentation
+    
     /**
      * The dispatch method {@code generateDoc} is called for each {@link MdBundleMember} that is supposed to be
      * documented.
@@ -325,16 +431,26 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         «if (option.upperBound !== null) '''*Upper Bound:* | `«option.upperBound.text»`'''»
         «if (!option.targets.empty) "*Applies To:* | " + option.targets.map[it.literal].join(", ")»
         «if (!option.legacyIds.empty) "*Legacy Id:* | " + option.legacyIds.map(["`" + it + "`"]).join(", ")»
-        «if (!option.dependencies.empty) "*Dependencies:* | " + option.dependencies.map["[" + it.target.qualifiedName
-                                                  + "](" + it.target.qualifiedName.toHugoIdentifier + ")"].join(", ")»
-        «if (!option.groups.empty) "*Containing Group:* | " + option.groups.map["[" + it.name+ "]({{< relref \"reference/groups/" + 
-                                                                it.qualifiedName.toHugoIdentifier + ".md\" >}})"].join(" -> ")»
+        «if (!option.dependencies.empty) "*Dependencies:* | " + option.dependencies.map[toOptionDependencyString].join(", ")»
+        «if (!option.groups.empty) "*Containing Group:* | " + option.groups.map[toGroupString].join(" -> ")»
         «if (option.description !== null) "\n### Description\n\n" + option.description.trimNewlineTabsAndReduceToSingleSpace»
         «if (!additionalDoc.nullOrEmpty) "\n## Additional Documentation\n\n" + additionalDoc»
         '''
 
         return doc
     }
+    
+    private def String toOptionDependencyString(MdOptionDependency dependency) {
+        return "[" + dependency.target.qualifiedName + "](" + dependency.target.qualifiedName.toHugoIdentifier + ")"
+    }
+    
+    private def toGroupString(MdGroup group) {
+        return "[" + group.name+ "]({{< relref \"reference/groups/" + group.qualifiedName.toHugoIdentifier + ".md\" >}})"
+    }
+    
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Group Documentation
     
     /**
      * The dispatch method {@code generateDoc} is called for each {@link MdBundleMember} that is supposed to be
@@ -378,47 +494,9 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         return doc
     }
     
-    /** 
-     * This is a wrapper for {@link #writeDoc(String, String) writeDoc(String, String)} 
-     * that uses the full name of a member as filename.
-     * 
-     * @param member
-     *      the {@link MdBundleMember} that documentation is generated for
-     * @param outputPath
-     *      the folder the bundle member's documentation is to be generated into
-     */
-    private def void writeDoc(MdBundleMember member, Path outputPath) {
-        val fileName = member.qualifiedName.toHugoIdentifier
-        writeDoc(fileName, outputPath, member.generateDoc)
-    }
-    
-    /**
-     * Creates a file in {@code outputPath} to store the generated Markdown in.
-     * 
-     * @param fileName
-     *      name of the file
-     * @param outputPath
-     *      the folder the bundle member's documentation is to be generated into
-     * @param documentation
-     *      generated markdown string
-     */
-    private def void writeDoc(String fileName, Path outputPath, String documentation) {
-        var file = fileName
-        // add file extension for Markdown
-        if (!file.endsWith(".md")) {
-            file += ".md"
-        }
 
-        var PrintWriter out
-        try {
-            out = new PrintWriter(outputPath.resolve(file).toString);
-            out.print(documentation)
-        } catch (Exception exception) {
-            exception.printStackTrace
-        } finally {
-            out?.close
-        }
-    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Additional Documentation
     
     /**
      * Extracts additional documentation from file or text.
@@ -503,37 +581,27 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         return res
     }
     
-    ////////////////////////////////////////////////////////////////////////////////
-    // utility functions
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // String Processing
     
     /**
-     * Sets up the documentation output paths. Normally, we would try and purge the directories first to be sure that
-     * there is no old content. However, in a typical automatic build this generator will be invoked multiple times. If
-     * each invocation purged the output directories, there wouldn't be much documentation left.
-     * 
-     * @param docsOutputFolder the folder the documentation should be generated into.
+     * The qualified name of a member consists of the bundles idPrefix, the containing groups and the members name
+     * joined by dots.
      */
-    private def setupOutputPaths(String docsOutputPathString) {
-        val Path docsOutputPath = Paths.get(docsOutputPathString);
+    private def String getQualifiedName(MdBundleMember member) {
+        val bundle = member.bundle
+        val model = bundle.eContainer as MdModel
+        var prefix = bundle.idPrefix ?: model.name
+
+        if (prefix.endsWith(member.name)) {
+           prefix = prefix.substring(0, prefix.lastIndexOf('.')) 
+        }
         
-        // Inside the documentation folder, we need to obtain access to the content/reference subfolder
-        val Path referencePath = docsOutputPath.resolve("content").resolve("reference");
-        
-        // Algorithms folder (remove and create to purge the thing)
-        algorithmsOutputPath = referencePath.resolve("algorithms");
-        Files.createDirectories(algorithmsOutputPath);
-        
-        // Layout options folder (remove and create to purge the thing)
-        optionsOutputPath = referencePath.resolve("options");
-        Files.createDirectories(optionsOutputPath);
-        
-        // Layout option groups folder (remove and create to purge the thing)
-        optionGroupsOutputPath = referencePath.resolve("groups");
-        Files.createDirectories(optionGroupsOutputPath);
-        
-        // Images folder (remove and create to purge the thing)
-        imageOutputPath = docsOutputPath.resolve("static").resolve("img_gen");
-        Files.createDirectories(imageOutputPath);
+        return prefix
+               + (if (member.groups.empty) '' else '.')
+               + member.groups.map[it.name].join('.') 
+               + '.' + member.name
     }
     
     /**
@@ -553,28 +621,8 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
     }
     
     /**
-     * Copies images or any file from within the project to the place where the generated documentation is located.
-     * 
-     * @param path
-     *      the path to the image relative to the eclipse project
-     * @param newFilename
-     *      file name for the copy (should be associable to the issuing member)
+     * Readable text representation of an XExpression.
      */
-    private def copyImageToOutputPath(String path, String newFileName) {
-        if (path === null || newFileName === null) {
-            return
-        }
-
-        try {
-            var iStream = (fsa as AbstractFileSystemAccess2).readBinaryFile(path,
-                MelkOutputConfigurationProvider.AD_INPUT)
-            Files.copy(iStream, imageOutputPath.resolve(newFileName), StandardCopyOption.REPLACE_EXISTING)
-        } catch (Exception exception) {
-            exception.printStackTrace
-        }
-    }
-    
-    // readable text representation of an XExpression
     private def String getText(XExpression exp) {
         if (exp === null) {
             return "<not defined>"
@@ -589,7 +637,20 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         return text
     }
     
-    // possible values for enumeration types
+    /**
+     * Turns the string into something we can safely include in Markdown.
+     */
+    private def String trimNewlineTabsAndReduceToSingleSpace(String string) {
+        CharMatcher.breakingWhitespace().replaceFrom(string, ' ').replaceAll(" +", " ")
+    }
+    
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Object Tree Traversal
+    
+    /**
+     * Possible values for enumeration types.
+     */
     private def Iterable<JvmField> getPossibleValues(JvmTypeReference type) {
         if (type !== null) {
             val jvmType = type.type
@@ -605,19 +666,25 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         return null
     }
     
-    // iterator for nested groups (flattened)
+    /**
+     * Iterator for nested groups (flattened).
+     */
     private def Iterable<MdGroup> getAllGroupDefinitions(Iterable<? extends MdBundleMember> elements) {
         val groups = elements.filter(MdGroup)
         return Iterables.concat(groups, groups.map[it.children.getAllGroupDefinitions].flatten)
     }
     
-    // iterator for nested options (flattened)
+    /**
+     * Iterator for nested options (flattened).
+     */
     private def Iterable<MdOption> getAllOptionDefinitions(Iterable<? extends MdBundleMember> elements) {
         return Iterables.concat(elements.filter(MdOption),
                                 elements.filter(MdGroup).map[it.children.getAllOptionDefinitions].flatten)
     }
     
-    // retrieve bundle associated with a member
+    /**
+     * Retrieve bundle associated with a member.
+     */
     private def MdBundle getBundle(MdBundleMember member) {
         var parent = member.eContainer
         while (!(parent instanceof MdBundle)) {
@@ -626,7 +693,9 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         return parent as MdBundle
     }
     
-    // groups containing this member
+    /**
+     * Groups containing this member.
+     */
     private def Iterable<MdGroup> getGroups(MdBundleMember member) {
         val groups = new LinkedList
         var group = member.eContainer
@@ -635,26 +704,5 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
             group = group.eContainer
         }
         return groups
-    }
-    
-    // The qualified name of a member consists of the bundles idPrefix, the containing groups and the members name
-    // joined by dots.
-    private def String getQualifiedName(MdBundleMember member) {
-        val bundle = member.bundle
-        val model = bundle.eContainer as MdModel
-        var prefix = bundle.idPrefix ?: model.name
-
-        if (prefix.endsWith(member.name)) {
-           prefix = prefix.substring(0, prefix.lastIndexOf('.')) 
-        }
-        
-        return prefix
-               + (if (member.groups.empty) '' else '.')
-               + member.groups.map[it.name].join('.') 
-               + '.' + member.name
-    }
-    
-    private def String trimNewlineTabsAndReduceToSingleSpace(String string) {
-        CharMatcher.BREAKING_WHITESPACE.replaceFrom(string, ' ').replaceAll(" +", " ")
     }
 }
