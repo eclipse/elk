@@ -431,8 +431,8 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         «if (option.upperBound !== null) '''*Upper Bound:* | `«option.upperBound.text»`'''»
         «if (!option.targets.empty) "*Applies To:* | " + option.targets.map[it.literal].join(", ")»
         «if (!option.legacyIds.empty) "*Legacy Id:* | " + option.legacyIds.map(["`" + it + "`"]).join(", ")»
-        «if (!option.dependencies.empty) "*Dependencies:* | " + option.dependencies.map[toOptionDependencyString].join(", ")»
-        «if (!option.groups.empty) "*Containing Group:* | " + option.groups.map[toGroupString].join(" -> ")»
+        «if (!option.dependencies.empty) "*Dependencies:* | " + option.dependencies.map[toOptionDocsString].join(", ")»
+        «if (!option.groups.empty) "*Containing Group:* | " + option.groups.map[toOptionDocsString].join(" -> ")»
         «if (option.description !== null) "\n### Description\n\n" + option.description.trimNewlineTabsAndReduceToSingleSpace»
         «if (!additionalDoc.nullOrEmpty) "\n## Additional Documentation\n\n" + additionalDoc»
         '''
@@ -440,11 +440,25 @@ class MelkDocumentationGenerator extends JvmModelGenerator {
         return doc
     }
     
-    private def String toOptionDependencyString(MdOptionDependency dependency) {
-        return "[" + dependency.target.qualifiedName + "](" + dependency.target.qualifiedName.toHugoIdentifier + ")"
+    /**
+     * Generates a proper String representation for the given option dependency.
+     */
+    private def String toOptionDocsString(MdOptionDependency dependency) {
+        // Link to the layout option we depend upon
+        var result = "[" + dependency.target.qualifiedName + "]("
+                + dependency.target.qualifiedName.toHugoIdentifier + ")";
+        
+        if (dependency.value !== null) {
+            result += " (" + getText(dependency.value) + ")";
+        }
+        
+        return result;
     }
     
-    private def toGroupString(MdGroup group) {
+    /**
+     * Generates a proper String representation for the given group.
+     */
+    private def toOptionDocsString(MdGroup group) {
         return "[" + group.name+ "]({{< relref \"reference/groups/" + group.qualifiedName.toHugoIdentifier + ".md\" >}})"
     }
     
