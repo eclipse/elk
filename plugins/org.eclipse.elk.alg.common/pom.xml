@@ -15,14 +15,14 @@
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.alg.common</artifactId>
   <name>ELK Common Algorithms</name>
-  <version>0.4.0</version>
+  <version>0.4.1</version>
   <description>Common algorithms.</description>
   <packaging>eclipse-plugin</packaging>
 
@@ -30,12 +30,12 @@
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.core</artifactId>
-      <version>0.4.0</version>
+      <version>0.4.1</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.graph</artifactId>
-      <version>0.4.0</version>
+      <version>0.4.1</version>
     </dependency>
   </dependencies>
 

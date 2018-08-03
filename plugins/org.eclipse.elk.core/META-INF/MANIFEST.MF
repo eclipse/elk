@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Core Components
 Bundle-SymbolicName: org.eclipse.elk.core;singleton:=true
-Bundle-Version: 0.4.0
+Bundle-Version: 0.4.1
 Eclipse-BuddyPolicy: registered
 Require-Bundle: com.google.guava;bundle-version="15.0.0",
  org.eclipse.emf.ecore,

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ELK Shared Tests
 Bundle-SymbolicName: org.eclipse.elk.shared.test;singleton:=true
-Bundle-Version: 0.4.0
+Bundle-Version: 0.4.1
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava;bundle-version="15.0.0",
  org.junit;bundle-version="4.12.0",
