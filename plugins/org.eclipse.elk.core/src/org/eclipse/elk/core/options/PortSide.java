@@ -157,6 +157,20 @@ public enum PortSide {
     }
     
     /**
+     * Returns whether this and the given port side are adjacent port sides in that they share a corner of their node.
+     * 
+     * @param other the port side to check with.
+     * @return {@code true} if the two sides share a corner.
+     */
+    public boolean areAdjacent(final PortSide other) {
+        if (this == UNDEFINED) {
+            return false;
+        } else {
+            return this.left() == other || this.right() == other;
+        }
+    }
+    
+    /**
      * Get the port side that corresponds to the given direction.
      * 
      * @param direction a direction

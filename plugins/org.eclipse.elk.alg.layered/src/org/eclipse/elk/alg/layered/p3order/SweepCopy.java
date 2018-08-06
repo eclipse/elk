@@ -23,6 +23,8 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.intermediate.PortListSorter;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Lists;
@@ -84,7 +86,7 @@ class SweepCopy {
     /**
      * @param lGraph
      */
-    public void transferNodeAndPortOrdersToGraph(final LGraph lGraph) {
+    public void transferNodeAndPortOrdersToGraph(final LGraph lGraph, boolean setPortContstraints) {
         
         // the 'NORTH_OR_SOUTH_PORT' option allows the crossing minimizer to decide 
         // the side a corresponding dummy node is placed on in order to reduce the number of crossings
@@ -111,6 +113,9 @@ class SweepCopy {
                 // order ports as computed
                 node.getPorts().clear();
                 node.getPorts().addAll(portOrders.get(i).get(j));
+                if (setPortContstraints) {
+                    node.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER);
+                }
             }
             
             // assert that the port side is set properly

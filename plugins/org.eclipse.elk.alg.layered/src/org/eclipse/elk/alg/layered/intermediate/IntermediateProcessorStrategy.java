@@ -54,6 +54,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     BIG_NODES_PREPROCESSOR,
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
+    /** Takes care of self loop preprocessing. */
+    SELF_LOOP_PREPROCESSOR,
 
     // Before Phase 3
     
@@ -79,8 +81,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     PORT_SIDE_PROCESSOR,
     /** Takes a layered graph and inserts dummy nodes for edges connected to inverted ports. */
     INVERTED_PORT_PROCESSOR,
-    /** Takes care of self loops. */
-    SELF_LOOP_PROCESSOR,
     /** Orders the port lists of nodes with fixed port order. */
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
@@ -94,8 +94,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     ONE_SIDED_GREEDY_SWITCH,
     /** Hierarchical two-sided greedy switch crossing reduction. */
     TWO_SIDED_GREEDY_SWITCH,
-    /** Unhide self loops after phase 3. */
-    SPLINE_SELF_LOOP_POSITIONER,
+    /** Position self loops after phase 3. */
+    SELF_LOOP_PLACER,
     /** Wraps graphs such that they better fit a given drawing area, allowing only a single edge per cut. */
     SINGLE_EDGE_GRAPH_WRAPPER,
     /** Makes sure that in-layer constraints are handled. */
@@ -107,7 +107,9 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     /** Sets the positions of ports and labels, and sets the node sizes. */
     LABEL_AND_NODE_SIZE_PROCESSOR,
     /** Calculates the self loops with relative position to the parent node.*/
-    SPLINE_SELF_LOOP_ROUTER,
+    SELF_LOOP_LABEL_PLACER,
+    /** Calculate the bendpoints for the self-loop edges. */
+    SELF_LOOP_BENDPOINT_CALCULATOR,
     /** Calculates the margins of nodes according to the sizes of ports and labels. */
     NODE_MARGIN_CALCULATOR,
     /** Place end labels of edges and extend node margins accordingly. */
@@ -142,6 +144,8 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
+    /** Add node position to the already routed self-loops. */
+    SELF_LOOP_POSTPROCESSOR,
     /** Removes the breaking points that were inserted for 'wrapping', derives edge routes correspondingly. */
     BREAKING_POINT_REMOVER,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
@@ -198,7 +202,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
             
         case COMMENT_POSTPROCESSOR:
             return new CommentPostprocessor();
-
+            
         case COMMENT_PREPROCESSOR:
             return new CommentPreprocessor();
 
@@ -321,22 +325,25 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
 
         case SINGLE_EDGE_GRAPH_WRAPPER:
             return new SingleEdgeGraphWrapper();
-
-        case SELF_LOOP_PROCESSOR:
-            return new SelfLoopProcessor();
-
+            
         case SEMI_INTERACTIVE_CROSSMIN_PROCESSOR:
             return new SemiInteractiveCrossMinProcessor();
+            
+        case SELF_LOOP_PREPROCESSOR:
+            return new SelfLoopPreProcessor();
+            
+        case SELF_LOOP_PLACER:
+            return new SelfLoopPlacer();
+            
+        case SELF_LOOP_LABEL_PLACER:
+            return new SelfLoopLabelPlacer();
+            
+        case SELF_LOOP_BENDPOINT_CALCULATOR:
+            return new SelfLoopBendpointCalculator();
 
-        case SPLINE_SELF_LOOP_POSITIONER:
-            return new SplineSelfLoopPositioner();
-            
-        case SPLINE_SELF_LOOP_PREPROCESSOR:
-            return new SplineSelfLoopPreProcessor();
-            
-        case SPLINE_SELF_LOOP_ROUTER:
-            return new SplineSelfLoopRouter();
-            
+        case SELF_LOOP_POSTPROCESSOR:
+            return new SelfLoopPostProcessor();
+
         default:
             throw new IllegalArgumentException(
                     "No implementation is available for the layout processor " + toString());

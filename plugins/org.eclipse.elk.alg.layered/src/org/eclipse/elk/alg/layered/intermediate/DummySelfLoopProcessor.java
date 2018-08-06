@@ -61,7 +61,7 @@ import com.google.common.collect.Lists;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public final class SelfLoopProcessor implements ILayoutProcessor<LGraph> {
+public final class DummySelfLoopProcessor implements ILayoutProcessor<LGraph> {
 
     /**
      * {@inheritDoc}

@@ -421,7 +421,7 @@ public class LayerSweepCrossingMinimizer
         for (GraphInfoHolder gD : graphInfoHolders) {
             SweepCopy bestSweep = gD.getBestSweep();
             if (bestSweep != null) {
-                bestSweep.transferNodeAndPortOrdersToGraph(gD.lGraph());
+                bestSweep.transferNodeAndPortOrdersToGraph(gD.lGraph(), true);
             }
         }
     }

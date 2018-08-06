@@ -20,23 +20,24 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNodeSide;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
- * Sets the node margins. Node margins are influenced by both port positions and sizes
- * and label positions and sizes. Furthermore, comment boxes that are put directly
- * above or below a node also increase the margin.
+ * Sets the node margins. Node margins are influenced by both port positions and sizes and label positions and sizes.
+ * Furthermore, comment boxes that are put directly above or below a node also increase the margin.
  * 
  * <dl>
- *   <dt>Precondition:</dt>
+ *   <dt>Preconditions:</dt>
  *     <dd>A layered graph.</dd>
  *     <dd>Ports have fixed port positions.</dd>
  *     <dd>Node and port labels have fixed positions.</dd>
  *   <dt>Postcondition:</dt>
- *     <dd>The node margins are properly set to form a bounding box around the node and its ports and
- *         labels. End labels of edges are not included in the margins.</dd>
+ *     <dd>The node margins are properly set to form a bounding box around the node and its ports and labels. End labels
+ *         of edges are not included in the margins.</dd>
  *   <dt>Slots:</dt>
  *     <dd>Before phase 4.</dd>
  *   <dt>Same-slot dependencies:</dt>
@@ -45,37 +46,38 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class NodeMarginCalculator implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    private static final double SELF_LOOP_EDGE_DISTANCE = 10.0;
+
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Node margin calculation", 1);
-        
+
         // Calculate the margins using ELK's utility methods. What is not included in the margins yet are is space
         // required for self loops and comment boxes. We will deal with all of those later.
         NodeDimensionCalculation.getNodeMarginCalculator(LGraphAdapters.adapt(layeredGraph, false))
-                .excludeEdgeHeadTailLabels()
-                .process();
+                .excludeEdgeHeadTailLabels().process();
 
         // Iterate through the layers to additionally handle comments
         double nodeNodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE).doubleValue();
-        
+
         for (Layer layer : layeredGraph) {
             // Iterate through the layer's nodes
             for (LNode node : layer) {
+                processSelfLoops(node);
                 processComments(node, nodeNodeSpacing);
-                processSelfLoops(node);                
             }
         }
-        
+
         monitor.done();
     }
 
     /**
      * Make some extra space for comment boxes that are placed near a node.
      * 
-     * @param node a node
-     * @param spacing the overall spacing value
+     * @param node
+     *            a node
+     * @param spacing
+     *            the overall spacing value
      */
     private void processComments(final LNode node, final double spacing) {
         LMargin margin = node.getMargin();
@@ -92,7 +94,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor<LGraph> {
             topWidth += spacing / 2 * (topBoxes.size() - 1);
             margin.top += maxHeight + spacing;
         }
-        
+
         // Consider comment boxes that are put in the bottom of the node
         List<LNode> bottomBoxes = node.getProperty(InternalProperties.BOTTOM_COMMENTS);
         double bottomWidth = 0;
@@ -105,7 +107,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor<LGraph> {
             bottomWidth += spacing / 2 * (bottomBoxes.size() - 1);
             margin.bottom += maxHeight + spacing;
         }
-        
+
         // Check if the maximum width of the comments is wider than the node itself, which the comments
         // are centered on
         double maxCommentWidth = Math.max(topWidth, bottomWidth);
@@ -115,20 +117,46 @@ public final class NodeMarginCalculator implements ILayoutProcessor<LGraph> {
             margin.right = Math.max(margin.right, protrusion);
         }
     }
-    
+
     /**
-     * Apply the additional space from spline self loops.
+     * Apply the additional space from self loops.
      * 
-     * @param node a node
+     * @param node
+     *            a node
      */
     private void processSelfLoops(final LNode node) {
         LMargin nodeMargin = node.getMargin();
-        ElkMargin selfLoopMargin = node.getProperty(InternalProperties.SPLINE_SELF_LOOP_MARGINS);
+        ElkMargin selfLoopMargin = new ElkMargin();
+        SelfLoopNode nodeRep = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        if (nodeRep != null) {
+            for (SelfLoopNodeSide side : nodeRep.getSides()) {
+                int maximumPortLevelOfNode = side.getMaximumPortLevel() + side.getMaximumSegmentLevel();
+                double maximumOffsetOfNode = side.getMaximumLabelOffset();
 
-        nodeMargin.left = Math.max(nodeMargin.left, selfLoopMargin.left);
-        nodeMargin.right = Math.max(nodeMargin.right, selfLoopMargin.right);
-        nodeMargin.bottom = Math.max(nodeMargin.bottom, selfLoopMargin.bottom);
-        nodeMargin.top = Math.max(nodeMargin.top, selfLoopMargin.top);
-    }    
-    
+                // adapt node margin per side
+                double margin = maximumPortLevelOfNode * SELF_LOOP_EDGE_DISTANCE + maximumOffsetOfNode;
+
+                switch (side.getSide()) {
+                case NORTH:
+                    selfLoopMargin.top = margin;
+                    break;
+                case EAST:
+                    selfLoopMargin.right = margin;
+                    break;
+                case SOUTH:
+                    selfLoopMargin.bottom = margin;
+                    break;
+                case WEST:
+                    selfLoopMargin.left = margin;
+                    break;
+                }
+            }
+
+            nodeMargin.left = Math.max(nodeMargin.left, selfLoopMargin.left);
+            nodeMargin.right = Math.max(nodeMargin.right, selfLoopMargin.right);
+            nodeMargin.bottom = Math.max(nodeMargin.bottom, selfLoopMargin.bottom);
+            nodeMargin.top = Math.max(nodeMargin.top, selfLoopMargin.top);
+        }
+    }
+
 }
