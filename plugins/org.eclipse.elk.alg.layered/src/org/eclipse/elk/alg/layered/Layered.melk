@@ -19,6 +19,7 @@ import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
 import org.eclipse.elk.core.options.HierarchyHandling
+import org.eclipse.elk.core.options.PortConstraints
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -129,7 +130,9 @@ algorithm layered(LayeredLayoutProvider) {
 	supports feedbackEdges
 	supports org.eclipse.elk.alg.layered.layering.wideNodesOnMultipleLayers
 	supports org.eclipse.elk.alg.layered.nodePlacement.linearSegments.deflectionDampening
-	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopPlacement
+	supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopDistribution
+    supports org.eclipse.elk.alg.layered.edgeRouting.selfLoopOrdering
+    supports org.eclipse.elk.alg.layered.edgeRouting.mergeSelfLoops
 	supports contentAlignment
 	supports org.eclipse.elk.alg.layered.nodePlacement.bk.edgeStraightening
 	supports org.eclipse.elk.alg.layered.compaction.postCompaction.strategy
@@ -469,12 +472,29 @@ group edgeRouting {
         
     }
 
-    option selfLoopPlacement: SelfLoopPlacement {
-        label "Spline Self-Loop Placement"
-        default = SelfLoopPlacement.NORTH_STACKED
+    option selfLoopDistribution: SelfLoopDistributionStrategy {
+        label "Self-Loop Distribution"
+        description 
+            "Alter the distribution of the loops around the node. It only takes effect for PortConstraints.FREE."
+        default = SelfLoopDistributionStrategy.NORTH
         targets parents
-        legacyIds de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement
-        requires org.eclipse.elk.edgeRouting == EdgeRouting.SPLINES
+    }
+    
+    option selfLoopOrdering: SelfLoopOrderingStrategy {
+        label "Self-Loop Ordering"
+         description 
+            "Alter the ordering of the loops they can either be stacked or sequenced.
+                It only takes effect for PortConstraints.FREE."
+        default = SelfLoopOrderingStrategy.STACKED
+        targets parents
+    }
+    option mergeSelfLoops: boolean {
+        label "Merge Self-Loops"
+        description "If different self-loops are not important, they can be merged to be displayed on above another. 
+                This saves space and labels will not be crossed if multiple labels are stacked.
+                It only takes effect for PortConstraints.FREE."
+        default = false
+        targets parents
     }
 
 }

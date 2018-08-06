@@ -154,6 +154,7 @@ public final class OrthogonalRoutingGenerator {
                 double sourcey = port.getAbsoluteAnchor().y;
 
                 for (LEdge edge : port.getOutgoingEdges()) {
+                    if(!edge.isSelfLoop()) {
                     LPort target = edge.getTarget();
                     double targety = target.getAbsoluteAnchor().y;
                     if (Math.abs(sourcey - targety) > TOLERANCE) {
@@ -164,6 +165,7 @@ public final class OrthogonalRoutingGenerator {
                         KVector point2 = new KVector(x, targety);
                         edge.getBendPoints().add(point2);
                         addJunctionPointIfNecessary(edge, hyperNode, point2, true);
+                    }
                     }
                 }
             }
@@ -209,6 +211,7 @@ public final class OrthogonalRoutingGenerator {
                 double sourcex = port.getAbsoluteAnchor().x;
 
                 for (LEdge edge : port.getOutgoingEdges()) {
+                    if(!edge.isSelfLoop()) {
                     LPort target = edge.getTarget();
                     double targetx = target.getAbsoluteAnchor().x;
                     if (Math.abs(sourcex - targetx) > TOLERANCE) {
@@ -219,7 +222,7 @@ public final class OrthogonalRoutingGenerator {
                         KVector point2 = new KVector(targetx, y);
                         edge.getBendPoints().add(point2);
                         addJunctionPointIfNecessary(edge, hyperNode, point2, false);
-                    }
+                    }}
                 }
             }
         }
@@ -264,6 +267,8 @@ public final class OrthogonalRoutingGenerator {
                 double sourcex = port.getAbsoluteAnchor().x;
 
                 for (LEdge edge : port.getOutgoingEdges()) {
+
+                    if(!edge.isSelfLoop()) {
                     LPort target = edge.getTarget();
                     double targetx = target.getAbsoluteAnchor().x;
                     if (Math.abs(sourcex - targetx) > TOLERANCE) {
@@ -275,7 +280,7 @@ public final class OrthogonalRoutingGenerator {
                         edge.getBendPoints().add(point2);
                         addJunctionPointIfNecessary(edge, hyperNode, point2, false);
                     }
-                }
+                }}
             }
         }
     }

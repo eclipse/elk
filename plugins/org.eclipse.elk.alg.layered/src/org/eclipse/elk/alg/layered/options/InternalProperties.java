@@ -26,8 +26,8 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
-import org.eclipse.elk.alg.layered.p5edges.splines.ConnectedSelfLoopComponent;
-import org.eclipse.elk.alg.layered.p5edges.splines.LoopSide;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -35,6 +35,7 @@ import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.LabelSide;
+import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
@@ -376,22 +377,9 @@ public final class InternalProperties {
             new Property<KVector>("splineLabelSize", new KVector());
 
     /**
-     * Determines the loop side of an edge.
-     */
-    public static final IProperty<LoopSide> SPLINE_LOOPSIDE = new Property<LoopSide>("splineLoopSide",
-            LoopSide.UNDEFINED);
-
-    /**
-     * A port with this property set will be handled from the SplineSelfLoopPre- and Postprocessor.
-     */
-    public static final IProperty<List<ConnectedSelfLoopComponent>> SPLINE_SELFLOOP_COMPONENTS =
-            new Property<List<ConnectedSelfLoopComponent>>("splineSelfLoopComponents",
-                    new ArrayList<ConnectedSelfLoopComponent>());
-
-    /**
      * A node's property storing the margins of a node required for it's self loops.
      */
-    public static final IProperty<ElkMargin> SPLINE_SELF_LOOP_MARGINS = new Property<ElkMargin>(
+    public static final IProperty<ElkMargin> SELF_LOOP_MARGINS = new Property<ElkMargin>(
             "splineSelfLoopMargins", new ElkMargin());
 
     /**
@@ -435,6 +423,24 @@ public final class InternalProperties {
      * the {@link FinalSplineBendpointsCalculator}.
      */
     public static final IProperty<List<LEdge>> SPLINE_EDGE_CHAIN = new Property<>("splines.edgeChain");
+    
+    /**
+     * Holds the information about the originally user set port constraints.
+     */
+    public static final IProperty<PortConstraints> ORIGINAL_PORT_CONSTRAINTS =  
+            new Property<PortConstraints>("originalPortConstraints");
+
+    /**
+     * The connected components of a node.
+     */
+    public static final IProperty<List<SelfLoopComponent>> SELFLOOP_COMPONENTS =
+            new Property<List<SelfLoopComponent>>("selfLoopComponent");
+    
+    /**
+     * The linear node representation used from the self-loop calculation.
+     */
+    public static final IProperty<SelfLoopNode> SELFLOOP_NODE_REPRESENTATION =
+            new Property<SelfLoopNode>("selfLoopNodeRepresentation");
 
     /**
      * Holds the y-coordinate of a deleted {@link NodeType#NORTH_SOUTH_PORT} dummy node. To be read by the

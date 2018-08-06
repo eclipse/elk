@@ -98,9 +98,9 @@ import com.google.common.collect.Lists;
  * 
  * <p>
  * Self-loops are a special case that is handled partly by this processor. For this to work, the
- * {@link SelfLoopProcessor} must have been executed prior to this processor's execution. Then, this
+ * {@link DummySelfLoopProcessor} must have been executed prior to this processor's execution. Then, this
  * processor correctly processes all kinds of self-loops involving northern or southern ports as
- * follows: (due to the {@link SelfLoopProcessor}, only the cases detailled below must be handled)
+ * follows: (due to the {@link DummySelfLoopProcessor}, only the cases detailled below must be handled)
  * </p>
  * 
  * <ul>
@@ -123,12 +123,12 @@ import com.google.common.collect.Lists;
  *     <dd>Before phase 3.</dd>
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>{@link PortListSorter}</dd>
- *     <dd>{@link SelfLoopProcessor}</dd>
+ *     <dd>{@link DummySelfLoopProcessor}</dd>
  * </dl>
  * 
  * @see NorthSouthPortPostprocessor
  * @see PortListSorter
- * @see SelfLoopProcessor
+ * @see DummySelfLoopProcessor
  */
 public final class NorthSouthPortPreprocessor implements ILayoutProcessor<LGraph> {
 
