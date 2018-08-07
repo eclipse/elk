@@ -84,11 +84,12 @@ import com.google.common.collect.Lists;
  */
 public final class LabelDummySwitcher implements ILayoutProcessor<LGraph> {
     
+    /** A property to communicate with the analyses that can be run on a graph. */
+    public static final IProperty<Boolean> INCLUDE_LABEL =
+            new Property<>("edgelabelcenterednessanalysis.includelabel", Boolean.FALSE);
+    
     /** Width of each layer. */
     private double[] layerWidths = null;
-    
-    public static final IProperty<Boolean> INCLUDE_LABEL =
-            new Property("edgelabelcenterednessanalysis.includelabel", Boolean.FALSE);
     
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
