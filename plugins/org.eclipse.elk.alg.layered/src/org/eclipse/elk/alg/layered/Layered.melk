@@ -16,10 +16,9 @@ import org.eclipse.elk.alg.layered.LayeredLayoutProvider
 import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
+import org.eclipse.elk.core.options.HierarchyHandling
 import org.eclipse.elk.core.options.PortAlignment
 import org.eclipse.elk.core.util.ExclusiveBounds
-import org.eclipse.elk.core.options.HierarchyHandling
-import org.eclipse.elk.core.options.PortConstraints
 
 /**
  * Declarations for the ELK Layered layout algorithm.
@@ -166,6 +165,7 @@ algorithm layered(LayeredLayoutProvider) {
     supports org.eclipse.elk.spacing.portsSurrounding
     supports directionCongruency
     supports portSortingStrategy
+    supports edgeRouting.polyline.slopedEdgeZoneWidth
 }
 
 
@@ -471,6 +471,19 @@ group edgeRouting {
         }
         
     }
+    
+    group polyline {
+        advanced option slopedEdgeZoneWidth: double {
+            label "Sloped Edge Zone Width"
+            description "Width of the strip to the left and to the right of each layer where the polyline edge router
+                    is allowed to refrain from ensuring that edges are routed horizontally. This prevents awkward
+                    bend points for nodes that extent almost to the edge of their layer."
+            documentation "@slopedEdgeZoneWidth.md"
+            default = 2.0
+            targets parents
+            requires org.eclipse.elk.edgeRouting == EdgeRouting.POLYLINE
+        }
+    }
 
     option selfLoopDistribution: SelfLoopDistributionStrategy {
         label "Self-Loop Distribution"
@@ -482,8 +495,7 @@ group edgeRouting {
     
     option selfLoopOrdering: SelfLoopOrderingStrategy {
         label "Self-Loop Ordering"
-         description 
-            "Alter the ordering of the loops they can either be stacked or sequenced.
+         description "Alter the ordering of the loops they can either be stacked or sequenced.
                 It only takes effect for PortConstraints.FREE."
         default = SelfLoopOrderingStrategy.STACKED
         targets parents
