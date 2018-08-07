@@ -63,8 +63,6 @@ import com.google.common.base.Strings;
  * A dialog to browse and select layout algorithms or layout types.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class AlgorithmSelectionDialog extends Dialog {
 

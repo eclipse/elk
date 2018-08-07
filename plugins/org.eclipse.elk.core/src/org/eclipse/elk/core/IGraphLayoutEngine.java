@@ -17,8 +17,6 @@ import org.eclipse.elk.graph.ElkNode;
  * A graph layout engine is able to perform automatic layout on a graph or parts of it.
  * 
  * @author swe
- * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
- * @kieler.design proposed by msp
  */
 public interface IGraphLayoutEngine {
 

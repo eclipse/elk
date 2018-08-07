@@ -20,8 +20,6 @@ import com.google.common.collect.Maps;
 /**
  * An implementation of {@link IPropertyHolder} based on a {@link HashMap}.
  *
- * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
- * @kieler.rating proposed yellow 2012-07-10 msp
  * @author msp
  */
 public class MapPropertyHolder implements IPropertyHolder, Serializable {

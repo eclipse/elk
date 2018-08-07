@@ -37,8 +37,6 @@ import com.google.common.collect.Iterables;
  * For that to work, the {@link #randomize(ElkEdge, Random, double, double)} method needs to be extended.
  * </p>
  *
- * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
- * @kieler.design proposed by msp
  * @author msp
  */
 public class RandomLayoutProvider extends AbstractLayoutProvider {

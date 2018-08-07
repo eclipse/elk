@@ -76,8 +76,6 @@ import com.google.inject.Singleton;
  * @author atr
  * @author soh
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 @SuppressWarnings("restriction")
 @Singleton

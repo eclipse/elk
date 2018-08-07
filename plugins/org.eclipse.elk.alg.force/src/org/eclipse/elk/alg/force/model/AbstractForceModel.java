@@ -28,8 +28,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * Superclass for force models.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public abstract class AbstractForceModel {
 

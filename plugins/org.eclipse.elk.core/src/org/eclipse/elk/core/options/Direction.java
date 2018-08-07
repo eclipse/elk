@@ -13,8 +13,6 @@ package org.eclipse.elk.core.options;
 /**
  * Definition of layout directions. To be accessed using {@link CoreOptions#DIRECTION}.
  * 
- * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  */
 public enum Direction {

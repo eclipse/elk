@@ -15,8 +15,6 @@ package org.eclipse.elk.core.util;
  *
  * @param <T> type of instances that are created by this factory
  * @author msp
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public interface IFactory<T> {
 

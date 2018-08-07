@@ -24,8 +24,6 @@ import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
  * 
  * @author msp
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public enum CrossingMinimizationStrategy implements ILayoutPhaseFactory<LayeredPhases, LGraph> {
 

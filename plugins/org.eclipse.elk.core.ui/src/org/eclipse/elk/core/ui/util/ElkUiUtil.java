@@ -23,8 +23,6 @@ import org.eclipse.emf.transaction.TransactionalEditingDomain;
  * Utility methods used for the ELK UI.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class ElkUiUtil {
     

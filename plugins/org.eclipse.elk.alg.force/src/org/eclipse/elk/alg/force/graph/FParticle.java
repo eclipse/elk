@@ -18,8 +18,6 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
  * 
  * @author owo
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public abstract class FParticle extends MapPropertyHolder {
     

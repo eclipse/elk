@@ -19,8 +19,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * KGraph meta model. Furthermore it must handle the transfer of concrete layout data from the
  * layout graph back to the diagram after a layout has been computed.
  * 
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2012-07-19 review KI-20 by cds, jjc
  * @author msp
  */
 public interface IDiagramLayoutConnector {

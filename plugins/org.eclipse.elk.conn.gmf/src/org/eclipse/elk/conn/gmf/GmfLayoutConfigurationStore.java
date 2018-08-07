@@ -44,8 +44,6 @@ import com.google.inject.Inject;
  * A layout configuration that stores layout options in the notation model of GMF diagrams.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-07-01 review KI-38 by cds, uru
  */
 public class GmfLayoutConfigurationStore implements ILayoutConfigurationStore {
     

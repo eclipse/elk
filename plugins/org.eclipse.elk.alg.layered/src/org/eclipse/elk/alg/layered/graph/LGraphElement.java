@@ -27,8 +27,6 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
  * code implemented here guarantees that such effects will not occur.</p>
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public abstract class LGraphElement extends MapPropertyHolder {
 

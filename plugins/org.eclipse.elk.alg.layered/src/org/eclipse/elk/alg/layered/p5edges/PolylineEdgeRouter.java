@@ -52,8 +52,6 @@ import com.google.common.collect.Sets;
  *
  * @author msp
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGraph> {
     

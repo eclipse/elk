@@ -39,8 +39,6 @@ import org.eclipse.swt.graphics.Rectangle;
  *
  * @author msp
  * @author cds
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class GraphRenderer {
     

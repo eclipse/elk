@@ -51,8 +51,6 @@ import com.google.common.collect.Multimap;
  * @author msp
  * @author cds
  * @author uru
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class InternalProperties {
 

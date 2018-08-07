@@ -17,8 +17,6 @@ import org.eclipse.elk.core.util.IDataObject;
 /**
  * A simple 2D vector class which supports translation, scaling, normalization etc.
  *
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author uru
  * @author owo
  * @author cds

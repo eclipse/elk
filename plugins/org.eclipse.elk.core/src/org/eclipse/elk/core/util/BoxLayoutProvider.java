@@ -50,8 +50,6 @@ import com.google.common.collect.Lists;
  * MIGRATE The box layout provider does not support hyperedges yet.
  * </p>
  * 
- * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
- * @kieler.design proposed by msp
  * @author msp
  */
 public class BoxLayoutProvider extends AbstractLayoutProvider {

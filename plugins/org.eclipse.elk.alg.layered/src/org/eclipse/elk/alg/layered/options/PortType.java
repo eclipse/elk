@@ -14,8 +14,6 @@ package org.eclipse.elk.alg.layered.options;
  * Definition of port types.
  *
  * @author msp
- * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow by msp
  */
 public enum PortType {
     

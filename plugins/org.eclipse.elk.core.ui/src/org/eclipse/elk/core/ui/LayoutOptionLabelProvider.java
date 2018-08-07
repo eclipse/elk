@@ -26,8 +26,6 @@ import org.eclipse.swt.graphics.Image;
  * associated with a specific option in order to correctly translate the passed values.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class LayoutOptionLabelProvider extends LabelProvider {
     

@@ -79,8 +79,6 @@ import com.google.common.collect.Multimap;
  *
  * @author msp
  * @author cds
- * @kieler.design proposed by cds
- * @kieler.rating proposed yellow by cds
  */
 public class CompoundGraphPreprocessor implements ILayoutProcessor<LGraph> {
     

@@ -23,8 +23,6 @@ import com.google.common.collect.HashBiMap;
  * that is created by diagram layout managers.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2012-07-19 review KI-20 by cds, jjc
  */
 public class LayoutMapping extends MapPropertyHolder {
     

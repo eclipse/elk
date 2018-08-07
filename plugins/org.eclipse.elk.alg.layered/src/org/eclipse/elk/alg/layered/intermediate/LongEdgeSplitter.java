@@ -54,8 +54,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * </dl>
  *
  * @author msp
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class LongEdgeSplitter implements ILayoutProcessor<LGraph> {
 

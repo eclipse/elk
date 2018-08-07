@@ -40,8 +40,6 @@ import com.google.common.collect.Multimap;
  * @author cds
  * @author ima
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class ForsterConstraintResolver implements  IInitializable {
 

@@ -36,8 +36,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  * </dl>
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class SimpleNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
 

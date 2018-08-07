@@ -40,8 +40,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * </p>
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public abstract class MonitoredOperation {
 

@@ -56,8 +56,6 @@ import com.google.common.collect.Maps;
  *
  * @author msp
  * @author uru
- * @kieler.design proposed by msp
- * @kieler.rating 2009-12-11 proposed yellow msp
  */
 public final class ElkUtil {
 

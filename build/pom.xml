@@ -137,16 +137,6 @@
                   <head>Ordered</head>
                 </tag>
                 <tag>
-                  <name>kieler.design</name>
-                  <placement>t</placement>
-                  <head>Design Review:</head>
-                </tag>
-                <tag>
-                  <name>kieler.rating</name>
-                  <placement>t</placement>
-                  <head>Code Review:</head>
-                </tag>
-                <tag>
                   <name>implSpec</name>
                   <placement>a</placement>
                   <head>Implementation Specification</head>

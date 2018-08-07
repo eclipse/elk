@@ -52,8 +52,6 @@ import java.util.NoSuchElementException;
  * </pre>
  * </p>
  * 
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @param <T> type of contained object
  * @author msp
  */

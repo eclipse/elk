@@ -35,8 +35,6 @@ import com.google.common.collect.Lists;
  * </dl>
  * 
  * @author msp
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public final class InteractiveCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
 

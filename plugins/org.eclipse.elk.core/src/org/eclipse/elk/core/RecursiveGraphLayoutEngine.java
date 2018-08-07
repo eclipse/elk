@@ -50,8 +50,6 @@ import com.google.common.collect.Lists;
  * MIGRATE Extend the graph layout engine to offset edge coordinates properly
  * </p> 
  * 
- * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
  * @author ars
  * @author msp
  */

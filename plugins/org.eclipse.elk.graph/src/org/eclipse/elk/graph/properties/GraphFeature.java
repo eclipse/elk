@@ -21,8 +21,6 @@ package org.eclipse.elk.graph.properties;
  *
  * @author msp
  * @author cds
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  */
 public enum GraphFeature {
 

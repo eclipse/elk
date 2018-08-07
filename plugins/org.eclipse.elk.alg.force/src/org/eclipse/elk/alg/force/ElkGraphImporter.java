@@ -34,8 +34,6 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  * Manages the transformation of KGraphs to FGraphs.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class ElkGraphImporter implements IGraphImporter<ElkNode> {
     

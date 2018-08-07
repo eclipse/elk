@@ -23,8 +23,6 @@ import java.util.EnumSet;
  * <p><i>Note:</i> Layout algorithms may only support a subset of these options.</p>
  *
  * @see SizeOptions
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  * @author msp
  * @author cds
  */

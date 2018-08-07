@@ -40,8 +40,6 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
  * {@link #getLongDescription()}.</p>
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutPropertyDescriptor implements IPropertyDescriptor {
 

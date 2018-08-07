@@ -14,8 +14,6 @@ package org.eclipse.elk.alg.layered.graph;
  * A label in the layered graph structure.
  * 
  * @author jjc
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LLabel extends LShape {
     

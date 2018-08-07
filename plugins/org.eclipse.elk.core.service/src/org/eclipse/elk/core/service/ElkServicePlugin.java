@@ -32,8 +32,6 @@ import com.google.common.collect.Multimap;
  * The activator class controls the plug-in life cycle.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class ElkServicePlugin extends AbstractUIPlugin {
 

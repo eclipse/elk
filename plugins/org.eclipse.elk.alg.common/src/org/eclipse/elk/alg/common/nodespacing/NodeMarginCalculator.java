@@ -38,7 +38,6 @@ import org.eclipse.elk.core.util.adapters.GraphAdapters.PortAdapter;
  * @see LabelAndNodeSizeProcessor
  * @author cds
  * @author uru
- * @kieler.design 2012-08-10 chsch grh
  */
 public final class NodeMarginCalculator  {
 

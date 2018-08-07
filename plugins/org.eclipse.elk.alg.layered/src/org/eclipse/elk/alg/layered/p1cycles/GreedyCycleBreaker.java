@@ -54,8 +54,6 @@ import com.google.common.collect.Lists;
  * @see org.eclipse.elk.alg.layered.intermediate.EdgeAndLayerConstraintEdgeReverser
  * @see org.eclipse.elk.alg.layered.intermediate.LayerConstraintProcessor
  * @author msp
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating yellow 2012-11-13 review KI-33 by grh, akoc
  */
 public final class GreedyCycleBreaker implements ILayoutPhase<LayeredPhases, LGraph> {
     

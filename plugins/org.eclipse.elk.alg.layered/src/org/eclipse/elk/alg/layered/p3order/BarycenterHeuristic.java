@@ -32,8 +32,6 @@ import com.google.common.collect.Lists;
  * @author msp
  * @author cds
  * @author ima
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class BarycenterHeuristic implements ICrossingMinimizationHeuristic {
 

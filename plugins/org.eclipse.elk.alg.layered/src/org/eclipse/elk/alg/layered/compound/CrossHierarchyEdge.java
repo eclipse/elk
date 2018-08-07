@@ -25,8 +25,6 @@ import org.eclipse.elk.alg.layered.options.PortType;
  * property.
  *
  * @author msp
- * @kieler.design proposed by cds
- * @kieler.rating proposed yellow by cds
  */
 public class CrossHierarchyEdge {
     

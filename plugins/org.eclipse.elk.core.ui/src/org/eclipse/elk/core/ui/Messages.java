@@ -17,8 +17,6 @@ import java.util.ResourceBundle;
  * String externalization class for the ELK UI plugin.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class Messages {
 

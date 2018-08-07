@@ -43,8 +43,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * Command handler for applying layout directly to GMF diagram files.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class LayoutDiagramFileHandler extends AbstractHandler {
 

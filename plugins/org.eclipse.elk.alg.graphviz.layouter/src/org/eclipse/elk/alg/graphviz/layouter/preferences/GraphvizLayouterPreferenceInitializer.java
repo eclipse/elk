@@ -20,8 +20,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * plug-in.
  * 
  * @author ars
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphvizLayouterPreferenceInitializer extends AbstractPreferenceInitializer {
 

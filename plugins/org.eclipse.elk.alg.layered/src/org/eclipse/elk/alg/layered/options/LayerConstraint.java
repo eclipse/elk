@@ -19,8 +19,6 @@ package org.eclipse.elk.alg.layered.options;
  * @see org.eclipse.elk.alg.layered.intermediate.LayerConstraintProcessor
  *        LayerConstraintProcessor
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public enum LayerConstraint {
     

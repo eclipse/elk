@@ -20,8 +20,6 @@ import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISyn
  * Customized syntactic sequencer to enforce serialization of some optional keywords.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 @SuppressWarnings("restriction")
 public class GraphvizDotSyntacticSequencer extends AbstractGraphvizDotSyntacticSequencer {

@@ -19,8 +19,6 @@ import com.google.common.math.DoubleMath;
  * Mathematics utility class for the Eclipse Layout Kernel.
  * 
  * @author msp
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating 2009-12-11 proposed yellow msp
  */
 public final class ElkMath {
 

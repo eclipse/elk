@@ -24,8 +24,6 @@ import org.eclipse.jface.viewers.Viewer;
  * Content provider for displaying layout algorithms sorted by layout type.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class AlgorithmContentProvider implements ITreeContentProvider {
 

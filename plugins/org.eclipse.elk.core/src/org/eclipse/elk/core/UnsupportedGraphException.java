@@ -14,8 +14,6 @@ package org.eclipse.elk.core;
  * Thrown when a layout algorithm is executed on a graph that is not supported.
  *
  * @author msp
- * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class UnsupportedGraphException extends RuntimeException {
 

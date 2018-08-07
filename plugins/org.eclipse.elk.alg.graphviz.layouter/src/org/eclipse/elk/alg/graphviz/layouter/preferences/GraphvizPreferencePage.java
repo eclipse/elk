@@ -27,8 +27,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * 
  * @author ars
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
         IWorkbenchPreferencePage {

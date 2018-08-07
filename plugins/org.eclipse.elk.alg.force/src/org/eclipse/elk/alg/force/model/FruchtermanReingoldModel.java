@@ -22,8 +22,6 @@ import org.eclipse.elk.core.math.KVector;
  * @author msp
  * @author tmn
  * @author fhol
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class FruchtermanReingoldModel extends AbstractForceModel {
 

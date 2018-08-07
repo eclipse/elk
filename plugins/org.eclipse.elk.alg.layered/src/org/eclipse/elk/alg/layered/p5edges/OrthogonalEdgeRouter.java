@@ -54,8 +54,6 @@ import com.google.common.collect.Iterables;
  * @author msp
  * @author cds
  * @author jjc
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class OrthogonalEdgeRouter implements ILayoutPhase<LayeredPhases, LGraph> {
     

@@ -26,8 +26,6 @@ import com.google.common.collect.Maps;
 /**
  * Data type used to store information for a layout algorithm.
  * 
- * @kieler.design 2011-02-01 reviewed by cmot, soh
- * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
 public final class LayoutAlgorithmData implements ILayoutMetaData {

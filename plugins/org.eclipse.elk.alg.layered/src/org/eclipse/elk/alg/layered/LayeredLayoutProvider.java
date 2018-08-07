@@ -26,8 +26,6 @@ import org.eclipse.elk.graph.ElkNode;
  * 
  * @author msp
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating yellow 2014-11-09 review KI-56 by chsch, als
  */
 public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 

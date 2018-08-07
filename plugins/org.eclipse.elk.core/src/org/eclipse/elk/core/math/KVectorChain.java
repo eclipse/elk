@@ -21,8 +21,6 @@ import org.eclipse.elk.core.util.IDataObject;
 /**
  * A chain of vectors. Can be used to describe polylines or similar constructs.
  * 
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author msp
  */
 public final class KVectorChain extends LinkedList<KVector> implements IDataObject {

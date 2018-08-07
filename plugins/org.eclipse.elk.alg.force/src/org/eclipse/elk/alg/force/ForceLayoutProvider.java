@@ -28,8 +28,6 @@ import org.eclipse.elk.graph.ElkNode;
  * Layout provider for the force layout algorithms.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class ForceLayoutProvider extends AbstractLayoutProvider {
 

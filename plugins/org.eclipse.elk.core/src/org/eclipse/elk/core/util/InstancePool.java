@@ -21,8 +21,6 @@ import java.util.LinkedList;
  *
  * @param <T> the type of instances that are held by this pool
  * @author msp
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public final class InstancePool<T> {
     

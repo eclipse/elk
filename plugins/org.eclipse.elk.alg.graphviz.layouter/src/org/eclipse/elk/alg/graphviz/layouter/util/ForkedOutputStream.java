@@ -18,8 +18,6 @@ import java.util.List;
 /**
  * An output stream that can be used to send the same output to multiple output streams.
  * 
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating 2009-12-11 proposed yellow msp
  * @author msp
  */
 public class ForkedOutputStream extends OutputStream {

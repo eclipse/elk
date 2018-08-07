@@ -29,8 +29,6 @@ import com.google.inject.Injector;
  * registered through the extension point.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow 2012-07-10 msp
  */
 public class LayoutConnectorsService {
 

@@ -47,8 +47,6 @@ import com.google.inject.Injector;
  * passed in the {@link #initialize(String)} method.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphvizLayoutProvider extends AbstractLayoutProvider {
 

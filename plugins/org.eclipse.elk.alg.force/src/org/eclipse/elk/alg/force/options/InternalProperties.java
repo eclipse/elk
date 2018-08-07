@@ -20,8 +20,6 @@ import org.eclipse.elk.graph.properties.Property;
  * Internal property definitions for the force layout algorithm.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class InternalProperties {
     

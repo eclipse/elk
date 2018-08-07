@@ -23,8 +23,6 @@ import com.google.common.collect.Iterables;
  * 
  * @author owo
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class FGraph extends MapPropertyHolder {
     
