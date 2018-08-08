@@ -15,10 +15,12 @@ import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -41,22 +43,23 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Same-slot dependencies:</dt>
  *     <dd>None.</dd>
  * </dl>
- *
  */
 public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
 
     @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Self-Loop pre-processing.", 1);
-
+        
         // process all nodes
         for (final LNode node : layeredGraph.getLayerlessNodes()) {
+            double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(node, LayeredOptions.SPACING_LABEL_LABEL);
+            
             // calculate the SelfLoopComponents of the node and save them to it's properties
             List<SelfLoopComponent> components = SelfLoopComponent.createSelfLoopComponents(node);
             node.setProperty(InternalProperties.SELFLOOP_COMPONENTS, components);
 
             // pre-process labels
-            preprocessLabels(components);
+            preprocessLabels(components, labelLabelSpacing);
 
             // hide the ports which are non useful for the crossing minimization
             hidePorts(node);
@@ -69,25 +72,28 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
      * For each component the labels of the contained edges are collected and put together to one label. This joint
      * label is stored in a SelfLoopLabel.
      */
-    public void preprocessLabels(final List<SelfLoopComponent> components) {
+    public void preprocessLabels(final List<SelfLoopComponent> components, final double labelLabelSpacing) {
         for (SelfLoopComponent component : components) {
             List<LLabel> labels = component.getComponentLabels();
 
             // the labels shall be assembled one above another,
             // therefore the max width and overall height has to be calculated
             double maxWidth = 0.0;
-            double maxHeight = 0.0;
+            double height = 0.0;
             for (LLabel label : labels) {
                 KVector size = label.getSize();
                 maxWidth = Math.max(size.x, maxWidth);
-                maxHeight += size.y;
+                height += size.y;
             }
+            
+            // add label-label spacing between each pair of labels
+            height += Math.max(0, labelLabelSpacing * (labels.size() - 1));
 
             // create a SelfLoopLabel for each component,
             // storing height and width of the labels of all component edges
             SelfLoopLabel label = new SelfLoopLabel();
             label.getLabels().addAll(labels);
-            label.setHeight(maxHeight);
+            label.setHeight(height);
             label.setWidth(maxWidth);
             component.setLabel(label);
         }

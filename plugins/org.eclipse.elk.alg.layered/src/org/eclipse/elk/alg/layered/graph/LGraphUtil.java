@@ -19,15 +19,18 @@ import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.InLayerConstraint;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayerConstraint;
-import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.layered.options.PortType;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.Alignment;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
+import org.eclipse.elk.core.util.IndividualSpacings;
+import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 
 /**
@@ -1019,6 +1022,35 @@ public final class LGraphUtil {
     
     ///////////////////////////////////////////////////////////////////////////////
     // Other Stuff
+    
+    /**
+     * {@code LGraph}-local implementation of
+     * {@link IndividualSpacings#getIndividualOrInherited(org.eclipse.elk.graph.ElkNode, IProperty)}.
+     * 
+     * @param node
+     *            the node whose property value to return. If the property is not set as part of an
+     *            {@link IndividualSpacings} object, we use the property value set on the graph the node is part of.
+     * @param property
+     *            the property whose value to return.
+     * @return the property value.
+     */
+    public static <T> T getIndividualOrInherited(final LNode node, final IProperty<T> property) {
+        T result = null;
+        
+        if (node.hasProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE)) {
+            IPropertyHolder individualSpacings = node.getProperty(CoreOptions.SPACING_INDIVIDUAL_OVERRIDE);
+            if (individualSpacings.hasProperty(property)) {
+                result = individualSpacings.getProperty(property);
+            }
+        }
+        
+        // use the common value
+        if (result == null && node.getGraph() != null) {
+            result = node.getGraph().getProperty(property);
+        }
+        
+        return result;
+    }
     
     /**
      * Determine the layout direction for the given graph. If the direction option is undefined,

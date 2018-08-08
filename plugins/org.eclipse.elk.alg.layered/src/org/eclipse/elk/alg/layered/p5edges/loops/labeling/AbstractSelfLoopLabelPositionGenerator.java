@@ -7,7 +7,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopRoutingDirection;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
@@ -20,11 +23,50 @@ import org.eclipse.elk.core.options.PortSide;
 public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoopLabelPositionGenerator {
     
     /** TODO Document. Perhaps replace through layout options. */
-    protected static final double EDGE_DISTANCE = 10;
-    /** TODO Document. Perhaps replace through layout options. */
-    protected static final double LABEL_SPACING = 2;
-    /** TODO Document. Perhaps replace through layout options. */
     protected static final double ANCHOR_SIZE = 5;
+    
+    /** The self loop node we're generating label positions for. */
+    private final SelfLoopNode slNode;
+    /** Spacing between edges. */
+    private final double edgeEdgeSpacing;
+    /** Spacing between edges and their labels. */
+    private final double edgeLabelSpacing;
+    
+    
+    /**
+     * Creates a new instance for the given node.
+     */
+    public AbstractSelfLoopLabelPositionGenerator(final SelfLoopNode slNode) {
+        this.slNode = slNode;
+        
+        edgeEdgeSpacing = LGraphUtil.getIndividualOrInherited(slNode.getNode(), LayeredOptions.SPACING_EDGE_EDGE);
+        edgeLabelSpacing = LGraphUtil.getIndividualOrInherited(slNode.getNode(), LayeredOptions.SPACING_EDGE_LABEL);
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Getters
+    
+    /**
+     * Returns the self loop node this position generator was created for.
+     */
+    protected SelfLoopNode getSelfLoopNode() {
+        return slNode;
+    }
+    
+    /**
+     * Returns the edge-edge spacing for the node we've been created for.
+     */
+    protected double getEdgeEdgeSpacing() {
+        return edgeEdgeSpacing;
+    }
+    
+    /**
+     * Returns the edge-label spacing for the node we've been created for.
+     */
+    protected double getEdgeLabelSpacing() {
+        return edgeLabelSpacing;
+    }
     
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -28,13 +28,11 @@ import com.google.common.collect.Iterables;
  */
 public class FourCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelPositionGenerator {
 
-    private SelfLoopNode slNode;
-
     /**
      * Creates a new generator for the given self loop node.
      */
-    public FourCornerLoopLabelPositionGenerator(final SelfLoopNode nodeRep) {
-        this.slNode = nodeRep;
+    public FourCornerLoopLabelPositionGenerator(final SelfLoopNode slNode) {
+        super(slNode);
     }
 
     @Override
@@ -53,23 +51,27 @@ public class FourCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelP
     private List<SelfLoopLabelPosition> generatePositions(final SelfLoopComponent component,
             final SelfLoopPort startPort, final SelfLoopPort endPort) {
         
+        // Retrieve the spacings active for this node
+        double edgeEdgeSpacing = getEdgeEdgeSpacing();
+        double edgeLabelSpacing = getEdgeLabelSpacing();
+        
         List<SelfLoopLabelPosition> positions = new ArrayList<SelfLoopLabelPosition>();
         KVector startPosition = startPort.getLPort().getPosition().clone().add(startPort.getLPort().getAnchor());
         KVector endPosition = endPort.getLPort().getPosition().clone().add(endPort.getLPort().getAnchor());
 
         double directionStart = SplinesMath.portSideToDirection(startPort.getPortSide());
         KVector dirVectorStart = new KVector(directionStart);
-        KVector firstBendpoint = startPosition.clone()
-                .add(dirVectorStart.clone().scale((startPort.getMaximumLevel() * EDGE_DISTANCE) + LABEL_SPACING));
+        KVector firstBendpoint = startPosition.clone().add(dirVectorStart.clone().scale(
+                (startPort.getMaximumLevel() * edgeEdgeSpacing) + edgeLabelSpacing));
 
         double directionEnd = SplinesMath.portSideToDirection(endPort.getPortSide());
         KVector dirVectorEnd = new KVector(directionEnd);
-        KVector secondBendpoint = endPosition.clone()
-                .add(dirVectorEnd.clone().scale((endPort.getMaximumLevel() * EDGE_DISTANCE) + LABEL_SPACING));
+        KVector secondBendpoint = endPosition.clone().add(dirVectorEnd.clone().scale(
+                (endPort.getMaximumLevel() * edgeEdgeSpacing) + edgeLabelSpacing));
 
         SelfLoopEdge edge = Iterables.get(component.getConnectedEdges(), 0);
-        List<KVector> cornerPoints = SelfLoopBendpointCalculationUtil.generateCornerBendpoints(slNode, startPort,
-                endPort, firstBendpoint, secondBendpoint, edge);
+        List<KVector> cornerPoints = SelfLoopBendpointCalculationUtil.generateCornerBendpoints(getSelfLoopNode(),
+                startPort, endPort, firstBendpoint, secondBendpoint, edge);
 
         // Centered Positions
         List<SelfLoopLabelPosition> centeredPositions = createCenteredPositions(startPort, endPort, firstBendpoint,

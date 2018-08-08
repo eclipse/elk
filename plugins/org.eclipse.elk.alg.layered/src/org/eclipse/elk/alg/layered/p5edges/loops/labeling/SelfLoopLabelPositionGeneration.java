@@ -40,19 +40,19 @@ public final class SelfLoopLabelPositionGeneration {
             Multimap<SelfLoopType, SelfLoopComponent> componentTypes = SelfLoopUtil.getTypeMap(slNode.getNode());
 
             // positions for side loops
-            SideLoopLabelPositionGenerator sidePlacer = new SideLoopLabelPositionGenerator();
+            SideLoopLabelPositionGenerator sidePlacer = new SideLoopLabelPositionGenerator(slNode);
             Map<SelfLoopComponent, List<SelfLoopLabelPosition>> sideLoopLabelMap =
                     placeLabels(componentTypes.get(SelfLoopType.SIDE), sidePlacer);
             allComponentLoopLabelMap.putAll(sideLoopLabelMap);
 
             // positions for corner loops
-            CornerLoopLabelPositionGenerator cornerPlacer = new CornerLoopLabelPositionGenerator();
+            CornerLoopLabelPositionGenerator cornerPlacer = new CornerLoopLabelPositionGenerator(slNode);
             Map<SelfLoopComponent, List<SelfLoopLabelPosition>> cornerLoopLabelMap =
                     placeLabels(componentTypes.get(SelfLoopType.CORNER), cornerPlacer);
             allComponentLoopLabelMap.putAll(cornerLoopLabelMap);
 
             // positions for opposing loops
-            OppossingLoopLabelPositionGenerator oppossingPlacer = new OppossingLoopLabelPositionGenerator(slNode);
+            OpposingLoopLabelPositionGenerator oppossingPlacer = new OpposingLoopLabelPositionGenerator(slNode);
             Map<SelfLoopComponent, List<SelfLoopLabelPosition>> opposingLoopLabelMap =
                     placeLabels(componentTypes.get(SelfLoopType.OPPOSING), oppossingPlacer);
             allComponentLoopLabelMap.putAll(opposingLoopLabelMap);

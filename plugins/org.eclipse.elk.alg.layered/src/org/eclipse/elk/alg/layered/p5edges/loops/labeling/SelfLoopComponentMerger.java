@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
@@ -50,6 +52,7 @@ public final class SelfLoopComponentMerger {
             SelfLoopLabel label = new SelfLoopLabel();
             
             // for each component the labels are collected
+            int componentsWithLabels = 0;
             for (SelfLoopComponent component : components) {
                 // update the dependency graph to avoid offsets
                 slNode.getNodeSide(PortSide.NORTH).getComponentDependencies().add(component);
@@ -73,10 +76,20 @@ public final class SelfLoopComponentMerger {
                     label.getLabels().addAll(componentLabel.getLabels());
                     label.setHeight(label.getHeight() + componentLabel.getHeight());
                     label.setWidth(Math.max(label.getWidth(), componentLabel.getWidth()));
+                    
+                    componentsWithLabels++;
                 }
                 
                 // delete old label reference
                 component.setLabel(new SelfLoopLabel());
+            }
+            
+            // we need to add an appropriate amount of label-label spacings
+            if (componentsWithLabels > 0) {
+                double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(
+                        lNode, LayeredOptions.SPACING_LABEL_LABEL);
+                double delta = Math.max(0, labelLabelSpacing * (componentsWithLabels - 1));
+                label.setHeight(label.getHeight() + delta);
             }
             
             // a random component holds the label now

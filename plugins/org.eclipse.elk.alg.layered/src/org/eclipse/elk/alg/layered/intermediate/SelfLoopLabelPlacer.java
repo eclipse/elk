@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
+import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
@@ -74,9 +75,13 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
                         // Find the best position for each component
                         List<SelfLoopLabel> minimumLabelConfiguration =
                                 SelfLoopLabelPositionEvaluation.evaluatePositions(slNode, positions);
-
+                        
+                        // Find the active label-label spacing
+                        double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(node,
+                                LayeredOptions.SPACING_LABEL_LABEL);
+                        
                         // calculate the actual coordinates
-                        placeLabels(minimumLabelConfiguration);
+                        placeLabels(minimumLabelConfiguration, labelLabelSpacing);
                     }
                 }
             }
@@ -88,16 +93,15 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
     /**
      * Apply the position information to the labels.
      */
-    private void placeLabels(final List<SelfLoopLabel> minimumLabelConfiguration) {
-        for (SelfLoopLabel label : minimumLabelConfiguration) {
-            double offset = 0;
-            KVector labelPosition = label.getRelativeLabelPosition().getPosition();
+    private void placeLabels(final List<SelfLoopLabel> minimumLabelConfiguration, final double labelLabelSpacing) {
+        for (SelfLoopLabel slLabel : minimumLabelConfiguration) {
+            KVector position = slLabel.getRelativeLabelPosition().getPosition();
             
-            for (LLabel alabel : label.getLabels()) {
-                double width = (label.getWidth() - alabel.getSize().x) / 2;
-                KVector labelPositionOffset = labelPosition.clone().add(new KVector(width, offset));
-                offset += alabel.getSize().y;
-                alabel.getPosition().reset().add(labelPositionOffset);
+            for (LLabel lLabel : slLabel.getLabels()) {
+                double xPos = position.x + (slLabel.getWidth() - lLabel.getSize().x) / 2;
+                lLabel.getPosition().set(xPos, position.y);
+                
+                position.y += lLabel.getSize().y + labelLabelSpacing;
             }
         }
     }
