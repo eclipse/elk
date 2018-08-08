@@ -13,7 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 
+import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
@@ -56,6 +58,30 @@ public final class SelfLoopLabelPositionEvaluation {
      */
     public static List<SelfLoopLabel> evaluatePositions(final SelfLoopNode slNode,
             final Map<SelfLoopComponent, List<SelfLoopLabelPosition>> positionsComponentMap) {
+        
+        // DEBUG START
+        KVector nodeSize = slNode.getNode().getSize();
+        System.out.println("----------------------------------------");
+        System.out.println("SETUP");
+        System.out.println();
+        System.out.println("Node (" + nodeSize.x + ", " + nodeSize.y + ")");
+        
+        for (SelfLoopComponent component : positionsComponentMap.keySet()) {
+            SelfLoopLabel slLabel = component.getLabel();
+            
+            // Output component labels
+            StringJoiner joiner = new StringJoiner(", ");
+            for (LLabel llabel : component.getComponentLabels()) {
+                joiner.add(llabel.getText());
+            }
+            System.out.println(joiner.toString() + " (" + slLabel.getWidth() + ", " + slLabel.getHeight() + ")");
+            
+            // Output possible positions
+            for (SelfLoopLabelPosition position : positionsComponentMap.get(component)) {
+                System.out.println("    " + position.getPosition().toString() + "     p " + position.getPenalty());
+            }
+        }
+        // DEBUG END
 
         // initialize a random position constellation
         HashMap<SelfLoopComponent, SelfLoopLabelPosition> minimumConstellation =
@@ -64,8 +90,19 @@ public final class SelfLoopLabelPositionEvaluation {
         // calculate the current penalty value
         double minimumPenalty = calculatePenalty(slNode, positionsComponentMap);
         double previousPenalty = Double.MAX_VALUE;
+        
+        // DEBUG START
+        int run = 1;
+        // DEBUG END
 
         while (minimumPenalty < previousPenalty) {
+            // DEBUG START
+            System.out.println();
+            System.out.println();
+            System.out.println("RUN " + run++);
+            System.out.println();
+            // DEBUG END
+            
             previousPenalty = minimumPenalty;
             double currentMinimum = Double.MAX_VALUE;
             HashMap<SelfLoopComponent, SelfLoopLabelPosition> currentMinimumConstellation =
@@ -73,18 +110,33 @@ public final class SelfLoopLabelPositionEvaluation {
 
             for (SelfLoopComponent component : positionsComponentMap.keySet()) {
                 List<SelfLoopLabelPosition> positions = positionsComponentMap.get(component);
+                
+                // DEBUG START
+                StringJoiner joiner = new StringJoiner(", ");
+                for (LLabel llabel : component.getComponentLabels()) {
+                    joiner.add(llabel.getText());
+                }
+                System.out.println(joiner.toString());
+                // DEBUG END
 
-                // search for the minimum of each component
-                for (int i = 0; i < positions.size(); i++) {
-                    SelfLoopLabelPosition currentPosition = positions.get(i);
+                // search for the minimum of this component
+                for (SelfLoopLabelPosition currentPosition : positions) {
                     component.getLabel().setRelativeLabelPosition(currentPosition);
                     currentMinimumConstellation.put(component, currentPosition);
 
                     // calculate penalty for current constellation
                     currentMinimum = calculatePenalty(slNode, positionsComponentMap);
+                    
+                    // DEBUG START
+                    System.out.println("    " + currentPosition.getPosition().toString() + ": " + currentMinimum);
+                    // DEBUG END
 
                     // update minimum
                     if (currentMinimum < minimumPenalty) {
+                        // DEBUG START
+                        System.out.println("    -> chosen");
+                        // DEBUG END
+                        
                         minimumPenalty = currentMinimum;
                         minimumConstellation = new HashMap<>(currentMinimumConstellation);
                     }
@@ -99,6 +151,25 @@ public final class SelfLoopLabelPositionEvaluation {
         for (SelfLoopComponent components : positionsComponentMap.keySet()) {
             labels.add(components.getLabel());
         }
+        
+        // DEBUG START
+        System.out.println();
+        System.out.println();
+        System.out.println("RESULT");
+        System.out.println();
+        
+        for (SelfLoopComponent component : positionsComponentMap.keySet()) {
+            // Output component labels
+            StringJoiner joiner = new StringJoiner(", ");
+            for (LLabel llabel : component.getComponentLabels()) {
+                joiner.add(llabel.getText());
+            }
+            System.out.println(joiner.toString());
+            
+            // Output chosen position
+            System.out.println("    -> " + minimumConstellation.get(component).getPosition().toString());
+        }
+        // DEBUG END
         
         return labels;
     }
