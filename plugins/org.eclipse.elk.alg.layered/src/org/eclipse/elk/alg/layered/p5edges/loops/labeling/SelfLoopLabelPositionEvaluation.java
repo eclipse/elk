@@ -99,7 +99,7 @@ public final class SelfLoopLabelPositionEvaluation {
                 initializeConstellation(positionsComponentMap);
 
         // calculate the current penalty value
-        double minimumPenalty = calculatePenalty(slNode, components, positionsComponentMap);
+        double minimumPenalty = calculatePenalty(slNode, components, positionsComponentMap, debugMode);
         double previousPenalty = Double.MAX_VALUE;
         
         int run = 1;
@@ -143,7 +143,7 @@ public final class SelfLoopLabelPositionEvaluation {
                     }
                     
                     // calculate penalty for current constellation
-                    currentMinimum = calculatePenalty(slNode, components, positionsComponentMap);
+                    currentMinimum = calculatePenalty(slNode, components, positionsComponentMap, debugMode);
 
                     if (debugMode) {
                         System.out.println("        Penalty: " + currentMinimum);
@@ -215,7 +215,7 @@ public final class SelfLoopLabelPositionEvaluation {
     }
 
     private static double calculatePenalty(final SelfLoopNode slNode, final List<SelfLoopComponent> components,
-            final Map<SelfLoopComponent, List<SelfLoopLabelPosition>> positionsComponentMap) {
+            final Map<SelfLoopComponent, List<SelfLoopLabelPosition>> positionsComponentMap, final boolean debugMode) {
 
         double preferenceValueSum = 0;
         
@@ -235,11 +235,11 @@ public final class SelfLoopLabelPositionEvaluation {
         int labelLabelCrossings = calculateLabelLabelCrossings(components);
         int labelEdgeCrossings = calculateLabelEdgeCrossings(slNode, components);
 
-        // DEBUG START
-        System.out.println("        Label-Node: " + labelNodeCrossings);
-        System.out.println("        Label-Label: " + labelLabelCrossings);
-        System.out.println("        Label-Edge: " + labelEdgeCrossings);
-        // DEBUG END
+        if (debugMode) {
+            System.out.println("        Label-Node: " + labelNodeCrossings);
+            System.out.println("        Label-Label: " + labelLabelCrossings);
+            System.out.println("        Label-Edge: " + labelEdgeCrossings);
+        }
         
         return LABEL_EDGE_CROSSING_PENALTY * labelEdgeCrossings
                 + LABEL_LABEL_CROSSING_PENALTY * labelLabelCrossings
