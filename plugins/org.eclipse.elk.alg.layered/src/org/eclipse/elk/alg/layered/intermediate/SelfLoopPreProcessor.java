@@ -19,10 +19,12 @@ import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -52,17 +54,21 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
         
         // process all nodes
         for (final LNode node : layeredGraph.getLayerlessNodes()) {
-            double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(node, LayeredOptions.SPACING_LABEL_LABEL);
-            
-            // calculate the SelfLoopComponents of the node and save them to it's properties
-            List<SelfLoopComponent> components = SelfLoopComponent.createSelfLoopComponents(node);
-            node.setProperty(InternalProperties.SELFLOOP_COMPONENTS, components);
-
-            // pre-process labels
-            preprocessLabels(components, labelLabelSpacing);
-
-            // hide the ports which are non useful for the crossing minimization
-            hidePorts(node);
+            if (node.getType() == NodeType.NORMAL) {
+                // create a self loop node representation
+                SelfLoopNode slNode = new SelfLoopNode(node);
+                node.setProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION, slNode);
+                
+                
+                // calculate the SelfLoopComponents of the node and save them to it's properties
+                SelfLoopComponent.createSelfLoopComponents(slNode);
+                
+                // pre-process labels
+                preprocessLabels(slNode);
+                
+                // hide the ports which are non useful for the crossing minimization
+                hidePorts(node);
+            }
         }
 
         monitor.done();
@@ -72,8 +78,11 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
      * For each component the labels of the contained edges are collected and put together to one label. This joint
      * label is stored in a SelfLoopLabel.
      */
-    public void preprocessLabels(final List<SelfLoopComponent> components, final double labelLabelSpacing) {
-        for (SelfLoopComponent component : components) {
+    public void preprocessLabels(final SelfLoopNode slNode) {
+        double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(
+                slNode.getNode(), LayeredOptions.SPACING_LABEL_LABEL);
+        
+        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
             List<LLabel> labels = component.getComponentLabels();
 
             // the labels shall be assembled one above another,

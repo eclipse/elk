@@ -24,6 +24,7 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
@@ -121,14 +122,12 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
                     }
 
                     // Self-loop
-                    final List<SelfLoopComponent> components = node.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
-                    if (components != null) {
-                        for (SelfLoopComponent component : components) {
-                            SelfLoopLabel label = component.getLabel();
-                            if (label != null) {
-                                doManageLabels(labelManager, label.getLabels(), MIN_WIDTH_EDGE_LABELS,
-                                        labelLabelSpacing, verticalLayout);
-                            }
+                    SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+                    for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
+                        SelfLoopLabel label = component.getLabel();
+                        if (label != null) {
+                            doManageLabels(labelManager, label.getLabels(), MIN_WIDTH_EDGE_LABELS,
+                                    labelLabelSpacing, verticalLayout);
                         }
                     }
 

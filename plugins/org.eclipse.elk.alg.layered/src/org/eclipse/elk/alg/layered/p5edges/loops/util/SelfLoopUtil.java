@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.util;
 
-import java.util.List;
-
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
@@ -33,11 +31,10 @@ public final class SelfLoopUtil {
     public static Multimap<SelfLoopType, SelfLoopComponent> getTypeMap(final LNode node) {
         Multimap<SelfLoopType, SelfLoopComponent> typeMap = ArrayListMultimap.create();
         
-        SelfLoopNode nodeRep = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        List<SelfLoopComponent> components = node.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
+        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
 
-        for (SelfLoopComponent component : components) {
-            typeMap.put(component.getType(nodeRep), component);
+        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            typeMap.put(component.getType(slNode), component);
         }
 
         return typeMap;

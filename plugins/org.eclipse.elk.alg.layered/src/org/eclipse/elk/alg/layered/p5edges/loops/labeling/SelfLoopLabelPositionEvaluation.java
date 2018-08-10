@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,8 +16,6 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import org.eclipse.elk.alg.layered.graph.LLabel;
-import org.eclipse.elk.alg.layered.graph.LNode;
-import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
@@ -26,8 +23,6 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.loops.calculators.SelfLoopOffsetCalculator;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
-import org.eclipse.elk.core.math.ElkMath;
-import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
@@ -42,8 +37,6 @@ public final class SelfLoopLabelPositionEvaluation {
     private static final double LABEL_EDGE_CROSSING_PENALTY = 10.0;
     /** Penalty applied for label-label crossings. */
     private static final double LABEL_LABEL_CROSSING_PENALTY = 40.0;
-    /** Penalty applied for label-node crossings. */
-    private static final double LABEL_NODE_CROSSING = 100.0;
 
     
     /**
@@ -57,14 +50,14 @@ public final class SelfLoopLabelPositionEvaluation {
     // Position Evaluation
     
     /**
-     * 
+     * Chooses one {@link SelfLoopLabelPosition} for each self loop label with the aim of minimizing the penalties
+     * that result from choosing those positions.
      */
-    public static List<SelfLoopLabel> evaluatePositions(final SelfLoopNode slNode,
+    public static void evaluatePositions(final SelfLoopNode slNode,
             final Map<SelfLoopComponent, List<SelfLoopLabelPosition>> positionsComponentMap) {
         
         boolean debugMode = slNode.getNode().getGraph().getProperty(LayeredOptions.DEBUG_MODE);
-        
-        List<SelfLoopComponent> components = slNode.getNode().getProperty(InternalProperties.SELFLOOP_COMPONENTS);
+        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
         
         if (debugMode) {
             KVector nodeSize = slNode.getNode().getSize();
@@ -170,12 +163,6 @@ public final class SelfLoopLabelPositionEvaluation {
             }
         }
 
-        // collect labels
-        List<SelfLoopLabel> labels = new ArrayList<>();
-        for (SelfLoopComponent component : components) {
-            labels.add(component.getLabel());
-        }
-
         if (debugMode) {
             System.out.println();
             System.out.println();
@@ -194,8 +181,6 @@ public final class SelfLoopLabelPositionEvaluation {
                 System.out.println("    -> " + minimumConstellation.get(component).getPosition().toString());
             }
         }
-        
-        return labels;
     }
 
     private static HashMap<SelfLoopComponent, SelfLoopLabelPosition> initializeConstellation(
@@ -231,69 +216,22 @@ public final class SelfLoopLabelPositionEvaluation {
         SelfLoopOffsetCalculator.calculateOpposingSegmentLabelOffsets(slNode);
 
         // calculate the different penalties
-        int labelNodeCrossings = calculateLabelNodeCrossings(slNode.getNode(), components);
         int labelLabelCrossings = calculateLabelLabelCrossings(components);
         int labelEdgeCrossings = calculateLabelEdgeCrossings(slNode, components);
 
         if (debugMode) {
-            System.out.println("        Label-Node: " + labelNodeCrossings);
             System.out.println("        Label-Label: " + labelLabelCrossings);
             System.out.println("        Label-Edge: " + labelEdgeCrossings);
         }
         
         return LABEL_EDGE_CROSSING_PENALTY * labelEdgeCrossings
                 + LABEL_LABEL_CROSSING_PENALTY * labelLabelCrossings
-                + preferenceValueSum
-                + LABEL_NODE_CROSSING * labelNodeCrossings;
+                + preferenceValueSum;
     }
     
     
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Crossing Calculation
-
-    private static int calculateLabelNodeCrossings(final LNode lNode, final Collection<SelfLoopComponent> components) {
-        KVector nodePosition = lNode.getPosition();
-        KVector size = lNode.getSize();
-        ElkRectangle rectangle = new ElkRectangle(nodePosition.x, nodePosition.y, size.x, size.y);
-
-        int crossings = 0;
-        for (SelfLoopComponent component : components) {
-            SelfLoopLabel label = component.getLabel();
-            SelfLoopLabelPosition currentPosition = label.getRelativeLabelPosition();
-            KVector currentPosVector = currentPosition.getPosition().clone();
-
-            boolean topSideCut = ElkMath.intersects(rectangle, currentPosVector,
-                    currentPosVector.add(new KVector(currentPosVector.x, 0)));
-
-            boolean topSideInclude = ElkMath.contains(rectangle, currentPosVector,
-                    currentPosVector.add(new KVector(currentPosVector.x, 0)));
-
-            boolean bottomSideCut = ElkMath.intersects(rectangle, currentPosVector.add(0, currentPosVector.y),
-                    currentPosVector.add(new KVector(currentPosVector.x, currentPosVector.y)));
-
-            boolean bottomSideInclude = ElkMath.contains(rectangle, currentPosVector.add(0, currentPosVector.y),
-                    currentPosVector.add(new KVector(currentPosVector.x, currentPosVector.y)));
-
-            boolean leftSideCut = ElkMath.intersects(rectangle, currentPosVector,
-                    currentPosVector.add(new KVector(0, currentPosVector.y)));
-
-            boolean leftSideInclude = ElkMath.contains(rectangle, currentPosVector,
-                    currentPosVector.add(new KVector(0, currentPosVector.y)));
-
-            boolean rightSideCut = ElkMath.intersects(rectangle, currentPosVector.add(currentPosVector.x, 0),
-                    currentPosVector.add(new KVector(currentPosVector.x, currentPosVector.y)));
-
-            boolean rightSideInclude = ElkMath.contains(rectangle, currentPosVector.add(currentPosVector.x, 0),
-                    currentPosVector.add(new KVector(currentPosVector.x, currentPosVector.y)));
-
-            if (topSideCut || topSideInclude || bottomSideCut || bottomSideInclude || leftSideCut || leftSideInclude
-                    || rightSideCut || rightSideInclude) {
-                
-                crossings++;
-            }
-        }
-        return crossings;
-    }
 
     private static int calculateLabelLabelCrossings(final Collection<SelfLoopComponent> components) {
         // receive all candidate positions

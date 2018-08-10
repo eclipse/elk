@@ -40,7 +40,7 @@ public class FixedOrderSelfLoopPortPositioner extends AbstractSelfLoopPortPositi
     public void position(final LNode node) {
         // receive the node representation and the nodes components
         slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        List<SelfLoopComponent> components = node.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
+        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // retrieve the ports from the components and sort them by their original index
         List<SelfLoopPort> allPorts = new ArrayList<SelfLoopPort>();

@@ -26,7 +26,6 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.layered.intermediate.FinalSplineBendpointsCalculator;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
-import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
@@ -428,12 +427,6 @@ public final class InternalProperties {
     public static final IProperty<PortConstraints> ORIGINAL_PORT_CONSTRAINTS =  
             new Property<PortConstraints>("originalPortConstraints");
 
-    /**
-     * The connected components of a node.
-     */
-    public static final IProperty<List<SelfLoopComponent>> SELFLOOP_COMPONENTS =
-            new Property<List<SelfLoopComponent>>("selfLoopComponent");
-    
     /**
      * The linear node representation used from the self-loop calculation.
      */

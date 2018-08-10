@@ -42,7 +42,6 @@ public final class SelfLoopComponentMerger {
      */
     public static void mergeComponents(final SelfLoopNode slNode) {
         LNode lNode = slNode.getNode();
-        List<SelfLoopComponent> components = lNode.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
         
         // only with free port constraints the edges will be merged.
         if (lNode.getProperty(InternalProperties.ORIGINAL_PORT_CONSTRAINTS) == PortConstraints.FREE) {
@@ -53,7 +52,7 @@ public final class SelfLoopComponentMerger {
             
             // for each component the labels are collected
             int componentsWithLabels = 0;
-            for (SelfLoopComponent component : components) {
+            for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
                 // update the dependency graph to avoid offsets
                 slNode.getNodeSide(PortSide.NORTH).getComponentDependencies().add(component);
                 slNode.getNodeSide(PortSide.NORTH).setMaximumPortLevel(1);
@@ -93,7 +92,7 @@ public final class SelfLoopComponentMerger {
             }
             
             // a random component holds the label now
-            components.get(0).setLabel(label);
+            slNode.getSelfLoopComponents().get(0).setLabel(label);
             Collections.reverse(label.getLabels());
 
             // route all edges anew

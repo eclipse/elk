@@ -11,7 +11,6 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -20,8 +19,8 @@ import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopRoutingDirection;
@@ -67,13 +66,11 @@ public final class SelfLoopBendpointCalculator implements ILayoutProcessor<LGrap
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 if (node.getType() == NodeType.NORMAL) {
-                    SelfLoopNode nodeRep =
-                            node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-                    List<SelfLoopComponent> components = node.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
+                    SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
 
-                    for (SelfLoopComponent component : components) {
+                    for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
                         for (SelfLoopEdge edge : component.getConnectedEdges()) {
-                            loopRouter.routeSelfLoop(edge, nodeRep);
+                            loopRouter.routeSelfLoop(edge, slNode);
                         }
 
                         calculateJunctionPoints(component, routingStyle);

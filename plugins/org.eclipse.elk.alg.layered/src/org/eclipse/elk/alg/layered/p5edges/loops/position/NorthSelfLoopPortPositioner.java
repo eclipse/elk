@@ -35,8 +35,8 @@ public class NorthSelfLoopPortPositioner extends AbstractSelfLoopPortPositioner 
     @Override
     public void position(final LNode node) {
         // receive the node representation and the self-loop components
-        SelfLoopNode nodeRep = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        List<SelfLoopComponent> components = node.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
+        SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // sort by size
         components.sort((comp1, comp2) -> Integer.compare(comp1.getPorts().size(), comp2.getPorts().size()));
@@ -49,9 +49,9 @@ public class NorthSelfLoopPortPositioner extends AbstractSelfLoopPortPositioner 
 
         // stack or sequence depending on the ordering
         if (ordering == SelfLoopOrderingStrategy.STACKED) {
-            stackComponents(nodeRep, components, PortSide.NORTH);
+            stackComponents(slNode, components, PortSide.NORTH);
         } else {
-            sequenceComponents(nodeRep, components, PortSide.NORTH);
+            sequenceComponents(slNode, components, PortSide.NORTH);
         }
     }
 

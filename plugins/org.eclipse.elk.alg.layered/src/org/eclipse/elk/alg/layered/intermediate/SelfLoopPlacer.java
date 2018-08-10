@@ -70,25 +70,24 @@ public final class SelfLoopPlacer implements ILayoutProcessor<LGraph> {
         // for each node in each layer the self-loops are placed
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                if (node.getType() == NodeType.NORMAL) { // only actual nodes can contain self-loops
-                    // Initialize the linear node representation for each node
-                    SelfLoopNode nodeRep = new SelfLoopNode(node);
-                    node.setProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION, nodeRep);
-                    List<SelfLoopComponent> components = node.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
+                if (node.getType() == NodeType.NORMAL) {
+                    // only actual nodes can contain self-loops
+                    SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+                    List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
 
                     // position the ports on the node
                     ISelfLoopPortPositioner positioner = getPositioner(node);
                     positioner.position(node);
 
                     // calculate dependency graph for components
-                    SelfLoopComponentDependencyGraphCalculator.calculateComponentDependecies(nodeRep);
+                    SelfLoopComponentDependencyGraphCalculator.calculateComponentDependecies(slNode);
                     //calculate a order for each edge in the components
                     SelfLoopComponentDependencyGraphCalculator.calculateEdgeDependecies(components);
 
                     // assign levels
-                    SelfLoopLevelCalculator.calculatePortLevels(nodeRep);
+                    SelfLoopLevelCalculator.calculatePortLevels(slNode);
                     SelfLoopLevelCalculator.calculateEdgeOrders(components);
-                    SelfLoopLevelCalculator.calculateOpposingSegmentLevel(nodeRep);
+                    SelfLoopLevelCalculator.calculateOpposingSegmentLevel(slNode);
 
                     // readd ports to port
                     SelfLoopNodePortRestorator.restorePorts(node);

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.eclipse.elk.core.options.PortSide;
 
 /**
  * Represents one node of the graph. Instead of one list of ports for one node it provides access to one
- * {@link SelfLoopNodeSide} object for each side of the node.
+ * {@link SelfLoopNodeSide} object for each side of the node. It also keeps a list of self loop components.
  */
 public class SelfLoopNode {
 
@@ -24,6 +25,8 @@ public class SelfLoopNode {
     private final LNode node;
     /** A map from all four port sides to their respective node side objects. */
     private EnumMap<PortSide, SelfLoopNodeSide> nodeSides = new EnumMap<>(PortSide.class);
+    /** List of self loop components this node has. */
+    private List<SelfLoopComponent> selfLoopComponents = new ArrayList<>();
 
     
     /**
@@ -75,6 +78,13 @@ public class SelfLoopNode {
             numberOfPorts += side.getPorts().size();
         }
         return numberOfPorts;
+    }
+    
+    /**
+     * Returns the list of self loop components this node has.
+     */
+    public List<SelfLoopComponent> getSelfLoopComponents() {
+        return selfLoopComponents;
     }
     
     

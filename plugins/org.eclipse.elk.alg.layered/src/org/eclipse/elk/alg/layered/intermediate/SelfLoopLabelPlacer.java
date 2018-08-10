@@ -62,8 +62,7 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
                     SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
 
                     // merge loops before generating the positions
-                    boolean mergeSelfLoops = layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_MERGE_SELF_LOOPS);
-                    if (mergeSelfLoops) {
+                    if (layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_MERGE_SELF_LOOPS)) {
                         SelfLoopComponentMerger.mergeComponents(slNode);
                     }
 
@@ -73,15 +72,10 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
 
                     if (!positions.isEmpty()) {
                         // Find the best position for each component
-                        List<SelfLoopLabel> minimumLabelConfiguration =
-                                SelfLoopLabelPositionEvaluation.evaluatePositions(slNode, positions);
-                        
-                        // Find the active label-label spacing
-                        double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(node,
-                                LayeredOptions.SPACING_LABEL_LABEL);
+                        SelfLoopLabelPositionEvaluation.evaluatePositions(slNode, positions);
                         
                         // calculate the actual coordinates
-                        placeLabels(minimumLabelConfiguration, labelLabelSpacing);
+                        placeLabels(slNode);
                     }
                 }
             }
@@ -93,8 +87,16 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
     /**
      * Apply the position information to the labels.
      */
-    private void placeLabels(final List<SelfLoopLabel> minimumLabelConfiguration, final double labelLabelSpacing) {
-        for (SelfLoopLabel slLabel : minimumLabelConfiguration) {
+    private void placeLabels(final SelfLoopNode slNode) {
+        double labelLabelSpacing = LGraphUtil.getIndividualOrInherited(slNode.getNode(),
+                LayeredOptions.SPACING_LABEL_LABEL);
+        
+        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
+            SelfLoopLabel slLabel = component.getLabel();
+            if (slLabel == null || slLabel.getLabels().isEmpty()) {
+                continue;
+            }
+            
             KVector position = slLabel.getRelativeLabelPosition().getPosition();
             
             for (LLabel lLabel : slLabel.getLabels()) {

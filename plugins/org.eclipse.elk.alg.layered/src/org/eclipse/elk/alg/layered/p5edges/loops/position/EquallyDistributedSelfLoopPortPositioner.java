@@ -51,7 +51,7 @@ public class EquallyDistributedSelfLoopPortPositioner extends AbstractSelfLoopPo
     public void position(final LNode node) {
         // Receive the node representation and the self loop components
         slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-        List<SelfLoopComponent> components = node.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
+        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // Sort by size
         components.sort((comp1, comp2) -> Integer.compare(comp1.getPorts().size(), comp2.getPorts().size()));

@@ -64,28 +64,25 @@ public class SelfLoopComponent {
     // Component Calculation
 
     /**
-     * Creates all self loop components for the given node.
+     * Creates all self loop components for the given node and adds them to the node.
      */
-    public static List<SelfLoopComponent> createSelfLoopComponents(final LNode node) {
-        List<LPort> nodePorts = new ArrayList<LPort>(node.getPorts());
-        List<SelfLoopComponent> components = new ArrayList<SelfLoopComponent>();
+    public static void createSelfLoopComponents(final SelfLoopNode slNode) {
+        LNode lNode = slNode.getNode();
+        List<LPort> nodePorts = new ArrayList<LPort>(lNode.getPorts());
         
         while (!nodePorts.isEmpty()) {
             // find all connected ports
-            List<LPort> ports = findAllConnectedPorts(node, nodePorts.get(0), new HashSet<LPort>());
+            List<LPort> ports = findAllConnectedPorts(lNode, nodePorts.get(0), new HashSet<LPort>());
             
             // sort the ports according to their original index at the node
-            ports.sort(Comparator.comparing(node.getPorts()::indexOf));
+            ports.sort(Comparator.comparing(lNode.getPorts()::indexOf));
             
             // create the actual component
             SelfLoopComponent component = new SelfLoopComponent(ports);
-            components.add(component);
+            slNode.getSelfLoopComponents().add(component);
 
             nodePorts.removeAll(ports);
         }
-
-        return components;
-
     }
 
     /**

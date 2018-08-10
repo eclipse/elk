@@ -61,8 +61,8 @@ public class FixedSideSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
 
     @Override
     public void position(final LNode node) {
-        List<SelfLoopComponent> components = node.getProperty(InternalProperties.SELFLOOP_COMPONENTS);
         slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+        List<SelfLoopComponent> components = slNode.getSelfLoopComponents();
 
         // Sort by size
         components.sort((comp1, comp2) -> Integer.compare(comp1.getPorts().size(), comp2.getPorts().size()));
