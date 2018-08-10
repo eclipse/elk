@@ -41,8 +41,6 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<LGr
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Creates connected components for the SplineSelfLoopPre- and postprocessor. */
-    SPLINE_SELF_LOOP_PREPROCESSOR,
     /** If one of the phases is set to interactive mode, this processor positions external ports. */
     INTERACTIVE_EXTERNAL_PORT_POSITIONER,
     /** Add constraint edges to respect partitioning of nodes. */
