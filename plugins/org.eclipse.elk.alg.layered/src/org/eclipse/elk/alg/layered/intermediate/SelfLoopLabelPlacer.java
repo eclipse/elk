@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
@@ -25,7 +22,6 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopComponentMerger;
-import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPosition;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPositionEvaluation;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPositionGeneration;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -66,17 +62,15 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
                         SelfLoopComponentMerger.mergeComponents(slNode);
                     }
 
-                    // Generate possible positions for the labels
-                    Map<SelfLoopComponent, List<SelfLoopLabelPosition>> positions =
-                            SelfLoopLabelPositionGeneration.generatePositions(slNode);
+                    // Generate possible positions for the labels. This will set the candidate positions field of each
+                    // component's self loop label.
+                    SelfLoopLabelPositionGeneration.generatePositions(slNode);
 
-                    if (!positions.isEmpty()) {
-                        // Find the best position for each component
-                        SelfLoopLabelPositionEvaluation.evaluatePositions(slNode, positions);
-                        
-                        // calculate the actual coordinates
-                        placeLabels(slNode);
-                    }
+                    // Find the best position for each component
+                    SelfLoopLabelPositionEvaluation.evaluatePositions(slNode);
+                    
+                    // Calculate the actual coordinates
+                    placeLabels(slNode);
                 }
             }
         }
@@ -92,12 +86,12 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
                 LayeredOptions.SPACING_LABEL_LABEL);
         
         for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-            SelfLoopLabel slLabel = component.getLabel();
-            if (slLabel == null || slLabel.getLabels().isEmpty()) {
+            SelfLoopLabel slLabel = component.getSelfLoopLabel();
+            if (slLabel == null) {
                 continue;
             }
             
-            KVector position = slLabel.getRelativeLabelPosition().getPosition();
+            KVector position = slLabel.getLabelPosition().getPosition();
             
             for (LLabel lLabel : slLabel.getLabels()) {
                 double xPos = position.x + (slLabel.getWidth() - lLabel.getSize().x) / 2;

@@ -70,17 +70,17 @@ public final class SelfLoopComponentMerger {
                 }
 
                 // collect components label and save them to a new one (label)
-                SelfLoopLabel componentLabel = component.getLabel();
+                SelfLoopLabel componentLabel = component.getSelfLoopLabel();
                 if (componentLabel != null) {
                     label.getLabels().addAll(componentLabel.getLabels());
                     label.setHeight(label.getHeight() + componentLabel.getHeight());
                     label.setWidth(Math.max(label.getWidth(), componentLabel.getWidth()));
                     
+                    // delete old label reference
+                    component.setSelfLoopLabel(null);
+                    
                     componentsWithLabels++;
                 }
-                
-                // delete old label reference
-                component.setLabel(new SelfLoopLabel());
             }
             
             // we need to add an appropriate amount of label-label spacings
@@ -92,7 +92,7 @@ public final class SelfLoopComponentMerger {
             }
             
             // a random component holds the label now
-            slNode.getSelfLoopComponents().get(0).setLabel(label);
+            slNode.getSelfLoopComponents().get(0).setSelfLoopLabel(label);
             Collections.reverse(label.getLabels());
 
             // route all edges anew

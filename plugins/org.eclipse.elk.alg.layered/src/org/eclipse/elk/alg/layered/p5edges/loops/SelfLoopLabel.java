@@ -24,8 +24,10 @@ public class SelfLoopLabel {
     private double height;
     /** The maximum width over all labels. */
     private double width;
-    /** The position relative to the node. */
-    private SelfLoopLabelPosition relativeLabelPosition;
+    /** The candidate positions for this label. */
+    private List<SelfLoopLabelPosition> candidatePositions = new ArrayList<>();
+    /** The position chosen for this label. */
+    private SelfLoopLabelPosition labelPosition;
 
     /**
      * Return the list of labels represented by this self loop label.
@@ -61,19 +63,28 @@ public class SelfLoopLabel {
     public void setWidth(final double width) {
         this.width = width;
     }
+    
+    /**
+     * Returns the list of label candidate positions.
+     */
+    public List<SelfLoopLabelPosition> getCandidatePositions() {
+        return candidatePositions;
+    }
 
     /**
      * Returns this self loop label's position. This is {@code null} until it is initialized by someone.
      */
-    public SelfLoopLabelPosition getRelativeLabelPosition() {
-        return relativeLabelPosition;
+    public SelfLoopLabelPosition getLabelPosition() {
+        return labelPosition;
     }
 
     /**
-     * Sets this self loop label's position.
+     * Sets this self loop label's position. This must be one of the candidate label positions available to this label.
      */
-    public void setRelativeLabelPosition(final SelfLoopLabelPosition relativeLabelPosition) {
-        this.relativeLabelPosition = relativeLabelPosition;
+    public void setLabelPosition(final SelfLoopLabelPosition labelPosition) {
+        assert candidatePositions.contains(labelPosition);
+        
+        this.labelPosition = labelPosition;
     }
 
     @Override

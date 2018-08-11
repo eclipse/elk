@@ -8,9 +8,6 @@
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
@@ -33,58 +30,37 @@ public final class SelfLoopLabelPositionGeneration {
     /**
      * Generates candidate positions for all self loop components of the given node.
      */
-    public static Map<SelfLoopComponent, List<SelfLoopLabelPosition>> generatePositions(final SelfLoopNode slNode) {
-        Map<SelfLoopComponent, List<SelfLoopLabelPosition>> allComponentLoopLabelMap = new HashMap<>();
+    public static void generatePositions(final SelfLoopNode slNode) {
+        Multimap<SelfLoopType, SelfLoopComponent> componentTypes = SelfLoopUtil.getTypeMap(slNode.getNode());
 
-        if (slNode != null) {
-            Multimap<SelfLoopType, SelfLoopComponent> componentTypes = SelfLoopUtil.getTypeMap(slNode.getNode());
+        // positions for side loops
+        SideLoopLabelPositionGenerator sidePlacer = new SideLoopLabelPositionGenerator(slNode);
+        generatePositions(componentTypes.get(SelfLoopType.SIDE), sidePlacer);
 
-            // positions for side loops
-            SideLoopLabelPositionGenerator sidePlacer = new SideLoopLabelPositionGenerator(slNode);
-            Map<SelfLoopComponent, List<SelfLoopLabelPosition>> sideLoopLabelMap =
-                    placeLabels(componentTypes.get(SelfLoopType.SIDE), sidePlacer);
-            allComponentLoopLabelMap.putAll(sideLoopLabelMap);
+        // positions for corner loops
+        CornerLoopLabelPositionGenerator cornerPlacer = new CornerLoopLabelPositionGenerator(slNode);
+        generatePositions(componentTypes.get(SelfLoopType.CORNER), cornerPlacer);
 
-            // positions for corner loops
-            CornerLoopLabelPositionGenerator cornerPlacer = new CornerLoopLabelPositionGenerator(slNode);
-            Map<SelfLoopComponent, List<SelfLoopLabelPosition>> cornerLoopLabelMap =
-                    placeLabels(componentTypes.get(SelfLoopType.CORNER), cornerPlacer);
-            allComponentLoopLabelMap.putAll(cornerLoopLabelMap);
+        // positions for opposing loops
+        OpposingLoopLabelPositionGenerator oppossingPlacer = new OpposingLoopLabelPositionGenerator(slNode);
+        generatePositions(componentTypes.get(SelfLoopType.OPPOSING), oppossingPlacer);
 
-            // positions for opposing loops
-            OpposingLoopLabelPositionGenerator oppossingPlacer = new OpposingLoopLabelPositionGenerator(slNode);
-            Map<SelfLoopComponent, List<SelfLoopLabelPosition>> opposingLoopLabelMap =
-                    placeLabels(componentTypes.get(SelfLoopType.OPPOSING), oppossingPlacer);
-            allComponentLoopLabelMap.putAll(opposingLoopLabelMap);
+        // positions for three side loops
+        ThreeCornerLoopLabelPositionGenerator threeSidePlacer = new ThreeCornerLoopLabelPositionGenerator(slNode);
+        generatePositions(componentTypes.get(SelfLoopType.THREE_CORNER), threeSidePlacer);
 
-            // positions for three side loops
-            ThreeCornerLoopLabelPositionGenerator threeSidePlacer = new ThreeCornerLoopLabelPositionGenerator(slNode);
-            Map<SelfLoopComponent, List<SelfLoopLabelPosition>> threeSideLoopLabelMap =
-                    placeLabels(componentTypes.get(SelfLoopType.THREE_CORNER), threeSidePlacer);
-            allComponentLoopLabelMap.putAll(threeSideLoopLabelMap);
-
-            // positions for four side loops
-            FourCornerLoopLabelPositionGenerator fourSidePlacer = new FourCornerLoopLabelPositionGenerator(slNode);
-            Map<SelfLoopComponent, List<SelfLoopLabelPosition>> fourSideLoopLabelMap =
-                    placeLabels(componentTypes.get(SelfLoopType.FOUR_CORNER), fourSidePlacer);
-            allComponentLoopLabelMap.putAll(fourSideLoopLabelMap);
-        }
-        
-        return allComponentLoopLabelMap;
+        // positions for four side loops
+        FourCornerLoopLabelPositionGenerator fourSidePlacer = new FourCornerLoopLabelPositionGenerator(slNode);
+        generatePositions(componentTypes.get(SelfLoopType.FOUR_CORNER), fourSidePlacer);
     }
 
-    private static Map<SelfLoopComponent, List<SelfLoopLabelPosition>> placeLabels(
-            final Collection<SelfLoopComponent> components, final ISelfLoopLabelPositionGenerator selfLoopPlacer) {
-        
-        Map<SelfLoopComponent, List<SelfLoopLabelPosition>> positionMap = new HashMap<>();
+    private static void generatePositions(final Collection<SelfLoopComponent> components,
+            final ISelfLoopLabelPositionGenerator selfLoopPlacer) {
         
         for (SelfLoopComponent component : components) {
-            if (component.getLabel() != null && !component.getLabel().getLabels().isEmpty()) {
-                List<SelfLoopLabelPosition> positions = selfLoopPlacer.generatePositions(component);
-                positionMap.put(component, positions);
+            if (component.getSelfLoopLabel() != null) {
+                selfLoopPlacer.generatePositions(component);
             }
         }
-        
-        return positionMap;
     }
 }

@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
@@ -34,27 +33,14 @@ public class ThreeCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabel
     }
 
     @Override
-    public List<SelfLoopLabelPosition> generatePositions(final SelfLoopComponent component) {
-        List<SelfLoopLabelPosition> positions = new ArrayList<>();
-
+    public void generatePositions(final SelfLoopComponent component) {
         List<SelfLoopPort> ports = component.getPorts();
         SelfLoopPort startPort = ports.get(0);
         SelfLoopPort endPort = ports.get(ports.size() - 1);
         
-        positions = generatePositions(component, startPort, endPort);
-        
-        return positions;
-    }
-
-    private List<SelfLoopLabelPosition> generatePositions(final SelfLoopComponent component,
-            final SelfLoopPort startPort, final SelfLoopPort endPort) {
-        
         // Retrieve the spacings active for this node
         double edgeEdgeSpacing = getEdgeEdgeSpacing();
         double edgeLabelSpacing = getEdgeLabelSpacing();
-        
-        List<SelfLoopLabelPosition> positions = new ArrayList<>();
-        SelfLoopLabel label = component.getLabel();
         
         KVector startPosition = startPort.getLPort().getPosition().clone().add(startPort.getLPort().getAnchor());
         KVector endPosition = endPort.getLPort().getPosition().clone().add(endPort.getLPort().getAnchor());
@@ -65,69 +51,37 @@ public class ThreeCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabel
         double directionEnd = SplinesMath.portSideToDirection(endPort.getPortSide());
         KVector dirVectorEnd = new KVector(directionEnd);
         
-        KVector firstBendpoint = startPosition.clone().add(dirVectorStart.clone().scale(
+        KVector firstBend = startPosition.clone().add(dirVectorStart.clone().scale(
                 (startPort.getMaximumLevel() * edgeEdgeSpacing) + edgeLabelSpacing));
-        KVector secondBendpoint = endPosition.clone().add(dirVectorEnd.clone().scale(
+        KVector secondBend = endPosition.clone().add(dirVectorEnd.clone().scale(
                 (endPort.getMaximumLevel() * edgeEdgeSpacing) + edgeLabelSpacing));
 
         SelfLoopEdge edge = Iterables.get(component.getConnectedEdges(), 0);
-        List<KVector> cornerPoints = SelfLoopBendpointCalculationUtil.generateCornerBendpoints(
-                getSelfLoopNode(), startPort, endPort, firstBendpoint, secondBendpoint, edge);
+        List<KVector> cornerBends = SelfLoopBendpointCalculationUtil.generateCornerBendpoints(
+                getSelfLoopNode(), startPort, endPort, firstBend, secondBend, edge);
 
-        KVector cornerPoint1 = cornerPoints.get(0);
-        KVector cornerPoint2 = cornerPoints.get(1);
-        KVector cornerPoint3 = cornerPoints.get(2);
+        KVector cornerBend1 = cornerBends.get(0);
+        KVector cornerBend2 = cornerBends.get(1);
+        KVector cornerBend3 = cornerBends.get(2);
+        
+        SelfLoopLabel label = component.getSelfLoopLabel();
+        List<SelfLoopLabelPosition> positions = label.getCandidatePositions();
 
-        SelfLoopLabelPosition firstShortSegment = shortSegmentCenteredPosition(
-                label, firstBendpoint, cornerPoint1, startPort);
-        positions.add(firstShortSegment);
-
-        SelfLoopLabelPosition secondShortSegment = shortSegmentCenteredPosition(
-                label, secondBendpoint, cornerPoint3, endPort);
-        positions.add(secondShortSegment);
-
-        SelfLoopLabelPosition firstLongSegment = longSegmentCenteredPosition(
-                label, cornerPoint1, cornerPoint2, startPort);
-        positions.add(firstLongSegment);
-
-        SelfLoopLabelPosition secondLongSegment = longSegmentCenteredPosition(
-                label, cornerPoint3, cornerPoint2, endPort);
-        positions.add(secondLongSegment);
-
+        // Centered positions
+        positions.add(shortSegmentCenteredPosition(label, firstBend, cornerBend1, startPort));
+        positions.add(shortSegmentCenteredPosition(label, secondBend, cornerBend3, endPort));
+        positions.add(longSegmentCenteredPosition(label, cornerBend1, cornerBend2, startPort));
+        positions.add(longSegmentCenteredPosition(label, cornerBend3, cornerBend2, endPort));
+        
         // Side aligned positions
-        SelfLoopLabelPosition firstShortSegmentRightBottomAligned = shortSegmentAlignedPosition(
-                label, firstBendpoint, cornerPoint1, startPort, false);
-        positions.add(firstShortSegmentRightBottomAligned);
-
-        SelfLoopLabelPosition secondShortSegmentRightBottomAligned = shortSegmentAlignedPosition(
-                label, secondBendpoint, cornerPoint3, endPort, false);
-        positions.add(secondShortSegmentRightBottomAligned);
-
-        SelfLoopLabelPosition firstLongSegmentRightBottomAligned = longSegmentAlignedPosition(
-                label, cornerPoint1, cornerPoint2, startPort, false);
-        positions.add(firstLongSegmentRightBottomAligned);
-
-        SelfLoopLabelPosition secondSegmentRightBottomAligned = longSegmentAlignedPosition(
-                label, cornerPoint3, cornerPoint2, endPort, false);
-        positions.add(secondSegmentRightBottomAligned);
-
-        SelfLoopLabelPosition firstShortSegmentLeftTopAligned = shortSegmentAlignedPosition(
-                label, firstBendpoint, cornerPoint1, startPort, true);
-        positions.add(firstShortSegmentLeftTopAligned);
-
-        SelfLoopLabelPosition secondShortSegmentLeftTopAligned = shortSegmentAlignedPosition(
-                label, secondBendpoint, cornerPoint3, endPort, true);
-        positions.add(secondShortSegmentLeftTopAligned);
-
-        SelfLoopLabelPosition firstLongSegmentLeftTopAligned = longSegmentAlignedPosition(
-                label, cornerPoint1, cornerPoint2, startPort, true);
-        positions.add(firstLongSegmentLeftTopAligned);
-
-        SelfLoopLabelPosition secondSegmentLeftTopAligned = longSegmentAlignedPosition(
-                label, cornerPoint3, cornerPoint2, endPort, true);
-        positions.add(secondSegmentLeftTopAligned);
-
-        return positions;
+        positions.add(shortSegmentAlignedPosition(label, firstBend, cornerBend1, startPort, false));
+        positions.add(shortSegmentAlignedPosition(label, secondBend, cornerBend3, endPort, false));
+        positions.add(longSegmentAlignedPosition(label, cornerBend1, cornerBend2, startPort, false));
+        positions.add(longSegmentAlignedPosition(label, cornerBend3, cornerBend2, endPort, false));
+        positions.add(shortSegmentAlignedPosition(label, firstBend, cornerBend1, startPort, true));
+        positions.add(shortSegmentAlignedPosition(label, secondBend, cornerBend3, endPort, true));
+        positions.add(longSegmentAlignedPosition(label, cornerBend1, cornerBend2, startPort, true));
+        positions.add(longSegmentAlignedPosition(label, cornerBend3, cornerBend2, endPort, true));
     }
 
 }

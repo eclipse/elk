@@ -19,12 +19,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
-import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.core.options.PortSide;
-
-import com.google.common.math.DoubleMath;
 
 /**
  * A self-loop component comprises a number of ports self-loops are incident to. Each can be thought of as a connected
@@ -33,13 +30,10 @@ import com.google.common.math.DoubleMath;
  */
 public class SelfLoopComponent {
 
-    /** A small number for double approximation. */
-    private static final double EPSILON = 1e-6;
-
     /** The ports of the self loop component. They are all connected by at least one edge. */
     private List<SelfLoopPort> ports = new ArrayList<>();
-    /** All center edge labels that occur at the component edges. */
-    private SelfLoopLabel label;
+    /** All center edge labels that occur at the component edges, if any. */
+    private SelfLoopLabel selfLoopLabel;
     /** The components that the self loop component depends on. */
     private Map<SelfLoopNodeSide, List<SelfLoopComponent>> dependencyComponents = new HashMap<>();
     /** Any edges the component depends on. */
@@ -53,9 +47,7 @@ public class SelfLoopComponent {
      *            Ports of the connected self loop component.
      */
     public SelfLoopComponent(final List<LPort> ports) {
-        // add ports by creating SelfLoopPorts
         addAllPorts(ports);
-        // calculated the edges connecting the ports of the component
         calculateConnectedEdges();
     }
 
@@ -201,32 +193,17 @@ public class SelfLoopComponent {
     // Labels
 
     /**
-     * Return all the labels belonging to the component's edges.
+     * Return the self loop label. May be {@code null} if there are no labels attached to this component.
      */
-    public List<LLabel> getComponentLabels() {
-        return getConnectedEdges().stream()
-                .flatMap(edge -> edge.getEdge().getLabels().stream())
-                .sorted(new Comparator<LLabel>() {
-                    @Override
-                    public int compare(final LLabel o1, final LLabel o2) {
-                        return DoubleMath.fuzzyCompare(o1.getSize().x, o2.getSize().x, EPSILON);
-                    }
-                })
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Return the self loop label.
-     */
-    public SelfLoopLabel getLabel() {
-        return label;
+    public SelfLoopLabel getSelfLoopLabel() {
+        return selfLoopLabel;
     }
 
     /**
      * Set the label.
      */
-    public void setLabel(final SelfLoopLabel label) {
-        this.label = label;
+    public void setSelfLoopLabel(final SelfLoopLabel selfLoopLabel) {
+        this.selfLoopLabel = selfLoopLabel;
     }
 
     

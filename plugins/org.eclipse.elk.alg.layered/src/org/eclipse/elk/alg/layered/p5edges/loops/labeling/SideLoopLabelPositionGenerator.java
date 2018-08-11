@@ -7,7 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
@@ -31,11 +30,8 @@ public class SideLoopLabelPositionGenerator extends AbstractSelfLoopLabelPositio
     }
     
 
-    /**
-     */
-    public List<SelfLoopLabelPosition> generatePositions(final SelfLoopComponent component) {
-        List<SelfLoopLabelPosition> positions = new ArrayList<>();
-        
+    @Override
+    public void generatePositions(final SelfLoopComponent component) {
         // Retrieve the spacings active for this node
         double edgeEdgeSpacing = getEdgeEdgeSpacing();
         double edgeLabelSpacing = getEdgeLabelSpacing();
@@ -53,75 +49,71 @@ public class SideLoopLabelPositionGenerator extends AbstractSelfLoopLabelPositio
         double directionEnd = SplinesMath.portSideToDirection(endPort.getPortSide());
         KVector dirVectorEnd = new KVector(directionEnd);
         
-        KVector firstBendpoint = startPosition.clone().add(dirVectorStart.clone().scale(
+        KVector firstBend = startPosition.clone().add(dirVectorStart.clone().scale(
                 (startPort.getMaximumLevel() * edgeEdgeSpacing) + edgeLabelSpacing));
 
-        KVector secondBendpoint = endPosition.clone().add(dirVectorEnd.clone().scale(
+        KVector secondBend = endPosition.clone().add(dirVectorEnd.clone().scale(
                 (endPort.getMaximumLevel() * edgeEdgeSpacing) + edgeLabelSpacing));
 
         // Centered Positions
-        List<SelfLoopLabelPosition> centeredPositions = createPositions(
-                component.getLabel(), firstBendpoint, secondBendpoint, startPort, endPort);
-        positions.addAll(centeredPositions);
-
-        return positions;
+        addPositions(component.getSelfLoopLabel(), firstBend, secondBend, startPort, endPort);
     }
 
-    private List<SelfLoopLabelPosition> createPositions(final SelfLoopLabel label, final KVector firstBendpoint,
-            final KVector secondBendpoint, final SelfLoopPort startPort, final SelfLoopPort endPort) {
+    private List<SelfLoopLabelPosition> addPositions(final SelfLoopLabel label, final KVector firstBend,
+            final KVector secondBend, final SelfLoopPort startPort, final SelfLoopPort endPort) {
         
-        List<SelfLoopLabelPosition> positions = new ArrayList<>();
+        List<SelfLoopLabelPosition> positions = label.getCandidatePositions();
 
         KVector startPosition = startPort.getLPort().getPosition().clone().add(startPort.getLPort().getAnchor());
         KVector endPosition = endPort.getLPort().getPosition().clone().add(endPort.getLPort().getAnchor());
 
         SelfLoopLabelPosition firstShortSegment = shortSegmentCenteredPosition(
-                label, firstBendpoint, secondBendpoint, startPort);
+                label, firstBend, secondBend, startPort);
         firstShortSegment.setPenalty(SelfLoopLabelPenalties.getSidePenalty(startPort.getPortSide()));
         positions.add(firstShortSegment);
 
         SelfLoopLabelPosition leftCenteredSegment = sideCentered(
-                startPort, startPosition, firstBendpoint, label, true);
+                startPort, startPosition, firstBend, label, true);
         double penalty = leftCenteredSegment.getPenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT;
         leftCenteredSegment.setPenalty(penalty);
         positions.add(leftCenteredSegment);
 
         SelfLoopLabelPosition rightCenteredSegment = sideCentered(
-                endPort, endPosition, secondBendpoint, label, false);
+                endPort, endPosition, secondBend, label, false);
         penalty = rightCenteredSegment.getPenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT;
         rightCenteredSegment.setPenalty(penalty);
         positions.add(rightCenteredSegment);
 
         // Side aligned positions
         SelfLoopLabelPosition firstShortSegmentRightBottomAligned = shortSegmentAlignedPosition(
-                label, firstBendpoint, secondBendpoint, startPort, false);
+                label, firstBend, secondBend, startPort, false);
         positions.add(firstShortSegmentRightBottomAligned);
 
         SelfLoopLabelPosition firstShortSegmentLeftTopAligned = shortSegmentAlignedPosition(
-                label, firstBendpoint, secondBendpoint, startPort, true);
+                label, firstBend, secondBend, startPort, true);
         positions.add(firstShortSegmentLeftTopAligned);
 
         // Side positions
         SelfLoopLabelPosition leftsideSegmentRightBottomAligned = sideCentered(
-                startPort, startPosition, firstBendpoint, label, false, true);
+                startPort, startPosition, firstBend, label, false, true);
         penalty = leftsideSegmentRightBottomAligned.getPenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT;
         leftsideSegmentRightBottomAligned.setPenalty(penalty);
         positions.add(leftsideSegmentRightBottomAligned);
 
         SelfLoopLabelPosition leftsideSegmentLeftTopAligned = sideCentered(
-                startPort, startPosition, firstBendpoint, label, true, true);
+                startPort, startPosition, firstBend, label, true, true);
         penalty = leftsideSegmentRightBottomAligned.getPenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT;
         leftsideSegmentRightBottomAligned.setPenalty(penalty);
         positions.add(leftsideSegmentLeftTopAligned);
 
         SelfLoopLabelPosition rightsideSegmentRightBottomAligned = sideCentered(
-                endPort, endPosition, secondBendpoint, label, false, false);
+                endPort, endPosition, secondBend, label, false, false);
         penalty = rightsideSegmentRightBottomAligned.getPenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT;
         rightsideSegmentRightBottomAligned.setPenalty(penalty);
         positions.add(rightsideSegmentRightBottomAligned);
 
         SelfLoopLabelPosition rightsideSegmentLeftTopAligned = sideCentered(
-                endPort, endPosition, secondBendpoint, label, true, false);
+                endPort, endPosition, secondBend, label, true, false);
         penalty = rightsideSegmentLeftTopAligned.getPenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT;
         rightsideSegmentLeftTopAligned.setPenalty(penalty);
         positions.add(rightsideSegmentLeftTopAligned);

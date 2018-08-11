@@ -11,7 +11,9 @@
 package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -28,6 +30,8 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+
+import com.google.common.math.DoubleMath;
 
 /**
  * Finds connected components of self loops and adds them to the {@link InternalProperties#SELFLOOP_COMPONENTS}
@@ -59,7 +63,6 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
                 SelfLoopNode slNode = new SelfLoopNode(node);
                 node.setProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION, slNode);
                 
-                
                 // calculate the SelfLoopComponents of the node and save them to it's properties
                 SelfLoopComponent.createSelfLoopComponents(slNode);
                 
@@ -73,6 +76,9 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
 
         monitor.done();
     }
+    
+    /** A small number for double approximation. */
+    private static final double EPSILON = 1e-6;
 
     /**
      * For each component the labels of the contained edges are collected and put together to one label. This joint
@@ -83,10 +89,23 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
                 slNode.getNode(), LayeredOptions.SPACING_LABEL_LABEL);
         
         for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-            List<LLabel> labels = component.getComponentLabels();
+            // Retrieve all labels attached to edges that belong to this component
+            List<LLabel> labels = component.getConnectedEdges().stream()
+                .flatMap(edge -> edge.getEdge().getLabels().stream())
+                .sorted(new Comparator<LLabel>() {
+                    @Override
+                    public int compare(final LLabel o1, final LLabel o2) {
+                        return DoubleMath.fuzzyCompare(o1.getSize().x, o2.getSize().x, EPSILON);
+                    }
+                })
+                .collect(Collectors.toList());
 
-            // the labels shall be assembled one above another,
-            // therefore the max width and overall height has to be calculated
+            // If there are no labels, there is no need for us to do anything
+            if (labels.isEmpty()) {
+                continue;
+            }
+            
+            // Since the labels will be stacked above one another, we calculate the width and the height required
             double maxWidth = 0.0;
             double height = 0.0;
             for (LLabel label : labels) {
@@ -95,16 +114,15 @@ public final class SelfLoopPreProcessor implements ILayoutProcessor<LGraph> {
                 height += size.y;
             }
             
-            // add label-label spacing between each pair of labels
+            // Add label-label spacing between each pair of labels
             height += Math.max(0, labelLabelSpacing * (labels.size() - 1));
 
-            // create a SelfLoopLabel for each component,
-            // storing height and width of the labels of all component edges
+            // Create a SelfLoopLabel for this component
             SelfLoopLabel label = new SelfLoopLabel();
             label.getLabels().addAll(labels);
             label.setHeight(height);
             label.setWidth(maxWidth);
-            component.setLabel(label);
+            component.setSelfLoopLabel(label);
         }
     }
 

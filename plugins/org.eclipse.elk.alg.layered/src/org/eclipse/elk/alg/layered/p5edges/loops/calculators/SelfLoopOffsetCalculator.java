@@ -71,8 +71,8 @@ public final class SelfLoopOffsetCalculator {
 
         for (SelfLoopComponent component : components) {
             if (component.getPorts().size() > 1) {
-                SelfLoopLabel label = component.getLabel();
-                SelfLoopLabelPosition position = label.getRelativeLabelPosition();
+                SelfLoopLabel slLabel = component.getSelfLoopLabel();
+                SelfLoopLabelPosition slLabelPos = slLabel == null ? null : slLabel.getLabelPosition();
 
                 // get the components side level by finding a port from this side
                 SelfLoopPort portOfSide = findPortOfSide(component, side.getSide());
@@ -85,9 +85,9 @@ public final class SelfLoopOffsetCalculator {
                     if (level + 1 == previousLevel) {
                         SelfLoopEdge edge = Iterables.get(component.getConnectedEdges(), 0);
                         SelfLoopOpposingSegment segment = side.getOpposingSegments().get(edge);
-                        if (position != null && position.getSide() == side.getSide() && segment == null) {
+                        if (slLabelPos != null && slLabelPos.getSide() == side.getSide() && segment == null) {
                             double offset = getSimpleLabelOffset(
-                                    label, side.getSide(), edgeEdgeSpacing, edgeLabelSpacing);
+                                    slLabel, side.getSide(), edgeEdgeSpacing, edgeLabelSpacing);
                             maximumOffsetForNextComponent = Math.max(maximumOffsetForNextComponent, offset);
                         }
                     }
@@ -98,15 +98,15 @@ public final class SelfLoopOffsetCalculator {
                     maximumOffsetOfComponent = Math.max(maximumOffsetOfComponent, componentHeight);
                     if (level + 1 == previousLevel) {
                         maximumOffsetForNextComponent = Math.max(maximumOffsetForNextComponent,
-                                getSimpleLabelOffset(label, side.getSide(), edgeEdgeSpacing, edgeLabelSpacing)
+                                getSimpleLabelOffset(slLabel, side.getSide(), edgeEdgeSpacing, edgeLabelSpacing)
                                 + maximumOffsetOfComponent);
 
                     }
                 }
 
                 final double direction = SplinesMath.portSideToDirection(side.getSide());
-                if (position != null && side.getSide() == position.getSide()) {
-                    position.getPosition().add(new KVector(direction).scale(maximumOffsetOfComponent));
+                if (slLabelPos != null && side.getSide() == slLabelPos.getSide()) {
+                    slLabelPos.getPosition().add(new KVector(direction).scale(maximumOffsetOfComponent));
                 }
                 
                 for (SelfLoopPort port : component.getPorts()) {
@@ -123,14 +123,22 @@ public final class SelfLoopOffsetCalculator {
     /**
      * TODO Document.
      */
-    private static double getSimpleLabelOffset(final SelfLoopLabel label, final PortSide portSide,
+    private static double getSimpleLabelOffset(final SelfLoopLabel slLabel, final PortSide portSide,
             final double edgeEdgeSpacing, final double edgeLabelSpacing) {
+        
+        double labelHeight = 0;
+        double labelWidth = 0;
+        
+        if (slLabel != null) {
+            labelHeight = slLabel.getHeight();
+            labelWidth = slLabel.getWidth();
+        }
         
         double difference;
         if (portSide == PortSide.NORTH || portSide == PortSide.SOUTH) {
-            difference = label.getHeight() - edgeEdgeSpacing + edgeLabelSpacing;
+            difference = labelHeight - edgeEdgeSpacing + edgeLabelSpacing;
         } else {
-            difference = label.getWidth() - edgeEdgeSpacing + edgeLabelSpacing;
+            difference = labelWidth - edgeEdgeSpacing + edgeLabelSpacing;
         }
         return Math.max(0, difference);
     }
@@ -169,18 +177,17 @@ public final class SelfLoopOffsetCalculator {
             for (SelfLoopOpposingSegment segment : segments) {
                 // get component and it's potential label position
                 SelfLoopComponent component = segment.getComponent();
-                SelfLoopLabel label = component.getLabel();
-                SelfLoopLabelPosition position = label.getRelativeLabelPosition();
+                SelfLoopLabel slLabel = component.getSelfLoopLabel();
 
                 segment.setLabelOffset(previousOffset);
 
                 // only positions that are placed at the same side as the segments are important
-                if (position != null && position.getSide() == side.getSide()) {
+                if (slLabel != null && slLabel.getLabelPosition().getSide() == side.getSide()) {
                     final double direction = SplinesMath.portSideToDirection(side.getSide());
-                    position.getPosition().add(new KVector(direction).scale(previousOffset));
+                    slLabel.getLabelPosition().getPosition().add(new KVector(direction).scale(previousOffset));
 
                     // update
-                    nextOffset = getSimpleLabelOffset(label, side.getSide(), edgeEdgeSpacing, edgeLabelSpacing);
+                    nextOffset = getSimpleLabelOffset(slLabel, side.getSide(), edgeEdgeSpacing, edgeLabelSpacing);
                     previousOffset = previousOffset + nextOffset;
                 }
             }

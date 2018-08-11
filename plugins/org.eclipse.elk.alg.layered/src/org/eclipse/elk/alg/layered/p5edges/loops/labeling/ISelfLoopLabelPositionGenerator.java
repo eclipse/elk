@@ -7,8 +7,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
-import java.util.List;
-
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 
 /**
@@ -18,8 +16,8 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 public interface ISelfLoopLabelPositionGenerator {
 
     /**
-     * Generate a list of possible positions for labels for the given component.
+     * Generate a list of possible positions for labels for the given component and saves them in the component.
      */
-    List<SelfLoopLabelPosition> generatePositions(SelfLoopComponent component);
+    void generatePositions(SelfLoopComponent component);
 
 }
