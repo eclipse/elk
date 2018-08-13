@@ -20,6 +20,7 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabelPosition;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopComponentMerger;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPositionEvaluation;
@@ -91,13 +92,28 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
                 continue;
             }
             
-            KVector position = slLabel.getLabelPosition().getPosition();
+            SelfLoopLabelPosition slPosition = slLabel.getLabelPosition();
+            KVector currCoordinates = slPosition.getPosition();
             
             for (LLabel lLabel : slLabel.getLabels()) {
-                double xPos = position.x + (slLabel.getWidth() - lLabel.getSize().x) / 2;
-                lLabel.getPosition().set(xPos, position.y);
+                // The x position depends on the label alignment
+                double xPos = currCoordinates.x;
                 
-                position.y += lLabel.getSize().y + labelLabelSpacing;
+                switch (slPosition.getLabelAlignment()) {
+                case CENTERED:
+                    xPos += (slLabel.getWidth() - lLabel.getSize().x) / 2;
+                    break;
+                    
+                case RIGHT:
+                    xPos += (slLabel.getWidth() - lLabel.getSize().x);
+                    break;
+                }
+                
+                // Apply position
+                lLabel.getPosition().set(xPos, currCoordinates.y);
+                
+                // Advance y position
+                currCoordinates.y += lLabel.getSize().y + labelLabelSpacing;
             }
         }
     }

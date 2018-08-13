@@ -16,6 +16,25 @@ import org.eclipse.elk.core.options.PortSide;
  * the probability of its label actually being placed there.
  */
 public class SelfLoopLabelPosition {
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Inner Classes
+    
+    /**
+     * How different labels will be aligned in this label position.
+     */
+    public static enum LabelAlignment {
+        /** Align all labels at the position's left boundary. */
+        LEFT,
+        /** Center all labels in the position. */
+        CENTERED,
+        /** Align all labels at the position's right boundary. */
+        RIGHT;
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Fields
 
     /** The label that will be placed at this position. */
     private final SelfLoopLabel label;
@@ -25,12 +44,19 @@ public class SelfLoopLabelPosition {
     private final KVector position;
     /** The original position as this object was created. */
     private final KVector originalPosition;
+    /** How different labels will be aligned. */
+    private LabelAlignment labelAlignment;
+    /** The base penalty for a certain position, not taking crossings into account. */
+    private double basePenalty;
+    
     /** Number of crossings with other labels. */
     private int labelLabelCrossings;
     /** Number of crossings with edges. */
     private int labelEdgeCrossings;
-    /** The base penalty for a certain position, not taking crossings into account. */
-    private double basePenalty;
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Construction
 
     /**
      * Creates a new instance.
@@ -40,6 +66,10 @@ public class SelfLoopLabelPosition {
         this.originalPosition = position.clone();
         this.position = position.clone();
     }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Accessors
 
     /**
      * Returns the self loop label this object was created for.
@@ -82,6 +112,34 @@ public class SelfLoopLabelPosition {
     public KVector getOriginalPosition() {
         return originalPosition;
     }
+    
+    /**
+     * Returns how different labels are to be aligned.
+     */
+    public LabelAlignment getLabelAlignment() {
+        return labelAlignment;
+    }
+
+    /**
+     * Determines how different labels are to be aligned.
+     */
+    public void setLabelAlignment(final LabelAlignment labelAlignment) {
+        this.labelAlignment = labelAlignment;
+    }
+    
+    /**
+     * Returns the base penalty associated with this position.
+     */
+    public double getBasePenalty() {
+        return basePenalty;
+    }
+
+    /**
+     * Sets the base penalty to be associated with this position.
+     */
+    public void setBasePenalty(final double penalty) {
+        this.basePenalty = penalty;
+    }
 
     /**
      * Returns the number of crossings with other labels.
@@ -111,19 +169,9 @@ public class SelfLoopLabelPosition {
         this.labelEdgeCrossings = crossings;
     }
     
-    /**
-     * Returns the base penalty associated with this position.
-     */
-    public double getBasePenalty() {
-        return basePenalty;
-    }
-
-    /**
-     * Sets the base penalty to be associated with this position.
-     */
-    public void setBasePenalty(final double penalty) {
-        this.basePenalty = penalty;
-    }
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Miscellaneous
 
     @Override
     public String toString() {

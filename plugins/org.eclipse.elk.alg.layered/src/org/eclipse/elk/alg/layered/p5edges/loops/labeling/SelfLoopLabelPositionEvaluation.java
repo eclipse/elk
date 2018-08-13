@@ -83,6 +83,7 @@ public final class SelfLoopLabelPositionEvaluation {
                     System.out.println("    " + position.getPosition().toString());
                     System.out.println("        Base penalty: " + position.getBasePenalty());
                     System.out.println("        Side: " + position.getSide());
+                    System.out.println("        Label alignment: " + position.getLabelAlignment());
                 }
             }
         }

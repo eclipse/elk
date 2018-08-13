@@ -14,6 +14,7 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabelPosition;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopRoutingDirection;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabelPosition.LabelAlignment;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
@@ -61,6 +62,20 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
         CENTERED,
         /** Right-aligned on horizontal edge segment or bottom-aligned on vertical edge segment. */
         RIGHT_OR_BOTTOM;
+        
+        private LabelAlignment toLabelAlignment() {
+            switch (this) {
+            case LEFT_OR_TOP:
+                return LabelAlignment.LEFT;
+            case CENTERED:
+                return LabelAlignment.CENTERED;
+            case RIGHT_OR_BOTTOM:
+                return LabelAlignment.RIGHT;
+            default:
+                assert false;
+                return null;
+            }
+        }
     }
     
     
@@ -488,9 +503,27 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
             break;
         }
         
+        // Compute the label alignment for multiple labels stacked above each other
+        LabelAlignment labelAlignment = null;
+        switch (labelSide) {
+        case EAST:
+            labelAlignment = LabelAlignment.LEFT;
+            break;
+            
+        case WEST:
+            labelAlignment = LabelAlignment.RIGHT;
+            break;
+            
+        case NORTH:
+        case SOUTH:
+            // In these cases, the label alignment depends on our own alignment
+            labelAlignment = alignment.toLabelAlignment();
+        }
+        
         // Setup the label position
         SelfLoopLabelPosition position = new SelfLoopLabelPosition(label, coordinates);
         position.setSide(segmentSide);
+        position.setLabelAlignment(labelAlignment);
         position.setBasePenalty(
                 SelfLoopLabelPenalties.getSidePenalty(penaltySide)
                 + SelfLoopLabelPenalties.getAlignmentPenalty(alignment));
