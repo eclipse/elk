@@ -44,6 +44,7 @@ public class FourCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelP
         double edgeEdgeSpacing = getEdgeEdgeSpacing();
         double edgeLabelSpacing = getEdgeLabelSpacing();
         
+        // Generate all the bend points
         KVector startPosition = startPort.getLPort().getPosition().clone().add(startPort.getLPort().getAnchor());
         KVector endPosition = endPort.getLPort().getPosition().clone().add(endPort.getLPort().getAnchor());
 
@@ -61,110 +62,72 @@ public class FourCornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelP
         List<KVector> cornerBends = SelfLoopBendpointCalculationUtil.generateCornerBendpoints(getSelfLoopNode(),
                 startPort, endPort, firstBend, secondBend, edge);
         
+        // Generate all the segment sides
+        // SUPPRESS CHECKSTYLE NEXT MagicNumber
+        PortSide[] segmentSides = new PortSide[3];
+        PortSide startSide = startPort.getPortSide();
+        
+        if (startPort.getDirection() == SelfLoopRoutingDirection.RIGHT) {
+            segmentSides[0] = startSide.right();
+            segmentSides[1] = segmentSides[0].right();
+            segmentSides[2] = segmentSides[1].right();
+        } else {
+            segmentSides[0] = startSide.left();
+            segmentSides[1] = segmentSides[0].left();
+            segmentSides[2] = segmentSides[1].left();
+        }
+        
+        addPositions(component, startPort, endPort, segmentSides, firstBend, cornerBends, secondBend);
+    }
+
+    private void addPositions(final SelfLoopComponent component, final SelfLoopPort startPort,
+            final SelfLoopPort endPort, final PortSide[] segmentSides, final KVector firstBend,
+            final List<KVector> cornerBends, final KVector lastBend) {
+        
         SelfLoopLabel label = component.getSelfLoopLabel();
         List<SelfLoopLabelPosition> positions = label.getCandidatePositions();
         
-        // SUPPRESS CHECKSTYLE NEXT 20 MagicNumber
-
-        // Centered positions
-        positions.add(shortSegmentCenteredPosition(label, firstBend, cornerBends.get(0), startPort));
-        positions.add(shortSegmentCenteredPosition(label, secondBend, cornerBends.get(3), endPort));
-        positions.add(longSegmentCenteredPosition(label, cornerBends.get(0), cornerBends.get(1), startPort));
-        positions.add(longSegmentCenteredPosition(label, cornerBends.get(3), cornerBends.get(2), endPort));
-        positions.add(middleSegmentCentered(label, cornerBends.get(1), cornerBends.get(2), startPort));
-
-        // Right-aligned
-        positions.add(shortSegmentAlignedPosition(label, firstBend, cornerBends.get(0), startPort, false));
-        positions.add(shortSegmentAlignedPosition(label, secondBend, cornerBends.get(3), endPort, false));
-        positions.add(longSegmentAlignedPosition(label, cornerBends.get(0), cornerBends.get(1), startPort, false));
-        positions.add(longSegmentAlignedPosition(label, cornerBends.get(3), cornerBends.get(2), endPort, false));
-        positions.add(middleSideAligned(label, cornerBends.get(1), cornerBends.get(2), startPort, false));
-
-        // Left-aligned
-        positions.add(shortSegmentAlignedPosition(label, firstBend, cornerBends.get(0), startPort, true));
-        positions.add(shortSegmentAlignedPosition(label, secondBend, cornerBends.get(3), endPort, true));
-        positions.add(longSegmentAlignedPosition(label, cornerBends.get(0), cornerBends.get(1), startPort, true));
-        positions.add(longSegmentAlignedPosition(label, cornerBends.get(3), cornerBends.get(2), endPort, true));
-        positions.add(middleSideAligned(label, cornerBends.get(1), cornerBends.get(2), startPort, true));
-    }
-
-    /**
-     * Returns a label position, along with the appropriate penalty, that is centered on a middle segment.
-     */
-    private SelfLoopLabelPosition middleSegmentCentered(final SelfLoopLabel label,
-            final KVector pointClosestToPort, final KVector endPoint, final SelfLoopPort closestPort) {
+        // SUPPRESS CHECKSTYLE NEXT 40 MagicNumber
         
-        PortSide portSide = closestPort.getPortSide();
-        SelfLoopRoutingDirection direction = closestPort.getDirection();
-        PortSide segmentSide = portSide.right().right();
-
-        KVector startPortPoint = null;
-        KVector endPortPoint = null;
-
-        switch (portSide) {
-        case NORTH:
-        case EAST:
-            startPortPoint = direction == SelfLoopRoutingDirection.RIGHT ? endPoint : pointClosestToPort;
-            endPortPoint = direction == SelfLoopRoutingDirection.RIGHT ? pointClosestToPort : endPoint;
-            break;
-        case SOUTH:
-        case WEST:
-            startPortPoint = direction == SelfLoopRoutingDirection.RIGHT ? pointClosestToPort : endPoint;
-            endPortPoint = direction == SelfLoopRoutingDirection.RIGHT ? endPoint : pointClosestToPort;
-            break;
-        }
-        KVector topAlignRightSide = sideCenteredCoordinates(startPortPoint, endPortPoint, label, segmentSide);
-
-        SelfLoopLabelPosition centerTopPosition = new SelfLoopLabelPosition(label, topAlignRightSide);
-        centerTopPosition.setSide(segmentSide);
-        centerTopPosition.setPenalty(SelfLoopLabelPenalties.getSidePenalty(segmentSide)
-                + SelfLoopLabelPenalties.CENTERED);
-
-        return centerTopPosition;
-    }
-
-    /**
-     * 
-     * Returns a label position, along with the appropriate penalty, that is side-aligned on a middle segment.
-     */
-    private SelfLoopLabelPosition middleSideAligned(final SelfLoopLabel label, final KVector pointClosestToPort,
-            final KVector endPoint, final SelfLoopPort closestPort, final boolean left) {
+        // Full segment 2 (long)
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(1), cornerBends.get(2), Alignment.CENTERED));
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(1), cornerBends.get(2), Alignment.LEFT_OR_TOP));
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(1), cornerBends.get(2), Alignment.RIGHT_OR_BOTTOM));
         
-        PortSide portSide = closestPort.getPortSide();
-        SelfLoopRoutingDirection direction = closestPort.getDirection();
-        PortSide segmentSide = portSide.right().right();
+        // Full segment 1 (long)
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(0), cornerBends.get(1), Alignment.CENTERED));
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(0), cornerBends.get(1), Alignment.LEFT_OR_TOP));
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(0), cornerBends.get(1), Alignment.RIGHT_OR_BOTTOM));
+        
+        // Full segment 3 (long)
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(2), cornerBends.get(3), Alignment.CENTERED));
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(2), cornerBends.get(3), Alignment.LEFT_OR_TOP));
+        positions.add(longSegmentPosition(
+                label, segmentSides[0], cornerBends.get(2), cornerBends.get(3), Alignment.RIGHT_OR_BOTTOM));
 
-        KVector startPortPoint = null;
-        KVector endPortPoint = null;
+        // Start segment (short)
+        positions.add(shortSegmentPosition(
+                label, startPort, firstBend, cornerBends.get(0), Alignment.CENTERED, true));
+        positions.add(shortSegmentPosition(
+                label, startPort, firstBend, cornerBends.get(0), Alignment.LEFT_OR_TOP, true));
+        positions.add(shortSegmentPosition(
+                label, startPort, firstBend, cornerBends.get(0), Alignment.RIGHT_OR_BOTTOM, true));
 
-        switch (portSide) {
-        case NORTH:
-        case EAST:
-            startPortPoint = direction == SelfLoopRoutingDirection.RIGHT ? endPoint : pointClosestToPort;
-            endPortPoint = direction == SelfLoopRoutingDirection.RIGHT ? pointClosestToPort : endPoint;
-            break;
-        case SOUTH:
-        case WEST:
-            startPortPoint = direction == SelfLoopRoutingDirection.RIGHT ? pointClosestToPort : endPoint;
-            endPortPoint = direction == SelfLoopRoutingDirection.RIGHT ? endPoint : pointClosestToPort;
-            break;
-        }
-
-        double penalty = SelfLoopLabelPenalties.getSidePenalty(segmentSide);
-
-        KVector topAlignRightSide = null;
-        if (!left) {
-            topAlignRightSide = bottomRightAlignedCoordinates(label, startPortPoint, endPortPoint, segmentSide);
-            penalty = SelfLoopLabelPenalties.RIGHT_BOTTOM_ALIGNED;
-        } else {
-            topAlignRightSide = topLeftAlignedCoordinates(label, startPortPoint, endPortPoint, segmentSide);
-            penalty = SelfLoopLabelPenalties.LEFT_TOP_ALIGNED;
-        }
-
-        SelfLoopLabelPosition centerTopPosition = new SelfLoopLabelPosition(label, topAlignRightSide);
-        centerTopPosition.setSide(segmentSide);
-        centerTopPosition.setPenalty(penalty);
-
-        return centerTopPosition;
+        // End segment (short)
+        positions.add(shortSegmentPosition(
+                label, endPort, lastBend, cornerBends.get(3), Alignment.CENTERED, true));
+        positions.add(shortSegmentPosition(
+                label, endPort, lastBend, cornerBends.get(3), Alignment.LEFT_OR_TOP, true));
+        positions.add(shortSegmentPosition(
+                label, endPort, lastBend, cornerBends.get(3), Alignment.RIGHT_OR_BOTTOM, true));
     }
+    
 }

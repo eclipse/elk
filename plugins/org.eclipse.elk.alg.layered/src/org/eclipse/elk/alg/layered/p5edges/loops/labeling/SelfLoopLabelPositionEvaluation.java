@@ -79,7 +79,9 @@ public final class SelfLoopLabelPositionEvaluation {
                 
                 // Output possible positions
                 for (SelfLoopLabelPosition position : slLabel.getCandidatePositions()) {
-                    System.out.println("    " + position.getPosition().toString() + "     p " + position.getPenalty());
+                    System.out.println("    " + position.getPosition().toString());
+                    System.out.println("        Base penalty: " + position.getPenalty());
+                    System.out.println("        Side: " + position.getSide());
                 }
             }
         }

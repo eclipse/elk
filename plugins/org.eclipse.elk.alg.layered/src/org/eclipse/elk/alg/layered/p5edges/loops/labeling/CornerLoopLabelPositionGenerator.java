@@ -60,15 +60,15 @@ public class CornerLoopLabelPositionGenerator extends AbstractSelfLoopLabelPosit
         SelfLoopLabel label = component.getSelfLoopLabel();
         List<SelfLoopLabelPosition> positions = label.getCandidatePositions();
         
-        // Centered positions
-        positions.add(shortSegmentCenteredPosition(label, firstBend, cornerBend, startPort));
-        positions.add(shortSegmentCenteredPosition(label, secondBend, cornerBend, endPort));
-
-        // Side aligned positions
-        positions.add(shortSegmentAlignedPosition(label, firstBend, cornerBend, startPort, false));
-        positions.add(shortSegmentAlignedPosition(label, secondBend, cornerBend, endPort, false));
-        positions.add(shortSegmentAlignedPosition(label, firstBend, cornerBend, startPort, true));
-        positions.add(shortSegmentAlignedPosition(label, secondBend, cornerBend, endPort, true));
+        // Start segment
+        positions.add(shortSegmentPosition(label, startPort, firstBend, cornerBend, Alignment.CENTERED, false));
+        positions.add(shortSegmentPosition(label, startPort, firstBend, cornerBend, Alignment.LEFT_OR_TOP, false));
+        positions.add(shortSegmentPosition(label, startPort, firstBend, cornerBend, Alignment.RIGHT_OR_BOTTOM, false));
+        
+        // End segment
+        positions.add(shortSegmentPosition(label, endPort, secondBend, cornerBend, Alignment.CENTERED, false));
+        positions.add(shortSegmentPosition(label, endPort, secondBend, cornerBend, Alignment.LEFT_OR_TOP, false));
+        positions.add(shortSegmentPosition(label, endPort, secondBend, cornerBend, Alignment.RIGHT_OR_BOTTOM, false));
     }
 
 }

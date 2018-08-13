@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
+import org.eclipse.elk.alg.layered.p5edges.loops.labeling.AbstractSelfLoopLabelPositionGenerator.Alignment;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
@@ -30,6 +31,7 @@ public final class SelfLoopLabelPenalties {
     public static final double LEFT_TOP_ALIGNED = 0.1;
     /** Penalty value for the right or bottom label positions. */
     public static final double RIGHT_BOTTOM_ALIGNED = 0.2;
+    
     /** Penalty value for short segments. */
     public static final double SHORT_SEGMENT = 0.3;
 
@@ -54,8 +56,27 @@ public final class SelfLoopLabelPenalties {
             return EAST;
         case WEST:
             return WEST;
+        default:
+            assert false;
+            return 0;
         }
-        return 0;
+    }
+    
+    /**
+     * Convenience method to find the penalty for a given side.
+     */
+    public static double getAlignmentPenalty(final Alignment alignment) {
+        switch (alignment) {
+        case LEFT_OR_TOP:
+            return LEFT_TOP_ALIGNED;
+        case CENTERED:
+            return CENTERED;
+        case RIGHT_OR_BOTTOM:
+            return RIGHT_BOTTOM_ALIGNED;
+        default:
+            assert false;
+            return 0;
+        }
     }
 
 }

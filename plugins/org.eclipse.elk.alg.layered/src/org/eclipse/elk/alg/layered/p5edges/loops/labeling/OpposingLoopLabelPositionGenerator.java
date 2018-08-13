@@ -14,9 +14,11 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopEdge;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopPort;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopRoutingDirection;
 import org.eclipse.elk.alg.layered.p5edges.loops.util.SelfLoopBendpointCalculationUtil;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Iterables;
 
@@ -41,7 +43,8 @@ public class OpposingLoopLabelPositionGenerator extends AbstractSelfLoopLabelPos
         // Retrieve the spacings active for this node
         double edgeEdgeSpacing = getEdgeEdgeSpacing();
         double edgeLabelSpacing = getEdgeLabelSpacing();
-        
+
+        // Generate all the bend points
         KVector startPosition = startPort.getLPort().getPosition().clone().add(startPort.getLPort().getAnchor());
         KVector endPosition = endPort.getLPort().getPosition().clone().add(endPort.getLPort().getAnchor());
 
@@ -60,26 +63,49 @@ public class OpposingLoopLabelPositionGenerator extends AbstractSelfLoopLabelPos
         List<KVector> cornerBends = SelfLoopBendpointCalculationUtil.generateCornerBendpoints(
                 getSelfLoopNode(), startPort, endPort, firstBend, secondBend, edge);
 
-        KVector cornerBend1 = cornerBends.get(0);
-        KVector cornerBend2 = cornerBends.get(1);
+        // Find the long segment's side
+        PortSide longSegmentSide = startPort.getPortSide();
+        if (startPort.getDirection() == SelfLoopRoutingDirection.RIGHT) {
+            longSegmentSide = longSegmentSide.right();
+        } else {
+            longSegmentSide = longSegmentSide.left();
+        }
 
+        addPositions(component, startPort, endPort, longSegmentSide, firstBend, cornerBends, secondBend);
+    }
+
+    private void addPositions(final SelfLoopComponent component, final SelfLoopPort startPort,
+            final SelfLoopPort endPort, final PortSide longSegmentSide, final KVector firstBend,
+            final List<KVector> cornerBends, final KVector lastBend) {
+        
         SelfLoopLabel label = component.getSelfLoopLabel();
         List<SelfLoopLabelPosition> positions = label.getCandidatePositions();
-
-        // Centered Positions
-        positions.add(shortSegmentCenteredPosition(label, firstBend, cornerBend1, startPort));
-        positions.add(shortSegmentCenteredPosition(label, secondBend, cornerBend2, endPort));
-        positions.add(longSegmentCenteredPosition(label, cornerBend1, cornerBend2, startPort));
         
-        // Right-aligned
-        positions.add(shortSegmentAlignedPosition(label, firstBend, cornerBend1, startPort, false));
-        positions.add(shortSegmentAlignedPosition(label, secondBend, cornerBend2, endPort, false));
-        positions.add(longSegmentAlignedPosition(label, cornerBend1, cornerBend2, startPort, false));
+        // SUPPRESS CHECKSTYLE NEXT 40 MagicNumber
+        
+        // Full (long)
+        positions.add(longSegmentPosition(
+                label, longSegmentSide, cornerBends.get(1), cornerBends.get(2), Alignment.CENTERED));
+        positions.add(longSegmentPosition(
+                label, longSegmentSide, cornerBends.get(1), cornerBends.get(2), Alignment.LEFT_OR_TOP));
+        positions.add(longSegmentPosition(
+                label, longSegmentSide, cornerBends.get(1), cornerBends.get(2), Alignment.RIGHT_OR_BOTTOM));
 
-        // Left-aligned
-        positions.add(shortSegmentAlignedPosition(label, firstBend, cornerBend1, startPort, true));
-        positions.add(shortSegmentAlignedPosition(label, secondBend, cornerBend2, endPort, true));
-        positions.add(longSegmentAlignedPosition(label, cornerBend1, cornerBend2, startPort, true));
+        // Start segment (short)
+        positions.add(shortSegmentPosition(
+                label, startPort, firstBend, cornerBends.get(0), Alignment.CENTERED, true));
+        positions.add(shortSegmentPosition(
+                label, startPort, firstBend, cornerBends.get(0), Alignment.LEFT_OR_TOP, true));
+        positions.add(shortSegmentPosition(
+                label, startPort, firstBend, cornerBends.get(0), Alignment.RIGHT_OR_BOTTOM, true));
+
+        // End segment (short)
+        positions.add(shortSegmentPosition(
+                label, endPort, lastBend, cornerBends.get(3), Alignment.CENTERED, true));
+        positions.add(shortSegmentPosition(
+                label, endPort, lastBend, cornerBends.get(3), Alignment.LEFT_OR_TOP, true));
+        positions.add(shortSegmentPosition(
+                label, endPort, lastBend, cornerBends.get(3), Alignment.RIGHT_OR_BOTTOM, true));
     }
     
 }
