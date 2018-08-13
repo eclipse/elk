@@ -67,6 +67,19 @@ public final class KVector implements IDataObject, Cloneable {
         this.x = v.x;
         this.y = v.y;
     }
+    
+    /**
+     * Creates a new vector that points from the given start to the end vector.
+     * 
+     * @param start
+     *            start vector.
+     * @param end
+     *            end vector.
+     */
+    public KVector(final KVector start, final KVector end) {
+        this.x = end.x - start.x;
+        this.y = end.y - start.y;
+    }
 
     /**
      * Creates a normalized vector for the passed angle in radians.
