@@ -10,6 +10,7 @@ package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabelPosition;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopRoutingDirection;
@@ -289,7 +290,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
         
         SelfLoopLabelPosition position = doCreateLabelPosition(
                 label, portSide, labelSide, penaltySide, startPoint, endPoint, alignment);
-        position.setPenalty(position.getPenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT);
+        position.setBasePenalty(position.getBasePenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT);
         
         return position;
     }
@@ -375,7 +376,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
                 label, portSide, portSide, penaltySide, startPoint, endPoint, alignment);
         
         if (addShortSegmentPenalty) {
-            position.setPenalty(position.getPenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT);
+            position.setBasePenalty(position.getBasePenalty() + SelfLoopLabelPenalties.SHORT_SEGMENT);
         }
         
         return position;
@@ -490,7 +491,7 @@ public abstract class AbstractSelfLoopLabelPositionGenerator implements ISelfLoo
         // Setup the label position
         SelfLoopLabelPosition position = new SelfLoopLabelPosition(label, coordinates);
         position.setSide(segmentSide);
-        position.setPenalty(
+        position.setBasePenalty(
                 SelfLoopLabelPenalties.getSidePenalty(penaltySide)
                 + SelfLoopLabelPenalties.getAlignmentPenalty(alignment));
 

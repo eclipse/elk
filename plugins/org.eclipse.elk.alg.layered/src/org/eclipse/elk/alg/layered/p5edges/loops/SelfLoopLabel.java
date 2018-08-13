@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.layered.graph.LLabel;
-import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPosition;
 
 /**
  * A list of labels that belong to a {@link SelfLoopComponent}.

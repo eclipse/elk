@@ -5,15 +5,15 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *******************************************************************************/
-package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
+package org.eclipse.elk.alg.layered.p5edges.loops;
 
-import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 
 /**
  * Describes a (possible) position of a {@link SelfLoopLabel}, along with a number of properties used internally by the
- * placement algorithms.
+ * placement algorithms. Each position has a base penalty associated with it: the higher the base penalty, the lower
+ * the probability of its label actually being placed there.
  */
 public class SelfLoopLabelPosition {
 
@@ -29,8 +29,8 @@ public class SelfLoopLabelPosition {
     private int labelLabelCrossings;
     /** Number of crossings with edges. */
     private int labelEdgeCrossings;
-    /** The penalty for a certain position. Higher penalties reduce the likelihood of a position being chosen. */
-    private double penalty;
+    /** The base penalty for a certain position, not taking crossings into account. */
+    private double basePenalty;
 
     /**
      * Creates a new instance.
@@ -66,7 +66,7 @@ public class SelfLoopLabelPosition {
      * Reset the position to the original position the object was originally created with.
      */
     public void resetPosition() {
-        this.position.reset().add(originalPosition);
+        this.position.set(originalPosition);
     }
 
     /**
@@ -112,17 +112,17 @@ public class SelfLoopLabelPosition {
     }
     
     /**
-     * Returns the penalty associated with this position.
+     * Returns the base penalty associated with this position.
      */
-    public double getPenalty() {
-        return penalty;
+    public double getBasePenalty() {
+        return basePenalty;
     }
 
     /**
-     * Sets the penalty to be associated with this position.
+     * Sets the base penalty to be associated with this position.
      */
-    public void setPenalty(final double penalty) {
-        this.penalty = penalty;
+    public void setBasePenalty(final double penalty) {
+        this.basePenalty = penalty;
     }
 
     @Override

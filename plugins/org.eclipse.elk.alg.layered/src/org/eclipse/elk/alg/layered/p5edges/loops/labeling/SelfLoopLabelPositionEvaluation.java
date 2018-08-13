@@ -18,6 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
+import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabelPosition;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopPort;
 import org.eclipse.elk.alg.layered.p5edges.loops.calculators.SelfLoopOffsetCalculator;
@@ -80,7 +81,7 @@ public final class SelfLoopLabelPositionEvaluation {
                 // Output possible positions
                 for (SelfLoopLabelPosition position : slLabel.getCandidatePositions()) {
                     System.out.println("    " + position.getPosition().toString());
-                    System.out.println("        Base penalty: " + position.getPenalty());
+                    System.out.println("        Base penalty: " + position.getBasePenalty());
                     System.out.println("        Side: " + position.getSide());
                 }
             }
@@ -204,7 +205,7 @@ public final class SelfLoopLabelPositionEvaluation {
         for (SelfLoopComponent component : components) {
             SelfLoopLabelPosition position = component.getSelfLoopLabel().getLabelPosition();
             position.resetPosition();
-            preferenceValueSum += position.getPenalty();
+            preferenceValueSum += position.getBasePenalty();
         }
 
         // offset port heights and opposing segment heights
