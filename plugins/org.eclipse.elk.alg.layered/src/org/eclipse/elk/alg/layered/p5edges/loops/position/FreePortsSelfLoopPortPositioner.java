@@ -33,10 +33,13 @@ public class FreePortsSelfLoopPortPositioner extends AbstractSelfLoopPortPositio
         switch (distribution) {
         case NORTH:
             positioner = new NorthSelfLoopPortPositioner(ordering);
+            break;
         case NORTH_SOUTH:
             positioner = new NorthSouthSelfLoopPortPositioner(ordering);
+            break;
         case EQUALLY:
             positioner = new EquallyDistributedSelfLoopPortPositioner();
+            break;
         }
     }
 
