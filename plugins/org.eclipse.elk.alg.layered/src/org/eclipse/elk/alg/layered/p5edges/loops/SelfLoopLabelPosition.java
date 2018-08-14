@@ -49,11 +49,6 @@ public class SelfLoopLabelPosition {
     /** The base penalty for a certain position, not taking crossings into account. */
     private double basePenalty;
     
-    /** Number of crossings with other labels. */
-    private int labelLabelCrossings;
-    /** Number of crossings with edges. */
-    private int labelEdgeCrossings;
-    
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Construction
@@ -139,34 +134,6 @@ public class SelfLoopLabelPosition {
      */
     public void setBasePenalty(final double penalty) {
         this.basePenalty = penalty;
-    }
-
-    /**
-     * Returns the number of crossings with other labels.
-     */
-    public int getLabelLabelCrossings() {
-        return labelLabelCrossings;
-    }
-
-    /**
-     * Sets the number of crossings with other labels.
-     */
-    public void setLabelLabelCrossings(final int labelLabelCrossings) {
-        this.labelLabelCrossings = labelLabelCrossings;
-    }
-
-    /**
-     * Returns the number of crossings with edges.
-     */
-    public int getLabelEdgeCrossings() {
-        return labelEdgeCrossings;
-    }
-
-    /**
-     * Sets the number of crossings with edges.
-     */
-    public void setLabelEdgeCrossings(final int crossings) {
-        this.labelEdgeCrossings = crossings;
     }
     
     

@@ -23,7 +23,7 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabelPosition;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopComponentMerger;
-import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPositionEvaluation;
+import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPositionEvaluator;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPositionGeneration;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
@@ -68,7 +68,8 @@ public final class SelfLoopLabelPlacer implements ILayoutProcessor<LGraph> {
                     SelfLoopLabelPositionGeneration.generatePositions(slNode);
 
                     // Find the best position for each component
-                    SelfLoopLabelPositionEvaluation.evaluatePositions(slNode);
+                    SelfLoopLabelPositionEvaluator evaluator = new SelfLoopLabelPositionEvaluator(slNode);
+                    evaluator.evaluatePositions();
                     
                     // Calculate the actual coordinates
                     placeLabels(slNode);
