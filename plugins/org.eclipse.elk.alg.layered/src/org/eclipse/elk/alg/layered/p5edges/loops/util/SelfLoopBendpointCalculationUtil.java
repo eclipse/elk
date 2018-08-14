@@ -101,6 +101,11 @@ public final class SelfLoopBendpointCalculationUtil {
         return cornerBendPoint;
     }
 
+    /**
+     * Calculates a bend point at the corner between the two given (adjacent) port sides and the two bend points placed
+     * on those sides. The result will be the bend point that needs to be inserted to connect the two existing bend
+     * points orthogonally.
+     */
     public static KVector calculateCornerBendPoint(final KVector firstBendpoint, final PortSide firstSide,
             final KVector secondBendpoint, final PortSide secondSide) {
         
@@ -148,27 +153,22 @@ public final class SelfLoopBendpointCalculationUtil {
     public static KVector calculateOpposingCornerBendPoint(final KVector previousBendPoint, final PortSide opposingSide,
             final KVector nodeSize, final double opposingSideDistance) {
         
-        double loopHeight = 0;
         final KVector secondCP = new KVector();
         switch (opposingSide) {
         case NORTH:
-            loopHeight = -opposingSideDistance;
             secondCP.x = previousBendPoint.x;
-            secondCP.y = loopHeight;
+            secondCP.y = -opposingSideDistance;
             break;
         case EAST:
-            loopHeight = opposingSideDistance + nodeSize.x;
-            secondCP.x = loopHeight;
+            secondCP.x = opposingSideDistance + nodeSize.x;
             secondCP.y = previousBendPoint.y;
             break;
         case SOUTH:
-            loopHeight = opposingSideDistance + nodeSize.y;
             secondCP.x = previousBendPoint.x;
-            secondCP.y = loopHeight;
+            secondCP.y = opposingSideDistance + nodeSize.y;
             break;
         case WEST:
-            loopHeight = -opposingSideDistance;
-            secondCP.x = loopHeight;
+            secondCP.x = -opposingSideDistance;
             secondCP.y = previousBendPoint.y;
             break;
         }

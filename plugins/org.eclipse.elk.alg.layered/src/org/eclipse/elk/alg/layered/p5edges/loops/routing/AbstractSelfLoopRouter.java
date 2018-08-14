@@ -106,28 +106,7 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
      * will take from its source to its target.
      */
     protected KVector computeSourceBendPoint(final SelfLoopEdge slEdge, final boolean supportsHyperEdges) {
-        LEdge lEdge = slEdge.getEdge();
-        final PortSide routingSide = lEdge.getSource().getSide();
-        final double direction = SplinesMath.portSideToDirection(routingSide);
-
-        final LPort sourceLPort = lEdge.getSource();
-        final KVector sourcePos = sourceLPort.getPosition().clone().add(lEdge.getSource().getAnchor());
-
-        SelfLoopPort sourcePort = slEdge.getSource();
-        int sourceLevel = sourcePort.getEdgeLevel(lEdge);
-        
-        if (!supportsHyperEdges) {
-            int order = slEdge.getEdgeOrders().get(routingSide);
-            int connectedEdges = Iterables.size(sourcePort.getConnectedEdges());
-            sourceLevel += -connectedEdges + order;
-        }
-
-        final double otherEdgeOffset = slEdge.getSource().getOtherEdgeOffset();
-
-        // calculate the actual bend point
-        KVector bendpoint = sourcePos.clone().add(new KVector(direction).scale(sourceLevel * DISTANCE));
-        bendpoint.add(new KVector(direction).scale(otherEdgeOffset));
-        return bendpoint;
+        return computeSourceOrTargetBendPoint(slEdge, slEdge.getSource(), supportsHyperEdges);
     }
 
     /**
@@ -143,26 +122,31 @@ public abstract class AbstractSelfLoopRouter implements ISelfLoopRouter {
      * will take from its source to its target.
      */
     protected KVector computeTargetBendPoint(final SelfLoopEdge slEdge, final boolean supportsHyperEdges) {
+        return computeSourceOrTargetBendPoint(slEdge, slEdge.getTarget(), supportsHyperEdges);
+    }
+    
+    private KVector computeSourceOrTargetBendPoint(final SelfLoopEdge slEdge, final SelfLoopPort slPort,
+            final boolean supportsHyperEdges) {
+        
         LEdge lEdge = slEdge.getEdge();
-        PortSide routingSide = lEdge.getTarget().getSide();
+        
+        PortSide routingSide = slPort.getPortSide();
         final double direction = SplinesMath.portSideToDirection(routingSide);
 
-        final LPort targetLPort = lEdge.getTarget();
-        final KVector targetPos = targetLPort.getPosition().clone().add(lEdge.getTarget().getAnchor());
+        final LPort lPort = slPort.getLPort();
+        final KVector lPortPos = lPort.getPosition().clone().add(lPort.getAnchor());
 
-        SelfLoopPort targetPort = slEdge.getTarget();
-        int targetLevel = targetPort.getEdgeLevel(lEdge);
-        
+        int level = slPort.getEdgeLevel(lEdge);
         if (!supportsHyperEdges) {
             int order = slEdge.getEdgeOrders().get(routingSide);
-            int connectedEdges = Iterables.size(targetPort.getConnectedEdges());
-            targetLevel += -connectedEdges + order;
+            int connectedEdges = Iterables.size(slPort.getConnectedEdges());
+            level += -connectedEdges + order;
         }
 
-        final double otherEdgeOffset = slEdge.getTarget().getOtherEdgeOffset();
+        final double otherEdgeOffset = slPort.getOtherEdgeOffset();
 
         // calculate the actual bend point
-        KVector bendpoint = targetPos.clone().add(new KVector(direction).scale(targetLevel * DISTANCE));
+        KVector bendpoint = lPortPos.clone().add(new KVector(direction).scale(level * DISTANCE));
         bendpoint.add(new KVector(direction).scale(otherEdgeOffset));
         return bendpoint;
     }

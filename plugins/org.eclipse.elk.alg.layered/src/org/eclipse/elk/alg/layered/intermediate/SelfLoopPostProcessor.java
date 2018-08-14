@@ -29,7 +29,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *   <dt>Precondition:</dt>
  *     <dd>The nodes do have coordinates.</dd>
  *   <dt>Postcondition:s</dt>
- *     <dd>Self-Loop edge bendpoints, junction points and labels are placed as intended by the relative positioning
+ *     <dd>Self-Loop edge bend points, junction points and labels are placed as intended by the relative positioning
  *         beforehand.</dd>
  *   <dt>Slots:</dt>
  *     <dd>After phase 5.</dd>
