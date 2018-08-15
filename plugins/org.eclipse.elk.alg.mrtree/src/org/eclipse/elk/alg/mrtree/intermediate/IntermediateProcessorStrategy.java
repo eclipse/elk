@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.intermediate;
 
+import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
+import org.eclipse.elk.alg.common.structure.ILayoutProcessorFactory;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
-import org.eclipse.elk.core.alg.ILayoutProcessor;
-import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 
 /**
  * Definition of available intermediate layout processors for the tree layouter. This enumeration

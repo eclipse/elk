@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.options;
 
+import org.eclipse.elk.alg.common.structure.ILayoutPhase;
+import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p1cycles.DepthFirstCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.GreedyCycleBreaker;
 import org.eclipse.elk.alg.layered.p1cycles.InteractiveCycleBreaker;
-import org.eclipse.elk.core.alg.ILayoutPhase;
-import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
 /**

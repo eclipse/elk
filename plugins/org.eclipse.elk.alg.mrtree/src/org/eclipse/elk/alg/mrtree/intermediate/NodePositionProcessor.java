@@ -13,10 +13,10 @@ package org.eclipse.elk.alg.mrtree.intermediate;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
-import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

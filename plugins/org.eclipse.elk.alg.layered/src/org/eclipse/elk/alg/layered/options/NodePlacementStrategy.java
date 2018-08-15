@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.options;
 
+import org.eclipse.elk.alg.common.structure.ILayoutPhase;
+import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p4nodes.InteractiveNodePlacer;
@@ -17,8 +19,6 @@ import org.eclipse.elk.alg.layered.p4nodes.LinearSegmentsNodePlacer;
 import org.eclipse.elk.alg.layered.p4nodes.NetworkSimplexPlacer;
 import org.eclipse.elk.alg.layered.p4nodes.SimpleNodePlacer;
 import org.eclipse.elk.alg.layered.p4nodes.bk.BKNodePlacer;
-import org.eclipse.elk.core.alg.ILayoutPhase;
-import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 
 /**

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.radial;
 
+import org.eclipse.elk.alg.common.structure.ILayoutPhase;
+import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.radial.p1position.EadesRadial;
 import org.eclipse.elk.alg.radial.p2routing.StraightLineEdgeRouter;
-import org.eclipse.elk.core.alg.ILayoutPhase;
-import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**

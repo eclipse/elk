@@ -13,11 +13,11 @@ package org.eclipse.elk.alg.layered.p5edges;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.eclipse.elk.alg.common.structure.ILayoutPhase;
+import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
-import org.eclipse.elk.core.alg.ILayoutPhase;
-import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.core.options.EdgeRouting;
 
 /**

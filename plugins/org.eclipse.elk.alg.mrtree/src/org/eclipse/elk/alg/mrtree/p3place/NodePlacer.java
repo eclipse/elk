@@ -12,6 +12,8 @@ package org.eclipse.elk.alg.mrtree.p3place;
 
 import java.util.LinkedList;
 
+import org.eclipse.elk.alg.common.structure.ILayoutPhase;
+import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.mrtree.TreeLayoutPhases;
 import org.eclipse.elk.alg.mrtree.TreeUtil;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
@@ -19,8 +21,6 @@ import org.eclipse.elk.alg.mrtree.graph.TNode;
 import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
-import org.eclipse.elk.core.alg.ILayoutPhase;
-import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Iterables;

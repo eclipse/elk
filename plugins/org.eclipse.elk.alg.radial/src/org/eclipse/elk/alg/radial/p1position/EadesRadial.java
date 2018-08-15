@@ -12,6 +12,8 @@ package org.eclipse.elk.alg.radial.p1position;
 
 import java.util.List;
 
+import org.eclipse.elk.alg.common.structure.ILayoutPhase;
+import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.radial.InternalProperties;
 import org.eclipse.elk.alg.radial.RadialLayoutPhases;
 import org.eclipse.elk.alg.radial.RadialUtil;
@@ -19,8 +21,6 @@ import org.eclipse.elk.alg.radial.intermediate.optimization.IEvaluation;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
 import org.eclipse.elk.alg.radial.p1position.wedge.IAnnulusWedgeCriteria;
 import org.eclipse.elk.alg.radial.sorting.IRadialSorter;
-import org.eclipse.elk.core.alg.ILayoutPhase;
-import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 

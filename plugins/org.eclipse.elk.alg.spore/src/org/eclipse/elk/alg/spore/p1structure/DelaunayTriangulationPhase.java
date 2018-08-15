@@ -14,10 +14,10 @@ import java.util.List;
 
 import org.eclipse.elk.alg.common.BowyerWatsonTriangulation;
 import org.eclipse.elk.alg.common.spore.InternalProperties;
+import org.eclipse.elk.alg.common.structure.ILayoutPhase;
+import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.spore.SPOrEPhases;
 import org.eclipse.elk.alg.spore.graph.Graph;
-import org.eclipse.elk.core.alg.ILayoutPhase;
-import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;

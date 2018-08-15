@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.radial.intermediate;
 
-import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
