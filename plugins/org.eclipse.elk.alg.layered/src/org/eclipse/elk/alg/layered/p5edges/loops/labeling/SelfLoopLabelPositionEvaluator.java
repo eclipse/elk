@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.loops.labeling;
 
-import java.awt.geom.Rectangle2D;
+import org.eclipse.elk.core.math.ElkRectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -250,7 +250,7 @@ public final class SelfLoopLabelPositionEvaluator {
         SelfLoopOffsetCalculator.calculateOpposingSegmentLabelOffsets(slNode);
         
         // Calculate the different penalties
-        List<Rectangle2D.Double> labelRects = createLabelPositionRects();
+        List<ElkRectangle> labelRects = createLabelPositionRects();
         
         int labelNodeCrossings = calculateLabelNodeCrossings(labelRects);
         int labelLabelCrossings = calculateLabelLabelCrossings(labelRects);
@@ -271,15 +271,15 @@ public final class SelfLoopLabelPositionEvaluator {
     /**
      * Returns a list that contains a rectangle that describes the current label position of each component's label.
      */
-    private List<Rectangle2D.Double> createLabelPositionRects() {
+    private List<ElkRectangle> createLabelPositionRects() {
         // Turn each chosen label position into a rectangle so we can easily check for overlaps
-        List<Rectangle2D.Double> labelRects = new ArrayList<>(components.size());
+        List<ElkRectangle> labelRects = new ArrayList<>(components.size());
         
         for (SelfLoopComponent comp : components) {
             SelfLoopLabel slLabel = comp.getSelfLoopLabel();
             SelfLoopLabelPosition slPos = slLabel.getLabelPosition();
             
-            Rectangle2D.Double labelRect = new Rectangle2D.Double(
+            ElkRectangle labelRect = new ElkRectangle(
                     slPos.getPosition().x,
                     slPos.getPosition().y,
                     slLabel.getWidth(),
@@ -293,13 +293,13 @@ public final class SelfLoopLabelPositionEvaluator {
     /**
      * Computes the number of label-node crossings for the chosen label positions of the given list of components.
      */
-    private int calculateLabelNodeCrossings(final List<Rectangle2D.Double> labelRects) {
+    private int calculateLabelNodeCrossings(final List<ElkRectangle> labelRects) {
         // Construct a rectangle that represents the node itself
         KVector nodeSize = slNode.getNode().getSize();
-        Rectangle2D.Double nodeRect = new Rectangle2D.Double(0, 0, nodeSize.x, nodeSize.y);
+        ElkRectangle nodeRect = new ElkRectangle(0, 0, nodeSize.x, nodeSize.y);
         
         int labelNodeCrossings = 0;
-        for (Rectangle2D.Double labelRect : labelRects) {
+        for (ElkRectangle labelRect : labelRects) {
             if (nodeRect.intersects(labelRect)) {
                 labelNodeCrossings++;
             }
@@ -312,12 +312,12 @@ public final class SelfLoopLabelPositionEvaluator {
      * Computes the number of label-label crossings for the chosen label positions of the given list of components.
      * Each crossing is only counted once.
      */
-    private int calculateLabelLabelCrossings(final List<Rectangle2D.Double> labelRects) {
+    private int calculateLabelLabelCrossings(final List<ElkRectangle> labelRects) {
         // We count each label-label crossing once by iterating over the rectangles and, for each rectangle, iterating
         // over the remaining rectangles to check whether they overlap
         int labelLabelCrossings = 0;
         for (int currIdx = 0; currIdx < labelRects.size(); currIdx++) {
-            Rectangle2D.Double currRect = labelRects.get(currIdx);
+            ElkRectangle currRect = labelRects.get(currIdx);
             
             for (int otherIdx = currIdx + 1; otherIdx < labelRects.size(); otherIdx++) {
                 if (currRect.intersects(labelRects.get(otherIdx))) {
@@ -372,7 +372,7 @@ public final class SelfLoopLabelPositionEvaluator {
         
         // Construct a rectangle that describes the label position
         SelfLoopLabelPosition slLabelPos = slLabel.getLabelPosition();
-        Rectangle2D.Double labelRect = new Rectangle2D.Double(
+        ElkRectangle labelRect = new ElkRectangle(
                 slLabelPos.getPosition().x,
                 slLabelPos.getPosition().y,
                 slLabel.getWidth(),
