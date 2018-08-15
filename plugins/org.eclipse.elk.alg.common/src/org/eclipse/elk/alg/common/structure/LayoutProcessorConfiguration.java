@@ -8,9 +8,11 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.alg;
+package org.eclipse.elk.alg.common.structure;
 
 import java.util.Set;
+
+import org.eclipse.elk.core.util.AbstractRandomListAccessor;
 
 import com.google.common.collect.Sets;
 
@@ -46,7 +48,7 @@ import com.google.common.collect.Sets;
 public final class LayoutProcessorConfiguration<P extends Enum<P>, G>
         extends AbstractRandomListAccessor<Set<ILayoutProcessorFactory<G>>> {
 
-    /** The processing slot index we're currently adding procesors to. */
+    /** The processing slot index we're currently adding processors to. */
     private int currentIndex;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////

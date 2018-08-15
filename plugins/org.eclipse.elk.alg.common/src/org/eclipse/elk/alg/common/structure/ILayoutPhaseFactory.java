@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.alg;
+package org.eclipse.elk.alg.common.structure;
 
 /**
  * Classes that implement this interface can create layout phases.

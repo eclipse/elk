@@ -8,13 +8,15 @@
  * Contributors:
  *    cds - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.core.alg;
+package org.eclipse.elk.alg.common.structure;
 
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.elk.core.util.AbstractRandomListAccessor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
