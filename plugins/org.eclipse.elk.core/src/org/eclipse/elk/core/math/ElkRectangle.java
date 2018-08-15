@@ -8,6 +8,7 @@
 package org.eclipse.elk.core.math;
 
 import java.util.Objects;
+import org.eclipse.elk.core.math.ElkMath;
 
 /**
  * Class resembles basic functionality of {@link java.awt.geom.Rectangle2D}. This way it is possible
@@ -197,6 +198,27 @@ public class ElkRectangle {
     @Override
     public int hashCode() {
         return Objects.hash(x, y, width, height);
+    }
+
+    /**
+    * Returns the largest X coordinate of the rectangle in double precision.
+    */
+    public double getMaxX(){
+        return this.x + this.width;
+    }
+    
+    /**
+    * Returns the largest Y coordinate of the rectangle in double precision.
+    */
+    public double getMaxY(){
+        return this.y + this.height;
+    }
+
+    /**
+    * Tests if the interior of this rect intersects the interior of a specified rect
+    */
+    public boolean intersects(ElkRectangle rect){
+        return ElkMath.intersectsRect(this, rect);
     }
 
 }
