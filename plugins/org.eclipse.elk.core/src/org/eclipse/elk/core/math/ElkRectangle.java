@@ -199,4 +199,25 @@ public class ElkRectangle {
         return Objects.hash(x, y, width, height);
     }
 
+    public double getMaxX(){
+        return this.x + this.width;
+    }
+    
+    public double getMaxY(){
+        return this.y + this.height;
+    }
+
+    public boolean intersects(ElkRectangle rect){
+        double r1x1 = this.x;
+        double r1y1 = this.y;
+        double r1x2 = this.x + this.width;
+        double r1y2 = this.y + this.height;
+        double r2x1 = rect.x;
+        double r2y1 = rect.y;
+        double r2x2 = rect.x + rect.width;
+        double r2y2 = rect.y + rect.height;
+
+        return r1x1 < r2x2 && r1x2 > r2x1 && r1y1 > r2y2 && r1y2 < r2y1;
+    }
+
 }
