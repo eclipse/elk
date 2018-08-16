@@ -12,7 +12,6 @@ package org.eclipse.elk.core.math;
 
 import java.util.Iterator;
 import java.util.ListIterator;
-import org.eclipse.elk.core.math.ElkRectangle;
 
 import com.google.common.math.DoubleMath;
 
@@ -1238,19 +1237,4 @@ public final class ElkMath {
         return -Math.sqrt(vertDist * vertDist + horzDist * horzDist);
     }
 
-    /**
-    * Tests if the interior of this rect intersects the interior of a specified rect
-    */
-    public static boolean intersectsRect(ElkRectangle rect1, ElkRectangle rect2){
-        double r1x1 = rect1.x;
-        double r1y1 = rect1.y;
-        double r1x2 = rect1.x + rect1.width;
-        double r1y2 = rect1.y + rect1.height;
-        double r2x1 = rect2.x;
-        double r2y1 = rect2.y;
-        double r2x2 = rect2.x + rect2.width;
-        double r2y2 = rect2.y + rect2.height;
-
-        return r1x1 < r2x2 && r1x2 > r2x1 && r1y1 > r2y2 && r1y2 < r2y1;
-    }
 }
