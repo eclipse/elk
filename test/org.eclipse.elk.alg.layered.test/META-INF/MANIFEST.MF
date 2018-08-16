@@ -1,13 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ELK Layout Algorithm Tests
-Bundle-SymbolicName: org.eclipse.elk.alg.test;singleton:=true
+Bundle-Name: ELK Layered Tests
+Bundle-SymbolicName: org.eclipse.elk.alg.layered.test;singleton:=true
 Bundle-Version: 0.5.0.qualifier
+Automatic-Module-Name: org.eclipse.elk.alg.layered.test
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Eclipse Modeling Project
 Require-Bundle: com.google.guava;bundle-version="15.0.0",
  org.eclipse.elk.core,
  org.eclipse.elk.graph,
  org.eclipse.elk.alg.layered,
  org.junit;bundle-version="4.12.0"
-Bundle-Vendor: Eclipse Modeling Project
-Export-Package: org.eclipse.elk.alg.test
+
