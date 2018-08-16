@@ -122,12 +122,14 @@ public final class LabelManagementProcessor implements ILayoutProcessor<LGraph> 
                     }
 
                     // Self-loop
-                    SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
-                    for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
-                        SelfLoopLabel slLabel = component.getSelfLoopLabel();
-                        if (slLabel != null) {
-                            doManageLabels(labelManager, slLabel.getLabels(), MIN_WIDTH_EDGE_LABELS, labelLabelSpacing,
-                                    verticalLayout);
+                    if (node.hasProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION)) {
+                       SelfLoopNode slNode = node.getProperty(InternalProperties.SELFLOOP_NODE_REPRESENTATION);
+                        for (SelfLoopComponent component : slNode.getSelfLoopComponents()) {
+                            SelfLoopLabel slLabel = component.getSelfLoopLabel();
+                            if (slLabel != null) {
+                                doManageLabels(labelManager, slLabel.getLabels(), MIN_WIDTH_EDGE_LABELS, labelLabelSpacing,
+                                        verticalLayout);
+                            }
                         }
                     }
 
