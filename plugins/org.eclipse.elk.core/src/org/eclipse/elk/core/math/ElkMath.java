@@ -1236,4 +1236,5 @@ public final class ElkMath {
         // case 3
         return -Math.sqrt(vertDist * vertDist + horzDist * horzDist);
     }
+
 }
