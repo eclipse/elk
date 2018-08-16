@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.radial.intermediate;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
-import org.eclipse.elk.alg.common.structure.ILayoutProcessorFactory;
 import org.eclipse.elk.alg.radial.intermediate.compaction.GeneralCompactor;
 import org.eclipse.elk.alg.radial.intermediate.overlaps.RadiusExtensionOverlapRemoval;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 import org.eclipse.elk.graph.ElkNode;
 
 /**

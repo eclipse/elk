@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.PriorityQueue;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -24,6 +22,8 @@ import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.ArrayListMultimap;

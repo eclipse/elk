@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.spore.options;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.spore.SPOrEPhases;
 import org.eclipse.elk.alg.spore.graph.Graph;
 import org.eclipse.elk.alg.spore.p2processingorder.MaxSTPhase;
 import org.eclipse.elk.alg.spore.p2processingorder.MinSTPhase;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
  * Definition of the spanning tree construction strategy for the processing order phase.

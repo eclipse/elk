@@ -8,7 +8,7 @@
  * Contributors:
  *    cds - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.common.structure;
+package org.eclipse.elk.core.alg;
 
 import java.util.Comparator;
 import java.util.EnumSet;

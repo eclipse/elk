@@ -12,10 +12,10 @@ package org.eclipse.elk.alg.spore;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.common.structure.AlgorithmAssembler;
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.spore.graph.Graph;
 import org.eclipse.elk.alg.spore.options.StructureExtractionStrategy;
+import org.eclipse.elk.core.alg.AlgorithmAssembler;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**

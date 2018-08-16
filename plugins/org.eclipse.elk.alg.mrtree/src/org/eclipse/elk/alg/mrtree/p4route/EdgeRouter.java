@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree.p4route;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.mrtree.TreeLayoutPhases;
 import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.graph.TNode;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**

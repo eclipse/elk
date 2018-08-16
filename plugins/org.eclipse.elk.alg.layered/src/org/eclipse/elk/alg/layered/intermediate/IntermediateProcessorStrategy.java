@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
-import org.eclipse.elk.alg.common.structure.ILayoutProcessorFactory;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.intermediate.compaction.HorizontalGraphCompactor;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter;
@@ -20,6 +18,8 @@ import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointRemover;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.SingleEdgeGraphWrapper;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer;
 import org.eclipse.elk.alg.layered.p3order.LayerSweepCrossingMinimizer.CrossMinType;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.alg.ILayoutProcessorFactory;
 
 /**
  * Definition of available intermediate layout processors for the layered layouter. This enumeration also serves as a

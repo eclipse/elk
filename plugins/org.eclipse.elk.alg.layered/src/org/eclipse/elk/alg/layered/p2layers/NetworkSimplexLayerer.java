@@ -19,8 +19,6 @@ import org.eclipse.elk.alg.common.networksimplex.NEdge;
 import org.eclipse.elk.alg.common.networksimplex.NGraph;
 import org.eclipse.elk.alg.common.networksimplex.NNode;
 import org.eclipse.elk.alg.common.networksimplex.NetworkSimplex;
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -30,6 +28,8 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.WideNodesStrategy;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;

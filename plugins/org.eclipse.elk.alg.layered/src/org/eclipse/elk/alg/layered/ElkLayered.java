@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.components.ComponentsProcessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPostprocessor;
 import org.eclipse.elk.alg.layered.compound.CompoundGraphPreprocessor;
@@ -34,6 +33,7 @@ import org.eclipse.elk.alg.layered.options.GraphProperties;
 import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;

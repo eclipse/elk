@@ -12,7 +12,6 @@ package org.eclipse.elk.alg.layered.intermediate;
 
 import java.util.Iterator;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -29,6 +28,7 @@ import org.eclipse.elk.alg.layered.p5edges.loops.routing.ISelfLoopRouter;
 import org.eclipse.elk.alg.layered.p5edges.loops.routing.OrthogonalSelfLoopRouter;
 import org.eclipse.elk.alg.layered.p5edges.loops.routing.PolylineSelfLoopRouter;
 import org.eclipse.elk.alg.layered.p5edges.loops.routing.SplineSelfLoopRouter;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeRouting;

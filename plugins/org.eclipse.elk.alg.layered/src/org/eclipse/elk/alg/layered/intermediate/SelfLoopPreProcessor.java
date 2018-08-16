@@ -15,7 +15,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
@@ -28,6 +27,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopComponent;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopLabel;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

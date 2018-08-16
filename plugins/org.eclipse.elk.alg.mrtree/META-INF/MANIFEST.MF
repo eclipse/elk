@@ -6,8 +6,7 @@ Bundle-Version: 0.5.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.elk.graph,
- org.eclipse.elk.core,
- org.eclipse.elk.alg.common
+ org.eclipse.elk.core
 Export-Package: org.eclipse.elk.alg.mrtree,
  org.eclipse.elk.alg.mrtree.options
 Import-Package: com.google.common.collect

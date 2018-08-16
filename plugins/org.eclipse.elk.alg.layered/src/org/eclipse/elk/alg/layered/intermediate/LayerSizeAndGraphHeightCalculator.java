@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LMargin;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

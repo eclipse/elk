@@ -13,8 +13,6 @@ package org.eclipse.elk.alg.layered;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.elk.alg.common.structure.AlgorithmAssembler;
-import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -29,6 +27,8 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.NodePromotionStrategy;
 import org.eclipse.elk.alg.layered.options.Spacings;
 import org.eclipse.elk.alg.layered.p5edges.EdgeRouterFactory;
+import org.eclipse.elk.core.alg.AlgorithmAssembler;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;

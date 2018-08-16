@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LMargin;
@@ -30,6 +29,7 @@ import org.eclipse.elk.alg.layered.p5edges.splines.SplineEdgeRouter;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplineSegment.EdgeInformation;
 import org.eclipse.elk.alg.layered.p5edges.splines.SplinesMath;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.ElkRectangle;
 import org.eclipse.elk.core.math.KVector;

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.spore.options;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.spore.SPOrEPhases;
 import org.eclipse.elk.alg.spore.graph.Graph;
 import org.eclipse.elk.alg.spore.p3execution.GrowTreePhase;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
  * Definition of the strategy for the third phase of overlap removal by growing a tree.

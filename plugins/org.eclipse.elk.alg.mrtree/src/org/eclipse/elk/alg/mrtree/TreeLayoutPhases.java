@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.mrtree;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.p1treeify.DFSTreeifyer;
 import org.eclipse.elk.alg.mrtree.p2order.NodeOrderer;
 import org.eclipse.elk.alg.mrtree.p3place.NodePlacer;
 import org.eclipse.elk.alg.mrtree.p4route.EdgeRouter;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
  * This algorithm's layout phases. Since none of the phases have alternative implementations, this enumeration also

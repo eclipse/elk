@@ -13,7 +13,6 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.List;
 
 import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphAdapters;
 import org.eclipse.elk.alg.layered.graph.LMargin;
@@ -23,6 +22,7 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNodeSide;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.ElkMargin;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

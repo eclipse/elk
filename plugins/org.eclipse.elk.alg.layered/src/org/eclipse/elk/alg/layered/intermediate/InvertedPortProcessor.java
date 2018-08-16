@@ -13,7 +13,6 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LLabel;
@@ -24,6 +23,7 @@ import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.PortType;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;

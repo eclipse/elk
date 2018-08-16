@@ -25,7 +25,7 @@ This example already highlights a difference between layout phases and layout pr
 
 ## The Implementation
 
-ELK contains everything required to implement layout algorithms this way in its `org.eclipse.elk.alg.commong.structure` package (part of the `...alg.common` plug-in). To use that, the first thing you should start with is to write an enumeration that lists all the phases your algorithm will consist of. For example:
+ELK contains everything required to implement layout algorithms this way in its `org.eclipse.elk.core.alg` package. To use that, the first thing you should start with is to write an enumeration that lists all the phases your algorithm will consist of. For example:
 
 ```java
 public enum LayoutPhases {

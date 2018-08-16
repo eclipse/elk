@@ -13,8 +13,6 @@ package org.eclipse.elk.alg.mrtree.p1treeify;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.mrtree.TreeLayoutPhases;
 import org.eclipse.elk.alg.mrtree.graph.TEdge;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
@@ -23,6 +21,8 @@ import org.eclipse.elk.alg.mrtree.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.mrtree.options.InternalProperties;
 import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
 import org.eclipse.elk.alg.mrtree.options.TreeifyingOrder;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**

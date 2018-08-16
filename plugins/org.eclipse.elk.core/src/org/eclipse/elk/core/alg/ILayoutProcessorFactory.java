@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.common.structure;
+package org.eclipse.elk.core.alg;
 
 /**
  * Classes that implement this interface can create layout processors.

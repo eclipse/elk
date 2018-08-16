@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.LayoutProcessorConfiguration;
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -32,6 +30,8 @@ import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.SplineRoutingMode;
 import org.eclipse.elk.alg.layered.p5edges.PolylineEdgeRouter;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;

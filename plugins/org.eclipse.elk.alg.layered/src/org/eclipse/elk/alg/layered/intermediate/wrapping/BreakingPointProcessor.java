@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Predicate;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
@@ -25,6 +24,7 @@ import org.eclipse.elk.alg.layered.intermediate.LongEdgeJoiner;
 import org.eclipse.elk.alg.layered.intermediate.wrapping.BreakingPointInserter.BPInfo;
 import org.eclipse.elk.alg.layered.options.InternalProperties;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 import com.google.common.collect.Lists;

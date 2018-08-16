@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.radial.intermediate.compaction;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 

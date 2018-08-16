@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.options;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.p2layers.CoffmanGrahamLayerer;
@@ -20,6 +18,8 @@ import org.eclipse.elk.alg.layered.p2layers.LongestPathLayerer;
 import org.eclipse.elk.alg.layered.p2layers.MinWidthLayerer;
 import org.eclipse.elk.alg.layered.p2layers.NetworkSimplexLayerer;
 import org.eclipse.elk.alg.layered.p2layers.StretchWidthLayerer;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
 import org.eclipse.elk.graph.properties.ExperimentalPropertyValue;
 

@@ -12,10 +12,10 @@ package org.eclipse.elk.alg.mrtree;
 
 import java.util.List;
 
-import org.eclipse.elk.alg.common.structure.AlgorithmAssembler;
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.mrtree.graph.TGraph;
 import org.eclipse.elk.alg.mrtree.options.MrTreeOptions;
+import org.eclipse.elk.core.alg.AlgorithmAssembler;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 

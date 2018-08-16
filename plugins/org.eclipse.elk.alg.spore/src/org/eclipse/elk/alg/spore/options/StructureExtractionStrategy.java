@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.spore.options;
 
-import org.eclipse.elk.alg.common.structure.ILayoutPhase;
-import org.eclipse.elk.alg.common.structure.ILayoutPhaseFactory;
 import org.eclipse.elk.alg.spore.SPOrEPhases;
 import org.eclipse.elk.alg.spore.graph.Graph;
 import org.eclipse.elk.alg.spore.p1structure.DelaunayTriangulationPhase;
+import org.eclipse.elk.core.alg.ILayoutPhase;
+import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
  * Definition of the structure extraction strategy for SPOrE.

@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.common.structure;
+package org.eclipse.elk.core.alg;
 
 /**
  * A layout phase processes a graph and may depend on {@link ILayoutProcessor layout processors} for further processing

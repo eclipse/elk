@@ -13,12 +13,12 @@ package org.eclipse.elk.alg.layered.intermediate;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
 

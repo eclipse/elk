@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.intermediate;
 
-import org.eclipse.elk.alg.common.structure.ILayoutProcessor;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
 import org.eclipse.elk.alg.layered.graph.LLabel;
@@ -26,6 +25,7 @@ import org.eclipse.elk.alg.layered.p5edges.loops.SelfLoopNode;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopComponentMerger;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPositionEvaluator;
 import org.eclipse.elk.alg.layered.p5edges.loops.labeling.SelfLoopLabelPositionGeneration;
+import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
