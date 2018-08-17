@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Kiel University and others.
+ * Copyright (c) 2008, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutAlgorithmResolver;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
+import org.eclipse.elk.core.testing.TestController;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkBendPoint;
@@ -47,6 +48,12 @@ import com.google.common.collect.Lists;
  * </p>
  * 
  * <p>
+ * Layout can be performed either as usual ({@link #layout(ElkNode, IElkProgressMonitor)}) or as part of
+ * a unit test ({@link #layout(ElkNode, TestController, IElkProgressMonitor)}). The latter should
+ * usually not be called directly, but is used by ELK's unit test framework for layout algorithms.
+ * </p>
+ * 
+ * <p>
  * MIGRATE Extend the graph layout engine to offset edge coordinates properly
  * </p> 
  * 
@@ -58,10 +65,23 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     /**
      * Performs recursive layout on the given layout graph.
      * 
-     * @param layoutGraph top-level node of the graph to be laid out
-     * @param progressMonitor monitor to which progress of the layout algorithms is reported
+     * @param layoutGraph top-level node of the graph to be laid out.
+     * @param progressMonitor monitor to which progress of the layout algorithms is reported.
      */
     public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+        layout(layoutGraph, null, progressMonitor);
+    }
+    
+    /**
+     * Performs recursive layout on the given layout graph, possibly in a test setting.
+     * 
+     * @param layoutGraph top-level node of the graph to be laid out.
+     * @param testController an optional test controller if the layout run is performed as part of a unit test.
+     * @param progressMonitor monitor to which progress of the layout algorithms is reported.
+     */
+    public void layout(final ElkNode layoutGraph, final TestController testController,
+            final IElkProgressMonitor progressMonitor) {
+        
         int nodeCount = countNodesRecursively(layoutGraph, true);
         progressMonitor.begin("Recursive Graph Layout", nodeCount);
         
@@ -71,7 +91,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         }
         
         // Perform recursive layout of the whole substructure of the given node
-        layoutRecursively(layoutGraph, progressMonitor);
+        layoutRecursively(layoutGraph, testController, progressMonitor);
         
         progressMonitor.done();
     }
@@ -86,10 +106,11 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * by the node's position.</p>
      * 
      * @param layoutNode the node with children to be laid out
+     * @param testController an optional test controller if this layout run is part of a unit test
      * @param progressMonitor monitor used to keep track of progress
      * @return list of self loops routed inside the node.
      */
-    protected List<ElkEdge> layoutRecursively(final ElkNode layoutNode,
+    protected List<ElkEdge> layoutRecursively(final ElkNode layoutNode, final TestController testController,
             final IElkProgressMonitor progressMonitor) {
         
         if (progressMonitor.isCanceled()) {
@@ -156,7 +177,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                     if (stopHierarchy 
                           || (node.hasProperty(CoreOptions.ALGORITHM) 
                                   && !algorithmData.equals(node.getProperty(CoreOptions.RESOLVED_ALGORITHM)))) {
-                        List<ElkEdge> childLayoutSelfLoops = layoutRecursively(node, progressMonitor);
+                        List<ElkEdge> childLayoutSelfLoops = layoutRecursively(node, testController, progressMonitor);
                         childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                         // Explicitly disable hierarchical layout for the child node. Simplifies the
                         // handling of switching algorithms in the layouter.
@@ -174,7 +195,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 // Layout each compound node contained in this node separately
                 nodeCount = layoutNode.getChildren().size();
                 for (ElkNode child : layoutNode.getChildren()) {
-                    List<ElkEdge> childLayoutSelfLoops = layoutRecursively(child, progressMonitor); 
+                    List<ElkEdge> childLayoutSelfLoops = layoutRecursively(child, testController, progressMonitor); 
                     childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                     
                     // Apply the LayoutOptions.SCALE_FACTOR if present
@@ -192,7 +213,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 selfLoop.setProperty(CoreOptions.NO_LAYOUT, true);
             }
 
-            executeAlgorithm(layoutNode, algorithmData, progressMonitor.subTask(nodeCount));
+            executeAlgorithm(layoutNode, algorithmData, testController, progressMonitor.subTask(nodeCount));
             
             // Post-process the inner self loops we collected
             postProcessInsideSelfLoops(childrenInsideSelfLoops);
@@ -212,9 +233,16 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * Execute the given layout algorithm on a parent node.
      */
     protected void executeAlgorithm(final ElkNode layoutNode, final LayoutAlgorithmData algorithmData,
-            final IElkProgressMonitor progressMonitor) {
+            final TestController testController, final IElkProgressMonitor progressMonitor) {
+        
         // Get an instance of the layout provider
         AbstractLayoutProvider layoutProvider = algorithmData.getInstancePool().fetch();
+        
+        // If we have a test controller and the layout algorithm supports test controllers, setup the test
+        if (testController != null && testController.targets(algorithmData)) {
+            testController.install(layoutProvider);
+        }
+        
         try {
             // Perform layout on the current hierarchy level
             layoutProvider.layout(layoutNode, progressMonitor);

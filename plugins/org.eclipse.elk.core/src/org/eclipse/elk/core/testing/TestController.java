@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 le-cds and others.
+ * Copyright (c) 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,10 @@ package org.eclipse.elk.core.testing;
 
 import java.util.Collection;
 
+import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -45,15 +47,53 @@ public class TestController {
     private Multimap<Class<? extends ILayoutProcessor<?>>, ILayoutPreProcessorListener> procRootPreListeners;
     /** Listeners that should be executed after a layout processor is executed on the root graph. */
     private Multimap<Class<? extends ILayoutProcessor<?>>, ILayoutPostProcessorListener> procRootPostListeners;
+    /** Identifier of the layout algorithm that should be tested with this controller. */
+    private String layoutAlgorithmId;
 
     /**
-     * Creates a new instance to test a layout algorithm with.
+     * Creates a new instance for testing the layout algorithm with the given ID. Each controller is created for a
+     * specific layout algorithm.
      */
-    public TestController() {
+    public TestController(final String layoutAlgorithmId) {
         procPreListeners = HashMultimap.create();
         procPostListeners = HashMultimap.create();
         procRootPreListeners = HashMultimap.create();
         procRootPostListeners = HashMultimap.create();
+        this.layoutAlgorithmId = layoutAlgorithmId;
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Setup
+    
+    /**
+     * Returns the identifier of the layout algorithm that should be tested with this test controller.
+     */
+    public String getTargetAlgorithmId() {
+        return layoutAlgorithmId;
+    }
+    
+    /**
+     * Checks whether this test controller targets layout algorithms described by the given data object. If so, this
+     * test controller can be installed on the algorithm by calling 
+     */
+    public boolean targets(final LayoutAlgorithmData algorithmData) {
+        return algorithmData.getId().equals(layoutAlgorithmId);
+    }
+    
+    /**
+     * Installs this test controller on the given layout provider. Before calling this method, clients should have made
+     * sure that the two fit by calling {@link #getTargetAlgorithmId()}.
+     * 
+     * @throws IllegalArgumentException of the layout provider does not implement {@link IWhiteBoxTestable}.
+     */
+    public void install(final AbstractLayoutProvider layoutProvider) {
+        if (layoutProvider instanceof IWhiteBoxTestable) {
+            ((IWhiteBoxTestable) layoutProvider).setTestController(this);
+        } else {
+            throw new IllegalArgumentException(
+                    "Test controllers can only be installed on white-box testable layout algorithms");
+        }
     }
     
     
