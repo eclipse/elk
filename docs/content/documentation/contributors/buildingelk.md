@@ -9,6 +9,8 @@ menu:
 
 ELK is built using [Apache Maven](https://maven.apache.org/) in conjunction with [Tycho](https://eclipse.org/tycho/) to tell Maven how to build Eclipse projects. There are two parts that can be built: the Eclipse Layout Kernel itself, and the metadata compiler used by the main ELK build. The remainder of this page assumes that you have opened a shell in the `build/` directory inside your clone of the ELK repository.
 
+_Note:_ We have had reports of people not being able to build ELK with Maven 3.3.9. We are building with Maven 3.0.5, so please try downgrading if you experience build problems where classes cannot be found although they are quite obviously there.
+
 
 ## The Main Build Process
 
