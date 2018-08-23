@@ -86,11 +86,11 @@ public class OpposingLoopLabelPositionGenerator extends AbstractSelfLoopLabelPos
         
         // Full (long)
         positions.add(longSegmentPosition(
-                label, longSegmentSide, cornerBends.get(1), cornerBends.get(2), Alignment.CENTERED));
+                label, longSegmentSide, cornerBends.get(0), cornerBends.get(1), Alignment.CENTERED));
         positions.add(longSegmentPosition(
-                label, longSegmentSide, cornerBends.get(1), cornerBends.get(2), Alignment.LEFT_OR_TOP));
+                label, longSegmentSide, cornerBends.get(0), cornerBends.get(1), Alignment.LEFT_OR_TOP));
         positions.add(longSegmentPosition(
-                label, longSegmentSide, cornerBends.get(1), cornerBends.get(2), Alignment.RIGHT_OR_BOTTOM));
+                label, longSegmentSide, cornerBends.get(0), cornerBends.get(1), Alignment.RIGHT_OR_BOTTOM));
 
         // Start segment (short)
         positions.add(shortSegmentPosition(
@@ -102,11 +102,11 @@ public class OpposingLoopLabelPositionGenerator extends AbstractSelfLoopLabelPos
 
         // End segment (short)
         positions.add(shortSegmentPosition(
-                label, endPort, lastBend, cornerBends.get(3), Alignment.CENTERED, true));
+                label, endPort, lastBend, cornerBends.get(1), Alignment.CENTERED, true));
         positions.add(shortSegmentPosition(
-                label, endPort, lastBend, cornerBends.get(3), Alignment.LEFT_OR_TOP, true));
+                label, endPort, lastBend, cornerBends.get(1), Alignment.LEFT_OR_TOP, true));
         positions.add(shortSegmentPosition(
-                label, endPort, lastBend, cornerBends.get(3), Alignment.RIGHT_OR_BOTTOM, true));
+                label, endPort, lastBend, cornerBends.get(1), Alignment.RIGHT_OR_BOTTOM, true));
     }
     
 }
