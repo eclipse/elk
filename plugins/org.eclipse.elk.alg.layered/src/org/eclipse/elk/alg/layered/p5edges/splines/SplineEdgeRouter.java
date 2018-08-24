@@ -120,9 +120,7 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
                 .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.END_LABEL_PREPROCESSOR)
                 .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_POSTPROCESSOR);
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         // Basic configuration
         final LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
@@ -185,9 +183,7 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
     
     //////////////////////////////////////////////////
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Spline edge routing", 1);
         
@@ -248,8 +244,8 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
             //  The xSegmentDelta variable holds the required offset 
             double xSegmentDelta = 0;
             double rightLayerPosition = xpos;
-            boolean isSpecialLeftLayer = leftLayer == null || isLeftLayerExternal;
-            boolean isSpecialRightLayer = rightLayer == null || isRightLayerExternal;
+            boolean isSpecialLeftLayer = leftLayer == null || (isLeftLayerExternal && leftLayer == firstLayer);
+            boolean isSpecialRightLayer = rightLayer == null || (isRightLayerExternal && rightLayer == lastLayer);
             
             // compute horizontal positions just as for the OrthogonalEdgeRouter
             if (slotCount > 0) {
