@@ -19,7 +19,7 @@ This page explains how to write a metadata file. See the end of the page for an 
 
 Follow these steps to add a metadata file to your layout algorithm project:
 
-1. Right-click your project's base package (which should have the same name as your plug-in project), and click _New - File_.
+1. Right-click your project's base package (which should have the same name as your plug-in project), and click _New - File_. Note that the base package cannot be empty (of course, you would never use the default empty package anyway since that's bad style now, would you...).
 1. Give your file a sensible name (which is usually the name of your algorithm), and add the file extension `.melk`. Click _Finish_.
 1. If Eclipse asks you whether you want to add the _Xtext nature_ to your project, click _Yes_.
 1. The ELK SDK needs some basic information in your file to generate your
