@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.TestClass;
@@ -180,6 +182,29 @@ public final class TestUtil {
         }
         
         return result;
+    }
+
+    /**
+     * Returns a basic graph with three connected nodes.
+     */
+    public static ElkNode buildBasicGraph() {
+        ElkNode layoutGraph = ElkGraphUtil.createGraph();
+        ElkNode node1 = ElkGraphUtil.createNode(layoutGraph);
+        ElkNode node2 = ElkGraphUtil.createNode(layoutGraph);
+        ElkNode node3 = ElkGraphUtil.createNode(layoutGraph);
+
+        ElkGraphUtil.createSimpleEdge(node1, node3);
+        ElkGraphUtil.createSimpleEdge(node2, node3);
+
+        // layout options
+        for (ElkNode node : layoutGraph.getChildren()) {
+            // suppress the checkstyle warnings, because the meaning is clear
+            // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
+            node.setWidth(50.0);
+            node.setHeight(50.0);
+        }
+        
+        return layoutGraph;
     }
 
 }
