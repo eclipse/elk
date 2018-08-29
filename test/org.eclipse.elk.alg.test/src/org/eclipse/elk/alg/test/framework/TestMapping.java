@@ -7,7 +7,9 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test.framework;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.core.LayoutConfigurator;
@@ -41,6 +43,8 @@ public class TestMapping {
     private FrameworkMethod configMethod = null;
     /** The test classes whose tests should be run on the graph. */
     private List<TestClass> testClasses = null;
+    /** The actual test runners used to execute tests in the test classes. */
+    private Map<TestClass, ActualTestRunner> testClassRunners = new HashMap<>();
     /** Specifies whether the graph should use default edge configurations. */
     private boolean useDefaultConfigEdges = false;
     /** Specifies whether the graph should use default node configurations. */
@@ -127,6 +131,13 @@ public class TestMapping {
      */
     public boolean isUseDefaultConfigPorts() {
         return useDefaultConfigPorts;
+    }
+    
+    /**
+     * Returns the test runner to be used to execute tests in the given test class.
+     */
+    public ActualTestRunner getRunnerForClass(final TestClass testClass) {
+        return testClassRunners.get(testClass);
     }
     
     
@@ -218,6 +229,13 @@ public class TestMapping {
     public TestMapping withDefaultPortConfiguration(final boolean useDefault) {
         this.useDefaultConfigPorts = useDefault;
         return this;
+    }
+    
+    /**
+     * Configures the given test runner as the one to be used to execute tests in the given test class.
+     */
+    public void setRunnerForClass(final TestClass testClass, final ActualTestRunner testRunner) {
+        testClassRunners.put(testClass, testRunner);
     }
     
     
