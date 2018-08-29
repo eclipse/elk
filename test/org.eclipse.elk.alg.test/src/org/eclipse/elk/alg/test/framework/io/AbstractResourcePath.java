@@ -9,6 +9,8 @@ package org.eclipse.elk.alg.test.framework.io;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.base.Strings;
 
@@ -25,6 +27,11 @@ import com.google.common.base.Strings;
  * sub directories (in which case it must end in {@link #ALL_FILES_RECURSIVE_SUFFIX}). Both the base path and the
  * relative path can simply use the slash {@code /} as their separator to be system-independent; those get converted
  * to the system-dependent path separator.
+ * </p>
+ * 
+ * <p>
+ * If a resource path describes the files in a directory (and possibly its sub directories), a list of all affected
+ * resources can be obtained by calling 
  * </p>
  * 
  * <p>
@@ -49,6 +56,57 @@ public abstract class AbstractResourcePath {
     private boolean isRecursive = false;
     /** The filter for looking up files in directories. */
     private FileFilter filter = null;
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Initialization
+    
+    /**
+     * Sets up the path to this resource. The path is specified by a base path, which varies with each subclass, and a
+     * relative path spec, which is resolved by this method relative to the base path.
+     * 
+     * @param base
+     *            the base path, with or without trailing slash. Can be empty or {@code null}.
+     * @param relative
+     *            the relative path spec.
+     */
+    protected void initialize(final String base, final String relative) {
+        if (relative == null) {
+            throw new IllegalArgumentException("Relative path cannot be null.");
+        }
+        
+        // Initialize base path
+        String path = "";
+        if (!Strings.isNullOrEmpty(base)) {
+            base.replace("/", File.separator);
+            if (!path.endsWith(File.separator)) {
+                path += File.separator;
+            }
+        }
+        
+        // Relative path specification
+        if (relative.endsWith(ALL_FILES_SUFFIX)) {
+            // All files in the directory
+            isDirectory = true;
+            path += relative
+                    .substring(0, relative.length() - ALL_FILES_SUFFIX.length())
+                    .replace("/", File.separator);
+            
+        } else if (relative.endsWith(ALL_FILES_RECURSIVE_SUFFIX)) {
+            // All files in the directory and its sub directories
+            isDirectory = true;
+            isRecursive = true;
+            path += relative
+                    .substring(0, relative.length() - ALL_FILES_RECURSIVE_SUFFIX.length())
+                    .replace("/", File.separator);
+            
+        } else {
+            // A single file
+            path += relative.replace("/", File.separator);
+        }
+        
+        file = new File(path);
+    }
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,52 +161,45 @@ public abstract class AbstractResourcePath {
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Path Resolving
+    // Resolver
     
     /**
-     * Sets up the path to this resource. The path is specified by a base path, which varies with each subclass, and a
-     * relative path spec, which is resolved by this method relative to the base path.
-     * 
-     * @param base
-     *            the base path, with or without trailing slash. Can be empty or {@code null}.
-     * @param relative
-     *            the relative path spec.
+     * Returns a list of resource paths that describe all of the actual resources described by this path. If this path
+     * refers to a file, the list will contain only that file. If it refers to a directory, the list will contain all
+     * of the files in the directory that are accepted by the filter. If it is set to be recursive, sub directories are
+     * traversed as well.
      */
-    protected void initialize(final String base, final String relative) {
-        if (relative == null) {
-            throw new IllegalArgumentException("Relative path cannot be null.");
-        }
+    public List<AbstractResourcePath> listResources() {
+        List<AbstractResourcePath> result = new ArrayList<>();
         
-        // Initialize base path
-        String path = "";
-        if (!Strings.isNullOrEmpty(base)) {
-            base.replace("/", File.separator);
-            if (!path.endsWith(File.separator)) {
-                path += File.separator;
+        if (file.exists()) {
+            if (isDirectory && file.isDirectory()) {
+                // We're a directory, and we're also supposed to be one. Let another method gather all files
+                fillFileList(file, result);
+                
+            } else if (!isDirectory && file.isFile()) {
+                // We're not a directory, just a humble file, so add us to the result
+                result.add(this);
             }
         }
         
-        // Relative path specification
-        if (relative.endsWith(ALL_FILES_SUFFIX)) {
-            // All files in the directory
-            isDirectory = true;
-            path += relative
-                    .substring(0, relative.length() - ALL_FILES_SUFFIX.length())
-                    .replace("/", File.separator);
-            
-        } else if (relative.endsWith(ALL_FILES_RECURSIVE_SUFFIX)) {
-            // All files in the directory and its sub directories
-            isDirectory = true;
-            isRecursive = true;
-            path += relative
-                    .substring(0, relative.length() - ALL_FILES_RECURSIVE_SUFFIX.length())
-                    .replace("/", File.separator);
-            
-        } else {
-            // A single file
-            path += relative.replace("/", File.separator);
-        }
-        
-        file = new File(path);
+        return result;
     }
+    
+    private void fillFileList(final File directory, final List<AbstractResourcePath> result) {
+        // List children (null filter accepts everything)
+        File[] children = directory.listFiles(filter);
+        
+        for (File child : children) {
+            if (child.isFile()) {
+                // Files are always added to the results
+                result.add(new AbsoluteResourcePath(child.getAbsolutePath()));
+                
+            } else if (child.isDirectory() && isRecursive) {
+                // Recurse into the sub directory
+                fillFileList(child, result);
+            }
+        }
+    }
+    
 }

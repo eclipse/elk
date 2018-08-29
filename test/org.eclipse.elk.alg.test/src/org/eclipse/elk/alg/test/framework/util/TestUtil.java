@@ -30,6 +30,30 @@ public final class TestUtil {
      */
     private TestUtil() {
     }
+    
+    /**
+     * Returns the concatenation of the results of {@link #loadAnnotatedFields(TestClass, Class)} and
+     * {@link #executeAnnotatedMethods(TestClass, Class)}.
+     */
+    public static List<Object> loadAnnotatedFieldsAndMethods(final TestClass testClass,
+            final Class<? extends Annotation> annotation) {
+        
+        List<Object> result = loadAnnotatedFields(testClass, annotation);
+        result.addAll(executeAnnotatedMethods(testClass, annotation));
+        return result;
+    }
+    
+    /**
+     * Returns the concatenation of the results of {@link #loadAnnotatedFieldsWithNames(TestClass, Class)} and
+     * {@link #executeAnnotatedMethodsWithName(TestClass, Class)}.
+     */
+    public static List<Pair<Object, String>> loadAnnotatedFieldsAndMethodsWithNames(final TestClass testClass,
+            final Class<? extends Annotation> annotation) {
+        
+        List<Pair<Object, String>> result = loadAnnotatedFieldsWithNames(testClass, annotation);
+        result.addAll(executeAnnotatedMethodsWithName(testClass, annotation));
+        return result;
+    }
 
     /**
      * Returns the values of all fields in the test class annotated with the specified annotation.
@@ -198,7 +222,7 @@ public final class TestUtil {
 
         // layout options
         for (ElkNode node : layoutGraph.getChildren()) {
-            // suppress the checkstyle warnings, because the meaning is clear
+            // Suppress the Checkstyle warnings, because the meaning is clear
             // SUPPRESS CHECKSTYLE NEXT 2 MagicNumber
             node.setWidth(50.0);
             node.setHeight(50.0);
