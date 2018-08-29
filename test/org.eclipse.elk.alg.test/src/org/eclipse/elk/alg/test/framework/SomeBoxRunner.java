@@ -58,7 +58,7 @@ public abstract class SomeBoxRunner extends Runner {
      * @param storeFailedGraphs
      *            whether graphs of failed tests should be stored.
      * @throws InitializationError
-     *             represents an error that occurred during initialization.
+     *             if an error occurred during initialization.
      */
     public SomeBoxRunner(final String algorithmId, final List<TestClass> testClasses, final boolean storeFailedGraphs)
             throws InitializationError {
@@ -68,6 +68,31 @@ public abstract class SomeBoxRunner extends Runner {
         
         loadTestMappings(testClasses);
         buildRunner();
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Getters
+
+    /**
+     * Returns the ID of the algorithm to be tested.
+     */
+    protected String getAlgorithmId() {
+        return algorithmId;
+    }
+    
+    /**
+     * Returns the test mappings that describe the test runs to be executed.
+     */
+    protected List<TestMapping> getTestMappings() {
+        return testMappings;
+    }
+
+    /**
+     * Whether to store graphs tests failed for.
+     */
+    protected boolean isStoreFailedGraphs() {
+        return storeFailedGraphs;
     }
     
     
