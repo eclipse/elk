@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.elk.core.debug.grandom,
  org.eclipse.elk.core
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.elk.core.debug.grandom.ui.internal,
- org.eclipse.elk.core.debug.grandom.ui.quickfix,
- org.eclipse.elk.core.debug.grandom.ui.contentassist
+Export-Package: org.eclipse.elk.core.debug.grandom.ui,
+ org.eclipse.elk.core.debug.grandom.ui.contentassist,
+ org.eclipse.elk.core.debug.grandom.ui.internal,
+ org.eclipse.elk.core.debug.grandom.ui.quickfix
 Bundle-Activator: org.eclipse.elk.core.debug.grandom.ui.internal.GrandomActivator
