@@ -20,7 +20,7 @@ import org.junit.runners.model.InitializationError;
  * error message printed to the console. For this purpose extra tests have to be executed and this special runner is
  * used to execute the tests and set their descriptions.
  */
-public class FailFakeRunner extends BlockJUnit4ClassRunner {
+class FailFakeRunner extends BlockJUnit4ClassRunner {
 
     /** The reason for the failure of the test. */
     private FailReason reason;
@@ -47,7 +47,7 @@ public class FailFakeRunner extends BlockJUnit4ClassRunner {
      * @throws InitializationError
      *             if an error occurs during initialization.
      */
-    public FailFakeRunner(final Class<?> klass, final String algorithm, final String testClass, final String graphName,
+    FailFakeRunner(final Class<?> klass, final String algorithm, final String testClass, final String graphName,
             final FailReason reason) throws InitializationError {
         
         super(klass);

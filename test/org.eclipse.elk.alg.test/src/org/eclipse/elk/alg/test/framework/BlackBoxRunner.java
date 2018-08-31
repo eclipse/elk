@@ -40,7 +40,7 @@ import com.google.common.base.Strings;
 /**
  * Executes black box tests. These tests are executed on the graphs after a completed layout run.
  */
-public class BlackBoxRunner extends SomeBoxRunner {
+class BlackBoxRunner extends SomeBoxRunner {
 
     /**
      * Creates a new instance.
@@ -54,7 +54,7 @@ public class BlackBoxRunner extends SomeBoxRunner {
      * @throws InitializationError
      *             if an error occurred during initialization.
      */
-    public BlackBoxRunner(final String algorithmId, final List<TestClass> testClasses,
+    BlackBoxRunner(final String algorithmId, final List<TestClass> testClasses,
             final boolean storeFailedGraphs) throws InitializationError {
         
         super(algorithmId, testClasses, storeFailedGraphs);

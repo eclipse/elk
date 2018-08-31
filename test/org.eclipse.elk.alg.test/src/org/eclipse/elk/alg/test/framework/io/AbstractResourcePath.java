@@ -202,4 +202,13 @@ public abstract class AbstractResourcePath {
         }
     }
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Stuff
+    
+    @Override
+    public String toString() {
+        return file.getAbsolutePath();
+    }
+    
 }

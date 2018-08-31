@@ -43,7 +43,7 @@ import com.google.common.base.Strings;
  * @see WhiteBoxRunner
  * @see BlackBoxRunner
  */
-public class ActualTestRunner extends BlockJUnit4ClassRunner {
+class ActualTestRunner extends BlockJUnit4ClassRunner {
 
     /** The normal number of parameters of a black box test. */
     public static final int BLACK_BOX_PARAMETER_COUNT = 1;
@@ -107,7 +107,7 @@ public class ActualTestRunner extends BlockJUnit4ClassRunner {
      * @throws InitializationError
      *             if there was an error while initializing the runner.
      */
-    public ActualTestRunner(final Class<?> klass, final String graphName, final String algorithmId,
+    ActualTestRunner(final Class<?> klass, final String graphName, final String algorithmId,
             final boolean shouldStore) throws InitializationError {
         
         super(klass);

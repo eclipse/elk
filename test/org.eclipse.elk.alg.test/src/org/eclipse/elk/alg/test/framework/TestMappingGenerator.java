@@ -35,7 +35,7 @@ import org.junit.runners.model.TestClass;
  * Generates test mappings for a list of test classes. To do so, this class loads all graphs and configurators and
  * groups them in order to improve performance. Used by test runners.
  */
-public class TestMappingGenerator {
+class TestMappingGenerator {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Loading Test Mappings

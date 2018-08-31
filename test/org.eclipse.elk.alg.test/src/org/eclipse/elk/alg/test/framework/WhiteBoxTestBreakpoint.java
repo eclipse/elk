@@ -16,7 +16,7 @@ import org.junit.runners.model.TestClass;
 /**
  * A point in the layout run of a white box test at which some test methods of a test class have to be executed.
  */
-public class WhiteBoxTestBreakpoint {
+class WhiteBoxTestBreakpoint {
 
     /** The processor the test should be executed after or before. */
     private Class<? extends ILayoutProcessor<?>> processor;
@@ -37,7 +37,7 @@ public class WhiteBoxTestBreakpoint {
      * @param methods
      *            the methods in the test class that should be executed.
      */
-    public WhiteBoxTestBreakpoint(final Class<? extends ILayoutProcessor<?>> processor, final TestClass testClass,
+    WhiteBoxTestBreakpoint(final Class<? extends ILayoutProcessor<?>> processor, final TestClass testClass,
             final List<FrameworkMethod> methods) {
         
         this.processor = processor;

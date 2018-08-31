@@ -15,7 +15,7 @@ import java.util.List;
  * be executed. Not at every point all test methods of a test class are executed and therefore the methods have to be
  * specified. For each breakpoint a test runner has to be present.
  */
-public class WhiteBoxTestRun {
+class WhiteBoxTestRun {
 
     /** The test mapping this test run belongs to. */
     private final TestMapping testMapping;
@@ -33,7 +33,7 @@ public class WhiteBoxTestRun {
     /**
      * Creates a new test run for the given test mapping.
      */
-    public WhiteBoxTestRun(final TestMapping testMapping) {
+    WhiteBoxTestRun(final TestMapping testMapping) {
         this.testMapping = testMapping;
     }
     

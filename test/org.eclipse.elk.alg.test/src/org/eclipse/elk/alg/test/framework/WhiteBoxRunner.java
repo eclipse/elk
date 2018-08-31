@@ -41,7 +41,7 @@ import com.google.common.collect.Lists;
 /**
  * This runner is used to execute white box tests.
  */
-public class WhiteBoxRunner extends SomeBoxRunner {
+class WhiteBoxRunner extends SomeBoxRunner {
     
     /** Each of the test runs holds the information for one execution of the layout algorithm. */
     private List<WhiteBoxTestRun> testRuns = new ArrayList<>();
@@ -63,7 +63,7 @@ public class WhiteBoxRunner extends SomeBoxRunner {
      * @throws InitializationError
      *             An error occurred while initializing the runner
      */
-    public WhiteBoxRunner(final String algorithm, final List<TestClass> testClasses) throws InitializationError {
+    WhiteBoxRunner(final String algorithm, final List<TestClass> testClasses) throws InitializationError {
         super(algorithm, testClasses, false);
         
         List<Annotation> annotations = new ArrayList<Annotation>();

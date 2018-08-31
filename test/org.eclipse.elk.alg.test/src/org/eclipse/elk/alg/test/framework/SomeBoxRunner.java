@@ -36,7 +36,7 @@ import com.google.common.base.Strings;
  * @see BlackBoxRunner
  * @see ActualTestRunner
  */
-public abstract class SomeBoxRunner extends Runner {
+abstract class SomeBoxRunner extends Runner {
 
     /** The size of the font used to calculate the size of a label. */
     private static final int FONT_SIZE = 10;
@@ -60,7 +60,7 @@ public abstract class SomeBoxRunner extends Runner {
      * @throws InitializationError
      *             if an error occurred during initialization.
      */
-    public SomeBoxRunner(final String algorithmId, final List<TestClass> testClasses, final boolean storeFailedGraphs)
+    SomeBoxRunner(final String algorithmId, final List<TestClass> testClasses, final boolean storeFailedGraphs)
             throws InitializationError {
         
         this.algorithmId = algorithmId;
