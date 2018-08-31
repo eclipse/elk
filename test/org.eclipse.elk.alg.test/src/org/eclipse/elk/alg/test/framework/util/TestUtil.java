@@ -32,6 +32,30 @@ public final class TestUtil {
     }
     
     /**
+     * Tries to create and return an instance of the test class.
+     * 
+     * @return an instance of the test class or {@code null} if something went wrong.
+     */
+    public static Object createTestClassInstance(final TestClass testClass) {
+        Constructor<?> constr = testClass.getOnlyConstructor();
+        
+        Object test = null;
+        try {
+            test = constr.newInstance();
+        } catch (InstantiationException e1) {
+            e1.printStackTrace();
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (IllegalArgumentException e1) {
+            e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        }
+        
+        return test;
+    }
+    
+    /**
      * Returns the concatenation of the results of {@link #loadAnnotatedFields(TestClass, Class)} and
      * {@link #executeAnnotatedMethods(TestClass, Class)}.
      */
@@ -135,12 +159,9 @@ public final class TestUtil {
         
         List<FrameworkMethod> annotMeth = testClass.getAnnotatedMethods(annotation);
         List<Object> result = new ArrayList<>();
-        Constructor<?> constr = testClass.getOnlyConstructor();
         
-        Object test = null;
-        try {
-            test = constr.newInstance();
-            
+        Object test = createTestClassInstance(testClass);
+        if (test != null) {
             for (FrameworkMethod frameworkMethod : annotMeth) {
                 try {
                     result.add(frameworkMethod.invokeExplosively(test));
@@ -148,15 +169,6 @@ public final class TestUtil {
                     e.printStackTrace();
                 }
             }
-            
-        } catch (InstantiationException e1) {
-            e1.printStackTrace();
-        } catch (IllegalAccessException e1) {
-            e1.printStackTrace();
-        } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
-        } catch (InvocationTargetException e1) {
-            e1.printStackTrace();
         }
         
         return result;
@@ -177,12 +189,9 @@ public final class TestUtil {
         
         List<FrameworkMethod> annotMeth = testClass.getAnnotatedMethods(annotation);
         List<Pair<Object, String>> result = new ArrayList<>();
-        Constructor<?> constr = testClass.getOnlyConstructor();
         
-        Object test = null;
-        try {
-            test = constr.newInstance();
-            
+        Object test = createTestClassInstance(testClass);
+        if (test != null) {
             for (FrameworkMethod frameworkMethod : annotMeth) {
                 String name = testClass.getJavaClass().getName() + "-" + frameworkMethod.getName();
                 
@@ -194,15 +203,6 @@ public final class TestUtil {
                     e.printStackTrace();
                 }
             }
-            
-        } catch (InstantiationException e1) {
-            e1.printStackTrace();
-        } catch (IllegalAccessException e1) {
-            e1.printStackTrace();
-        } catch (IllegalArgumentException e1) {
-            e1.printStackTrace();
-        } catch (InvocationTargetException e1) {
-            e1.printStackTrace();
         }
         
         return result;
