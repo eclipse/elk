@@ -11,7 +11,6 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -165,20 +164,17 @@ class WhiteBoxRunner extends SomeBoxRunner {
     private List<FrameworkMethod> getProcessorIndependentMethods(final TestClass testClass) {
         // Look through all test methods and throw out those that have RunBefore* or RunAfter* annotations
         List<FrameworkMethod> testMethods = testClass.getAnnotatedMethods(Test.class);
+        List<FrameworkMethod> result = Lists.newArrayListWithCapacity(testMethods.size());
         
-        ListIterator<FrameworkMethod> methodIterator = testMethods.listIterator();
-        while (methodIterator.hasNext()) {
-            Annotation[] annotations = methodIterator.next().getAnnotations();
+        for (FrameworkMethod method : testMethods) {
+            boolean processorDependent = Arrays.stream(method.getAnnotations())
+                .anyMatch(ann -> ann instanceof RunBeforeProcessor
+                        || ann instanceof RunBeforeProcessors
+                        || ann instanceof RunAfterProcessor
+                        || ann instanceof RunAfterProcessors);
             
-            for (Annotation a : annotations) {
-                if (a instanceof RunBeforeProcessor
-                        || a instanceof RunBeforeProcessors
-                        || a instanceof RunAfterProcessor
-                        || a instanceof RunAfterProcessors) {
-                    
-                    methodIterator.remove();
-                    break;
-                }
+            if (!processorDependent) {
+                result.add(method);
             }
         }
         

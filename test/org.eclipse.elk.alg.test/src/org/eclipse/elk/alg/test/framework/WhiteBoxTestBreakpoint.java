@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.test.framework;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.core.alg.ILayoutProcessor;
@@ -23,7 +24,7 @@ class WhiteBoxTestBreakpoint {
     /** The test class that contains the test methods. */
     private TestClass testClass;
     /** The methods in the test class that should be executed. */
-    private List<FrameworkMethod> methods;
+    private List<FrameworkMethod> methods = new ArrayList<>();
     /** The test runner to execute the test methods. */
     private ActualTestRunner runner;
 
@@ -42,7 +43,7 @@ class WhiteBoxTestBreakpoint {
         
         this.processor = processor;
         this.testClass = testClass;
-        this.methods = methods;
+        this.methods.addAll(methods);
     }
 
     /**
