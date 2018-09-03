@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
@@ -455,12 +456,11 @@ class WhiteBoxRunner extends SomeBoxRunner {
 
         @Override
         public void layoutProcessorReady(final Object graph, final ILayoutProcessor<?> processor) {
-            System.out.println("Run Test methods");
-            List<FrameworkMethod> methods = runner.getMethods();
-            for (FrameworkMethod frameworkMethod : methods) {
-                System.out.println(frameworkMethod.getName());
-            }
-            System.out.println("before the processor " + processor.getClass().getName() + " executes.");
+            System.out.print("Run Test methods ");
+            System.out.print(runner.getMethods().stream()
+                .map(method -> method.getName())
+                .collect(Collectors.joining(", ")));
+            System.out.println(" before the processor " + processor.getClass().getName() + " executes.");
             
             runner.setWhiteBoxGraph(graph);
             runner.setProcessor(processor);
@@ -493,13 +493,11 @@ class WhiteBoxRunner extends SomeBoxRunner {
 
         @Override
         public void layoutProcessorFinished(final Object graph, final ILayoutProcessor<?> processor) {
-
-            System.out.println("Run Test methods");
-            List<FrameworkMethod> methods = runner.getMethods();
-            for (FrameworkMethod frameworkMethod : methods) {
-                System.out.println(frameworkMethod.getName());
-            }
-            System.out.println("after the processor " + processor.getClass().getName() + " executed.");
+            System.out.print("Run Test methods ");
+            System.out.print(runner.getMethods().stream()
+                .map(method -> method.getName())
+                .collect(Collectors.joining(", ")));
+            System.out.println(" after the processor " + processor.getClass().getName() + " executes.");
             
             runner.setWhiteBoxGraph(graph);
             runner.setProcessor(processor);

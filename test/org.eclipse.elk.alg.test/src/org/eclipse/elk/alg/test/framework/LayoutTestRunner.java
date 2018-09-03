@@ -625,7 +625,7 @@ public class LayoutTestRunner extends ParentRunner<Runner> {
         List<WhiteBoxTestDescription> whiteBoxchildren = listener.getAtomicWhiteBoxChildren();
         for (WhiteBoxTestDescription pair : whiteBoxchildren) {
             System.out.println(
-                    pair.getNameWithoutGraph() + " had been executed " + pair.getExpectedExecutions() + " on "
+                    pair.getNameWithoutGraph() + " has been executed " + pair.getExpectedExecutions() + " on "
                     + pair.getActualExecutions() + " graphs.");
             
             if (pair.getExpectedExecutions() == 0 && pair.getActualExecutions() > 0 && pair.isFail()) {
