@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="gRandom" nsURI="http://www.eclipse.org/elk/core/debug/grandom/GRandom"
+    nsPrefix="gRandom">
+  <eClassifiers xsi:type="ecore:EClass" name="RandGraph">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="configs" upperBound="-1"
+        eType="#//Configuration" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Formats">
+    <eLiterals name="elkt" literal="elkt"/>
+    <eLiterals name="elkg" value="1" literal="elkg"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Configuration">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="samples" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="form" eType="#//Form"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" eType="#//Nodes"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="edges" eType="#//Edges"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mW" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxWidth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mD" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxDegree" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="pF" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fraction" eType="#//DoubleQuantity"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="hierarchy" eType="#//Hierarchy"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="seed" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="format" eType="#//Formats"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="filename" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Hierarchy">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="levels" eType="#//DoubleQuantity"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="edges" eType="#//DoubleQuantity"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="numHierarchNodes" eType="#//DoubleQuantity"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="crossHierarchRel" eType="#//DoubleQuantity"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Form">
+    <eLiterals name="trees" literal="trees"/>
+    <eLiterals name="custom" value="1" literal="graphs"/>
+    <eLiterals name="bipartite" value="2" literal="bipartite graphs"/>
+    <eLiterals name="biconnected" value="3" literal="biconnected graphs"/>
+    <eLiterals name="triconnected" value="4" literal="triconnected graphs"/>
+    <eLiterals name="acyclic" value="5" literal="acyclic graphs"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Edges">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="density" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="total" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="relative" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="outbound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nEdges" eType="#//DoubleQuantity"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="labels" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="selfLoops" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Nodes">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nNodes" eType="#//DoubleQuantity"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ports" eType="#//Ports"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="labels" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="size" eType="#//Size" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="removeIsolated" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Size">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="height" eType="#//DoubleQuantity"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="width" eType="#//DoubleQuantity"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Ports">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="labels" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reUse" eType="#//DoubleQuantity"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="size" eType="#//Size" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="constraint" eType="#//ConstraintType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="flow" upperBound="-1" eType="#//Flow"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Flow">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="flowType" eType="#//FlowType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="side" eType="#//Side"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="amount" eType="#//DoubleQuantity"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Side">
+    <eLiterals name="north" literal="north"/>
+    <eLiterals name="east" value="1" literal="east"/>
+    <eLiterals name="south" value="2" literal="south"/>
+    <eLiterals name="west" value="3" literal="west"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="FlowType">
+    <eLiterals name="incoming" literal="incoming"/>
+    <eLiterals name="outgoing" value="1" literal="outgoing"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ConstraintType">
+    <eLiterals name="free" literal="free"/>
+    <eLiterals name="side" value="1" literal="side"/>
+    <eLiterals name="position" value="2" literal="position"/>
+    <eLiterals name="order" value="3" literal="order"/>
+    <eLiterals name="ratio" value="4" literal="ratio"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DoubleQuantity">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="quant" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="min" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="minMax" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="max" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mean" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gaussian" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="stddv" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"/>
+  </eClassifiers>
+</ecore:EPackage>

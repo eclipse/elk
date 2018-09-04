@@ -32,6 +32,9 @@
     <module>org.eclipse.elk.conn.graphiti</module>
     <module>org.eclipse.elk.core</module>
     <module>org.eclipse.elk.core.debug</module>
+    <module>org.eclipse.elk.core.debug.grandom</module>
+    <module>org.eclipse.elk.core.debug.grandom.ide</module>
+    <module>org.eclipse.elk.core.debug.grandom.ui</module>
     <module>org.eclipse.elk.core.meta</module>
     <module>org.eclipse.elk.core.meta.ui</module>
     <module>org.eclipse.elk.core.service</module>

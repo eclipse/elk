@@ -11,11 +11,13 @@
 package org.eclipse.elk.alg.layered;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
-import org.eclipse.elk.alg.layered.graph.transform.IGraphTransformer;
 import org.eclipse.elk.alg.layered.graph.transform.ElkGraphTransformer;
+import org.eclipse.elk.alg.layered.graph.transform.IGraphTransformer;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.options.HierarchyHandling;
+import org.eclipse.elk.core.testing.IWhiteBoxTestable;
+import org.eclipse.elk.core.testing.TestController;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
@@ -27,7 +29,7 @@ import org.eclipse.elk.graph.ElkNode;
  * @author msp
  * @author cds
  */
-public final class LayeredLayoutProvider extends AbstractLayoutProvider {
+public final class LayeredLayoutProvider extends AbstractLayoutProvider implements IWhiteBoxTestable {
 
     ///////////////////////////////////////////////////////////////////////////////
     // Variables
@@ -39,9 +41,6 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
     ///////////////////////////////////////////////////////////////////////////////
     // Regular Layout
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void layout(final ElkNode elkgraph, final IElkProgressMonitor progressMonitor) {
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
@@ -97,6 +96,11 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
      */
     public ElkLayered getLayoutAlgorithm() {
         return elkLayered;
+    }
+
+    @Override
+    public void setTestController(final TestController controller) {
+        elkLayered.setTestController(controller);
     }
 
 }

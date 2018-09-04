@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ELK Random Graph Generator
+Bundle-Vendor: Eclipse Modeling Project
+Bundle-Version: 0.5.0.qualifier
+Bundle-SymbolicName: org.eclipse.elk.core.debug.grandom; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext,
+ org.eclipse.xtext.xbase,
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.util,
+ org.eclipse.xtend.lib,
+ org.eclipse.emf.common,
+ org.eclipse.elk.graph,
+ org.eclipse.elk.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.elk.core.debug.grandom,
+ org.eclipse.elk.core.debug.grandom.gRandom,
+ org.eclipse.elk.core.debug.grandom.gRandom.impl,
+ org.eclipse.elk.core.debug.grandom.gRandom.util,
+ org.eclipse.elk.core.debug.grandom.generators,
+ org.eclipse.elk.core.debug.grandom.parser.antlr,
+ org.eclipse.elk.core.debug.grandom.parser.antlr.internal,
+ org.eclipse.elk.core.debug.grandom.scoping,
+ org.eclipse.elk.core.debug.grandom.serializer,
+ org.eclipse.elk.core.debug.grandom.services,
+ org.eclipse.elk.core.debug.grandom.validation
+Import-Package: org.apache.log4j
