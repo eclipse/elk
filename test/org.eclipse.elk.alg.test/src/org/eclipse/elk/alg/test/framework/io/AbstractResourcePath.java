@@ -78,7 +78,7 @@ public abstract class AbstractResourcePath {
         // Initialize base path
         String path = "";
         if (!Strings.isNullOrEmpty(base)) {
-            base.replace("/", File.separator);
+            path = base.replace("/", File.separator);
             if (!path.endsWith(File.separator)) {
                 path += File.separator;
             }
