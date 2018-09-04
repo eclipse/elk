@@ -44,6 +44,8 @@
       <modules>
         <module>../plugins</module>
         <module>../features</module>
+        <!-- Re-enable tests soon. -->
+        <!-- <module>../test</module> -->
         <module>org.eclipse.elk.repository</module>
       </modules>
     </profile>
@@ -242,6 +244,18 @@
         <version>${tycho-version}</version>
         <configuration>
           <argLine>-ea</argLine>
+          <excludes>
+            <exclude>**/ElkTest*.java</exclude>
+            <exclude>**/*ElkTest.java</exclude>
+            <exclude>**/TestUtil.java</exclude>
+            <exclude>**/TestMapping.java</exclude>
+            <exclude>**/TestMappingGenerator.java</exclude>
+          </excludes>
+          <systemProperties>
+            <ELK_REPO>${tests.paths.elk-repo}</ELK_REPO>
+            <MODELS_REPO>${tests.paths.models-repo}</MODELS_REPO>
+            <RESULTS_PATH>${tests.paths.results}</RESULTS_PATH>
+          </systemProperties>
         </configuration>
       </plugin>
 

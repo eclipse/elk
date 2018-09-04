@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.eclipse.elk</groupId>
+  <artifactId>test</artifactId>
+  <version>0.5.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <parent>
+    <groupId>org.eclipse.elk</groupId>
+    <artifactId>parent</artifactId>
+    <version>0.5.0-SNAPSHOT</version>
+    <relativePath>../build/pom.xml</relativePath>
+  </parent>
+
+  <!-- all tests need to be listed as module -->
+  <modules>
+    <module>org.eclipse.elk.alg.common.compaction.test</module>
+    <module>org.eclipse.elk.alg.common.test</module>
+    <module>org.eclipse.elk.alg.disco.test</module>
+    <module>org.eclipse.elk.alg.layered.test</module>
+    <module>org.eclipse.elk.alg.spore.test</module>
+    <module>org.eclipse.elk.alg.test</module>
+    <module>org.eclipse.elk.core.test</module>
+    <module>org.eclipse.elk.graph.json.test</module>
+    <module>org.eclipse.elk.graph.test</module>
+    <module>org.eclipse.elk.shared.test</module>
+  </modules>
+
+</project>
