@@ -21,7 +21,6 @@ import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
 import org.eclipse.elk.alg.test.framework.util.TestUtil;
 import org.eclipse.elk.core.LayoutConfigurator;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;

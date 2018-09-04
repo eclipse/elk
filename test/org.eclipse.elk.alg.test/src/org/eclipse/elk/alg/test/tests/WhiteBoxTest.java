@@ -24,16 +24,13 @@ import org.eclipse.elk.alg.test.framework.annotations.FailIfNotExecuted;
 import org.eclipse.elk.alg.test.framework.annotations.Graph;
 import org.eclipse.elk.alg.test.framework.annotations.ImportGraphs;
 import org.eclipse.elk.alg.test.framework.annotations.RunAfterProcessor;
-import org.eclipse.elk.alg.test.framework.annotations.RunBeforeProcessor;
 import org.eclipse.elk.alg.test.framework.io.AbstractResourcePath;
 import org.eclipse.elk.alg.test.framework.io.ModelResourcePath;
 import org.eclipse.elk.alg.test.framework.util.TestUtil;
-import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.graph.ElkNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
