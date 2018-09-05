@@ -17,8 +17,6 @@ package org.eclipse.elk.core;
  * is defined by the {@code org.eclipse.elk.core.service} plugin.
  * </p>
  * 
- * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
- * @kieler.rating yellow 2012-08-10 review KI-23 by cds, sgu
  * @author ars
  * @author msp
  */

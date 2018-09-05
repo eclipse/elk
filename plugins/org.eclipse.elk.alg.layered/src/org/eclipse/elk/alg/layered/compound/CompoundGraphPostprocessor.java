@@ -50,8 +50,6 @@ import com.google.common.collect.Sets;
  *
  * @author msp
  * @author cds
- * @kieler.design proposed by cds
- * @kieler.rating proposed yellow by cds
  */
 public class CompoundGraphPostprocessor implements ILayoutProcessor<LGraph> {
     

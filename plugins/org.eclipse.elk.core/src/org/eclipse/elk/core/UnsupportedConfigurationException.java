@@ -15,8 +15,6 @@ package org.eclipse.elk.core;
  * supported by the algorithm.
  *
  * @author cds
- * @kieler.design 2013-05-22 proposed by cds
- * @kieler.rating proposed yellow 2013-05-22 cds
  */
 public class UnsupportedConfigurationException extends RuntimeException {
 

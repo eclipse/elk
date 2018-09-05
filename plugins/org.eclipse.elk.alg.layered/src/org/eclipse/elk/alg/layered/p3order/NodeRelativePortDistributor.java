@@ -25,8 +25,6 @@ import org.eclipse.elk.core.options.PortSide;
  * @author cds
  * @author msp
  * @author ima
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class NodeRelativePortDistributor extends AbstractBarycenterPortDistributor {
 

@@ -55,8 +55,6 @@ import com.google.common.collect.Maps;
  * A transformer for Graphviz Dot.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class DotImporter {
     

@@ -26,8 +26,6 @@ import org.eclipse.swt.widgets.Control;
  * A cell editor that opens a dialog to select a layout algorithm or type.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class AlgorithmCellEditor extends DialogCellEditor {
     

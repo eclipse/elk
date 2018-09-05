@@ -6,20 +6,19 @@
   which accompanies this distribution, and is available at
   http://www.eclipse.org/legal/epl-v10.html
 -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.5.0-SNAPSHOT</version>
     <relativePath>../../build/pom.xml</relativePath>
   </parent>
 
   <groupId>org.eclipse.elk</groupId>
   <artifactId>org.eclipse.elk.alg.disco</artifactId>
   <name>ELK Disconnected Components Compaction</name>
-  <version>0.4.0-SNAPSHOT</version>
+  <version>0.5.0-SNAPSHOT</version>
   <description>Compaction algorithms for disconnected graphs.</description>
   <packaging>eclipse-plugin</packaging>
 
@@ -27,17 +26,17 @@
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.core</artifactId>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.5.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.graph</artifactId>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.5.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.elk</groupId>
       <artifactId>org.eclipse.elk.alg.common</artifactId>
-      <version>0.4.0-SNAPSHOT</version>
+      <version>0.5.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
@@ -47,6 +46,25 @@
       <plugin>
         <groupId>org.eclipse.xtext</groupId>
         <artifactId>xtext-maven-plugin</artifactId>
+        <!-- Workaround for broken build from https://github.com/eclipse/xtext/issues/1231#issuecomment-401125569 -->
+        <dependencies>
+          <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>3.13.102</version>
+          </dependency>
+          <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.compiler.apt</artifactId>
+            <version>1.3.110</version>
+          </dependency>
+          <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.compiler.tool</artifactId>
+            <version>1.2.101</version>
+          </dependency>
+        </dependencies>
+        <!-- End Workaround -->
       </plugin>
     </plugins>
   </build>

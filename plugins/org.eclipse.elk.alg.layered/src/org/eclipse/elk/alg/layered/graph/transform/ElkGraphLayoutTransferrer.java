@@ -227,8 +227,6 @@ class ElkGraphLayoutTransferrer {
         // untouched if another routing algorithm is selected.
         if (elkedge == null) {
             return;
-        } else if (ledge.isSelfLoop() && routing != EdgeRouting.ORTHOGONAL && routing != EdgeRouting.SPLINES) {
-            return;
         }
         
         KVectorChain bendPoints = ledge.getBendPoints();

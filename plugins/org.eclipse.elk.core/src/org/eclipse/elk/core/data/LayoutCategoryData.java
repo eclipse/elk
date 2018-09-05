@@ -19,8 +19,6 @@ import java.util.List;
  * or the force-based approach. The category of an algorithm can be left empty, in which case it
  * is displayed as "Other" in the user interface.
  *
- * @kieler.design 2011-02-01 reviewed by cmot, soh
- * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
 public final class LayoutCategoryData implements ILayoutMetaData {

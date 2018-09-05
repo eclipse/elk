@@ -42,7 +42,6 @@ import com.google.common.collect.Sets;
 public class ElkReflectTest {
 
     /** Dedicated meta data providers. */
-    @SuppressWarnings("unchecked")
     private List<Class<? extends ILayoutMetaDataProvider>> providers =
             Lists.newArrayList(
                     CoreOptions.class, 

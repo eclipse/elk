@@ -21,8 +21,6 @@ import org.eclipse.gmf.runtime.diagram.ui.services.editpolicy.IEditPolicyProvide
  * The edit policy provider for the <i>apply layout</i> edit policy.
  * 
  * @author haf
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class LayoutEditPolicyProvider extends AbstractProvider implements
         IEditPolicyProvider {

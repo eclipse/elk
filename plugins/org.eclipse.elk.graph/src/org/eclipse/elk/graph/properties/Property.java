@@ -18,8 +18,6 @@ import org.eclipse.elk.graph.util.ElkReflect;
  * a property holder if the property is not set on it. Properties may also define lower and upper
  * bounds that restrict which values are considered legal.
  *
- * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
- * @kieler.rating proposed yellow 2012-07-10 msp
  * @param <T> type of the property
  * @author msp
  */

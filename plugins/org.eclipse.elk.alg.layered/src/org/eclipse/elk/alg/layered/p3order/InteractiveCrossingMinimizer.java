@@ -49,8 +49,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  *
  * @author msp
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class InteractiveCrossingMinimizer implements ILayoutPhase<LayeredPhases, LGraph> {
 

@@ -49,10 +49,6 @@ import com.google.common.collect.Lists;
  * the top-left to the bottom-right corner.</p>
  * 
  * <p>The target graph must not be contained in the list of components.</p>
- * 
- * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating yellow 2014-04-22 review KI-48 by uru, tit, csp
  */
 final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
     
@@ -68,9 +64,6 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
     ///////////////////////////////////////////////////////////////////////////////
     // AbstractGraphPlacer
 
-    /**
-     * {@inheritDoc}
-     */
     public void combine(final List<LGraph> components, final LGraph target) {
         componentGroups.clear();
         assert !components.contains(target);

@@ -24,6 +24,7 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.alg.ILayoutProcessor;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.LabelSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
@@ -50,9 +51,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
  */
 public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Label dummy removal", 1);
         
@@ -107,14 +106,18 @@ public final class LabelDummyRemover implements ILayoutProcessor<LGraph> {
                     // Add represented labels back to the original edge
                     originEdge.getLabels().addAll(representedLabels);
                     
-                    // Join the edges without adding unnecessary bend points
-                    LongEdgeJoiner.joinAt(node, false);
+                    // Whether we need to add unnecessary bend points around the label dummy depends on the edge
+                    // router. For orthogonal edge routing, they are not necessary. For splines, they may even be
+                    // harmful. For polylines, they are necessary to keep the routes edges take close to their labels
+                    LongEdgeJoiner.joinAt(node,
+                            layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.POLYLINE);
                     
                     // Remove the node
                     nodeIterator.remove();
                 }
             }
         }
+        
         monitor.done();
     }
 

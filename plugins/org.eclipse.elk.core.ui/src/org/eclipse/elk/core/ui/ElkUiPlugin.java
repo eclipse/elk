@@ -20,8 +20,6 @@ import org.osgi.framework.BundleContext;
  * 
  * @author haf
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class ElkUiPlugin extends AbstractUIPlugin {
 

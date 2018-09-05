@@ -16,8 +16,6 @@ package org.eclipse.elk.alg.force.graph;
  * @author tmn
  * @author owo
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class FBendpoint extends FParticle {
     

@@ -9,7 +9,7 @@
 <feature
       id="org.eclipse.elk.sdk.feature"
       label="Eclipse Layout Kernel (Incubation) - SDK"
-      version="0.4.0.qualifier"
+      version="0.5.0.qualifier"
       provider-name="Eclipse Layout Kernel"
       plugin="org.eclipse.elk.core">
 
@@ -89,6 +89,27 @@ http://www.eclipse.org/legal/epl-v10.html.
 
    <plugin
          id="org.eclipse.elk.graph.text.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.elk.core.debug.grandom"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.elk.core.debug.grandom.ide"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.elk.core.debug.grandom.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

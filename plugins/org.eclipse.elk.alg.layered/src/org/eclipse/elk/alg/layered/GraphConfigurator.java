@@ -15,6 +15,8 @@ import java.util.Set;
 
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
+import org.eclipse.elk.alg.layered.graph.LNode;
+import org.eclipse.elk.alg.layered.graph.Layer;
 import org.eclipse.elk.alg.layered.intermediate.IntermediateProcessorStrategy;
 import org.eclipse.elk.alg.layered.options.CrossingMinimizationStrategy;
 import org.eclipse.elk.alg.layered.options.GraphCompactionStrategy;
@@ -31,6 +33,7 @@ import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.HierarchyHandling;
+import org.eclipse.elk.core.options.PortConstraints;
 
 /**
  * The configurator configures a graph in preparation for layout. This includes making sure that a
@@ -118,11 +121,40 @@ final class GraphConfigurator {
                     lgraph.getProperty(LayeredOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL);
         }
         
+        //copy the port constraints to keep a list of original port constraints
+        copyPortContraints(lgraph);
+        
         // pre-calculate spacing information
         Spacings spacings = new Spacings(lgraph);
         lgraph.setProperty(InternalProperties.SPACINGS, spacings);
     }
     
+    private void copyPortContraints(final LGraph graph) {
+
+        for (LNode node : graph.getLayerlessNodes()) {
+            PortConstraints originalPortconstraints = node.getProperty(LayeredOptions.PORT_CONSTRAINTS);
+
+            node.setProperty(InternalProperties.ORIGINAL_PORT_CONSTRAINTS, originalPortconstraints);
+
+            LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+            if (nestedGraph != null) {
+                copyPortContraints(nestedGraph);
+            }
+        }
+
+        for (Layer layer : graph.getLayers()) {
+            for (LNode node : layer.getNodes()) {
+                PortConstraints originalPortconstraints = node.getProperty(LayeredOptions.PORT_CONSTRAINTS);
+
+                node.setProperty(InternalProperties.ORIGINAL_PORT_CONSTRAINTS, originalPortconstraints);
+
+                LGraph nestedGraph = node.getProperty(InternalProperties.NESTED_LGRAPH);
+                if (nestedGraph != null) {
+                    copyPortContraints(nestedGraph);
+                }
+            }
+        }
+    }
     
     ////////////////////////////////////////////////////////////////////////////////
     // Updating the Configuration

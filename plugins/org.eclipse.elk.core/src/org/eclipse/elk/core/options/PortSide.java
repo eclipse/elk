@@ -23,8 +23,6 @@ import com.google.common.collect.Sets;
  * 
  * @author msp
  * @author cds
- * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
  */
 public enum PortSide {
     
@@ -153,6 +151,20 @@ public enum PortSide {
             return EAST;
         default:
             return UNDEFINED;
+        }
+    }
+    
+    /**
+     * Returns whether this and the given port side are adjacent port sides in that they share a corner of their node.
+     * 
+     * @param other the port side to check with.
+     * @return {@code true} if the two sides share a corner.
+     */
+    public boolean areAdjacent(final PortSide other) {
+        if (this == UNDEFINED) {
+            return false;
+        } else {
+            return this.left() == other || this.right() == other;
         }
     }
     

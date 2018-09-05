@@ -25,8 +25,6 @@ import com.google.common.collect.Lists;
 /**
  * Data type used to store information for a layout option.
  * 
- * @kieler.design 2011-02-01 reviewed by cmot, soh
- * @kieler.rating yellow 2012-10-09 review KI-25 by chsch, bdu
  * @author msp
  */
 public final class LayoutOptionData implements ILayoutMetaData, IProperty<Object>,

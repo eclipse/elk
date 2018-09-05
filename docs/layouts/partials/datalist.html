@@ -9,7 +9,7 @@
     {{ range .Children }}
       <tr>
         <td><a href="{{ .URL }}">{{ .Name }}</a></td>
-        <td><code>{{ replace .Identifier "-" "." }}</code></td>
+        <td><code>{{ .Page.Params.displayid }}</code></td>
       </tr>
     {{ end }}
   {{ else }}

@@ -55,8 +55,6 @@ import com.google.common.collect.Lists;
  * @author grh
  * @author cds
  * @author ima
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class LinearSegmentsNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
 

@@ -20,8 +20,6 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
  *
  * @param <T> the type of graph that this importer can transform into a layered graph.
  * @author msp
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public interface IGraphTransformer<T> {
     

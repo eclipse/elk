@@ -23,8 +23,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Handler for execution of layout triggered by menu, toolbar, or keyboard command.
  * 
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2012-07-19 review KI-20 by cds, jjc
  * @author msp
  */
 public class LayoutHandler extends AbstractHandler {

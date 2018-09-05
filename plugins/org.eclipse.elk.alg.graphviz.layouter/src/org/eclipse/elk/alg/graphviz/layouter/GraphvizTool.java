@@ -35,8 +35,6 @@ import com.google.common.collect.Lists;
  * Handler for accessing Graphviz via a separate process.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphvizTool {
     

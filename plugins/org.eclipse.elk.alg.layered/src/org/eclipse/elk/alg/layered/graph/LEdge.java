@@ -26,8 +26,6 @@ import com.google.common.collect.Lists;
  * point where the edge touches the node.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LEdge extends LGraphElement {
 

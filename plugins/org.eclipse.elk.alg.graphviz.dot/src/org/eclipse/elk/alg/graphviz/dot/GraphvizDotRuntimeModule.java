@@ -18,8 +18,6 @@ import org.eclipse.xtext.serializer.ISerializer;
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphvizDotRuntimeModule extends AbstractGraphvizDotRuntimeModule {
     

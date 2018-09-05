@@ -1,0 +1,146 @@
+/*******************************************************************************
+ * Copyright (c) 2018 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *******************************************************************************/
+ grammar org.eclipse.elk.core.debug.grandom.GRandom with org.eclipse.xtext.common.Terminals
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+generate gRandom "http://www.eclipse.org/elk/core/debug/grandom/GRandom"
+
+RandGraph:
+    (configs+=Configuration)*
+;
+
+enum Formats:
+    elkt
+    | elkg
+;
+
+Configuration:
+    'generate' samples=INT
+     form=Form ( '{'
+         ( (nodes=Nodes)?
+               & (edges=Edges)?
+               & (mW?='maxWidth' '=' maxWidth=Integer)?
+               & (mD?='maxDegree' '=' maxDegree=Integer)?
+               & (pF?='partitionFraction' '=' fraction=DoubleQuantity)?
+               & (hierarchy=Hierarchy)?
+               & ('seed' '=' seed=Integer)?
+               & ('format' '=' format=Formats)?
+               & ('filename' '=' filename=STRING)?
+               )
+    '}')?
+;
+
+Hierarchy:
+    {Hierarchy}
+    'hierarchy' ('{'
+          (('levels' '=' levels=DoubleQuantity)? // MISSING
+              & ('cross-hierarchy edges' '=' edges=DoubleQuantity)?
+              & ('compound nodes' '=' numHierarchNodes=DoubleQuantity)?
+              & ('cross-hierarchy relative edges' '=' crossHierarchRel=DoubleQuantity)?
+          )
+    '}')?
+;
+
+enum Form:
+    trees
+    | custom='graphs'
+    | bipartite='bipartite graphs'
+    | biconnected='biconnected graphs'
+    | triconnected='triconnected graphs'
+    | acyclic='acyclic graphs'
+;
+
+Edges:
+    ('edges'  (density?='density' | total?='total' | relative?='relative' | outbound?='outgoing')
+        '=' nEdges=DoubleQuantity)
+    ('{'
+         ((labels?='labels')? &
+         (selfLoops?='self loops')?)
+    '}')?
+;
+
+Nodes:
+    {Nodes}
+    'nodes' '=' nNodes=DoubleQuantity ( '{'
+       ((ports=Ports)? & 
+        (labels?=Labels)? & 
+        (size=Size)? &
+        (removeIsolated?='remove isolated')? )
+    '}'
+    )?
+;
+
+Size:
+    {Size}
+    ('size' ('{'
+        (('height' '=' height=DoubleQuantity)? &
+        ('width' '=' width=DoubleQuantity)?)
+    '}')?)
+;
+
+Ports:
+    {Ports}
+    'ports' ('{'
+          ((labels?=Labels)?
+              & ('re-use' '=' reUse=DoubleQuantity)? 
+              & (size=Size)?
+              & ('constraint' '=' constraint=ConstraintType)?
+              & (flow+=Flow)*
+          )
+    '}')?
+;
+
+Flow:
+    (flowType=FlowType side=Side '=' amount=DoubleQuantity)
+;
+
+enum Side:
+    north
+    | east
+    | south
+    | west
+;
+
+enum FlowType:
+    incoming
+    | outgoing
+;
+
+enum ConstraintType:
+    free
+    | side
+    | position
+    | order
+    | ratio
+;
+
+Labels:
+    'labels'
+;
+
+DoubleQuantity:
+    quant=Double |  min=Double minMax?='to' max=Double | mean=Double gaussian?=Pm stddv=Double
+;
+
+Pm:
+    '+/-'
+;
+
+Double returns ecore::EDoubleObject:
+    INT ('.' INT)?
+;
+
+Float returns ecore::EFloatObject:
+    INT ('.' INT)?
+;
+
+Integer returns ecore::EIntegerObject:
+    INT ('.' INT)?
+;
+

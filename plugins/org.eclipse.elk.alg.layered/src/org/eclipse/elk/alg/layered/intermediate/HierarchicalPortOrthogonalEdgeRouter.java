@@ -81,8 +81,6 @@ import com.google.common.collect.Sets;
  * @see HierarchicalPortPositionProcessor
  * @see OrthogonalRoutingGenerator
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProcessor<LGraph> {
     

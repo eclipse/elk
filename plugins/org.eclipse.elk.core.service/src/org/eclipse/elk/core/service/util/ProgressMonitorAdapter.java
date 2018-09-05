@@ -17,8 +17,6 @@ import org.eclipse.elk.core.util.BasicProgressMonitor;
  * Wrapper class for Eclipse progress monitors.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class ProgressMonitorAdapter extends BasicProgressMonitor {
 

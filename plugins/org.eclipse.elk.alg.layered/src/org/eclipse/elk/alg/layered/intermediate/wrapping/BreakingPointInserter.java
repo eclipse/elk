@@ -93,12 +93,26 @@ public class BreakingPointInserter implements ILayoutProcessor<LGraph> {
             cuts = improveCuts(graph, cuts);
         }
         
+        // #3 if they are not guaranteed to be valid, make them valid
+        if (!icic.guaranteeValid() && graph.hasProperty(LayeredOptions.WRAPPING_VALIDIFY_STRATEGY)) {
+            switch (graph.getProperty(LayeredOptions.WRAPPING_VALIDIFY_STRATEGY)) {
+                case LOOK_BACK:
+                    cuts = SingleEdgeGraphWrapper.validifyIndexesLookingBack(gs, cuts);
+                    break;
+                case GREEDY:
+                    cuts = SingleEdgeGraphWrapper.validifyIndexesGreedily(gs, cuts);
+                    break;
+                default:
+                    // leave the cuts as they are
+            }
+        }
+        
         if (cuts.isEmpty()) {
             progressMonitor.done();
             return;
         }
         
-        // #3 insert the breaking points
+        // #4 insert the breaking points
         @SuppressWarnings("unused")
         int splits = applyCuts(graph, cuts);
         

@@ -225,18 +225,6 @@ public final class SplinesMath {
     }
     
     /**
-     * Prints the side of a {@link ConnectedSelfLoopComponent} and all of it's ports to sysout.
-     * @param component The component to print.
-     */
-    public static void printConnectedComponent(final ConnectedSelfLoopComponent component) {
-        System.out.print("Connected component: " + component.getLoopSide().toString() + ": ");
-        for (final LPort port : component.getHidablePorts()) {
-            System.out.print(port.toString() + " " + port.getSide().toString() + " / ");
-        }
-        System.out.println();
-    }
-
-    /**
      * Calculates the perpendicular to the given nodeSide through the AbsolutAnchor of the given port.
      * The distance of the AbsolutAnchor to the nodeSide on this perpendicular is returned.
      *

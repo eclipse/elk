@@ -18,8 +18,6 @@ package org.eclipse.elk.alg.layered.options;
  * @see org.eclipse.elk.alg.layered.intermediate.InLayerConstraintProcessor
  *        InLayerConstraintProcessor
  * @author cds
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public enum InLayerConstraint {
     

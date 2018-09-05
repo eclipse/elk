@@ -13,8 +13,6 @@ package org.eclipse.elk.graph.properties;
 /**
  * A proxy object for properties that are resolved lazily.
  *
- * @kieler.rating proposed yellow 2012-11-06 cds
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
  * @author msp
  */
 public interface IPropertyValueProxy {

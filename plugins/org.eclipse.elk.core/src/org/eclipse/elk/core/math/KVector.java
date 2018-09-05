@@ -17,8 +17,6 @@ import org.eclipse.elk.core.util.IDataObject;
 /**
  * A simple 2D vector class which supports translation, scaling, normalization etc.
  *
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating 2011-01-13 proposed yellow msp
  * @author uru
  * @author owo
  * @author cds
@@ -68,6 +66,19 @@ public final class KVector implements IDataObject, Cloneable {
     public KVector(final KVector v) {
         this.x = v.x;
         this.y = v.y;
+    }
+    
+    /**
+     * Creates a new vector that points from the given start to the end vector.
+     * 
+     * @param start
+     *            start vector.
+     * @param end
+     *            end vector.
+     */
+    public KVector(final KVector start, final KVector end) {
+        this.x = end.x - start.x;
+        this.y = end.y - start.y;
     }
 
     /**
@@ -198,6 +209,19 @@ public final class KVector implements IDataObject, Cloneable {
     public KVector set(final double x, final double y) {
         this.x = x;
         this.y = y;
+        return this;
+    }
+
+    /**
+     * Resets this vector to the given values.
+     *
+     * @param newX new x value.
+     * @param newY new y value.
+     * @return {@code this}
+     */
+    public KVector set(final double newX, final double newY) {
+        this.x = newX;
+        this.y = newY;
         return this;
     }
 

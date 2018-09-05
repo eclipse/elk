@@ -1,12 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2017 Kiel University and others.
+ * Copyright (c) 2017, 2018 Kiel University and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Kiel University - initial API and implementation
  *******************************************************************************/
 package org.eclipse.elk.alg.layered.p5edges.splines;
 
@@ -46,12 +43,11 @@ import com.google.common.collect.Sets;
  * 
  * Furthermore only hyperedges are considered for vertical alignment of edges. All other edges are assumed to go
  * straight to the target port.
- * 
  */
 public final class SplineSegment implements Comparable<SplineSegment> {
     
     // For convenient usage, members are public
-    // SUPPRESS CHECKSTYLE NEXT 60 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 70 VisibilityModifier
     /** Spline segments may be part of hyperedges, in which case the {@link FinalSplineBendpointsCalculator} may try to 
      * handle them more than once. We avoid this by flagging the segment as 'handled' as soon as it has been seen. */
     public boolean handled = false;
@@ -102,6 +98,10 @@ public final class SplineSegment implements Comparable<SplineSegment> {
     /** If this segment is the {@link SplineSegment#lastSegment last segment} of a spline, this field holds
      * the target node of the spline. Otherwise it is {@code null}. */
     public LNode targetNode;
+    /** Flag indicating that the control points computed for this segment must be interpreted in inverse order. This is
+     * necessary for some segments when a {@link org.eclipse.elk.alg.layered.options.WrappingStrategy WrappingStrategy}
+     * is used. */
+    public boolean inverseOrder = false;
 
     // hyperedge-related variables
     /** If this segment represents a hyperedge, this is the top y coordinate of the segment that is used during

@@ -18,8 +18,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * Tester class for checking whether the active editor is supported by ELK.
  * 
  * @author jjc
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class ActiveEditorSupportedTester extends PropertyTester {
 

@@ -22,8 +22,6 @@ import org.eclipse.elk.alg.layered.options.PortType;
  * segment.
  * 
  * @author msp
- * @kieler.design proposed by cds
- * @kieler.rating proposed yellow by cds
  */
 final class CrossHierarchyEdgeComparator implements Comparator<CrossHierarchyEdge> {
     private final LGraph graph;

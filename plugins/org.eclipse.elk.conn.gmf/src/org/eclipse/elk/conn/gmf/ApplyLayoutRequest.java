@@ -22,8 +22,6 @@ import org.eclipse.gef.Request;
  * Request for automatic layout on a set of edit parts of a diagram.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class ApplyLayoutRequest extends Request {
 

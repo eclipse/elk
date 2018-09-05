@@ -65,8 +65,6 @@ import org.eclipse.gmf.runtime.notation.View;
  * manipulate layout data in the GMF notation model.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.XYLayoutEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.ConnectionBendpointEditPolicy
  * @see org.eclipse.gmf.runtime.diagram.ui.editpolicies.GraphicalNodeEditPolicy

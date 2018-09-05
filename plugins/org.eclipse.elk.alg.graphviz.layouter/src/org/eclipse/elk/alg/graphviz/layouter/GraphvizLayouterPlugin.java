@@ -17,8 +17,6 @@ import org.osgi.framework.BundleContext;
  * The activator class controls the plug-in life cycle.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphvizLayouterPlugin extends Plugin {
 

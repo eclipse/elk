@@ -41,9 +41,6 @@ import com.google.common.collect.Sets;
  * <dd>all nodes have been assigned a layer such that edges connect only nodes from layers with
  * increasing indices</dd>
  * </dl>
- * 
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class NetworkSimplex  {
 

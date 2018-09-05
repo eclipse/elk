@@ -19,7 +19,6 @@ import org.eclipse.elk.alg.layered.LayeredPhases;
 import org.eclipse.elk.alg.layered.graph.LEdge;
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphUtil;
-import org.eclipse.elk.alg.layered.graph.LLabel;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LNode.NodeType;
 import org.eclipse.elk.alg.layered.graph.LPort;
@@ -33,7 +32,6 @@ import org.eclipse.elk.alg.layered.options.SplineRoutingMode;
 import org.eclipse.elk.alg.layered.p5edges.PolylineEdgeRouter;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
-import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
@@ -89,10 +87,12 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
     /** additional processor dependencies for graphs with self-loops. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> SELF_LOOP_PROCESSING_ADDITIONS =
             LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
-                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.SPLINE_SELF_LOOP_PREPROCESSOR)
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.SELF_LOOP_PREPROCESSOR)
+                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.SELF_LOOP_POSTPROCESSOR)
                 .before(LayeredPhases.P4_NODE_PLACEMENT)
-                    .add(IntermediateProcessorStrategy.SPLINE_SELF_LOOP_POSITIONER)
-                    .add(IntermediateProcessorStrategy.SPLINE_SELF_LOOP_ROUTER);
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_PLACER)
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_LABEL_PLACER)
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_BENDPOINT_CALCULATOR);
 
     /** additional processor dependencies for graphs with center edge labels. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
@@ -120,9 +120,7 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
                 .addBefore(LayeredPhases.P4_NODE_PLACEMENT, IntermediateProcessorStrategy.END_LABEL_PREPROCESSOR)
                 .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_POSTPROCESSOR);
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         // Basic configuration
         final LayoutProcessorConfiguration<LayeredPhases, LGraph> configuration =
@@ -185,9 +183,7 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
     
     //////////////////////////////////////////////////
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Spline edge routing", 1);
         
@@ -248,8 +244,8 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
             //  The xSegmentDelta variable holds the required offset 
             double xSegmentDelta = 0;
             double rightLayerPosition = xpos;
-            boolean isSpecialLeftLayer = leftLayer == null || isLeftLayerExternal;
-            boolean isSpecialRightLayer = rightLayer == null || isRightLayerExternal;
+            boolean isSpecialLeftLayer = leftLayer == null || (isLeftLayerExternal && leftLayer == firstLayer);
+            boolean isSpecialRightLayer = rightLayer == null || (isRightLayerExternal && rightLayer == lastLayer);
             
             // compute horizontal positions just as for the OrthogonalEdgeRouter
             if (slotCount > 0) {
@@ -284,9 +280,6 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
             if (rightLayer != null) {
                 LGraphUtil.placeNodesHorizontally(rightLayer, rightLayerPosition);
             }
-            
-            // self loops
-            handleSelfloops();
             
             // Assign tentative start and end points to the spline segments
             //  they may be modified before final spline coordinates 
@@ -361,22 +354,6 @@ public final class SplineEdgeRouter implements ILayoutPhase<LayeredPhases, LGrap
         
         // assign ranks to the hyper-nodes
         topologicalNumbering(splineSegmentsLayer);
-    }
-    
-    /**
-     * Self loops are already calculated. All we have to do is add the node offset to the bend points and the edge
-     * labels.
-     */
-    private void handleSelfloops() {
-        for (final LEdge selfLoop : selfLoopsLayer) {
-            final KVector offset = selfLoop.getSource().getNode().getPosition();
-
-            selfLoop.getBendPoints().offset(offset);
-            
-            for (final LLabel label : selfLoop.getLabels()) {
-                label.getPosition().add(offset);
-            }
-        }
     }
     
     /**

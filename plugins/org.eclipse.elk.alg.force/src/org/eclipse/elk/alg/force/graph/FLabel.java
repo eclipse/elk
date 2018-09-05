@@ -19,8 +19,6 @@ import org.eclipse.elk.core.math.KVector;
  * @author tmn
  * @author owo
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class FLabel extends FParticle {
     

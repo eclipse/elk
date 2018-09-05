@@ -27,8 +27,6 @@ import com.google.common.collect.Lists;
  * It is optimized for being processed by a layer-based layout algorithm.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LGraph extends LGraphElement implements Iterable<Layer> {
     

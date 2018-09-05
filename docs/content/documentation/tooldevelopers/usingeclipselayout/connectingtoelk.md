@@ -10,7 +10,7 @@ In our [our basic introduction to automatic layout in Eclipse]({{< relref "docum
 
 To connect to ELK, there are two things you will have to do:
 
-1. Create an `ILayoutSetup` implementation and register it with out extension point.
+1. Create an `ILayoutSetup` implementation and register it with our extension point.
 1. Create an `IDiagramLayoutConnector` implementation.
 
 The rest of this page will look at each of these in turn.
@@ -24,6 +24,8 @@ An `ILayoutSetup` implementation consists of just two methods:
 boolean supports(Object object);
 Injector createInjector(Module defaultModule);
 ```
+
+To be able to implement the interface, you may have to add a dependency to `org.eclipse.elk.core.service` to your project. Then register your layout setup with the `org.eclipse.elk.core.service.layoutConnectors` extension point.
 
 ### The `supports(...)` Method
 

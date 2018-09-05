@@ -10,7 +10,7 @@ menu:
 The Eclipse Layout Kernel SDK provides two views built specifically for debugging your layout algorithm: the layout graph view and the execution time view.
 
 
-# Layout Graph View
+## Layout Graph View
 
 {{< image src="layout_graph_view.png" alt="Layout Graph View" >}}
 
@@ -21,7 +21,7 @@ Note that the layout graph view allows you to export the displayed graph as a PN
 Open the layout graph view by clicking _Window_ -> _Show View_ -> _Other_ and select _Layout Graph_ from the _Eclipse Diagram Layout_ category.
 
 
-# Layout Time View
+## Layout Time View
 
 {{< image src="layout_time_view.png" alt="Layout Time View" >}}
 
@@ -45,6 +45,6 @@ monitor.done();
 Open the layout graph view by clicking _Window_ -> _Show View_ -> _Other_ and select _Layout Time_ from the _Eclipse Diagram Layout_ category.
 
 
-# Debug Files
+## Debug Files
 
 The ELK preference page (see above) contains another setting: _Debug graph output_. Enabling this will cause the `DiagramLayoutEngine` to save the layout graph just before automatic layout is run. The graphs are placed in your user folder, in a subfolder called `elk/diagram_layout_engine`. The graph files can be displayed by the layout graph view, even though that usually is not very helpful since they may not contain any valid layout data yet.

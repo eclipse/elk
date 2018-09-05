@@ -52,8 +52,6 @@ import com.google.inject.Injector;
  * A view that displays layout options for selected objects.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutViewPart extends ViewPart {
     

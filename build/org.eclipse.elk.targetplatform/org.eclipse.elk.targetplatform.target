@@ -3,28 +3,29 @@
 <target name="ELK Target Platform for Tycho Build" sequenceNumber="1">
   <locations>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-      <unit id="com.google.guava" version="0.0.0"/>
-      <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.gmf.sdk.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
-      <repository location="http://download.eclipse.org/releases/neon"/>
+      <repository location="http://download.eclipse.org/eclipse/updates/4.8/R-4.8-201806110500"/>
+    </location>
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+      <!--<unit id="org.eclipse.ecf.filetransfer.httpclient4.feature.feature.group" version="0.0.0"/>-->
+      <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.gmf.runtime.sdk.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.0.0"/>
+      <repository location="http://download.eclipse.org/releases/photon"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
       <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
       <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
     </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-      <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="0.0.0"/>
-      <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.0/"/>
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+      <unit id="com.google.inject" version="0.0.0"/>
+      <unit id="com.google.gson" version="0.0.0"/>
+      <unit id="org.objectweb.asm" version="0.0.0"/>
+      <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
       <unit id="de.itemis.xtext.antlr.sdk.feature.group" version="0.0.0"/>
       <repository location="http://xtext.github.io/download/updates/releases/2.1.1/"/>
-    </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-      <unit id="com.google.gson" version="0.0.0"/>
-      <repository location="http://download.eclipse.org/tools/orbit/R-builds/R20170307180635/repository/"/>
     </location>
   </locations>
 </target>

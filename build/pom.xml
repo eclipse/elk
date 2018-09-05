@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>parent</artifactId>
   <groupId>org.eclipse.elk</groupId>
   <name>Eclipse Layout Kernel</name>
   <url>https://www.eclipse.org/elk/</url>
-  <version>0.4.0-SNAPSHOT</version>
+  <version>0.5.0-SNAPSHOT</version>
   <description>An infrastructure for automatic graph layout and implementations of different layout algorithms.</description>
   <packaging>pom</packaging>
 
@@ -15,7 +14,7 @@
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
     <targetJdk>1.8</targetJdk>
-    <tycho-version>1.0.0</tycho-version>
+    <tycho-version>1.2.0</tycho-version>
     <xtext-version>2.12.0</xtext-version>
     <elk-version>${project.version}</elk-version>
 
@@ -45,6 +44,8 @@
       <modules>
         <module>../plugins</module>
         <module>../features</module>
+        <!-- Re-enable tests soon. -->
+        <!-- <module>../test</module> -->
         <module>org.eclipse.elk.repository</module>
       </modules>
     </profile>
@@ -71,6 +72,31 @@
 
         <downloadUrl>${elkMeta.repositoryUrl}</downloadUrl>
       </distributionManagement>
+    </profile>
+
+    <!-- Activate to have the generated artifacts signed by Eclipse. -->
+    <!-- Only works if the build is run on the Eclipse infrastructure. -->
+    <profile>
+      <id>sign</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.eclipse.cbi.maven.plugins</groupId>
+            <artifactId>eclipse-jarsigner-plugin</artifactId>
+            <version>1.1.3</version>
+            <executions>
+              <execution>
+                <id>sign</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <!-- The Maven publishing configuration. -->
@@ -113,16 +139,6 @@
                   <head>Ordered</head>
                 </tag>
                 <tag>
-                  <name>kieler.design</name>
-                  <placement>t</placement>
-                  <head>Design Review:</head>
-                </tag>
-                <tag>
-                  <name>kieler.rating</name>
-                  <placement>t</placement>
-                  <head>Code Review:</head>
-                </tag>
-                <tag>
                   <name>implSpec</name>
                   <placement>a</placement>
                   <head>Implementation Specification</head>
@@ -146,31 +162,6 @@
             <executions>
               <execution>
                 <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <!-- Activate to have the generated artifacts signed by Eclipse. -->
-    <!-- Only works if the build is run on the Eclipse infrastructure. -->
-    <profile>
-      <id>sign</id>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.eclipse.cbi.maven.plugins</groupId>
-            <artifactId>eclipse-jarsigner-plugin</artifactId>
-            <version>1.1.3</version>
-            <executions>
-              <execution>
-                <id>sign</id>
                 <phase>verify</phase>
                 <goals>
                   <goal>sign</goal>
@@ -210,6 +201,23 @@
               <version>${elk-version}</version>
             </artifact>
           </target>
+          <environments>
+            <environment>
+              <os>win32</os>
+              <ws>win32</ws>
+              <arch>x86</arch>
+            </environment>
+            <environment>
+              <os>linux</os>
+              <ws>gtk</ws>
+              <arch>x86_64</arch>
+            </environment>
+            <environment>
+              <os>macosx</os>
+              <ws>cocoa</ws>
+              <arch>x86_64</arch>
+            </environment>
+          </environments>
         </configuration>
       </plugin>
 
@@ -236,6 +244,18 @@
         <version>${tycho-version}</version>
         <configuration>
           <argLine>-ea</argLine>
+          <excludes>
+            <exclude>**/ElkTest*.java</exclude>
+            <exclude>**/*ElkTest.java</exclude>
+            <exclude>**/TestUtil.java</exclude>
+            <exclude>**/TestMapping.java</exclude>
+            <exclude>**/TestMappingGenerator.java</exclude>
+          </excludes>
+          <systemProperties>
+            <ELK_REPO>${tests.paths.elk-repo}</ELK_REPO>
+            <MODELS_REPO>${tests.paths.models-repo}</MODELS_REPO>
+            <RESULTS_PATH>${tests.paths.results}</RESULTS_PATH>
+          </systemProperties>
         </configuration>
       </plugin>
 
@@ -269,6 +289,13 @@
             </languages>
           </configuration>
           <dependencies>
+            <!-- Workaround for broken build from https://github.com/eclipse/xtext/issues/1231#issuecomment-401125569 -->
+            <dependency>
+              <groupId>org.eclipse.platform</groupId>
+              <artifactId>org.eclipse.equinox.common</artifactId>
+              <version>3.10.0</version>
+            </dependency>
+            <!-- End Workaround -->
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.graph</artifactId>
@@ -297,6 +324,15 @@
               </goals>
             </execution>
           </executions>
+          <!-- Workaround for broken build from https://github.com/eclipse/xtext/issues/1231#issuecomment-401125569 -->
+          <dependencies>
+            <dependency>
+              <groupId>org.eclipse.platform</groupId>
+              <artifactId>org.eclipse.equinox.common</artifactId>
+              <version>3.10.0</version>
+            </dependency>
+          </dependencies>
+          <!-- End Workaround -->
         </plugin>
 
         <!-- Add src-gen and xtend-gen to source-directories -->
@@ -337,7 +373,7 @@
           </configuration>
         </plugin>
 
-        <!-- Child projects may use this to be excempted from inclusion in the Maven repository -->
+        <!-- Child projects may use this to be exempted from inclusion in the Maven repository -->
         <plugin>
            <groupId>org.apache.maven.plugins</groupId>
            <artifactId>maven-deploy-plugin</artifactId>
@@ -354,7 +390,7 @@
     <pluginRepository>
       <id>central</id>
       <name>Maven Plugin Repository</name>
-      <url>http://repo1.maven.org/maven2</url>
+      <url>http://central.maven.org/maven2</url>
       <layout>default</layout>
       <snapshots>
         <enabled>false</enabled>

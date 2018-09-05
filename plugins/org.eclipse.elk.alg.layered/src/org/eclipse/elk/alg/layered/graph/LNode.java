@@ -30,8 +30,6 @@ import com.google.common.collect.Maps;
  * A node in a layered graph.
  * 
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public final class LNode extends LShape {
     
@@ -42,8 +40,6 @@ public final class LNode extends LShape {
      * @author cds
      * @author ima
      * @author jjc
-     * @kieler.design proposed by msp
-     * @kieler.rating proposed yellow by msp
      */
     public static enum NodeType {
         

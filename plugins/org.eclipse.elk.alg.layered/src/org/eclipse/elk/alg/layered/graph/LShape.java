@@ -16,8 +16,6 @@ import org.eclipse.elk.core.math.KVector;
  * Abstract superclass for {@link LGraphElement}s that can have a position and a size.
  * 
  * @author cds
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2013-03-22 review KI-35 by chsch, grh
  */
 public abstract class LShape extends LGraphElement {
     

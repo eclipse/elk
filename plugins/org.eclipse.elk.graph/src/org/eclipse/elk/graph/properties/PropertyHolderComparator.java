@@ -15,8 +15,6 @@ import java.util.Comparator;
 /**
  * A comparator for property holders that can uses a specific property for comparison.
  *
- * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
- * @kieler.rating proposed yellow by msp
  * @author msp
  * @param <T> the type of the property used for comparison
  */

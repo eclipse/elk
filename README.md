@@ -12,8 +12,13 @@ and can thus also be used outside of Eclipse.
 ## More Info
 
 * [The ELK homepage](http://www.eclipse.org/elk)
-* [Our GitHub repository](https://github.com/eclipse/elk/)
+* [... and ELK's documentation](http://www.eclipse.org/elk/documentation.html)
+* [ELK Live](https://rtsys.informatik.uni-kiel.de/elklive/) (web-based playground to play around with ELK)
+* [elkjs](https://github.com/OpenKieler/elkjs) (JavaScript library transpiled from ELK's Java sources)
 
+## Example Layout
+
+![](https://raw.githubusercontent.com/eclipse/elk/master/docs/static/img/example_layout_complexRouter.svg?sanitize=true)
 
 ## Repository Structure
 

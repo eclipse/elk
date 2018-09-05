@@ -30,8 +30,6 @@ import com.google.inject.Provider;
  * <p>Subclasses of this class can be bound in an {@link ILayoutSetup} injector for customization.</p>
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating yellow 2012-10-26 review KI-29 by cmot, sgu
  */
 public class LayoutPropertySourceProvider implements IPropertySourceProvider {
     

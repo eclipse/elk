@@ -14,8 +14,6 @@ package org.eclipse.elk.alg.force.options;
  * Enumeration of available force models to use in the strategy pattern.
  *
  * @author msp
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public enum ForceModelStrategy {
     

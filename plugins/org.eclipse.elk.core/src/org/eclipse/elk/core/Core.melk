@@ -276,7 +276,7 @@ group spacing {
 	    description 
 	       "Spacing to be preserved between pairs of connected components. 
             This option is only relevant if 'separateConnectedComponents' is activated."
-        default = 12f
+        default = 20f
         lowerBound = 0.0
         targets parents
         legacyIds de.cau.cs.kieler.borderSpacing
@@ -389,7 +389,8 @@ group partitioning {
 		label "Layout Partition"
 		description 
 			"Partition to which the node belongs to. If 'layoutPartitions' is true,
-			all nodes are expected to have a partition."
+			 a pair of nodes with different partition indices is placed such that 
+             the node with lower index is placed to the left of the other node (with left-to-right layout direction)."
 		targets parents, nodes
 		legacyIds de.cau.cs.kieler.partition
 	}
@@ -517,9 +518,9 @@ group nodeSize {
 	option constraints: EnumSet<SizeConstraint> {
 		label "Node Size Constraints"
 		description
-			"Constraints for determining node sizes. Each member of the set specifies something that
-			should be taken into account when calculating node sizes. The empty set corresponds to
-			node sizes being fixed."
+			"What should be taken into account when calculating a node's size. Empty size constraints
+            specify that a node's size is already fixed and should not be changed."
+        documentation "@sizeconstraints.md"
 		default = EnumSet.noneOf(SizeConstraint)
 		targets nodes
 	} 
@@ -530,6 +531,7 @@ group nodeSize {
 			"Options modifying the behavior of the size constraints set on a node. Each member of the
 			set specifies something that should be taken into account when calculating node sizes.
 			The empty set corresponds to no further modifications."
+        documentation "@sizeoptions.md"
 		default = EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE)
 		targets nodes
 	}

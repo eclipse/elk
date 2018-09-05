@@ -52,8 +52,6 @@ import com.google.common.collect.Sets;
  *
  * @author msp
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating proposed yellow by msp
  */
 public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGraph> {
     
@@ -121,6 +119,16 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
             .addBefore(LayeredPhases.P3_NODE_ORDERING, IntermediateProcessorStrategy.NORTH_SOUTH_PORT_PREPROCESSOR)
             .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.NORTH_SOUTH_PORT_POSTPROCESSOR);
     
+    /** additional processor dependencies for graphs with self-loops. */
+    private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> SELF_LOOP_PROCESSING_ADDITIONS =
+            LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
+                .addBefore(LayeredPhases.P1_CYCLE_BREAKING, IntermediateProcessorStrategy.SELF_LOOP_PREPROCESSOR)
+                .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.SELF_LOOP_POSTPROCESSOR)
+                .before(LayeredPhases.P4_NODE_PLACEMENT)
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_PLACER)
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_LABEL_PLACER)
+                    .add(IntermediateProcessorStrategy.SELF_LOOP_BENDPOINT_CALCULATOR);
+    
     /** additional processor dependencies for graphs with center edge labels. */
     private static final LayoutProcessorConfiguration<LayeredPhases, LGraph> CENTER_EDGE_LABEL_PROCESSING_ADDITIONS =
         LayoutProcessorConfiguration.<LayeredPhases, LGraph>create()
@@ -137,9 +145,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
             .addAfter(LayeredPhases.P5_EDGE_ROUTING, IntermediateProcessorStrategy.END_LABEL_POSTPROCESSOR);
     
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public LayoutProcessorConfiguration<LayeredPhases, LGraph> getLayoutProcessorConfiguration(final LGraph graph) {
         Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
         
@@ -156,6 +162,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
             if (graphProperties.contains(GraphProperties.NORTH_SOUTH_PORTS)) {
                 configuration.addAll(NORTH_SOUTH_PORT_PROCESSING_ADDITIONS);
             }
+        }
+        if (graphProperties.contains(GraphProperties.SELF_LOOPS)) {
+            configuration.addAll(SELF_LOOP_PROCESSING_ADDITIONS);
         }
         
         if (graphProperties.contains(GraphProperties.CENTER_LABELS)) {
@@ -188,16 +197,16 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
      * second while iterating through the target layer. Understanding causes the code below to make a
      * lot more sense.
      */
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    @Override
     public void process(final LGraph layeredGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Polyline edge routing", 1);
         
+        final double slopedEdgeZoneWidth =
+                layeredGraph.getProperty(LayeredOptions.EDGE_ROUTING_POLYLINE_SLOPED_EDGE_ZONE_WIDTH);
         final double nodeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS);
         final double edgeSpacing = layeredGraph.getProperty(LayeredOptions.SPACING_EDGE_EDGE_BETWEEN_LAYERS);
-        final double edgeSpaceFac = Math.min(1.0, edgeSpacing / nodeSpacing); 
+        final double edgeSpaceFac = Math.min(1.0, edgeSpacing / nodeSpacing);
         
         double xpos = 0.0;
         double layerSpacing = 0.0;
@@ -236,7 +245,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
                     double sourcePos = outgoingEdge.getSource().getAbsoluteAnchor().y;
                     double targetPos = outgoingEdge.getTarget().getAbsoluteAnchor().y;
                     
-                    if (layer == outgoingEdge.getTarget().getNode().getLayer()) {
+                    if (layer == outgoingEdge.getTarget().getNode().getLayer() && !outgoingEdge.isSelfLoop()) {
                         // In-layer edges require an extra bend point to make them look nice
                         processInLayerEdge(outgoingEdge, xpos,
                                 LAYER_SPACE_FAC * edgeSpaceFac * Math.abs(sourcePos - targetPos));
@@ -260,7 +269,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
                 case LONG_EDGE:
                 case NORTH_SOUTH_PORT:
                 case BREAKING_POINT:
-                    processNode(node, xpos);
+                    processNode(node, xpos, slopedEdgeZoneWidth);
                     break;
                 }
                 
@@ -307,8 +316,10 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
      *            the node whose incident edges to insert bend points for.
      * @param layerLeftXPos
      *            the x position of the node's layer.
+     * @param maxAcceptableXDiff
+     *            the maximum space between node and layer boundary before bend points need to be inserted.
      */
-    private void processNode(final LNode node, final double layerLeftXPos) {
+    private void processNode(final LNode node, final double layerLeftXPos, final double maxAcceptableXDiff) {
         // The right side of the layer
         final double layerRightXPos = layerLeftXPos + node.getLayer().getSize().x;
         
@@ -327,7 +338,8 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
             
             // If the port's absolute anchor equals the bend point, we don't want to insert anything
             // (unless the node represents an in-layer dummy)
-            if (absolutePortAnchor.x == bendPoint.x && !isInLayerDummy(node)) {
+            double xDistance = Math.abs(absolutePortAnchor.x - bendPoint.x);
+            if (xDistance <= maxAcceptableXDiff && !isInLayerDummy(node)) {
                 continue;
             }
             
@@ -363,7 +375,8 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
         LPort sourcePort = edge.getSource();
         LPort targetPort = edge.getTarget();
         
-        double midY = (sourcePort.getAbsoluteAnchor().y + targetPort.getAbsoluteAnchor().y) / 2.0;
+        double sourceAnchorY = sourcePort.getAbsoluteAnchor().y;
+        double midY = (sourceAnchorY + targetPort.getAbsoluteAnchor().y) / 2.0;
         
         /* This method is called if an outgoing in-layer edge is found before any other edges of the
          * offending node are routed. Thus, if the edge's list of bend points is not empty, any bend
@@ -433,9 +446,9 @@ public final class PolylineEdgeRouter implements ILayoutPhase<LayeredPhases, LGr
     private void addBendPoint(final LEdge edge, final KVector bendPoint, final boolean addJunctionPoint,
             final LPort currPort) {
         
-        // Only insert the bend point if necessary,
-        // for in-layer edges we are extra save and add the bend point in any case
-        if (edge.isInLayerEdge() || !currPort.getAbsoluteAnchor().equals(bendPoint)) {
+        // Only insert the bend point if necessary; for in-layer edges we are extra save and add the bend point in
+        // any case
+        if ((edge.isInLayerEdge() || !currPort.getAbsoluteAnchor().equals(bendPoint)) && !edge.isSelfLoop()) {
             if (edge.getSource() == currPort) {
                 edge.getBendPoints().add(0, new KVector(bendPoint));
             } else {

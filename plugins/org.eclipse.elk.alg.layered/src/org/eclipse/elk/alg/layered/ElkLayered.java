@@ -38,6 +38,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
+import org.eclipse.elk.core.testing.TestController;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -89,6 +90,7 @@ import org.eclipse.elk.core.util.Pair;
  *       given layout processor starts executing). All of these methods resume execution from where the
  *       algorithm has stopped previously.</li>
  * </ol>
+ * <p>ELK Layered also supports the ELK unit test framework through being a white box testable algorithm.</p>
  *
  * @see ILayoutProcessor
  * @see GraphConfigurator
@@ -96,8 +98,6 @@ import org.eclipse.elk.core.util.Pair;
  *
  * @author msp
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating yellow 2014-11-09 review KI-56 by chsch, als
  */
 public final class ElkLayered {
 
@@ -112,6 +112,8 @@ public final class ElkLayered {
     private final CompoundGraphPreprocessor compoundGraphPreprocessor = new CompoundGraphPreprocessor();
     /** compound graph postprocessor. */
     private final CompoundGraphPostprocessor compoundGraphPostprocessor = new CompoundGraphPostprocessor();
+    /** Test controller for a white box test. */
+    private TestController testController = null;
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -177,12 +179,16 @@ public final class ElkLayered {
         theMonitor.begin("Layered layout", 2); // SUPPRESS CHECKSTYLE MagicNumber
 
         // Preprocess the compound graph by splitting cross-hierarchy edges
+        notifyProcessorReady(lgraph, compoundGraphPreprocessor);
         compoundGraphPreprocessor.process(lgraph, theMonitor.subTask(1));
+        notifyProcessorFinished(lgraph, compoundGraphPreprocessor);
 
         hierarchicalLayout(lgraph, theMonitor.subTask(1));
 
         // Postprocess the compound graph by combining split cross-hierarchy edges
+        notifyProcessorReady(lgraph, compoundGraphPostprocessor);
         compoundGraphPostprocessor.process(lgraph, theMonitor.subTask(1));
+        notifyProcessorFinished(lgraph, compoundGraphPostprocessor);
 
         theMonitor.done();
     }
@@ -234,13 +240,19 @@ public final class ElkLayered {
                 while (processors.hasNext()) {
                     ILayoutProcessor<LGraph> processor = processors.next();
                     if (!(processor instanceof IHierarchyAwareLayoutProcessor)) {
+                        notifyProcessorReady(graph, processor);
                         processor.process(graph, monitor.subTask(1));
+                        notifyProcessorFinished(graph, processor);
+                        
                     } else if (isRoot(graph)) {
-                        // If processor operates on the full hierarchy, it must be executed on the
-                        // root.
+                        // If processor operates on the full hierarchy, it must be executed on the root
+                        notifyProcessorReady(graph, processor);
                         processor.process(graph, monitor.subTask(1));
+                        notifyProcessorFinished(graph, processor);
+                        
                         // Continue operation with the graph at the bottom of the hierarchy
                         break;
+                        
                     } else { // operates on full hierarchy and is not root graph
                         // skip this processor and pause execution until root graph has processed.
                         break;
@@ -289,7 +301,6 @@ public final class ElkLayered {
      * @param graphs all graphs of the handled hierarchy
      */
     private void reviewAndCorrectHierarchicalProcessors(final LGraph root, final Collection<LGraph> graphs) {
-        
         // Crossing minimization
         //  overwrite invalid child configuration (only layer sweep is hierarchical)
         CrossingMinimizationStrategy parentCms = root.getProperty(LayeredOptions.CROSSING_MINIMIZATION_STRATEGY);
@@ -491,6 +502,41 @@ public final class ElkLayered {
     public List<ILayoutProcessor<LGraph>> getLayoutTestConfiguration(final TestExecutionState state) {
         return state.graphs.get(0).getProperty(InternalProperties.PROCESSORS);
     }
+    
+    /**
+     * Installs the given test controller to be notified of layout events.
+     * 
+     * @param testController the test controller to be installed. May be {@code null}.
+     */
+    public void setTestController(final TestController testController) {
+        this.testController = testController;
+    }
+    
+    /**
+     * Notifies the test controller (if installed) that the given processor is ready to start processing the given
+     * graph. If the graph is the root graph, the corresponding notification is triggered as well.
+     */
+    private void notifyProcessorReady(final LGraph lgraph, final ILayoutProcessor<?> processor) {
+        if (testController != null) {
+            testController.notifyProcessorReady(lgraph, processor);
+            if (isRoot(lgraph)) {
+                testController.notifyRootProcessorReady(lgraph, processor);
+            }
+        }
+    }
+
+    /**
+     * Notifies the test controller (if installed) that the given processor has finished processing the given
+     * graph. If the graph is the root graph, the corresponding notification is triggered as well.
+     */
+    private void notifyProcessorFinished(final LGraph lgraph, final ILayoutProcessor<?> processor) {
+        if (testController != null) {
+            testController.notifyProcessorFinished(lgraph, processor);
+            if (isRoot(lgraph)) {
+                testController.notifyRootProcessorFinished(lgraph, processor);
+            }
+        }
+    }
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -534,7 +580,9 @@ public final class ElkLayered {
                 DebugUtil.writeDebugGraph(lgraph, slotIndex++, processor.getClass().getSimpleName());
                 // elkjs-exclude-end
 
+                notifyProcessorReady(lgraph, processor);
                 processor.process(lgraph, monitor.subTask(monitorProgress));
+                notifyProcessorFinished(lgraph, processor);
             }
 
             // Graph debug output
@@ -547,7 +595,10 @@ public final class ElkLayered {
                 if (monitor.isCanceled()) {
                     return;
                 }
+
+                notifyProcessorReady(lgraph, processor);
                 processor.process(lgraph, monitor.subTask(monitorProgress));
+                notifyProcessorFinished(lgraph, processor);
             }
         }
 
@@ -576,8 +627,10 @@ public final class ElkLayered {
      */
     private void layoutTest(final List<LGraph> lgraphs, final ILayoutProcessor<LGraph> processor) {
         // invoke the layout processor on each of the given graphs
-        for (LGraph graph : lgraphs) {
-            processor.process(graph, new BasicProgressMonitor());
+        for (LGraph lgraph : lgraphs) {
+            notifyProcessorReady(lgraph, processor);
+            processor.process(lgraph, new BasicProgressMonitor());
+            notifyProcessorFinished(lgraph, processor);
         }
     }
 

@@ -62,8 +62,6 @@ import com.google.common.collect.HashBiMap;
  * 
  * @author msp
  * @author mri
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class DotExporter {
 

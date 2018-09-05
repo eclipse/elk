@@ -32,8 +32,6 @@ import java.util.Map.Entry;
  * </code>
  * </p>
  * 
- * @kieler.design 2011-03-14 reviewed by cmot, cds
- * @kieler.rating proposed yellow 2012-07-10 msp
  * @param <F>
  *            type of first contained object
  * @param <S>

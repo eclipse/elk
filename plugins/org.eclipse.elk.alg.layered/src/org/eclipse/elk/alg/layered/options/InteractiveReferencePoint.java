@@ -15,8 +15,6 @@ package org.eclipse.elk.alg.layered.options;
  * of node positions.
  * 
  * @author cds
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public enum InteractiveReferencePoint {
     

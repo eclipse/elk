@@ -18,8 +18,6 @@ import java.util.LinkedList;
  * As described in "Graphic Gems, Andrew Glassner (editor), Academic Press, 1990".
  * 
  * @author uru
- * @kieler.design proposed 2012-11-02 cds
- * @kieler.rating proposed yellow 2012-11-02 cds
  */
 public class CubicSplineInterpolator implements ISplineInterpolator {
 

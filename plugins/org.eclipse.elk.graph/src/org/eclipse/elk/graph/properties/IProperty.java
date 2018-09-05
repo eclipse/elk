@@ -16,8 +16,6 @@ package org.eclipse.elk.graph.properties;
  * with their {@link java.lang.Object#equals(Object)} and {@link java.lang.Object#hashCode()}
  * implementations.
  *
- * @kieler.design 2011-01-17 reviewed by haf, cmot, soh
- * @kieler.rating proposed yellow 2012-07-10 msp
  * @param <T> type of the property
  * @author msp
  */

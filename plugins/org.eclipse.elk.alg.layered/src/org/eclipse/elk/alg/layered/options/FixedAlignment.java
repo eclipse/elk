@@ -14,8 +14,6 @@ package org.eclipse.elk.alg.layered.options;
  * Layout option for the choice of candidates in the Brandes & Köpf node placement.
  *
  * @author jjc
- * @kieler.design proposed by cds
- * @kieler.rating proposed yellow by cds
  */
 public enum FixedAlignment {
     

@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.eclipse.elk</groupId>
   <artifactId>plugins</artifactId>
-  <version>0.4.0-SNAPSHOT</version>
+  <version>0.5.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <parent>
     <groupId>org.eclipse.elk</groupId>
     <artifactId>parent</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
+    <version>0.5.0-SNAPSHOT</version>
     <relativePath>../build/pom.xml</relativePath>
   </parent>
 
   <!-- all plugins need to be listed as module -->
   <modules>
     <module>../build/org.eclipse.elk.targetplatform</module>
-    <!-- Re-enable tests at some point. -->
-    <!--<module>../test</module>-->
     <module>org.eclipse.elk.alg.common</module>
     <module>org.eclipse.elk.alg.disco</module>
     <module>org.eclipse.elk.alg.disco.debug</module>
@@ -34,6 +31,9 @@
     <module>org.eclipse.elk.conn.graphiti</module>
     <module>org.eclipse.elk.core</module>
     <module>org.eclipse.elk.core.debug</module>
+    <module>org.eclipse.elk.core.debug.grandom</module>
+    <module>org.eclipse.elk.core.debug.grandom.ide</module>
+    <module>org.eclipse.elk.core.debug.grandom.ui</module>
     <module>org.eclipse.elk.core.meta</module>
     <module>org.eclipse.elk.core.meta.ui</module>
     <module>org.eclipse.elk.core.service</module>

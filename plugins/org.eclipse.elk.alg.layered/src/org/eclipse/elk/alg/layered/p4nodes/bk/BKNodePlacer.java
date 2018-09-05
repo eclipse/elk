@@ -116,8 +116,6 @@ import com.google.common.collect.Sets;
  * 
  * @author jjc
  * @author uru
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating yellow 2012-08-10 chsch grh KI-19
  */
 public final class BKNodePlacer implements ILayoutPhase<LayeredPhases, LGraph> {
     

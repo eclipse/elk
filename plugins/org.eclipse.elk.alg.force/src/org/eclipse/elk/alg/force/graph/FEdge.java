@@ -22,8 +22,6 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
  * A physico-virtual representation of an edge, including a list of associated bend points.
  * 
  * @author owo
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public final class FEdge extends MapPropertyHolder {
 

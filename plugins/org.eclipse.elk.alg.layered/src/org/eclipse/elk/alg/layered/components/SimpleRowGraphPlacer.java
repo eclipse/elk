@@ -32,8 +32,6 @@ import org.eclipse.elk.core.math.KVector;
  * 
  * @author msp
  * @author cds
- * @kieler.design 2012-08-10 chsch grh
- * @kieler.rating yellow 2014-04-22 review KI-48 by uru, tit, csp
  */
 final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
     

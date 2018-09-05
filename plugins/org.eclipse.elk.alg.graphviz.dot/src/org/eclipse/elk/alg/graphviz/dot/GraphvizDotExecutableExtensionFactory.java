@@ -25,8 +25,6 @@ import com.google.inject.Injector;
  * 
  * @author Sven Efftinge - Initial contribution and API
  * @author Miro Spoenemann - Adapted to Graphviz Dot language
- * @kieler.design proposed by msp
- * @kieler.rating proposed yellow by msp
  */
 public class GraphvizDotExecutableExtensionFactory implements IExecutableExtensionFactory,
         IExecutableExtension {
