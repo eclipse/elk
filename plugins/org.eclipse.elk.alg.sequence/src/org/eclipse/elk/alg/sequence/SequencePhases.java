@@ -24,7 +24,10 @@ public enum SequencePhases {
     /** Assigns messages to layers, which will later determine their Y coordinate. */
     P4_MESSAGE_LAYERING,
     
-    /** Assigns coordinates to things. */
-    P5_COORDINATE_ASSIGNMENT;
+    /** Assigns y coordinates to things. */
+    P5_Y_COORDINATE_ASSIGNMENT,
+    
+    /** Assigns x coordinates to things. */
+    P6_X_COORDINATE_ASSIGNMENT;
     
 }

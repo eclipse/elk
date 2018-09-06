@@ -8,7 +8,7 @@
  * Contributors:
  *     Kiel University - initial API and implementation
  *******************************************************************************/
-package org.eclipse.elk.alg.sequence.p5coordinates;
+package org.eclipse.elk.alg.sequence.p5ycoordinates;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,14 +44,14 @@ import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Calculates coordinates for many objects in a sequence diagram.
+ * Calculates y coordinates for many objects in a sequence diagram.
  * 
  * <p>The coordinate system is interpreted as follows. The point (0, 0) (the upper left corner) is the top left corner
  * of the interaction's content. All coordinates we calculate here are relative to that point, and the graph's size
  * will only span the content as well. Y coordinate 0 is where all lifelines start (unless they are created through a
  * create message). The export code is responsible for including any paddings.</p>
  */
-public class CoordinateCalculator implements ILayoutPhase<SequencePhases, LayoutContext> {
+public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, LayoutContext> {
 
     @Override
     public LayoutProcessorConfiguration<SequencePhases, LayoutContext> getLayoutProcessorConfiguration(

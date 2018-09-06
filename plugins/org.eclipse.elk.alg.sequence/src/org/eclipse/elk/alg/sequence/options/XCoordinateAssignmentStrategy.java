@@ -12,16 +12,16 @@ package org.eclipse.elk.alg.sequence.options;
 
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
-import org.eclipse.elk.alg.sequence.p5coordinates.CoordinateCalculator;
+import org.eclipse.elk.alg.sequence.p6xcoordinates.XCoordinateCalculator;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.ILayoutPhaseFactory;
 
 /**
- * Definition of available coordinate assignment strategies for the sequence diagram layouter.
+ * Definition of available x coordinate assignment strategies for the sequence diagram layouter.
  */
-public enum CoordinateAssignmentStrategy implements ILayoutPhaseFactory<SequencePhases, LayoutContext> {
+public enum XCoordinateAssignmentStrategy implements ILayoutPhaseFactory<SequencePhases, LayoutContext> {
 
-    /** The only coordinate assignment implementation. */
+    /** The only x coordinate assignment implementation. */
     DEFAULT;
 
     
@@ -29,11 +29,11 @@ public enum CoordinateAssignmentStrategy implements ILayoutPhaseFactory<Sequence
     public ILayoutPhase<SequencePhases, LayoutContext> create() {
         switch (this) {
         case DEFAULT:
-            return new CoordinateCalculator();
+            return new XCoordinateCalculator();
             
         default:
             throw new IllegalArgumentException(
-                    "No implementation is available for the coordinate assigner " + this.toString());
+                    "No implementation is available for the x coordinate assigner " + this.toString());
         }
     }
     

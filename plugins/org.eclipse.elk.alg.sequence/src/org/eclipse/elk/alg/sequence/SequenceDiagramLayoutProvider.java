@@ -16,11 +16,12 @@ import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.transform.ElkGraphTransformer;
 import org.eclipse.elk.alg.sequence.graph.transform.IGraphTransformer;
 import org.eclipse.elk.alg.sequence.intermediate.IntermediateProcessorStrategy;
-import org.eclipse.elk.alg.sequence.options.CoordinateAssignmentStrategy;
 import org.eclipse.elk.alg.sequence.options.CycleBreakingStrategy;
 import org.eclipse.elk.alg.sequence.options.MessageLayeringStrategy;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.alg.sequence.options.SpaceAllocationStrategy;
+import org.eclipse.elk.alg.sequence.options.XCoordinateAssignmentStrategy;
+import org.eclipse.elk.alg.sequence.options.YCoordinateAssignmentStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.alg.AlgorithmAssembler;
@@ -30,7 +31,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
- * Layout algorithm for Papyrus sequence diagrams.
+ * Layout algorithm for sequence diagrams.
  */
 public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider {
     
@@ -80,16 +81,18 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
         // Setup the algorithm assembler
         algorithmAssembler.reset();
         
+        algorithmAssembler.setPhase(SequencePhases.P1_LIFELINE_SORTING,
+                context.elkgraph.getProperty(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY));
         algorithmAssembler.setPhase(SequencePhases.P2_SPACE_ALLOCATION,
                 SpaceAllocationStrategy.DEFAULT);
         algorithmAssembler.setPhase(SequencePhases.P3_CYCLE_BREAKING,
                 CycleBreakingStrategy.DEFAULT);
         algorithmAssembler.setPhase(SequencePhases.P4_MESSAGE_LAYERING,
                 MessageLayeringStrategy.DEFAULT);
-        algorithmAssembler.setPhase(SequencePhases.P1_LIFELINE_SORTING,
-                context.elkgraph.getProperty(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY));
-        algorithmAssembler.setPhase(SequencePhases.P5_COORDINATE_ASSIGNMENT,
-                CoordinateAssignmentStrategy.DEFAULT);
+        algorithmAssembler.setPhase(SequencePhases.P5_Y_COORDINATE_ASSIGNMENT,
+                YCoordinateAssignmentStrategy.DEFAULT);
+        algorithmAssembler.setPhase(SequencePhases.P6_X_COORDINATE_ASSIGNMENT,
+                XCoordinateAssignmentStrategy.DEFAULT);
         
         algorithmAssembler.addProcessorConfiguration(BASELINE_CONFIGURATION);
         
