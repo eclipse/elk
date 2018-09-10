@@ -160,9 +160,6 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
         // If we haven't returned during the loop, there was no cycle
         return null;
     }
-    
-    
-    
 
     /**
      * Process a depth first search starting with the given node and check for cycles.
