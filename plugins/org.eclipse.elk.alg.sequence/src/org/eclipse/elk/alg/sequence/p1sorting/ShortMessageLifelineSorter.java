@@ -140,7 +140,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
             for (SMessage message : node.lifeline.getOutgoingMessages()) {
                 int increaseValue = 1 + messageWeightIncrement[message.id];
 
-                SLifeline target = message.getTarget();
+                SLifeline target = message.getTargetLifeline();
                 LifelineNode targetNode = lifelineNodeMap.get(target);
                 if (targetNode != null) {
                     node.addConnectionTo(targetNode, increaseValue);
@@ -160,7 +160,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
             // interaction. This is necessary, because these messages come from the left border of the diagram and are
             // not considered in the normal algorithm.
             for (SMessage message : node.lifeline.getIncomingMessages()) {
-                SLifeline source = message.getSource();
+                SLifeline source = message.getSourceLifeline();
                 LifelineNode oppositeNode = lifelineNodeMap.get(source);
                 MessageType messageType = message.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
                 if (oppositeNode == null && messageType != MessageType.FOUND) {
@@ -205,7 +205,7 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         
         if (candidates.size() > 1) {
             return candidates.stream()
-                    .map(node -> ((SMessage) node.getProperty(InternalSequenceProperties.ORIGIN)).getSource())
+                    .map(node -> ((SMessage) node.getProperty(InternalSequenceProperties.ORIGIN)).getSourceLifeline())
                     .map(ll -> lifelineNodeMap.get(ll))
                     .min(ShortMessageLifelineSorter::compareLifelineNodesByWeightedDegree)
                     .get();
@@ -213,12 +213,12 @@ public final class ShortMessageLifelineSorter implements ILayoutPhase<SequencePh
         } else {
             // If there is just one message in the first layer, return the node corresponding to its source lifeline
             SMessage message = (SMessage) candidates.get(0).getProperty(InternalSequenceProperties.ORIGIN);
-            SLifeline sourceLifeline = message.getSource();
+            SLifeline sourceLifeline = message.getSourceLifeline();
             
             LifelineNode lifelineNode = lifelineNodeMap.get(sourceLifeline);
             if (lifelineNode == null) {
                 // Found messages have no source lifeline. Therefore their target is the first lifeline 
-                lifelineNode = lifelineNodeMap.get(message.getTarget());
+                lifelineNode = lifelineNodeMap.get(message.getTargetLifeline());
             }
             
             return lifelineNode;

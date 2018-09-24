@@ -16,10 +16,8 @@ package org.eclipse.elk.alg.sequence.options;
 public enum LabelAlignmentStrategy {
     
     /** Centers the label between the source lifeline and its next neighbour lifeline. */
-    SOURCE_CENTER,
+    //SOURCE_CENTER,
     /** Aligns the label directly at the source lifeline. */
-    SOURCE,
-    /** Aligns the label at the center of its message. */
-    CENTER;
+    SOURCE;
     
 }

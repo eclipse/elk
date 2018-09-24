@@ -70,7 +70,7 @@ public class LayeredGraphCreator implements ILayoutProcessor<LayoutContext> {
 
             // Handle found messages (whose source lifeline is a dummy lifeline)
             for (SMessage message : lifeline.getIncomingMessages()) {
-                if (message.getSource().isDummy()) {
+                if (message.getSourceLifeline().isDummy()) {
                     LNode node = SequenceUtils.createLNode(context.lgraph);
                     node.getLabels().add(new LLabel("Node" + nodeNumber++));
 
@@ -122,14 +122,14 @@ public class LayeredGraphCreator implements ILayoutProcessor<LayoutContext> {
 
             // Handle found messages (whose source lifeline is a dummy lifeline)
             for (SMessage message : lifeline.getIncomingMessages()) {
-                if (message.getSource().isDummy()) {
+                if (message.getSourceLifeline().isDummy()) {
                     messages.add(message);
                 }
             }
         }
         
         // Sort the messages ascendingly by y coordinate
-        messages.sort((msg1, msg2) -> Double.compare(msg1.getSourceYPos(), msg2.getSourceYPos()));
+        messages.sort((msg1, msg2) -> Double.compare(msg1.getSourcePosition().y, msg2.getSourcePosition().y));
         
         // Connect the message nodes
         for (int i = messages.size() - 2; i >= 0; i--) {

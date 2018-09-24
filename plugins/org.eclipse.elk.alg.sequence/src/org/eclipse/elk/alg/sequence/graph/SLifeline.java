@@ -206,22 +206,22 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
      */
     public void addMessage(final SMessage newMsg) {
         // Count the message (both cases may be true in the case of self message)
-        if (newMsg.getSource() == this) {
+        if (newMsg.getSourceLifeline() == this) {
             outgoingMessageCount++;
         }
         
-        if (newMsg.getTarget() == this) {
+        if (newMsg.getTargetLifeline() == this) {
             incomingMessageCount++;
         }
         
         // Get the position of the message at this lifeline
-        double newMsgYPos = newMsg.getSource() == this ? newMsg.getSourceYPos() : newMsg.getTargetYPos();
+        double newMsgYPos = newMsg.getSourceLifeline() == this ? newMsg.getSourceYPos() : newMsg.getTargetYPos();
         
         // Insert the message just before the first message with a greater y position
         ListIterator<SMessage> iterator = messages.listIterator();
         while (iterator.hasNext()) {
             SMessage currMsg = iterator.next();
-            double currMsgYPos = currMsg.getSource() == this ? currMsg.getSourceYPos() : currMsg.getTargetYPos();
+            double currMsgYPos = currMsg.getSourceLifeline() == this ? currMsg.getSourceYPos() : currMsg.getTargetYPos();
             
             if (newMsgYPos < currMsgYPos) {
                 iterator.previous();
@@ -245,7 +245,7 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
             private HashSet<SMessage> selfMessages = new HashSet<SMessage>();
             public boolean apply(final SMessage message) {
                 // Workaround for self messages that are returned twice if just checking the source
-                if (message.getSource() == message.getTarget()) {
+                if (message.getSourceLifeline() == message.getTargetLifeline()) {
                     if (selfMessages.contains(message)) {
                         return false;
                     } else {
@@ -253,7 +253,7 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
                         return true;
                     }
                 }
-                return message.getSource() == SLifeline.this;
+                return message.getSourceLifeline() == SLifeline.this;
             }
         });
     }
@@ -278,7 +278,7 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
             private HashSet<SMessage> selfMessages = new HashSet<SMessage>();
             public boolean apply(final SMessage message) {
                 // Workaround for self messages that are returned twice if just checking the target
-                if (message.getSource() == message.getTarget()) {
+                if (message.getSourceLifeline() == message.getTargetLifeline()) {
                     if (selfMessages.contains(message)) {
                         return false;
                     } else {
@@ -286,7 +286,7 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
                         return true;
                     }
                 }
-                return message.getTarget() == SLifeline.this;
+                return message.getTargetLifeline() == SLifeline.this;
             }
         });
     }

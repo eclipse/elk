@@ -50,6 +50,7 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports id.upperEmptyArea
     supports id.sourceExecutions
     supports id.targetExecutions
+    supports id.parentExecution
     supports id.attachedElements
     
     supports type.node
@@ -72,7 +73,6 @@ algorithm sequence(SequenceDiagramLayoutProvider) {
     supports degreeBasedLeftmostLifeline
     
     supports labelSide
-    supports labelAlignment
     supports verticalCompaction
     supports org.eclipse.elk.edgeLabels.inline
     
@@ -147,6 +147,13 @@ group id {
                     actually be visually attached to."
         targets edges
         default = Lists.newArrayList
+    }
+    
+    programmatic option parentExecution : int {
+        label "Parent Execution ID"
+        description "Element ID of the execution that is the parent of the execution this property is set on. Determines
+                    how executions are nested."
+        targets nodes
     }
     
     programmatic option attachedElements : List<Integer> {
@@ -267,13 +274,6 @@ option labelSide : LabelSideSelection {
     description "Method to decide on edge label sides."
     default = LabelSideSelection.ALWAYS_UP
     targets parents
-}
-
-option labelAlignment : LabelAlignmentStrategy {
-    label "Label Alignment"
-    description "The strategy used to find the horizontal position for message labels."
-    targets parents
-    default = LabelAlignmentStrategy.SOURCE_CENTER
 }
 
 option verticalCompaction : boolean {

@@ -15,10 +15,6 @@ public enum LabelSideSelection {
     /** Labels are always placed above their edge. */
     ALWAYS_UP,
     /** Labels are always placed below their edge. */
-    ALWAYS_DOWN,
-    /** Labels are always placed above their edge if the edge points rightwards, or below if it doesn't. */
-    DIRECTION_UP,
-    /** Labels are always placed below their edge if the edge points leftwards, or above if it doesn't. */
-    DIRECTION_DOWN;
+    ALWAYS_DOWN;
 
 }

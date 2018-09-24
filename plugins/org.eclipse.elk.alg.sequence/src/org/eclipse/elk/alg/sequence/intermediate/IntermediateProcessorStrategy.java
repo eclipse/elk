@@ -26,7 +26,7 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Lay
     // Before Phase 1
     
     /** Creates and initializes the layered graph based on the sequence graph. */
-    LAYERED_GRAPH_CREATOR;
+    LAYERED_GRAPH_CREATOR,
 
 
     // Before Phase 2
@@ -39,15 +39,23 @@ public enum IntermediateProcessorStrategy implements ILayoutProcessorFactory<Lay
 
 
     // Before Phase 5
+    
+    /** Computes nesting slots for executions that will later deterine their horizontal offset. */
+    EXECUTION_SLOT_CALCULATOR;
+    
+    
+    // Before Phase 6
 
 
-    // After Phase 5
+    // After Phase 6
     
     
 
     @Override
     public ILayoutProcessor<LayoutContext> create() {
         switch (this) {
+        case EXECUTION_SLOT_CALCULATOR:
+            return new ExecutionSlotCalculator();
         case LAYERED_GRAPH_CREATOR:
             return new LayeredGraphCreator();
         default:

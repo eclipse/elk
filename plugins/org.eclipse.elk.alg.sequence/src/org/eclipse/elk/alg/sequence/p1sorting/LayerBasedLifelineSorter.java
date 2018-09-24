@@ -60,7 +60,7 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
         for (LNode uppermostMessageNode : uppermostMessageNodes) {
             SMessage uppermostMessage = messageFor(uppermostMessageNode);
             
-            if (uppermostMessage.getSource().getHorizontalSlot() == UNPROCESSED) {
+            if (uppermostMessage.getSourceLifeline().getHorizontalSlot() == UNPROCESSED) {
                 // Place the lifeline and follow its outgoing messages
                 placeSourceLifelineAndSuccessors(uppermostMessage);
             }
@@ -128,14 +128,14 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
      * messages to place its unplaced successor lifelines.
      */
     private void placeSourceLifelineAndSuccessors(final SMessage message) {
-        assert message.getSource().getHorizontalSlot() == UNPROCESSED;
+        assert message.getSourceLifeline().getHorizontalSlot() == UNPROCESSED;
         
-        assignToNextPosition(message.getSource());
+        assignToNextPosition(message.getSourceLifeline());
         
         SMessage currMsg = message;
         do {
             // The target of this lifeline is set to next position
-            SLifeline targetLifeline = currMsg.getTarget();
+            SLifeline targetLifeline = currMsg.getTargetLifeline();
             assignToNextPosition(targetLifeline);
 
             // Find the uppermost outgoing message of the next lifeline
@@ -176,7 +176,7 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
      */
     private SMessage uppermostOutgoingMessageToUnprocessedLifeline(final SLifeline lifeline) {
         for (SMessage outgoingMessage : lifeline.getOutgoingMessages()) {
-            if (outgoingMessage.getTarget().getHorizontalSlot() == UNPROCESSED) {
+            if (outgoingMessage.getTargetLifeline().getHorizontalSlot() == UNPROCESSED) {
                 return outgoingMessage;
             }
         }
@@ -232,7 +232,7 @@ public final class LayerBasedLifelineSorter implements ILayoutPhase<SequencePhas
      * Returns the source lifeline of the message represented by the given node.
      */
     private static SLifeline sourceLifelineFor(final LNode messageNode) {
-        return messageFor(messageNode).getSource();
+        return messageFor(messageNode).getSourceLifeline();
     }
     
 }

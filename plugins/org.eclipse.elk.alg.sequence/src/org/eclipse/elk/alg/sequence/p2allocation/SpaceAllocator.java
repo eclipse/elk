@@ -218,8 +218,9 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
      * 
      * @param nodes
      *            the nodes that get a new predecessor.
+     * @return the newly created dummy node.
      */
-    private void insertDummyNodeBefore(final LNode node) {
+    private LNode insertDummyNodeBefore(final LNode node) {
         LNode dummy = SequenceUtils.createLNode(node.getGraph());
         LPort dummyPort = dummy.getPorts().get(0);
         
@@ -233,6 +234,8 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
         LEdge dummyEdge = new LEdge();
         dummyEdge.setSource(dummyPort);
         dummyEdge.setTarget(node.getPorts().get(0));
+        
+        return dummy;
     }
     
     /**

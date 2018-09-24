@@ -232,8 +232,8 @@ public final class SCycleBreaker implements ILayoutPhase<SequencePhases, LayoutC
         lgraph.getLayerlessNodes().add(newNode);
 
         SMessage message = (SMessage) node.getProperty(InternalSequenceProperties.ORIGIN);
-        SLifeline sourceLL = message.getSource();
-        SLifeline targetLL = message.getTarget();
+        SLifeline sourceLL = message.getSourceLifeline();
+        SLifeline targetLL = message.getTargetLifeline();
         
         for (LEdge edge : node.getConnectedEdges()) {
             SLifeline belongsTo = edge.getProperty(InternalSequenceProperties.BELONGS_TO_LIFELINE);

@@ -17,7 +17,9 @@ import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
 import com.google.common.collect.Lists;
 
 /**
- * Data structure for execution specification elements in sequence diagrams.
+ * Data structure for execution specification elements in sequence diagrams. An execution can have child executions.
+ * These are nested executions this execution is the direct parent of. The nesting structure establishes how executions
+ * are offset in the horizontal direction in the final layout.
  */
 public final class SExecution extends SShape {
 
@@ -27,11 +29,15 @@ public final class SExecution extends SShape {
     private SequenceExecutionType type = null;
     /** The list of connected messages. */
     private final List<SMessage> messages = Lists.newArrayList();
+    /** Parent execution. */
+    private SExecution parent = null;
+    /** Child executions. */
+    private final List<SExecution> children = Lists.newArrayList();
+    /** The slot the execution will be placed in. This will determine its horizontal offset in the final layout. */
+    private int slot = 0;
 
     /**
      * Get the type of the execution.
-     * 
-     * @return the type
      */
     public SequenceExecutionType getType() {
         return type;
@@ -39,9 +45,6 @@ public final class SExecution extends SShape {
 
     /**
      * Set the type of the execution.
-     * 
-     * @param type
-     *            the new type
      */
     public void setType(final SequenceExecutionType type) {
         this.type = type;
@@ -49,26 +52,51 @@ public final class SExecution extends SShape {
 
     /**
      * Get the list of messages that are connected to the execution.
-     * 
-     * @return the list of messages
      */
     public List<SMessage> getMessages() {
         return messages;
     }
+    
+    /**
+     * Returns the parent execution, if any.
+     */
+    public SExecution getParent() {
+        return parent;
+    }
 
     /**
-     * Add a message to the list of connected messages.
-     * 
-     * @param message
-     *            the new message
+     * Sets the parent execution. This will not automatically add the execution to the parent's list of children.
      */
-    public void addMessage(final SMessage message) {
-        this.messages.add(message);
+    public void setParent(final SExecution parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Get the list of child executions of this execution. Changes to this list are not automatically reflected in the
+     * parent execution fields of affected executions.
+     */
+    public List<SExecution> getChildren() {
+        return children;
+    }
+
+    /**
+     * Returns the slot the execution will be placed in.
+     */
+    public int getSlot() {
+        return slot;
+    }
+
+    /**
+     * Sets the slot the execution will be placed in.
+     */
+    public void setSlot(final int slot) {
+        this.slot = slot;
     }
 
     @Override
     public String toString() {
-        return "Messages: " + messages + ", Pos: (" + getPosition().x + "/" + getPosition().y + "), Size: ("
-                + getSize().x + "/" + getSize().y + ")";
+        return "Messages: " + messages
+                + ", Pos: (" + getPosition().x + "/" + getPosition().y
+                + "), Size: (" + getSize().x + "/" + getSize().y + ")";
     }
 }

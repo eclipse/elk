@@ -310,7 +310,8 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
         // If we have a message, check whether it is part of all areas in the lifelines between its end points
         SMessage message = SequenceUtils.originObjectFor(node, SMessage.class);
         if (message != null) {
-            return isPartOfAllAreas(message, message.getSource(), message.getTarget(), activeAreasPerLifeline);
+            return isPartOfAllAreas(message, message.getSourceLifeline(), message.getTargetLifeline(),
+                    activeAreasPerLifeline);
         }
         
         // If we have the top node of an area, check whether the area should be active in this layer (as determined
@@ -419,13 +420,13 @@ public final class MessageLayerer implements ILayoutPhase<SequencePhases, Layout
             rightmostLifeline = -1;
             
             for (SMessage smessage : area.getMessages()) {
-                SLifeline source = smessage.getSource();
+                SLifeline source = smessage.getSourceLifeline();
                 if (!source.isDummy()) {
                     leftmostLifeline = Math.min(leftmostLifeline, source.id);
                     rightmostLifeline = Math.max(rightmostLifeline, source.id);
                 }
 
-                SLifeline target = smessage.getTarget();
+                SLifeline target = smessage.getTargetLifeline();
                 if (!target.isDummy()) {
                     leftmostLifeline = Math.min(leftmostLifeline, target.id);
                     rightmostLifeline = Math.max(rightmostLifeline, target.id);

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.graph;
 
-import java.security.cert.Certificate;
-
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.sequence.graph.SGraphAdapters.SGraphAdapter;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
@@ -65,6 +63,8 @@ public final class LayoutContext {
     public final double lifelineSpacing;
     /** Vertical spacing between two consecutive layers of messages. */
     public final double messageSpacing;
+    /** Width of a self message without an inline message label. */
+    public final double selfMessageWidth;
     /** Space to be left between labels and labeled elements. */
     public final double labelSpacing;
     /** Default padding between an area's border and its innards. Can be overriden by area nodes. */
@@ -93,8 +93,8 @@ public final class LayoutContext {
         
         labelSideSelection = parentNode.getProperty(
                 SequenceDiagramOptions.LABEL_SIDE);
-        labelAlignment = parentNode.getProperty(
-                SequenceDiagramOptions.LABEL_ALIGNMENT);
+        // This used to be an option and might be again in the future, so we're keeping this setting around
+        labelAlignment = LabelAlignmentStrategy.SOURCE;
         verticalCompaction = parentNode.getProperty(
                 SequenceDiagramOptions.VERTICAL_COMPACTION);
         
@@ -115,6 +115,7 @@ public final class LayoutContext {
                 SequenceDiagramOptions.SPACING_LIFELINE);
         messageSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.SPACING_MESSAGE);
+        selfMessageWidth = messageSpacing / 2;
         labelSpacing = parentNode.getProperty(
                 SequenceDiagramOptions.SPACING_EDGE_LABEL);
         areaPadding = parentNode.getProperty(

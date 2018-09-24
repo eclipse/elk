@@ -38,7 +38,9 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
     /** The processors we always want to have in our algorithm. */
     private static final LayoutProcessorConfiguration<SequencePhases, LayoutContext> BASELINE_CONFIGURATION =
             LayoutProcessorConfiguration.<SequencePhases, LayoutContext>create()
-                .addBefore(SequencePhases.P1_LIFELINE_SORTING, IntermediateProcessorStrategy.LAYERED_GRAPH_CREATOR);
+                .addBefore(SequencePhases.P1_LIFELINE_SORTING, IntermediateProcessorStrategy.LAYERED_GRAPH_CREATOR)
+                .addBefore(SequencePhases.P5_X_COORDINATE_ASSIGNMENT,
+                        IntermediateProcessorStrategy.EXECUTION_SLOT_CALCULATOR);
     
     /** The algorithm assembler we use to assemble our algorithm configurations. */
     private final AlgorithmAssembler<SequencePhases, LayoutContext> algorithmAssembler =
@@ -89,10 +91,10 @@ public final class SequenceDiagramLayoutProvider extends AbstractLayoutProvider 
                 CycleBreakingStrategy.DEFAULT);
         algorithmAssembler.setPhase(SequencePhases.P4_MESSAGE_LAYERING,
                 MessageLayeringStrategy.DEFAULT);
-        algorithmAssembler.setPhase(SequencePhases.P5_Y_COORDINATE_ASSIGNMENT,
-                YCoordinateAssignmentStrategy.DEFAULT);
-        algorithmAssembler.setPhase(SequencePhases.P6_X_COORDINATE_ASSIGNMENT,
+        algorithmAssembler.setPhase(SequencePhases.P5_X_COORDINATE_ASSIGNMENT,
                 XCoordinateAssignmentStrategy.DEFAULT);
+        algorithmAssembler.setPhase(SequencePhases.P6_Y_COORDINATE_ASSIGNMENT,
+                YCoordinateAssignmentStrategy.DEFAULT);
         
         algorithmAssembler.addProcessorConfiguration(BASELINE_CONFIGURATION);
         

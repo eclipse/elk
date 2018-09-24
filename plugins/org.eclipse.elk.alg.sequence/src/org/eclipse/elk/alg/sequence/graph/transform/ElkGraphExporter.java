@@ -23,6 +23,7 @@ import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.LabelAlignmentStrategy;
+import org.eclipse.elk.alg.sequence.options.LabelSideSelection;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.alg.sequence.options.SequenceExecutionType;
@@ -52,6 +53,162 @@ public final class ElkGraphExporter {
     private KVector offset = null;
 
     public void applyLayout(final LayoutContext context) {
+        // Set the size of the interaction and place it
+        applyToInteraction(context);
+        
+        // Apply coordinates to the different diagram elements
+        applyToLifelines(context);
+    }
+
+    /**
+     * Sets the size of the node that represents the interaction and places it such that its margins are respected.
+     */
+    private void applyToInteraction(final LayoutContext context) {
+        // The SGraph already has the final size including padding and all
+        ElkUtil.resizeNode(context.elkgraph,
+                context.sgraph.getSize().x,
+                context.sgraph.getSize().y,
+                false,
+                false);
+        
+        // Place it such that it will be centered in the diagram
+        ElkMargin interactionMargins = context.elkgraph.getProperty(SequenceDiagramOptions.MARGINS);
+        context.elkgraph.setLocation(interactionMargins.left, interactionMargins.top);
+    }
+
+    private void applyToLifelines(final LayoutContext context) {
+        for (SLifeline sLifeline : context.sgraph.getLifelines()) {
+            // Apply height and coordinates
+            ElkNode elkLifeline = (ElkNode) sLifeline.getProperty(InternalSequenceProperties.ORIGIN);
+            elkLifeline.setX(sLifeline.getPosition().x);
+            elkLifeline.setY(sLifeline.getPosition().y);
+            elkLifeline.setHeight(sLifeline.getSize().y);
+            
+            applyToMessages(context, sLifeline);
+            applyToExecutions(context, sLifeline);
+        }
+    }
+    
+    private void applyToMessages(final LayoutContext context, final SLifeline sLifeline) {
+        for (SMessage sMessage : sLifeline.getOutgoingMessages()) {
+            // TODO Does this cover found messages?
+            ElkEdge elkEdge = (ElkEdge) sMessage.getProperty(InternalSequenceProperties.ORIGIN);
+            ElkEdgeSection elkEdgeSection = ElkGraphUtil.firstEdgeSection(elkEdge, true, true);
+            
+            KVector sourcePos = sMessage.getSourcePosition();
+            elkEdgeSection.setStartLocation(
+                    sourcePos.x,
+                    sourcePos.y);
+            
+            for (KVector bp : sMessage.getBendPoints()) {
+                ElkGraphUtil.createBendPoint(elkEdgeSection, bp.x, bp.y);
+            }
+            
+            KVector targetPos = sMessage.getTargetPosition();
+            elkEdgeSection.setEndLocation(
+                    targetPos.x,
+                    targetPos.y);
+            
+            if (sMessage.getLabel() != null) {
+                applyToLabel(sMessage.getLabel());
+            }
+        }
+    }
+    
+    private void applyToExecutions(final LayoutContext context, final SLifeline sLifeline) {
+        for (SExecution sExecution : sLifeline.getExcecutions()) {
+            // Apply height and coordinates
+            ElkNode elkExecution = (ElkNode) sExecution.getProperty(InternalSequenceProperties.ORIGIN);
+            elkExecution.setX(sExecution.getPosition().x);
+            elkExecution.setY(sExecution.getPosition().y);
+            elkExecution.setWidth(sExecution.getSize().x);
+            elkExecution.setHeight(sExecution.getSize().y);
+        }
+    }
+    
+    private void applyToLabel(final SLabel sLabel) {
+        ElkLabel elkLabel = (ElkLabel) sLabel.getProperty(InternalSequenceProperties.ORIGIN);
+        
+        KVector sLabelPos = sLabel.getPosition();
+        elkLabel.setLocation(sLabelPos.x, sLabelPos.y);
+        
+        KVector sLabelSize = sLabel.getSize();
+        elkLabel.setDimensions(sLabelSize.x, sLabelSize.y);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void oldApplyLayout(final LayoutContext context) {
         // The padding will be applied in this step, so calculate the resulting offset as a KVector that we can
         // easily add to things
         ElkPadding sgraphPadding = context.sgraph.getPadding();
@@ -177,7 +334,7 @@ public final class ElkGraphExporter {
     private void applyOutgoingMessageCoordinates(final SLifeline slifeline, final SMessage smessage,
             final LayoutContext context) {
         
-        assert slifeline == smessage.getSource();
+        assert slifeline == smessage.getSourceLifeline();
         
         // Clear the bend points of all edges (this is safe to do here since we will only be adding
         // bend points for self loops, which we encounter first as outgoing messages, so we're not
@@ -237,7 +394,7 @@ public final class ElkGraphExporter {
         }
         
         // Specify bend points for self loops
-        if (smessage.getSource() == smessage.getTarget()) {
+        if (smessage.getSourceLifeline() == smessage.getTargetLifeline()) {
             ElkGraphUtil.createBendPoint(edgeSection,
                     llCenter + context.messageSpacing / 2 + offset.x,
                     edgeSection.getStartY());
@@ -262,7 +419,7 @@ public final class ElkGraphExporter {
     private void applyIncomingMessageCoordinates(final SLifeline slifeline, final SMessage smessage,
             final LayoutContext context) {
         
-        assert slifeline == smessage.getTarget();
+        assert slifeline == smessage.getTargetLifeline();
         
         // Compute the horizontal center of the lifeline to be used later
         double llCenter = slifeline.getPosition().x + slifeline.getSize().x / 2;
@@ -342,7 +499,7 @@ public final class ElkGraphExporter {
         }
         
         // Specify bend points for self loops
-        if (smessage.getSource() == smessage.getTarget()) {
+        if (smessage.getSourceLifeline() == smessage.getTargetLifeline()) {
             ElkGraphUtil.createBendPoint(edgeSection,
                     llCenter + context.messageSpacing / 2 + offset.x,
                     edgeSection.getEndY());
@@ -355,7 +512,7 @@ public final class ElkGraphExporter {
     private double upperSequencePositionForMessage(final SMessage smessage, final boolean outgoing,
             final LayoutContext context) {
         
-        if (smessage.getSource() != smessage.getTarget()) {
+        if (smessage.getSourceLifeline() != smessage.getTargetLifeline()) {
             return outgoing ? smessage.getSourceYPos() : smessage.getTargetYPos();
         } else {
             return smessage.getSourceYPos() + context.messageSpacing / 2;
@@ -365,7 +522,7 @@ public final class ElkGraphExporter {
     private double lowerSequencePositionForMessage(final SMessage smessage, final boolean outgoing,
             final LayoutContext context) {
         
-        if (smessage.getSource() != smessage.getTarget()) {
+        if (smessage.getSourceLifeline() != smessage.getTargetLifeline()) {
             return outgoing ? smessage.getSourceYPos() : smessage.getTargetYPos();
         } else {
             return smessage.getSourceYPos();
@@ -388,8 +545,8 @@ public final class ElkGraphExporter {
      */
     private void placeLabels(final LayoutContext context, final SMessage smessage, final ElkEdge kmessage) {
         MessageType msgType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
-        SLifeline msgSource = smessage.getSource();
-        SLifeline msgTarget = smessage.getTarget();
+        SLifeline msgSource = smessage.getSourceLifeline();
+        SLifeline msgTarget = smessage.getTargetLifeline();
         
         applyLabelSize(smessage);
         
@@ -460,7 +617,7 @@ public final class ElkGraphExporter {
     private void placeRightPointingMessageLabels(final LayoutContext context, final SMessage smessage,
             final ElkLabel klabel) {
         
-        SLifeline srcLL = smessage.getSource();
+        SLifeline srcLL = smessage.getSourceLifeline();
         double llCenter = srcLL.getPosition().x + srcLL.getSize().x / 2;
         
         placeLabelVertically(context, smessage, klabel, true);
@@ -470,14 +627,10 @@ public final class ElkGraphExporter {
 
         MessageType msgType = smessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE);
         boolean lostFound = false;
-        if (isRightmostLifeline(srcLL) && alignment == LabelAlignmentStrategy.SOURCE_CENTER) {
-            // This is a lost message; fall back to source placement
-            alignment = LabelAlignmentStrategy.SOURCE;
-            
-        } else if (msgType == MessageType.CREATE) {
+        if (msgType == MessageType.CREATE) {
             // If the two lifelines connected by the message are adjacent, we fall back to SOURCE placement to avoid
             // overlapping the target lifeline header
-            SLifeline targetLL = smessage.getTarget();
+            SLifeline targetLL = smessage.getTargetLifeline();
             
             if (srcLL.getHorizontalSlot() == targetLL.getHorizontalSlot() - 1) {
                 alignment = LabelAlignmentStrategy.SOURCE;
@@ -498,27 +651,9 @@ public final class ElkGraphExporter {
             
         } else {
             // Actually calculate the horizontal position
-            switch (alignment) {
-            case SOURCE_CENTER:
-                // Place label centered between the source lifeline and the next lifeline (which must exist at
-                // this point)
-                assert context.sgraph.getLifelines().size() > srcLL.getHorizontalSlot() + 1;
-                SLifeline nextLL = context.sgraph.getLifelines().get(srcLL.getHorizontalSlot() + 1);
-                
-                double center = (llCenter + nextLL.getPosition().x + nextLL.getSize().x / 2) / 2;
-                klabel.setX(center - klabel.getWidth() / 2 + offset.x);
-                break;
-                
-            case SOURCE:
+            if (alignment == LabelAlignmentStrategy.SOURCE) {
                 // Place label near the source lifeline
                 klabel.setX(llCenter + context.labelSpacing + offset.x);
-                break;
-                
-            case CENTER:
-                // Place label at the center of the message
-                double targetCenter = smessage.getTarget().getPosition().x + smessage.getTarget().getSize().x / 2;
-                klabel.setX((llCenter + targetCenter) / 2 - klabel.getWidth() / 2 + offset.x);
-                break;
             }
         }
         
@@ -539,7 +674,7 @@ public final class ElkGraphExporter {
     private void placeLeftPointingMessageLabels(final LayoutContext context, final SMessage smessage,
             final ElkLabel klabel) {
 
-        SLifeline srcLL = smessage.getSource();
+        SLifeline srcLL = smessage.getSourceLifeline();
         double llCenter = srcLL.getPosition().x + srcLL.getSize().x / 2;
         
         placeLabelVertically(context, smessage, klabel, false);
@@ -547,32 +682,10 @@ public final class ElkGraphExporter {
         // For the horizontal alignment, we need to check which alignment strategy to use
         LabelAlignmentStrategy alignment = context.labelAlignment;
 
-        if (isLeftmostLifeline(srcLL) && alignment == LabelAlignmentStrategy.SOURCE_CENTER) {
-            // This is a found message; fall back to source placement
-            alignment = LabelAlignmentStrategy.SOURCE;
-        }
-        
         // Actually calculate the horizontal position
-        switch (alignment) {
-        case SOURCE_CENTER:
-            // Place label centered between the source and the previous lifeline (which must exist at this point)
-            assert srcLL.getHorizontalSlot() > 0;
-            SLifeline prevLL = context.sgraph.getLifelines().get(srcLL.getHorizontalSlot() - 1);
-            
-            double center = (llCenter + prevLL.getPosition().x + prevLL.getSize().x / 2) / 2;
-            klabel.setX(center - klabel.getWidth() / 2 + offset.x);
-            break;
-            
-        case SOURCE:
+        if (alignment == LabelAlignmentStrategy.SOURCE) {
             // Place label near the source lifeline
             klabel.setX(llCenter - klabel.getWidth() - context.labelSpacing + offset.x);
-            break;
-            
-        case CENTER:
-            // Place label at the center of the message
-            double targetCenter = smessage.getTarget().getPosition().x + smessage.getTarget().getSize().x / 2;
-            klabel.setX((llCenter + targetCenter) / 2 - klabel.getWidth() / 2 + offset.x);
-            break;
         }
         
         ensureGraphIsWideEnough(context, klabel.getX() + klabel.getWidth());
@@ -596,26 +709,10 @@ public final class ElkGraphExporter {
             
         } else {
             // Whether we place the label above or below its edge depends on the side selections trategy
-            boolean placeAbove = true;
-            
-            switch (context.labelSideSelection) {
-            case ALWAYS_DOWN:
-                placeAbove = false;
-                break;
-                
-            case DIRECTION_UP:
-                placeAbove = messagePointsRight;
-                break;
-                
-            case DIRECTION_DOWN:
-                placeAbove = !messagePointsRight;
-                break;
-            }
-            
-            if (placeAbove) {
-                klabel.setY(smessage.getSourceYPos() - klabel.getHeight() - 2);
-            } else {
+            if (context.labelSideSelection != LabelSideSelection.ALWAYS_DOWN) {
                 klabel.setY(smessage.getSourceYPos() + 2);
+            } else {
+                klabel.setY(smessage.getSourceYPos() - klabel.getHeight() - 2);
             }
         }
         
@@ -666,14 +763,14 @@ public final class ElkGraphExporter {
             // Walk through execution's messages and adjust their position
             for (SMessage smessage : sexecution.getMessages()) {
                 // Self-message are processed later
-                if (smessage.getSource() == smessage.getTarget()) {
+                if (smessage.isSelfMessage()) {
                     selfMessages.put(smessage, sexecution);
                     continue;
                 }
                 
                 // Check if the message points rightwards
-                boolean messagePointsRightwards =
-                        smessage.getSource().getHorizontalSlot() < smessage.getTarget().getHorizontalSlot();
+                boolean messagePointsRightwards = smessage.getSourceLifeline().getHorizontalSlot()
+                        < smessage.getTargetLifeline().getHorizontalSlot();
 
                 ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalSequenceProperties.ORIGIN);
                 ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
@@ -681,7 +778,7 @@ public final class ElkGraphExporter {
                 // x coordinate for messages attached to the left side of the execution
                 double newXPos = sexecution.getPosition().x + offset.x;
                 
-                if (smessage.getSource() == slifeline) {
+                if (smessage.getSourceLifeline() == slifeline) {
                     if (messagePointsRightwards) {
                         newXPos += sexecution.getSize().x;
                     }
@@ -691,7 +788,7 @@ public final class ElkGraphExporter {
                     
                     // TODO Labels positioned at the source should be offset as well
                     
-                } else if (smessage.getTarget() == slifeline) {
+                } else if (smessage.getTargetLifeline() == slifeline) {
                     if (!messagePointsRightwards) {
                         newXPos += sexecution.getSize().x;
                     }
@@ -781,7 +878,7 @@ public final class ElkGraphExporter {
         double lifelineXCenter = slifeline.getPosition().x + slifeline.getSize().x / 2;
         
         for (final SMessage smessage : selfMessages.keySet()) {
-            assert smessage.getSource() == slifeline && smessage.getTarget() == slifeline;
+            assert smessage.getSourceLifeline() == slifeline && smessage.getTargetLifeline() == slifeline;
             
             // Retrieve message layout info
             ElkEdge kmessage = (ElkEdge) smessage.getProperty(InternalSequenceProperties.ORIGIN);

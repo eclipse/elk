@@ -12,11 +12,13 @@ package org.eclipse.elk.alg.sequence.options;
  */
 public enum MessageCommentAlignment {
     
-    /** Left-aligned. */
+    /** Left-aligned. @deprecated */
     LEFT,
-    /** Centered. */
+    /** Centered. @deprecated */
     CENTER,
-    /** Right-aligned. */
-    RIGHT;
+    /** Right-aligned. @deprecated */
+    RIGHT,
+    SOURCE,
+    TARGET;
     
 }

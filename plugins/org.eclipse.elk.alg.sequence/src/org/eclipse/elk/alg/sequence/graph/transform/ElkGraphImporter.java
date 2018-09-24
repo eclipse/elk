@@ -254,6 +254,7 @@ public final class ElkGraphImporter {
             if (kchildNodeType.isExecutionType()) {
                 // Create a new sequence execution for this thing
                 SExecution sexecution = new SExecution();
+                sexecution.copyProperties(kchild);
                 sexecution.setProperty(InternalSequenceProperties.ORIGIN, kchild);
                 sexecution.setType(SequenceExecutionType.fromNodeType(kchildNodeType));
                 executionIdMap.put(kchild.getProperty(SequenceDiagramOptions.ID_ELEMENT), sexecution);
@@ -262,6 +263,19 @@ public final class ElkGraphImporter {
 
             } else if (kchildNodeType == NodeType.DESTRUCTION_EVENT) {
                 getParentLifeline(kchild).setProperty(InternalSequenceProperties.DESTRUCTION_NODE, kchild);
+            }
+        }
+        
+        // Iterate over all created executions again and establish their parent-child relationships
+        for (SExecution sexecution : executionIdMap.values()) {
+            if (sexecution.hasProperty(SequenceDiagramOptions.ID_PARENT_EXECUTION)) {
+                Integer parentId = sexecution.getProperty(SequenceDiagramOptions.ID_PARENT_EXECUTION);
+                SExecution parent = executionIdMap.get(parentId);
+                
+                if (parent != null) {
+                    parent.getChildren().add(sexecution);
+                    sexecution.setParent(parent);
+                }
             }
         }
     }
@@ -333,8 +347,8 @@ public final class ElkGraphImporter {
             messageIdMap.put(kmessage.getProperty(SequenceDiagramOptions.ID_ELEMENT), smessage);
 
             ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
-            smessage.setSourceYPos(edgeSection.getStartY());
-            smessage.setTargetYPos(edgeSection.getEndY());
+            smessage.getSourcePosition().y = edgeSection.getStartY();
+            smessage.getTargetPosition().y = edgeSection.getEndY();
 
             // Add message to the source and the target lifeline's list of messages
             sourceLL.addMessage(smessage);
@@ -348,7 +362,8 @@ public final class ElkGraphImporter {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.ID_SOURCE_EXECUTIONS)) {
                     SExecution sourceExecution = executionIdMap.get(execId);
                     if (sourceExecution != null) {
-                        sourceExecution.addMessage(smessage);
+                        sourceExecution.getMessages().add(smessage);
+                        smessage.getSourceExecutions().add(sourceExecution);
                     } else {
                         throw new UnsupportedGraphException("Execution " + execId + " does not exist");
                     }
@@ -359,7 +374,8 @@ public final class ElkGraphImporter {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.ID_TARGET_EXECUTIONS)) {
                     SExecution targetExecution = executionIdMap.get(execId);
                     if (targetExecution != null) {
-                        targetExecution.addMessage(smessage);
+                        targetExecution.getMessages().add(smessage);
+                        smessage.getTargetExecutions().add(targetExecution);
                     } else {
                         throw new UnsupportedGraphException("Execution " + execId + " does not exist");
                     }
@@ -390,8 +406,8 @@ public final class ElkGraphImporter {
                 SArea area = areaIdMap.get(areaId);
                 if (area != null) {
                     area.getMessages().add(smessage);
-                    area.getLifelines().add(smessage.getSource());
-                    area.getLifelines().add(smessage.getTarget());
+                    area.getLifelines().add(smessage.getSourceLifeline());
+                    area.getLifelines().add(smessage.getTargetLifeline());
                 } else {
                     throw new UnsupportedGraphException("Area " + areaId + " does not exist");
                 }
@@ -449,7 +465,7 @@ public final class ElkGraphImporter {
             messageIdMap.put(kmessage.getProperty(SequenceDiagramOptions.ID_ELEMENT), smessage);
 
             ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(kmessage, false, false);
-            smessage.setTargetYPos(edgeSection.getEndY());
+            smessage.getTargetPosition().y = edgeSection.getEndY();
 
             // Add the message to the source and target lifeline's list of messages
             sourceLL.addMessage(smessage);
@@ -463,8 +479,8 @@ public final class ElkGraphImporter {
                 SArea area = areaIdMap.get(areaId);
                 if (area != null) {
                     area.getMessages().add(smessage);
-                    area.getLifelines().add(smessage.getSource());
-                    area.getLifelines().add(smessage.getTarget());
+                    area.getLifelines().add(smessage.getSourceLifeline());
+                    area.getLifelines().add(smessage.getTargetLifeline());
                 } else {
                     throw new UnsupportedGraphException("Area " + areaId + " does not exist");
                 }
@@ -475,7 +491,7 @@ public final class ElkGraphImporter {
                 for (Integer execId : kmessage.getProperty(SequenceDiagramOptions.ID_TARGET_EXECUTIONS)) {
                     SExecution targetExecution = executionIdMap.get(execId);
                     if (targetExecution != null) {
-                        targetExecution.addMessage(smessage);
+                        targetExecution.getMessages().add(smessage);
                     } else {
                         throw new UnsupportedGraphException("Execution " + execId + " does not exist");
                     }
@@ -573,7 +589,7 @@ public final class ElkGraphImporter {
                 ElkEdge edge = (ElkEdge) message.getProperty(InternalSequenceProperties.ORIGIN);
                 ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(edge, false, false);
                 double distance;
-                if (message.getSource() == nextLifeline) {
+                if (message.getSourceLifeline() == nextLifeline) {
                     distance = Math.abs((edgeSection.getStartY()) - (kcomment.getY() + kcomment.getHeight() / 2));
                 } else {
                     distance = Math.abs((edgeSection.getEndY()) - (kcomment.getY() + kcomment.getHeight() / 2));
