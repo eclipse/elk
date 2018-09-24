@@ -27,6 +27,7 @@ import org.eclipse.elk.alg.sequence.SequenceUtils;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
+import org.eclipse.elk.alg.sequence.graph.SDestruction;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
 import org.eclipse.elk.alg.sequence.graph.SGraphAdapters;
 import org.eclipse.elk.alg.sequence.graph.SLabel;
@@ -90,6 +91,9 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         computeLifelineHeight(context);
         context.sgraph.getSize().y = lowestY + context.sgraph.getPadding().bottom;
+        
+        // Finally, compute coordinates for destruction events
+        placeDestructions(context);
 
         progressMonitor.done();
     }
@@ -117,21 +121,33 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
      */
     private void computeLifelineHeight(final LayoutContext context) {
         for (SLifeline sLifeline : context.sgraph.getLifelines()) {
-            if (!hasAlreadyBeenDestroyed(sLifeline)) {
+            if (sLifeline.getDestruction() != null) {
+                double lowestIncidentThingY = lowestIncidentThingY(context, sLifeline);
+                sLifeline.getSize().y = lowestIncidentThingY + context.messageSpacing - sLifeline.getPosition().y;
+                
+            } else {
                 sLifeline.getSize().y = lowestY - sLifeline.getPosition().y;
             }
         }
     }
     
     /**
-     * Returns whether or not a lifeline has a destruction associated with it by inspecting the
-     * {@link InternalSequenceProperties#DESTRUCTION_NODE} property.
+     * Computes the position of the lowermost thing incident to the given lifeline.
      */
-    private boolean hasAlreadyBeenDestroyed(final SLifeline sLifeline) {
-        return sLifeline.hasProperty(InternalSequenceProperties.DESTRUCTION_NODE);
+    private double lowestIncidentThingY(final LayoutContext context, final SLifeline sLifeline) {
+        double lowestY = sLifeline.getPosition().y + context.lifelineHeaderHeight;
+        
+        for (SMessage inMsg : sLifeline.getIncomingMessages()) {
+            lowestY = Math.max(lowestY, inMsg.getTargetPosition().y);
+        }
+        
+        for (SMessage outMsg : sLifeline.getOutgoingMessages()) {
+            lowestY = Math.max(lowestY, outMsg.getSourcePosition().y);
+        }
+        
+        return lowestY;
     }
-    
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Layer Placement
     
@@ -381,6 +397,21 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         exec.getPosition().y = topY;
         exec.getSize().y = Math.max(context.minExecutionHeight, bottomY - topY);
     }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Destruction
+    
+    private void placeDestructions(final LayoutContext context) {
+        for (SLifeline sLifeline : context.sgraph.getLifelines()) {
+            SDestruction sDestruction = sLifeline.getDestruction();
+            if (sDestruction != null) {
+                sDestruction.getPosition().y = sLifeline.getPosition().y + sLifeline.getSize().y
+                        - (sDestruction.getSize().y / 2);
+            }
+        }
+    }
+    
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Utilities

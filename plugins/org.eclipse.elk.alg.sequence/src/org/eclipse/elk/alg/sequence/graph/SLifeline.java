@@ -60,6 +60,8 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
     private List<SExecution> executions = Lists.newArrayList();
     /** The list of comments that are drawn near to this lifeline. */
     private Set<SComment> comments = Sets.newLinkedHashSet();
+    /** Destruction event, if any. */
+    private SDestruction destruction = null;
     
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -190,6 +192,20 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
      */
     public Set<SComment> getComments() {
         return comments;
+    }
+    
+    /**
+     * Returns the destruction.
+     */
+    public SDestruction getDestruction() {
+        return destruction;
+    }
+    
+    /**
+     * Sets the destruction.
+     */
+    public void setDestruction(final SDestruction destruction) {
+        this.destruction = destruction;
     }
     
     

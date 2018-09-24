@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
+import org.eclipse.elk.alg.sequence.graph.SDestruction;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
 import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
@@ -494,6 +495,12 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
                             targetExecutionCount(sMessage) * context.executionWidth / 2;
                 }
             }
+        }
+        
+        // Place the destruction event, if any
+        SDestruction sDestruction = sLifeline.getDestruction();
+        if (sDestruction != null) {
+            sDestruction.getPosition().x = currX + (sLifeline.getSize().x - sDestruction.getSize().x) / 2; 
         }
 
         // TODO Place comments

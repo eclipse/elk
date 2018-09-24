@@ -17,6 +17,7 @@ import org.eclipse.elk.alg.sequence.SequenceUtils;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
+import org.eclipse.elk.alg.sequence.graph.SDestruction;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
 import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
@@ -86,6 +87,7 @@ public final class ElkGraphExporter {
             
             applyToMessages(context, sLifeline);
             applyToExecutions(context, sLifeline);
+            applyToDestruction(context, sLifeline);
         }
     }
     
@@ -123,6 +125,17 @@ public final class ElkGraphExporter {
             elkExecution.setY(sExecution.getPosition().y);
             elkExecution.setWidth(sExecution.getSize().x);
             elkExecution.setHeight(sExecution.getSize().y);
+        }
+    }
+    
+    private void applyToDestruction(final LayoutContext context, final SLifeline sLifeline) {
+        SDestruction sDestruction = sLifeline.getDestruction();
+        
+        if (sDestruction != null) {
+            // Apply coordinates
+            ElkNode elkDestruction = (ElkNode) sDestruction.getProperty(InternalSequenceProperties.ORIGIN);
+            elkDestruction.setX(sDestruction.getPosition().x);
+            elkDestruction.setY(sDestruction.getPosition().y);
         }
     }
     

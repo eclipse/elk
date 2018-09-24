@@ -16,6 +16,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
+import org.eclipse.elk.alg.sequence.graph.SDestruction;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
 import org.eclipse.elk.alg.sequence.graph.SGraph;
 import org.eclipse.elk.alg.sequence.graph.SGraphAdapters;
@@ -108,7 +109,7 @@ public final class ElkGraphImporter {
         }
 
         // Executions and destruction events are added to existing lifelines as they are imported
-        createExecutions(context);
+        createExecutionsAndDestructions(context);
 
         // Walk through lifelines to create their stuff
         for (ElkNode node : context.elkgraph.getChildren()) {
@@ -247,10 +248,10 @@ public final class ElkGraphImporter {
      * @param context
      *            the layout context we're currently building.
      */
-    private void createExecutions(final LayoutContext context) {
+    private void createExecutionsAndDestructions(final LayoutContext context) {
         for (ElkNode kchild : context.elkgraph.getChildren()) {
             NodeType kchildNodeType = kchild.getProperty(SequenceDiagramOptions.TYPE_NODE);
-
+            
             if (kchildNodeType.isExecutionType()) {
                 // Create a new sequence execution for this thing
                 SExecution sexecution = new SExecution();
@@ -260,9 +261,18 @@ public final class ElkGraphImporter {
                 executionIdMap.put(kchild.getProperty(SequenceDiagramOptions.ID_ELEMENT), sexecution);
 
                 getParentLifeline(kchild).getExcecutions().add(sexecution);
-
+                
             } else if (kchildNodeType == NodeType.DESTRUCTION_EVENT) {
-                getParentLifeline(kchild).setProperty(InternalSequenceProperties.DESTRUCTION_NODE, kchild);
+                SLifeline parentLifeline = getParentLifeline(kchild);
+                
+                // Create a destruction for this thing
+                SDestruction sdestruction = new SDestruction(parentLifeline);
+                sdestruction.copyProperties(kchild);
+                sdestruction.setProperty(InternalSequenceProperties.ORIGIN, kchild);
+                
+                sdestruction.getSize().set(kchild.getWidth(), kchild.getHeight());
+                
+                parentLifeline.setDestruction(sdestruction);
             }
         }
         
