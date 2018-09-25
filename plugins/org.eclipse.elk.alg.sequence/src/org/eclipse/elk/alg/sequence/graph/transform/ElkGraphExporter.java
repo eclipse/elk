@@ -59,6 +59,7 @@ public final class ElkGraphExporter {
         
         // Apply coordinates to the different diagram elements
         applyToLifelines(context);
+        applyToComments(context);
     }
 
     /**
@@ -147,6 +148,22 @@ public final class ElkGraphExporter {
         
         KVector sLabelSize = sLabel.getSize();
         elkLabel.setDimensions(sLabelSize.x, sLabelSize.y);
+    }
+    
+    private void applyToComments(final LayoutContext context) {
+        for (SComment sComment : context.sgraph.getComments()) {
+            // Apply height and coordinates
+            ElkNode elkComment = (ElkNode) sComment.getProperty(InternalSequenceProperties.ORIGIN);
+            elkComment.setX(sComment.getPosition().x);
+//            elkComment.setY(sComment.getPosition().y);
+            elkComment.setWidth(sComment.getSize().x);
+            elkComment.setHeight(sComment.getSize().y);
+            
+            // Apply to comment's label as well
+            if (sComment.getLabel() != null) {
+                applyToLabel(sComment.getLabel());
+            }
+        }
     }
     
     

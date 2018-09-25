@@ -24,6 +24,7 @@ import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
+import org.eclipse.elk.alg.sequence.options.MessageCommentAlignment;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.NodeType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
@@ -571,6 +572,15 @@ public final class ElkGraphImporter {
                     scomment.setLifeline(lifelineIdMap.get(elementId));
                 } else if (messageIdMap.containsKey(elementId)) {
                     scomment.setReferenceMessage(messageIdMap.get(elementId));
+                }
+            }
+            
+            // Set the comment's message alignment, if necessary
+            if (scomment.getLifeline() != null && scomment.getReferenceMessage() != null) {
+                if (scomment.getLifeline() == scomment.getReferenceMessage().getSourceLifeline()) {
+                    scomment.setAlignment(MessageCommentAlignment.SOURCE);
+                } else if (scomment.getLifeline() == scomment.getReferenceMessage().getTargetLifeline()) {
+                    scomment.setAlignment(MessageCommentAlignment.TARGET);
                 }
             }
         }

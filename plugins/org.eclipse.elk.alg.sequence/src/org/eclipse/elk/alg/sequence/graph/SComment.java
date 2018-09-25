@@ -25,7 +25,7 @@ public final class SComment extends SShape {
     /** If the comment is attached to anything, this is the message it will be drawn next to. */
     private SMessage referenceMessage;
     /** Where a comment will be aligned along a message. */
-    private MessageCommentAlignment alignment = MessageCommentAlignment.CENTER;
+    private MessageCommentAlignment alignment = MessageCommentAlignment.SOURCE;
     /** The label that contains the comment's text, if we know about any. */
     private SLabel label;
 

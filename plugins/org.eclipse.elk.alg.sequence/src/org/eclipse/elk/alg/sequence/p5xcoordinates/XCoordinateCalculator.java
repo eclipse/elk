@@ -13,21 +13,26 @@ package org.eclipse.elk.alg.sequence.p5xcoordinates;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SDestruction;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
+import org.eclipse.elk.alg.sequence.graph.SGraphAdapters;
 import org.eclipse.elk.alg.sequence.graph.SLabel;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
+import org.eclipse.elk.alg.sequence.options.MessageCommentAlignment;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
@@ -176,18 +181,18 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         // rightwards)
         for (SMessage outMsg : leftLL.getOutgoingMessages()) {
             if (pointsRightwards(outMsg) || outMsg.isSelfMessage()) {
-                minSpacing = Math.max(minSpacing, minOutgoingRightwardsMessageLength(context, outMsg));
+                minSpacing = Math.max(minSpacing, minOutgoingMessageLength(context, outMsg));
             }
         }
 
         for (SMessage outMsg : rightLL.getOutgoingMessages()) {
             if (pointsLeftwards(outMsg)) {
-                minSpacing = Math.max(minSpacing, minOutgoingLeftwardsMessageLength(context, outMsg));
+                minSpacing = Math.max(minSpacing, minOutgoingMessageLength(context, outMsg));
             }
         }
         
         for (SMessage inMsg : rightLL.getIncomingMessages()) {
-            if (pointsRightwards(inMsg)) {
+            if (pointsRightwards(inMsg) && !inMsg.connectsAdjacentLifelines()) {
                 minSpacing = Math.max(minSpacing, minIncomingRightwardsMessageLength(context, inMsg));
             }
         }
@@ -199,89 +204,48 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
      * Computes the minimum length required for an outgoing rightwards-pointing message. Given a pair of lifelines, the
      * message is assumed to leave the left one.
      */
-    private double minOutgoingRightwardsMessageLength(final LayoutContext context, final SMessage outMsg) {
-        double minMsgLength = 0;
+    private double minOutgoingMessageLength(final LayoutContext context, final SMessage outMsg) {
+        // We calculate two kinds of space: the space between adjacent lifelines that the message spans, but needs to
+        // be left free of labels and comments (surroundingSpace) and the space required around or between labels or
+        // comments (labelingSpace). The two will be merged into the min message length at the end
+        double surroundingSpace = 0;
+        double labelingSpace = 0;
         
         // Pre-compute information about the message
         boolean isCreateMessage = outMsg.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE;
         
         // If the message is incident to any execution specifications, those need space (only half of an execution
         // will ever stick leftwards out of the message's target lifeline)
-        minMsgLength += sourceExecutionCount(outMsg) * context.executionWidth / 2;
+        surroundingSpace += sourceExecutionCount(outMsg) * context.executionWidth / 2;
         if (outMsg.connectsAdjacentLifelines()) {
-            minMsgLength += Math.signum(targetExecutionCount(outMsg)) * context.executionWidth / 2;
+            surroundingSpace += Math.signum(targetExecutionCount(outMsg)) * context.executionWidth / 2;
         }
-        
-        // TODO Space required for comments
         
         // Space required for the message itself
         if (outMsg.isSelfMessage()) {
-            minMsgLength = context.selfMessageWidth;
+            // Self messages need a certain width to be routed
+            surroundingSpace += context.selfMessageWidth;
             
-        } else {
-            // If it's not a self message, but connects adjacent lifelines, it needs a minimum length
-            if (outMsg.connectsAdjacentLifelines()) {
-                minMsgLength += MIN_MESSAGE_LENGTH;
-            }
-        }
-        
-        // If the message is a create message, we need to take the lifeline header into account
-        if (outMsg.connectsAdjacentLifelines() && isCreateMessage) {
-            minMsgLength += outMsg.getTargetLifeline().getSize().x / 2;
+        } else if (outMsg.connectsAdjacentLifelines() && isCreateMessage) {
+            // If the message is a create message that creates the adjacent lifeline, we need to take its lifeline
+            // header into account
+            surroundingSpace += outMsg.getTargetLifeline().getSize().x / 2;
         }
         
         // Space required for a label, provided there is one
         if (outMsg.getLabel() != null) {
-            minMsgLength += 2 * context.labelSpacing;
+            labelingSpace += 2 * context.labelSpacing;
         }
+        
+        // Find out how many different types of comments we have and reserve space around and between them
+        labelingSpace = Math.max(labelingSpace, (commentTypeCount(outMsg) + 1) * context.labelSpacing);
         
         // We have only computed the space necessary for all non-label components of a message. The rest will be
         // available to labels. Remember that info for later.
-        unusableMessageSpace.put(outMsg, minMsgLength);
+        unusableMessageSpace.put(outMsg, surroundingSpace + labelingSpace);
         
-        return minMsgLength;
-    }
-    
-    /**
-     * Computes the minimum length required for an outgoing leftwards-pointing message. Given a pair of lifelines, the
-     * message is assumed to leave the right one.
-     */
-    private double minOutgoingLeftwardsMessageLength(final LayoutContext context, final SMessage outMsg) {
-        double minMsgLength = 0;
-
-        // Pre-compute information about the message
-        boolean isCreateMessage = outMsg.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE;
-        
-        // If the message is incident to any execution specifications, those need space (only half of an execution
-        // will ever stick leftwards out of the message's source lifeline)
-        minMsgLength += targetExecutionCount(outMsg) * context.executionWidth / 2;
-        if (outMsg.connectsAdjacentLifelines()) {
-            minMsgLength += Math.signum(sourceExecutionCount(outMsg)) * context.executionWidth / 2;
-        }
-        
-        // TODO Space required for comments
-        
-        // Space required for the message itself
-        assert !outMsg.isSelfMessage();
-        if (outMsg.connectsAdjacentLifelines()) {
-            minMsgLength += MIN_MESSAGE_LENGTH;
-        }
-        
-        // If the message is a create message, we need to take the lifeline header into account
-        if (outMsg.connectsAdjacentLifelines() && isCreateMessage) {
-            minMsgLength += outMsg.getTargetLifeline().getSize().x / 2;
-        }
-        
-        // Space required for a label, provided there is one
-        if (outMsg.getLabel() != null) {
-            minMsgLength += 2 * context.labelSpacing;
-        }
-        
-        // We have only computed the space necessary for all non-label components of a message. The rest will be
-        // available to labels. Remember that info for later.
-        unusableMessageSpace.put(outMsg, minMsgLength);
-        
-        return minMsgLength;
+        // The value we return must ensure that there is enough space left beyond the surrounding space
+        return surroundingSpace + Math.max(labelingSpace, MIN_MESSAGE_LENGTH);
     }
 
     /**
@@ -289,9 +253,32 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
      * message is assumed to enter the right one.
      */
     private double minIncomingRightwardsMessageLength(final LayoutContext context, final SMessage inMsg) {
-        // TODO Implement?
-        // Implementing this method properly gains importance if we allow labels to be placed near their target lifeline
-        return 0;
+        // We calculate two kinds of space: the space between adjacent lifelines that the message spans, but needs to
+        // be left free of labels and comments (surroundingSpace) and the space required around or between labels or
+        // comments (labelingSpace). The two will be merged into the min message length at the end
+        double surroundingSpace = 0;
+        double labelingSpace = 0;
+        
+        // Pre-compute information about the message
+        boolean isCreateMessage = inMsg.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE;
+        
+        if (inMsg.connectsAdjacentLifelines() && isCreateMessage) {
+            // If the message is a create message, we need to take the lifeline header into account
+            surroundingSpace += inMsg.getTargetLifeline().getSize().x / 2;
+        }
+        
+        // If there is a target comment, we need to reserve space around it
+        boolean targetCommentExists = inMsg.getComments().stream()
+                .anyMatch(c -> c.getAlignment() == MessageCommentAlignment.TARGET);
+        if (targetCommentExists) {
+            labelingSpace += 2 * context.labelSpacing;
+        }
+        
+        // We have only computed the space necessary for all non-label components of a message. The rest will be
+        // available to labels. Remember that info for later.
+        unusableMessageSpace.put(inMsg, surroundingSpace + labelingSpace);
+        
+        return surroundingSpace + labelingSpace;
     }
     
     
@@ -327,7 +314,7 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         }
         
         for (SMessage inMsg : rightLL.getIncomingMessages()) {
-            if (pointsRightwards(inMsg)) {
+            if (pointsRightwards(inMsg) && !inMsg.connectsAdjacentLifelines()) {
                 actSpacing = Math.max(actSpacing, actIncomingRightwardsMessageLength(context, inMsg, minSpacing));
             }
         }
@@ -342,27 +329,35 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     private double actOutgoingMessageLength(final LayoutContext context, final SMessage outMsg,
             final double minSpacing) {
         
-        // No label, no problem
-        if (outMsg.getLabel() == null) {
-            return minSpacing;
+        double spaceAvailableForText = minSpacing - unusableMessageSpace.get(outMsg);
+        assert spaceAvailableForText >= 0;
+        
+        double spaceRequiredForText = 0;
+
+        // Apply label management to label
+        if (outMsg.getLabel() != null) {
+            applyLabelManagement(context, outMsg.getLabel(), spaceAvailableForText);
+            spaceRequiredForText = Math.max(spaceRequiredForText, outMsg.getLabel().getSize().x);
         }
         
-        double spaceForLabel = minSpacing - unusableMessageSpace.get(outMsg);
-        assert spaceForLabel >= 0;
-
-        // Apply label management, if installed
-        if (context.labelManager != null) {
-            SLabel slabel = outMsg.getLabel();
-            KVector newSize = context.labelManager.manageLabelSize(
-                    slabel.getProperty(InternalSequenceProperties.ORIGIN),
-                    spaceForLabel);
-            if (newSize != null) {
-                slabel.getSize().set(newSize);
+        // Apply label management to comments
+        int commentTypeCount = commentTypeCount(outMsg);
+        double spaceAvailableForComment = spaceAvailableForText;
+        if (commentTypeCount > 1) {
+            // Space between adjacent comments
+            spaceAvailableForComment = (spaceAvailableForComment - context.labelSpacing) / 2;
+        }
+        
+        for (SComment sComment : outMsg.getComments()) {
+            // We're interested in source comments and, if the message connects adjacent lifelines, target comments
+            if (sComment.getAlignment() == MessageCommentAlignment.SOURCE || outMsg.connectsAdjacentLifelines()) {
+                applyLabelManagement(context, sComment, spaceAvailableForComment);
+                spaceRequiredForText = Math.max(spaceRequiredForText, sComment.getSize().x);
             }
         }
         
         // Check if the minimum space needs to be increased (will be > 0 if we need more space)
-        double delta = outMsg.getLabel().getSize().x - spaceForLabel;
+        double delta = spaceRequiredForText - spaceAvailableForText;
         return Math.max(minSpacing, minSpacing + delta);
     }
 
@@ -472,6 +467,18 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
                     }
                 }
             }
+            
+            // Place message source comments
+            for (SComment sComment : sMessage.getComments()) {
+                if (sComment.getAlignment() == MessageCommentAlignment.SOURCE) {
+                    if (pointsRightwards(sMessage)) {
+                        sComment.getPosition().x = sMessage.getSourcePosition().x + context.labelSpacing;
+                    } else if (pointsLeftwards(sMessage)) {
+                        sComment.getPosition().x = sMessage.getSourcePosition().x - context.labelSpacing
+                                - sComment.getSize().x;
+                    }
+                }
+            }
         }
         
         // Place incoming messages
@@ -495,6 +502,18 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
                             targetExecutionCount(sMessage) * context.executionWidth / 2;
                 }
             }
+            
+            // Place message target comments
+            for (SComment sComment : sMessage.getComments()) {
+                if (sComment.getAlignment() == MessageCommentAlignment.TARGET) {
+                    if (pointsRightwards(sMessage)) {
+                        sComment.getPosition().x = sMessage.getTargetPosition().x - context.labelSpacing
+                                - sComment.getSize().x;
+                    } else if (pointsLeftwards(sMessage)) {
+                        sComment.getPosition().x = sMessage.getTargetPosition().x + context.labelSpacing;
+                    }
+                }
+            }
         }
         
         // Place the destruction event, if any
@@ -503,7 +522,7 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
             sDestruction.getPosition().x = currX + (sLifeline.getSize().x - sDestruction.getSize().x) / 2; 
         }
 
-        // TODO Place comments
+        // TODO Place lifeline comments that don't refer to particular messages
     }
 
     /**
@@ -523,19 +542,33 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Utilities
     
+    /**
+     * Checks whether the given message points rightwards. Self messages don't.
+     */
     private boolean pointsRightwards(final SMessage msg) {
         return msg.getSourceLifeline().getHorizontalSlot() < msg.getTargetLifeline().getHorizontalSlot();
     }
-    
+
+    /**
+     * Checks whether the given message points leftwards. Self messages don't.
+     */
     private boolean pointsLeftwards(final SMessage msg) {
         return msg.getSourceLifeline().getHorizontalSlot() > msg.getTargetLifeline().getHorizontalSlot();
     }
     
+    /**
+     * Checks whether the message has an inline label. Not having a label at all means not having an inline label.
+     */
     private boolean hasInlineLabel(final SMessage msg) {
         SLabel sLabel = msg.getLabel();
         return sLabel != null && sLabel.getProperty(SequenceDiagramOptions.EDGE_LABELS_INLINE);
     }
     
+    /**
+     * Checks how many executions the given message's source is incident to. This will influence the amount of space
+     * between its source point and its source lifeline. If a message starts an execution, it will only do so at its
+     * target point. Such executions are thus not counted.
+     */
     private int sourceExecutionCount(final SMessage msg) {
         int count = msg.getSourceExecutions().size();
         
@@ -549,9 +582,12 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         return count;
     }
-    
+
+    /**
+     * Checks whether the given message starts the given execution. A message starts an execution if no message is part
+     * of the execution that is on a layer above the message
+     */
     private boolean startsExecution(final SMessage msg, final SExecution exec) {
-        // A message starts an execution if no message is part of the execution that is on a layer above the message
         int minLayer = exec.getMessages().stream()
             .map(execMsg -> execMsg.getProperty(InternalSequenceProperties.LAYERED_NODE))
             .mapToInt(lnode -> lnode.getLayer().getIndex())
@@ -561,7 +597,12 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         return minLayer == msg.getProperty(InternalSequenceProperties.LAYERED_NODE).getLayer().getIndex();
     }
-    
+
+    /**
+     * Checks how many executions the given message's target is incident to. This will influence the amount of space
+     * between its target point and its target lifeline. If a message ends an execution, it will only do so at its
+     * source point. Such executions are thus not counted.
+     */
     private int targetExecutionCount(final SMessage msg) {
         int count = msg.getTargetExecutions().size();
         
@@ -575,9 +616,12 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         return count;
     }
-    
+
+    /**
+     * Checks whether the given message ends the given execution. A message ends an execution if no message is part of
+     * the execution that is on a layer below the message
+     */
     private boolean endsExecution(final SMessage msg, final SExecution exec) {
-        // A message ends an execution if no message is part of the execution that is on a layer below the message
         int maxLayer = exec.getMessages().stream()
             .map(execMsg -> execMsg.getProperty(InternalSequenceProperties.LAYERED_NODE))
             .mapToInt(lnode -> lnode.getLayer().getIndex())
@@ -586,5 +630,59 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         assert maxLayer > -1;
         
         return maxLayer == msg.getProperty(InternalSequenceProperties.LAYERED_NODE).getLayer().getIndex();
+    }
+    
+    /**
+     * Returns the number of different types of comments (source and target). Target comments are only counted if the
+     * message connects adjacent lifelines.
+     */
+    private int commentTypeCount(final SMessage msg) {
+        boolean sourceComment = false;
+        boolean targetComment = false;
+        for (SComment sComment : msg.getComments()) {
+            sourceComment |= sComment.getAlignment() == MessageCommentAlignment.SOURCE;
+            targetComment |= sComment.getAlignment() == MessageCommentAlignment.TARGET
+                    && msg.connectsAdjacentLifelines();
+        }
+        
+        return (sourceComment ? 1 : 0) + (targetComment ? 1 : 0);
+    }
+    
+    /**
+     * Applies label management to the given label. Nothing is returned since the label's size is updated directly. If
+     * there is no label manager, nothing happens.
+     */
+    private void applyLabelManagement(final LayoutContext context, final SLabel sLabel, final double targetWidth) {
+        if (context.labelManager != null) {
+            KVector newSize = context.labelManager.manageLabelSize(
+                    sLabel.getProperty(InternalSequenceProperties.ORIGIN),
+                    targetWidth);
+            if (newSize != null) {
+                sLabel.getSize().set(newSize);
+            }
+        }
+    }
+
+    /**
+     * Applies label management to the given comment. Nothing is returned since the comment's size is updated directly.
+     * If there is no label manager, we at least invoke node size calculation on the comment.
+     */
+    private void applyLabelManagement(final LayoutContext context, final SComment sComment, final double targetWidth) {
+        if (context.labelManager != null && sComment.getLabel() != null) {
+            SLabel sLabel = sComment.getLabel();
+            KVector newSize = context.labelManager.manageLabelSize(
+                    sLabel.getProperty(InternalSequenceProperties.ORIGIN),
+                    targetWidth);
+            if (newSize != null) {
+                sLabel.getSize().set(newSize);
+            }
+        }
+        
+        // Size calculation
+        Set<SizeConstraint> sizeConstraints = sComment.getProperty(SequenceDiagramOptions.NODE_SIZE_CONSTRAINTS);
+        if (!sizeConstraints.isEmpty()) {
+            NodeLabelAndSizeCalculator.process(context.sgraphAdapter,
+                    SGraphAdapters.adaptComment(sComment, context.sgraphAdapter), true, false);
+        }
     }
 }

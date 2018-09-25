@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -417,7 +418,7 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     // Utilities
     
     /**
-     * Computs how much space we need above messages to place comments and labels.
+     * Computes how much space we need above messages to place comments and labels.
      */
     private double heightAboveMessages(final LayoutContext context, final List<LNode> subLayer) {
         // We may need to place comments
