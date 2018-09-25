@@ -231,13 +231,17 @@ public final class SLifeline extends SShape implements Comparable<SLifeline> {
         }
         
         // Get the position of the message at this lifeline
-        double newMsgYPos = newMsg.getSourceLifeline() == this ? newMsg.getSourceYPos() : newMsg.getTargetYPos();
+        double newMsgYPos = newMsg.getSourceLifeline() == this
+                ? newMsg.getSourcePosition().y
+                : newMsg.getTargetPosition().y;
         
         // Insert the message just before the first message with a greater y position
         ListIterator<SMessage> iterator = messages.listIterator();
         while (iterator.hasNext()) {
             SMessage currMsg = iterator.next();
-            double currMsgYPos = currMsg.getSourceLifeline() == this ? currMsg.getSourceYPos() : currMsg.getTargetYPos();
+            double currMsgYPos = currMsg.getSourceLifeline() == this
+                    ? currMsg.getSourcePosition().y
+                    : currMsg.getTargetPosition().y;
             
             if (newMsgYPos < currMsgYPos) {
                 iterator.previous();
