@@ -369,13 +369,23 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
             spaceAvailableForComment = (spaceAvailableForComment - context.labelSpacing) / 2;
         }
         
+        double maxSourceCommentWidth = 0;
+        double maxTargetCommentWidth = 0;
         for (SComment sComment : outMsg.getComments()) {
             // We're interested in source comments and, if the message connects adjacent lifelines, target comments
-            if (sComment.getAlignment() == MessageCommentAlignment.SOURCE || outMsg.connectsAdjacentLifelines()) {
+            if (sComment.getAlignment() == MessageCommentAlignment.SOURCE) {
                 applyLabelManagement(context, sComment, spaceAvailableForComment);
-                spaceRequiredForText = Math.max(spaceRequiredForText, sComment.getSize().x);
+                maxSourceCommentWidth = Math.max(maxSourceCommentWidth, sComment.getSize().x);
+            } else if (outMsg.connectsAdjacentLifelines()) {
+                applyLabelManagement(context, sComment, spaceAvailableForComment);
+                maxTargetCommentWidth = Math.max(maxTargetCommentWidth, sComment.getSize().x);
             }
         }
+        
+        // If there are both source and target comments, we need to take the space between them into account as well
+        double commentSpacing = maxSourceCommentWidth > 0 && maxTargetCommentWidth > 0 ? context.labelSpacing : 0;
+        spaceRequiredForText = Math.max(spaceRequiredForText,
+                maxSourceCommentWidth + maxTargetCommentWidth + commentSpacing);
         
         // Check if the minimum space needs to be increased (will be > 0 if we need more space)
         double delta = spaceRequiredForText - spaceAvailableForText;
