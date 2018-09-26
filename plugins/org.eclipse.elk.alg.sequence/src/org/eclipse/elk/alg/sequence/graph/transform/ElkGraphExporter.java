@@ -155,7 +155,7 @@ public final class ElkGraphExporter {
             // Apply height and coordinates
             ElkNode elkComment = (ElkNode) sComment.getProperty(InternalSequenceProperties.ORIGIN);
             elkComment.setX(sComment.getPosition().x);
-//            elkComment.setY(sComment.getPosition().y);
+            elkComment.setY(sComment.getPosition().y);
             elkComment.setWidth(sComment.getSize().x);
             elkComment.setHeight(sComment.getSize().y);
             

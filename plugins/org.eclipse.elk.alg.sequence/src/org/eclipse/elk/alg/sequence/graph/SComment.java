@@ -28,7 +28,10 @@ public final class SComment extends SShape {
     private MessageCommentAlignment alignment = MessageCommentAlignment.SOURCE;
     /** The label that contains the comment's text, if we know about any. */
     private SLabel label;
-
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Accessors
 
     /**
      * Get the lifeline next to which the comment will be placed.
@@ -124,6 +127,24 @@ public final class SComment extends SShape {
      */
     public void setLabel(final SLabel label) {
         this.label = label;
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utilities
+    
+    /**
+     * Checks whether this comment is non-specific.
+     */
+    public boolean isNonSpecific() {
+        return this.referenceLifeline == null && this.referenceMessage == null;
+    }
+    
+    /**
+     * Checks whether this comment is specific to a lifeline, but not to any particular message.
+     */
+    public boolean isLifelineSpecific() {
+        return this.referenceLifeline != null && this.referenceMessage == null;
     }
     
 }

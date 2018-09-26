@@ -84,8 +84,9 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         lowestY += context.messageSpacing * 0.5;
         theMeatOfTheAlgorithm(context);
         
-        // Now that pretty much everything is placed, compute y coordinates for the executions as well
+        // Now that pretty much everything is placed, compute y coordinates for executions and non-specific comments
         placeExecutions(context);
+        placeNonSpecificComments(context); 
         
         // Set the height of lifelines and the graph's height
         lowestY += context.messageSpacing * 0.5;
@@ -256,6 +257,7 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     
     private double placeMessages(final LayoutContext context, final List<LNode> subLayer, final double messageY) {
         double bottomMostY = messageY;
+        double topMostY = messageY;
         
         for (LNode lNode : subLayer) {
             SMessage sMessage = SequenceUtils.originObjectFor(lNode, SMessage.class);
@@ -278,14 +280,17 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
                 sMessage.getTargetPosition().y = messageY;
             }
             
-            // Place related elements
+            // Place label
             placeMessageLabel(context, sMessage);
-            placeMessageComments(context, sMessage, 0);
             
             if (sMessage.getLabel() != null) {
                 SLabel sLabel = sMessage.getLabel();
                 bottomMostY = Math.max(bottomMostY, sLabel.getPosition().y + sLabel.getSize().y);
+                topMostY = Math.min(topMostY, sLabel.getPosition().y);
             }
+            
+            // Place comments
+            placeMessageComments(context, sMessage, topMostY - context.labelSpacing);
             
             // If this is a create message, the target lifeline must be moved accordingly
             if (sMessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE) {
@@ -397,6 +402,27 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         // Apply coordinates and size
         exec.getPosition().y = topY;
         exec.getSize().y = Math.max(context.minExecutionHeight, bottomY - topY);
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Comment Placement
+    
+    /**
+     * Places all non-specific comments and updates {@link #lowestY} accordingly.
+     */
+    private void placeNonSpecificComments(final LayoutContext context) {
+        double currY = context.sgraph.getPadding().top - context.labelSpacing;
+        
+        for (SComment sComment : context.sgraph.getComments()) {
+            if (sComment.isNonSpecific()) {
+                currY += context.labelSpacing;
+                sComment.getPosition().y = currY;
+                currY += sComment.getSize().y;
+                
+                lowestY = Math.max(lowestY, currY);
+            }
+        }
     }
     
     
@@ -810,11 +836,11 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
                         }
                     }
                     
-                    scomment.setAlignment(MessageCommentAlignment.RIGHT);
+//                    scomment.setAlignment(MessageCommentAlignment.RIGHT);
                     
                 } else {
                     scomment.setLifeline(left);
-                    scomment.setAlignment(MessageCommentAlignment.LEFT);
+//                    scomment.setAlignment(MessageCommentAlignment.LEFT);
                 }
             }
         }
@@ -1044,22 +1070,22 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
                 commentPos.y = message.getSourceYPos() - (comment.getSize().y + context.messageSpacing);
                 
                 // x position depends on the comment's alignment
-                switch (comment.getAlignment()) {
-                case LEFT:
-                    commentPos.x = xPos + currLifeline.getSize().x / 2 + context.labelSpacing;
-                    break;
-                    
-                case CENTER:
-                    commentPos.x = xPos + currLifeline.getSize().x / 2 + context.labelSpacing
-                            + (actualSpace - comment.getSize().x - 2 * context.labelSpacing) / 2;
-                    break;
-                    
-                case RIGHT:
-                    // The required space might be smaller than the actual space
-                    commentPos.x = xPos + currLifeline.getSize().x / 2
-                            + actualSpace - context.labelSpacing - comment.getSize().x;
-                    break;
-                }
+//                switch (comment.getAlignment()) {
+//                case LEFT:
+//                    commentPos.x = xPos + currLifeline.getSize().x / 2 + context.labelSpacing;
+//                    break;
+//                    
+//                case CENTER:
+//                    commentPos.x = xPos + currLifeline.getSize().x / 2 + context.labelSpacing
+//                            + (actualSpace - comment.getSize().x - 2 * context.labelSpacing) / 2;
+//                    break;
+//                    
+//                case RIGHT:
+//                    // The required space might be smaller than the actual space
+//                    commentPos.x = xPos + currLifeline.getSize().x / 2
+//                            + actualSpace - context.labelSpacing - comment.getSize().x;
+//                    break;
+//                }
                 
                 // If another comment for the message has already been placed, handled conflicts by shifting the
                 // comment vertically

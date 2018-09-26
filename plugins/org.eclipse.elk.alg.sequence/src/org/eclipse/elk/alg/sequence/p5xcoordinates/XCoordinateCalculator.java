@@ -42,9 +42,13 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     
     /** The minimum length messages must have. */
     private static final double MIN_MESSAGE_LENGTH = 15;
+    /** Minimum width of comments not specific to any particular diagram element. */
+    private static final double MIN_NON_SPECIFIC_COMMENT_WIDTH = 30;
     
-    /** Saves for each message how much of its length is unusable for labels. */
-    private Map<SMessage, Double> unusableMessageSpace;
+    /** Saves for each incoming message how much of its length is unusable for labels. */
+    private Map<SMessage, Double> unusableIncomingMessageSpace;
+    /** Saves for each outgoing message how much of its length is unusable for labels. */
+    private Map<SMessage, Double> unusableOutgoingMessageSpace;
     
 
     @Override
@@ -61,9 +65,13 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         if (context.sgraph.getLifelines().isEmpty()) {
             context.sgraph.getSize().x = context.sgraph.getPadding().left + context.sgraph.getPadding().right;
         } else {
-            unusableMessageSpace = new HashMap<>();
+            unusableIncomingMessageSpace = new HashMap<>();
+            unusableOutgoingMessageSpace = new HashMap<>();
+            
             processLifelines(context);
-            unusableMessageSpace = null;
+            
+            unusableIncomingMessageSpace = null;
+            unusableOutgoingMessageSpace = null;
         }
 
         progressMonitor.done();
@@ -104,7 +112,7 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         currX += spaceRightwards(context, rightLL);
 
         // Place any non-specific comments
-        if (context.sgraph.getComments().stream().anyMatch(this::isNonSpecificComment)) {
+        if (context.sgraph.getComments().stream().anyMatch(c -> c.isNonSpecific())) {
             currX += context.lifelineSpacing;
             currX = placeNonSpecificComments(context, currX);
         }
@@ -148,6 +156,7 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
                 double msgWidth = incidentExecutions * context.executionWidth / 2 + context.selfMessageWidth;
                 
                 if (outMsg.getLabel() != null) {
+                    applyLabelManagement(context, outMsg.getLabel(), MIN_MESSAGE_LENGTH);
                     msgWidth += outMsg.getLabel().getSize().x;
                     
                     if (!hasInlineLabel(outMsg)) {
@@ -176,9 +185,8 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         double minSpacing = (leftLL.getSize().x + rightLL.getSize().x) / 2 + context.lifelineSpacing;
         
         // Process all messages relevant to the space required between the two lifelines. Those are messages that leave
-        // the left lifeline rightwards, messages that leave the right lifeline leftwards, and messages that enter the
-        // right lifeline from the left (which haven't already been processed as messages that leave the left lifeline
-        // rightwards)
+        // the left lifeline pointing rightwards or enter it pointing leftwards as well as messages that leave the
+        // right lifeline pointing leftwards or enter it pointing rightwards.
         for (SMessage outMsg : leftLL.getOutgoingMessages()) {
             if (pointsRightwards(outMsg) || outMsg.isSelfMessage()) {
                 minSpacing = Math.max(minSpacing, minOutgoingMessageLength(context, outMsg));
@@ -191,9 +199,15 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
             }
         }
         
+        for (SMessage inMsg : leftLL.getIncomingMessages()) {
+            if (pointsLeftwards(inMsg) && !inMsg.connectsAdjacentLifelines()) {
+                minSpacing = Math.max(minSpacing, minIncomingMessageLength(context, inMsg));
+            }
+        }
+        
         for (SMessage inMsg : rightLL.getIncomingMessages()) {
             if (pointsRightwards(inMsg) && !inMsg.connectsAdjacentLifelines()) {
-                minSpacing = Math.max(minSpacing, minIncomingRightwardsMessageLength(context, inMsg));
+                minSpacing = Math.max(minSpacing, minIncomingMessageLength(context, inMsg));
             }
         }
         
@@ -202,7 +216,8 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     
     /**
      * Computes the minimum length required for an outgoing rightwards-pointing message. Given a pair of lifelines, the
-     * message is assumed to leave the left one.
+     * message is assumed to leave the left one if it's a right-pointing message, or the right one if it's a
+     * left-pointing message.
      */
     private double minOutgoingMessageLength(final LayoutContext context, final SMessage outMsg) {
         // We calculate two kinds of space: the space between adjacent lifelines that the message spans, but needs to
@@ -242,17 +257,18 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         // We have only computed the space necessary for all non-label components of a message. The rest will be
         // available to labels. Remember that info for later.
-        unusableMessageSpace.put(outMsg, surroundingSpace + labelingSpace);
+        unusableOutgoingMessageSpace.put(outMsg, surroundingSpace + labelingSpace);
         
         // The value we return must ensure that there is enough space left beyond the surrounding space
         return surroundingSpace + Math.max(labelingSpace, MIN_MESSAGE_LENGTH);
     }
 
     /**
-     * Computes the minimum length required for an incoming rightwards-pointing message. Given a pair of lifelines, the
-     * message is assumed to enter the right one.
+     * Computes the minimum length required for an incoming message that doesn't connect adjacent lifelines. Given a
+     * pair of lifelines, the message is assumed to enter the right one if it's a right-pointing message, and enter the
+     * left one if it's a left-pointing message.
      */
-    private double minIncomingRightwardsMessageLength(final LayoutContext context, final SMessage inMsg) {
+    private double minIncomingMessageLength(final LayoutContext context, final SMessage inMsg) {
         // We calculate two kinds of space: the space between adjacent lifelines that the message spans, but needs to
         // be left free of labels and comments (surroundingSpace) and the space required around or between labels or
         // comments (labelingSpace). The two will be merged into the min message length at the end
@@ -276,7 +292,7 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         // We have only computed the space necessary for all non-label components of a message. The rest will be
         // available to labels. Remember that info for later.
-        unusableMessageSpace.put(inMsg, surroundingSpace + labelingSpace);
+        unusableIncomingMessageSpace.put(inMsg, surroundingSpace + labelingSpace);
         
         return surroundingSpace + labelingSpace;
     }
@@ -298,9 +314,8 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         double actSpacing = minSpacing;
         
         // Process all messages relevant to the space required between the two lifelines. Those are messages that leave
-        // the left lifeline rightwards, messages that leave the right lifeline leftwards, and messages that enter the
-        // right lifeline from the left (which haven't already been processed as messages that leave the left lifeline
-        // rightwards)
+        // the left lifeline pointing rightwards or enter it pointing leftwards as well as messages that leave the
+        // right lifeline pointing leftwards or enter it pointing rightwards.
         for (SMessage outMsg : leftLL.getOutgoingMessages()) {
             if (pointsRightwards(outMsg) || outMsg.isSelfMessage()) {
                 actSpacing = Math.max(actSpacing, actOutgoingMessageLength(context, outMsg, minSpacing));
@@ -313,9 +328,15 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
             }
         }
         
+        for (SMessage inMsg : leftLL.getIncomingMessages()) {
+            if (pointsLeftwards(inMsg) && !inMsg.connectsAdjacentLifelines()) {
+                actSpacing = Math.max(actSpacing, actIncomingMessageLength(context, inMsg, minSpacing));
+            }
+        }
+        
         for (SMessage inMsg : rightLL.getIncomingMessages()) {
             if (pointsRightwards(inMsg) && !inMsg.connectsAdjacentLifelines()) {
-                actSpacing = Math.max(actSpacing, actIncomingRightwardsMessageLength(context, inMsg, minSpacing));
+                actSpacing = Math.max(actSpacing, actIncomingMessageLength(context, inMsg, minSpacing));
             }
         }
         
@@ -329,7 +350,7 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     private double actOutgoingMessageLength(final LayoutContext context, final SMessage outMsg,
             final double minSpacing) {
         
-        double spaceAvailableForText = minSpacing - unusableMessageSpace.get(outMsg);
+        double spaceAvailableForText = minSpacing - unusableOutgoingMessageSpace.get(outMsg);
         assert spaceAvailableForText >= 0;
         
         double spaceRequiredForText = 0;
@@ -365,25 +386,30 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
      * Invokes label management on things with the aim of not exceeding the minimum space and returns the space we will
      * actually need for the message.
      */
-    private double actIncomingRightwardsMessageLength(final LayoutContext context, final SMessage inMsg,
+    private double actIncomingMessageLength(final LayoutContext context, final SMessage inMsg,
             final double minSpacing) {
         
-        // TODO Implement?
-        // Implementing this method properly gains importance if we allow labels to be placed near their target lifeline
-        // Also: Target comments
-        return 0;
+        double spaceAvailableForText = minSpacing - unusableIncomingMessageSpace.get(inMsg);
+        assert spaceAvailableForText >= 0;
+        
+        double spaceRequiredForText = 0;
+
+        // Apply label management to target comments
+        for (SComment sComment : inMsg.getComments()) {
+            if (sComment.getAlignment() == MessageCommentAlignment.TARGET) {
+                applyLabelManagement(context, sComment, spaceAvailableForText);
+                spaceRequiredForText = Math.max(spaceRequiredForText, sComment.getSize().x);
+            }
+        }
+        
+        // Check if the minimum space needs to be increased (will be > 0 if we need more space)
+        double delta = spaceRequiredForText - spaceAvailableForText;
+        return Math.max(minSpacing, minSpacing + delta);
     }
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Non-Specific Comments
-    
-    /**
-     * Returns whether the given comment is non-specific.
-     */
-    private boolean isNonSpecificComment(final SComment sComment) {
-        return sComment.getLifeline() == null && sComment.getReferenceMessage() == null;
-    }
     
     /**
      * Places any non-specific comments at the given x coordinate below one another. Returns the x coordinate of the
@@ -394,11 +420,12 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         for (SComment sComment : context.sgraph.getComments()) {
             // We're only interested in non-specific comments
-            if (!isNonSpecificComment(sComment)) {
+            if (!sComment.isNonSpecific()) {
                 continue;
             }
             
             sComment.getPosition().x = xPos;
+            applyLabelManagement(context, sComment, MIN_NON_SPECIFIC_COMMENT_WIDTH);
             maxX = Math.max(maxX, sComment.getPosition().x + sComment.getSize().x);
         }
         

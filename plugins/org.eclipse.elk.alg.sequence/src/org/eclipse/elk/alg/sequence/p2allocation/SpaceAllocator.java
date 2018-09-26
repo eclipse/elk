@@ -158,27 +158,33 @@ public final class SpaceAllocator implements ILayoutPhase<SequencePhases, Layout
     // Space Allocation for Comments
 
     /**
-     * Allocate space for placing the comments near to their attached elements.
+     * Allocate space for non-message specific lifeline comments.
      * 
      * @param context
      *            the layout context that contains all relevant information for the current layout run.
      */
     private void allocateSpaceForComments(final LayoutContext context) {
         for (SComment comment : context.sgraph.getComments()) {
-            // Check to which kind of object the comment is attached
-            if (comment.getReferenceMessage() != null) {
-                // Get height of the comment and calculate number of dummy nodes needed
-                double height = comment.getSize().y;
-                int dummys = (int) Math.ceil(height / context.messageSpacing);
-                
-                // Add dummy nodes in the layered graph
-                LNode lnode = comment.getReferenceMessage().getProperty(InternalSequenceProperties.LAYERED_NODE);
-                if (lnode != null) {
-                    for (int i = 0; i < dummys; i++) {
-                        insertDummyNodeBefore(lnode);
-                    }
-                }
+            // We're only interested in lifeline-specific comments
+            if (comment.isLifelineSpecific()) {
+                // TODO Implement
             }
+            
+            
+//            // Check to which kind of object the comment is attached
+//            if (comment.getReferenceMessage() != null) {
+//                // Get height of the comment and calculate number of dummy nodes needed
+//                double height = comment.getSize().y;
+//                int dummys = (int) Math.ceil(height / context.messageSpacing);
+//                
+//                // Add dummy nodes in the layered graph
+//                LNode lnode = comment.getReferenceMessage().getProperty(InternalSequenceProperties.LAYERED_NODE);
+//                if (lnode != null) {
+//                    for (int i = 0; i < dummys; i++) {
+//                        insertDummyNodeBefore(lnode);
+//                    }
+//                }
+//            }
         }
     }
     
