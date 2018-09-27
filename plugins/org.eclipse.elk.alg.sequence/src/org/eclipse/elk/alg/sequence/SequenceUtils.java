@@ -7,21 +7,39 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
 import org.eclipse.elk.alg.sequence.graph.SMessage;
 import org.eclipse.elk.alg.sequence.options.InternalSequenceProperties;
 import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
+import org.eclipse.elk.core.math.ElkPadding;
 
 /**
  * Utility methods.
  */
 public final class SequenceUtils {
+
+    /**
+     * No instantiation.
+     */
+    private SequenceUtils() {
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Message Utilities
     
     /**
      * Calculates the effective length of the given lost / found message, taking a possible message label into account.
@@ -57,7 +75,6 @@ public final class SequenceUtils {
      * @return the space required by this message.
      */
     public static double calculateMessageLength(final SMessage smessage, final LayoutContext context) {
-        
         double messageLength = 0;
         
         if (smessage.getLabel() != null) {
@@ -66,6 +83,10 @@ public final class SequenceUtils {
         
         return messageLength;
     }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // LGraph Utilities
     
     /**
      * Creates a new layered node with a single port and adds it to the given graph.
@@ -101,7 +122,65 @@ public final class SequenceUtils {
     }
     
     
-    private SequenceUtils() {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Area Utilities
+    
+    /**
+     * Returns the padding to be applied to the given area. This can be a specific padding, or the default padding from
+     * the layout context.
+     */
+    public static ElkPadding getAreaPadding(final SArea sArea, final LayoutContext context) {
+        if (sArea.hasProperty(SequenceDiagramOptions.AREAS_PADDING)) {
+            return sArea.getProperty(SequenceDiagramOptions.AREAS_PADDING);
+        } else {
+            return context.areaPadding;
+        }
+    }
+    
+    /**
+     * For the given areas, this method computes their nesting trees. Areas that have no nesting relationship will end
+     * up in different trees. The returned list contains the root node of each tree. 
+     */
+    public static List<AreaNestingTreeNode> computeAreaNestings(final List<SArea> areas) {
+        // Create tree nodes for all areas
+        Map<SArea, AreaNestingTreeNode> treeNodeMap = new HashMap<>();
+        areas.stream().forEach(sArea -> treeNodeMap.put(sArea, new AreaNestingTreeNode(sArea)));
+        
+        // Add area relationships
+        for (SArea sArea : areas) {
+            SArea sParentArea = sArea.getParentArea();
+            if (sParentArea != null && treeNodeMap.containsKey(sParentArea)) {
+                AreaNestingTreeNode areaNode = treeNodeMap.get(sArea);
+                AreaNestingTreeNode parentAreaNode = treeNodeMap.get(sParentArea);
+                
+                areaNode.parent = parentAreaNode;
+                parentAreaNode.children.add(areaNode);
+            }
+        }
+        
+        // Return a list of all root nodes
+        return treeNodeMap.values().stream()
+                .filter(node -> node.parent == null)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Represents a node in an area nesting tree computed to find the nesting of a given set of areas.
+     */
+    public static final class AreaNestingTreeNode {
+        /** Area represented by this node. */
+        public SArea sArea;
+        /** Parent in the nesting tree. */
+        public AreaNestingTreeNode parent;
+        /** Children in the nesting tree. */
+        public List<AreaNestingTreeNode> children = new ArrayList<>();
+        
+        /**
+         * Creates a new instance for the given area.
+         */
+        public AreaNestingTreeNode(final SArea sArea) {
+            this.sArea = sArea;
+        }
     }
     
 }

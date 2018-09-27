@@ -70,7 +70,7 @@ public final class LayoutContext {
     /** Default padding between an area's border and its innards. Can be overriden by area nodes. */
     public final ElkPadding areaPadding;
     /** The height of lifeline headers. */
-    // TODO: This should actually be specific to each lifeline.
+    // TODO: This should actually be specific to each lifeline, with this value being the maximum over all lifelines.
     public final double lifelineHeaderHeight;
     /** The minimum height of executions. */
     public final double minExecutionHeight;

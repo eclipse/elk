@@ -29,6 +29,8 @@ public final class SArea extends SShape {
     private final Set<SLifeline> lifelines = Sets.newLinkedHashSet();
     /** The list of sections / operators (in case of a combined fragment). */
     private final List<SArea> sections = Lists.newArrayList();
+    /** The area this area is contained in, if any. */
+    private SArea parentArea;
     /** The list of areas that are contained in this area. */
     private final List<SArea> containedAreas = Lists.newArrayList();
     /** The message, that is nearest to the area if the area is empty. */
@@ -59,6 +61,20 @@ public final class SArea extends SShape {
      */
     public List<SArea> getSections() {
         return sections;
+    }
+
+    /**
+     * Returns the area this area is contained in, if any.
+     */
+    public SArea getParentArea() {
+        return parentArea;
+    }
+
+    /**
+     * Sets the area this area is contained in, if any.
+     */
+    public void setParentArea(final SArea parentArea) {
+        this.parentArea = parentArea;
     }
 
     /**

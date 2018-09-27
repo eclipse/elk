@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.layered.graph.LNode;
@@ -25,6 +24,7 @@ import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.sequence.SequenceLayoutConstants;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.SequenceUtils;
+import org.eclipse.elk.alg.sequence.SequenceUtils.AreaNestingTreeNode;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
@@ -51,18 +51,20 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 /**
  * Calculates y coordinates for all elements of the diagram. This will also determine the height of lifelines,
  * fragments, executions, and the graph itself.
- * 
- * TODO Executions need a minimum height
  */
 public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, LayoutContext> {
     
     /** The lowest Y coordinate at which we can still find an element that was already placed. */
     private double lowestY = 0;
+    /** The lowermost nodes of each area that we haven't encountered yet. */
+    private Multimap<SArea, LNode> lowermostAreaNodes;
     
 
     @Override
@@ -79,6 +81,10 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         // Set all lifelines to begin at the top padding to start with (lifelines created through create messages will
         // be moved down later)
         initLifelinePositions(context);
+        
+        // Initialize the set of area nodes that we haven't encountered yet. Once we have encountered the last of an
+        // area's lowermost nodes at a sublayer, we can close that area
+        initLowermostAreaNodes(context);
         
         // Place everything; this is the meat of the algorithm
         lowestY += context.messageSpacing * 0.5;
@@ -150,6 +156,7 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         return lowestY;
     }
 
+    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Layer Placement
     
@@ -246,13 +253,21 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
      * Places the nodes of a sub layer, assuming that no nodes are in conflict. Makes things easier.
      */
     private void placeSubLayer(final LayoutContext context, final List<LNode> subLayer) {
-        // TODO Place areas
+        // Find out which areas need to be closed below this sub layer
+        List<SArea> areasToBeClosed = computeAreasToBeClosed(subLayer);
         
-        // Find the height of things that should be placed above the set of messages
+        // Find the height of things that should be placed above the set of messages and place the messages, noting how
+        // far down they extend
         double heightAboveMessages = heightAboveMessages(context, subLayer);
+        double lowestMessageY = placeMessages(context, subLayer, lowestY + heightAboveMessages);
         
-        lowestY = placeMessages(context, subLayer, lowestY + heightAboveMessages);
-        lowestY += context.messageSpacing;
+        // Place area headers
+        double lowestAreaHeaderY = placeAreaHeaders(context, subLayer, lowestY);
+        
+        // Close areas
+        double lowestAreaFooterY = placeAreaFooters(context, areasToBeClosed, lowestMessageY);
+        
+        lowestY = ElkMath.maxd(lowestMessageY, lowestAreaHeaderY, lowestAreaFooterY) + context.messageSpacing;
     }
     
     private double placeMessages(final LayoutContext context, final List<LNode> subLayer, final double messageY) {
@@ -361,10 +376,111 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         }
     }
     
+    /**
+     * Places area headers starting at the given y coordinate. We let areas extend into the message spacing below the
+     * sublayer to avoid too much whitespace.
+     */
+    private double placeAreaHeaders(final LayoutContext context, final List<LNode> subLayer, final double areaTopY) {
+        double bottomMostY = areaTopY;
+        
+        for (LNode lNode : subLayer) {
+            SArea sArea = SequenceUtils.originObjectFor(lNode, SArea.class);
+            if (sArea == null) {
+                // Only interested in area header nodes, thank you very much
+                continue;
+            }
+            
+            sArea.getPosition().y = areaTopY;
+            
+            ElkPadding areaPadding = SequenceUtils.getAreaPadding(sArea, context);
+            bottomMostY = Math.max(bottomMostY, sArea.getPosition().y + areaPadding.top - context.messageSpacing);
+        }
+        
+        return bottomMostY;
+    }
+    
+    /**
+     * Closes the given list of areas by setting their height accordingly. The y coordinate is the lowermost coordinate
+     * occupied by a message on the sublayer the areas are closed in.
+     */
+    private double placeAreaFooters(final LayoutContext context, final List<SArea> areas, final double areaY) {
+        double bottomMostY = areaY;
+        
+        List<AreaNestingTreeNode> nestingRoots = SequenceUtils.computeAreaNestings(areas);
+        
+        for (AreaNestingTreeNode root : nestingRoots) {
+            bottomMostY = Math.max(bottomMostY, placeAreaTreeFooters(context, root, areaY));
+        }
+        
+        return bottomMostY;
+    }
+    
+    /**
+     * Places the area tree rooted at the given tree node and returns the lowermost y coordinate used while doing so.
+     */
+    private double placeAreaTreeFooters(final LayoutContext context, final AreaNestingTreeNode areas,
+            final double areaY) {
+        
+        double bottomMostY = areaY;
+        
+        // Place children (and their children, and their children, and...)
+        for (AreaNestingTreeNode child : areas.children) {
+            bottomMostY = Math.max(bottomMostY, placeAreaTreeFooters(context, child, areaY));
+        }
+        
+        // Place this area
+        ElkPadding areaPadding = SequenceUtils.getAreaPadding(areas.sArea, context);
+        bottomMostY += areaPadding.bottom;
+        areas.sArea.getSize().y = bottomMostY - areas.sArea.getPosition().y;
+        areas.sArea.getSize().x = 20;
+        return bottomMostY;
+    }
+    
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Area Utilities
+    
+    /**
+     * Initializes {@link #lowermostAreaNodes} to contain the lowermost area nodes of each area we have.
+     */
+    private void initLowermostAreaNodes(final LayoutContext context) {
+        lowermostAreaNodes = HashMultimap.create();
+        
+        for (SArea sArea : context.sgraph.getAreas()) {
+            if (sArea.hasProperty(InternalSequenceProperties.LOWERMOST_NODES)) {
+                lowermostAreaNodes.putAll(sArea, sArea.getProperty(InternalSequenceProperties.LOWERMOST_NODES));
+            }
+        }
+    }
+    
+    /**
+     * Goes through the nodes in the sublayer and updates the lowermost nodes of our open areas that are contained
+     * therein. If an area ceases to have open nodes, it must be closed and is thus added to the list.
+     */
+    private List<SArea> computeAreasToBeClosed(final List<LNode> subLayer) {
+        List<SArea> result = new ArrayList<>();
+        
+        // We'll be modifying the map as we're iterating over it, so iterate over copies
+        for (SArea sArea : lowermostAreaNodes.keySet().toArray(new SArea[0])) {
+            for (LNode lNode : subLayer) {
+                lowermostAreaNodes.remove(sArea, lNode);
+            }
+            
+            if (!lowermostAreaNodes.containsKey(sArea)) {
+                result.add(sArea);
+            }
+        }
+        
+        return result;
+    }
+    
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Execution Placement
     
+    /**
+     * Calls {@link #placeExecution(LayoutContext, SLifeline, SExecution)} on all executions.
+     */
     private void placeExecutions(final LayoutContext context) {
         for (SLifeline sLifeline : context.sgraph.getLifelines()) {
             for (SExecution sExec : sLifeline.getExcecutions()) {
@@ -533,6 +649,47 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     private double withSpacing(final double x, final double spacing) {
         return x == 0 ? x : x + spacing;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
