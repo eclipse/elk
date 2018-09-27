@@ -391,6 +391,10 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
      * occupied by a message on the sublayer the areas are closed in.
      */
     private double placeAreaFooters(final LayoutContext context, final List<SArea> areas, final double areaY) {
+        if (areas.isEmpty()) {
+            return areaY;
+        }
+        
         double bottomMostY = areaY;
         
         List<AreaNestingTreeNode> nestingRoots = SequenceUtils.computeAreaNestings(areas);

@@ -185,6 +185,7 @@ public final class ElkGraphImporter {
 
                     if (parentArea != null && childArea != null) {
                         parentArea.getContainedAreas().add(childArea);
+                        childArea.setParentArea(parentArea);
                     } else {
                         // The child area must exist, so the parent area must be the problem
                         throw new UnsupportedGraphException("Parent area ID " + parentAreaId + " configured for area "
