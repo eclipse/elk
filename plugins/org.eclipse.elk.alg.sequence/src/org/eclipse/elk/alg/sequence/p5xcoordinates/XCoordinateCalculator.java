@@ -17,7 +17,9 @@ import java.util.Set;
 
 import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.sequence.SequencePhases;
+import org.eclipse.elk.alg.sequence.SequenceUtils;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
+import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
 import org.eclipse.elk.alg.sequence.graph.SDestruction;
 import org.eclipse.elk.alg.sequence.graph.SExecution;
@@ -31,6 +33,7 @@ import org.eclipse.elk.alg.sequence.options.MessageType;
 import org.eclipse.elk.alg.sequence.options.SequenceDiagramOptions;
 import org.eclipse.elk.core.alg.ILayoutPhase;
 import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -122,6 +125,26 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         // By now, all lifelines were placed at their final coordinates. Place all of their incident elements
         context.sgraph.getLifelines().stream().forEach(ll -> applyLifelineCoordinates(context, ll));
+        
+        // TODO Do this properly. We need to reserve space for areas and compute nestings
+        for (SArea sArea : context.sgraph.getAreas()) {
+            if (sArea.getMessages().isEmpty()) {
+                continue;
+            }
+            
+            double minSourceY = sArea.getMessages().stream()
+                    .mapToDouble(msg -> msg.getSourcePosition().x).min().getAsDouble();
+            double maxSourceY = sArea.getMessages().stream()
+                    .mapToDouble(msg -> msg.getSourcePosition().x).max().getAsDouble();
+            double minTargetY = sArea.getMessages().stream()
+                    .mapToDouble(msg -> msg.getTargetPosition().x).min().getAsDouble();
+            double maxTargetY = sArea.getMessages().stream()
+                    .mapToDouble(msg -> msg.getTargetPosition().x).max().getAsDouble();
+            
+            ElkPadding areaPadding = SequenceUtils.getAreaPadding(sArea, context);
+            sArea.getPosition().x = Math.min(minSourceY, minTargetY) - areaPadding.left;
+            sArea.getSize().x = Math.max(maxSourceY, maxTargetY) + areaPadding.right - sArea.getPosition().x;
+        }
     }
     
 

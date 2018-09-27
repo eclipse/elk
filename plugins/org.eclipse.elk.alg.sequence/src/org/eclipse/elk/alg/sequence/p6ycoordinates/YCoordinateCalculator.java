@@ -419,7 +419,6 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         ElkPadding areaPadding = SequenceUtils.getAreaPadding(areas.sArea, context);
         bottomMostY += areaPadding.bottom;
         areas.sArea.getSize().y = bottomMostY - areas.sArea.getPosition().y;
-        areas.sArea.getSize().x = 20;
         return bottomMostY;
     }
     
