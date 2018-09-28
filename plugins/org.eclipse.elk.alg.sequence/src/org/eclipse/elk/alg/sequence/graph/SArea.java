@@ -17,7 +17,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
- * Data structure for area-like elements (such as fragments) in sequence diagrams.
+ * Data structure for area-like elements (such as fragments) in sequence diagrams. Areas span a set of lifelines. The
+ * leftmost and rightmost lifelines an area spans can be computed by calling {@link #computeSpannedLifelines()} and
+ * accessed afterwards by calling {@link #getLeftmostLifeline()} and {@link #getRightmostLifeline()}.
  */
 public final class SArea extends SShape {
 
@@ -35,6 +37,14 @@ public final class SArea extends SShape {
     private final List<SArea> containedAreas = Lists.newArrayList();
     /** The message, that is nearest to the area if the area is empty. */
     private SMessage nextMessage;
+    /** The leftmost lifeline this area spans. Set upon calling {@link #computeSpannedLifelines()}. */
+    private SLifeline leftmostLifeline = null;
+    /** The rightmost lifeline this area spans. Set upon calling {@link #computeSpannedLifelines()}. */
+    private SLifeline rightmostLifeline = null;
+    /** The space this area requires to the left of the center of the leftmost lifeline it spans. */
+    private double requiredSpaceToTheLeft = 0;
+    /** The space this area requires to the right of the center of the rightmost lifeline it spans. */
+    private double requiredSpaceToTheRight = 0;
 
     /**
      * Get the list of messages that are covered by the area.
@@ -103,6 +113,72 @@ public final class SArea extends SShape {
      */
     public void setNextMessage(final SMessage nextMessage) {
         this.nextMessage = nextMessage;
+    }
+
+    /**
+     * Returns the leftmost lifeline spanned by this area. Results are only valid if {@link #computeSpannedLifelines()}
+     * has already been called.
+     */
+    public SLifeline getLeftmostLifeline() {
+        return leftmostLifeline;
+    }
+
+    /**
+     * Returns the rightmost lifeline spanned by this area. Results are only valid if {@link #computeSpannedLifelines()}
+     * has already been called.
+     */
+    public SLifeline getRightmostLifeline() {
+        return rightmostLifeline;
+    }
+    
+    /**
+     * Returns how much space this area requires to the left of the center of the leftmost lifeline it spans.
+     */
+    public double getRequiredSpaceToTheLeft() {
+        return requiredSpaceToTheLeft;
+    }
+
+    /**
+     * Sets how much space this area requires to the left of the center of the leftmost lifeline it spans.
+     */
+    public void setRequiredSpaceToTheLeft(final double requiredSpaceToTheLeft) {
+        this.requiredSpaceToTheLeft = requiredSpaceToTheLeft;
+    }
+
+    /**
+     * Returns how much space this area requires to the right of the center of the rightmost lifeline it spans.
+     */
+    public double getRequiredSpaceToTheRight() {
+        return requiredSpaceToTheRight;
+    }
+
+    /**
+     * Sets how much space this area requires to the right of the center of the rightmost lifeline it spans.
+     */
+    public void setRequiredSpaceToTheRight(double requiredSpaceToTheRight) {
+        this.requiredSpaceToTheRight = requiredSpaceToTheRight;
+    }
+
+    /**
+     * Computes the lifelines spanned by this area.
+     */
+    public void computeSpannedLifelines() {
+        if (leftmostLifeline == null) {
+            for (SMessage sMessage : messages) {
+                processSpannedLifeline(sMessage.getSourceLifeline());
+                processSpannedLifeline(sMessage.getTargetLifeline());
+            }
+        }
+    }
+    
+    private void processSpannedLifeline(final SLifeline spannedLifeline) {
+        if (leftmostLifeline == null || leftmostLifeline.getHorizontalSlot() > spannedLifeline.getHorizontalSlot()) {
+            leftmostLifeline = spannedLifeline;
+        }
+
+        if (rightmostLifeline == null || rightmostLifeline.getHorizontalSlot() < spannedLifeline.getHorizontalSlot()) {
+            rightmostLifeline = spannedLifeline;
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@
 package org.eclipse.elk.alg.sequence;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.eclipse.elk.alg.layered.graph.LGraph;
 import org.eclipse.elk.alg.layered.graph.LGraphElement;
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.LPort;
+import org.eclipse.elk.alg.sequence.SequenceUtils.AreaNestingTreeNode;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SLifeline;
@@ -141,7 +143,7 @@ public final class SequenceUtils {
      * For the given areas, this method computes their nesting trees. Areas that have no nesting relationship will end
      * up in different trees. The returned list contains the root node of each tree. 
      */
-    public static List<AreaNestingTreeNode> computeAreaNestings(final List<SArea> areas) {
+    public static List<AreaNestingTreeNode> computeAreaNestings(final Collection<SArea> areas) {
         // Create tree nodes for all areas
         Map<SArea, AreaNestingTreeNode> treeNodeMap = new HashMap<>();
         areas.stream().forEach(sArea -> treeNodeMap.put(sArea, new AreaNestingTreeNode(sArea)));

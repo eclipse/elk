@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.elk.alg.sequence.p5xcoordinates;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 import org.eclipse.elk.alg.common.nodespacing.NodeLabelAndSizeCalculator;
 import org.eclipse.elk.alg.sequence.SequencePhases;
 import org.eclipse.elk.alg.sequence.SequenceUtils;
+import org.eclipse.elk.alg.sequence.SequenceUtils.AreaNestingTreeNode;
 import org.eclipse.elk.alg.sequence.graph.LayoutContext;
 import org.eclipse.elk.alg.sequence.graph.SArea;
 import org.eclipse.elk.alg.sequence.graph.SComment;
@@ -68,18 +73,40 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         if (context.sgraph.getLifelines().isEmpty()) {
             context.sgraph.getSize().x = context.sgraph.getPadding().left + context.sgraph.getPadding().right;
         } else {
-            unusableIncomingMessageSpace = new HashMap<>();
-            unusableOutgoingMessageSpace = new HashMap<>();
+            init(context);
+
+            // Compute the lifelines each area spans, since we're going to need that later
+            for (SArea sArea : context.sgraph.getAreas()) {
+                sArea.computeSpannedLifelines();
+            }
             
             processLifelines(context);
+            processAreas(context);
             
-            unusableIncomingMessageSpace = null;
-            unusableOutgoingMessageSpace = null;
+            cleanup();
         }
 
         progressMonitor.done();
     }
+    
+    private void init(final LayoutContext context) {
+        unusableIncomingMessageSpace = new HashMap<>();
+        unusableOutgoingMessageSpace = new HashMap<>();
+    }
+    
+    private void cleanup() {
+        unusableIncomingMessageSpace = null;
+        unusableOutgoingMessageSpace = null;
+    }
+    
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Lifeline and Area Processing
+
+    /**
+     * Computes the space required around all lifelines, places them, and then places all of their incident elements
+     * except for areas.
+     */
     private void processLifelines(final LayoutContext context) {
         assert !context.sgraph.getLifelines().isEmpty();
         
@@ -90,7 +117,7 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         // Check how much space we need to the left of the first lifeline and place it right there. Note that the
         // variable will always point to the actual lifeline part of the most recently placed lifeline
-        double currX = spaceLeftwards(context, rightLL);
+        double currX = context.sgraph.getPadding().left + spaceLeftwards(context, rightLL);
         rightLL.getPosition().x = currX - rightLL.getSize().x / 2;
         
         // For each pair of subsequent lifelines, find out how close they should be placed and then place the right
@@ -125,42 +152,49 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         
         // By now, all lifelines were placed at their final coordinates. Place all of their incident elements
         context.sgraph.getLifelines().stream().forEach(ll -> applyLifelineCoordinates(context, ll));
-        
-        // TODO Do this properly. We need to reserve space for areas and compute nestings
+    }
+    
+    /**
+     * With the space required to the left and right of each area computed, this applies the coordinates to each area.
+     */
+    private void processAreas(final LayoutContext context) {
         for (SArea sArea : context.sgraph.getAreas()) {
             if (sArea.getMessages().isEmpty()) {
+                // TODO This needs to be handled more gracefully
                 continue;
             }
             
-            double minSourceY = sArea.getMessages().stream()
-                    .mapToDouble(msg -> msg.getSourcePosition().x).min().getAsDouble();
-            double maxSourceY = sArea.getMessages().stream()
-                    .mapToDouble(msg -> msg.getSourcePosition().x).max().getAsDouble();
-            double minTargetY = sArea.getMessages().stream()
-                    .mapToDouble(msg -> msg.getTargetPosition().x).min().getAsDouble();
-            double maxTargetY = sArea.getMessages().stream()
-                    .mapToDouble(msg -> msg.getTargetPosition().x).max().getAsDouble();
+            // Left and right coordinates are the centers of the respective lifelines, with the area's required space
+            // taken into account
+            SLifeline leftAreaLL = sArea.getLeftmostLifeline();
+            double leftX = leftAreaLL.getPosition().x + leftAreaLL.getSize().x / 2
+                    - sArea.getRequiredSpaceToTheLeft();
             
-            ElkPadding areaPadding = SequenceUtils.getAreaPadding(sArea, context);
-            sArea.getPosition().x = Math.min(minSourceY, minTargetY) - areaPadding.left;
-            sArea.getSize().x = Math.max(maxSourceY, maxTargetY) + areaPadding.right - sArea.getPosition().x;
+            SLifeline rightAreaLL = sArea.getRightmostLifeline();
+            double rightX = rightAreaLL.getPosition().x + rightAreaLL.getSize().x / 2
+                    + sArea.getRequiredSpaceToTheRight();
+            
+            sArea.getPosition().x = leftX;
+            sArea.getSize().x = rightX - leftX;
         }
     }
     
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Space Around Set of Lifelines
+    // Space Around Outermost Lifelines
     
     /**
      * Returns the amount of space to be left leftwards of the actual lifeline part of the given lifeline. That
-     * lifeline is assumed to be the leftmost lifeline.
+     * lifeline is assumed to be the leftmost lifeline. The interaction's padding is not included.
      */
     private double spaceLeftwards(final LayoutContext context, final SLifeline sLifeline) {
         assert context.sgraph.getLifelines().get(0) == sLifeline;
         
-        return context.sgraph.getPadding().left + sLifeline.getSize().x / 2;
+        return Math.max(
+                sLifeline.getSize().x / 2,
+                spaceRequiredByStartingAreas(context, sLifeline));
     }
-    
+
     /**
      * Returns the amount of space to be left rightwards of the actual lifeline part of the given lifeline. That
      * lifeline is assumed to be the rightmost lifeline. The space will only include what is necessary to cover the
@@ -191,7 +225,7 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
             }
         }
         
-        return space;
+        return Math.max(space, spaceRequiredByEndingAreas(context, sLifeline, true));
     }
     
     
@@ -234,13 +268,24 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
             }
         }
         
-        return minSpacing;
+        // We also need to take the space required for areas into account, particularly for areas that end at the left
+        // or begin at the right lifeline
+        double leftAreaSpace = spaceRequiredByEndingAreas(context, leftLL, false);
+        double rightAreaSpace = spaceRequiredByStartingAreas(context, rightLL);
+        double areaSpace = leftAreaSpace + rightAreaSpace;
+        
+        // If there are both areas that end at the left and start at the right lifeline, we need to make sure that we
+        // leave a bit of space between them
+        if (leftAreaSpace > 0 && rightAreaSpace > 0) {
+            areaSpace += context.labelSpacing;
+        }
+        
+        return Math.max(minSpacing, areaSpace);
     }
     
     /**
-     * Computes the minimum length required for an outgoing rightwards-pointing message. Given a pair of lifelines, the
-     * message is assumed to leave the left one if it's a right-pointing message, or the right one if it's a
-     * left-pointing message.
+     * Computes the minimum length required for an outgoing message. Given a pair of lifelines, the message is assumed
+     * to leave the left one if it's a right-pointing message, or the right one if it's a left-pointing message.
      */
     private double minOutgoingMessageLength(final LayoutContext context, final SMessage outMsg) {
         // We calculate two kinds of space: the space between adjacent lifelines that the message spans, but needs to
@@ -483,9 +528,9 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
             // Set x coordinate
             sMessage.getSourcePosition().x = currX + sLifeline.getSize().x / 2;
             
-            // Check if the message has an inline label
             SLabel sLabel = sMessage.getLabel();
             
+            // Check which way the message points
             if (pointsRightwards(sMessage)) {
                 sMessage.getSourcePosition().x += sourceExecutionCount(sMessage) * context.executionWidth / 2;
             } else if (pointsLeftwards(sMessage)) {
@@ -581,6 +626,9 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         if (sDestruction != null) {
             sDestruction.getPosition().x = currX + (sLifeline.getSize().x - sDestruction.getSize().x) / 2; 
         }
+        
+        // Update area coordinates
+        spaceRequiredByEndingAreas(context, sLifeline, true);
 
         // TODO Place lifeline comments that don't refer to particular messages
     }
@@ -595,6 +643,187 @@ public class XCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
         for (SExecution sExecution : sLifeline.getExcecutions()) {
             sExecution.getPosition().x = baseX + sExecution.getSlot() * context.executionWidth / 2;
             sExecution.getSize().x = context.executionWidth;
+        }
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Area Space Requirements
+    
+    /**
+     * Computes and returns the space required to the left of the given lifeline's center by areas that start at the
+     * lifeline. During the computation, this method sets the appropriate required space fields of the offending areas
+     * to be used later when they are actually placed.
+     */
+    private double spaceRequiredByStartingAreas(final LayoutContext context, final SLifeline sLifeline) {
+        // Go through the areas that begin at this lifeline and compute how much space they will require
+        List<SArea> areasThatStartHere = new ArrayList<>();
+        for (SArea sArea : context.sgraph.getAreas()) {
+            if (sArea.getLeftmostLifeline() == sLifeline) {
+                areasThatStartHere.add(sArea);
+                
+                // Go through the area's messages and check how much to the left the area wants to extend
+                double areaSpace = 0;
+                for (SMessage sMessage : sArea.getMessages()) {
+                    if (sMessage.getSourceLifeline() == sLifeline) {
+                        // The message leaves this lifeline towards the right. There's not much to push the area away
+                        // from the lifeline
+                        assert sMessage.isSelfMessage() || pointsRightwards(sMessage);
+                        areaSpace = Math.max(areaSpace,
+                                Math.signum(sourceExecutionCount(sMessage)) * context.executionWidth / 2);
+                    }
+                    
+                    // No "else if" since we need to take executions at both ends of self messages into account
+                    if (sMessage.getTargetLifeline() == sLifeline) {
+                        // The message enters this lifeline from the right. The only thing that we need to take into
+                        // account is that the message might actually create the lifeline
+                        assert sMessage.isSelfMessage() || pointsLeftwards(sMessage);
+                        
+                        if (sMessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE) {
+                            areaSpace = Math.max(areaSpace, sLifeline.getSize().x / 2);
+                        } else {
+                            areaSpace = Math.max(areaSpace,
+                                    Math.signum(targetExecutionCount(sMessage)) * context.executionWidth / 2);
+                        }
+                    }
+                }
+                
+                ElkPadding areaPadding = SequenceUtils.getAreaPadding(sArea, context);
+                sArea.setRequiredSpaceToTheLeft(areaSpace + areaPadding.left);
+            }
+        }
+        
+        // Areas may in fact be nested, with inner areas pushing their parents outwards. Correct for that.
+        List<AreaNestingTreeNode> areaNestings = SequenceUtils.computeAreaNestings(areasThatStartHere);
+        for (AreaNestingTreeNode areaNesting : areaNestings) {
+            correctForAreaNesting(context, areaNesting, true);
+        }
+
+        // The space we need is the maximum of the maximum space required by any area and what the lifeline itself needs
+        return areasThatStartHere.stream()
+                .mapToDouble(a -> a.getRequiredSpaceToTheLeft())
+                .max()
+                .orElse(0);
+    }
+
+    /**
+     * Computes and returns the space required to the right of the given lifeline's center by areas that end at the
+     * lifeline. During the computation, this method sets the appropriate required space fields of the offending areas
+     * to be used later when they are actually placed.
+     * 
+     * <p>This method is usually invoked twice: once when computing how much space an area expects to require, and
+     * once when computing how much it actually requires. The results only differ if the lifeline has self loops with
+     * inline labels. A self loop contained in an area is supposed to be completely contained in that area, but how
+     * much that self loop will actually extend to the right only becomes known one label management has been applied
+     * to the label and the loop's routing has been finalized.</p>
+     */
+    private double spaceRequiredByEndingAreas(final LayoutContext context, final SLifeline sLifeline,
+            final boolean accountForSelfLoopLabels) {
+        
+        // Go through the areas that end at this lifeline and compute how much space they will require
+        List<SArea> areasThatEndHere = new ArrayList<>();
+        for (SArea sArea : context.sgraph.getAreas()) {
+            if (sArea.getRightmostLifeline() == sLifeline) {
+                areasThatEndHere.add(sArea);
+                
+                // Go through the area's messages and check how much to the right the area wants to extend
+                double areaSpace = 0;
+                for (SMessage sMessage : sArea.getMessages()) {
+                    if (sMessage.getSourceLifeline() == sLifeline) {
+                        if (sMessage.isSelfMessage()) {
+                            int maxIncidentExecutions = Math.max(
+                                    sourceExecutionCount(sMessage),
+                                    targetExecutionCount(sMessage));
+                            double selfMessageWidth = maxIncidentExecutions * context.executionWidth / 2;
+                            
+                            if (accountForSelfLoopLabels && hasInlineLabel(sMessage)) {
+                                // We actually do need to account for the label
+                                selfMessageWidth += context.labelSpacing + sMessage.getLabel().getSize().x / 2;
+                                
+                            } else {
+                                // Only account for the self message itself, without any label
+                                selfMessageWidth += context.selfMessageWidth;
+                            }
+                            
+                            areaSpace = Math.max(areaSpace, selfMessageWidth);
+                            
+                        } else {
+                            // The message leaves this lifeline towards the left. There's not much to push the area
+                            // away from the lifeline
+                            assert pointsLeftwards(sMessage);
+                            areaSpace = Math.max(areaSpace,
+                                    sourceExecutionCount(sMessage) * context.executionWidth / 2);
+                        }
+                        
+                    } else if (sMessage.getTargetLifeline() == sLifeline) {
+                        // The message enters this lifeline from the left. Again, there's not much that can happen here
+                        // except for when it's a create message
+                        assert pointsRightwards(sMessage);
+                        
+                        if (sMessage.getProperty(SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE) {
+                            areaSpace = Math.max(areaSpace, sLifeline.getSize().x / 2);
+                        } else {
+                            areaSpace = Math.max(areaSpace,
+                                    targetExecutionCount(sMessage) * context.executionWidth / 2);
+                        }
+                    }
+                }
+                
+                ElkPadding areaPadding = SequenceUtils.getAreaPadding(sArea, context);
+                sArea.setRequiredSpaceToTheRight(areaSpace + areaPadding.right);
+            }
+        }
+        
+        // Areas may in fact be nested, with inner areas pushing their parents outwards. Correct for that.
+        List<AreaNestingTreeNode> areaNestings = SequenceUtils.computeAreaNestings(areasThatEndHere);
+        for (AreaNestingTreeNode areaNesting : areaNestings) {
+            correctForAreaNesting(context, areaNesting, false);
+        }
+
+        // The space we need is the maximum of the maximum space required by any area and what the lifeline itself needs
+        return areasThatEndHere.stream()
+                .mapToDouble(a -> a.getRequiredSpaceToTheRight())
+                .max()
+                .orElse(0);
+    }
+    
+    /**
+     * Corrects the necessary space computed for the given areas for the effects of inner areas pushing out their
+     * parents. The area's required space as computed so far does not take any area nesting into account. Calling this
+     * method updates the required space accordingly.
+     */
+    private void correctForAreaNesting(LayoutContext context, AreaNestingTreeNode areaNesting, boolean left) {
+        // Invoke on nested areas first
+        areaNesting.children.stream()
+                .forEach(tn -> correctForAreaNesting(context, tn, left));
+        
+        // Find the maximum space required by child areas
+        double maxAreaForChildren = areaNesting.children.stream()
+                .mapToDouble(tn -> (left
+                        ? tn.sArea.getRequiredSpaceToTheLeft()
+                        :  tn.sArea.getRequiredSpaceToTheRight()))
+                .max()
+                .orElse(0);
+        
+        // We need to ensure that the children don't extend into the padding of this area
+        double maxArea = left
+                ? areaNesting.sArea.getRequiredSpaceToTheLeft()
+                : areaNesting.sArea.getRequiredSpaceToTheRight();
+        
+        ElkPadding areaPadding = SequenceUtils.getAreaPadding(areaNesting.sArea, context);
+        double relevantPadding = left
+                ? areaPadding.left
+                : areaPadding.right;
+        
+        if (maxAreaForChildren > maxArea - relevantPadding) {
+            maxArea += maxAreaForChildren - (maxArea - relevantPadding);
+        }
+        
+        // Update the area's required space
+        if (left) {
+            areaNesting.sArea.setRequiredSpaceToTheLeft(maxArea);
+        } else {
+            areaNesting.sArea.setRequiredSpaceToTheRight(maxArea);
         }
     }
     

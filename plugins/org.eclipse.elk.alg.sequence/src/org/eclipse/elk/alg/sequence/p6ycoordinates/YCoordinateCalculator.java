@@ -11,7 +11,9 @@
 package org.eclipse.elk.alg.sequence.p6ycoordinates;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.elk.alg.layered.graph.LNode;
 import org.eclipse.elk.alg.layered.graph.Layer;
@@ -37,6 +39,7 @@ import org.eclipse.elk.core.alg.LayoutProcessorConfiguration;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -241,7 +244,7 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
      */
     private void placeSubLayer(final LayoutContext context, final List<LNode> subLayer) {
         // Find out which areas need to be closed below this sub layer
-        List<SArea> areasToBeClosed = computeAreasToBeClosed(subLayer);
+        Map<SArea, Boolean> areasToBeClosed = computeAreasToBeClosed(subLayer);
         
         // Find the height of things that should be placed above the set of messages and place the messages, noting how
         // far down they extend
@@ -390,17 +393,17 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
      * Closes the given list of areas by setting their height accordingly. The y coordinate is the lowermost coordinate
      * occupied by a message on the sublayer the areas are closed in.
      */
-    private double placeAreaFooters(final LayoutContext context, final List<SArea> areas, final double areaY) {
+    private double placeAreaFooters(final LayoutContext context, final Map<SArea, Boolean> areas, final double areaY) {
         if (areas.isEmpty()) {
             return areaY;
         }
         
         double bottomMostY = areaY;
         
-        List<AreaNestingTreeNode> nestingRoots = SequenceUtils.computeAreaNestings(areas);
+        List<AreaNestingTreeNode> nestingRoots = SequenceUtils.computeAreaNestings(areas.keySet());
         
         for (AreaNestingTreeNode root : nestingRoots) {
-            bottomMostY = Math.max(bottomMostY, placeAreaTreeFooters(context, root, areaY));
+            bottomMostY = Math.max(bottomMostY, placeAreaTreeFooters(context, root, areas, areaY));
         }
         
         return bottomMostY;
@@ -409,20 +412,25 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     /**
      * Places the area tree rooted at the given tree node and returns the lowermost y coordinate used while doing so.
      */
-    private double placeAreaTreeFooters(final LayoutContext context, final AreaNestingTreeNode areas,
-            final double areaY) {
+    private double placeAreaTreeFooters(final LayoutContext context, final AreaNestingTreeNode areaTreeNode,
+            final Map<SArea, Boolean> areas, final double areaY) {
         
         double bottomMostY = areaY;
         
         // Place children (and their children, and their children, and...)
-        for (AreaNestingTreeNode child : areas.children) {
-            bottomMostY = Math.max(bottomMostY, placeAreaTreeFooters(context, child, areaY));
+        for (AreaNestingTreeNode child : areaTreeNode.children) {
+            bottomMostY = Math.max(bottomMostY, placeAreaTreeFooters(context, child, areas, areaY));
         }
         
-        // Place this area
-        ElkPadding areaPadding = SequenceUtils.getAreaPadding(areas.sArea, context);
+        // Place this area. If this is a leaf (that is, one of the uppermost areas in the tree), chances are that it
+        // may have been closed by a create message (as indicated by the map). If so, we need to move it down a bit
+        if (areaTreeNode.children.isEmpty() && areas.get(areaTreeNode.sArea)) {
+            bottomMostY += context.lifelineHeaderHeight / 2;
+        }
+        
+        ElkPadding areaPadding = SequenceUtils.getAreaPadding(areaTreeNode.sArea, context);
         bottomMostY += areaPadding.bottom;
-        areas.sArea.getSize().y = bottomMostY - areas.sArea.getPosition().y;
+        areaTreeNode.sArea.getSize().y = bottomMostY - areaTreeNode.sArea.getPosition().y;
         return bottomMostY;
     }
     
@@ -445,19 +453,29 @@ public class YCoordinateCalculator implements ILayoutPhase<SequencePhases, Layou
     
     /**
      * Goes through the nodes in the sublayer and updates the lowermost nodes of our open areas that are contained
-     * therein. If an area ceases to have open nodes, it must be closed and is thus added to the list.
+     * therein. If an area ceases to have open nodes, it must be closed and is thus added to the list. The returned
+     * list contains pairs of closed areas and boolean variables that describe whether they were closed by create
+     * messages. If so, we will have to reserve a bit of space in order to keep from crossing the created lifeline's
+     * header.
      */
-    private List<SArea> computeAreasToBeClosed(final List<LNode> subLayer) {
-        List<SArea> result = new ArrayList<>();
+    private Map<SArea, Boolean> computeAreasToBeClosed(final List<LNode> subLayer) {
+        Map<SArea, Boolean> result = new HashMap<>();
         
         // We'll be modifying the map as we're iterating over it, so iterate over copies
         for (SArea sArea : lowermostAreaNodes.keySet().toArray(new SArea[0])) {
+            boolean closedByCreateMessage = false;
             for (LNode lNode : subLayer) {
-                lowermostAreaNodes.remove(sArea, lNode);
+                if (lowermostAreaNodes.remove(sArea, lNode)) {
+                    // We actually stumbled upon a lowermost area node, so check whether that node represented a
+                    // create message
+                    SMessage sMessage = SequenceUtils.originObjectFor(lNode, SMessage.class);
+                    closedByCreateMessage |= sMessage.getProperty(
+                            SequenceDiagramOptions.TYPE_MESSAGE) == MessageType.CREATE;
+                }
             }
             
             if (!lowermostAreaNodes.containsKey(sArea)) {
-                result.add(sArea);
+                result.put(sArea, closedByCreateMessage);
             }
         }
         
