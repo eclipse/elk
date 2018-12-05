@@ -484,8 +484,8 @@ public class MetaDataSemanticSequencer extends XbaseSemanticSequencer {
 	 *                 lowerBound=XExpression | 
 	 *                 upperBound=XExpression
 	 *             )? 
-	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)? 
-	 *             (targets+=MdOptionTargetType targets+=MdOptionTargetType*)?
+	 *             (targets+=MdOptionTargetType targets+=MdOptionTargetType*)? 
+	 *             (legacyIds+=QualifiedName legacyIds+=QualifiedName*)?
 	 *         )+ 
 	 *         dependencies+=MdOptionDependency*
 	 *     )
